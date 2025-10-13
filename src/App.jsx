@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
+import { BrainCircuit, Gamepad2, Eye, Rocket } from 'lucide-react'
+
 const navigationLinks = [
+  { name: 'Why AlgoViz?', href: '#why-algoviz' },
   { name: 'Overview', href: '#overview' },
   { name: 'Algorithms', href: '#algorithms' },
   { name: 'Learning Paths', href: '#tracks' },
@@ -91,6 +94,29 @@ const masteryMetrics = [
   { label: 'Sorting & searching', value: '86%', color: 'from-emerald-400 to-emerald-500' },
   { label: 'Graphs & traversal', value: '64%', color: 'from-cyan-400 to-blue-500' },
   { label: 'Dynamic programming', value: '58%', color: 'from-purple-400 to-fuchsia-500' },
+]
+
+const whyAlgoViz = [
+  {
+    icon: BrainCircuit,
+    title: 'Make Algorithms Tangible',
+    description: 'See exactly how data moves and transforms with frame-by-frame clarity.',
+  },
+  {
+    icon: Rocket,
+    title: 'Accelerate Learning',
+    description: 'Interactive visualizations and guided flows make concepts stick faster.',
+  },
+  {
+    icon: Eye,
+    title: 'Build Intuition',
+    description: 'Watch algorithms in action and connect every step to its outcome.',
+  },
+  {
+    icon: Gamepad2,
+    title: 'Gamify Practice',
+    description: 'Turn mastery into a game with streaks, challenges, and unlockable quests.',
+  },
 ]
 
 function App() {
@@ -315,6 +341,35 @@ function App() {
             </div>
           </div>
         </header>
+
+        <section
+          id="why-algoviz"
+          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/35 px-6 py-16 backdrop-blur-xl sm:px-12"
+        >
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold text-white sm:text-4xl">Why AlgoViz?</h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
+              AlgoViz translates dense theory into vivid, interactive stories so you can feel how
+              algorithms behave, remember them longer, and enjoy the journey.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {whyAlgoViz.map(({ icon: Icon, title, description }) => (
+              <article
+                key={title}
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-7 shadow-[0_25px_80px_-60px_rgba(6,182,212,0.7)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-white/10 hover:shadow-[0_30px_90px_-55px_rgba(56,189,248,0.9)]"
+              >
+                <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10 blur-3xl transition group-hover:opacity-100 group-hover:blur-[70px]" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-gradient-to-br from-slate-900/80 to-slate-900/40 text-cyan-300 shadow-glow transition group-hover:scale-105">
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-white">{title}</h3>
+                <p className="mt-3 text-sm text-slate-300">{description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <section
           id="overview"
