@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { BrainCircuit, Gamepad2, Eye, Rocket } from 'lucide-react'
+import { BrainCircuit, Gamepad2, Eye, Rocket, ArrowDownUp, Search, Boxes, GitBranch } from 'lucide-react'
 
 const navigationLinks = [
   { name: 'Why AlgoViz?', href: '#why-algoviz' },
@@ -116,6 +116,33 @@ const whyAlgoViz = [
     icon: Gamepad2,
     title: 'Gamify Practice',
     description: 'Turn mastery into a game with streaks, challenges, and unlockable quests.',
+  },
+]
+
+const dsaCategories = [
+  {
+    name: 'Sorting Algorithms',
+    icon: ArrowDownUp,
+    slug: 'sorting',
+    algorithms: ['Bubble', 'Selection', 'Insertion', 'Merge', 'Quick', 'Heap'],
+  },
+  {
+    name: 'Searching Algorithms',
+    icon: Search,
+    slug: 'searching',
+    algorithms: ['Linear', 'Binary', 'Jump', 'Interpolation'],
+  },
+  {
+    name: 'Data Structures',
+    icon: Boxes,
+    slug: 'data-structures',
+    algorithms: ['Stack', 'Queue', 'Linked List', 'Trees', 'Graphs'],
+  },
+  {
+    name: 'Graph Algorithms',
+    icon: GitBranch,
+    slug: 'graphs',
+    algorithms: ['DFS', 'BFS', 'Dijkstra\'s', 'A*'],
   },
 ]
 
@@ -279,7 +306,7 @@ function App() {
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-semibold text-white">Pathfinding visualizer</p>
-                    <p className="text-xs text-slate-400">A* Algorithm · Step 23 of 48</p>
+                    <p className="text-xs text-slate-400">A* Algorithm - Step 23 of 48</p>
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200">
                     Live
@@ -417,11 +444,11 @@ function App() {
                 theory, dynamic programming, and interview-focused drills. Each explorer mode
                 includes visual comparisons, complexity overlays, and real-world scenarios.
               </p>
-            </div>
+          </div>
 
-            <div className="grid flex-1 gap-6 sm:grid-cols-2">
-              {algorithmTracks.map((item) => (
-                <article
+          <div className="grid flex-1 gap-6 sm:grid-cols-2">
+            {algorithmTracks.map((item) => (
+              <article
                   key={item.name}
                   className="rounded-2xl border border-white/10 bg-slate-950/60 p-6 shadow-[0_25px_80px_-60px_rgba(129,140,248,0.9)] transition hover:-translate-y-1 hover:border-white/20 hover:bg-slate-950/80"
                 >
@@ -442,6 +469,69 @@ function App() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section
+          id="dsa-categories"
+          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/45 px-6 py-16 backdrop-blur-xl sm:px-12"
+        >
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-semibold text-white sm:text-4xl">Explore DSA categories</h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
+              Jump into curated playlists that bundle visual explainers, guided walkthroughs, and
+              practice drills for every stage of your learning journey.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {dsaCategories.map(({ name, icon: Icon, slug, algorithms }) => (
+              <article
+                key={name}
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-7 transition transform duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/40 hover:shadow-[0_35px_100px_-60px_rgba(59,130,246,0.9)]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 opacity-0 transition duration-300 group-hover:opacity-100" />
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-slate-900/70 text-cyan-300 shadow-glow">
+                      <Icon className="h-6 w-6" strokeWidth={1.75} />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">{name}</h3>
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                        {algorithms.length} algorithms
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <ul className="relative mt-5 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
+                  {algorithms.map((algorithm) => (
+                    <li key={algorithm} className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
+                      <span>{algorithm}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <a
+                  href={`/algorithms/${slug}`}
+                  className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 transition hover:text-white"
+                >
+                  Learn More
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    className="h-4 w-4 transition group-hover:translate-x-1"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </article>
+            ))}
           </div>
         </section>
 
