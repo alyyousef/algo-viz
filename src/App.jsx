@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   BrainCircuit,
@@ -9,11 +9,16 @@ import {
   Search,
   Boxes,
   GitBranch,
+  ListChecks,
+  SlidersHorizontal,
+  PlayCircle,
+  Lightbulb,
 } from 'lucide-react'
 
 const navigationLinks = [
   { name: 'Why AlgoViz?', href: '#why-algoviz' },
   { name: 'Features', href: '#features' },
+  { name: 'How It Works', href: '#how-it-works' },
   { name: 'Overview', href: '#overview' },
   { name: 'Algorithms', href: '#algorithms' },
   { name: 'Learning Paths', href: '#tracks' },
@@ -153,6 +158,29 @@ const dsaCategories = [
     icon: GitBranch,
     slug: 'graphs',
     algorithms: ['DFS', 'BFS', 'Dijkstra\'s', 'A*'],
+  },
+]
+
+const howItWorks = [
+  {
+    title: 'Select an Algorithm',
+    description: 'Browse curated categories and pick a sorting, searching, or data structure routine to visualize.',
+    icon: ListChecks,
+  },
+  {
+    title: 'Customize Visualization',
+    description: 'Adjust array size, drop in custom values, and tweak scenario presets to match your curiosity.',
+    icon: SlidersHorizontal,
+  },
+  {
+    title: 'Control Playback',
+    description: 'Play, pause, scrub, or step through operations and fine-tune the speed to see every detail.',
+    icon: PlayCircle,
+  },
+  {
+    title: 'Learn & Understand',
+    description: 'Review synced code, complexity breakdowns, and live stats to cement your understanding.',
+    icon: Lightbulb,
   },
 ]
 
@@ -427,6 +455,38 @@ function FeatureVisual({ variant }) {
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [visibleSteps, setVisibleSteps] = useState(() => Array(howItWorks.length).fill(false))
+  const stepRefs = useRef([])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute('data-step-index'))
+            setVisibleSteps((prev) => {
+              if (prev[index]) return prev
+              const next = [...prev]
+              next[index] = true
+              return next
+            })
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.4 },
+    )
+
+    stepRefs.current.forEach((element) => {
+      if (element) observer.observe(element)
+    })
+
+    return () => {
+      stepRefs.current.forEach((element) => {
+        if (element) observer.unobserve(element)
+      })
+    }
+  }, [])
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100 antialiased">
@@ -759,6 +819,58 @@ function App() {
                 </article>
               )
             })}
+          </div>
+        </section>
+
+        <section
+          id="how-it-works"
+          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/45 px-6 py-16 backdrop-blur-xl sm:px-12"
+        >
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-semibold text-white sm:text-4xl">How AlgoViz Works</h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
+              Move from curiosity to clarity with a guided workflow that keeps you in control at every step.
+            </p>
+          </div>
+
+          <div className="relative mt-12">
+            <div className="hidden lg:block absolute left-0 right-0 top-16 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+            <div className="grid gap-10 lg:grid-cols-4">
+              {howItWorks.map((step, index) => {
+                const Icon = step.icon
+                const isLast = index === howItWorks.length - 1
+                return (
+                  <div
+                    key={step.title}
+                    ref={(element) => {
+                      stepRefs.current[index] = element
+                    }}
+                    data-step-index={index}
+                    className={`relative pl-12 transition-all duration-500 ease-out lg:pl-0 ${
+                      isLast ? '' : 'after:absolute after:left-6 after:top-16 after:h-[calc(100%-3.5rem)] after:w-px after:bg-white/10 lg:after:hidden'
+                    } ${visibleSteps[index] ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
+                  >
+                    <span className="absolute left-5 top-4 h-3 w-3 rounded-full bg-cyan-400/80 shadow-glow lg:hidden" />
+                    <span className="hidden lg:block absolute left-1/2 top-14 h-4 w-4 -translate-x-1/2 rounded-full border border-white/20 bg-cyan-400/80 shadow-[0_0_25px_rgba(56,189,248,0.35)]" />
+
+                    <div className="relative flex h-full flex-col gap-5 rounded-2xl border border-white/10 bg-slate-950/60 p-6 shadow-[0_25px_70px_-50px_rgba(56,189,248,0.35)] backdrop-blur">
+                      <div className="flex items-center gap-4">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-cyan-400/40 bg-slate-900/90 text-sm font-semibold text-white">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500/30 to-purple-500/30 text-cyan-200">
+                          <Icon className="h-5 w-5" strokeWidth={1.75} />
+                        </span>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                        <p className="text-sm leading-relaxed text-slate-300">{step.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </section>
 
