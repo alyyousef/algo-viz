@@ -188,244 +188,25 @@ function AnimatedCounter({ value, suffix = '', prefix = '', duration = 1600 }) {
 
 const featureShowcase = [
   {
-    title: 'Real-time animations with color-coded states',
-    description:
-      'Watch every comparison, swap, and restructure unfold in vibrant gradients so you always know which elements are active.',
-    highlights: [
-      'Active, pending, and sorted states glow in unique hues',
-      'Follow operations frame-by-frame without losing context',
-    ],
-    mediaVariant: 'grid',
-    stats: [
-      { label: 'State channels visualized', value: 4, suffix: '+' },
-      { label: 'Frames per second rendering', value: 60 },
-    ],
-  },
-  {
-    title: 'Adjustable playback speed',
-    description:
-      'Dial the tempo from calm explorations to rapid replays and scrub through runs without jitter or desync.',
-    highlights: ['0.5x to 4x speed control with smooth easing', 'Instant scrubbing with position-aware thumbnails'],
-    mediaVariant: 'speed',
-    stats: [
-      { label: 'Speed presets', value: 6 },
-      { label: 'Range', display: '0.5x - 4x' },
-    ],
-  },
-  {
-    title: 'Intuitive playback controls',
-    description:
-      'Own the flow with play, pause, reset, and step-through actions mapped to keyboard shortcuts and on-screen controls.',
-    highlights: ['Step through single operations or algorithm phases', 'Auto-reset for rapid replay loops'],
-    mediaVariant: 'controls',
-    stats: [
-      { label: 'Control modes', value: 4 },
-      { label: 'Keyboard shortcuts', value: 8, suffix: '+' },
-    ],
-  },
-  {
-    title: 'Live statistics tracking',
-    description:
-      'Comparisons, swaps, and array accesses update the moment they happen so you can quantify efficiency in real time.',
-    highlights: ['Charts pulse with every metric update', 'Reset or export run summaries instantly'],
-    mediaVariant: 'stats',
-    stats: [
-      { label: 'Comparisons logged', value: 950, suffix: '+' },
-      { label: 'Swaps counted', value: 620, suffix: '+' },
-      { label: 'Array accesses tracked', value: 1280, suffix: '+' },
-    ],
-  },
-  {
     title: 'Code implementations in multiple languages',
     description:
       'View idiomatic implementations side-by-side across languages while remaining synchronized with the animation.',
     highlights: ['Syntax highlighting with inline complexity notes', 'Swap languages mid-run without restarting'],
-    mediaVariant: 'code',
-    badges: ['JavaScript', 'Python', 'Java', 'C++', 'Go', 'Rust'],
-    stats: [{ label: 'Languages supported', value: 6 }],
-  },
-  {
-    title: 'Time and space complexity analysis',
-    description:
-      'Overlay best, average, and worst-case complexity while the algorithm runs, then inspect breakdowns once it finishes.',
-    highlights: ['Auto-generated Big O summaries per step', 'Space usage visualized alongside time complexity'],
-    mediaVariant: 'complexity',
-    stats: [
-      { label: 'Complexity views', value: 5, suffix: '+' },
-      { label: 'Scenario breakdowns', display: 'Best / Avg / Worst' },
-    ],
-  },
-]
-
-function FeatureVisual({ variant }) {
-  switch (variant) {
-    case 'grid':
-      return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-[0_30px_90px_-60px_rgba(56,189,248,0.7)]">
-          <div className="absolute -top-10 -right-12 h-32 w-32 rounded-full bg-cyan-500/20 blur-3xl" />
-          <div className="absolute -bottom-16 left-4 h-36 w-36 animate-float rounded-full bg-purple-500/10 blur-2xl" />
-          <div className="relative grid grid-cols-6 gap-2">
-            {Array.from({ length: 24 }).map((_, index) => {
-              const classes =
-                index % 7 === 0
-                  ? 'bg-cyan-500/70'
-                  : index % 5 === 0
-                    ? 'bg-emerald-500/70'
-                    : index % 4 === 0
-                      ? 'bg-purple-500/60'
-                      : 'bg-slate-800/90'
-              return (
-                <div
-                  key={index}
-                  className={`aspect-square rounded-xl border border-white/10 ${classes} animate-pulse`}
-                  style={{ animationDelay: `${(index % 4) * 0.2}s` }}
-                />
-              )
-            })}
-          </div>
-        </div>
-      )
-    case 'speed':
-      return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 p-8 shadow-[0_30px_90px_-60px_rgba(6,182,212,0.7)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/20 opacity-80" />
-          <div className="relative flex flex-col gap-6">
-            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-slate-300">
-              <span>Slow</span>
-              <span>Fast</span>
-            </div>
-            <div className="relative h-3 w-full rounded-full bg-slate-800">
-              <div className="absolute inset-y-0 left-0 w-3/4 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500" />
-              <div className="absolute -top-2 left-3/4 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full border border-white/30 bg-white/90 text-[10px] font-semibold text-slate-900 shadow-md animate-pulse">
-                2.8x
-              </div>
-            </div>
-            <div className="grid grid-cols-6 gap-3 text-[11px] text-slate-300">
-              {['0.5x', '1x', '1.5x', '2x', '3x', '4x'].map((mark) => (
-                <span
-                  key={mark}
-                  className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-2 py-1"
-                >
-                  {mark}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )
-    case 'controls':
-      return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-[0_30px_90px_-60px_rgba(129,140,248,0.65)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-800/40 via-slate-900/20 to-cyan-500/20" />
-            <div className="relative flex flex-col gap-5">
-            <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-slate-200">
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-semibold uppercase tracking-[0.3em]">
-                Controls
-              </span>
-              <span>Ctrl + Space</span>
-            </div>
-            <div className="grid grid-cols-4 gap-3 text-sm font-semibold text-slate-200">
-              {['Play', 'Pause', 'Reset', 'Step'].map((action) => (
-                <button
-                  key={action}
-                  type="button"
-                  className="rounded-xl border border-white/10 bg-gradient-to-br from-slate-800/80 to-slate-900/60 px-4 py-3 shadow-lg transition hover:border-cyan-400/40 hover:text-white"
-                >
-                  {action}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center justify-between text-xs text-slate-300">
-              <span>Step granularity</span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-semibold text-white">
-                Operation
-              </span>
-            </div>
-          </div>
-        </div>
-      )
-    case 'stats':
-      return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 p-7 shadow-[0_30px_90px_-60px_rgba(6,182,212,0.65)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-emerald-500/20" />
-          <div className="relative grid gap-4">
-            {['Comparisons', 'Swaps', 'Array Accesses'].map((metric, index) => (
-              <div
-                key={metric}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
-              >
-                <span>{metric}</span>
-                <span className="flex items-center gap-2 font-semibold text-white">
-                  <span className="h-2 w-2 animate-ping rounded-full bg-cyan-400" />
-                  {index === 0 ? '942' : index === 1 ? '615' : '1288'}
-                </span>
-              </div>
-            ))}
-            <div className="grid grid-cols-3 gap-3 text-[11px] text-slate-300">
-              {['Export CSV', 'Toggle chart', 'Reset tally'].map((action) => (
-                <span
-                  key={action}
-                  className="flex items-center justify-center rounded-lg border border-white/10 bg-white/5 px-3 py-2 uppercase tracking-[0.2em]"
-                >
-                  {action}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )
-    case 'code':
-      return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/80 p-6 shadow-[0_30px_90px_-60px_rgba(147,51,234,0.65)]">
-          <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20" />
-            <div className="relative space-y-3 rounded-xl border border-white/10 bg-slate-900/80 p-5 text-[12px] font-mono text-slate-200">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-slate-400">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <span>JavaScript</span>
-            </div>
-            <pre className="whitespace-pre-wrap leading-6 text-slate-200">
-              {`function mergeSort(arr) {
+    badges: ['JavaScript', 'Python', 'Java'],
+    stats: [{ label: 'Languages supported', value: 3 }],
+    codeExample: {
+      language: 'JavaScript',
+      snippet: `function mergeSort(arr) {
   if (arr.length <= 1) return arr;
   const mid = Math.floor(arr.length / 2);
   const left = mergeSort(arr.slice(0, mid));
   const right = mergeSort(arr.slice(mid));
   return merge(left, right);
-}`}
-            </pre>
-            <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
-              Tap to switch: Python - Java - C++ - Go - Rust
-            </div>
-          </div>
-        </div>
-      )
-    case 'complexity':
-      return (
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 p-8 shadow-[0_30px_90px_-60px_rgba(79,70,229,0.7)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/15 via-transparent to-cyan-500/15" />
-          <div className="relative flex flex-col gap-6">
-            <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-slate-300">
-              <span>Complexity</span>
-              <span>Big O</span>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-3xl font-semibold text-white">
-              O(n log n)
-            </div>
-            <div className="grid gap-2 text-sm text-slate-300">
-              {['Best: O(n log n)', 'Average: O(n log n)', 'Worst: O(n^2)', 'Space: O(n)'].map((item) => (
-                <div key={item} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                  <span>{item.split(':')[0]}:</span>
-                  <span className="font-semibold text-white">{item.split(':')[1]}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )
-    default:
-      return null
-  }
-}
-
+}`,
+      altLanguages: ['Python', 'Java'],
+    },
+  },
+]
 function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -546,10 +327,6 @@ function LandingPage() {
           className="relative grid gap-16 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 shadow-[0_40px_120px_-50px_rgba(56,189,248,0.35)] backdrop-blur-lg sm:px-12 lg:grid-cols-[1.1fr_1fr]"
         >
           <div className="flex flex-col gap-6">
-            <span className="inline-flex w-max items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
-              Interactive learning
-              <span className="h-2 w-2 rounded-full bg-gradient-to-br from-cyan-400 to-indigo-500 shadow-glow" />
-            </span>
             <h1 className="font-display text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-[3.4rem]">
               AlgoViz - Master Algorithms Through Visualization
             </h1>
@@ -703,84 +480,81 @@ function LandingPage() {
           id="features"
           className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 backdrop-blur-xl sm:px-12"
         >
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-              Interactive features built to accelerate understanding
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-              Fine-tune the pace, stay in control, and connect code to visuals with instrumentation
-              engineered for deep comprehension.
-            </p>
-          </div>
-
-          <div className="mt-14 flex flex-col gap-16">
-            {featureShowcase.map((feature, index) => {
-              const isReversed = index % 2 === 1
-              return (
-                <article
-                  key={feature.title}
-                  className="grid gap-10 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_90px_-60px_rgba(56,189,248,0.35)] transition hover:border-cyan-400/30 hover:shadow-[0_40px_120px_-70px_rgba(56,189,248,0.45)] sm:p-10 lg:grid-cols-[1.05fr_1fr] lg:items-center"
-                >
-                  <div className={`flex flex-col gap-6 ${isReversed ? 'lg:order-2' : 'lg:order-1'}`}>
-                    <div className="inline-flex w-max items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                      Feature
-                      <span className="h-1.5 w-1.5 animate-ping rounded-full bg-cyan-400" />
+          <div className="flex flex-col gap-12">
+            {featureShowcase.map((feature) => (
+              <article
+                key={feature.title}
+                className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_90px_-60px_rgba(56,189,248,0.35)] transition hover:border-cyan-400/30 hover:shadow-[0_40px_120px_-70px_rgba(56,189,248,0.45)] sm:p-10"
+              >
+                <div className="inline-flex w-max items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
+                  Feature
+                  <span className="h-1.5 w-1.5 animate-ping rounded-full bg-cyan-400" />
+                </div>
+                <div className="mt-6 space-y-4">
+                  <h3 className="text-2xl font-semibold text-white sm:text-3xl">{feature.title}</h3>
+                  <p className="text-base leading-relaxed text-slate-300">{feature.description}</p>
+                </div>
+                {feature.highlights && (
+                  <ul className="mt-4 grid gap-2 text-sm text-slate-300">
+                    {feature.highlights.map((highlight) => (
+                      <li key={highlight} className="flex items-start gap-2">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-400" />
+                        <span>{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {feature.badges && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {feature.badges.map((badge) => (
+                      <span
+                        key={badge}
+                        className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200"
+                      >
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {feature.codeExample && (
+                  <div className="mt-6 space-y-3 rounded-2xl border border-white/10 bg-slate-950/80 p-5 text-[12px] font-mono text-slate-200">
+                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                      <span>{feature.codeExample.language}</span>
                     </div>
-                    <div className="space-y-4">
-                      <h3 className="text-2xl font-semibold text-white sm:text-3xl">{feature.title}</h3>
-                      <p className="text-base leading-relaxed text-slate-300">{feature.description}</p>
-                    </div>
-                    {feature.highlights && (
-                      <ul className="mt-2 grid gap-2 text-sm text-slate-300">
-                        {feature.highlights.map((highlight) => (
-                          <li key={highlight} className="flex items-start gap-2">
-                            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                            <span>{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {feature.badges && (
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {feature.badges.map((badge) => (
-                          <span
-                            key={badge}
-                            className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200"
-                          >
-                            {badge}
-                          </span>
-                        ))}
+                    <pre className="whitespace-pre-wrap leading-6 text-slate-200">
+                      {feature.codeExample.snippet}
+                    </pre>
+                    {feature.codeExample.altLanguages?.length ? (
+                      <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
+                        {`Tap to switch: ${feature.codeExample.altLanguages.join(' - ')}`}
                       </div>
-                    )}
-                    {feature.stats && (
-                      <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-                        {feature.stats.map((stat) => (
-                          <div
-                            key={`${feature.title}-${stat.label}`}
-                            className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-300"
-                          >
-                            <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                              {stat.label}
-                            </dt>
-                            <dd className="mt-2 text-lg">
-                              {typeof stat.value === 'number' ? (
-                                <AnimatedCounter value={stat.value} suffix={stat.suffix ?? ''} prefix={stat.prefix ?? ''} />
-                              ) : (
-                                <span className="font-semibold text-white">{stat.display}</span>
-                              )}
-                            </dd>
-                          </div>
-                        ))}
-                      </dl>
-                    )}
+                    ) : null}
                   </div>
-
-                  <div className={`${isReversed ? 'lg:order-1' : 'lg:order-2'}`}>
-                    <FeatureVisual variant={feature.mediaVariant} />
-                  </div>
-                </article>
-              )
-            })}
+                )}
+                {feature.stats && (
+                  <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+                    {feature.stats.map((stat) => (
+                      <div
+                        key={`${feature.title}-${stat.label}`}
+                        className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-300"
+                      >
+                        <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                          {stat.label}
+                        </dt>
+                        <dd className="mt-2 text-lg">
+                          {typeof stat.value === 'number' ? (
+                            <AnimatedCounter value={stat.value} suffix={stat.suffix ?? ''} prefix={stat.prefix ?? ''} />
+                          ) : (
+                            <span className="font-semibold text-white">{stat.display}</span>
+                          )}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </article>
+            ))}
           </div>
         </section>
 
