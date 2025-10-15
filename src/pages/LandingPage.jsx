@@ -854,7 +854,7 @@ function LandingPage() {
       </main>
 
       <footer className="relative border-t border-white/10 bg-slate-950/80 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center text-sm text-slate-400 sm:flex-row sm:justify-center sm:gap-8">
           <p>&copy; {new Date().getFullYear()} AlgoViz. Crafted for curious problem solvers.</p>
           <div className="flex items-center gap-6">
             <a href="#overview" className="transition hover:text-white">
