@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 const navigationLinks = [
-  { name: 'Why AlgoViz?', href: '#why-algoviz' },
+  { name: 'AlgoViz', href: '#why-algoviz' },
   { name: 'Features', href: '#features' },
   { name: 'Overview', href: '#overview' },
   { name: 'Algorithms', href: '/algorithms' },
