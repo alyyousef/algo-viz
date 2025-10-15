@@ -257,7 +257,7 @@ function LandingPage() {
               to="/algorithms"
               className="inline-flex items-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white shadow-glow transition hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
             >
-              Start Learning
+              explore
             </Link>
           </div>
 
@@ -315,7 +315,7 @@ function LandingPage() {
               onClick={() => setIsMenuOpen(false)}
               className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-4 py-2 text-white shadow-glow transition hover:scale-[1.01]"
             >
-              Start Learning
+              explore
             </a>
           </div>
         </div>
@@ -341,7 +341,7 @@ function LandingPage() {
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-7 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02]"
               >
                 <span className="absolute inset-0 translate-y-full bg-white/20 transition duration-300 group-hover:translate-y-0" />
-                <span className="relative">Start Learning</span>
+                <span className="relative">explore</span>
               </Link>
               <a
                 href="#algorithms"
