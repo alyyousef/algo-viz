@@ -16,7 +16,7 @@ const navigationLinks = [
   { name: 'AlgoViz', href: '#why-algoviz' },
   { name: 'Features', href: '#features' },
   { name: 'Overview', href: '#overview' },
-  { name: 'Algorithms', href: '/algorithms' },
+  { name: 'Algorithms', href: '/dsa' },
   { name: 'Learning Paths', href: '#tracks' },
   { name: 'Community', href: '#community' },
 ]
@@ -134,25 +134,25 @@ const dsaCategories = [
   {
     name: 'Sorting Algorithms',
     icon: ArrowDownUp,
-    slug: 'sorting',
+    path: '/dsa/2-core-algorithms/1-sorting-searching',
     algorithms: ['Bubble', 'Selection', 'Insertion', 'Merge', 'Quick', 'Heap'],
   },
   {
     name: 'Searching Algorithms',
     icon: Search,
-    slug: 'searching',
+    path: '/dsa/2-core-algorithms/1-sorting-searching',
     algorithms: ['Linear', 'Binary', 'Jump', 'Interpolation'],
   },
   {
     name: 'Data Structures',
     icon: Boxes,
-    slug: 'data-structures',
+    path: '/dsa/1-core-data-structures',
     algorithms: ['Stack', 'Queue', 'Linked List', 'Trees', 'Graphs'],
   },
   {
     name: 'Graph Algorithms',
     icon: GitBranch,
-    slug: 'graphs',
+    path: '/dsa/2-core-algorithms/2-graph-algorithms',
     algorithms: ['DFS', 'BFS', 'Dijkstra\'s', 'A*'],
   },
 ]
@@ -254,7 +254,7 @@ function LandingPage() {
 
           <div className="hidden md:flex">
             <Link
-              to="/algorithms"
+              to="/dsa"
               className="inline-flex items-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white shadow-glow transition hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
             >
               explore
@@ -337,7 +337,7 @@ function LandingPage() {
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                to="/algorithms"
+                to="/dsa"
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-7 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02]"
               >
                 <span className="absolute inset-0 translate-y-full bg-white/20 transition duration-300 group-hover:translate-y-0" />
@@ -460,19 +460,22 @@ function LandingPage() {
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {whyAlgoViz.map(({ icon: Icon, title, description }) => (
-              <article
-                key={title}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-7 shadow-[0_25px_80px_-60px_rgba(6,182,212,0.7)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-white/10 hover:shadow-[0_30px_90px_-55px_rgba(56,189,248,0.9)]"
-              >
-                <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10 blur-3xl transition group-hover:opacity-100 group-hover:blur-[70px]" />
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-gradient-to-br from-slate-900/80 to-slate-900/40 text-cyan-300 shadow-glow transition group-hover:scale-105">
-                  <Icon className="h-6 w-6" strokeWidth={1.75} />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-white">{title}</h3>
-                <p className="mt-3 text-sm text-slate-300">{description}</p>
-              </article>
-            ))}
+            {whyAlgoViz.map(({ icon, title, description }) => {
+              const Icon = icon
+              return (
+                <article
+                  key={title}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-7 shadow-[0_25px_80px_-60px_rgba(6,182,212,0.7)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-white/10 hover:shadow-[0_30px_90px_-55px_rgba(56,189,248,0.9)]"
+                >
+                  <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10 blur-3xl transition group-hover:opacity-100 group-hover:blur-[70px]" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-gradient-to-br from-slate-900/80 to-slate-900/40 text-cyan-300 shadow-glow transition group-hover:scale-105">
+                    <Icon className="h-6 w-6" strokeWidth={1.75} />
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold text-white">{title}</h3>
+                  <p className="mt-3 text-sm text-slate-300">{description}</p>
+                </article>
+              )
+            })}
           </div>
         </section>
 
@@ -645,53 +648,56 @@ function LandingPage() {
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {dsaCategories.map(({ name, icon: Icon, slug, algorithms }) => (
-              <article
-                key={name}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-7 transition transform duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/40 hover:shadow-[0_35px_100px_-60px_rgba(59,130,246,0.9)]"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 opacity-0 transition duration-300 group-hover:opacity-100" />
-                <div className="relative flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-slate-900/70 text-cyan-300 shadow-glow">
-                      <Icon className="h-6 w-6" strokeWidth={1.75} />
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{name}</h3>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                        {algorithms.length} algorithms
-                      </p>
+            {dsaCategories.map(({ name, icon, path, algorithms }) => {
+              const Icon = icon
+              return (
+                <article
+                  key={name}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-7 transition transform duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/40 hover:shadow-[0_35px_100px_-60px_rgba(59,130,246,0.9)]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 opacity-0 transition duration-300 group-hover:opacity-100" />
+                  <div className="relative flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-slate-900/70 text-cyan-300 shadow-glow">
+                        <Icon className="h-6 w-6" strokeWidth={1.75} />
+                      </span>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{name}</h3>
+                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                          {algorithms.length} algorithms
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <ul className="relative mt-5 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
-                  {algorithms.map((algorithm) => (
-                    <li key={algorithm} className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                      <span>{algorithm}</span>
-                    </li>
-                  ))}
-                </ul>
+                  <ul className="relative mt-5 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
+                    {algorithms.map((algorithm) => (
+                      <li key={algorithm} className="flex items-center gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
+                        <span>{algorithm}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                <a
-                  href={`/algorithms/${slug}`}
-                  className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 transition hover:text-white"
-                >
-                  Learn More
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    className="h-4 w-4 transition group-hover:translate-x-1"
+                  <Link
+                    to={path}
+                    className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 transition hover:text-white"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </a>
-              </article>
-            ))}
+                    Learn More
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      className="h-4 w-4 transition group-hover:translate-x-1"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </article>
+              )
+            })}
           </div>
         </section>
 
