@@ -489,10 +489,6 @@ function LandingPage() {
                 key={feature.title}
                 className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_90px_-60px_rgba(56,189,248,0.35)] transition hover:border-cyan-400/30 hover:shadow-[0_40px_120px_-70px_rgba(56,189,248,0.45)] sm:p-10"
               >
-                <div className="inline-flex w-max items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300">
-                  Feature
-                  <span className="h-1.5 w-1.5 animate-ping rounded-full bg-cyan-400" />
-                </div>
                 <div className="mt-6 space-y-4">
                   <h3 className="text-2xl font-semibold text-white sm:text-3xl">{feature.title}</h3>
                   <p className="text-base leading-relaxed text-slate-300">{feature.description}</p>
