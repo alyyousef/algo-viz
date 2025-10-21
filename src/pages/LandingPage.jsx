@@ -39,29 +39,6 @@ const overviewHighlights = [
   },
 ]
 
-const algorithmTracks = [
-  {
-    name: 'Data structure deep dives',
-    bullets: ['Binary trees & heaps', 'Union-find animations', 'Hash maps in action'],
-    accent: 'from-blue-500/30 to-cyan-500/20',
-  },
-  {
-    name: 'Graph algorithms lab',
-    bullets: ['Dijkstra vs. A*', 'Network flow explorers', 'Topological sorting'],
-    accent: 'from-purple-500/30 to-fuchsia-500/20',
-  },
-  {
-    name: 'Dynamic programming coach',
-    bullets: ['State grids visualized', 'Memoization timelines', 'Optimal substructure hints'],
-    accent: 'from-emerald-500/30 to-cyan-500/20',
-  },
-  {
-    name: 'Interview blitz mode',
-    bullets: ['Timed whiteboard rounds', 'Complexity reasoning prompts', 'Solution breakdown replays'],
-    accent: 'from-rose-500/30 to-orange-500/20',
-  },
-]
-
 const learningPaths = [
   {
     title: 'CS foundations (6 weeks)',
@@ -585,52 +562,6 @@ function LandingPage() {
             ))}
           </div>
         </section>
-
-        <section
-          id="algorithms"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/70 via-slate-900/40 to-slate-900/70 px-6 py-16 backdrop-blur-xl sm:px-12"
-        >
-          <div className="flex flex-col gap-10 lg:flex-row lg:items-center">
-            <div className="max-w-lg">
-              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                Algorithm explorer
-              </span>
-              <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
-                Algorithms curated for every computer science journey
-              </h2>
-              <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-                Navigate a library organized by goal: foundational data structures, advanced graph
-                theory, dynamic programming, and interview-focused drills. Each explorer mode
-                includes visual comparisons, complexity overlays, and real-world scenarios.
-              </p>
-          </div>
-
-          <div className="grid flex-1 gap-6 sm:grid-cols-2">
-            {algorithmTracks.map((item) => (
-              <article
-                  key={item.name}
-                  className="rounded-2xl border border-white/10 bg-slate-950/60 p-6 shadow-[0_25px_80px_-60px_rgba(129,140,248,0.9)] transition hover:-translate-y-1 hover:border-white/20 hover:bg-slate-950/80"
-                >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br ${item.accent} text-white`}>
-                    <span className="text-lg font-semibold">
-                      {item.name.charAt(0)}
-                    </span>
-                  </div>
-                  <h3 className="mt-4 text-lg font-semibold text-white">{item.name}</h3>
-                  <ul className="mt-3 space-y-2 text-sm text-slate-300">
-                    {item.bullets.map((point) => (
-                      <li key={point} className="flex items-start gap-2">
-                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section
           id="dsa-categories"
           className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/45 px-6 py-16 backdrop-blur-xl sm:px-12"
