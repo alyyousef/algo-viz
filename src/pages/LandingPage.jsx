@@ -317,7 +317,7 @@ function LandingPage() {
                 className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-7 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02]"
               >
                 <span className="absolute inset-0 translate-y-full bg-white/20 transition duration-300 group-hover:translate-y-0" />
-                <span className="relative">explore</span>
+                <span className="relative">Explore</span>
               </Link>
             </div>
             <dl className="mt-8 grid grid-cols-2 gap-6 text-sm text-slate-300 sm:flex sm:flex-wrap sm:gap-10">
