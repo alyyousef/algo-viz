@@ -16,7 +16,6 @@ const navigationLinks = [
   { name: 'AlgoViz', href: '#why-algoviz' },
   { name: 'Features', href: '#features' },
   { name: 'Overview', href: '#overview' },
-  { name: 'Algorithms', href: '/dsa' },
   { name: 'Learning Paths', href: '#tracks' },
   { name: 'Community', href: '#community' },
 ]
@@ -320,22 +319,6 @@ function LandingPage() {
                 <span className="absolute inset-0 translate-y-full bg-white/20 transition duration-300 group-hover:translate-y-0" />
                 <span className="relative">explore</span>
               </Link>
-              <a
-                href="#algorithms"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/35 hover:text-white"
-              >
-                Explore Algorithms
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="h-5 w-5 transition group-hover:translate-x-1"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
-                </svg>
-              </a>
             </div>
             <dl className="mt-8 grid grid-cols-2 gap-6 text-sm text-slate-300 sm:flex sm:flex-wrap sm:gap-10">
               <div>

@@ -133,7 +133,6 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/algorithms/*" element={<Navigate to="/dsa" replace />} />
       {rootSectionProps ? (
         <Route path="/dsa" element={<DSAIndex {...rootSectionProps} />} />
       ) : (

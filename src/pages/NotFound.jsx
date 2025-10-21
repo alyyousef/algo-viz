@@ -17,10 +17,10 @@ function NotFound({ message = 'The page you were looking for could not be found.
             Return home
           </Link>
           <Link
-            to="/algorithms"
+            to="/dsa"
             className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-3 text-sm font-semibold text-cyan-200 transition hover:border-cyan-400/60 hover:text-white"
           >
-            Browse algorithms
+            Explore catalog
           </Link>
         </div>
       </div>
