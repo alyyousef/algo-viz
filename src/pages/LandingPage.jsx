@@ -233,7 +233,7 @@ function LandingPage() {
               to="/dsa"
               className="inline-flex items-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white shadow-glow transition hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
             >
-              explore
+              Explore
             </Link>
           </div>
 
@@ -291,7 +291,7 @@ function LandingPage() {
               onClick={() => setIsMenuOpen(false)}
               className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-4 py-2 text-white shadow-glow transition hover:scale-[1.01]"
             >
-              explore
+              Explore
             </a>
           </div>
         </div>
