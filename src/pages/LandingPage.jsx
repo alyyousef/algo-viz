@@ -16,7 +16,6 @@ const navigationLinks = [
   { name: 'AlgoViz', href: '#why-algoviz' },
   { name: 'Features', href: '#features' },
   { name: 'Overview', href: '#overview' },
-  { name: 'Learning Paths', href: '#tracks' },
   { name: 'Community', href: '#community' },
 ]
 
@@ -38,27 +37,6 @@ const overviewHighlights = [
   },
 ]
 
-const learningPaths = [
-  {
-    title: 'CS foundations (6 weeks)',
-    description:
-      'Solidify core data structures and algorithms with weekly reflections and spaced repetition checkpoints.',
-    badge: 'Students',
-  },
-  {
-    title: 'Interview accelerator (4 weeks)',
-    description:
-      'Sharpen decision-making under pressure with timed drills, complexity flashcards, and partner mock guides.',
-    badge: 'Job seekers',
-  },
-  {
-    title: 'Systems thinking (8 weeks)',
-    description:
-      'Connect algorithms to production workloads with observability labs, scaling case studies, and debugging quests.',
-    badge: 'Builders',
-  },
-]
-
 const communityStories = [
   {
     name: 'Nadia - Systems Engineer',
@@ -75,12 +53,6 @@ const communityStories = [
     quote:
       'Pairing the visual explorer with mock interviews helped me articulate complexity trade-offs with confidence.',
   },
-]
-
-const masteryMetrics = [
-  { label: 'Sorting & searching', value: '86%', color: 'from-emerald-400 to-emerald-500' },
-  { label: 'Graphs & traversal', value: '64%', color: 'from-cyan-400 to-blue-500' },
-  { label: 'Dynamic programming', value: '58%', color: 'from-purple-400 to-fuchsia-500' },
 ]
 
 const whyAlgoViz = [
@@ -286,13 +258,13 @@ function LandingPage() {
                 </a>
               ),
             )}
-            <a
-              href="#tracks"
+            <Link
+              to="/dsa"
               onClick={() => setIsMenuOpen(false)}
               className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-4 py-2 text-white shadow-glow transition hover:scale-[1.01]"
             >
               Explore
-            </a>
+            </Link>
           </div>
         </div>
       </nav>
@@ -612,87 +584,6 @@ function LandingPage() {
         </section>
 
         <section
-          id="tracks"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/50 px-6 py-16 backdrop-blur-xl sm:px-12"
-        >
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-              Adaptive learning paths tailored to your goals
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-              Pick a path and AlgoViz calibrates difficulty, reinforces gaps, and suggests
-              real-world challenges to cement mastery.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-            <div className="flex flex-col gap-6">
-              {learningPaths.map((item) => (
-                <article
-                  key={item.title}
-                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-6 py-6 transition hover:border-blue-400/40 hover:shadow-[0_20px_70px_-45px_rgba(59,130,246,0.8)]"
-                >
-                  <div className="absolute -left-6 top-1/2 h-24 w-24 -translate-y-1/2 rounded-full bg-blue-500/10 blur-2xl" />
-                  <span className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-200">
-                    {item.badge}
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold text-white">{item.title}</h3>
-                  <p className="mt-2 text-sm text-slate-300">{item.description}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-8 shadow-[0_30px_80px_-50px_rgba(6,182,212,0.8)]">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-cyan-500/10" />
-              <div className="relative flex flex-col gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-white">Progress snapshot</h3>
-                  <p className="mt-2 text-sm text-slate-300">
-                    Weekly pacing, mastery percentages, and suggested focus areas powered by your
-                    practice history.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-6">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>Algorithm mastery</span>
-                    <span>72%</span>
-                  </div>
-                  <div className="mt-2 h-2 rounded-full bg-slate-800">
-                    <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" />
-                  </div>
-
-                  <div className="mt-6 grid gap-4 text-sm text-slate-300">
-                    {masteryMetrics.map((metric) => (
-                      <div key={metric.label}>
-                        <div className="flex items-center justify-between">
-                          <span>{metric.label}</span>
-                          <span className="text-white">{metric.value}</span>
-                        </div>
-                        <div className="mt-2 h-1.5 rounded-full bg-slate-900">
-                          <div
-                            className={`h-full rounded-full bg-gradient-to-r ${metric.color}`}
-                            style={{ width: metric.value }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">
-                    <p>
-                      <span className="font-semibold text-white">Next up:</span> revisit recursion
-                      strategies with memoization labs and stretch your graph intuition with maximum
-                      flow challenges.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
           id="community"
           className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 backdrop-blur-lg sm:px-12"
         >
@@ -742,12 +633,12 @@ function LandingPage() {
               personalized learning path in under five minutes.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="#tracks"
+              <Link
+                to="/dsa"
                 className="inline-flex items-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
               >
                 Begin Your Journey
-              </a>
+              </Link>
               <a
                 href="#overview"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 px-7 py-3 text-sm font-semibold text-white transition hover:border-white/60"
