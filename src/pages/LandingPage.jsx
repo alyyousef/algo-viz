@@ -1,39 +1,65 @@
-﻿import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import {
-  BrainCircuit,
-  Gamepad2,
-  Eye,
-  Rocket,
-  ArrowDownUp,
-  Search,
-  Boxes,
-  GitBranch,
-} from 'lucide-react'
+import Window97 from '../components/win97/Window97'
+import Button97 from '../components/win97/Button97'
+import Toolbar97, { Toolbar97Spacer } from '../components/win97/Toolbar97'
+import Taskbar97 from '../components/win97/Taskbar97'
+import ThemeToggle from '../components/win97/ThemeToggle'
+import { ComputerIcon, FolderIcon, DocumentIcon } from '../components/win97/icons'
+import useWin97Theme from '../hooks/useWin97Theme'
 
-const navigationLinks = [
-  { name: 'AlgoViz', href: '#why-algoviz' },
-  { name: 'Features', href: '#features' },
-  { name: 'Overview', href: '#overview' },
-  { name: 'Community', href: '#community' },
+import './landing-win97.css'
+
+const stats = [
+  { label: 'Interactive visualizations', value: '120+' },
+  { label: 'Practice scenarios', value: '45' },
+  { label: 'Community sessions', value: 'Weekly' },
+  { label: 'Roadmaps & checklists', value: '30+' },
 ]
 
-const overviewHighlights = [
+const featureList = [
   {
     title: 'Concept to code bridge',
     description:
-      'See every step mapped to pseudocode with synced highlighting that ties what you watch to how you implement.',
+      'Watch every algorithm animate alongside pseudocode and capture the exact steps for implementation.',
   },
   {
     title: 'Scenario-based walkthroughs',
     description:
-      'Compare best, average, and worst-case behaviors across datasets sized for coursework, whiteboards, and production.',
+      'Compare best, average, and worst case behaviors with datasets that mirror coursework and interviews.',
   },
   {
     title: 'Mastery metrics',
     description:
-      'Track confidence per topic with quiz streaks, spaced repetition reminders, and targeted practice suggestions.',
+      'Log quiz streaks, spaced repetition reminders, and per-topic confidence without leaving the demo.',
+  },
+  {
+    title: 'Gamified practice',
+    description: 'Unlock challenges, streaks, and quests that keep your study routine consistent.',
+  },
+]
+
+const dsaCategories = [
+  {
+    name: 'Sorting Algorithms',
+    path: '/dsa/2-core-algorithms/1-sorting-searching',
+    algorithms: ['Bubble', 'Merge', 'Quick', 'Heap'],
+  },
+  {
+    name: 'Searching Algorithms',
+    path: '/dsa/2-core-algorithms/1-sorting-searching',
+    algorithms: ['Linear', 'Binary', 'Jump', 'Interpolation'],
+  },
+  {
+    name: 'Data Structures',
+    path: '/dsa/1-core-data-structures',
+    algorithms: ['Stack', 'Queue', 'Linked List', 'Trees', 'Graphs'],
+  },
+  {
+    name: 'Graph Algorithms',
+    path: '/dsa/2-core-algorithms/2-graph-algorithms',
+    algorithms: ['DFS', 'BFS', 'Dijkstra', 'A*'],
   },
 ]
 
@@ -41,641 +67,224 @@ const communityStories = [
   {
     name: 'Nadia - Systems Engineer',
     quote:
-      'AlgoViz gave me the intuition I was missing. Watching algorithms animate across real datasets made scaling decisions finally click.',
+      '"AlgoViz gave me the intuition I was missing. Watching live animations made production scaling click."',
   },
   {
     name: 'Ravi - CS Undergraduate',
     quote:
-      'The adaptive playlists kept me accountable all semester. Visual memory cues meant exams felt like replaying what I already understood.',
+      '"Adaptive playlists kept me accountable all semester. Exams felt like replaying the demos."',
   },
   {
     name: 'Mina - Bootcamp Grad',
     quote:
-      'Pairing the visual explorer with mock interviews helped me articulate complexity trade-offs with confidence.',
+      '"Pairing the visual explorer with mock interviews helped me articulate trade-offs confidently."',
   },
 ]
 
-const whyAlgoViz = [
-  {
-    icon: BrainCircuit,
-    title: 'Make Algorithms Tangible',
-    description: 'See exactly how data moves and transforms with frame-by-frame clarity.',
-  },
-  {
-    icon: Rocket,
-    title: 'Accelerate Learning',
-    description: 'Interactive visualizations and guided flows make concepts stick faster.',
-  },
-  {
-    icon: Eye,
-    title: 'Build Intuition',
-    description: 'Watch algorithms in action and connect every step to its outcome.',
-  },
-  {
-    icon: Gamepad2,
-    title: 'Gamify Practice',
-    description: 'Turn mastery into a game with streaks, challenges, and unlockable quests.',
-  },
-]
+const formatTime = (date) =>
+  date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
-const dsaCategories = [
-  {
-    name: 'Sorting Algorithms',
-    icon: ArrowDownUp,
-    path: '/dsa/2-core-algorithms/1-sorting-searching',
-    algorithms: ['Bubble', 'Selection', 'Insertion', 'Merge', 'Quick', 'Heap'],
-  },
-  {
-    name: 'Searching Algorithms',
-    icon: Search,
-    path: '/dsa/2-core-algorithms/1-sorting-searching',
-    algorithms: ['Linear', 'Binary', 'Jump', 'Interpolation'],
-  },
-  {
-    name: 'Data Structures',
-    icon: Boxes,
-    path: '/dsa/1-core-data-structures',
-    algorithms: ['Stack', 'Queue', 'Linked List', 'Trees', 'Graphs'],
-  },
-  {
-    name: 'Graph Algorithms',
-    icon: GitBranch,
-    path: '/dsa/2-core-algorithms/2-graph-algorithms',
-    algorithms: ['DFS', 'BFS', 'Dijkstra\'s', 'A*'],
-  },
-]
-
-function AnimatedCounter({ value, suffix = '', prefix = '', duration = 1600 }) {
-  const [displayValue, setDisplayValue] = useState(0)
+function LandingPage() {
+  const navigate = useNavigate()
+  const { enable, enabled } = useWin97Theme()
+  const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    let animationFrame
-    const start = performance.now()
+    enable()
+  }, [enable])
 
-    const step = (timestamp) => {
-      const progress = Math.min((timestamp - start) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      setDisplayValue(Math.floor(eased * value))
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(step)
-      }
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date())
+    }, 60_000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const currentTime = useMemo(() => formatTime(now), [now])
+
+  const handleScrollTo = (id) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-
-    animationFrame = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(animationFrame)
-  }, [value, duration])
+  }
 
   return (
-    <span className="font-semibold text-white">
-      {prefix}
-      {displayValue.toLocaleString()}
-      {suffix}
-    </span>
-  )
-}
-
-const featureShowcase = [
-  {
-    title: 'Code implementations in multiple languages',
-    description:
-      'View idiomatic implementations side-by-side across languages while remaining synchronized with the animation.',
-    highlights: ['Syntax highlighting with inline complexity notes', 'Swap languages mid-run without restarting'],
-    badges: ['JavaScript', 'Python', 'Java'],
-    stats: [{ label: 'Languages supported', value: 3 }],
-    codeExample: {
-      language: 'JavaScript',
-      snippet: `function mergeSort(arr) {
-  if (arr.length <= 1) return arr;
-  const mid = Math.floor(arr.length / 2);
-  const left = mergeSort(arr.slice(0, mid));
-  const right = mergeSort(arr.slice(mid));
-  return merge(left, right);
-}`,
-      altLanguages: ['Python', 'Java'],
-    },
-  },
-]
-function LandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100 antialiased">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 bg-hero-radial opacity-70 blur-3xl"
-      />
-
-      <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <a
-            href="#hero"
-            className="flex items-center gap-3 text-lg font-semibold tracking-tight text-white"
-          >
-            <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 text-base font-semibold shadow-glow">
-              AV
-              <span className="absolute inset-0 animate-pulse-ring rounded-full border border-white/10" />
-            </span>
-            AlgoViz
-          </a>
-
-          <div className="hidden items-center gap-8 text-sm font-medium text-slate-300 md:flex">
-            {navigationLinks.map((item) =>
-              item.href.startsWith('/') ? (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="transition hover:text-white hover:drop-shadow"
-                >
-                  {item.name}
-                </Link>
-              ) : (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="transition hover:text-white hover:drop-shadow"
-                >
-                  {item.name}
-                </a>
-              ),
-            )}
-          </div>
-
-          <div className="hidden md:flex">
-            <Link
-              to="/dsa"
-              className="inline-flex items-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-5 py-2 text-sm font-semibold text-white shadow-glow transition hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
-            >
-              Explore
-            </Link>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen((open) => !open)}
-            className="inline-flex items-center justify-center rounded-full border border-white/10 p-2 text-slate-200 transition hover:border-white/30 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400 md:hidden"
-            aria-label="Toggle navigation"
-            aria-expanded={isMenuOpen}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="h-6 w-6"
-            >
-              {isMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
-
-        <div
-          className={`md:hidden ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden border-t border-white/5 bg-slate-950/95 backdrop-blur transition-all duration-300 ease-in-out`}
-        >
-          <div className="flex flex-col gap-4 px-6 py-5 text-sm font-medium text-slate-300">
-            {navigationLinks.map((item) =>
-              item.href.startsWith('/') ? (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-full px-4 py-2 transition hover:bg-white/5 hover:text-white"
-                >
-                  {item.name}
-                </Link>
-              ) : (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-full px-4 py-2 transition hover:bg-white/5 hover:text-white"
-                >
-                  {item.name}
-                </a>
-              ),
-            )}
-            <Link
-              to="/dsa"
-              onClick={() => setIsMenuOpen(false)}
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-4 py-2 text-white shadow-glow transition hover:scale-[1.01]"
-            >
-              Explore
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <main className="relative z-10 mx-auto flex max-w-6xl flex-col gap-28 px-6 pb-24 pt-32 sm:pt-40 lg:gap-32">
-        <header
-          id="hero"
-          className="relative grid gap-16 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 shadow-[0_40px_120px_-50px_rgba(56,189,248,0.35)] backdrop-blur-lg sm:px-12 lg:grid-cols-[1.1fr_1fr]"
-        >
-          <div className="flex flex-col gap-6">
-            <h1 className="font-display text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-[3.4rem]">
-              AlgoViz - Master Algorithms Through Visualization
-            </h1>
-            <p className="max-w-xl text-base text-slate-300 sm:text-lg">
-              Guided walkthroughs, hands-on experimentation, and animated insights designed for CS
-              students, self-taught programmers, and anyone preparing for technical interviews.
-              Learn algorithms by seeing them come alive.
-            </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                to="/dsa"
-                className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 px-7 py-3 text-sm font-semibold text-white transition duration-300 hover:scale-[1.02]"
-              >
-                <span className="absolute inset-0 translate-y-full bg-white/20 transition duration-300 group-hover:translate-y-0" />
-                <span className="relative">Explore</span>
-              </Link>
+    <div className="win97-desktop">
+      <div className="landing-win97 theme-win97" id="hero">
+        <header className="landing-win97__header">
+          <div>
+            <div className="landing-win97__header-title">
+              <ComputerIcon />
+              <span>AlgoViz Desktop</span>
             </div>
-            <dl className="mt-8 grid grid-cols-2 gap-6 text-sm text-slate-300 sm:flex sm:flex-wrap sm:gap-10">
-              <div>
-                <dt className="font-semibold text-white">50+ interactive visuals</dt>
-                <dd>Trace algorithms step-by-step with live controls.</dd>
-              </div>
-              <div>
-                <dt className="font-semibold text-white">Adaptive playlists</dt>
-                <dd>Personalized paths tailored to your goals.</dd>
-              </div>
-              <div>
-                <dt className="font-semibold text-white">Interview practice</dt>
-                <dd>Timed challenges with breakdowns and hints.</dd>
-              </div>
-            </dl>
-          </div>
-
-          <div className="relative">
-            <div className="absolute -right-8 -top-10 h-32 w-32 rounded-full bg-cyan-500/30 blur-2xl" />
-            <div className="absolute -bottom-12 -left-10 h-40 w-40 animate-gradient-move rounded-full bg-purple-500/20 blur-3xl" />
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/80 shadow-[0_40px_70px_-50px_rgba(56,189,248,0.45)]">
-              <div className="border-b border-white/5 bg-slate-900/90 px-6 py-4 backdrop-blur">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-semibold text-white">Pathfinding visualizer</p>
-                    <p className="text-xs text-slate-400">A* Algorithm - Step 23 of 48</p>
-                  </div>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-slate-200">
-                    Live
-                    <span className="h-1.5 w-1.5 animate-ping rounded-full bg-emerald-400" />
-                  </span>
-                </div>
-              </div>
-
-              <div className="relative h-72 overflow-hidden bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.25),transparent_55%),radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.2),transparent_45%)] px-6 py-6">
-                <div className="absolute inset-6 rounded-2xl border border-white/5 bg-slate-950/80 backdrop-blur-lg" />
-                <div className="relative grid grid-cols-6 gap-1 text-[10px] font-medium text-slate-400">
-                  {Array.from({ length: 36 }).map((_, index) => {
-                    const pathCells = [7, 13, 14, 15, 21, 27, 33]
-                    const visitedCells = [2, 3, 4, 8, 9, 10, 11, 16, 22, 23, 28, 29, 34]
-                    const isSource = index === 0
-                    const isTarget = index === 35
-
-                    const baseClasses =
-                      'aspect-square rounded-lg border border-white/5 bg-slate-900/60 backdrop-blur transition'
-
-                    let variant = 'text-slate-500'
-                    if (isSource) {
-                      variant = 'border-emerald-400/80 bg-emerald-500/30 text-emerald-200'
-                    } else if (isTarget) {
-                      variant = 'border-fuchsia-400/80 bg-fuchsia-500/30 text-fuchsia-200'
-                    } else if (pathCells.includes(index)) {
-                      variant =
-                        'border-cyan-400/40 bg-gradient-to-br from-cyan-500/30 to-blue-500/20 text-cyan-200 shadow-glow'
-                    } else if (visitedCells.includes(index)) {
-                      variant = 'border-indigo-400/20 bg-indigo-500/20 text-indigo-200'
-                    }
-
-                    return (
-                      <div
-                        key={index}
-                        className={`${baseClasses} ${variant} flex items-center justify-center`}
-                      >
-                        {isSource ? 'S' : isTarget ? 'T' : ''}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div className="grid gap-4 border-t border-white/5 bg-slate-900/90 px-6 py-5 text-xs text-slate-300">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-white">Explored nodes</span>
-                  <span className="text-cyan-300">134</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-white">Path cost</span>
-                  <span className="text-emerald-300">17</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-white">Heuristic weight</span>
-                  <span className="text-purple-300">0.65</span>
-                </div>
-              </div>
+            <div className="landing-win97__header-subtitle">
+              Interactive algorithm laboratory - Windows 96 Edition
             </div>
           </div>
+          <div className="landing-win97__clock">{currentTime}</div>
         </header>
 
-        <section
-          id="why-algoviz"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/35 px-6 py-16 backdrop-blur-xl sm:px-12"
-        >
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">Why AlgoViz?</h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-              AlgoViz translates dense theory into vivid, interactive stories so you can feel how
-              algorithms behave, remember them longer, and enjoy the journey.
-            </p>
-          </div>
+        <Toolbar97 className="landing-win97__toolbar">
+          <Button97
+            size="sm"
+            variant="primary"
+            onClick={() => navigate('/dsa')}
+            title="Open the DSA explorer"
+          >
+            Launch DSA Library
+          </Button97>
+          <Toolbar97Spacer />
+          <Button97 size="sm" onClick={() => handleScrollTo('features')}>
+            View Features
+          </Button97>
+          <Button97 size="sm" onClick={() => handleScrollTo('community')}>
+            Community
+          </Button97>
+          <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
+            Quick Launch
+          </Button97>
+          <Toolbar97Spacer />
+          <ThemeToggle size="sm" />
+        </Toolbar97>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {whyAlgoViz.map(({ icon, title, description }) => {
-              const Icon = icon
-              return (
-                <article
-                  key={title}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-7 shadow-[0_25px_80px_-60px_rgba(6,182,212,0.7)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-white/10 hover:shadow-[0_30px_90px_-55px_rgba(56,189,248,0.9)]"
-                >
-                  <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-500/10 to-purple-500/10 blur-3xl transition group-hover:opacity-100 group-hover:blur-[70px]" />
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-gradient-to-br from-slate-900/80 to-slate-900/40 text-cyan-300 shadow-glow transition group-hover:scale-105">
-                    <Icon className="h-6 w-6" strokeWidth={1.75} />
-                  </div>
-                  <h3 className="mt-5 text-lg font-semibold text-white">{title}</h3>
-                  <p className="mt-3 text-sm text-slate-300">{description}</p>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
-        <section
-          id="features"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 backdrop-blur-xl sm:px-12"
-        >
-          <div className="flex flex-col gap-12">
-            {featureShowcase.map((feature) => (
-              <article
-                key={feature.title}
-                className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_30px_90px_-60px_rgba(56,189,248,0.35)] transition hover:border-cyan-400/30 hover:shadow-[0_40px_120px_-70px_rgba(56,189,248,0.45)] sm:p-10"
-              >
-                <div className="mt-6 space-y-4">
-                  <h3 className="text-2xl font-semibold text-white sm:text-3xl">{feature.title}</h3>
-                  <p className="text-base leading-relaxed text-slate-300">{feature.description}</p>
+        <main className="landing-win97__windows">
+          <Window97
+            title="AlgoViz Control Center"
+            icon={<ComputerIcon />}
+            className="landing-win97__window landing-win97__window--hero"
+          >
+            <div className="landing-win97__hero">
+              <div className="landing-win97__hero-copy">
+                <div className="landing-win97__hero-title">
+                  Where algorithms behave like classic software.
                 </div>
-                {feature.highlights && (
-                  <ul className="mt-4 grid gap-2 text-sm text-slate-300">
-                    {feature.highlights.map((highlight) => (
-                      <li key={highlight} className="flex items-start gap-2">
-                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                        <span>{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {feature.badges && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {feature.badges.map((badge) => (
-                      <span
-                        key={badge}
-                        className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200"
-                      >
-                        {badge}
-                      </span>
-                    ))}
+                <p className="landing-win97__hero-text">
+                  Boot into guided simulations, step through pseudocode, and pin your favourite
+                  demos to the taskbar. AlgoViz turns theory into a tactile desktop experience.
+                </p>
+              </div>
+              <div className="landing-win97__hero-actions">
+                <Button97 variant="primary" onClick={() => navigate('/dsa')}>
+                  Enter practice room
+                </Button97>
+                <Button97 onClick={() => handleScrollTo('features')}>Show me what&apos;s inside</Button97>
+                <Button97 variant="ghost" onClick={() => handleScrollTo('community')}>
+                  Meet the community
+                </Button97>
+              </div>
+              <div className="landing-win97__hero-stats">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="landing-win97__stat-card">
+                    <span className="landing-win97__stat-value">{stat.value}</span>
+                    <span className="landing-win97__stat-label">{stat.label}</span>
                   </div>
-                )}
-                {feature.codeExample && (
-                  <div className="mt-6 space-y-3 rounded-2xl border border-white/10 bg-slate-950/80 p-5 text-[12px] font-mono text-slate-200">
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-slate-400">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                      <span>{feature.codeExample.language}</span>
-                    </div>
-                    <pre className="whitespace-pre-wrap leading-6 text-slate-200">
-                      {feature.codeExample.snippet}
-                    </pre>
-                    {feature.codeExample.altLanguages?.length ? (
-                      <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
-                        {`Tap to switch: ${feature.codeExample.altLanguages.join(' - ')}`}
-                      </div>
-                    ) : null}
-                  </div>
-                )}
-                {feature.stats && (
-                  <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-                    {feature.stats.map((stat) => (
-                      <div
-                        key={`${feature.title}-${stat.label}`}
-                        className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-300"
-                      >
-                        <dt className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                          {stat.label}
-                        </dt>
-                        <dd className="mt-2 text-lg">
-                          {typeof stat.value === 'number' ? (
-                            <AnimatedCounter value={stat.value} suffix={stat.suffix ?? ''} prefix={stat.prefix ?? ''} />
-                          ) : (
-                            <span className="font-semibold text-white">{stat.display}</span>
-                          )}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section
-          id="overview"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 backdrop-blur-lg sm:px-12"
-        >
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-              Build intuition before you memorize solutions
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-              AlgoViz breaks algorithms down into animated stories. We turn abstract operations into
-              visual, configurable flows so you can experiment, observe patterns, and understand the
-              trade-offs that matter in real systems and interviews.
-            </p>
-          </div>
-
-          <div className="mt-14 grid gap-8 md:grid-cols-3">
-            {overviewHighlights.map((item) => (
-              <article
-                key={item.title}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 px-6 py-8 transition hover:border-cyan-400/40 hover:shadow-[0_20px_60px_-40px_rgba(6,182,212,0.8)]"
-              >
-                <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-cyan-500/10 blur-2xl transition group-hover:scale-110 group-hover:bg-cyan-400/30" />
-                <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm text-slate-300">{item.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-        <section
-          id="dsa-categories"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/45 px-6 py-16 backdrop-blur-xl sm:px-12"
-        >
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">Explore DSA categories</h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-              Jump into curated playlists that bundle visual explainers, guided walkthroughs, and
-              practice drills for every stage of your learning journey.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {dsaCategories.map(({ name, icon, path, algorithms }) => {
-              const Icon = icon
-              return (
-                <article
-                  key={name}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-7 transition transform duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/40 hover:shadow-[0_35px_100px_-60px_rgba(59,130,246,0.9)]"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 opacity-0 transition duration-300 group-hover:opacity-100" />
-                  <div className="relative flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-400/40 bg-slate-900/70 text-cyan-300 shadow-glow">
-                        <Icon className="h-6 w-6" strokeWidth={1.75} />
-                      </span>
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{name}</h3>
-                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                          {algorithms.length} algorithms
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <ul className="relative mt-5 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
-                    {algorithms.map((algorithm) => (
-                      <li key={algorithm} className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                        <span>{algorithm}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    to={path}
-                    className="relative mt-6 inline-flex items-center gap-2 text-sm font-semibold text-cyan-300 transition hover:text-white"
-                  >
-                    Learn More
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      className="h-4 w-4 transition group-hover:translate-x-1"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </article>
-              )
-            })}
-          </div>
-        </section>
-
-        <section
-          id="community"
-          className="scroll-mt-28 rounded-3xl border border-white/10 bg-slate-900/40 px-6 py-16 backdrop-blur-lg sm:px-12"
-        >
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-              Learn alongside a global community of builders
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
-              Join weekly live streams, pair up for interview drills, and share insights with peers
-              tackling the same concepts. AlgoViz is more than a tool - it&apos;s a learning network.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {communityStories.map((story) => (
-              <article
-                key={story.name}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 text-left transition hover:border-purple-400/40 hover:shadow-[0_20px_60px_-50px_rgba(147,51,234,0.8)]"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 p-[2px]">
-                    <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-950 text-sm font-semibold text-white">
-                      {story.name
-                        .split('-')[0]
-                        .trim()
-                        .split(' ')
-                        .map((word) => word[0] ?? '')
-                        .join('')}
-                    </div>
-                  </div>
-                  <p className="text-sm font-semibold text-white">{story.name}</p>
-                </div>
-                <p className="text-sm text-slate-300">{story.quote}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-700/40 via-purple-700/40 to-cyan-600/40 px-6 py-14 shadow-[0_40px_120px_-70px_rgba(56,189,248,0.9)] backdrop-blur-xl sm:px-12">
-          <div className="absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
-          <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-            <h2 className="text-3xl font-semibold text-white sm:text-4xl">
-              Ready to make algorithms your competitive edge?
-            </h2>
-            <p className="text-base leading-relaxed text-slate-100/90 sm:text-lg">
-              Start for free, unlock premium visuals, or bring AlgoViz to your classroom. Launch a
-              personalized learning path in under five minutes.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link
-                to="/dsa"
-                className="inline-flex items-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
-              >
-                Begin Your Journey
-              </Link>
-              <a
-                href="#overview"
-                className="inline-flex items-center gap-2 rounded-full border border-white/30 px-7 py-3 text-sm font-semibold text-white transition hover:border-white/60"
-              >
-                View Platform Tour
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="h-5 w-5"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L18 12l-3.75 2.25m-4.5 0L6 12l3.75-2.25M12 19.5v-15" />
-                </svg>
-              </a>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
+          </Window97>
 
-      <footer className="relative border-t border-white/10 bg-slate-950/80 py-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center text-sm text-slate-400 sm:flex-row sm:justify-center sm:gap-8">
-          <p>&copy; {new Date().getFullYear()} AlgoViz. Crafted for curious problem solvers.</p>
-          <div className="flex items-center gap-6">
-            <a href="#overview" className="transition hover:text-white">
-              Platform
-            </a>
-            <a href="#community" className="transition hover:text-white">
-              Community
-            </a>
-            <a href="#hero" className="transition hover:text-white">
-              Back to top
-            </a>
+          <Window97
+            title="Why AlgoViz"
+            icon={<FolderIcon />}
+            id="features"
+            className="landing-win97__window"
+          >
+            <ul className="landing-win97__list">
+              {featureList.map((feature) => (
+                <li key={feature.title} className="landing-win97__list-item">
+                  <span className="landing-win97__list-icon">[]</span>
+                  <div>
+                    <strong>{feature.title}</strong>
+                    <div>{feature.description}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Window97>
+
+          <Window97
+            title="DSA Quick Launch"
+            icon={<DocumentIcon />}
+            id="quick-launch"
+            className="landing-win97__window"
+          >
+            <div className="landing-win97__category-grid">
+              {dsaCategories.map((category) => (
+                <div key={category.name} className="landing-win97__category-card">
+                  <div className="landing-win97__category-header">
+                    <FolderIcon width={16} height={16} />
+                    <span>{category.name}</span>
+                  </div>
+                  <ul className="landing-win97__category-list">
+                    {category.algorithms.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <Button97
+                    size="sm"
+                    onClick={() => navigate(category.path)}
+                    aria-label={`Open ${category.name}`}
+                  >
+                    Open
+                  </Button97>
+                </div>
+              ))}
+            </div>
+          </Window97>
+
+          <Window97
+            title="Community Bulletin"
+            icon={<ComputerIcon />}
+            id="community"
+            className="landing-win97__window"
+          >
+            <div className="landing-win97__community-grid">
+              {communityStories.map((story) => (
+                <div key={story.name} className="landing-win97__community-card">
+                  <span className="landing-win97__community-name">{story.name}</span>
+                  <span>{story.quote}</span>
+                </div>
+              ))}
+            </div>
+          </Window97>
+
+          <Window97 title="Theme Status" icon={<DocumentIcon />} className="landing-win97__window">
+            <p className="landing-win97__hero-text">
+              The Windows 96 theme is {enabled ? 'active' : 'off'}. Use the toggle in the toolbar or
+              the Start menu to switch between experiences whenever you like.
+            </p>
+            <div className="landing-win97__hero-actions">
+              <ThemeToggle />
+            </div>
+          </Window97>
+
+          <div className="landing-win97__footer-note">
+            AlgoViz - Crafted for curious problem solvers since 2025 - Windows 96 desktop skin
           </div>
-        </div>
-      </footer>
+        </main>
+      </div>
+
+      <Taskbar97
+        startButtonProps={{
+          onClick: () => navigate('/dsa'),
+        }}
+        runningItems={
+          <div className="landing-win97__task-items">
+            <Button97 size="sm" variant="ghost" className="landing-win97__task-btn" onClick={() => handleScrollTo('hero')}>
+              AlgoViz
+            </Button97>
+            <Button97 size="sm" variant="ghost" className="landing-win97__task-btn" onClick={() => handleScrollTo('features')}>
+              Features
+            </Button97>
+          </div>
+        }
+        tray={<div className="landing-win97__clock">{currentTime}</div>}
+      />
     </div>
   )
 }
