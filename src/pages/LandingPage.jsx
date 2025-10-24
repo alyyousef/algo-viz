@@ -71,7 +71,7 @@ const formatTime = (date) =>
 
 function LandingPage() {
   const navigate = useNavigate()
-  const { enable, enabled } = useWin97Theme()
+  const { enable } = useWin97Theme()
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -123,9 +123,6 @@ function LandingPage() {
           <Toolbar97Spacer />
           <Button97 size="sm" onClick={() => handleScrollTo('features')}>
             View Features
-          </Button97>
-          <Button97 size="sm" onClick={() => handleScrollTo('community')}>
-            Community
           </Button97>
           <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
             Quick Launch
@@ -213,16 +210,6 @@ function LandingPage() {
                   </Button97>
                 </div>
               ))}
-            </div>
-          </Window97>
-
-          <Window97 title="Theme Status" icon={<DocumentIcon />} className="landing-win97__window">
-            <p className="landing-win97__hero-text">
-              The Windows 96 theme is {enabled ? 'active' : 'off'}. Use the toggle in the toolbar or
-              the Start menu to switch between experiences whenever you like.
-            </p>
-            <div className="landing-win97__hero-actions">
-              <ThemeToggle />
             </div>
           </Window97>
 
