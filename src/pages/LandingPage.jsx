@@ -63,24 +63,6 @@ const dsaCategories = [
   },
 ]
 
-const communityStories = [
-  {
-    name: 'Nadia - Systems Engineer',
-    quote:
-      '"AlgoViz gave me the intuition I was missing. Watching live animations made production scaling click."',
-  },
-  {
-    name: 'Ravi - CS Undergraduate',
-    quote:
-      '"Adaptive playlists kept me accountable all semester. Exams felt like replaying the demos."',
-  },
-  {
-    name: 'Mina - Bootcamp Grad',
-    quote:
-      '"Pairing the visual explorer with mock interviews helped me articulate trade-offs confidently."',
-  },
-]
-
 const formatTime = (date) =>
   date.toLocaleTimeString([], {
     hour: '2-digit',
@@ -173,9 +155,6 @@ function LandingPage() {
                   Enter practice room
                 </Button97>
                 <Button97 onClick={() => handleScrollTo('features')}>Show me what&apos;s inside</Button97>
-                <Button97 variant="ghost" onClick={() => handleScrollTo('community')}>
-                  Meet the community
-                </Button97>
               </div>
               <div className="landing-win97__hero-stats">
                 {stats.map((stat) => (
@@ -232,22 +211,6 @@ function LandingPage() {
                   >
                     Open
                   </Button97>
-                </div>
-              ))}
-            </div>
-          </Window97>
-
-          <Window97
-            title="Community Bulletin"
-            icon={<ComputerIcon />}
-            id="community"
-            className="landing-win97__window"
-          >
-            <div className="landing-win97__community-grid">
-              {communityStories.map((story) => (
-                <div key={story.name} className="landing-win97__community-card">
-                  <span className="landing-win97__community-name">{story.name}</span>
-                  <span>{story.quote}</span>
                 </div>
               ))}
             </div>
