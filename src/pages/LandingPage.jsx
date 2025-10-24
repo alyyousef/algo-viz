@@ -213,9 +213,6 @@ function LandingPage() {
             </div>
           </Window97>
 
-          <div className="landing-win97__footer-note">
-            AlgoViz - Crafted for curious problem solvers since 2025 - Windows 96 desktop skin
-          </div>
         </main>
       </div>
 
