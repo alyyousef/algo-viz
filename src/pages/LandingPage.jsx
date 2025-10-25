@@ -111,15 +111,6 @@ function LandingPage() {
   return (
     <div className="win97-desktop">
       <div className="landing-win97 theme-win97" id="hero">
-        <header className="landing-win97__header">
-          <div>
-            <div className="landing-win97__header-title">
-              <ComputerIcon />
-            </div>
-          </div>
-          <div className="landing-win97__clock">{currentTime}</div>
-        </header>
-
         <Toolbar97 className="landing-win97__toolbar">
           <Button97
             size="sm"
