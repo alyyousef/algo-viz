@@ -102,10 +102,6 @@ function LandingPage() {
           <div>
             <div className="landing-win97__header-title">
               <ComputerIcon />
-              <span>AlgoViz Desktop</span>
-            </div>
-            <div className="landing-win97__header-subtitle">
-              Interactive algorithm laboratory - Windows 96 Edition
             </div>
           </div>
           <div className="landing-win97__clock">{currentTime}</div>
