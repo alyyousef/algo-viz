@@ -202,14 +202,6 @@ function LandingPage() {
         runningItems={
           <div className="landing-win97__taskbar-groups">
             <div className="landing-win97__quick-actions">
-              <Button97
-                size="sm"
-                variant="primary"
-                onClick={() => navigate('/dsa')}
-                title="Open the DSA explorer"
-              >
-                Launch DSA Library
-              </Button97>
               <Button97 size="sm" onClick={() => handleScrollTo('features')}>
                 View Features
               </Button97>
