@@ -36,10 +36,6 @@
   background: var(--win97-bg);
 }
 
-.landing-win97__toolbar {
-  margin-top: 4px;
-}
-
 .landing-win97__windows {
   display: grid;
   gap: 20px;
@@ -201,8 +197,26 @@
   gap: 4px;
   height: 100%;
   align-items: center;
+  margin-left: auto;
 }
 
 .landing-win97__task-btn {
   cursor: pointer;
+}
+
+.landing-win97__taskbar-groups {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.landing-win97__quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }

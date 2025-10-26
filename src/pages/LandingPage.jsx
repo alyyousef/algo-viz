@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import Window97 from '../components/win97/Window97'
 import Button97 from '../components/win97/Button97'
-import Toolbar97, { Toolbar97Spacer } from '../components/win97/Toolbar97'
 import Taskbar97 from '../components/win97/Taskbar97'
 import ThemeToggle from '../components/win97/ThemeToggle'
 import { ComputerIcon, FolderIcon, DocumentIcon } from '../components/win97/icons'
@@ -111,26 +110,6 @@ function LandingPage() {
   return (
     <div className="win97-desktop">
       <div className="landing-win97 theme-win97" id="hero">
-        <Toolbar97 className="landing-win97__toolbar">
-          <Button97
-            size="sm"
-            variant="primary"
-            onClick={() => navigate('/dsa')}
-            title="Open the DSA explorer"
-          >
-            Launch DSA Library
-          </Button97>
-          <Toolbar97Spacer />
-          <Button97 size="sm" onClick={() => handleScrollTo('features')}>
-            View Features
-          </Button97>
-          <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
-            Quick Launch
-          </Button97>
-          <Toolbar97Spacer />
-          <ThemeToggle size="sm" />
-        </Toolbar97>
-
         <main className="landing-win97__windows">
           <Window97
             title="AlgoViz Control Center"
@@ -221,13 +200,43 @@ function LandingPage() {
           onClick: () => navigate('/dsa'),
         }}
         runningItems={
-          <div className="landing-win97__task-items">
-            <Button97 size="sm" variant="ghost" className="landing-win97__task-btn" onClick={() => handleScrollTo('hero')}>
-              AlgoViz
-            </Button97>
-            <Button97 size="sm" variant="ghost" className="landing-win97__task-btn" onClick={() => handleScrollTo('features')}>
-              Features
-            </Button97>
+          <div className="landing-win97__taskbar-groups">
+            <div className="landing-win97__quick-actions">
+              <Button97
+                size="sm"
+                variant="primary"
+                onClick={() => navigate('/dsa')}
+                title="Open the DSA explorer"
+              >
+                Launch DSA Library
+              </Button97>
+              <Button97 size="sm" onClick={() => handleScrollTo('features')}>
+                View Features
+              </Button97>
+              <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
+                Quick Launch
+              </Button97>
+              <ThemeToggle size="sm" />
+            </div>
+
+            <div className="landing-win97__task-items">
+              <Button97
+                size="sm"
+                variant="ghost"
+                className="landing-win97__task-btn"
+                onClick={() => handleScrollTo('hero')}
+              >
+                AlgoViz
+              </Button97>
+              <Button97
+                size="sm"
+                variant="ghost"
+                className="landing-win97__task-btn"
+                onClick={() => handleScrollTo('features')}
+              >
+                Features
+              </Button97>
+            </div>
           </div>
         }
         tray={<div className="landing-win97__clock">{currentTime}</div>}
