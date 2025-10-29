@@ -112,7 +112,6 @@ function LandingPage() {
             <ul className="landing-win97__list">
               {featureList.map((feature) => (
                 <li key={feature.title} className="landing-win97__list-item">
-                  <span className="landing-win97__list-icon">[]</span>
                   <div>
                     <strong>{feature.title}</strong>
                     <div>{feature.description}</div>
