@@ -5,17 +5,10 @@ import Window97 from '../components/win97/Window97'
 import Button97 from '../components/win97/Button97'
 import Taskbar97 from '../components/win97/Taskbar97'
 import ThemeToggle from '../components/win97/ThemeToggle'
-import { ComputerIcon, FolderIcon, DocumentIcon } from '../components/win97/icons'
+import { FolderIcon, DocumentIcon } from '../components/win97/icons'
 import useWin97Theme from '../hooks/useWin97Theme'
 
 import './landing-win97.css'
-
-const stats = [
-  { label: 'Interactive visualizations', value: '120+' },
-  { label: 'Practice scenarios', value: '45' },
-  { label: 'Community sessions', value: 'Weekly' },
-  { label: 'Roadmaps & checklists', value: '30+' },
-]
 
 const featureList = [
   {
@@ -109,40 +102,8 @@ function LandingPage() {
 
   return (
     <div className="win97-desktop">
-      <div className="landing-win97 theme-win97" id="hero">
+      <div className="landing-win97 theme-win97">
         <main className="landing-win97__windows">
-          <Window97
-            title="AlgoViz Control Center"
-            icon={<ComputerIcon />}
-            className="landing-win97__window landing-win97__window--hero"
-          >
-            <div className="landing-win97__hero">
-              <div className="landing-win97__hero-copy">
-                <div className="landing-win97__hero-title">
-                  Where algorithms behave like classic software.
-                </div>
-                <p className="landing-win97__hero-text">
-                  Boot into guided simulations, step through pseudocode, and pin your favourite
-                  demos to the taskbar. AlgoViz turns theory into a tactile desktop experience.
-                </p>
-              </div>
-              <div className="landing-win97__hero-actions">
-                <Button97 variant="primary" onClick={() => navigate('/dsa')}>
-                  Enter practice room
-                </Button97>
-                <Button97 onClick={() => handleScrollTo('features')}>Show me what&apos;s inside</Button97>
-              </div>
-              <div className="landing-win97__hero-stats">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="landing-win97__stat-card">
-                    <span className="landing-win97__stat-value">{stat.value}</span>
-                    <span className="landing-win97__stat-label">{stat.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Window97>
-
           <Window97
             title="Why AlgoViz"
             icon={<FolderIcon />}
@@ -212,14 +173,6 @@ function LandingPage() {
             </div>
 
             <div className="landing-win97__task-items">
-              <Button97
-                size="sm"
-                variant="ghost"
-                className="landing-win97__task-btn"
-                onClick={() => handleScrollTo('hero')}
-              >
-                AlgoViz
-              </Button97>
               <Button97
                 size="sm"
                 variant="ghost"
