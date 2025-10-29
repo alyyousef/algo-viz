@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import Window97 from '../components/win97/Window97'
 import Button97 from '../components/win97/Button97'
 import Taskbar97 from '../components/win97/Taskbar97'
-import ThemeToggle from '../components/win97/ThemeToggle'
 import { FolderIcon, DocumentIcon } from '../components/win97/icons'
 import useWin97Theme from '../hooks/useWin97Theme'
 
@@ -169,7 +168,6 @@ function LandingPage() {
               <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
                 Quick Launch
               </Button97>
-              <ThemeToggle size="sm" />
             </div>
 
             <div className="landing-win97__task-items">
