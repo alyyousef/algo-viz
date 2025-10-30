@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type HTMLAttributes,
   type JSX,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
@@ -44,7 +45,7 @@ type DragState =
       height: number
     }
 
-export interface Window96Props {
+export interface Window96Props extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   title: string
   children: ReactNode
   className?: string

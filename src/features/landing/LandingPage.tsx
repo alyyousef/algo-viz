@@ -179,6 +179,9 @@ export default function LandingPage(): JSX.Element {
               <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
                 Quick Launch
               </Button97>
+              <Button97 size="sm" onClick={() => navigate('/win96')}>
+                Open Desktop
+              </Button97>
             </div>
 
             <div className="landing-win97__task-items">

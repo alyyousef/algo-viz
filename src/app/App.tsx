@@ -3,6 +3,7 @@
 import NotFound from '@/app/routes/NotFound'
 import DsaIndex, { type DsaIndexProps, type DsaSection } from '@/features/dsa/routes/DSA'
 import LandingPage from '@/features/landing/LandingPage'
+import Win96AlgoVizDesktop from '@/features/win96-desktop/Win96AlgoVizDesktop'
 
 import type { ComponentType, JSX } from 'react'
 
@@ -162,6 +163,7 @@ export default function App(): JSX.Element {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/win96" element={<Win96AlgoVizDesktop />} />
       {rootSectionProps ? (
         <Route path="/dsa" element={<DsaIndex {...rootSectionProps} />} />
       ) : (
@@ -183,4 +185,3 @@ export default function App(): JSX.Element {
     </Routes>
   )
 }
-

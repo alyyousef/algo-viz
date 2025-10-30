@@ -2,7 +2,6 @@
 
 import type { JSX } from 'react'
 
-
 export interface NotFoundProps {
   message?: string
 }
@@ -36,4 +35,3 @@ export default function NotFound({
     </div>
   )
 }
-

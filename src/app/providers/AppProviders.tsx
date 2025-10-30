@@ -9,4 +9,3 @@ export interface AppProvidersProps {
 export default function AppProviders({ children }: AppProvidersProps): JSX.Element {
   return <BrowserRouter>{children}</BrowserRouter>
 }
-
