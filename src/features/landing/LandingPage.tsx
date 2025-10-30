@@ -1,5 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
-import type { JSX } from 'react'
+﻿import { useEffect, useMemo, useState, type JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import Button97 from '@/systems/win97/components/Button97'
@@ -199,4 +198,3 @@ export default function LandingPage(): JSX.Element {
     </div>
   )
 }
-

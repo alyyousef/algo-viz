@@ -66,7 +66,7 @@ export default [
     ignores: ['dist', 'node_modules'],
   },
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -136,6 +136,29 @@ export default [
       'n/no-unsupported-features/es-syntax': 'off',
       'n/no-process-env': 'off',
       semi: 'off',
+    },
+  },
+  {
+    files: ['vite.config.ts', 'vitest.config.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: ['./tsconfig.node.json'],
+        tsconfigRootDir: __dirname,
+      },
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      import: importPlugin,
+    },
+    rules: {
+      ...importRecommendedRules,
+      'import/order': importOrderRule,
+      'import/no-unresolved': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
     },
   },
   eslintConfigPrettier,
