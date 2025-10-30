@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const config = {
-  content: [
-    './index.html',
-    './src/**/*.{js,jsx,ts,tsx}',
-  ],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       fontFamily: {
@@ -11,7 +8,8 @@ const config = {
         sans: ['"Inter"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-radial': 'radial-gradient(circle at 20% 20%, rgba(76, 29, 149, 0.35), transparent 55%), radial-gradient(circle at 80% 0%, rgba(6, 182, 212, 0.25), transparent 45%), radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.3), transparent 50%)',
+        'hero-radial':
+          'radial-gradient(circle at 20% 20%, rgba(76, 29, 149, 0.35), transparent 55%), radial-gradient(circle at 80% 0%, rgba(6, 182, 212, 0.25), transparent 45%), radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.3), transparent 50%)',
       },
       boxShadow: {
         glow: '0 0 40px -15px rgba(59, 130, 246, 0.8)',
@@ -39,6 +37,6 @@ const config = {
     },
   },
   plugins: [],
-};
+}
 
-export default config;
+export default config
