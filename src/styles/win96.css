@@ -188,7 +188,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a3b7a 0%, #2454a7 50%, #0f1b37 100%);
+  background: linear-gradient(135deg, #008080 0%, #000080 100%);
   padding-bottom: 40px;
   overflow: hidden;
 }
@@ -392,4 +392,29 @@
 .taskbar-96__clock {
   font-family: 'Courier New', Courier, monospace;
   font-size: 12px;
+}
+
+.win96-taskbar__items {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.win96-taskbar__button {
+  display: inline-flex;
+  justify-content: flex-start;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.win96-taskbar__clock {
+  font-size: 12px;
+  color: var(--win97-text);
+  padding: 2px 8px;
+  border: 1px solid var(--win97-3d-dark);
+  background: var(--win97-bg);
 }

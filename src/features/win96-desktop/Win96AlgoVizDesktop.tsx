@@ -1,5 +1,7 @@
-﻿import { useMemo, type JSX } from 'react'
+import { useEffect, useMemo, useState, type JSX } from 'react'
 
+import Button97 from '@/systems/win97/components/Button97'
+import Taskbar97 from '@/systems/win97/components/Taskbar97'
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import Window96 from '@/systems/win96/components/Window96'
 import {
@@ -7,9 +9,9 @@ import {
   useWin96WindowManager,
   type WindowState,
 } from '@/systems/win96/context/Win96WindowManager'
+import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 
 import FolderWindowContent from './components/FolderWindowContent'
-import Taskbar96 from './components/Taskbar96'
 import VisualizationWindowContent from './components/VisualizationWindowContent'
 
 const FOLDER_GLYPH = '\uD83D\uDCC1'
@@ -59,10 +61,58 @@ const WindowLayer = (): JSX.Element => {
 }
 
 function DesktopContainer(): JSX.Element {
-  const { windows, activeWindowId, rootFolders, openFolderWindow } = useWin96WindowManager()
+  const {
+    windows,
+    activeWindowId,
+    rootFolders,
+    openFolderWindow,
+    toggleMinimize,
+  } = useWin96WindowManager()
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setNow(new Date())
+    }, 60_000)
+
+    return () => {
+      window.clearInterval(timer)
+    }
+  }, [])
+
+  const timeLabel = useMemo(
+    () => now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    [now],
+  )
+
+  const orderedWindows = useMemo(() => [...windows].sort((a, b) => a.zIndex - b.zIndex), [windows])
+
+  const runningItemsContent =
+    orderedWindows.length === 0 ? (
+      <span className="taskbar-97__placeholder">Start a program</span>
+    ) : (
+      orderedWindows.map((win) => (
+        <Button97
+          key={win.id}
+          size="sm"
+          className="win96-taskbar__button"
+          iconLeft={
+            <span aria-hidden="true">
+              {win.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH}
+            </span>
+          }
+          aria-pressed={!win.isMinimized && activeWindowId === win.id}
+          onClick={() => toggleMinimize(win.id)}
+        >
+          {win.title}
+        </Button97>
+      ))
+    )
+
+  const startFolder = rootFolders[0]
 
   return (
-    <div className="win96-desktop">
+    <div className="win96-desktop theme-win97">
       <div className="win96-desktop-icons">
         {rootFolders.map((node) => (
           <DesktopIcon96
@@ -75,12 +125,31 @@ function DesktopContainer(): JSX.Element {
         ))}
       </div>
       <WindowLayer />
-      <Taskbar96 windows={windows} activeWindowId={activeWindowId} />
+      <Taskbar97
+        startButtonProps={
+          startFolder
+            ? {
+                onClick: () => {
+                  openFolderWindow(startFolder.id)
+                },
+                'aria-label': `Open ${startFolder.name}`,
+              }
+            : undefined
+        }
+        runningItems={<div className="win96-taskbar__items">{runningItemsContent}</div>}
+        tray={<div className="win96-taskbar__clock">{timeLabel}</div>}
+      />
     </div>
   )
 }
 
 export default function Win96AlgoVizDesktop(): JSX.Element {
+  const { enable } = useWin97Theme()
+
+  useEffect(() => {
+    enable()
+  }, [enable])
+
   return (
     <Win96WindowManagerProvider>
       <DesktopContainer />
