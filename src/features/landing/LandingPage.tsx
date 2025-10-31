@@ -9,38 +9,11 @@ import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 
 import './landing-win97.css'
 
-interface FeatureHighlight {
-  title: string
-  description: string
-}
-
 interface DsaCategory {
   name: string
   path: string
   algorithms: string[]
 }
-
-const featureList: FeatureHighlight[] = [
-  {
-    title: 'Concept to code bridge',
-    description:
-      'Watch every algorithm animate alongside pseudocode and capture the exact steps for implementation.',
-  },
-  {
-    title: 'Scenario-based walkthroughs',
-    description:
-      'Compare best, average, and worst case behaviors with datasets that mirror coursework and interviews.',
-  },
-  {
-    title: 'Mastery metrics',
-    description:
-      'Log quiz streaks, spaced repetition reminders, and per-topic confidence without leaving the demo.',
-  },
-  {
-    title: 'Gamified practice',
-    description: 'Unlock challenges, streaks, and quests that keep your study routine consistent.',
-  },
-]
 
 const dsaCategories: DsaCategory[] = [
   {
@@ -115,24 +88,6 @@ export default function LandingPage(): JSX.Element {
       <div className="landing-win97 theme-win97">
         <main className="landing-win97__windows">
           <Window97
-            title="Why AlgoViz"
-            icon={<FolderIcon />}
-            id="features"
-            className="landing-win97__window"
-          >
-            <ul className="landing-win97__list">
-              {featureList.map((feature) => (
-                <li key={feature.title} className="landing-win97__list-item">
-                  <div>
-                    <strong>{feature.title}</strong>
-                    <div>{feature.description}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Window97>
-
-          <Window97
             title="DSA Quick Launch"
             icon={<DocumentIcon />}
             id="quick-launch"
@@ -173,9 +128,6 @@ export default function LandingPage(): JSX.Element {
         runningItems={
           <div className="landing-win97__taskbar-groups">
             <div className="landing-win97__quick-actions">
-              <Button97 size="sm" onClick={() => handleScrollTo('features')}>
-                View Features
-              </Button97>
               <Button97 size="sm" onClick={() => handleScrollTo('quick-launch')}>
                 Quick Launch
               </Button97>
@@ -189,9 +141,9 @@ export default function LandingPage(): JSX.Element {
                 size="sm"
                 variant="ghost"
                 className="landing-win97__task-btn"
-                onClick={() => handleScrollTo('features')}
+                onClick={() => handleScrollTo('quick-launch')}
               >
-                Features
+                Quick Launch
               </Button97>
             </div>
           </div>
