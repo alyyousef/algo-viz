@@ -132,18 +132,6 @@
   text-align: center;
 }
 
-.landing-win97__task-items {
-  display: flex;
-  gap: 4px;
-  height: 100%;
-  align-items: center;
-  margin-left: auto;
-}
-
-.landing-win97__task-btn {
-  cursor: pointer;
-}
-
 .landing-win97__taskbar-groups {
   display: flex;
   align-items: center;

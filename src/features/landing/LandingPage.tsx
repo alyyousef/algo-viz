@@ -135,17 +135,6 @@ export default function LandingPage(): JSX.Element {
                 Open Desktop
               </Button97>
             </div>
-
-            <div className="landing-win97__task-items">
-              <Button97
-                size="sm"
-                variant="ghost"
-                className="landing-win97__task-btn"
-                onClick={() => handleScrollTo('quick-launch')}
-              >
-                Quick Launch
-              </Button97>
-            </div>
           </div>
         }
         tray={<div className="landing-win97__clock">{currentTime}</div>}
