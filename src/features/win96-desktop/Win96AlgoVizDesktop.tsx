@@ -91,22 +91,33 @@ function DesktopContainer(): JSX.Element {
     orderedWindows.length === 0 ? (
       <span className="taskbar-97__placeholder">Start a program</span>
     ) : (
-      orderedWindows.map((win) => (
-        <Button97
-          key={win.id}
-          size="sm"
-          className="win96-taskbar__button"
-          iconLeft={
-            <span aria-hidden="true">
-              {win.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH}
-            </span>
-          }
-          aria-pressed={!win.isMinimized && activeWindowId === win.id}
-          onClick={() => toggleMinimize(win.id)}
-        >
-          {win.title}
-        </Button97>
-      ))
+      orderedWindows.map((win) => {
+        const isActive = !win.isMinimized && activeWindowId === win.id
+        const classes = [
+          'win96-taskbar__button',
+          isActive ? 'win96-taskbar__button--active' : undefined,
+          win.isMinimized ? 'win96-taskbar__button--minimized' : undefined,
+        ]
+          .filter(Boolean)
+          .join(' ')
+
+        return (
+          <Button97
+            key={win.id}
+            size="sm"
+            className={classes}
+            iconLeft={
+              <span aria-hidden="true">
+                {win.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH}
+              </span>
+            }
+            data-state={isActive ? 'active' : win.isMinimized ? 'minimized' : 'inactive'}
+            onClick={() => toggleMinimize(win.id)}
+          >
+            {win.title}
+          </Button97>
+        )
+      })
     )
 
   const startFolder = rootFolders[0]
