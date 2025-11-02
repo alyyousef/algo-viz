@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type JSX } from 'react'
+import { useEffect, useMemo, useRef, useState, type JSX } from 'react'
 
 import Button97 from '@/systems/win97/components/Button97'
 import Taskbar97 from '@/systems/win97/components/Taskbar97'
@@ -69,6 +69,8 @@ function DesktopContainer(): JSX.Element {
     toggleMinimize,
   } = useWin96WindowManager()
   const [now, setNow] = useState(() => new Date())
+  const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
+  const startMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -79,6 +81,48 @@ function DesktopContainer(): JSX.Element {
       window.clearInterval(timer)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isStartMenuOpen) {
+      return
+    }
+
+    const listenerOptions: AddEventListenerOptions = { capture: true }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target
+      if (
+        !(target instanceof Node) ||
+        startMenuRef.current?.contains(target) ||
+        (target instanceof Element && target.closest('.start-button-97'))
+      ) {
+        return
+      }
+      setIsStartMenuOpen(false)
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsStartMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('pointerdown', handlePointerDown, listenerOptions)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown, listenerOptions)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isStartMenuOpen])
+
+  const handleStartButtonClick = () => {
+    setIsStartMenuOpen((open) => !open)
+  }
+
+  const handleSelectFolder = (folderId: string) => {
+    setIsStartMenuOpen(false)
+    openFolderWindow(folderId)
+  }
 
   const timeLabel = useMemo(
     () => now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -120,7 +164,10 @@ function DesktopContainer(): JSX.Element {
       })
     )
 
-  const startFolder = rootFolders[0]
+  const startMenuEntries = useMemo(
+    () => rootFolders.filter((node) => node.kind === 'folder'),
+    [rootFolders],
+  )
 
   return (
     <div className="win96-desktop theme-win97">
@@ -136,17 +183,47 @@ function DesktopContainer(): JSX.Element {
         ))}
       </div>
       <WindowLayer />
+      {isStartMenuOpen ? (
+        <div
+          ref={startMenuRef}
+          className="win96-start-menu"
+          role="menu"
+          aria-label="AlgoViz start menu"
+        >
+          <div className="win96-start-menu__sidebar">
+            <span className="win96-start-menu__sidebar-label">AlgoViz</span>
+          </div>
+          <div className="win96-start-menu__list">
+            {startMenuEntries.map((node) => (
+              <button
+                key={node.id}
+                type="button"
+                className="win96-start-menu__item"
+                role="menuitem"
+                onClick={() => handleSelectFolder(node.id)}
+              >
+                <span className="win96-start-menu__item-icon" aria-hidden="true">
+                  {node.icon ?? FOLDER_GLYPH}
+                </span>
+                <span className="win96-start-menu__item-content">
+                  <span className="win96-start-menu__item-label">{node.name}</span>
+                  {node.description ? (
+                    <span className="win96-start-menu__item-description">{node.description}</span>
+                  ) : null}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
       <Taskbar97
-        startButtonProps={
-          startFolder
-            ? {
-                onClick: () => {
-                  openFolderWindow(startFolder.id)
-                },
-                'aria-label': `Open ${startFolder.name}`,
-              }
-            : undefined
-        }
+        startButtonProps={{
+          onClick: handleStartButtonClick,
+          'aria-label': 'Show programs menu',
+          pressed: isStartMenuOpen,
+          'aria-expanded': isStartMenuOpen,
+          'aria-haspopup': 'menu',
+        }}
         runningItems={<div className="win96-taskbar__items">{runningItemsContent}</div>}
         tray={<div className="win96-taskbar__clock">{timeLabel}</div>}
       />
