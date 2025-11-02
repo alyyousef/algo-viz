@@ -1,4 +1,4 @@
-﻿import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
 import NotFound from '@/app/routes/NotFound'
 import DsaIndex, { type DsaIndexProps, type DsaSection } from '@/features/dsa/routes/DSA'
@@ -161,8 +161,8 @@ export default function App(): JSX.Element {
 
   return (
     <Routes>
-      <Route path="/" element={<Win96AlgoVizDesktop />} />
-      <Route path="/win96" element={<Win96AlgoVizDesktop />} />
+      <Route path="/" element={<Navigate to="/algoViz" replace />} />
+      <Route path="/algoViz" element={<Win96AlgoVizDesktop />} />
       {rootSectionProps ? (
         <Route path="/dsa" element={<DsaIndex {...rootSectionProps} />} />
       ) : (
