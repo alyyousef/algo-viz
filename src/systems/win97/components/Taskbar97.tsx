@@ -21,9 +21,7 @@ const Taskbar97 = forwardRef(function Taskbar97(
         <StartButton97 {...startButtonProps} />
       </div>
       <div className="taskbar-97__items" aria-label="Running tasks">
-        {runningItems ?? children ?? (
-          <span className="taskbar-97__placeholder">Start a program</span>
-        )}
+        {runningItems ?? children ?? null}
       </div>
       <div className="taskbar-97__tray" aria-label="System tray">
         {tray ?? null}
