@@ -18,7 +18,7 @@
 
 .theme-win97 {
   color: var(--win97-text);
-  background: transparent;
+  background-color: transparent;
   font-family: var(--win97-font);
 }
 
