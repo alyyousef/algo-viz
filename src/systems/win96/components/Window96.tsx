@@ -28,6 +28,8 @@ interface Size {
 
 type InteractionKind = 'idle' | 'dragging' | 'resizing'
 
+type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
+
 type DragState =
   | { type: null }
   | {
@@ -43,6 +45,9 @@ type DragState =
       startY: number
       width: number
       height: number
+      x: number
+      y: number
+      direction: ResizeDirection
     }
 
 export interface Window96Props extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -105,6 +110,7 @@ const Window96 = forwardRef(function Window96(
     height: initialSize.height,
   }))
   const [interaction, setInteraction] = useState<InteractionKind>('idle')
+  const { width: currentWidth, height: currentHeight } = size
 
   useImperativeHandle(
     ref,
@@ -117,20 +123,21 @@ const Window96 = forwardRef(function Window96(
   )
 
   const ensureWithinViewport = useCallback(
-    (next: Position): Position => {
+    (next: Position, nextSize?: Size): Position => {
       if (typeof window === 'undefined') {
         return next
       }
 
-      const maxX = Math.max(0, window.innerWidth - size.width)
-      const maxY = Math.max(0, window.innerHeight - size.height)
+      const dimensions = nextSize ?? { width: currentWidth, height: currentHeight }
+      const maxX = Math.max(0, window.innerWidth - dimensions.width)
+      const maxY = Math.max(0, window.innerHeight - dimensions.height)
 
       return {
         x: Math.min(Math.max(0, next.x), maxX),
         y: Math.min(Math.max(0, next.y), maxY),
       }
     },
-    [size.height, size.width],
+    [currentHeight, currentWidth],
   )
 
   const handlePointerMove = useCallback(
@@ -142,32 +149,72 @@ const Window96 = forwardRef(function Window96(
 
       if (state.type === 'drag') {
         event.preventDefault()
-        setPosition((prev) => {
-          const next = ensureWithinViewport({
-            x: event.clientX - state.offsetX,
-            y: event.clientY - state.offsetY,
-          })
+        const nextPosition = ensureWithinViewport({
+          x: event.clientX - state.offsetX,
+          y: event.clientY - state.offsetY,
+        })
 
-          if (prev.x === next.x && prev.y === next.y) {
+        setPosition((prev) => {
+          if (prev.x === nextPosition.x && prev.y === nextPosition.y) {
             return prev
           }
-
-          return next
+          return nextPosition
         })
-      } else if (state.type === 'resize') {
-        event.preventDefault()
-        setSize((prev) => {
-          const nextWidth = Math.max(minWidth, state.width + (event.clientX - state.startX))
-          const nextHeight = Math.max(minHeight, state.height + (event.clientY - state.startY))
+        return
+      }
 
+      if (state.type === 'resize') {
+        event.preventDefault()
+        const deltaX = event.clientX - state.startX
+        const deltaY = event.clientY - state.startY
+
+        let nextWidth = state.width
+        let nextHeight = state.height
+        let nextX = state.x
+        let nextY = state.y
+        const direction = state.direction
+
+        if (direction.includes('e')) {
+          nextWidth = Math.max(minWidth, state.width + deltaX)
+        }
+
+        if (direction.includes('s')) {
+          nextHeight = Math.max(minHeight, state.height + deltaY)
+        }
+
+        if (direction.includes('w')) {
+          const proposedWidth = state.width - deltaX
+          const clampedWidth = Math.max(minWidth, proposedWidth)
+          const usedDelta = state.width - clampedWidth
+          nextWidth = clampedWidth
+          nextX = state.x + usedDelta
+        }
+
+        if (direction.includes('n')) {
+          const proposedHeight = state.height - deltaY
+          const clampedHeight = Math.max(minHeight, proposedHeight)
+          const usedDelta = state.height - clampedHeight
+          nextHeight = clampedHeight
+          nextY = state.y + usedDelta
+        }
+
+        const constrainedPosition = ensureWithinViewport(
+          { x: nextX, y: nextY },
+          { width: nextWidth, height: nextHeight },
+        )
+
+        setSize((prev) => {
           if (prev.width === nextWidth && prev.height === nextHeight) {
             return prev
           }
+          return { width: nextWidth, height: nextHeight }
+        })
 
-          return {
-            width: nextWidth,
-            height: nextHeight,
+        setPosition((prev) => {
+          if (prev.x === constrainedPosition.x && prev.y === constrainedPosition.y) {
+            return prev
           }
+          return constrainedPosition
         })
       }
     },
@@ -219,31 +266,52 @@ const Window96 = forwardRef(function Window96(
     [draggable, handlePointerMove, handlePointerUp, position.x, position.y],
   )
 
-  const startResize = useCallback(
-    (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (!resizable) {
-        return
-      }
+  const createResizeStart = useCallback(
+    (direction: ResizeDirection) =>
+      (event: ReactPointerEvent<HTMLDivElement>) => {
+        if (!resizable) {
+          return
+        }
 
-      event.preventDefault()
-      event.stopPropagation()
+        event.preventDefault()
+        event.stopPropagation()
 
-      dragStateRef.current = {
-        type: 'resize',
-        pointerId: event.pointerId,
-        startX: event.clientX,
-        startY: event.clientY,
-        width: size.width,
-        height: size.height,
-      }
+        dragStateRef.current = {
+          type: 'resize',
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          width: size.width,
+          height: size.height,
+          x: position.x,
+          y: position.y,
+          direction,
+        }
 
-      setInteraction('resizing')
+        setInteraction('resizing')
 
-      window.addEventListener('pointermove', handlePointerMove)
-      window.addEventListener('pointerup', handlePointerUp)
-    },
-    [handlePointerMove, handlePointerUp, resizable, size.height, size.width],
+        window.addEventListener('pointermove', handlePointerMove)
+        window.addEventListener('pointerup', handlePointerUp)
+      },
+    [
+      handlePointerMove,
+      handlePointerUp,
+      position.x,
+      position.y,
+      resizable,
+      size.height,
+      size.width,
+    ],
   )
+
+  const handleResizeNorth = useMemo(() => createResizeStart('n'), [createResizeStart])
+  const handleResizeSouth = useMemo(() => createResizeStart('s'), [createResizeStart])
+  const handleResizeEast = useMemo(() => createResizeStart('e'), [createResizeStart])
+  const handleResizeWest = useMemo(() => createResizeStart('w'), [createResizeStart])
+  const handleResizeNorthEast = useMemo(() => createResizeStart('ne'), [createResizeStart])
+  const handleResizeNorthWest = useMemo(() => createResizeStart('nw'), [createResizeStart])
+  const handleResizeSouthEast = useMemo(() => createResizeStart('se'), [createResizeStart])
+  const handleResizeSouthWest = useMemo(() => createResizeStart('sw'), [createResizeStart])
 
   const windowStyle = useMemo<CSSProperties>(
     () => ({
@@ -301,7 +369,48 @@ const Window96 = forwardRef(function Window96(
       {statusText ? <div className="win96-window__status-bar">{statusText}</div> : null}
 
       {resizable ? (
-        <div className="win96-window__resizer" role="presentation" onPointerDown={startResize} />
+        <>
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--n"
+            role="presentation"
+            onPointerDown={handleResizeNorth}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--s"
+            role="presentation"
+            onPointerDown={handleResizeSouth}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--e"
+            role="presentation"
+            onPointerDown={handleResizeEast}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--w"
+            role="presentation"
+            onPointerDown={handleResizeWest}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--ne"
+            role="presentation"
+            onPointerDown={handleResizeNorthEast}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--nw"
+            role="presentation"
+            onPointerDown={handleResizeNorthWest}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--se"
+            role="presentation"
+            onPointerDown={handleResizeSouthEast}
+          />
+          <div
+            className="win96-window__resize-handle win96-window__resize-handle--sw"
+            role="presentation"
+            onPointerDown={handleResizeSouthWest}
+          />
+        </>
       ) : null}
     </div>
   )

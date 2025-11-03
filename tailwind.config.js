@@ -8,7 +8,7 @@ const config = {
         sans: ['"Inter"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-radia
+        'hero-radial':
           'radial-gradient(circle at 20% 20%, rgba(76, 29, 149, 0.35), transparent 55%), radial-gradient(circle at 80% 0%, rgba(6, 182, 212, 0.25), transparent 45%), radial-gradient(circle at 50% 80%, rgba(14, 165, 233, 0.3), transparent 50%)',
       },
       boxShadow: {
