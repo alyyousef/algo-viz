@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type JSX } from 'react'
 
-import Button97 from '@/systems/win97/components/Button97'
-import Taskbar97 from '@/systems/win97/components/Taskbar97'
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import Window96 from '@/systems/win96/components/Window96'
 import {
@@ -9,6 +7,8 @@ import {
   useWin96WindowManager,
   type WindowState,
 } from '@/systems/win96/context/Win96WindowManager'
+import Button97 from '@/systems/win97/components/Button97'
+import Taskbar97 from '@/systems/win97/components/Taskbar97'
 import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 
 import FolderWindowContent from './components/FolderWindowContent'
