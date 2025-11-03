@@ -74,6 +74,8 @@ export interface Window96Handle {
 
 const DEFAULT_POSITION: Position = { x: 120, y: 120 }
 const DEFAULT_SIZE: Size = { width: 420, height: 320 }
+const DESKTOP_MARGIN = 8
+const TASKBAR_HEIGHT = 36
 
 const cn = (...classes: Array<string | false | null | undefined>): string =>
   classes.filter(Boolean).join(' ')
@@ -100,6 +102,7 @@ const Window96 = forwardRef(function Window96(
 ): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const dragStateRef = useRef<DragState>({ type: null })
+  const previousMetricsRef = useRef<{ position: Position; size: Size } | null>(null)
 
   const [position, setPosition] = useState<Position>(() => ({
     x: initialPosition.x,
@@ -110,6 +113,7 @@ const Window96 = forwardRef(function Window96(
     height: initialSize.height,
   }))
   const [interaction, setInteraction] = useState<InteractionKind>('idle')
+  const [isMaximized, setIsMaximized] = useState(false)
   const { width: currentWidth, height: currentHeight } = size
 
   useImperativeHandle(
@@ -245,7 +249,7 @@ const Window96 = forwardRef(function Window96(
 
   const startDrag = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (!draggable) {
+      if (!draggable || isMaximized) {
         return
       }
 
@@ -263,13 +267,13 @@ const Window96 = forwardRef(function Window96(
       window.addEventListener('pointermove', handlePointerMove)
       window.addEventListener('pointerup', handlePointerUp)
     },
-    [draggable, handlePointerMove, handlePointerUp, position.x, position.y],
+    [draggable, handlePointerMove, handlePointerUp, isMaximized, position.x, position.y],
   )
 
   const createResizeStart = useCallback(
     (direction: ResizeDirection) =>
       (event: ReactPointerEvent<HTMLDivElement>) => {
-        if (!resizable) {
+        if (!resizable || isMaximized) {
           return
         }
 
@@ -299,10 +303,69 @@ const Window96 = forwardRef(function Window96(
       position.x,
       position.y,
       resizable,
+      isMaximized,
       size.height,
       size.width,
     ],
   )
+
+  const computeMaximizedMetrics = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return {
+        position: { x: position.x, y: position.y },
+        size: { width: size.width, height: size.height },
+      }
+    }
+
+    const viewportWidth = Math.max(minWidth, window.innerWidth - DESKTOP_MARGIN * 2)
+    const viewportHeight = Math.max(
+      minHeight,
+      window.innerHeight - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2,
+    )
+
+    return {
+      position: { x: DESKTOP_MARGIN, y: DESKTOP_MARGIN },
+      size: { width: viewportWidth, height: viewportHeight },
+    }
+  }, [minHeight, minWidth, position.x, position.y, size.height, size.width])
+
+  const handleMaximize = useCallback(() => {
+    if (isMaximized) {
+      const previous = previousMetricsRef.current
+      if (previous) {
+        setPosition(previous.position)
+        setSize(previous.size)
+      }
+      previousMetricsRef.current = null
+      setIsMaximized(false)
+      return
+    }
+
+    previousMetricsRef.current = { position, size }
+    const metrics = computeMaximizedMetrics()
+    setPosition(metrics.position)
+    setSize(metrics.size)
+    setIsMaximized(true)
+    onMaximize?.()
+  }, [computeMaximizedMetrics, isMaximized, onMaximize, position, size])
+
+  useEffect(() => {
+    if (!isMaximized) {
+      return
+    }
+
+    const handleResize = () => {
+      const metrics = computeMaximizedMetrics()
+      setPosition(metrics.position)
+      setSize(metrics.size)
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [computeMaximizedMetrics, isMaximized])
 
   const handleResizeNorth = useMemo(() => createResizeStart('n'), [createResizeStart])
   const handleResizeSouth = useMemo(() => createResizeStart('s'), [createResizeStart])
@@ -323,6 +386,13 @@ const Window96 = forwardRef(function Window96(
     [position.x, position.y, size.height, size.width, style],
   )
 
+  const handleTitleDoubleClick = useCallback(() => {
+    if (!resizable) {
+      return
+    }
+    handleMaximize()
+  }, [handleMaximize, resizable])
+
   return (
     <div
       ref={containerRef}
@@ -330,8 +400,13 @@ const Window96 = forwardRef(function Window96(
       style={windowStyle}
       tabIndex={-1}
       data-interaction={interaction}
+      data-maximized={isMaximized ? 'true' : undefined}
     >
-      <div className="win96-window__title-bar" onPointerDown={startDrag}>
+      <div
+        className="win96-window__title-bar"
+        onPointerDown={startDrag}
+        onDoubleClick={handleTitleDoubleClick}
+      >
         {icon ? <span className="win96-window__icon">{icon}</span> : null}
         <span className="win96-window__title" title={title}>
           {title}
@@ -348,10 +423,10 @@ const Window96 = forwardRef(function Window96(
           <button
             type="button"
             className="win96-window__button"
-            aria-label="Maximize window"
-            onClick={onMaximize}
+            aria-label={isMaximized ? 'Restore window' : 'Maximize window'}
+            onClick={handleMaximize}
           >
-            ▢
+            {isMaximized ? '▭' : '▢'}
           </button>
           <button
             type="button"
@@ -368,7 +443,7 @@ const Window96 = forwardRef(function Window96(
 
       {statusText ? <div className="win96-window__status-bar">{statusText}</div> : null}
 
-      {resizable ? (
+      {resizable && !isMaximized ? (
         <>
           <div
             className="win96-window__resize-handle win96-window__resize-handle--n"
