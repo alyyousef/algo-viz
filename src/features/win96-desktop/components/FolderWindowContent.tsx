@@ -3,6 +3,8 @@
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import { useWin96WindowManager } from '@/systems/win96/context/Win96WindowManager'
 
+import FolderNavigationBar from './FolderNavigationBar'
+
 import type { ExplorerNode } from '@/data/algoviz-explorer'
 import type { FolderWindowState } from '@/systems/win96/context/Win96WindowManager'
 
@@ -11,7 +13,7 @@ const VISUALIZATION_GLYPH = '\uD83D\uDCCA'
 
 const buildAddress = (entries: ExplorerNode[]): string => {
   const segments = entries.slice(1).map((entry) => entry.name)
-  return ['C:', 'User', 'AlgoViz', ...segments].join('/')
+  return ['C:', 'Users', 'AlgoViz', ...segments].join('\\')
 }
 
 interface FolderWindowContentProps {
@@ -31,37 +33,31 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
   const entries = useMemo(() => getPathEntries(window.path), [getPathEntries, window.path])
   const currentNodeId = window.path[window.path.length - 1] ?? 'root'
   const children = useMemo(() => getChildren(currentNodeId), [currentNodeId, getChildren])
+  const currentEntry = entries[entries.length - 1]?.node ?? null
 
   const canGoBack = window.history.length > 0
   const canGoUp = window.path.length > 1
   const address = useMemo(() => buildAddress(entries.map((entry) => entry.node)), [entries])
+  const itemCount = children.length
+  const subtitle =
+    currentEntry?.description ?? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
 
   return (
     <div className="folder-window">
-      <div className="folder-window__toolbar">
-        <div className="folder-window__controls">
-          <button
-            type="button"
-            className="folder-window__nav-btn"
-            onClick={() => navigateBack(window.id)}
-            disabled={!canGoBack}
-          >
-            \u2190 Back
-          </button>
-          <button
-            type="button"
-            className="folder-window__nav-btn"
-            onClick={() => navigateUp(window.id)}
-            disabled={!canGoUp}
-          >
-            \u2191 Up
-          </button>
+      <FolderNavigationBar
+        canGoBack={canGoBack}
+        canGoUp={canGoUp}
+        address={address}
+        onBack={() => navigateBack(window.id)}
+        onUp={() => navigateUp(window.id)}
+      />
+
+      <header className="folder-window__header">
+        <div>
+          <h2 className="folder-window__title">{currentEntry?.name ?? 'Folder'}</h2>
+          <p className="folder-window__subtitle">{subtitle}</p>
         </div>
-        <div className="folder-window__address">
-          <span className="folder-window__address-label">Address:</span>
-          <output className="folder-window__address-value">{address}</output>
-        </div>
-      </div>
+      </header>
 
       <div className="folder-window__content">
         {children.length === 0 ? (
