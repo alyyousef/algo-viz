@@ -1,5 +1,3 @@
-import Button97 from '@/systems/win97/components/Button97'
-
 import type { JSX } from 'react'
 
 export interface FolderNavigationBarProps {
@@ -10,6 +8,9 @@ export interface FolderNavigationBarProps {
   onUp: () => void
 }
 
+const BACK_ARROW = '\u2190'
+const FORWARD_ARROW = '\u2192'
+
 export default function FolderNavigationBar({
   canGoBack,
   canGoUp,
@@ -18,38 +19,30 @@ export default function FolderNavigationBar({
   onUp,
 }: FolderNavigationBarProps): JSX.Element {
   return (
-    <div className="folder-window__toolbar" role="navigation" aria-label="Folder navigation">
-      <div className="folder-window__controls">
-        <Button97
-          size="sm"
-          variant="ghost"
+    <header className="folder-window__header" role="navigation" aria-label="Folder navigation">
+      <div className="folder-window__nav-buttons">
+        <button
+          type="button"
+          className="folder-window__nav-button"
           onClick={onBack}
           disabled={!canGoBack}
-          aria-label="Go back to the previous folder"
-          iconLeft={<span aria-hidden="true">←</span>}
+          aria-label="Go back"
         >
-          Back
-        </Button97>
-        <Button97
-          size="sm"
-          variant="ghost"
+          <span aria-hidden="true">{BACK_ARROW}</span>
+        </button>
+        <button
+          type="button"
+          className="folder-window__nav-button"
           onClick={onUp}
           disabled={!canGoUp}
           aria-label="Go up one level"
-          iconLeft={<span aria-hidden="true">↑</span>}
         >
-          Up
-        </Button97>
+          <span aria-hidden="true">{FORWARD_ARROW}</span>
+        </button>
       </div>
-      <label className="folder-window__address">
-        <span className="folder-window__address-label">Address</span>
-        <input
-          className="folder-window__address-input"
-          value={address}
-          readOnly
-          aria-readonly="true"
-        />
-      </label>
-    </div>
+      <div className="folder-window__address-bar" title={address}>
+        <span className="folder-window__address-text">{address}</span>
+      </div>
+    </header>
   )
 }

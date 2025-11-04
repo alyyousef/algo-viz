@@ -34,11 +34,16 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
   const currentNodeId = window.path[window.path.length - 1] ?? 'root'
   const children = useMemo(() => getChildren(currentNodeId), [currentNodeId, getChildren])
   const currentEntry = entries[entries.length - 1]?.node ?? null
+  const folderChildren = useMemo(
+    () => children.filter((child) => child.kind === 'folder'),
+    [children],
+  )
+  const visibleChildren = folderChildren.length > 0 ? folderChildren : children
 
   const canGoBack = window.history.length > 0
   const canGoUp = window.path.length > 1
   const address = useMemo(() => buildAddress(entries.map((entry) => entry.node)), [entries])
-  const itemCount = children.length
+  const itemCount = visibleChildren.length
   const subtitle =
     currentEntry?.description ?? `${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
 
@@ -52,19 +57,17 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
         onUp={() => navigateUp(window.id)}
       />
 
-      <header className="folder-window__header">
-        <div>
-          <h2 className="folder-window__title">{currentEntry?.name ?? 'Folder'}</h2>
-          <p className="folder-window__subtitle">{subtitle}</p>
-        </div>
-      </header>
+      <div className="folder-window__summary">
+        <h2 className="folder-window__summary-title">{currentEntry?.name ?? 'Folder'}</h2>
+        <span className="folder-window__summary-meta">{subtitle}</span>
+      </div>
 
       <div className="folder-window__content">
-        {children.length === 0 ? (
+        {visibleChildren.length === 0 ? (
           <div className="folder-window__empty">This folder is empty.</div>
         ) : (
           <div className="folder-window__grid">
-            {children.map((child) => {
+            {visibleChildren.map((child) => {
               const icon = child.icon ? <span aria-hidden="true">{child.icon}</span> : undefined
 
               if (child.kind === 'folder') {
