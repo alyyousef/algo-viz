@@ -33,8 +33,8 @@ export default function TopicLayout({
   backLabel = 'Back to catalog',
 }: TopicLayoutProps): JSX.Element {
   return (
-    <div className="min-h-screen bg-[#008080]">
-      <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 pb-12 pt-10 text-white">
+    <div className="min-h-screen bg-[#008080] font-mono text-white">
+      <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 pb-12 pt-10">
         <header className="space-y-4 rounded-xl bg-white/10 p-6 shadow-sm shadow-black/10">
           <Link
             to={backLink}
