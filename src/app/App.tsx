@@ -17,6 +17,14 @@ const slugifySegment = (segment: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'section'
 
+const slugifySegmentWithoutAmpersand = (segment: string): string =>
+  segment
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'section'
+
 const dsaModules = import.meta.glob<DsaModule>('../features/dsa/routes/**/index.tsx', {
   eager: true,
 })
@@ -26,15 +34,29 @@ interface DsaRouteEntry {
   Component: ComponentType<Record<string, unknown>>
 }
 
-const dsaRouteEntries: DsaRouteEntry[] = Object.entries(dsaModules).map(([filePath, module]) => {
+const dsaRouteEntries: DsaRouteEntry[] = []
+
+Object.entries(dsaModules).forEach(([filePath, module]) => {
   const relative = filePath.replace(DSA_ROUTE_PREFIX, '').replace(/\/index\.tsx$/, '')
   const segments = relative.split('/')
   const pathSegments = segments.map(slugifySegment)
   const path = `/${pathSegments.join('/')}`
 
-  return {
+  dsaRouteEntries.push({
     path,
     Component: module.default,
+  })
+
+  const altSegments = segments.map(slugifySegmentWithoutAmpersand)
+  const hasAmpersand = segments.some((segment) => segment.includes('&'))
+  const differsFromPrimary = altSegments.some((alt, index) => alt !== pathSegments[index])
+
+  if (hasAmpersand && differsFromPrimary) {
+    const altPath = `/${altSegments.join('/')}`
+    dsaRouteEntries.push({
+      path: altPath,
+      Component: module.default,
+    })
   }
 })
 
