@@ -10,27 +10,25 @@ export default function NotFound({
   message = 'The page you were looking for could not be found.',
 }: NotFoundProps): JSX.Element {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-6 py-24 text-center">
-        <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-          404
-        </span>
-        <h1 className="text-3xl font-semibold text-white sm:text-4xl">Nothing to see here yet</h1>
-        <p className="max-w-xl text-base text-slate-300 sm:text-lg">{message}</p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link
-            to="/"
-            className="rounded-full border border-white/10 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:border-white/40 hover:text-white"
-          >
-            Return home
-          </Link>
-          <Link
-            to="/dsa"
-            className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-6 py-3 text-sm font-semibold text-cyan-200 transition hover:border-cyan-400/60 hover:text-white"
-          >
-            Explore catalog
-          </Link>
-        </div>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-950 px-6 text-center text-slate-200">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-xs uppercase tracking-[0.4em] text-slate-500">404</span>
+        <h1 className="text-xl font-semibold text-slate-100">Page not found</h1>
+      </div>
+      <p className="max-w-md text-sm text-slate-400">{message}</p>
+      <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
+        <Link
+          to="/"
+          className="rounded-md border border-slate-700 px-4 py-2 text-slate-200 transition hover:border-slate-500 hover:text-white"
+        >
+          Go home
+        </Link>
+        <Link
+          to="/dsa"
+          className="rounded-md border border-slate-700 px-4 py-2 text-slate-200 transition hover:border-slate-500 hover:text-white"
+        >
+          Browse DSA catalog
+        </Link>
       </div>
     </div>
   )

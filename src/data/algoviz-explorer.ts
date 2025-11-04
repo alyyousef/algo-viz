@@ -84,7 +84,7 @@ export const explorerRoot: ExplorerFolderNode = folder('root', 'AlgoViz', [
         'arrays-lists',
         'Arrays & Lists',
         'Compare contiguous vs linked layouts with insertion/deletion demos.',
-        '/dsa/1-core-data-structures/1-linear/1-arrays-lists',
+        '/dsa/1-core-data-structures/1-linear/1-arrays-and-lists',
       ),
       visualization(
         'linked-lists',

@@ -1,16 +1,19 @@
-﻿export default function Page() {
+import TopicPlaceholder from '@/features/dsa/components/TopicPlaceholder'
+
+import type { JSX } from 'react'
+
+export default function Page(): JSX.Element {
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">DSA/1. Core Data Structures/4. Advanced & Specialized</h1>
-      <p className="opacity-80">
-        This is a placeholder page for{' '}
-        <strong>DSA/1. Core Data Structures/4. Advanced & Specialized</strong>.
-      </p>
-      <ul className="list-disc pl-6 space-y-1">
-        <li>Explain core ideas and definitions.</li>
-        <li>Add visualizer hooks/components if applicable.</li>
-        <li>Link to related topics and practice problems.</li>
-      </ul>
-    </div>
+    <TopicPlaceholder
+      title="Advanced & Specialised Structures"
+      subtitle="Heaps, tries, DSU, and more"
+      backLink="/dsa/1-core-data-structures"
+      backLabel="Back to core data structures"
+      notes={[
+        'Explain what problem each specialised structure was invented to solve.',
+        'Call out implementation tips: balancing requirements, pointer pitfalls, and common mistakes.',
+        'Collect links to practice problems where these structures shine.',
+      ]}
+    />
   )
 }
