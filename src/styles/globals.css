@@ -14,3 +14,37 @@
     color: #f8fafc;
   }
 }
+
+@layer components {
+  .win96-link {
+    @apply inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase no-underline;
+    font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+    letter-spacing: 0.3em;
+    color: #0a246a;
+    background: linear-gradient(180deg, #ffffff 0%, #d7e3ff 100%);
+    border-top: 2px solid #f5f5f5;
+    border-left: 2px solid #f5f5f5;
+    border-right: 2px solid #4f5256;
+    border-bottom: 2px solid #4f5256;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+    transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+  }
+
+  .win96-link:hover {
+    background: linear-gradient(180deg, #ffffff 0%, #cbdcff 100%);
+  }
+
+  .win96-link:active {
+    border-top-color: #4f5256;
+    border-left-color: #4f5256;
+    border-right-color: #f5f5f5;
+    border-bottom-color: #f5f5f5;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+    transform: translate(1px, 1px);
+  }
+
+  .win96-link:focus-visible {
+    outline: 2px dotted #0a246a;
+    outline-offset: 3px;
+  }
+}

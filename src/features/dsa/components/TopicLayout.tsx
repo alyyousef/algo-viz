@@ -36,10 +36,7 @@ export default function TopicLayout({
     <div className="min-h-screen bg-[#008080] font-mono text-white">
       <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 pb-12 pt-10">
         <header className="space-y-4 text-white">
-          <Link
-            to={backLink}
-            className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:text-white"
-          >
+          <Link to={backLink} className="win96-link">
             {backLabel}
           </Link>
           <div className="space-y-2">
