@@ -17,7 +17,7 @@ export interface TopicSectionProps {
 
 export function TopicSection({ heading, children }: TopicSectionProps): JSX.Element {
   return (
-    <section className="space-y-3 rounded-xl bg-white/10 p-6 text-white shadow-sm shadow-black/10">
+    <section className="space-y-3 text-white">
       <h2 className="text-lg font-semibold tracking-tight">{heading}</h2>
       <div className="space-y-3 text-sm leading-relaxed text-white/90">{children}</div>
     </section>
@@ -35,7 +35,7 @@ export default function TopicLayout({
   return (
     <div className="min-h-screen bg-[#008080] font-mono text-white">
       <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 pb-12 pt-10">
-        <header className="space-y-4 rounded-xl bg-white/10 p-6 shadow-sm shadow-black/10">
+        <header className="space-y-4 text-white">
           <Link
             to={backLink}
             className="inline-flex items-center text-xs font-semibold uppercase tracking-[0.3em] text-white/80 transition hover:text-white"
