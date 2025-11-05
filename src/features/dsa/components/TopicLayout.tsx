@@ -36,9 +36,11 @@ export default function TopicLayout({
     <div className="min-h-screen bg-[#008080] font-mono text-white">
       <div className="mx-auto flex w-full max-w-none flex-col gap-8 px-6 pb-12 pt-10">
         <header className="space-y-4 text-white">
-          <Link to={backLink} className="win96-link">
-            {backLabel}
-          </Link>
+          <div className="flex justify-end">
+            <Link to={backLink} className="win96-link win96-link--sm">
+              {backLabel}
+            </Link>
+          </div>
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
             {subtitle ? <p className="text-sm text-white/90">{subtitle}</p> : null}

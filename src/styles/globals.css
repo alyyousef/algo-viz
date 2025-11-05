@@ -47,4 +47,10 @@
     outline: 2px dotted #0a246a;
     outline-offset: 3px;
   }
+
+  .win96-link--sm {
+    @apply px-2 py-0.5;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+  }
 }
