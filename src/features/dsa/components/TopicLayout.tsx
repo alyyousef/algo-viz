@@ -34,7 +34,7 @@ export default function TopicLayout({
 }: TopicLayoutProps): JSX.Element {
   return (
     <div className="min-h-screen bg-[#008080] font-mono text-white">
-      <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 pb-12 pt-10">
+      <div className="mx-auto flex w-full max-w-none flex-col gap-8 px-6 pb-12 pt-10">
         <header className="space-y-4 text-white">
           <Link to={backLink} className="win96-link">
             {backLabel}
