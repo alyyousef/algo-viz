@@ -29,7 +29,7 @@ export default function TopicLayout({
   subtitle,
   intro,
   children,
-  backLink = '/dsa',
+  backLink = '/algoViz',
   backLabel = 'Back to catalog',
 }: TopicLayoutProps): JSX.Element {
   return (
