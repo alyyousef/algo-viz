@@ -26,10 +26,10 @@ export default function NotFound({
           Go home
         </Link>
         <Link
-          to="/dsa"
+          to="/algoViz"
           className="rounded-full border border-white/40 px-4 py-2 transition hover:border-white hover:text-white"
         >
-          Browse DSA catalog
+          Browse AlgoViz desktop
         </Link>
       </div>
     </div>
