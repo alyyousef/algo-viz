@@ -11,8 +11,8 @@ export default function NotFound({
 }: NotFoundProps): JSX.Element {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-[#008080] px-6 text-center font-mono text-white">
-      <div className="space-y-4">
-        <p className="text-[clamp(3.5rem,12vw,5rem)] font-semibold tracking-[0.6em] text-white">404</p>
+      <div className="flex flex-col items-center space-y-4">
+        <p className="text-[clamp(3rem,11vw,4.5rem)] font-semibold tracking-[0.25em] leading-none text-white">404</p>
         <h1 className="text-3xl font-semibold tracking-tight text-white">Page not found</h1>
         <p className="max-w-lg text-sm leading-relaxed text-white/85">{message}</p>
       </div>
