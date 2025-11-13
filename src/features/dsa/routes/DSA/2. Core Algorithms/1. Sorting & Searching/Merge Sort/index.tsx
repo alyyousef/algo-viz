@@ -6,40 +6,95 @@ export default function MergeSortPage(): JSX.Element {
   return (
     <TopicLayout
       title="Merge Sort"
-      subtitle="Divide, sort, and merge"
-      intro="Merge sort divides the list in half, recursively sorts each side, and then merges the two sorted halves back together. Each merge stitch keeps the overall order intact."
+      subtitle="Weaving order from two halves"
+      intro="Merge sort feels like a calm atelier: every sequence pauses while the artist splits it into smaller canvases, then merges the painted pieces back together with careful, ordered strokes."
     >
-      <TopicSection heading="Divide and conquer">
+      <TopicSection heading="Why merge sort exists">
         <p>
-          Break the sequence in half until you reach trivially sorted pieces (individual elements). Each recursive call operates the same way, so the logic feels like repeating the same melody on smaller sections.
+          Not every list can be tamed by one left-to-right sweep. Merge sort exists to tame chaos by asking the list to quiet down, divide into manageable chunks, and trust the system to reassemble them without losing perspective.
         </p>
         <p>
-          Once the halves are sorted, you stitch them back together with a two-finger merge that always picks the smaller front element from either half.
+          It is one of the purest divide-and-conquer routines: the work is the same at every scale. You keep splitting until the pieces are inevitable, then you trust the merging step to restore the rhythm.
         </p>
       </TopicSection>
 
-      <TopicSection heading="Merging steps">
+      <TopicSection heading="Breaking problems down">
+        <p>
+          Split the sequence exactly in half. No heuristics, no fancy pivots. Each recursive call gets a smaller neighborhood of the data until it only holds one element, a trivially sorted piece.
+        </p>
+        <p>
+          Even though you are calling the same routine over and over, every level of recursion works on exponentially fewer items. The call stack grows logarithmically, so the work per level stays steady.
+        </p>
+      </TopicSection>
+
+      <TopicSection heading="The merge choreography">
+        <p>
+          Two ordered halves sit side by side with pointers at the front of each. The merge step compares their heads, appends the smaller to the output, and advances that pointer. It is a polite negotiation between halves, always picking the friendliest candidate.
+        </p>
+        <p>
+          When one half runs dry, the other has already been living in sorted order, so you append the rest without another comparison. The merged result preserves every order relation from the halves without backtracking.
+        </p>
+      </TopicSection>
+
+      <TopicSection heading="What you can do with merge sort">
         <div className="space-y-2 text-sm text-white/90">
-          <p>Set two pointers at the start of each half and compare their values.</p>
-          <p>Append the smaller value to the output and advance that pointer, repeating until one half is exhausted.</p>
-          <p>Copy any remaining values from the non-empty half—those are already sorted.</p>
-          <p>Because the merge runs in linear time, each level of recursion costs O(n), and the height is O(log n), so merge sort stays O(n log n) regardless of input shape.</p>
+          <p>
+            Build stable sorts: equal elements keep their original ordering because merges never rearrange ties.
+          </p>
+          <p>
+            Divide huge data sets into chunks that fit in memory, sort each slice independently, and then stream the merges so you never load everything at once.
+          </p>
+          <p>
+            Parallelize the halves by splitting the work among threads or machines and merging the sorted streams back together in a reduction tree.
+          </p>
+          <p>
+            Use it for linked lists too. You can split and merge without random access, which keeps the advantages of O(n log n) time while avoiding extra space for array copies.
+          </p>
         </div>
       </TopicSection>
 
-      <TopicSection heading="When merge sort shines">
-        <p>The stability and predictable performance make merge sort ideal for linked data, external sorting, or systems that need guaranteed bounds.</p>
-        <p>It works well for huge data sets because you can merge chunks from disk without loading everything into memory.</p>
-        <p>Use it when you need to preserve input order for equal elements or when you can parallelize the recursive halves.</p>
+      <TopicSection heading="Building your own">
+        <p>
+          Represent the recursive split explicitly, or simulate it with an explicit stack when you need control over recursion depth. The key is to remember the merge order so that you only combine segments when both are ready.
+        </p>
+        <p>
+          In-place variants exist, but they require careful bookkeeping to rotate elements without breaking stability. Keep the logic separate: write a clean merge first, then only optimize if memory becomes the bottleneck.
+        </p>
+        <p>
+          Always test with edge cases: empty inputs, already sorted lists, and reverse-sorted lists all exercise different parts of the recursion tree.
+        </p>
       </TopicSection>
 
-      <TopicSection heading="Implementation checklist">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/90">
-          <li>Recursively split until each partition has one element.</li>
-          <li>Merge two sorted arrays using pointers that always advance after selecting the smaller head.</li>
-          <li>Copy leftover elements after one side empties.</li>
-          <li>Document the space trade-off: merge sort needs O(n) extra space unless you use linked lists or in-place merge tricks.</li>
-        </ol>
+      <TopicSection heading="Performance and space trade-offs">
+        <p>
+          Merge sort visits every element exactly once per level, and there are O(log n) levels, so the running time stays at O(n log n) regardless of how the data started.
+        </p>
+        <p>
+          The cost is space: the merge step needs a buffer proportional to the number of active elements unless you carefully splice nodes in linked structures. That trade-off is worth it when you care more about guarantees than squeezing out every byte.
+        </p>
+      </TopicSection>
+
+      <TopicSection heading="Related sorts and hybrids">
+        <div className="space-y-3 text-sm text-white/90">
+          <article>
+            <p className="font-semibold text-white">Sorting neighbors:</p>
+            <ul className="list-disc space-y-1 pl-5">
+              <li>Quick sort splits with a pivot and sorts in place, but its worst case can degrade without good pivot selection.</li>
+              <li>Heap sort guarantees O(n log n) with constant space overhead, yet it breaks stability for the sake of brevity.</li>
+              <li>Tim sort combines merge sort with insertion sort to exploit runs in real data, making it the practical default for many libraries.</li>
+              <li>Radix sort moves beyond comparisons, handling digits directly for linear time at the cost of extra passes.</li>
+            </ul>
+          </article>
+
+          <article>
+            <p className="font-semibold text-white">Merge-inspired structures:</p>
+            <ul className="list-disc space-y-1 pl-5">
+              <li>K-way merge extends the idea to more than two inputs, which is key for multi-way merge joins in databases.</li>
+              <li>External merge sort keeps sorted runs on disk and only loads what is necessary for each merge.</li>
+              <li>Mergeable heaps and priority queues reuse the ordered merge when melding two structures.</li>
+            </ul>
+          </article>
+        </div>
       </TopicSection>
     </TopicLayout>
   )
