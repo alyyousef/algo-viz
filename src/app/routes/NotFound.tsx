@@ -7,29 +7,27 @@ export interface NotFoundProps {
 }
 
 export default function NotFound({
-  message = 'The page you were looking for could not be found.',
+  message = 'The page you were looking for could not be found. Double-check the URL or head back to something you recognize.',
 }: NotFoundProps): JSX.Element {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[#008080] px-6 text-center font-mono text-white">
-      <span className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-[0.4em] text-white/80">
-        404
-      </span>
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Page not found</h1>
-        <p className="max-w-md text-sm leading-relaxed text-white/85">{message}</p>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-[#008080] px-6 text-center font-mono text-white">
+      <div className="space-y-4">
+        <p className="text-[clamp(3.5rem,12vw,5rem)] font-semibold tracking-[0.6em] text-white">404</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-white">Page not found</h1>
+        <p className="max-w-lg text-sm leading-relaxed text-white/85">{message}</p>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-3 text-xs uppercase tracking-[0.2em] text-white/90">
+      <div className="flex flex-wrap items-center justify-center gap-4 text-xs uppercase tracking-[0.25em] text-[#003366]">
         <Link
           to="/"
-          className="rounded-full border border-white/40 px-4 py-2 transition hover:border-white hover:text-white"
+          className="inline-flex w-[200px] items-center justify-center border-2 border-[#000] bg-gradient-to-br from-[#fefefe] via-[#cfcfcf] to-[#d4d4d4] px-6 py-3 text-base font-semibold text-[#003366] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.8)] transition hover:shadow-[2px_2px_0_rgba(0,0,0,0.7)] active:translate-y-0.5"
         >
           Go home
         </Link>
         <Link
           to="/algoViz"
-          className="rounded-full border border-white/40 px-4 py-2 transition hover:border-white hover:text-white"
+          className="inline-flex w-[200px] items-center justify-center border-2 border-[#000] bg-gradient-to-br from-[#fefefe] via-[#cfcfcf] to-[#d4d4d4] px-6 py-3 text-base font-semibold text-[#003366] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.8)] transition hover:shadow-[2px_2px_0_rgba(0,0,0,0.7)] active:translate-y-0.5"
         >
-          Browse AlgoViz desktop
+          Browse
         </Link>
       </div>
     </div>
