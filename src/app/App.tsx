@@ -15,6 +15,7 @@ const slugifySegment = (segment: string): string =>
     .toLowerCase()
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '') || 'section'
 
 const slugifySegmentWithoutAmpersand = (segment: string): string =>
@@ -23,6 +24,7 @@ const slugifySegmentWithoutAmpersand = (segment: string): string =>
     .toLowerCase()
     .replace(/&/g, ' ')
     .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '') || 'section'
 
 const dsaModules = import.meta.glob<DsaModule>('../features/dsa/routes/**/index.tsx', {
