@@ -172,7 +172,7 @@ export const explorerRoot: ExplorerFolderNode = folder('root', 'AlgoViz', [
       'minimum-spanning-tree',
       'Minimum Spanning Tree',
       'Compare Kruskal vs Prim with sorted edges and union-find inspector.',
-      '/dsa/2-core-algorithms/2-graph-algorithms/3-minimum-spanning-treee',
+      '/dsa/2-core-algorithms/2-graph-algorithms/3-minimum-spanning-tree',
       '\uD83C\uDF08',
     ),
   ]),
