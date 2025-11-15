@@ -181,7 +181,7 @@ export const explorerRoot: ExplorerFolderNode = folder('root', 'AlgoViz', [
       'knapsack',
       'Knapsack',
       'Table filling steps with decision tracebacks for 0/1 and unbounded variants.',
-      '/dsa/2-core-algorithms/3-dynamic-programming',
+      '/dsa/2-core-algorithms/3-dynamic-programming/knapsack',
       '\uD83C\uDF92',
     ),
     visualization(
