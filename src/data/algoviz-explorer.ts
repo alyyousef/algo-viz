@@ -1,4 +1,4 @@
-import { slugifySegment } from '@/features/dsa/utils/slug'
+﻿import { slugifySegment } from '@/features/dsa/utils/slug'
 
 export type ExplorerNodeKind = 'folder' | 'visualization'
 
@@ -88,7 +88,7 @@ const getSegmentArray = (filePath: string): string[] => {
 const compareSegmentArrays = (a: string[], b: string[]): number => {
   const maxLength = Math.min(a.length, b.length)
   for (let i = 0; i < maxLength; i += 1) {
-    const comparison = collator.compare(a[i], b[i])
+    const comparison = collator.compare(a[i]!, b[i]!)
     if (comparison !== 0) {
       return comparison
     }
@@ -145,7 +145,7 @@ const sortedNonLeafPrefixes = Array.from(nonLeafPrefixes).sort((a, b) => {
 
 sortedNonLeafPrefixes.forEach((prefix) => {
   const segments = prefixSegments.get(prefix)
-  if (!segments) {
+  if (!segments || segments.length === 0) {
     return
   }
 
@@ -157,13 +157,21 @@ sortedNonLeafPrefixes.forEach((prefix) => {
   }
 
   const nodeId = `folder:${slugPath(segments)}`
-  const displayName = formatSegmentName(segments[segments.length - 1])
+  const lastSegment = segments[segments.length - 1]
+  if (!lastSegment) {
+    return
+  }
+  const displayName = formatSegmentName(lastSegment)
   const childFolder = folder(nodeId, displayName, [])
-  folderCache.set(prefix, childFolder)
   parentFolder.children.push(childFolder)
+  folderCache.set(prefix, childFolder)
 })
 
 segmentPaths.forEach((segments) => {
+  if (segments.length === 0) {
+    return
+  }
+
   const prefix = joinPrefix(segments)
   if (nonLeafPrefixes.has(prefix)) {
     return
@@ -173,8 +181,12 @@ segmentPaths.forEach((segments) => {
   const parentPrefix = joinPrefix(parentSegments)
   const parentFolder = folderCache.get(parentPrefix) ?? explorerRoot
 
+  const lastSegment = segments[segments.length - 1]
+  if (!lastSegment) {
+    return
+  }
   const pageId = `page:${slugPath(segments)}`
-  const pageName = formatSegmentName(segments[segments.length - 1])
+  const pageName = formatSegmentName(lastSegment)
   const route = `/dsa/${slugPath(segments)}`
 
   parentFolder.children.push(visualization(pageId, pageName, undefined, route))
