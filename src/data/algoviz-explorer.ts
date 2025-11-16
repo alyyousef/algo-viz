@@ -1,4 +1,6 @@
-﻿export type ExplorerNodeKind = 'folder' | 'visualization'
+import { slugifySegment } from '@/features/dsa/utils/slug'
+
+export type ExplorerNodeKind = 'folder' | 'visualization'
 
 export interface ExplorerNodeBase {
   id: string
@@ -34,7 +36,7 @@ export interface ExplorerIndex {
 const visualization = (
   id: string,
   name: string,
-  description: string,
+  description?: string,
   route?: string,
   icon = '\uD83D\uDCCA',
   estimatedDurationMinutes?: number,
@@ -48,12 +50,7 @@ const visualization = (
   estimatedDurationMinutes,
 })
 
-const folder = (
-  id: string,
-  name: string,
-  children: ExplorerNode[],
-  icon = '\uD83D\uDCC1',
-): ExplorerFolderNode => ({
+const folder = (id: string, name: string, children: ExplorerNode[], icon = '\uD83D\uDCC1'): ExplorerFolderNode => ({
   id,
   name,
   icon,
@@ -61,138 +58,127 @@ const folder = (
   children,
 })
 
-export const explorerRoot: ExplorerFolderNode = folder('root', 'AlgoViz', [
-  folder('fundamentals', 'Fundamentals', [
-    visualization(
-      'complexity-analysis',
-      'Complexity Analysis',
-      'Review Big-O, Big-Theta, and Big-Omega bounds with annotated charts.',
-      '/dsa/0-fundamentals/2-complexity-analysis-big-o',
-      '\uD83D\uDCC8',
-    ),
-    visualization(
-      'bitwise-operations',
-      'Bitwise Operations',
-      'Interactive bit manipulation playground with masks and shifts.',
-      '/dsa/0-fundamentals/3-bit-manipulation',
-      '\uD83E\uDDEE',
-    ),
-  ]),
-  folder('core-data-structures', 'Core Data Structures', [
-    folder('linear-structures', 'Linear Structures', [
-      visualization(
-        'arrays-lists',
-        'Arrays & Lists',
-        'Compare contiguous vs linked layouts with insertion/deletion demos.',
-        '/dsa/1-core-data-structures/1-linear/1-arrays-and-lists',
-      ),
-      visualization(
-        'linked-lists',
-        'Linked Lists',
-        'Step through pointer operations for singly and doubly linked lists.',
-        '/dsa/1-core-data-structures/1-linear/2-linked-lists',
-      ),
-      visualization(
-        'stacks',
-        'Stacks',
-        'Visualize push/pop operations with call stack analogies.',
-        '/dsa/1-core-data-structures/1-linear/3-stacks',
-        '\uD83D\uDDC4',
-      ),
-      visualization(
-        'queues',
-        'Queues',
-        'Simulate queueing systems with circular buffers and priority queues.',
-        '/dsa/1-core-data-structures/1-linear/4-queues',
-      ),
-    ]),
-    folder('non-linear-structures', 'Non-Linear Structures', [
-      visualization(
-        'trees',
-        'Trees',
-        'Traverse binary trees, heaps, and tries with animated recursion.',
-        '/dsa/1-core-data-structures/2-non-linear/1-trees',
-        '\uD83C\uDF33',
-      ),
-      visualization(
-        'graphs',
-        'Graphs',
-        'Explore BFS, DFS, and shortest paths with interactive graph layouts.',
-        '/dsa/1-core-data-structures/2-non-linear/2-graphs',
-        '\uD83D\uDD75',
-      ),
-    ]),
-  ]),
-  folder('sorting-algorithms', 'Sorting Algorithms', [
-    visualization(
-      'bubble-sort',
-      'Bubble Sort',
-      'Classic adjacent swap animation with swap counters and adaptive mode.',
-      '/dsa/2-core-algorithms/1-sorting-searching/bubble-sort',
-      '\uD83D\uDCA7',
-    ),
-    visualization(
-      'merge-sort',
-      'Merge Sort',
-      'Divide-and-conquer breakdown with merge buffers and tree view.',
-      '/dsa/2-core-algorithms/1-sorting-searching/merge-sort',
-      '\uD83D\uDD37',
-    ),
-    visualization(
-      'quick-sort',
-      'Quick Sort',
-      'Pivot selection strategies with Lomuto/Hoare partition animations.',
-      '/dsa/2-core-algorithms/1-sorting-searching/quick-sort',
-      '\u26A1',
-    ),
-    visualization(
-      'heap-sort',
-      'Heap Sort',
-      'Heapify process and array representation side-by-side.',
-      '/dsa/2-core-algorithms/1-sorting-searching/heap-sort',
-      '\u26F0',
-    ),
-  ]),
-  folder('graph-algorithms', 'Graph Algorithms', [
-    visualization(
-      'breadth-first-search',
-      'Breadth-First Search',
-      'Layer-by-layer traversal with queue state and distance tracking.',
-      '/dsa/2-core-algorithms/2-graph-algorithms/1-breadth-first-search',
-      '\uD83D\uDC41',
-    ),
-    visualization(
-      'dijkstras',
-      "Dijkstra's Algorithm",
-      'Shortest paths with priority queue timeline and edge relaxation view.',
-      '/dsa/2-core-algorithms/2-graph-algorithms/2-dijkstra-s-algorithm',
-      '\uD83D\uDEE6',
-    ),
-    visualization(
-      'minimum-spanning-tree',
-      'Minimum Spanning Tree',
-      'Compare Kruskal vs Prim with sorted edges and union-find inspector.',
-      '/dsa/2-core-algorithms/2-graph-algorithms/3-minimum-spanning-tree',
-      '\uD83C\uDF08',
-    ),
-  ]),
-  folder('dynamic-programming', 'Dynamic Programming', [
-    visualization(
-      'knapsack',
-      'Knapsack',
-      'Table filling steps with decision tracebacks for 0/1 and unbounded variants.',
-      '/dsa/2-core-algorithms/3-dynamic-programming/knapsack',
-      '\uD83C\uDF92',
-    ),
-    visualization(
-      'longest-common-subsequence',
-      'Longest Common Subsequence',
-      'Matrix animations that highlight matches and reconstruction paths.',
-      '/dsa/2-core-algorithms/3-dynamic-programming',
-      '\uD83D\uDD17',
-    ),
-  ]),
-])
+const ROUTE_PREFIX = '../features/dsa/routes/DSA/'
+const SEGMENT_DELIMITER = '\u0000'
+
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+
+const joinPrefix = (segments: string[]) => segments.join(SEGMENT_DELIMITER)
+const formatSegmentName = (segment: string): string =>
+  segment.replace(/^\d+\.\s*/, '').trim() || segment
+const slugPath = (segments: string[]): string => segments.map((segment) => slugifySegment(segment)).join('/')
+
+const routeFiles = Object.keys(
+  import.meta.glob('../features/dsa/routes/DSA/**/index.tsx', { eager: false }),
+)
+
+const getSegmentArray = (filePath: string): string[] => {
+  if (!filePath.startsWith(ROUTE_PREFIX)) {
+    return []
+  }
+
+  const relative = filePath.slice(ROUTE_PREFIX.length).replace(/\/index\.tsx$/, '')
+  if (!relative) {
+    return []
+  }
+
+  return relative.split('/')
+}
+
+const compareSegmentArrays = (a: string[], b: string[]): number => {
+  const maxLength = Math.min(a.length, b.length)
+  for (let i = 0; i < maxLength; i += 1) {
+    const comparison = collator.compare(a[i], b[i])
+    if (comparison !== 0) {
+      return comparison
+    }
+  }
+  return a.length - b.length
+}
+
+const segmentPaths = routeFiles
+  .map(getSegmentArray)
+  .filter((segments): segments is string[] => segments.length > 0)
+  .sort(compareSegmentArrays)
+
+const prefixSegments = new Map<string, string[]>()
+const prefixMaxDepth = new Map<string, number>()
+
+segmentPaths.forEach((segments) => {
+  for (let depth = 1; depth <= segments.length; depth += 1) {
+    const prefix = joinPrefix(segments.slice(0, depth))
+    if (!prefixSegments.has(prefix)) {
+      prefixSegments.set(prefix, segments.slice(0, depth))
+    }
+
+    const currentMax = prefixMaxDepth.get(prefix) ?? 0
+    if (segments.length > currentMax) {
+      prefixMaxDepth.set(prefix, segments.length)
+    }
+  }
+})
+
+const nonLeafPrefixes = new Set<string>()
+prefixSegments.forEach((segments, prefix) => {
+  if ((prefixMaxDepth.get(prefix) ?? 0) > segments.length) {
+    nonLeafPrefixes.add(prefix)
+  }
+})
+
+export const explorerRoot: ExplorerFolderNode = folder('root', 'AlgoViz', [])
+const folderCache = new Map<string, ExplorerFolderNode>([['', explorerRoot]])
+
+const sortedNonLeafPrefixes = Array.from(nonLeafPrefixes).sort((a, b) => {
+  const aSegments = prefixSegments.get(a)
+  const bSegments = prefixSegments.get(b)
+
+  if (!aSegments || !bSegments) {
+    return 0
+  }
+
+  if (aSegments.length !== bSegments.length) {
+    return aSegments.length - bSegments.length
+  }
+
+  return compareSegmentArrays(aSegments, bSegments)
+})
+
+sortedNonLeafPrefixes.forEach((prefix) => {
+  const segments = prefixSegments.get(prefix)
+  if (!segments) {
+    return
+  }
+
+  const parentSegments = segments.slice(0, -1)
+  const parentPrefix = joinPrefix(parentSegments)
+  const parentFolder = folderCache.get(parentPrefix)
+  if (!parentFolder) {
+    return
+  }
+
+  const nodeId = `folder:${slugPath(segments)}`
+  const displayName = formatSegmentName(segments[segments.length - 1])
+  const childFolder = folder(nodeId, displayName, [])
+  folderCache.set(prefix, childFolder)
+  parentFolder.children.push(childFolder)
+})
+
+segmentPaths.forEach((segments) => {
+  const prefix = joinPrefix(segments)
+  if (nonLeafPrefixes.has(prefix)) {
+    return
+  }
+
+  const parentSegments = segments.slice(0, -1)
+  const parentPrefix = joinPrefix(parentSegments)
+  const parentFolder = folderCache.get(parentPrefix) ?? explorerRoot
+
+  const pageId = `page:${slugPath(segments)}`
+  const pageName = formatSegmentName(segments[segments.length - 1])
+  const route = `/dsa/${slugPath(segments)}`
+
+  parentFolder.children.push(visualization(pageId, pageName, undefined, route))
+})
 
 export const createExplorerIndex = (root: ExplorerFolderNode): ExplorerIndex => {
   const map = new Map<string, ExplorerIndexEntry>()
