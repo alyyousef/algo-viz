@@ -34,7 +34,7 @@ export default function TopicLayout({
   backLabel = 'Back to catalog',
 }: TopicLayoutProps): JSX.Element {
   return (
-    <div className="min-h-screen bg-[linear-gradient(135deg,#008080_0%,#000080_100%)] font-mono text-white">
+    <div className="min-h-screen bg-[#001A7F] font-mono text-white">
       <div className="mx-auto flex w-full max-w-none flex-col gap-8 px-6 pb-12 pt-10">
         <header className="space-y-4 text-white">
           <div className="flex justify-end">
