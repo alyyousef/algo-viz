@@ -66,10 +66,13 @@ function DesktopContainer(): JSX.Element {
     activeWindowId,
     rootFolders,
     openFolderWindow,
+    openVisualizationWindow,
     toggleMinimize,
+    getChildren,
   } = useWin96WindowManager()
   const [now, setNow] = useState(() => new Date())
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
+  const [activeStartFolderId, setActiveStartFolderId] = useState<string | null>(null)
   const startMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -116,12 +119,14 @@ function DesktopContainer(): JSX.Element {
   }, [isStartMenuOpen])
 
   const handleStartButtonClick = () => {
-    setIsStartMenuOpen((open) => !open)
-  }
-
-  const handleSelectFolder = (folderId: string) => {
-    setIsStartMenuOpen(false)
-    openFolderWindow(folderId)
+    setIsStartMenuOpen((open) => {
+      const next = !open
+      if (next) {
+        const firstFolder = startMenuEntries[0]
+        setActiveStartFolderId(firstFolder ? firstFolder.id : null)
+      }
+      return next
+    })
   }
 
   const timeLabel = useMemo(
@@ -164,6 +169,31 @@ function DesktopContainer(): JSX.Element {
     [rootFolders],
   )
 
+  const activeStartFolder = useMemo(
+    () => startMenuEntries.find((node) => node.id === activeStartFolderId) ?? startMenuEntries[0],
+    [activeStartFolderId, startMenuEntries],
+  )
+
+  const activeStartFolderChildren = useMemo(() => {
+    if (!activeStartFolder) {
+      return []
+    }
+    return getChildren(activeStartFolder.id)
+  }, [activeStartFolder, getChildren])
+
+  const handleSelectStartFolder = (folderId: string) => {
+    setActiveStartFolderId(folderId)
+  }
+
+  const handleLaunchNode = (nodeId: string, kind: 'folder' | 'visualization') => {
+    setIsStartMenuOpen(false)
+    if (kind === 'folder') {
+      openFolderWindow(nodeId)
+    } else {
+      openVisualizationWindow(nodeId)
+    }
+  }
+
   return (
     <div className="win96-desktop theme-win97">
       <div className="win96-desktop-icons">
@@ -185,29 +215,77 @@ function DesktopContainer(): JSX.Element {
           role="menu"
           aria-label="AlgoViz start menu"
         >
-          <div className="win96-start-menu__sidebar">
-            <span className="win96-start-menu__sidebar-label">AlgoViz</span>
-          </div>
-          <div className="win96-start-menu__list">
-            {startMenuEntries.map((node) => (
-              <button
-                key={node.id}
-                type="button"
-                className="win96-start-menu__item"
-                role="menuitem"
-                onClick={() => handleSelectFolder(node.id)}
-              >
-                <span className="win96-start-menu__item-icon" aria-hidden="true">
-                  {node.icon ?? FOLDER_GLYPH}
+          <div className="win96-start-menu__columns">
+            <div className="win96-start-menu__list">
+              {startMenuEntries.map((node) => {
+                const isActive = node.id === activeStartFolder?.id
+                return (
+                  <button
+                    key={node.id}
+                    type="button"
+                    className={`win96-start-menu__item${isActive ? ' win96-start-menu__item--active' : ''}`}
+                    role="menuitem"
+                    onClick={() => handleSelectStartFolder(node.id)}
+                  >
+                    <span className="win96-start-menu__item-icon" aria-hidden="true">
+                      {node.icon ?? FOLDER_GLYPH}
+                    </span>
+                    <span className="win96-start-menu__item-content">
+                      <span className="win96-start-menu__item-label">{node.name}</span>
+                      {node.description ? (
+                        <span className="win96-start-menu__item-description">
+                          {node.description}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="win96-start-menu__subpanel" role="menu">
+              <div className="win96-start-menu__subpanel-header">
+                <span className="win96-start-menu__subpanel-title">
+                  {activeStartFolder?.name ?? 'Items'}
                 </span>
-                <span className="win96-start-menu__item-content">
-                  <span className="win96-start-menu__item-label">{node.name}</span>
-                  {node.description ? (
-                    <span className="win96-start-menu__item-description">{node.description}</span>
-                  ) : null}
-                </span>
-              </button>
-            ))}
+                {activeStartFolder ? (
+                  <button
+                    type="button"
+                    className="win96-start-menu__subpanel-action"
+                    onClick={() => handleLaunchNode(activeStartFolder.id, 'folder')}
+                  >
+                    Open
+                  </button>
+                ) : null}
+              </div>
+              <div className="win96-start-menu__sublist">
+                {activeStartFolderChildren.length === 0 ? (
+                  <div className="win96-start-menu__subpanel-empty">No items</div>
+                ) : (
+                  activeStartFolderChildren.map((child) => (
+                    <button
+                      key={child.id}
+                      type="button"
+                      className="win96-start-menu__item win96-start-menu__item--sub"
+                      role="menuitem"
+                      onClick={() => handleLaunchNode(child.id, child.kind)}
+                    >
+                      <span className="win96-start-menu__item-icon" aria-hidden="true">
+                        {child.icon ?? (child.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH)}
+                      </span>
+                      <span className="win96-start-menu__item-content">
+                        <span className="win96-start-menu__item-label">{child.name}</span>
+                        {child.description ? (
+                          <span className="win96-start-menu__item-description">
+                            {child.description}
+                          </span>
+                        ) : null}
+                      </span>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
       ) : null}
