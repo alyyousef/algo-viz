@@ -2,9 +2,9 @@
 
 # AlgoViz
 
+![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/-React%2019-black?style=flat-square&logo=react)
 ![React Router](https://img.shields.io/badge/-React%20Router%20v7-black?style=flat-square&logo=react-router)
-![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/-Vite%207-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/-Tailwind%20CSS%204-06B6D4?style=flat-square&logo=tailwind-css&logoColor=white)
 ![Zustand](https://img.shields.io/badge/-Zustand-black?style=flat-square&logo=zustand)
