@@ -2,8 +2,6 @@
 
 # AlgoViz
 
-Interactive Algorithm Visualizer & Learning Platform
-
 A comprehensive web application that teaches data structures and algorithms through interactive visualizations, gamification, and hands-on practice. Built for computer science students, self-taught programmers, interview prep candidates, and algorithm enthusiasts.
 
 </div>
