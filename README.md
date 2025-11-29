@@ -2,6 +2,18 @@
 
 # AlgoViz
 
+![React](https://img.shields.io/badge/-React%2019-black?style=flat-square&logo=react)
+![React Router](https://img.shields.io/badge/-React%20Router%20v7-black?style=flat-square&logo=react-router)
+![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/-Vite%207-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/-Tailwind%20CSS%204-06B6D4?style=flat-square&logo=tailwind-css&logoColor=white)
+![Zustand](https://img.shields.io/badge/-Zustand-black?style=flat-square&logo=zustand)
+![Framer Motion](https://img.shields.io/badge/-Framer%20Motion-black?style=flat-square&logo=framer)
+![Recharts](https://img.shields.io/badge/-Recharts-8884D8?style=flat-square)
+![ESLint](https://img.shields.io/badge/-ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)
+![Vitest](https://img.shields.io/badge/-Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)
+![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat-square&logo=github)
+
 A comprehensive web application that teaches data structures and algorithms through interactive visualizations, gamification, and hands-on practice. Built for computer science students, self-taught programmers, interview prep candidates, and algorithm enthusiasts.
 
 </div>
@@ -198,58 +210,37 @@ npm run preview  # Preview production build locally
 
 ## How to Use
 
-1. **Select an algorithm** from the navigation menu (Sorting, Searching, Data Structures, etc.)
+1. **Select a Topic** from the navigation menu (Sorting, Searching, Data Structures, etc.)
 
-2. **Choose a specific algorithm** from the algorithm selector (e.g., Bubble Sort, Quick Sort)
+2. **Choose an Algorithm** to study (e.g., Bubble Sort, Quick Sort)
 
-3. **Customize the visualization:**
-   - Adjust array size with the slider
-   - Generate a new random array
-   - Input custom values
-   - Select preset patterns (sorted, reverse, nearly sorted)
+3. **Learn the Fundamentals:**
+   - Read the algorithm description and explanation
+   - View the step-by-step code implementation with comments
+   - Understand the core concepts and approach
 
-4. **Control playback:**
-   - Click **Play** to start the animation
-   - Use **Pause** to stop at any point
-   - Click **Reset** to return to the initial state
-   - Adjust **Speed** to control animation tempo
+4. **Explore Examples:**
+   - Study how the algorithm works on different input patterns (sorted, reverse, nearly sorted, random)
+   - See traced execution steps and decision points
+   - Review worked examples with detailed walkthroughs
 
-5. **Learn while watching:**
-   - Read the algorithm description in the info panel
-   - View the code implementation
-   - Monitor statistics (comparisons, swaps, time)
-   - Check complexity information
+5. **Analyze Complexity:**
+   - Review time complexity (best, average, worst case)
+   - Understand space complexity requirements
+   - Compare performance across different scenarios
+   - View complexity graphs and trade-offs
 
-6. **Practice (coming soon):**
-   - Try challenge mode to test your understanding
-   - Compete for the best time in timed challenges
-   - Unlock achievements as you learn
+6. **Compare Algorithms:**
+   - See side-by-side comparisons with similar algorithms
+   - Understand when to use each approach
+   - Review pros and cons of different strategies
 
-## Tests
-
-**Run all tests:**
-
-```bash
-npm test
-```
-
-**Run tests in watch mode:**
-
-```bash
-npm test -- --watch
-```
-
-**Run tests with coverage:**
-
-```bash
-npm test -- --coverage
-```
-
-**Test structure:**
-
-- `/src/algorithms/__tests__/` - Algorithm logic tests
-- `/src/components/__tests__/` - Component tests
-- `/src/hooks/__tests__/` - Custom hook tests
+7. **Practice & Assessment (coming soon):**
+   - Answer conceptual questions about the algorithm
+   - Trace through execution manually
+   - Implement the algorithm from scratch
+   - Debug incorrect implementations
+   - Take assessment quizzes to test your understanding
 
 ## Contribute
 
@@ -318,7 +309,6 @@ Contributions are welcome and appreciated! Here's how you can help:
 
 **Special Thanks:**
 
-- My family and friends
 - The open-source community for amazing tools and libraries
 
 ## License
@@ -331,6 +321,7 @@ You are free to:
 - Modify and adapt the code
 - Distribute and sublicense
 - Use privately
+- Do whatever you wish
 
 **Attribution appreciated but not required!**
 
@@ -345,4 +336,4 @@ You are free to:
 - [GitHub](https://github.com/alyyousef)
 
 Star this repo if you find it helpful!  
-Have a suggestion? Found a bug? Email me at aliyousef.aca@gmail.com
+Have a suggestion? Want to add something? Email me at aliyousef.aca@gmail.com
