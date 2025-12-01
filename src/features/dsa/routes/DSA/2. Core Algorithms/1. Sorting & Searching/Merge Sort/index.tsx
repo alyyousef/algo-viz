@@ -2,98 +2,342 @@ import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout
 
 import type { JSX } from 'react'
 
+const historicalNotes = [
+  {
+    title: '1945, John von Neumann proposes merge sort',
+    detail:
+      'Designed for early computers with sequential storage, merge sort fit tape drives where random access was expensive but linear scans were cheap.',
+  },
+  {
+    title: '1968, Knuth formalizes the analysis',
+    detail:
+      'The Art of Computer Programming Volume 3 recorded merge sort as a canonical stable sort with tight O(n log n) bounds and practical external variants.',
+  },
+  {
+    title: '1970s, database and tape sorting',
+    detail:
+      'External merge sort became the backbone of tape and disk sorting, influencing database merge joins and batch processing pipelines.',
+  },
+  {
+    title: '2002, Tim Peters crafts Timsort',
+    detail:
+      'Python adopted a hybrid merge-based sort that detects natural runs and gallops through data, later adopted by Java and Android.',
+  },
+]
+
+const mentalModels = [
+  {
+    title: 'Two conveyor belts',
+    detail:
+      'Picture two belts of sorted boxes feeding a single chute. You always take the smaller front box to keep the outgoing stream sorted.',
+  },
+  {
+    title: 'Tournament brackets',
+    detail:
+      'Subarrays compete pairwise, producing winners that advance to the next merge round. Each level halves the number of contenders until one sorted champion remains.',
+  },
+  {
+    title: 'Band rehearsal',
+    detail:
+      'Each section (subarray) practices alone to stay in tune, then sections merge in time until the full orchestra is synchronized in order.',
+  },
+]
+
+const mechanics = [
+  {
+    heading: 'Divide phase',
+    bullets: [
+      'Split the array at the midpoint into left and right halves until each segment has length 1.',
+      'Recursion depth is O(log n), and each level covers all elements exactly once.',
+    ],
+  },
+  {
+    heading: 'Merge phase',
+    bullets: [
+      'Maintain two pointers, one per half. Repeatedly pick the smaller element to append to the output buffer.',
+      'When a half is exhausted, append the remaining items from the other half; they are already sorted.',
+      'Copy the merged buffer back into the original segment to preserve global order.',
+    ],
+  },
+  {
+    heading: 'Stable behavior',
+    bullets: [
+      'Ties are resolved by taking from the left half first, so equal elements retain their original ordering.',
+      'Stability is why merge sort underpins language library sorts where predictable ordering matters.',
+    ],
+  },
+]
+
+const complexityNotes = [
+  {
+    title: 'Time complexity',
+    detail:
+      'Every level of the recursion tree processes n elements, and there are log2 n levels. Total time is O(n log n) regardless of input order.',
+  },
+  {
+    title: 'Space complexity',
+    detail:
+      'The classic array implementation needs O(n) auxiliary space for the merge buffer. Linked list versions can achieve O(1) extra space by relinking nodes.',
+  },
+  {
+    title: 'Cache and bandwidth',
+    detail:
+      'Merge sort reads and writes sequentially, which plays well with disks and memory bandwidth. Cache locality is good for the merge buffer but can lag quicksort on in-place arrays.',
+  },
+  {
+    title: 'Stability and determinism',
+    detail:
+      'Stable by design and free from pivot pathologies. Worst-case behavior matches average-case behavior, a reason databases rely on it.',
+  },
+]
+
+const applications = [
+  {
+    context: 'Standard library defaults',
+    detail:
+      'Python, Java, and Android collections lean on Timsort, a merge-based stable algorithm tuned for real-world runs and partly sorted data.',
+  },
+  {
+    context: 'External sorting and ETL',
+    detail:
+      'Sorting terabyte-scale logs uses external merge sort: produce sorted runs that fit in memory or on SSD, then k-way merge them from disk.',
+  },
+  {
+    context: 'Databases and merge joins',
+    detail:
+      'Merge sort aligns with merge join operators. Sorted relations let databases join in linear time relative to input sizes.',
+  },
+  {
+    context: 'Linked list ordering',
+    detail:
+      'Without random access, quicksort and heapsort stumble. Merge sort on linked lists stays O(n log n) and stable with no extra buffer.',
+  },
+]
+
+const codeExamples = [
+  {
+    title: 'Classic merge sort (TypeScript-like pseudocode)',
+    code: `function mergeSort(arr: number[]): number[] {
+  if (arr.length <= 1) return arr
+  const mid = Math.floor(arr.length / 2)
+  const left = mergeSort(arr.slice(0, mid))
+  const right = mergeSort(arr.slice(mid))
+  return merge(left, right)
+}
+
+function merge(a: number[], b: number[]): number[] {
+  const out: number[] = []
+  let i = 0, j = 0
+  while (i < a.length && j < b.length) {
+    if (a[i] <= b[j]) out.push(a[i++])
+    else out.push(b[j++])
+  }
+  // append any leftovers
+  while (i < a.length) out.push(a[i++])
+  while (j < b.length) out.push(b[j++])
+  return out
+}`,
+    explanation:
+      'Left-first tie handling preserves stability. Slicing simplifies the exposition; production code prefers a shared buffer to avoid repeated allocations.',
+  },
+  {
+    title: 'External merge: k-way merge of sorted runs',
+    code: `function mergeRuns(runs: Array<Iterator<number>>): number[] {
+  // Min-heap of { value, fromRun }
+  const heap: Array<{ v: number, r: number }> = []
+  const next = (r: number) => {
+    const iter = runs[r]
+    const { value, done } = iter.next()
+    if (!done) pushHeap(heap, { v: value, r })
+  }
+  // seed heap
+  for (let r = 0; r < runs.length; r++) next(r)
+  const out: number[] = []
+  while (heap.length) {
+    const { v, r } = popMin(heap)
+    out.push(v)
+    next(r) // refill from the run that lost an element
+  }
+  return out
+}`,
+    explanation:
+      'External sort reads multiple pre-sorted runs from disk and merges them with a min-heap of run heads. The heap keeps the next smallest item across all runs in O(log k) per output element.',
+  },
+]
+
+const pitfalls = [
+  'Forgetting to copy merged data back into the source segment leaves parent calls with stale ordering.',
+  'Allocating a fresh buffer at every recursion level inflates space to O(n log n). Reuse one buffer per call stack level instead.',
+  'Off-by-one midpoints can skip elements or double-count them. Use mid = floor((l + r) / 2) and careful boundaries.',
+  'Recursion depth can overflow on very large inputs in constrained environments; iterative bottom-up merges avoid this.',
+  'Assuming merge sort is always faster because of stability. On tiny arrays insertion sort beats it; hybrids switch for small sizes.',
+]
+
+const decisionGuidance = [
+  'Need stability and predictable O(n log n) time: choose merge sort or Timsort.',
+  'Sorting linked lists: prefer merge sort to avoid random access and preserve stability.',
+  'Sorting data larger than memory: external merge sort is the default approach.',
+  'Memory is tight and stability is optional: quicksort or heapsort may be better.',
+  'Real-world partially sorted data: use Timsort or a merge hybrid that exploits natural runs.',
+]
+
+const advancedInsights = [
+  {
+    title: 'Bottom-up iterative merges',
+    detail:
+      'Merging subarrays of size 1, then 2, then 4 avoids recursion and improves cache behavior. This pattern mirrors how Timsort merges runs.',
+  },
+  {
+    title: 'Galloping mode in Timsort',
+    detail:
+      'When one run dominates comparisons, Timsort switches to exponential search and bulk copies, cutting comparisons significantly on clustered data.',
+  },
+  {
+    title: 'In-place merging tricks',
+    detail:
+      'Algorithms like the rotation method or block merge sort reduce auxiliary space below O(n) while trying to preserve stability, trading simplicity for intricate pointer gymnastics.',
+  },
+  {
+    title: 'Parallel merges',
+    detail:
+      'Splitting both halves and merging with parallel prefix partitions delivers near-linear speedups on multi-core systems when bandwidth allows.',
+  },
+]
+
+const takeaways = [
+  'Merge sort delivers stable, deterministic O(n log n) performance across inputs.',
+  'Its space footprint buys simplicity and guarantees, shining on linked lists and external sorting.',
+  'Run detection and galloping, as in Timsort, make merge-based sorts excel on real-world partially ordered data.',
+  'When memory is scarce, consider quicksort or heapsort; when order stability matters, merge sort is the safe choice.',
+  'References: CLRS Chapter 2, Knuth Volume 3, and GeeksforGeeks for visual walkthroughs and external sort examples.',
+]
+
 export default function MergeSortPage(): JSX.Element {
   return (
     <TopicLayout
       title="Merge Sort"
-      subtitle="Weaving order from two halves"
-      intro="Merge sort feels like a calm atelier: every sequence pauses while the artist splits it into smaller canvases, then merges the painted pieces back together with careful, ordered strokes."
+      subtitle="Divide, conquer, and recombine in steady order"
+      intro="Merge sort is the canonical divide-and-conquer sort: split the array into halves, sort each half, and merge them while keeping ties stable. Its predictable O(n log n) behavior and stability make it a backbone for library sorts, external sorting, and linked structures."
     >
-      <TopicSection heading="Why merge sort exists">
-        <p>
-          Not every list can be tamed by one left-to-right sweep. Merge sort exists to tame chaos by asking the list to quiet down, divide into manageable chunks, and trust the system to reassemble them without losing perspective.
-        </p>
-        <p>
-          It is one of the purest divide-and-conquer routines: the work is the same at every scale. You keep splitting until the pieces are inevitable, then you trust the merging step to restore the rhythm.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Breaking problems down">
-        <p>
-          Split the sequence exactly in half. No heuristics, no fancy pivots. Each recursive call gets a smaller neighborhood of the data until it only holds one element, a trivially sorted piece.
-        </p>
-        <p>
-          Even though you are calling the same routine over and over, every level of recursion works on exponentially fewer items. The call stack grows logarithmically, so the work per level stays steady.
+      <TopicSection heading="The big picture">
+        <p className="text-white/80">
+          Merge sort exists to provide reliable ordering when memory and determinism matter. It favors sequential access over clever
+          pivots, making it ideal for disks, streams, and data that must keep equal elements in their original order. Its rhythm is
+          consistent at every scale: divide, sort, and merge with the same choreography from start to finish.
         </p>
       </TopicSection>
 
-      <TopicSection heading="The merge choreography">
-        <p>
-          Two ordered halves sit side by side with pointers at the front of each. The merge step compares their heads, appends the smaller to the output, and advances that pointer. It is a polite negotiation between halves, always picking the friendliest candidate.
-        </p>
-        <p>
-          When one half runs dry, the other has already been living in sorted order, so you append the rest without another comparison. The merged result preserves every order relation from the halves without backtracking.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="What you can do with merge sort">
-        <div className="space-y-2 text-sm text-white/90">
-          <p>
-            Build stable sorts: equal elements keep their original ordering because merges never rearrange ties.
-          </p>
-          <p>
-            Divide huge data sets into chunks that fit in memory, sort each slice independently, and then stream the merges so you never load everything at once.
-          </p>
-          <p>
-            Parallelize the halves by splitting the work among threads or machines and merging the sorted streams back together in a reduction tree.
-          </p>
-          <p>
-            Use it for linked lists too. You can split and merge without random access, which keeps the advantages of O(n log n) time while avoiding extra space for array copies.
-          </p>
+      <TopicSection heading="Historical context">
+        <div className="grid gap-3 md:grid-cols-2">
+          {historicalNotes.map((item) => (
+            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
         </div>
       </TopicSection>
 
-      <TopicSection heading="Building your own">
-        <p>
-          Represent the recursive split explicitly, or simulate it with an explicit stack when you need control over recursion depth. The key is to remember the merge order so that you only combine segments when both are ready.
-        </p>
-        <p>
-          In-place variants exist, but they require careful bookkeeping to rotate elements without breaking stability. Keep the logic separate: write a clean merge first, then only optimize if memory becomes the bottleneck.
-        </p>
-        <p>
-          Always test with edge cases: empty inputs, already sorted lists, and reverse-sorted lists all exercise different parts of the recursion tree.
+      <TopicSection heading="Core concept and mental models">
+        <div className="grid gap-3 md:grid-cols-3">
+          {mentalModels.map((item) => (
+            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{item.title}</p>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="How it works">
+        <div className="grid gap-3 md:grid-cols-3">
+          {mechanics.map((block) => (
+            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{block.heading}</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
+                {block.bullets.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+        <p className="mt-3 text-sm text-white/70">
+          The merge step drives the algorithm: two sorted halves flow into a buffer, picking the smallest head each time. Stability
+          arises naturally because ties favor the left half, preserving the original relative order of equal items.
         </p>
       </TopicSection>
 
-      <TopicSection heading="Performance and space trade-offs">
-        <p>
-          Merge sort visits every element exactly once per level, and there are O(log n) levels, so the running time stays at O(n log n) regardless of how the data started.
-        </p>
-        <p>
-          The cost is space: the merge step needs a buffer proportional to the number of active elements unless you carefully splice nodes in linked structures. That trade-off is worth it when you care more about guarantees than squeezing out every byte.
-        </p>
+      <TopicSection heading="Complexity analysis">
+        <div className="grid gap-3 md:grid-cols-2">
+          {complexityNotes.map((note) => (
+            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
+              <p className="text-sm text-white/80">{note.detail}</p>
+            </article>
+          ))}
+        </div>
       </TopicSection>
 
-      <TopicSection heading="Related sorts and hybrids">
-        <div className="space-y-3 text-sm text-white/90">
-          <article>
-            <p className="font-semibold text-white">Sorting neighbors:</p>
-            <ul className="list-disc space-y-1 pl-5">
-              <li>Quick sort splits with a pivot and sorts in place, but its worst case can degrade without good pivot selection.</li>
-              <li>Heap sort guarantees O(n log n) with constant space overhead, yet it breaks stability for the sake of brevity.</li>
-              <li>Tim sort combines merge sort with insertion sort to exploit runs in real data, making it the practical default for many libraries.</li>
-              <li>Radix sort moves beyond comparisons, handling digits directly for linear time at the cost of extra passes.</li>
-            </ul>
-          </article>
+      <TopicSection heading="Real-world applications">
+        <div className="grid gap-3 md:grid-cols-2">
+          {applications.map((item) => (
+            <article key={item.context} className="rounded-lg bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{item.context}</p>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </TopicSection>
 
-          <article>
-            <p className="font-semibold text-white">Merge-inspired structures:</p>
-            <ul className="list-disc space-y-1 pl-5">
-              <li>K-way merge extends the idea to more than two inputs, which is key for multi-way merge joins in databases.</li>
-              <li>External merge sort keeps sorted runs on disk and only loads what is necessary for each merge.</li>
-              <li>Mergeable heaps and priority queues reuse the ordered merge when melding two structures.</li>
-            </ul>
-          </article>
+      <TopicSection heading="Practical examples">
+        <div className="space-y-4">
+          {codeExamples.map((example) => (
+            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{example.title}</p>
+              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
+                <code>{example.code}</code>
+              </pre>
+              <p className="text-sm text-white/80">{example.explanation}</p>
+            </article>
+          ))}
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Common pitfalls">
+        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
+          {pitfalls.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </TopicSection>
+
+      <TopicSection heading="When to use it">
+        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
+          {decisionGuidance.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ol>
+      </TopicSection>
+
+      <TopicSection heading="Advanced insights and variations">
+        <div className="grid gap-3 md:grid-cols-2">
+          {advancedInsights.map((item) => (
+            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{item.title}</p>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Key takeaways">
+        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
+          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
+            {takeaways.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         </div>
       </TopicSection>
     </TopicLayout>
