@@ -259,12 +259,15 @@
 }
 
 .win96-desktop-icons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-auto-rows: minmax(76px, auto);
+  align-content: start;
+  align-items: start;
+  gap: 24px 32px;
   padding: 24px;
-  width: max(140px, min(200px, 100%));
+  width: min(440px, 100%);
 }
 
 .win96-window-layer {

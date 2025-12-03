@@ -75,6 +75,20 @@ function DesktopContainer(): JSX.Element {
   const [activeStartFolderId, setActiveStartFolderId] = useState<string | null>(null)
   const startMenuRef = useRef<HTMLDivElement | null>(null)
 
+  const orderedRootFolders = useMemo(() => {
+    const priorityIds = [
+      'folder:0-fundamentals',
+      'folder:0-cs-problems',
+      'folder:0-programming-languages',
+    ]
+    const lookup = new Set(priorityIds)
+    const prioritized = priorityIds
+      .map((id) => rootFolders.find((node) => node.id === id))
+      .filter(Boolean)
+    const rest = rootFolders.filter((node) => !lookup.has(node.id))
+    return [...prioritized, ...rest]
+  }, [rootFolders])
+
   useEffect(() => {
     const timer = window.setInterval(() => {
       setNow(new Date())
@@ -165,8 +179,8 @@ function DesktopContainer(): JSX.Element {
   })
 
   const startMenuEntries = useMemo(
-    () => rootFolders.filter((node) => node.kind === 'folder'),
-    [rootFolders],
+    () => orderedRootFolders.filter((node) => node.kind === 'folder'),
+    [orderedRootFolders],
   )
 
   const activeStartFolder = useMemo(
@@ -197,7 +211,7 @@ function DesktopContainer(): JSX.Element {
   return (
     <div className="win96-desktop theme-win97">
       <div className="win96-desktop-icons">
-        {rootFolders.map((node) => (
+        {orderedRootFolders.map((node) => (
           <DesktopIcon96
             key={node.id}
             label={node.name}
