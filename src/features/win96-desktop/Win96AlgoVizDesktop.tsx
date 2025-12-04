@@ -76,17 +76,22 @@ function DesktopContainer(): JSX.Element {
   const startMenuRef = useRef<HTMLDivElement | null>(null)
 
   const orderedRootFolders = useMemo(() => {
-    const priorityIds = [
+    const desiredOrder = [
       'folder:0-fundamentals',
-      'folder:0-cs-problems',
       'folder:0-programming-languages',
+      'folder:1-core-data-structures',
+      'folder:2-core-algorithms',
+      'folder:3-algorithmic-paradigms',
+      'folder:0-cs-problems',
+      'folder:4-domain-specific-advanced',
+      'folder:5-specialized-applications',
     ]
-    const lookup = new Set(priorityIds)
-    const prioritized = priorityIds
-      .map((id) => rootFolders.find((node) => node.id === id))
-      .filter(Boolean)
-    const rest = rootFolders.filter((node) => !lookup.has(node.id))
-    return [...prioritized, ...rest]
+    const lookup = new Map(rootFolders.map((node) => [node.id, node]))
+    const ordered = desiredOrder
+      .map((id) => lookup.get(id))
+      .filter((node): node is NonNullable<typeof node> => Boolean(node))
+    const rest = rootFolders.filter((node) => !desiredOrder.includes(node.id))
+    return [...ordered, ...rest]
   }, [rootFolders])
 
   useEffect(() => {
