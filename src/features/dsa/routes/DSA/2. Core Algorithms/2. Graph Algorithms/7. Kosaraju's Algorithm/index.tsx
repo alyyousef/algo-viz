@@ -2,147 +2,226 @@ import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout
 
 import type { JSX } from 'react'
 
-const mentalModels = [
+const historicalMilestones = [
   {
-    title: 'Two-pass mirror walk',
+    title: 'Tarjan, Kosaraju, and the SCC toolkit (1970s)',
     detail:
-      'First walk the original graph to record finishing times, then walk the reversed graph in that order to reveal strongly connected components (SCCs).',
+      'Multiple linear-time SCC algorithms emerged: Kosaraju’s two-pass DFS, Tarjan’s one-pass low-link method, and later Gabow’s stack-based approach. Together they cemented SCCs as a core graph primitive.',
   },
   {
-    title: 'Condensation peeling',
+    title: 'Cut/condense insight',
     detail:
-      'Reversing the graph turns sinks into sources. Processing by reverse finish order peels SCCs from the condensed DAG, one source at a time.',
+      'Viewing SCCs as nodes of a DAG (the condensation graph) clarified why finishing times from one pass order SCCs for the next. This perspective underpins Kosaraju’s correctness proof.',
+  },
+  {
+    title: 'SCCs in compilers and systems',
+    detail:
+      'Dependency analysis, dead code elimination, circuit timing, and package managers all adopted SCC decompositions to collapse cycles into single units for scheduling and optimization.',
+  },
+]
+
+const mentalModels = [
+  {
+    title: 'Finish order as a topological hint',
+    detail:
+      'A DFS finishing stack orders SCCs reverse-topologically: if there is a path from A to B in the condensation DAG, B finishes before A. Processing in that order on the reversed graph peels SCCs cleanly.',
+  },
+  {
+    title: 'Turn sinks into sources',
+    detail:
+      'Reversing edges converts sink SCCs into sources. Starting DFS from the latest finisher ensures you expand exactly one SCC before any incoming edges can pull you elsewhere.',
+  },
+  {
+    title: 'Two mirrors of the same walk',
+    detail:
+      'Pass one paints a map of where you can finish; pass two follows the mirrors of those paths, revealing mutually reachable groups.',
   },
 ]
 
 const mechanics = [
   {
-    heading: 'Pass 1: finishing order',
+    heading: 'Pass 1: finishing order on G',
     bullets: [
-      'Run DFS on the original graph, pushing nodes onto a stack/list on exit.',
-      'Finishing times order nodes so that if there is a path u -> v in the condensation DAG, v finishes before u.',
+      'Run DFS over all vertices; on exit, push the vertex onto a stack/list.',
+      'Finishing order ensures that edges in the condensation DAG point from later to earlier finishes.',
     ],
   },
   {
-    heading: 'Pass 2: reversed graph',
+    heading: 'Pass 2: discovery on G^T',
     bullets: [
-      'Reverse all edges.',
-      'Pop nodes from the finishing stack; for each unvisited node, DFS on the reversed graph to collect one SCC.',
-      'Each DFS in pass 2 visits exactly one SCC because incoming edges from earlier components are reversed away.',
+      'Traverse the reversed graph. Pop vertices from the finish stack.',
+      'For each unvisited vertex popped, run DFS/BFS on G^T to collect one SCC.',
+      'Because sinks became sources, each search stays within a single SCC.',
     ],
   },
   {
     heading: 'Outputs',
     bullets: [
-      'List of SCCs (each a list of vertices).',
-      'Optional condensation graph built by contracting SCCs into meta-nodes.',
+      'List of SCCs (each a vertex set).',
+      'Optional condensation DAG by contracting SCCs and adding edges between components.',
     ],
   },
 ]
 
 const complexityNotes = [
   {
-    title: 'Time and space',
+    title: 'Time',
     detail:
-      'Two DFS runs: O(V + E) time, O(V) space for visited/stack plus graph storage. Reversing edges can be done implicitly by iterating reverse adjacency.',
+      'O(V + E): two graph traversals. Sorting is not needed; the stack order emerges from DFS finishes.',
   },
   {
-    title: 'Stability',
+    title: 'Space',
     detail:
-      'Order of SCC discovery depends on DFS order but not correctness. Finishing stack preserves the partial order needed for correctness.',
+      'O(V + E) to store the graph; O(V) for visited flags and the finish stack. A reversed adjacency list may double storage unless generated on the fly.',
+  },
+  {
+    title: 'Iterative robustness',
+    detail:
+      'Recursive DFS can overflow on deep graphs. Iterative stacks keep the same complexity with better safety in production code.',
   },
 ]
 
 const realWorldUses = [
   {
-    context: 'Component condensation',
+    context: 'Package and build systems',
     detail:
-      'Build DAGs of mutually reachable modules (package dependency analysis, call graphs) to simplify reasoning about update order.',
+      'Collapse dependency cycles into single nodes to schedule builds or updates. Many build tools and package managers run SCC detection to break strongly connected dependency chains.',
+  },
+  {
+    context: 'Program analysis and compilers',
+    detail:
+      'SCCs enable strongly connected region scheduling, dead code elimination, and identifying loops in control-flow graphs.',
   },
   {
     context: 'Model checking and games',
     detail:
-      'SCCs identify closed sets of states for reachability, liveness, and attractor computations.',
+      'Closed sets of states (attractors, recurrent classes) are SCCs. Finding them is central to reachability, liveness, and parity-game solvers.',
   },
   {
-    context: 'Deadlock and strongly connected subsystems',
+    context: 'Clustering on directed data',
     detail:
-      'Detect cyclic dependencies in distributed systems or workflows by grouping mutually dependent nodes.',
+      'In web graphs or citation networks, SCCs reveal tightly knit communities of mutual reachability.',
   },
 ]
 
 const examples = [
   {
-    title: "Kosaraju's algorithm",
+    title: "Kosaraju's algorithm (iterative-friendly pseudocode)",
     code: `function kosaraju(graph):
-    visited = set()
     order = []
+    visited = set()
 
-    // first pass: record finish order
-    function dfs1(u):
-        visited.add(u)
-        for v in graph.neighbors(u):
-            if v not in visited:
-                dfs1(v)
-        order.append(u)
+    # pass 1: record finish order
+    for u in graph.vertices():
+        if u not in visited:
+            iterative_dfs_finish(graph, u, visited, order)
 
-    for node in graph.vertices():
-        if node not in visited:
-            dfs1(node)
-
-    // second pass on reversed graph
-    rev = graph.reversed()
     visited.clear()
     sccs = []
-
-    function dfs2(u, comp):
-        visited.add(u)
-        comp.append(u)
-        for v in rev.neighbors(u):
-            if v not in visited:
-                dfs2(v, comp)
-
     for u in reversed(order):
         if u not in visited:
             comp = []
-            dfs2(u, comp)
+            iterative_dfs_collect(graph.rev(), u, visited, comp)
             sccs.append(comp)
+    return sccs
 
-    return sccs`,
+function iterative_dfs_finish(g, start, visited, order):
+    stack = [(start, 0)]  # (node, next_index)
+    visited.add(start)
+    while stack:
+        u, idx = stack.pop()
+        if idx < len(g.neighbors(u)):
+            v = g.neighbors(u)[idx]
+            stack.append((u, idx + 1))
+            if v not in visited:
+                visited.add(v)
+                stack.append((v, 0))
+        else:
+            order.append(u)  # finished
+
+function iterative_dfs_collect(g_rev, start, visited, comp):
+    stack = [start]
+    visited.add(start)
+    while stack:
+        u = stack.pop()
+        comp.append(u)
+        for v in g_rev.neighbors(u):
+            if v not in visited:
+                visited.add(v)
+                stack.append(v)`,
     explanation:
-      'Finishing order ensures each DFS on the reversed graph starts at a source of the condensation DAG, capturing exactly one SCC.',
+      'Finishing order from the first pass provides a reverse topological ordering of SCCs. Iterative DFS avoids recursion limits while preserving O(V + E) cost.',
   },
 ]
 
 const pitfalls = [
-  'Forgetting to reverse edges in the second pass breaks correctness.',
-  'Stack overflow on deep graphs; use iterative DFS if recursion depth is a concern.',
-  'Building an explicit reversed graph can be costly in memory; iterate reverse adjacency if available.',
+  'Forgetting to reverse edges in pass 2; using the original graph yields incorrect SCC grouping.',
+  'Stack overflow from recursive DFS on large graphs; use iterative versions in production.',
+  'Materializing the reversed graph can double memory; consider on-the-fly reverse adjacency iteration.',
+  'Assuming uniqueness: multiple valid SCC orders exist; determinism may need vertex-id tie-breaks.',
 ]
 
 const decisionGuidance = [
-  'Need SCCs quickly with simple code: Kosaraju in O(V + E) is fine.',
-  'Need one-pass SCCs with low memory: consider Tarjan (single DFS with low-link).',
-  'Graph is huge and recursion risky: implement both passes iteratively.',
+  'Need simple, linear-time SCCs and can afford two passes: use Kosaraju.',
+  'Need single-pass SCCs or memory tightness: use Tarjan’s algorithm.',
+  'Graph is extremely deep or large: prefer iterative DFS to avoid recursion limits.',
+  'Streaming edges sorted by tail/head: consider on-the-fly reverse iteration to avoid building g^T fully.',
+]
+
+const advancedInsights = [
+  {
+    title: 'Condensation DAG ordering',
+    detail:
+      'Finishing times produce a reverse topological order of the condensation graph. This is why processing in that order on g^T isolates SCCs.',
+  },
+  {
+    title: 'Comparison to Tarjan',
+    detail:
+      'Tarjan computes low-link values in one pass with one stack. Kosaraju splits work into two clean passes; both are O(V + E), but Tarjan saves the reverse graph cost.',
+  },
+  {
+    title: 'Edge-reversal shortcuts',
+    detail:
+      'If the graph stores in-edges alongside out-edges, pass 2 can iterate in-edges directly, avoiding explicit reversal and halving memory.',
+  },
+  {
+    title: 'Parallel opportunities',
+    detail:
+      'Parallelization is tricky because pass 2 depends on pass 1 ordering, but building the reverse graph and the first DFS can be parallelized in preprocessing.',
+  },
 ]
 
 const takeaways = [
-  "Kosaraju uses two DFS passes: finish order on the original, discovery on the reversed, to peel SCCs in topological order of the condensation DAG.",
-  'Overall cost is linear in graph size; recursion depth and graph reversal are practical concerns to manage.',
+  "Kosaraju runs two DFS passes: finish order on G, discovery on G^T, to output SCCs in linear time.",
+  'Union-Find is not needed; correctness rests on finish ordering and edge reversal.',
+  'Iterative DFS avoids recursion issues; implicit reversal saves memory.',
+  'Pick Tarjan for one-pass tightness, Kosaraju for clarity, and Gabow for another stack-based alternative.',
 ]
 
 export default function KosarajusAlgorithmPage(): JSX.Element {
   return (
     <TopicLayout
       title="Kosaraju's Algorithm"
-      subtitle="Two-pass DFS for strongly connected components"
-      intro="Kosaraju finds strongly connected components by leveraging DFS finishing times and a reversed graph. The first pass records an order; the second pass, on the reversed edges, peels SCCs in the right sequence."
+      subtitle="Two DFS passes to expose strongly connected components"
+      intro="Kosaraju’s algorithm finds strongly connected components with two DFS passes. The first records finishing order on the original graph; the second, on the reversed graph, peels components in reverse topological order of the condensation DAG."
     >
       <TopicSection heading="The big picture">
         <p className="text-white/80">
-          SCCs collapse a directed graph into a DAG. Kosaraju accomplishes this with two linear-time DFS passes, using finish order
-          to ensure each reversed-graph search stays within one component.
+          SCCs collapse a directed graph into a DAG. Kosaraju achieves this in O(V + E): one DFS to capture finishing order, and a
+          second on the reversed graph to collect components. Sink components become sources after reversal, ensuring each search
+          stays inside one SCC.
         </p>
+      </TopicSection>
+
+      <TopicSection heading="Historical context">
+        <div className="grid gap-3 md:grid-cols-2">
+          {historicalMilestones.map((item) => (
+            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
       </TopicSection>
 
       <TopicSection heading="Core concept and mental models">
@@ -156,8 +235,8 @@ export default function KosarajusAlgorithmPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="How it works: mechanics in motion">
-        <div className="grid gap-3 md:grid-cols-3">
+      <TopicSection heading="How it works">
+        <div className="grid gap-3 md:grid-cols-4">
           {mechanics.map((block) => (
             <article key={block.heading} className="rounded-lg bg-white/5 p-4">
               <p className="text-sm font-semibold text-white">{block.heading}</p>
@@ -171,7 +250,7 @@ export default function KosarajusAlgorithmPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="Complexity analysis and intuition">
+      <TopicSection heading="Complexity analysis">
         <div className="grid gap-3 md:grid-cols-2">
           {complexityNotes.map((note) => (
             <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
@@ -221,6 +300,17 @@ export default function KosarajusAlgorithmPage(): JSX.Element {
             <li key={item}>{item}</li>
           ))}
         </ol>
+      </TopicSection>
+
+      <TopicSection heading="Advanced insights">
+        <div className="grid gap-3 md:grid-cols-2">
+          {advancedInsights.map((item) => (
+            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{item.title}</p>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
       </TopicSection>
 
       <TopicSection heading="Key takeaways">
