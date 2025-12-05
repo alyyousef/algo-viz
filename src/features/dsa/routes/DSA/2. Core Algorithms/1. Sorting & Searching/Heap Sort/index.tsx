@@ -2,44 +2,44 @@ import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout
 
 import type { JSX } from 'react'
 
-const historicalNotes = [
+const historicalMilestones = [
   {
-    title: '1964, J. W. J. Williams coins heaps',
+    title: '1964: Williams introduces heapsort',
     detail:
-      'Williams published the binary heap and heapsort idea to improve tape sorting, showing that the structure could deliver in-place O(n log n) sorting.',
+      'J. W. J. Williams proposed the binary heap and heapsort to speed up tape sorting, showing O(n log n) time with O(1) extra space.',
   },
   {
-    title: '1964, Robert Floyd optimizes heapify',
+    title: '1964: Floyd makes heapify linear',
     detail:
-      'Floyd introduced the bottom-up heap construction that runs in O(n) time, a cornerstone still taught in CLRS and Knuth Volume 3.',
+      "Robert Floyd published the bottom-up heap construction that runs in O(n), the version still taught in CLRS and Knuth's texts.",
   },
   {
-    title: '1970s, heaps extend to Dijkstra and Prim',
+    title: '1970s: Heaps power graph algorithms',
     detail:
-      'Priority queues backed by heaps powered shortest paths and minimum spanning tree algorithms, cementing heaps as a general scheduling tool.',
+      'Binary heaps became the default priority queue for Dijkstra and Prim, tying heap primitives to scheduling and shortest paths.',
   },
   {
-    title: '1997, introsort adopts heaps',
+    title: '1997: Introsort uses heaps as a safety net',
     detail:
-      'Musser blended quicksort with heapsort in introspective sort to guarantee O(n log n) even on adversarial inputs, a strategy used by C++ std::sort.',
+      'David Musser blended quicksort with heapsort to cap worst-case time at O(n log n); C++ std::sort still follows this strategy.',
   },
 ]
 
 const mentalModels = [
   {
-    title: 'Ballasted pyramid',
+    title: 'Mountain with the peak on top',
     detail:
-      'Picture a pyramid of rocks where each layer must rest on heavier stones beneath it. The largest rock settles at the top in a max-heap because every parent dominates its children.',
+      'A max-heap is a mountain where every parent is taller than its children. The peak (largest element) sits at index 0, ready to remove.',
   },
   {
-    title: 'Bubble with gravity',
+    title: 'Sift-down as gravity',
     detail:
-      'Sift-down acts like a bubble in water moving opposite gravity. When the root is swapped with a tail element, it sinks until the heap property is restored.',
+      'After swapping the root with the end, the new root falls down the tree, swapping with the larger child until the heap property is restored.',
   },
   {
-    title: 'Two-phase excavation',
+    title: 'Two zones in one array',
     detail:
-      'First compact the pile (heapify), then excavate the biggest rocks one by one and stack them at the end of the array. The sorted segment grows from the tail backward.',
+      'Heapsort keeps a live heap prefix and a growing sorted suffix at the end. The boundary shrinks as you peel off maxima.',
   },
 ]
 
@@ -47,203 +47,217 @@ const mechanics = [
   {
     heading: 'Array layout',
     bullets: [
-      'Store the heap in place: children of index i sit at 2i+1 and 2i+2, the parent is floor((i-1)/2).',
-      'Use a max-heap for ascending order. The maximum is always at index 0, ready for extraction.',
+      'Children of i are at 2i+1 and 2i+2; parent is floor((i-1)/2).',
+      'Use a max-heap for ascending output; the root holds the current maximum.',
     ],
   },
   {
-    heading: 'Bottom-up heapify',
+    heading: 'Linear-time heapify',
     bullets: [
-      'Start from the last internal node at floor(n/2)-1 and call sift-down on each node toward index 0.',
-      'Each sift-down touches at most the height of its subtree, yielding an amortized O(n) build, a result Floyd formalized.',
+      'Start at the last internal node floor(n/2)-1 and call sift-down to index 0.',
+      'Total work is O(n) because lower levels have many nodes with tiny heights.',
     ],
   },
   {
-    heading: 'Sort-down phase',
+    heading: 'Sort-down',
     bullets: [
-      'Swap the root with the last element in the heap boundary, shrinking the active heap by one.',
-      'Sift-down the new root to restore order, then repeat until the heap size is 1. The array tail becomes the sorted output.',
+      'Swap the root with the last element in the heap boundary.',
+      'Reduce heap size by one, then sift-down the new root to restore heap order.',
+      'Repeat until the heap size is 1; the array tail ends up sorted.',
     ],
   },
 ]
 
 const complexityNotes = [
   {
-    title: 'Time complexity',
+    title: 'Time',
     detail:
-      'Heapify runs in O(n); each of n extract-max operations costs O(log n). Overall heapsort is O(n log n) regardless of input order, unlike quicksort without introspection.',
+      "O(n) to build the heap with Floyd's method, then (n-1) extract-max steps at O(log n) each; total O(n log n) regardless of input order.",
   },
   {
-    title: 'Space complexity',
+    title: 'Space',
     detail:
-      'The algorithm is in-place, requiring O(1) auxiliary space beyond a few temporaries. No additional buffers are allocated.',
-  },
-  {
-    title: 'Constant factors and cache',
-    detail:
-      'Tree-shaped memory access harms cache locality compared to merge sort or quicksort. Practical runtimes can be slower even with identical Big O bounds.',
+      'In-place with O(1) auxiliary space. No extra buffers beyond a few temporaries.',
   },
   {
     title: 'Stability',
     detail:
-      'Plain heapsort is unstable because swaps can reorder equal elements. Stable variants track original indices at the cost of extra space.',
+      'Unstable: swaps can reorder equal elements. Stable variants tag items with original indices at the cost of extra space.',
+  },
+  {
+    title: 'Cache behavior',
+    detail:
+      'Pointer-like jumps (2i+1, 2i+2) hurt locality, so heapsort often lags quicksort or mergesort in wall-clock time despite the same asymptotic bound.',
   },
 ]
 
-const applications = [
+const realWorldUses = [
   {
-    context: 'Language runtimes and libraries',
+    context: 'Introsort fallback',
     detail:
-      'C++ std::sort uses introsort, which falls back to heapsort when recursion depth grows too large. This protects against worst-case quicksort behavior caused by crafted inputs.',
+      'C++ std::sort and many runtimes fall back to heapsort when quicksort recursion gets too deep, protecting against adversarial inputs.',
   },
   {
-    context: 'Partial sorting and top-k',
+    context: 'Top-k selection',
     detail:
-      'Building a heap lets you pick off the largest or smallest elements efficiently. Top-k selection with a bounded heap avoids sorting the full array when you only need the extremes.',
+      'Maintaining a bounded heap yields top-k without sorting everything, common in leaderboards, search ranking, and monitoring dashboards.',
   },
   {
-    context: 'External and streaming workflows',
+    context: 'Resource scheduling',
     detail:
-      'Heapsort pairs well with runs from external sorting passes. It offers deterministic memory use, useful when merging streams or preparing fixed-size batches for disks.',
+      'Heaps back priority queues in simulators, kernels, and networking stacks. Heapsort showcases the same primitives.',
   },
   {
-    context: 'Scheduling and simulation',
+    context: 'External sorting pipelines',
     detail:
-      'Priority queues in simulators, networking stacks, and operating systems depend on heap operations. Heapsort demonstrates the same primitives used in those schedulers.',
+      'Deterministic memory use makes heaps useful when producing fixed-size runs for external merge sort or constrained batch jobs.',
   },
 ]
 
-const codeExamples = [
+const examples = [
   {
-    title: 'Canonical heapsort (TypeScript-like pseudocode)',
-    code: `function heapSort(arr: number[]): void {
-  const n = arr.length
+    title: 'Heapsort (TypeScript-like pseudocode)',
+    code: `function heapSort(a: number[]): void {
+  const n = a.length;
   // Build max-heap in O(n)
-  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-    siftDown(arr, i, n)
+  for (let i = Math.floor(n / 2) - 1; i >= 0; i -= 1) {
+    siftDown(a, i, n);
   }
-  // Extract max and shrink heap
-  for (let end = n - 1; end > 0; end--) {
-    swap(arr, 0, end)
-    siftDown(arr, 0, end) // heap size is 'end'
+  // Sort-down: extract max to the end
+  for (let end = n - 1; end > 0; end -= 1) {
+    swap(a, 0, end);
+    siftDown(a, 0, end); // heap size is "end"
   }
 }
 
-function siftDown(a: number[], i: number, heapSize: number): void {
+function siftDown(a: number[], i: number, size: number): void {
   while (true) {
-    const left = 2 * i + 1
-    const right = 2 * i + 2
-    let largest = i
-    if (left < heapSize && a[left] > a[largest]) largest = left
-    if (right < heapSize && a[right] > a[largest]) largest = right
-    if (largest === i) return
-    swap(a, i, largest)
-    i = largest
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+    let largest = i;
+    if (left < size && a[left] > a[largest]) largest = left;
+    if (right < size && a[right] > a[largest]) largest = right;
+    if (largest === i) break;
+    swap(a, i, largest);
+    i = largest;
   }
 }
 
 function swap(a: number[], i: number, j: number): void {
-  const tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
+  const tmp = a[i];
+  a[i] = a[j];
+  a[j] = tmp;
 }`,
     explanation:
-      'The sift-down loop ensures each node is larger than its children before moving on. Using the heap boundary (heapSize) prevents touching the sorted suffix.',
+      'Floyd-style heapify builds the structure in linear time. The heap boundary (size) keeps the sorted suffix untouched during sift-down.',
   },
   {
-    title: 'Top-k smallest using a max-heap',
-    code: `function topKSmallest(stream: number[], k: number): number[] {
-  const heap: number[] = []
+    title: 'Top-k largest via min-heap',
+    code: `function topKLargest(stream: number[], k: number): number[] {
+  if (k === 0) return [];
+  const heap: number[] = [];
   for (const x of stream) {
     if (heap.length < k) {
-      heap.push(x)
-      siftUp(heap, heap.length - 1)
-    } else if (x < heap[0]) { // replace current max
-      heap[0] = x
-      siftDown(heap, 0, heap.length)
+      heap.push(x);
+      siftUpMin(heap, heap.length - 1);
+    } else if (x > heap[0]) {
+      heap[0] = x;
+      siftDownMin(heap, 0, heap.length);
     }
   }
-  return heap.sort((a, b) => a - b) // final order
+  return heap.sort((a, b) => b - a); // optional final order
 }
 
-function siftUp(a: number[], i: number): void {
+function siftUpMin(h: number[], i: number): void {
   while (i > 0) {
-    const parent = Math.floor((i - 1) / 2)
-    if (a[parent] >= a[i]) break
-    swap(a, parent, i)
-    i = parent
+    const p = Math.floor((i - 1) / 2);
+    if (h[p] <= h[i]) break;
+    swap(h, p, i);
+    i = p;
+  }
+}
+
+function siftDownMin(h: number[], i: number, size: number): void {
+  while (true) {
+    const l = 2 * i + 1;
+    const r = 2 * i + 2;
+    let smallest = i;
+    if (l < size && h[l] < h[smallest]) smallest = l;
+    if (r < size && h[r] < h[smallest]) smallest = r;
+    if (smallest === i) break;
+    swap(h, i, smallest);
+    i = smallest;
   }
 }`,
     explanation:
-      'A bounded heap keeps only k elements in O(k) space. This pattern is common in recommendations, monitoring dashboards, and leaderboard services that surface top items without full sorts.',
+      'A size-k min-heap keeps the current k largest items; any new item only interacts with the root. This pattern avoids sorting the full stream.',
   },
 ]
 
 const pitfalls = [
-  'Forgetting the floor(n/2)-1 starting index for heapify leads to wasted work or missed nodes.',
-  'Using sift-up during heap construction degrades performance to O(n log n); the bottom-up Floyd method is strictly better.',
-  'Not shrinking the heap boundary after swaps causes already-sorted elements to be reheapified and can break correctness.',
-  'Assuming stability can misplace equal keys. Attach original positions if order among equals matters.',
-  'Ignoring cache effects can make heapsort slower than quicksort or merge sort on real CPUs even though complexities match.',
+  'Building with repeated insert (sift-up) wastes O(n log n); use Floyd heapify for O(n).',
+  'Off-by-one in heapify start: begin at floor(n/2)-1 or you will revisit leaves unnecessarily.',
+  'Forgetting to shrink the heap boundary after swapping root with end causes already-sorted elements to be reheapified.',
+  'Assuming stability: plain heapsort can reorder equal keys unless you tag original positions.',
+  'Expecting quicksort-like cache behavior: scattered accesses can make heapsort slower in practice despite O(n log n) bounds.',
 ]
 
 const decisionGuidance = [
-  'Need worst-case O(n log n) without extra memory: pick heapsort over quicksort when adversarial inputs are possible.',
-  'Need tight cache behavior and average-case speed: prefer quicksort or Timsort; heapsort trades locality for predictability.',
-  'Need stability: choose merge sort or Timsort. Stable heapsort variants require extra bookkeeping and space.',
-  'Need to guard a quicksort: use introsort, which switches to heapsort after a recursion depth threshold.',
-  'Need top-k or continuous selection: maintain a bounded heap instead of sorting all elements.',
+  'Need worst-case O(n log n) with O(1) space: heapsort is a safe choice or fallback inside introsort.',
+  'Need raw speed on average data and good cache use: quicksort or TimSort usually win.',
+  'Need stability: choose merge sort or TimSort; stable heapsort needs extra space to tag elements.',
+  'Need partial results (top-k): use a bounded heap instead of full heapsort.',
+  'Memory constrained environments: heapsort avoids the extra buffers merge-based methods allocate.',
 ]
 
 const advancedInsights = [
   {
-    title: 'D-ary and pairing heaps',
+    title: 'Branch and cache tuning',
     detail:
-      'Increasing arity reduces depth and can speed up decrease-key heavy workloads. Pairing heaps or Fibonacci heaps beat binary heaps for specific priority queue operations, but they trade simplicity and constants.',
+      'Branchless comparisons and blocking the array to improve locality can narrow the gap to quicksort by reducing mispredictions and cache misses.',
   },
   {
-    title: 'Heapsort with branchless comparisons',
+    title: 'D-ary heaps',
     detail:
-      'Tuning sift-down with branchless selection and cache-aware layouts can narrow the gap to quicksort. Academic benchmarks show 5 to 15 percent gains from reduced mispredictions.',
+      'Using d-ary heaps reduces height (fewer sift steps) at the cost of more child comparisons per level; useful for wide-fanout hardware or decrease-key heavy queues.',
+  },
+  {
+    title: 'Parallel heapify',
+    detail:
+      'Bottom-up heap construction parallelizes across subtrees, but merge-based parallel sorts often scale better because of memory access patterns.',
   },
   {
     title: 'Stable heapsort variants',
     detail:
-      'Tagging elements with original indices or using two heaps can yield stability at O(n log n) time with O(n) extra space. Useful when equality order must be preserved.',
-  },
-  {
-    title: 'Parallel heap construction',
-    detail:
-      'Bottom-up heapify parallelizes across subtrees. Parallel heapsort exists, but merge-based parallel sorts often scale better because of memory access patterns.',
+      'Stability can be achieved by pairing each key with its original index and comparing tuples. Time stays O(n log n), space rises to O(n).',
   },
 ]
 
 const takeaways = [
-  'Heapsort guarantees O(n log n) time and O(1) extra space, independent of input order.',
-  'Floyds bottom-up heapify is the key to linear-time construction.',
-  'Cache behavior and instability are the main practical drawbacks compared to quicksort or merge sort.',
-  'Heaps underpin schedulers, top-k queries, and introsort fallbacks, so mastering heap primitives pays beyond sorting.',
-  'References: CLRS, Knuth Volume 3, and GeeksforGeeks for walkthroughs and visualizations.',
+  'Heapsort guarantees O(n log n) time and O(1) extra space for any input.',
+  'Floyd heapify is the lever that makes heap construction linear.',
+  'Scattered memory access and instability are the main practical drawbacks versus quicksort or mergesort.',
+  'Mastering heap primitives pays off beyond sorting: top-k, schedulers, and introsort all rely on them.',
 ]
 
 export default function HeapSortPage(): JSX.Element {
   return (
     <TopicLayout
       title="Heap Sort"
-      subtitle="Build a heap in place, then peel off the maximums"
-      intro="Heapsort is an in-place, comparison-based algorithm that never degrades beyond O(n log n). It leverages the heap order property to surface the maximum element, swap it to the back, and restore the heap until the array is sorted."
+      subtitle="Build a max-heap in place, then peel off the maximums"
+      intro="Heap sort converts the array into a max-heap, then repeatedly swaps the root to the end and restores the heap. It offers O(n log n) worst-case time and O(1) extra space, making it a predictable safety net when inputs can be adversarial."
     >
       <TopicSection heading="The big picture">
         <p className="text-white/80">
-          Heapsort answers a classic constraint: sort reliably using minimal extra space. By turning the input array into a binary
-          heap, it provides a predictable ceiling on comparisons and memory. That reliability is why introsort leans on it and why
-          systems with strict memory budgets keep it in the toolkit.
+          Heapsort trades a bit of cache friendliness for reliability. It never needs extra buffers, never degrades beyond
+          O(n log n), and uses the same sift primitives that power priority queues. That predictability is why introsort falls back
+          to it when quicksort faces bad pivots.
         </p>
       </TopicSection>
 
       <TopicSection heading="Historical context">
         <div className="grid gap-3 md:grid-cols-2">
-          {historicalNotes.map((item) => (
+          {historicalMilestones.map((item) => (
             <article key={item.title} className="rounded-lg bg-white/5 p-4">
               <h3 className="text-sm font-semibold text-white">{item.title}</h3>
               <p className="text-sm text-white/80">{item.detail}</p>
@@ -263,7 +277,7 @@ export default function HeapSortPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="How it works">
+      <TopicSection heading="How it works: heapify then sort-down">
         <div className="grid gap-3 md:grid-cols-3">
           {mechanics.map((block) => (
             <article key={block.heading} className="rounded-lg bg-white/5 p-4">
@@ -277,8 +291,9 @@ export default function HeapSortPage(): JSX.Element {
           ))}
         </div>
         <p className="mt-3 text-sm text-white/70">
-          The key operation is sift-down: compare a node to its children, swap with the larger child if the heap property fails,
-          and continue downward. Each swap strictly reduces the height of the violation, so it terminates in logarithmic time.
+          The core operation is sift-down: compare a node to its children, swap with the larger child if the heap property fails,
+          and continue until the path ends. Each swap reduces the height of the violation, so sift-down is O(log n). Building from
+          the bottom amortizes that cost to O(n) overall during heapify.
         </p>
       </TopicSection>
 
@@ -295,7 +310,7 @@ export default function HeapSortPage(): JSX.Element {
 
       <TopicSection heading="Real-world applications">
         <div className="grid gap-3 md:grid-cols-2">
-          {applications.map((item) => (
+          {realWorldUses.map((item) => (
             <article key={item.context} className="rounded-lg bg-white/5 p-4">
               <p className="text-sm font-semibold text-white">{item.context}</p>
               <p className="text-sm text-white/80">{item.detail}</p>
@@ -306,7 +321,7 @@ export default function HeapSortPage(): JSX.Element {
 
       <TopicSection heading="Practical examples">
         <div className="space-y-4">
-          {codeExamples.map((example) => (
+          {examples.map((example) => (
             <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
               <p className="text-sm font-semibold text-white">{example.title}</p>
               <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">

@@ -2,16 +2,39 @@ import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout
 
 import type { JSX } from 'react'
 
+const historicalMilestones = [
+  {
+    title: 'Early textbook anchor (1960s)',
+    detail:
+      'Insertion sort appeared as a canonical example in early algorithm texts for demonstrating loop invariants and stability.',
+  },
+  {
+    title: 'Knuth analysis (1968)',
+    detail:
+      'The Art of Computer Programming Vol. 3 formalized its expected O(n^2) cost and highlighted its adaptivity on nearly sorted inputs.',
+  },
+  {
+    title: 'Hybrid cutoffs in libraries (1990s to today)',
+    detail:
+      'C and C++ library sorts, Python TimSort, and JavaScript engines use insertion sort on tiny partitions to beat branch and call overhead from heavier sorts.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Sorting a hand of cards',
     detail:
-      'You pick up cards one by one and insert each into its correct spot among the already sorted ones.',
+      'Hold a sorted fan in your left hand and insert each new card into its proper spot. The left side stays sorted the whole time.',
   },
   {
     title: 'Growing a sorted prefix',
     detail:
-      'Left side stays sorted; each new element from the right shifts left until it fits.',
+      'Think of the array as two zones: a sorted prefix and an unsorted suffix. Each step moves one item from right to left until it fits.',
+  },
+  {
+    title: 'Shifting to make space',
+    detail:
+      'Instead of swapping, you shift elements right to open a hole, preserving stability because equal keys never leapfrog.',
   },
 ]
 
@@ -19,23 +42,23 @@ const mechanics = [
   {
     heading: 'Core loop',
     bullets: [
-      'Iterate i from 1 to n - 1; key = arr[i].',
-      'Shift larger elements in arr[0..i-1] one position right until you find the insertion point.',
-      'Place key in the opened slot.',
+      'For i from 1 to n - 1, set key = a[i].',
+      'Shift elements in a[0..i-1] right while they are greater than key.',
+      'Place key into the hole created by the shifts.',
     ],
   },
   {
     heading: 'Stability and adaptivity',
     bullets: [
-      'Stable: equal elements retain relative order because shifts move only larger elements.',
-      'Adaptive: runs in O(n) on already sorted input (only comparisons, no shifts).',
+      'Shifts move only strictly greater elements, so equal keys keep order (stable).',
+      'If the input is already sorted, no shifts occur and time drops to O(n).',
     ],
   },
   {
-    heading: 'Hybrid usage',
+    heading: 'Hybrid cutoffs',
     bullets: [
-      'Use insertion sort for small partitions inside quicksort/mergesort to reduce overhead.',
-      'Good for small arrays where constant factors dominate.',
+      'Commonly used for partitions of size 16-32 inside quicksort, mergesort, or introsort to reduce constant factors.',
+      'Works well after a partition step when many elements are already close to sorted.',
     ],
   },
 ]
@@ -44,74 +67,143 @@ const complexityNotes = [
   {
     title: 'Time',
     detail:
-      'Worst and average O(n^2); best case O(n) on sorted arrays. Practical for small n.',
+      'Worst and average O(n^2) comparisons and shifts; best case O(n) when the array is already sorted.',
   },
   {
-    title: 'Space',
+    title: 'Space and stability',
     detail:
-      'In-place, O(1) extra space; stable.',
+      'In-place with O(1) extra space and stable ordering via shifts instead of swaps.',
+  },
+  {
+    title: 'Constant factors',
+    detail:
+      'Excellent data locality and branch predictability on nearly sorted data make it fast for small n despite quadratic asymptotics.',
   },
 ]
 
 const realWorldUses = [
   {
-    context: 'Small or nearly sorted datasets',
+    context: 'Small or nearly sorted arrays',
     detail:
-      'Great for small n (e.g., n < 20) or low-disorder data where shifts are minimal.',
+      'Excellent for tiny buffers (tens of elements) or workloads with few inversions, such as merging almost-sorted logs.',
   },
   {
-    context: 'Sorting cutoffs in hybrids',
+    context: 'Hybrid sort cutoffs',
     detail:
-      'Used as a base case in introsort and mergesort implementations to speed up tiny partitions.',
+      'Used inside TimSort, V8 sort, and std::sort/introsort as the base case to finish tiny partitions faster than recursive calls.',
+  },
+  {
+    context: 'Online insertion',
+    detail:
+      'When elements arrive one by one and must be kept sorted immediately (small priority lists, leaderboard snippets), insertion sort incremental nature is simple and predictable.',
   },
 ]
 
 const examples = [
   {
-    title: 'Insertion sort',
-    code: `function insertionSort(arr):
-    for i in range(1, len(arr)):
-        key = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j] > key:
-            arr[j + 1] = arr[j]
-            j -= 1
-        arr[j + 1] = key
-    return arr`,
+    title: 'Insertion sort (TypeScript-like pseudocode)',
+    code: `function insertionSort(a: number[]): number[] {
+  for (let i = 1; i < a.length; i += 1) {
+    const key = a[i];
+    let j = i - 1;
+    while (j >= 0 && a[j] > key) {
+      a[j + 1] = a[j]; // shift right
+      j -= 1;
+    }
+    a[j + 1] = key; // place key
+  }
+  return a;
+}`,
     explanation:
-      'Shifts elements right until the correct spot for key is found; stable and in-place.',
+      'Shifts create a hole, then key fills it. Because only greater elements move, equal keys keep their original order (stability).',
+  },
+  {
+    title: 'Hybrid cutoff inside quicksort',
+    code: `function quicksort(a, lo, hi):
+    while lo < hi:
+        if hi - lo + 1 <= 24: # cutoff tuned to CPU/cache
+            insertionSortRange(a, lo, hi)
+            return
+        p = partition(a, lo, hi)
+        if p - lo < hi - p:
+            quicksort(a, lo, p - 1)
+            lo = p + 1
+        else:
+            quicksort(a, p + 1, hi)
+            hi = p - 1`,
+    explanation:
+      'Small partitions skip recursive overhead and branch mispredictions by finishing with insertion sort. Tail recursion elimination keeps stack depth shallow.',
   },
 ]
 
 const pitfalls = [
-  'Inefficient on large, random data due to O(n^2) behavior.',
-  'Forgetting stability by swapping instead of shifting can break relative order.',
+  'Using swaps instead of shifts loses stability and doubles writes.',
+  'Applying insertion sort to large, random data leads to severe O(n^2) slowdowns.',
+  'Forgetting to tune hybrid cutoffs can leave performance on the table (too low wastes recursion, too high wastes quadratic work).',
+  'Inner loop bounds errors (j >= 0) can underflow or skip the first element.',
 ]
 
 const decisionGuidance = [
-  'Tiny arrays or nearly sorted: insertion sort is simple and fast.',
-  'Large or random data: prefer O(n log n) algorithms.',
-  'As a helper inside divide-and-conquer sorts, set a cutoff where insertion sort takes over small partitions.',
+  'Tiny or nearly sorted input: insertion sort is ideal and often faster than O(n log n) sorts.',
+  'Hybrid base case: switch to insertion sort when partitions drop below a tuned threshold (often 16-32 elements).',
+  'Need stability with in-place behavior: insertion sort provides both for small n.',
+  'General large or disordered input: pick merge sort, heap sort, quicksort, or TimSort.',
+]
+
+const advancedInsights = [
+  {
+    title: 'Adaptive cost and inversion count',
+    detail:
+      'Runtime is proportional to the number of inversions; few inversions mean few shifts. This connects insertion sort to inversion-count analytics.',
+  },
+  {
+    title: 'Binary-search insertion',
+    detail:
+      'You can binary search the insertion point to cut comparisons to O(log n), but shifts still cost O(n), so overall remains O(n^2).',
+  },
+  {
+    title: 'Cache friendliness',
+    detail:
+      'Linear scans and tight inner loops make insertion sort friendlier to caches and branch predictors than bubble sort on similar sizes.',
+  },
+  {
+    title: 'Stable merges and TimSort runs',
+    detail:
+      'TimSort detects ascending runs; short runs are extended using insertion sort before merging, combining adaptivity with O(n log n) guarantees.',
+  },
 ]
 
 const takeaways = [
-  'Insertion sort is stable, in-place, adaptive to order, and great for small ranges.',
-  'Quadratic worst-case time limits it to small or low-disorder inputs.',
-  'Perfect as a hybrid cutoff in faster sorts.',
+  'Insertion sort is stable, in-place, and adaptive, excelling on tiny or nearly sorted inputs.',
+  'Quadratic worst-case time limits it to small ranges or hybrid base cases.',
+  'Shifts, not swaps, preserve order and reduce writes.',
+  'Tune hybrid cutoffs to your CPU and data to maximize gains.',
 ]
 
 export default function InsertionSortPage(): JSX.Element {
   return (
     <TopicLayout
       title="Insertion Sort"
-      subtitle="Grow a sorted prefix one item at a time"
-      intro="Insertion sort builds a sorted prefix by inserting each new element into place. It is stable, in-place, adaptive on nearly sorted data, and a common base case for hybrid algorithms."
+      subtitle="Grow a sorted prefix one element at a time"
+      intro="Insertion sort builds a sorted prefix by shifting larger elements right to make space for each new key. It is stable, in-place, and adaptive on nearly sorted data, which makes it a staple for tiny arrays and hybrid cutoffs."
     >
       <TopicSection heading="The big picture">
         <p className="text-white/80">
-          With each iteration, the left portion remains sorted while the next element slides left to fit. This yields linear time
-          on sorted input and quadratic time on random input, making it best for small or nearly ordered arrays.
+          Each iteration keeps the left side sorted while one new element slides left to its place. On sorted data, the algorithm
+          is linear; on random data it is quadratic. That balance makes it perfect for small buffers, nearly ordered sequences,
+          and as the finishing step inside faster divide-and-conquer sorts.
         </p>
+      </TopicSection>
+
+      <TopicSection heading="Historical context">
+        <div className="grid gap-3 md:grid-cols-2">
+          {historicalMilestones.map((item) => (
+            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
       </TopicSection>
 
       <TopicSection heading="Core concept and mental models">
@@ -125,7 +217,7 @@ export default function InsertionSortPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="How it works">
+      <TopicSection heading="How it works: step-by-step">
         <div className="grid gap-3 md:grid-cols-3">
           {mechanics.map((block) => (
             <article key={block.heading} className="rounded-lg bg-white/5 p-4">
@@ -140,7 +232,7 @@ export default function InsertionSortPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="Complexity">
+      <TopicSection heading="Complexity analysis and intuition">
         <div className="grid gap-3 md:grid-cols-2">
           {complexityNotes.map((note) => (
             <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
@@ -149,6 +241,10 @@ export default function InsertionSortPage(): JSX.Element {
             </article>
           ))}
         </div>
+        <p className="mt-3 text-sm text-white/70">
+          Rule of thumb: for n under a few dozen or when inversions are rare, insertion sort can outrun O(n log n) sorts because
+          of its low overhead and cache friendliness. Beyond that, switch to merge, heap, quick, or TimSort.
+        </p>
       </TopicSection>
 
       <TopicSection heading="Real-world applications">
@@ -162,7 +258,7 @@ export default function InsertionSortPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="Practical example">
+      <TopicSection heading="Practical examples">
         <div className="space-y-4">
           {examples.map((example) => (
             <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
@@ -190,6 +286,17 @@ export default function InsertionSortPage(): JSX.Element {
             <li key={item}>{item}</li>
           ))}
         </ol>
+      </TopicSection>
+
+      <TopicSection heading="Advanced insights">
+        <div className="grid gap-3 md:grid-cols-2">
+          {advancedInsights.map((item) => (
+            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+              <p className="text-sm font-semibold text-white">{item.title}</p>
+              <p className="text-sm text-white/80">{item.detail}</p>
+            </article>
+          ))}
+        </div>
       </TopicSection>
 
       <TopicSection heading="Key takeaways">
