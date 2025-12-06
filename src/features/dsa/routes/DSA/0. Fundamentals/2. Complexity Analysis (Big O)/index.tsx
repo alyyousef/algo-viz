@@ -1,329 +1,300 @@
 import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
-
 import type { JSX } from 'react'
 
-const historicalMilestones = [
+const bigPicture = [
   {
-    title: 'Turing frames computation as machines (1936)',
+    title: 'What It Is',
     detail:
-      'Alan Turing described abstract machines and gave us a way to talk about the cost of computation separate from any real hardware.',
+      'Complexity analysis is a way to measure how the resource needs of an algorithm (like time or memory) grow as the input size (n) increases. It gives us a high-level, hardware-independent way to compare algorithms.',
+    note: "It's not about exact seconds, but about the rate of growth.",
   },
   {
-    title: 'Knuth popularizes Big O in algorithms (1960s)',
+    title: 'Why It Exists',
     detail:
-      'Donald Knuth adopted Bachmann and Landau notation for algorithm analysis, making asymptotic reasoning standard in computer science.',
+      'To make informed engineering decisions. An algorithm that is fast on a small test case might become disastrously slow with production-scale data. Complexity analysis helps us predict and prevent this.',
+    note: 'It saves us from building systems that do not scale.',
   },
   {
-    title: 'Cook and Karp formalize complexity classes (1970s)',
+    title: 'Where It Shows Up',
     detail:
-      'Their work on NP-completeness connected algorithm design with hardness assumptions, guiding where to expect efficient solutions.',
-  },
-  {
-    title: 'Amortized analysis gains traction (1980s)',
-    detail:
-      'Tarjan and others showed how average cost over sequences of operations can be small even when single operations look expensive.',
+      'Everywhere. From choosing a sorting algorithm in a library, to designing a database index, to understanding why a web page is slow. It is the fundamental language for discussing algorithm performance.',
+    note: 'It is a core concept in technical interviews and system design.',
   },
 ]
 
-const mentalModels = [
+const asymptoticNotations = [
   {
-    title: 'Topographic maps for code',
+    title: 'Big O (O): The Upper Bound',
     detail:
-      'Complexity tells you how the cost landscape rises as input grows. You are learning where the cliffs are before you hike.',
+      "This is the most common notation. It describes the *worst-case* scenario. If an algorithm is O(n^2), it means its execution time will not grow faster than a quadratic function of the input size. It gives a guarantee: 'The performance will be at least this good.'",
+    math: 'f(n) = O(g(n)) if there exist constants c > 0 and n₀ >= 0 such that 0 <= f(n) <= c * g(n) for all n >= n₀.',
   },
   {
-    title: 'Exchange rates',
+    title: 'Big Omega (Ω): The Lower Bound',
     detail:
-      'Big O is an exchange rate between input size and work. It ignores constant factors to focus on how fast the bill grows.',
+      "This describes the *best-case* scenario. If an algorithm is Ω(n), it means its execution time will not grow slower than a linear function of the input. It provides a floor: 'It will take at least this much effort, even on a good day.'",
+    math: 'f(n) = Ω(g(n)) if there exist constants c > 0 and n₀ >= 0 such that 0 <= c * g(n) <= f(n) for all n >= n₀.',
   },
   {
-    title: 'Ceilings versus averages',
+    title: 'Big Theta (Θ): The Tight Bound',
     detail:
-      'Worst case is a ceiling on pain, average case is typical experience, amortized is budget spread across a journey.',
-  },
-  {
-    title: 'Memory as a second currency',
-    detail:
-      'Space complexity counts how much extra memory you rent to gain speed or simplicity. Sometimes the cheapest time costs the most space.',
+      'This is the most precise notation. It is used when an algorithm\'s best-case and worst-case performance are of the same order. If an algorithm is Θ(n log n), it means it grows as fast as n log n, no slower and no faster.',
+    math: 'f(n) = Θ(g(n)) if f(n) = O(g(n)) and f(n) = Ω(g(n)). It is \'squeezed\' between two multiples of g(n).',
   },
 ]
 
-const growthRates = [
-  { name: 'O(1)', meaning: 'Constant. Cost does not grow with input size.' },
-  { name: 'O(log n)', meaning: 'Logarithmic. Each step cuts the problem space, like binary search.' },
-  { name: 'O(n)', meaning: 'Linear. Work grows directly with input size.' },
-  { name: 'O(n log n)', meaning: 'Linearithmic. Divide and conquer with merging or balanced partitions.' },
-  { name: 'O(n^2)', meaning: 'Quadratic. Every element interacts with many others, like naive double loops.' },
-  { name: 'O(2^n) / O(n!)', meaning: 'Exponential or factorial. Work explodes; feasible only for tiny n.' },
-]
-
-const mechanics = [
+const complexityClasses = [
   {
-    heading: 'What Big O captures',
-    bullets: [
-      'Growth trend as n approaches infinity. Constants and lower-order terms are ignored.',
-      'Upper bound guarantee. O(n) means cost grows no faster than some multiple of n beyond a certain size.',
-      'Machine-agnostic reasoning. Compares algorithms without needing hardware benchmarks.',
-    ],
-  },
-  {
-    heading: 'What it hides',
-    bullets: [
-      'Constant factors. O(n) with a small constant can beat O(log n) with a huge one for realistic n.',
-      'Cache and memory effects. Poor locality can dominate asymptotic wins for moderate inputs.',
-      'Input distribution. Average case and practical cases can differ from worst case dramatically.',
-    ],
-  },
-  {
-    heading: 'Space complexity',
-    bullets: [
-      'Counts extra memory beyond the input itself. In-place algorithms aim for O(1) extra space.',
-      'Recursive algorithms consume stack frames; depth often equals recursion height.',
-      'Time-space tradeoffs: precomputed tables or memoization trade memory for speed.',
-    ],
-  },
-]
-
-const realWorldImplications = [
-  {
-    context: 'Search and indexing',
-    detail:
-      'Databases rely on O(log n) tree indexes instead of O(n) scans. At a billion rows, the difference is milliseconds versus minutes.',
-  },
-  {
-    context: 'Sorting pipelines',
-    detail:
-      'O(n log n) sorts like mergesort and quicksort are defaults in standard libraries. O(n^2) sorts only survive in tiny data or specialized niches.',
-  },
-  {
-    context: 'APIs and SLAs',
-    detail:
-      'If a handler is O(n^2) in request size, adversaries can craft large bodies to exhaust CPU. Complexity is part of capacity planning and security review.',
-  },
-  {
-    context: 'Mobile and edge devices',
-    detail:
-      'Memory-sensitive environments push for O(1) or O(log n) space. Algorithms with high constant factors can still drain battery faster despite good asymptotics.',
-  },
-]
-
-const examples = [
-  {
-    title: 'Binary search walkthrough',
-    code: `function binarySearch(arr, target):
-    lo = 0
-    hi = arr.length - 1
-    while lo <= hi:
-        mid = floor((lo + hi) / 2)
-        if arr[mid] == target: return mid
-        if arr[mid] < target: lo = mid + 1
-        else: hi = mid - 1
-    return -1`,
+    class: 'O(1) - Constant',
     explanation:
-      'Each iteration halves the search space. The loop runs at most log2(n) times, so time is O(log n) and space is O(1).',
+      'The algorithm takes the same amount of time regardless of the input size. Operations like accessing an array element by index or pushing to a stack are typically O(1).',
+    code: `function getFirstElement(arr) {
+  return arr[0]; // Always one operation
+}`,
   },
   {
-    title: 'Quadratic pitfall in naive duplicates check',
-    code: `function hasDuplicate(arr):
-    for i in 0..arr.length-1:
-        for j in i+1..arr.length-1:
-            if arr[i] == arr[j]: return true
-    return false`,
+    class: 'O(log n) - Logarithmic',
     explanation:
-      'Two nested loops over n produce O(n^2) time. Using a hash set drops time to O(n) with O(n) extra space.',
+      'The algorithm\'s time complexity grows logarithmically. This is typical for algorithms that divide the problem space in each step, like binary search. Doubling the input size adds only a single constant unit of work.',
+    code: `function binarySearch(arr, target) {
+  let left = 0, right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) return mid;
+    if (arr[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  } // Each step halves the search space
+}`,
   },
   {
-    title: 'Amortized analysis of dynamic array push',
-    code: `class DynamicArray:
-    init():
-        capacity = 1
-        data = new array(capacity)
-        size = 0
-
-    push(x):
-        if size == capacity:
-            // allocate new array of 2 * capacity
-            newData = new array(2 * capacity)
-            copy(data, newData)
-            data = newData
-            capacity *= 2
-        data[size] = x
-        size += 1`,
+    class: 'O(n) - Linear',
     explanation:
-      'Resizing is O(n) when it happens, but it happens rarely. Spreading that cost across many pushes yields O(1) amortized time per push.',
+      'The runtime grows directly in proportion to the input size. A simple loop through all elements of an array is a classic example. If you double the input, you double the work.',
+    code: `function findSum(arr) {
+  let sum = 0;
+  for (const element of arr) {
+    sum += element; // Operation runs n times
+  }
+  return sum;
+}`,
+  },
+  {
+    class: 'O(n log n) - Linearithmic',
+    explanation:
+      'This is a very common complexity for efficient sorting algorithms. It represents doing O(log n) work for each of the n elements. Merge Sort and Quick Sort are prime examples.',
+    code: `// Merge Sort conceptually
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  // O(log n) levels of division
+  let mid = Math.floor(arr.length / 2);
+  let left = mergeSort(arr.slice(0, mid));
+  let right = mergeSort(arr.slice(mid));
+  // O(n) work to merge
+  return merge(left, right);
+}`,
+  },
+  {
+    class: 'O(n^2) - Quadratic',
+    explanation:
+      'The runtime is proportional to the square of the input size. This often occurs with nested loops, where for each element, you iterate through the list again. Inefficient for large datasets.',
+    code: `function findPairs(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr.length; j++) {
+      // Operation runs n * n times
+      console.log(arr[i], arr[j]);
+    }
+  }
+}`,
+  },
+  {
+    class: 'O(2^n) - Exponential',
+    explanation:
+      'The runtime doubles with each addition to the input dataset. This is common in brute-force algorithms that explore all subsets of a set. Feasible only for very small input sizes.',
+    code: `// Recursive solution for Fibonacci
+function fibonacci(n) {
+  if (n <= 1) return n;
+  // Two recursive calls for each n
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}`,
+  },
+  {
+    class: 'O(n!) - Factorial',
+    explanation:
+      'The runtime grows factorially, which is even faster than exponential. This often involves generating all permutations of a set, like in the brute-force solution to the Traveling Salesperson Problem.',
+    code: `// Concept for finding all permutations
+function permutations(arr, current = []) {
+  if (arr.length === 0) console.log(current);
+  for (let i = 0; i < arr.length; i++) {
+    let rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
+    permutations(rest, [...current, arr[i]]);
+  } // n! possible paths
+}`,
   },
 ]
+
+const algorithmCheatSheet = {
+  sorting: [
+    { name: 'Bubble Sort', time: 'Θ(n^2)', space: 'O(1)', notes: 'Simple but inefficient. The Θ bound applies because even in the best case, it must pass through the list.' },
+    { name: 'Insertion Sort', time: 'O(n^2)', space: 'O(1)', notes: 'Best case is Ω(n) if nearly sorted. Good for small or almost-sorted datasets.' },
+    { name: 'Selection Sort', time: 'Θ(n^2)', space: 'O(1)', notes: 'Always finds the minimum n times, so performance does not change with input order.' },
+    { name: 'Merge Sort', time: 'Θ(n log n)', space: 'O(n)', notes: 'Consistent, not in-place. Its performance is very predictable. Great for external sorting.' },
+    { name: 'Quick Sort', time: 'O(n^2)', space: 'O(log n)', notes: 'Average case is Θ(n log n). Worst case occurs with bad pivots (e.g., on sorted data). In-place and fast in practice.' },
+    { name: 'Heap Sort', time: 'Θ(n log n)', space: 'O(1)', notes: 'In-place but generally slower in practice than a well-implemented Quick Sort due to cache performance.' },
+    { name: 'Radix Sort', time: 'Θ(nk)', space: 'O(n+k)', notes: 'Not comparison-based. k is the number of digits. Very fast for integers or fixed-size strings.' },
+  ],
+  searching: [
+    { name: 'Linear Search', time: 'O(n)', space: 'O(1)', notes: 'Worst case is O(n), best case is Ω(1). Simple but inefficient for large, static datasets.' },
+    { name: 'Binary Search', time: 'O(log n)', space: 'O(1)', notes: 'Requires a sorted data structure. Extremely efficient.' },
+  ],
+  dataStructures: [
+    { name: 'Array (Access)', time: 'Θ(1)', space: '-', notes: 'Direct memory access.' },
+    { name: 'Stack (Push/Pop)', time: 'Θ(1)', space: '-', notes: 'Operations on the top of the stack.' },
+    { name: 'Queue (Enqueue/Dequeue)', time: 'Θ(1)', space: '-', notes: 'Amortized time for array-based implementations.' },
+    { name: 'Linked List (Search/Insert)', time: 'O(n)', space: '-', notes: 'Insertion at head/tail is O(1), but finding the node is O(n).' },
+    { name: 'Hash Table (Search/Insert/Delete)', time: 'O(1)', space: 'O(n)', notes: 'Average case is Θ(1). Worst case (due to collisions) is O(n).' },
+    { name: 'Binary Search Tree (BST)', time: 'O(n)', space: 'O(n)', notes: 'Average case for balanced trees is Θ(log n). Worst case for unbalanced trees is O(n).' },
+    { name: 'AVL Tree / Red-Black Tree', time: 'Θ(log n)', space: 'O(n)', notes: 'Self-balancing BSTs that guarantee logarithmic performance.' },
+  ],
+  graph: [
+    { name: 'Breadth-First Search (BFS)', time: 'Θ(V+E)', space: 'Θ(V)', notes: 'V is vertices, E is edges. Explores level by level. Uses a queue.' },
+    { name: 'Depth-First Search (DFS)', time: 'Θ(V+E)', space: 'Θ(V)', notes: 'Goes as deep as possible. Uses a stack (or recursion).' },
+    { name: "Dijkstra's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'With a binary heap. Finds the shortest path in a weighted graph with non-negative weights.' },
+    { name: "Prim's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'Finds a Minimum Spanning Tree. Similar implementation to Dijkstra.' },
+  ]
+}
 
 const pitfalls = [
-  'Assuming asymptotic dominance too early. For small n, an O(n^2) algorithm with tight loops can beat an O(n log n) one with heavy constants.',
-  'Ignoring input characteristics. Quickselect average case is O(n) but worst case is O(n^2) without good pivots.',
-  'Conflating memory and time. Reducing time with memoization increases space; that can be a regression on constrained devices.',
-  'Overlooking hidden costs. Allocations, I/O, and cache misses can dwarf arithmetic operations.',
-  'Treating average case as guaranteed. Systems with adversaries or untrusted input must respect worst case bounds.',
+  'Constants Matter: An algorithm that is O(n) but has a constant factor of 1000 will be slower than an O(n^2) algorithm with a constant of 1 for small n.',
+  'Ignoring the "n": Is n the number of elements, the number of bits in an element, or something else? Be precise.',
+  'Premature Optimization: Do not sacrifice code readability and correctness for a minor complexity improvement unless performance profiling proves it is a bottleneck.',
+  'Average vs. Worst Case: Relying on the average case can be dangerous in security contexts or real-time systems where the worst case can be triggered deliberately or by chance.',
+  'Space Complexity is Real: An algorithm with great time complexity but requires terabytes of RAM is not practical on most machines.',
 ]
 
-const decisionGuidance = [
-  'If correctness under adversarial input is required: design for worst case O bound or add guards like timeouts and size limits.',
-  'If typical workloads are well behaved: average case or amortized guarantees may suffice and yield simpler or faster code.',
-  'If memory is scarce: prefer in-place algorithms even if they cost extra time, or use streaming approaches that process data in chunks.',
-  'If latency SLOs are tight: favor predictable bounds and cache-friendly layouts over theoretically optimal but cache-poor algorithms.',
-  'If inputs can explode: build size checks and backpressure rather than relying solely on asymptotics.',
-]
-
-const advancedInsights = [
+const keyTakeaways = [
   {
-    title: 'Tight bounds beyond Big O',
-    detail:
-      'Big Theta gives matching upper and lower bounds, Big Omega gives lower bounds. Together they describe how tight the analysis is.',
+    title: 'It is a Language of Growth',
+    detail: 'Complexity is about how resource needs scale, not about precise timings.',
   },
   {
-    title: 'Probabilistic and average-case analysis',
-    detail:
-      'Randomized algorithms like randomized quicksort rely on expectation. Understanding distributions is key to trusting those averages.',
+    title: 'O, Ω, and Θ Answer Different Questions',
+    detail: 'Use O for an upper bound (guarantee), Ω for a lower bound (minimum effort), and Θ for a tight, precise description.',
   },
   {
-    title: 'Cache-aware and cache-oblivious models',
-    detail:
-      'The I/O model counts memory transfers instead of RAM operations. Algorithms like cache-oblivious matrix multiplication optimize block locality asymptotically.',
+    title: 'Know Your Classes',
+    detail: 'Being able to instantly recognize O(1), O(log n), O(n), O(n log n), and O(n^2) patterns in code is a vital skill.',
   },
   {
-    title: 'Lower bounds and impossibility',
-    detail:
-      'Comparison sorting cannot beat O(n log n). Such bounds guide when to seek domain-specific shortcuts like radix sort or hashing.',
+    title: 'Theory Guides, Practice Decides',
+    detail: 'Complexity analysis is a powerful tool for eliminating bad choices, but final performance decisions should be backed by real-world profiling.',
   },
-]
-
-const takeaways = [
-  'Complexity analysis is about growth trends, not exact timings. It protects you as n scales.',
-  'Worst case, average case, and amortized views answer different engineering questions.',
-  'Space is a first-class resource. Trading memory for time or vice versa is deliberate design.',
-  'Asymptotics must meet reality. Constants, cache, and input shape decide real performance.',
 ]
 
 export default function ComplexityAnalysisPage(): JSX.Element {
   return (
     <TopicLayout
-      title="Complexity Analysis (Big O)"
-      subtitle="Measuring algorithmic growth to predict performance"
-      intro="Big O notation is a vocabulary for how work and memory grow with input size. It does not predict wall-clock time, but it shows which designs will survive when data scales from thousands to billions. This page builds the intuition, the formalism, and the practical checks you need to use complexity as a design tool."
+      title="Complexity Analysis"
+      subtitle="The Language of Algorithmic Performance"
+      intro="Complexity analysis provides the essential vocabulary to discuss how an algorithm's performance scales with the size of the input. It abstracts away machine-specific details to give us a pure, mathematical lens to compare different approaches and build systems that last."
     >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Complexity analysis is a safety net against unbounded growth. It separates hardware-dependent speed from the mathematical
-          rate at which cost rises. Understanding it keeps systems predictable, secure against malicious inputs, and efficient when
-          datasets grow faster than hardware budgets.
-        </p>
+      <TopicSection heading="The Big Picture">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {bigPicture.map((item) => (
+            <div key={item.title} className="rounded-lg bg-white/5 p-4">
+              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+              <p className="mt-1 text-sm text-white/80">{item.detail}</p>
+              {item.note && <p className="mt-2 text-xs text-white/60 italic">{item.note}</p>}
+            </div>
+          ))}
+        </div>
+      </TopicSection>
+      
+      <TopicSection heading="The Asymptotic Notations: O, Ω, and Θ">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {asymptoticNotations.map((item) => (
+            <div key={item.title} className="rounded-lg bg-white/5 p-4">
+              <h3 className="text-xl font-semibold text-white">{item.title}</h3>
+              <p className="mt-2 text-sm text-white/80">{item.detail}</p>
+              <p className="mt-4 font-mono text-xs text-amber-400">{item.math}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 rounded-lg border border-sky-500/50 bg-sky-500/10 p-4 text-sm text-white/90">
+            <h4 className="font-bold text-sky-400">Analogy: Speed Limits</h4>
+            <p className="mt-1">
+                <strong>Big O</strong> is like the <span className="font-semibold">speed limit</span>. You are guaranteed not to go faster than this.
+                <br />
+                <strong>Big Ω</strong> is like the <span className="font-semibold">minimum speed</span> on a highway. You are guaranteed not to go slower.
+                <br />
+                <strong>Big Θ</strong> is when the speed limit and minimum speed are the same. You travel at a <span className="font-semibold">fixed speed</span>.
+            </p>
+        </div>
       </TopicSection>
 
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMilestones.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
+      <TopicSection heading="A Tour of Common Complexity Classes">
+        <div className="space-y-6">
+          {complexityClasses.map((c) => (
+            <div key={c.class} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <h3 className="font-mono text-lg font-semibold text-white">{c.class}</h3>
+              <p className="mt-2 text-sm text-white/80">{c.explanation}</p>
+              <div className="mt-4 rounded bg-black/30 p-2">
+                <pre><code className="language-js text-xs">{c.code.trim()}</code></pre>
+              </div>
+            </div>
           ))}
         </div>
       </TopicSection>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
+      <TopicSection heading="The Great Algorithm Complexity Cheat Sheet">
+        {Object.entries(algorithmCheatSheet).map(([category, algorithms]) => (
+           <div key={category} className="mb-8">
+             <h3 className="text-xl font-semibold capitalize text-white">{category}</h3>
+             <div className="mt-4 overflow-x-auto">
+               <table className="w-full min-w-max table-auto text-left">
+                 <thead>
+                   <tr className="border-b border-white/20">
+                     <th className="p-3 text-sm font-semibold text-white">Algorithm</th>
+                     <th className="p-3 text-sm font-semibold text-white">Time Complexity</th>
+                     <th className="p-3 text-sm font-semibold text-white">Space Complexity</th>
+                     <th className="p-3 text-sm font-semibold text-white">Notes</th>
+                   </tr>
+                 </thead>
+                 <tbody className="text-sm text-white/80">
+                   {algorithms.map(algo => (
+                     <tr key={algo.name} className="border-b border-white/10">
+                       <td className="p-3 font-semibold">{algo.name}</td>
+                       <td className="p-3 font-mono">{algo.time}</td>
+                       <td className="p-3 font-mono">{algo.space}</td>
+                       <td className="p-3">{algo.notes}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+             </div>
+           </div>
+        ))}
+      </TopicSection>
+      
+      <TopicSection heading="Common Pitfalls & Mistakes">
+        <div className="rounded-lg bg-white/5 p-6">
+            <h3 className="text-lg font-semibold text-rose-400">Pitfalls to Avoid</h3>
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-white/80">
+              {pitfalls.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Key Takeaways">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {keyTakeaways.map((item) => (
+            <div key={item.title} className="rounded-lg bg-white/5 p-4">
+              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+              <p className="mt-1 text-sm text-white/80">{item.detail}</p>
+            </div>
           ))}
         </div>
       </TopicSection>
 
-      <TopicSection heading="How it works: common growth rates">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {growthRates.map((item) => (
-            <article key={item.name} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.name}</p>
-              <p className="text-sm text-white/80">{item.meaning}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="How it works: what Big O shows and hides">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Real-world implications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {realWorldImplications.map((item) => (
-            <article key={item.context} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use each lens">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
     </TopicLayout>
   )
 }

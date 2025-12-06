@@ -190,8 +190,7 @@ const advanced = [
 
 const codeExamples = [
   {
-    title: 'Finding a Target in an Array (Linear Search)',
-    code: """
+    code: `
 function linearSearch(arr, target) {
   for (let i = 0; i < arr.length; i++) {
     // Test every element
@@ -199,15 +198,14 @@ function linearSearch(arr, target) {
       return i; // Solution found
     }
   }
-  return -1; // Solution not found
 }
-    ",
+    `,
     explanation:
       'This is the most basic form of brute force. It iterates through every element (the entire search space) and tests each one against the target. Simple and effective for unsorted data.',
   },
   {
     title: 'Traveling Salesperson Problem (TSP)',
-    code: """
+    code: `
 function tsp(cities) {
   let minDistance = Infinity;
   let bestPath = [];
@@ -234,7 +232,7 @@ function tsp(cities) {
   generatePermutations([], cities); // Start the generation
   return { path: bestPath, distance: minDistance };
 }
-    ",
+    `,
     explanation:
       'This recursive function generates every possible ordering (permutation) of cities. For each complete path, it calculates the total distance and updates the minimum. This is a classic example of factorial (O(N!)) complexity.',
   },
