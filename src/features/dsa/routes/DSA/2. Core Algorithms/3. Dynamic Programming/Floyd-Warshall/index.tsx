@@ -2,28 +2,35 @@ import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout
 
 import type { JSX } from 'react'
 
+const history = [
+  '1959: Stephen Warshall publishes the transitive closure algorithm using a triple loop over a boolean matrix.',
+  '1962: Robert Floyd adapts the pattern to weighted graphs (min-plus semiring) for all-pairs shortest paths with negative edges allowed.',
+  '1970s-1990s: Dynamic programming and matrix formulations popularize Floyd-Warshall in CS curricula (Knuth, Tarjan, CLRS).',
+  'Modern practice: reused with alternative semirings (max-min for bottlenecks, min-times for reliability) and blocked for cache efficiency.',
+]
+
 const mechanics = [
   {
     heading: 'Triple-loop dynamic programming',
     bullets: [
-      'dp[k][i][j] stores the shortest path from i to j using only intermediate vertices from {0..k}.',
-      'Transition: dp[k][i][j] = min(dp[k-1][i][j], dp[k-1][i][k] + dp[k-1][k][j]).',
-      'Space can be reduced to dp[i][j] updated in place because each k-step only depends on the previous k - 1 slice.',
+      'dist[k][i][j] is the best distance from i to j using only intermediates in {0..k}.',
+      'Transition: dist[k][i][j] = min(dist[k-1][i][j], dist[k-1][i][k] + dist[k-1][k][j]).',
+      'In-place update works because each k-layer depends only on the previous k-1 layer, so a 2D dist is enough.',
     ],
   },
   {
     heading: 'Initialization',
     bullets: [
-      'dp[i][i] = 0 for all i.',
-      'dp[i][j] = weight(i, j) if edge exists, else infinity.',
-      'Parent or next-hop matrices capture reconstruction of actual paths.',
+      'dist[i][i] = 0 for all i.',
+      'dist[i][j] = w(i, j) if edge exists, else infinity.',
+      'next[i][j] = j if an edge exists; used to reconstruct paths.',
     ],
   },
   {
-    heading: 'Negative cycles',
+    heading: 'Negative cycles and detection',
     bullets: [
-      'After completion, any dp[i][i] < 0 indicates a negative cycle reachable from i.',
-      'Propagation of negative cycles: optionally run another pass to mark all pairs influenced by such cycles as -infinity.',
+      'After all k, any dist[v][v] < 0 flags a negative cycle reachable from v.',
+      'To mark pairs affected by a negative cycle, iterate k again: if dist[i][k] + dist[k][j] < dist[i][j] and dist[k][k] < 0, mark as -infinity.',
     ],
   },
 ]
@@ -32,80 +39,105 @@ const complexityNotes = [
   {
     title: 'Time and space',
     detail:
-      'O(V^3) time and O(V^2) space. Excellent for dense graphs or when all-pairs queries are required repeatedly.',
+      'O(V^3) time, O(V^2) space. Great for dense graphs or when you need all-pairs answers reused many times. Becomes heavy past a few thousand vertices.',
   },
   {
-    title: 'Cache behavior',
+    title: 'Cache and blocking',
     detail:
-      'Loop ordering matters; k outermost with i, j inner often improves locality. Blocking can help on large V to fit submatrices in cache.',
+      'k outermost with i, j inner is common. Blocking (tiling) the matrix improves locality on large V, similar to blocked matrix multiply.',
   },
   {
-    title: 'When to choose it',
+    title: 'Alternatives by sparsity',
     detail:
-      'Prefer Floyd-Warshall for dense graphs, small to medium V (hundreds to a few thousands), or when negative edges exist but no negative cycles are desired.',
+      'On sparse graphs with non-negative weights, Johnson (one Bellman-Ford + V Dijkstra) is O(V E log V) and wins for large V. Repeated Dijkstra without reweighting fails on graphs with negative edges.',
   },
 ]
 
 const realWorldUses = [
   {
-    context: 'Routing and reachability matrices',
-    detail:
-      'Build full distance and next-hop tables for small networks, network simulators, or classroom routing labs.',
+    context: 'Routing tables and simulators',
+    detail: 'Small or simulated networks precompute all-pairs latencies and next hops for instant lookup.',
   },
   {
-    context: 'Transitive closure and constraints',
-    detail:
-      'With boolean semiring, it computes reachability; with min-plus, it solves shortest paths; with other semirings, it handles precedence constraints.',
+    context: 'Compilers and static analysis',
+    detail: 'Transitive closure over dependency or precedence graphs; min-plus variants handle timing and cost constraints.',
   },
   {
-    context: 'Graph analytics for small graphs',
-    detail:
-      'All-pairs centrality, diameter, and clustering coefficients for small dense graphs often start from Floyd-Warshall outputs.',
+    context: 'Graph analytics on dense data',
+    detail: 'Betweenness centrality, diameter, and clustering on dense social or biological graphs often start from an all-pairs matrix.',
+  },
+  {
+    context: 'Reliability and bottleneck paths',
+    detail: 'Using max-min semiring finds widest bottleneck paths; min-times models reliability multiplication.',
   },
 ]
 
 const examples = [
   {
-    title: 'Standard Floyd-Warshall',
-    code: `function floydWarshall(n, adjMatrix):
-    // adjMatrix: n x n, infinity where no edge, 0 on diagonal
-    dist = copy(adjMatrix)
-    nextHop = initializeNextHop(adjMatrix) // optional reconstruction
+    title: 'Standard Floyd-Warshall with path reconstruction',
+    code: `function floydWarshall(n, adj):
+    // adj: n x n matrix, inf where no edge, 0 on diagonal
+    dist = copy(adj)
+    next = matrix(n, n, null)
+    for i in range(n):
+        for j in range(n):
+            if i == j: next[i][j] = i
+            else if adj[i][j] < inf: next[i][j] = j
 
     for k in range(n):
         for i in range(n):
-            if dist[i][k] == infinity: continue
+            if dist[i][k] == inf: continue
             for j in range(n):
-                if dist[k][j] == infinity: continue
                 alt = dist[i][k] + dist[k][j]
                 if alt < dist[i][j]:
                     dist[i][j] = alt
-                    nextHop[i][j] = nextHop[i][k]
+                    next[i][j] = next[i][k]  // step toward j
 
-    // negative cycle detection
+    // detect negative cycles
     for v in range(n):
-        if dist[v][v] < 0:
-            throw NegativeCycleDetected
+        if dist[v][v] < 0: raise NegativeCycle
 
-    return dist, nextHop`,
+    return dist, next`,
     explanation:
-      'Each iteration k expands the allowed intermediates. Early infinity checks trim unnecessary work; nextHop tracks path reconstruction.',
+      'Each k-layer authorizes vertex k as an intermediate. next lets you rebuild an actual path by walking i -> next[i][j] until j. Infinity checks avoid overflow when no connection exists.',
+  },
+  {
+    title: 'Boolean transitive closure (Warshall)',
+    code: `function transitiveClosure(n, reach):
+    // reach[i][j] = true if edge exists
+    for k in range(n):
+        for i in range(n):
+            if not reach[i][k]: continue
+            for j in range(n):
+                reach[i][j] = reach[i][j] or (reach[i][k] and reach[k][j])
+    return reach`,
+    explanation:
+      'Same structure over the boolean semiring. Answers reachability queries in O(1) after O(V^3) preprocessing.',
   },
 ]
 
 const pitfalls = [
-  'Forgetting to set dist[i][i] = 0 leads to incorrect paths and missed negative cycles.',
-  'Using an adjacency list directly is awkward; Floyd-Warshall expects or constructs a dense matrix.',
-  'Not guarding against overflow on dist[i][k] + dist[k][j] when one side is infinity can wrap around.',
-  'O(V^3) becomes prohibitive beyond a few thousand vertices; choose Johnson + Dijkstra or repeated Bellman-Ford on sparse larger graphs.',
+  'Failing to set dist[i][i] = 0 breaks correctness and hides negative cycles.',
+  'Updating next incorrectly (or not copying adjacency to dist) yields wrong reconstructions even if distances are right.',
+  'Using adjacency lists directly hurts performance; convert to a dense matrix first for tight loops and cache locality.',
+  'Integer overflow when adding infinities or large weights; guard with sentinel inf checks and wide integer types.',
+  'Expecting it to scale to huge sparse graphs; past a few thousand nodes, O(V^3) can dominate wall-clock and memory.',
 ]
 
 const decisionGuidance = [
-  'Need all-pairs shortest paths on dense or moderately sized graphs: use Floyd-Warshall.',
-  'Need single-source on sparse graphs: prefer Dijkstra or Bellman-Ford depending on weights.',
-  'Need all-pairs on sparse graphs with non-negative edges: use Johnson (Bellman-Ford once + many Dijkstra runs).',
-  'Need reachability only: run Floyd-Warshall over boolean values (transitive closure).',
-  'Negative cycles possible: detect via dist[v][v] after completion and handle accordingly.',
+  'Dense or moderately sized graphs (hundreds to a few thousands), negative edges allowed, no negative cycles wanted: choose Floyd-Warshall.',
+  'Sparse graphs, non-negative weights: choose Dijkstra per source or Johnson for all-pairs.',
+  'Negative edges on sparse graphs: run Bellman-Ford per source or Johnson (with reweighting) if all-pairs is needed.',
+  'Reachability only: run the boolean version (Warshall) for transitive closure.',
+  'Need widest or most reliable paths: swap in max-min or min-times semiring without changing the loop structure.',
+]
+
+const advancedInsights = [
+  'Semiring view: replace min-plus with any associative combine/op pair to solve reachability, bottleneck, reliability, or precedence problems.',
+  'Blocked variants mimic cache-friendly matrix multiply; crucial when V is large enough that naive triple loops thrash cache.',
+  'Parallelization: k-outer loops can be tiled; inner i, j loops vectorize well on CPUs and map to GPU-style matrix kernels.',
+  'Path reconstruction: next[i][j] = next[i][k] when going through k ensures O(path length) recovery without storing parents per k.',
+  'Negative cycle propagation: a second pass marking pairs that can reach and be reached from any vertex with dist[v][v] < 0 yields complete -infinity labeling.',
 ]
 
 export default function FloydWarshallPage(): JSX.Element {
@@ -121,6 +153,14 @@ export default function FloydWarshallPage(): JSX.Element {
           layers. Each k-layer either keeps the old distance or routes through k if that is cheaper, converging to optimal all-pairs
           paths and flagging negative cycles on the diagonal.
         </p>
+      </TopicSection>
+
+      <TopicSection heading="Historical context">
+        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
+          {history.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
       </TopicSection>
 
       <TopicSection heading="How it works">
@@ -188,6 +228,14 @@ export default function FloydWarshallPage(): JSX.Element {
             <li key={item}>{item}</li>
           ))}
         </ol>
+      </TopicSection>
+
+      <TopicSection heading="Advanced insights">
+        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
+          {advancedInsights.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
       </TopicSection>
     </TopicLayout>
   )
