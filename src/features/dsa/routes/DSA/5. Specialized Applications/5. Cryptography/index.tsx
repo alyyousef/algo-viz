@@ -2,291 +2,435 @@ import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout
 
 import type { JSX } from 'react'
 
-const historicalMilestones = [
+const bigPicture = [
   {
-    title: 'Diffie and Hellman formalize public-key ideas (1976)',
-    detail:
-      'They introduced the notion of exchanging keys over an open channel by leaning on discrete logarithms, breaking the assumption that secrecy requires a pre-shared key.',
+    title: 'Control who learns and who alters',
+    detail: 'Encryption hides content; authentication and MACs prove integrity and origin.',
+    note: 'Both are needed to resist active attackers.',
   },
   {
-    title: 'Rivest, Shamir, and Adleman publish RSA (1977)',
-    detail:
-      'RSA showed that asymmetric encryption and signatures are practical, basing security on integer factorization hardness.',
+    title: 'Keys are the real asset',
+    detail: 'Primitive strength means little if keys leak, repeat, or lack rotation.',
+    note: 'Key lifecycle and storage dominate real incidents.',
   },
   {
-    title: 'Naor and Yung define semantic security (1990)',
-    detail:
-      'They gave modern confidentiality definitions, crystallizing the need for indistinguishability under chosen-plaintext attack (IND-CPA).',
+    title: 'Protocols are glue',
+    detail: 'Safe primitives still fail when combined without labels, nonces, and identities.',
+    note: 'Context binding prevents replay and misrouting.',
   },
   {
-    title: 'Bellare and Rogaway make authenticated encryption mainstream (2000s)',
-    detail:
-      'Their work on provable security and composition clarified why confidentiality must pair with integrity to resist active attackers.',
+    title: 'Performance is layered',
+    detail: 'Public-key work is rare and latency bound; symmetric work is frequent and throughput bound.',
+    note: 'Optimize handshakes for correctness, bulk crypto for speed.',
+  },
+]
+
+const history = [
+  {
+    title: '1976: Diffie-Hellman',
+    detail: 'Key exchange over open channels without pre-shared secrets.',
+    note: 'Birth of practical public-key cryptography.',
   },
   {
-    title: 'Bernstein introduces Curve25519 (2006)',
-    detail:
-      'A fast, side-channel resistant elliptic-curve design that now underpins X25519 key exchange and Ed25519 signatures.',
+    title: '1977: RSA',
+    detail: 'Asymmetric encryption and signatures from factoring hardness.',
+    note: 'Made digital signatures mainstream.',
+  },
+  {
+    title: '1990s: Modern security definitions',
+    detail: 'IND-CPA, IND-CCA, and provable security frameworks formalize goals.',
+    note: 'Clarified what “secure” means for developers.',
+  },
+  {
+    title: '2006: Curve25519',
+    detail: 'Safe, fast elliptic-curve operations with side-channel hardening.',
+    note: 'Adopted in TLS 1.3, Signal, and SSH.',
+  },
+  {
+    title: '2022+: Post-quantum finalists',
+    detail: 'Kyber (KEM) and Dilithium (signatures) selected for standardization.',
+    note: 'Hybrid use begins in production to hedge quantum risk.',
+  },
+]
+
+const pillars = [
+  {
+    title: 'Confidentiality + integrity together',
+    detail: 'Use AEAD so ciphertext cannot be altered without detection.',
+  },
+  {
+    title: 'Nonce discipline',
+    detail: 'Nonces must never repeat under a key; counters or random 96-bit values with tracking.',
+  },
+  {
+    title: 'Identity and context binding',
+    detail: 'Bind messages to identities and metadata (AAD) so attackers cannot replay across contexts.',
+  },
+  {
+    title: 'Key lifecycle',
+    detail: 'Generate with entropy, store in hardware when possible, rotate with versioning, retire on compromise.',
   },
 ]
 
 const mentalModels = [
   {
-    title: 'Locks and labels',
-    detail:
-      'Encryption is a lock, but without clear labels (associated data) you cannot prove what was locked. AEAD tags both ciphertext and context so the receiver knows exactly what was protected.',
+    title: 'Sealed envelope with a receipt',
+    detail: 'AEAD seals the letter and signs the envelope label. If the seal or label check fails, drop it unopened.',
   },
   {
-    title: 'Fragile counters',
-    detail:
-      'Nonces act like fragile counters. Reusing one with the same key is like sealing two letters with the same one-time pad; the xor of ciphertexts leaks the xor of plaintexts.',
+    title: 'One-time pad caution',
+    detail: 'Reusing a nonce with stream ciphers is like reusing a one-time pad; differences of plaintexts leak.',
   },
   {
-    title: 'Math as a budget',
-    detail:
-      'Security reductions translate attacker effort into math hardness. Choosing parameters is budgeting computation so attackers run out of time or energy first.',
-  },
-  {
-    title: 'Composition is plumbing',
-    detail:
-      'Primitives rarely fail alone; leaks happen at the joints. Protocols are the plumbing that routes keys, identities, and randomness without backflow.',
+    title: 'Budgeted hardness',
+    detail: 'Parameters translate to attacker work. Pick sizes so attacks cost more time/energy than your asset is worth.',
   },
 ]
 
-const primitiveMechanics = [
+const howItWorks = [
   {
-    heading: 'Symmetric encryption',
-    bullets: [
-      'Modern AEAD modes: AES-GCM, ChaCha20-Poly1305. Both provide confidentiality and integrity in one shot.',
-      'Inputs: key, nonce, plaintext, and associated data. Output: ciphertext and tag.',
-      'Nonce rules: unique per key. Use counters server side or 96-bit randomness with collision analysis.',
-    ],
+    title: 'Pick primitives with safe defaults',
+    detail: 'AES-GCM or ChaCha20-Poly1305 for AEAD; X25519/P-256 for key exchange; Ed25519 for signatures.',
   },
   {
-    heading: 'Hashing and MACs',
-    bullets: [
-      'Cryptographic hash: preimage and collision resistance. SHA-256, SHA-512, and SHA3-256 dominate practice.',
-      'MACs: HMAC(key, message) or Poly1305. They bind integrity to a shared secret.',
-      'KDFs: HKDF expands shared secrets into multiple labeled keys. PBKDF2, scrypt, Argon2 harden passwords.',
-    ],
+    title: 'Bind identities and context',
+    detail: 'Use certificates or pre-shared identities; include headers as associated data in AEAD.',
   },
   {
-    heading: 'Public-key tools',
-    bullets: [
-      'Key exchange: X25519 and P-256 ECDHE for forward secrecy.',
-      'Signatures: Ed25519 for speed and safety defaults; ECDSA and RSA for compatibility.',
-      'Certificates bind public keys to identities; revocation and rotation keep bindings fresh.',
-    ],
-  },
-]
-
-const complexityNotes = [
-  {
-    title: 'Asymptotic cost',
-    detail:
-      'Symmetric operations are O(n) in message length; hashes and stream ciphers scale linearly. Public-key operations are roughly O(k^3) with modulus size k for RSA, and near O(k^2) for elliptic curves.',
+    title: 'Manage nonces and keys',
+    detail: 'Use counters or random nonces with tracking; derive subkeys with HKDF to avoid reuse.',
   },
   {
-    title: 'Real throughput',
-    detail:
-      'AES-GCM with hardware acceleration often exceeds 10 Gbps per core; ChaCha20-Poly1305 shines on devices without AES-NI, including many mobile CPUs.',
+    title: 'Harden passwords and secrets',
+    detail: 'Use Argon2id/scrypt with salts for passwords; avoid storing secrets in code repos.',
   },
   {
-    title: 'Handshake vs. bulk',
-    detail:
-      'Public-key handshakes are latency-bound; they happen once per session. Bulk data lives in the symmetric realm, so optimizing key reuse, batching, and record sizes matters more than shaving microseconds off ECDH.',
+    title: 'Plan rotation and revocation',
+    detail: 'Version keys, support dual-read/write during rotation, and verify revocation paths work.',
   },
   {
-    title: 'Memory footprint',
-    detail:
-      'AEAD needs minimal working memory; Argon2 and scrypt intentionally require tens to hundreds of megabytes to raise the cost of guessing attacks.',
+    title: 'Test for timing and replay',
+    detail: 'Check constant-time comparisons and explicit replay protection where needed.',
   },
 ]
 
-const realWorldUses = [
+const complexityTable = [
   {
-    context: 'Web traffic',
-    detail:
-      'TLS 1.3 uses X25519 or P-256 for ECDHE, HKDF for key derivation, and AEAD (AES-GCM or ChaCha20-Poly1305) for records. Forward secrecy and authenticated encryption are defaults, not options.',
+    approach: 'AES-GCM encrypt',
+    time: 'O(n)',
+    space: 'O(1)',
+    note: 'n = bytes; hardware AES-NI makes it near memory-speed.',
   },
   {
-    context: 'Messaging apps',
-    detail:
-      'Signal protocol employs the Double Ratchet: X25519 for initial handshake, HKDF chains for rapid key rotation, and AEAD for message confidentiality and authenticity.',
+    approach: 'ChaCha20-Poly1305',
+    time: 'O(n)',
+    space: 'O(1)',
+    note: 'Great on CPUs without AES acceleration.',
   },
   {
-    context: 'Databases and storage',
-    detail:
-      'Disk encryption stacks rely on XTS-AES for sector-level confidentiality and integrity, while backup systems layer AEAD envelopes with key IDs for rotation.',
+    approach: 'ECDH (X25519/P-256)',
+    time: 'O(k^2)',
+    space: 'O(1)',
+    note: 'k = key size; latency dominates, done per session.',
   },
   {
-    context: 'Package ecosystems',
-    detail:
-      'NPM, PyPI, and container registries lean on signature verification (often via TUF or Sigstore) to prevent tampered artifacts from entering supply chains.',
+    approach: 'Argon2id',
+    time: 'O(t * m)',
+    space: 'O(m)',
+    note: 't = iterations, m = memory; intentionally expensive for attackers.',
+  },
+]
+
+const applications = [
+  {
+    title: 'TLS 1.3',
+    detail: 'ECDHE (X25519/P-256) plus HKDF for keys; AEAD for records; forward secrecy by default.',
+    note: 'Short handshakes and no legacy RSA key transport.',
+  },
+  {
+    title: 'Messaging protocols',
+    detail: 'Signal uses X25519 handshakes and a double ratchet with AEAD for per-message keys.',
+    note: 'Rapid key churn limits damage from compromise.',
+  },
+  {
+    title: 'Software supply chain',
+    detail: 'Sign releases with Ed25519/RSA, publish transparency logs, and verify on install.',
+    note: 'Prevents tampered artifacts from entering builds.',
+  },
+  {
+    title: 'Storage at rest',
+    detail: 'XTS-AES for disks; envelope encryption with key IDs for backups and objects.',
+    note: 'Keys rotate without rewriting data.',
   },
 ]
 
-const examples = [
-  {
-    title: 'Authenticated encryption blueprint',
-    code: `function seal({ key, nonce, plaintext, aad }):
-    // Encrypt and authenticate. In practice, call a vetted AEAD library.
-    (ciphertext, tag) = AEAD_Encrypt(key, nonce, plaintext, aad)
-    return { nonce, ciphertext, tag, aad }
-
-function open({ key, nonce, ciphertext, tag, aad }):
-    plaintext = AEAD_Decrypt(key, nonce, ciphertext, aad, tag)
-    if plaintext is INVALID: throw IntegrityError
-    return plaintext`,
-    explanation:
-      'The mental model is sealing a letter and stamping both the envelope and its label. If the stamp verification fails, reject without revealing any plaintext.',
-  },
-  {
-    title: 'Password hashing guardrail',
-    code: `function hashPassword(password):
-    salt = SecureRandom(16 bytes)
-    params = { memory: 64 MB, iterations: 3, parallelism: 2 }
-    digest = Argon2id(password, salt, params)
-    return { salt, params, digest }
-
-function verifyPassword(password, record):
-    digest = Argon2id(password, record.salt, record.params)
-    return ConstantTimeEqual(digest, record.digest)`,
-    explanation:
-      'Argon2id forces attackers to burn memory and time on each guess. Constant-time comparison avoids timing leaks.',
-  },
-]
+const failureStory =
+  'A payments service reused AES-GCM nonces after a deployment bug; attackers could xor ciphertexts to recover card details. Adding monotonic counters per key and strict nonce validation stopped reuse and forced key rotation.'
 
 const pitfalls = [
-  'Nonce reuse with the same AEAD key leaks relationships between messages and can reveal plaintext. Enforce nonce uniqueness in code.',
-  'Rolling your own padding, RNG, or protocol usually introduces a break. Prefer boring, audited libraries.',
-  'Missing associated data means metadata can be tampered without detection. Always MAC headers and contextual fields.',
-  'Certificate validation shortcuts (skipping hostname checks, trusting self-signed roots in production) open trivial man-in-the-middle vectors.',
-  'Storing long-lived keys alongside code repositories increases blast radius. Separate duties and use hardware-backed key storage.',
-]
-
-const decisionGuidance = [
-  'Need confidentiality plus integrity for messages: choose AEAD (AES-GCM on servers with AES-NI, ChaCha20-Poly1305 on constrained or mixed hardware).',
-  'Need two parties to agree on a key without prior sharing: use ECDHE (X25519 or P-256) with authentication via certificates or pre-shared identities.',
-  'Need tamper evidence for software or documents: sign with Ed25519 when possible; use RSA-2048 or better when compatibility requires it.',
-  'Need to store user passwords: use Argon2id or scrypt with salts and tuned parameters; never store raw hashes.',
-  'Need to derive multiple keys from one secret: use HKDF with explicit labels to avoid key reuse across contexts.',
-]
-
-const advancedInsights = [
   {
-    title: 'Post-quantum migration',
-    detail:
-      'NIST is standardizing lattice-based schemes like CRYSTALS-Kyber and Dilithium. Hybrid handshakes (ECDHE + Kyber) hedge against future quantum attacks while maintaining current security.',
+    title: 'Nonce reuse',
+    detail: 'Repeating a nonce with a stream/AEAD key leaks plaintext relations.',
   },
   {
-    title: 'Side-channel resilience',
-    detail:
-      'Constant-time implementations and complete addition formulas (as in Edwards curves) reduce timing and power leakage. Hardware isolation and masking add defense in depth.',
+    title: 'DIY crypto',
+    detail: 'Custom padding, RNGs, or protocols often break under scrutiny; use vetted libraries.',
   },
   {
-    title: 'Key lifecycle engineering',
-    detail:
-      'Rotate keys with versioned identifiers. During rotation, decrypt with the old key and encrypt with the new to avoid outages. Log key usage to spot stale or overused material.',
+    title: 'Skipping identity checks',
+    detail: 'Ignoring hostname or certificate validation enables trivial man-in-the-middle attacks.',
   },
   {
-    title: 'Formal verification',
-    detail:
-      'Tools like Tamarin, ProVerif, and EverCrypt help prove protocol properties and constant-time behavior. Verified components reduce whole classes of implementation bugs.',
+    title: 'Missing context binding',
+    detail: 'Failing to MAC headers or metadata lets attackers replay or misroute ciphertexts.',
+  },
+  {
+    title: 'Stale or exposed keys',
+    detail: 'Long-lived keys in repos or logs expand blast radius; rotate and isolate storage.',
   },
 ]
 
-const takeaways = [
-  'Cryptography is about composition. Safe primitives can still fail when glued together without clear identities, nonces, and context.',
-  'Authenticated encryption is the default. Confidentiality without integrity invites active attacks.',
-  'Key management and randomness hygiene cause most real incidents, not broken math.',
-  'Prefer modern, audited primitives and rotate keys with versioning to limit blast radius.',
+const whenToUse = [
+  {
+    title: 'Need confidentiality and integrity',
+    detail: 'Use AEAD; pick AES-GCM where AES-NI exists, ChaCha20-Poly1305 where it does not.',
+  },
+  {
+    title: 'Need fresh shared keys',
+    detail: 'Use ECDHE (X25519/P-256) with authentication; avoid static RSA key transport.',
+  },
+  {
+    title: 'Need tamper evidence',
+    detail: 'Sign with Ed25519 when possible; use RSA/ECDSA where compatibility demands.',
+  },
+  {
+    title: 'Need password storage',
+    detail: 'Use Argon2id or scrypt with salts and tuned memory/time limits.',
+  },
+]
+
+const advanced = [
+  {
+    title: 'Hybrid post-quantum handshakes',
+    detail: 'Combine ECDHE with Kyber KEM to maintain security if quantum breaks ECC later.',
+    note: 'Hedges future risk while keeping today secure.',
+  },
+  {
+    title: 'Replay and duplicate defense',
+    detail: 'Track seen nonces or sequence numbers; discard duplicates before decryption.',
+    note: 'Prevents padding-oracle style gadgets.',
+  },
+  {
+    title: 'Side-channel hygiene',
+    detail: 'Use constant-time comparisons and implementations; avoid branching on secrets.',
+    note: 'Needed on shared hardware or hostile environments.',
+  },
+  {
+    title: 'Key management services',
+    detail: 'Store keys in HSMs or KMS with audit logs and per-use limits.',
+    note: 'Reduces blast radius of application bugs.',
+  },
+]
+
+const codeExamples = [
+  {
+    title: 'AEAD encrypt/decrypt',
+    code: `function seal(key: Uint8Array, nonce: Uint8Array, plaintext: Uint8Array, aad: Uint8Array) {
+  // Use a vetted AEAD; here we sketch ChaCha20-Poly1305 style inputs
+  const { ciphertext, tag } = aeadEncrypt(key, nonce, plaintext, aad)
+  return { nonce, ciphertext, tag }
+}
+
+function open(key: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array, tag: Uint8Array, aad: Uint8Array) {
+  const plaintext = aeadDecrypt(key, nonce, ciphertext, aad, tag)
+  if (!plaintext) throw new Error('integrity check failed')
+  return plaintext
+}`,
+    explanation: 'AEAD seals both data and associated context; decryption must reject on any tag failure without revealing data.',
+  },
+  {
+    title: 'Argon2id password hashing',
+    code: `type HashRecord = { salt: Uint8Array; params: { m: number; t: number; p: number }; digest: Uint8Array }
+
+function hashPassword(password: Uint8Array): HashRecord {
+  const salt = randomBytes(16)
+  const params = { m: 64 * 1024, t: 3, p: 2 } // memory KB, iterations, lanes
+  const digest = argon2id(password, salt, params)
+  return { salt, params, digest }
+}
+
+function verifyPassword(password: Uint8Array, record: HashRecord): boolean {
+  const digest = argon2id(password, record.salt, record.params)
+  return constantTimeEqual(digest, record.digest)
+}`,
+    explanation: 'Memory-hard hashing slows offline guessing; constant-time compare avoids timing leaks.',
+  },
+]
+
+const keyTakeaways = [
+  {
+    title: 'Pair secrecy with integrity',
+    detail: 'Confidentiality alone is not enough; always use AEAD or a MAC.',
+  },
+  {
+    title: 'Nonces and keys are fragile',
+    detail: 'Prevent reuse, rotate regularly, and isolate storage.',
+  },
+  {
+    title: 'Identity checks are part of crypto',
+    detail: 'Certificate validation, AAD, and signatures bind data to the right parties.',
+  },
+  {
+    title: 'Plan the future now',
+    detail: 'Design for rotation, revocation, and post-quantum upgrades before incidents force change.',
+  },
 ]
 
 export default function CryptographyPage(): JSX.Element {
   return (
     <TopicLayout
       title="Cryptography"
-      subtitle="Building secrecy, integrity, and identity with math and engineering discipline"
-      intro="Cryptography is not only ciphers and equations. It is a toolbox for controlling who can learn, modify, or impersonate data. The failures that reach headlines rarely come from AES or elliptic curves; they come from reused nonces, unvalidated certificates, or missing context binding. This page walks through the ideas, history, mechanics, and real-world playbooks that keep systems trustworthy."
+      subtitle="Secrecy, integrity, and identity in practice"
+      intro="Cryptography turns untrusted networks into workable systems by hiding data, detecting tampering, and binding identities. Real security comes from disciplined key handling, nonce hygiene, and protocols that treat failure as normal."
     >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          At its core, cryptography gives two guarantees: keeping secrets and detecting tampering. It lets strangers agree on keys
-          in public, proves authorship of messages, and ties data to identities so that networks can be open without being reckless.
-          Without it, caches, CDNs, API clients, and supply chains would be forced into private networks or blind trust.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMilestones.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
+      <TopicSection heading="Big picture">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {bigPicture.map((item) => (
+            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
               <h3 className="text-sm font-semibold text-white">{item.title}</h3>
               <p className="text-sm text-white/80">{item.detail}</p>
+              <p className="text-xs text-white/60">{item.note}</p>
             </article>
           ))}
         </div>
       </TopicSection>
 
-      <TopicSection heading="Core concept and mental models">
+      <TopicSection heading="History that shaped practice">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {history.map((event) => (
+            <article key={event.title} className="rounded-lg bg-white/5 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-white/60">{event.title}</p>
+              <p className="text-sm text-white/80">{event.detail}</p>
+              <p className="text-xs text-white/60">{event.note}</p>
+            </article>
+          ))}
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Pillars and mental hooks">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-3">
+            {pillars.map((pillar) => (
+              <article key={pillar.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+                <h3 className="text-sm font-semibold text-white">{pillar.title}</h3>
+                <p className="text-sm text-white/80">{pillar.detail}</p>
+              </article>
+            ))}
+          </div>
+          <div className="space-y-3">
+            {mentalModels.map((model) => (
+              <article key={model.title} className="rounded-lg bg-white/5 p-4">
+                <h3 className="text-sm font-semibold text-white">{model.title}</h3>
+                <p className="text-sm text-white/80">{model.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="How it works, step by step">
+        <div className="grid gap-3 md:grid-cols-3">
+          {howItWorks.map((step, idx) => (
+            <article key={step.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <p className="text-xs font-semibold text-white/60">Step {idx + 1}</p>
+              <h3 className="text-sm font-semibold text-white">{step.title}</h3>
+              <p className="text-sm text-white/80">{step.detail}</p>
+            </article>
+          ))}
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Complexity at a glance">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm text-white/80">
+            <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-white/60">
+              <tr>
+                <th className="px-3 py-2">Approach</th>
+                <th className="px-3 py-2">Time</th>
+                <th className="px-3 py-2">Space</th>
+                <th className="px-3 py-2">Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {complexityTable.map((row) => (
+                <tr key={row.approach} className="border-b border-white/5">
+                  <td className="px-3 py-2 font-semibold text-white">{row.approach}</td>
+                  <td className="px-3 py-2 text-white/80">{row.time}</td>
+                  <td className="px-3 py-2 text-white/80">{row.space}</td>
+                  <td className="px-3 py-2 text-white/70">{row.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Where it shows up">
         <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+          {applications.map((app) => (
+            <article key={app.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">{app.title}</h3>
+              <p className="text-sm text-white/80">{app.detail}</p>
+              <p className="text-xs text-white/60">{app.note}</p>
+            </article>
+          ))}
+        </div>
+        <div className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-100">
+          <p className="font-semibold text-red-200">Failure mode</p>
+          <p>{failureStory}</p>
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Pitfalls to avoid">
+        <div className="space-y-2 rounded-lg bg-white/5 p-4">
+          {pitfalls.map((item) => (
+            <div key={item.title} className="rounded-md border border-white/5 p-3">
               <p className="text-sm font-semibold text-white">{item.title}</p>
               <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
+            </div>
           ))}
         </div>
       </TopicSection>
 
-      <TopicSection heading="How it works: primitives in motion">
-        <div className="grid gap-3 md:grid-cols-3">
-          {primitiveMechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((note) => (
-            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
-              <p className="text-sm text-white/80">{note.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Rule of thumb: optimize public-key handshakes for latency and correctness, then focus energy on symmetric throughput,
-          nonce management, and key lifecycle. Hardware acceleration often dominates algorithmic constants.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {realWorldUses.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
+      <TopicSection heading="When to reach for each tool">
+        <div className="space-y-2 rounded-lg bg-white/5 p-4">
+          {whenToUse.map((item) => (
+            <div key={item.title} className="rounded-md border border-white/5 p-3">
+              <p className="text-sm font-semibold text-white">{item.title}</p>
               <p className="text-sm text-white/80">{item.detail}</p>
+            </div>
+          ))}
+        </div>
+      </TopicSection>
+
+      <TopicSection heading="Advanced moves">
+        <div className="grid gap-3 md:grid-cols-2">
+          {advanced.map((item) => (
+            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
+              <p className="text-sm text-white/80">{item.detail}</p>
+              <p className="text-xs text-white/60">{item.note}</p>
             </article>
           ))}
         </div>
       </TopicSection>
 
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
+      <TopicSection heading="Code examples">
+        <div className="grid gap-3 md:grid-cols-2">
+          {codeExamples.map((example) => (
+            <article key={example.title} className="space-y-2 rounded-lg border border-white/10 bg-white/5 p-4">
+              <h3 className="text-sm font-semibold text-white">{example.title}</h3>
+              <pre className="overflow-x-auto rounded-md bg-black/40 p-3 text-xs text-white">
                 <code>{example.code}</code>
               </pre>
               <p className="text-sm text-white/80">{example.explanation}</p>
@@ -295,40 +439,14 @@ export default function CryptographyPage(): JSX.Element {
         </div>
       </TopicSection>
 
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and current frontiers">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
+      <TopicSection heading="Key takeaways">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          {keyTakeaways.map((item) => (
             <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
+              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
               <p className="text-sm text-white/80">{item.detail}</p>
             </article>
           ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
         </div>
       </TopicSection>
     </TopicLayout>
