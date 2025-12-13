@@ -432,7 +432,7 @@ export default function FlowNetworkAlgorithms(): JSX.Element {
           <span role="menuitem">Help</span>
         </div>
         <div className="win95-inline-toolbar" aria-label="Toolbar">
-          {[...Array(7)].map((_, index) => (
+          {Array.from({ length: 7 }, (_, index) => index).map((index) => (
             <button key={index} className="win95-icon-btn" aria-label={`Toolbar button ${index + 1}`} />
           ))}
         </div>
