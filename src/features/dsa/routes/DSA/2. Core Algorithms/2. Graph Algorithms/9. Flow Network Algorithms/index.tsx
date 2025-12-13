@@ -425,6 +425,17 @@ export default function FlowNetworkAlgorithms(): JSX.Element {
             </button>
           </div>
         </header>
+        <div className="win95-menu" role="menubar">
+          <span role="menuitem">File</span>
+          <span role="menuitem">Edit</span>
+          <span role="menuitem">View</span>
+          <span role="menuitem">Help</span>
+        </div>
+        <div className="win95-inline-toolbar" aria-label="Toolbar">
+          {[...Array(7)].map((_, index) => (
+            <button key={index} className="win95-icon-btn" aria-label={`Toolbar button ${index + 1}`} />
+          ))}
+        </div>
         <div className="win95-content">
           <div className="win95-header-row">
             <div>
@@ -607,6 +618,11 @@ export default function FlowNetworkAlgorithms(): JSX.Element {
               ))}
             </div>
           </fieldset>
+        </div>
+        <div className="win95-status-bar">
+          <span>Ready</span>
+          <span className="win95-badge">Win95 Theme</span>
+          <span className="win95-badge">No errors</span>
         </div>
       </div>
     </div>

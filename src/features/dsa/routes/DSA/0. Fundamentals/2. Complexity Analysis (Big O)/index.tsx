@@ -1,4 +1,3 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
 import type { JSX } from 'react'
 
 const bigPicture = [
@@ -27,19 +26,19 @@ const asymptoticNotations = [
     title: 'Big O (O): The Upper Bound',
     detail:
       "This is the most common notation. It describes the *worst-case* scenario. If an algorithm is O(n^2), it means its execution time will not grow faster than a quadratic function of the input size. It gives a guarantee: 'The performance will be at least this good.'",
-    math: 'f(n) = O(g(n)) if there exist constants c > 0 and n₀ >= 0 such that 0 <= f(n) <= c * g(n) for all n >= n₀.',
+    math: 'f(n) = O(g(n)) if there exist constants c > 0 and nƒ,? >= 0 such that 0 <= f(n) <= c * g(n) for all n >= nƒ,?.',
   },
   {
-    title: 'Big Omega (Ω): The Lower Bound',
+    title: 'Big Omega (Ic): The Lower Bound',
     detail:
-      "This describes the *best-case* scenario. If an algorithm is Ω(n), it means its execution time will not grow slower than a linear function of the input. It provides a floor: 'It will take at least this much effort, even on a good day.'",
-    math: 'f(n) = Ω(g(n)) if there exist constants c > 0 and n₀ >= 0 such that 0 <= c * g(n) <= f(n) for all n >= n₀.',
+      "This describes the *best-case* scenario. If an algorithm is Ic(n), it means its execution time will not grow slower than a linear function of the input. It provides a floor: 'It will take at least this much effort, even on a good day.'",
+    math: 'f(n) = Ic(g(n)) if there exist constants c > 0 and nƒ,? >= 0 such that 0 <= c * g(n) <= f(n) for all n >= nƒ,?.',
   },
   {
-    title: 'Big Theta (Θ): The Tight Bound',
+    title: 'Big Theta (I~): The Tight Bound',
     detail:
-      'This is the most precise notation. It is used when an algorithm\'s best-case and worst-case performance are of the same order. If an algorithm is Θ(n log n), it means it grows as fast as n log n, no slower and no faster.',
-    math: 'f(n) = Θ(g(n)) if f(n) = O(g(n)) and f(n) = Ω(g(n)). It is \'squeezed\' between two multiples of g(n).',
+      'This is the most precise notation. It is used when an algorithm\'s best-case and worst-case performance are of the same order. If an algorithm is I~(n log n), it means it grows as fast as n log n, no slower and no faster.',
+    math: 'f(n) = I~(g(n)) if f(n) = O(g(n)) and f(n) = Ic(g(n)). It is \'squeezed\' between two multiples of g(n).',
   },
 ]
 
@@ -134,30 +133,30 @@ function permutations(arr, current = []) {
 
 const algorithmCheatSheet = {
   sorting: [
-    { name: 'Bubble Sort', time: 'Θ(n^2)', space: 'O(1)', notes: 'Simple but inefficient. The Θ bound applies because even in the best case, it must pass through the list.' },
-    { name: 'Insertion Sort', time: 'O(n^2)', space: 'O(1)', notes: 'Best case is Ω(n) if nearly sorted. Good for small or almost-sorted datasets.' },
-    { name: 'Selection Sort', time: 'Θ(n^2)', space: 'O(1)', notes: 'Always finds the minimum n times, so performance does not change with input order.' },
-    { name: 'Merge Sort', time: 'Θ(n log n)', space: 'O(n)', notes: 'Consistent, not in-place. Its performance is very predictable. Great for external sorting.' },
-    { name: 'Quick Sort', time: 'O(n^2)', space: 'O(log n)', notes: 'Average case is Θ(n log n). Worst case occurs with bad pivots (e.g., on sorted data). In-place and fast in practice.' },
-    { name: 'Heap Sort', time: 'Θ(n log n)', space: 'O(1)', notes: 'In-place but generally slower in practice than a well-implemented Quick Sort due to cache performance.' },
-    { name: 'Radix Sort', time: 'Θ(nk)', space: 'O(n+k)', notes: 'Not comparison-based. k is the number of digits. Very fast for integers or fixed-size strings.' },
+    { name: 'Bubble Sort', time: 'I~(n^2)', space: 'O(1)', notes: 'Simple but inefficient. The I~ bound applies because even in the best case, it must pass through the list.' },
+    { name: 'Insertion Sort', time: 'O(n^2)', space: 'O(1)', notes: 'Best case is Ic(n) if nearly sorted. Good for small or almost-sorted datasets.' },
+    { name: 'Selection Sort', time: 'I~(n^2)', space: 'O(1)', notes: 'Always finds the minimum n times, so performance does not change with input order.' },
+    { name: 'Merge Sort', time: 'I~(n log n)', space: 'O(n)', notes: 'Consistent, not in-place. Its performance is very predictable. Great for external sorting.' },
+    { name: 'Quick Sort', time: 'O(n^2)', space: 'O(log n)', notes: 'Average case is I~(n log n). Worst case occurs with bad pivots (e.g., on sorted data). In-place and fast in practice.' },
+    { name: 'Heap Sort', time: 'I~(n log n)', space: 'O(1)', notes: 'In-place but generally slower in practice than a well-implemented Quick Sort due to cache performance.' },
+    { name: 'Radix Sort', time: 'I~(nk)', space: 'O(n+k)', notes: 'Not comparison-based. k is the number of digits. Very fast for integers or fixed-size strings.' },
   ],
   searching: [
-    { name: 'Linear Search', time: 'O(n)', space: 'O(1)', notes: 'Worst case is O(n), best case is Ω(1). Simple but inefficient for large, static datasets.' },
+    { name: 'Linear Search', time: 'O(n)', space: 'O(1)', notes: 'Worst case is O(n), best case is Ic(1). Simple but inefficient for large, static datasets.' },
     { name: 'Binary Search', time: 'O(log n)', space: 'O(1)', notes: 'Requires a sorted data structure. Extremely efficient.' },
   ],
   dataStructures: [
-    { name: 'Array (Access)', time: 'Θ(1)', space: '-', notes: 'Direct memory access.' },
-    { name: 'Stack (Push/Pop)', time: 'Θ(1)', space: '-', notes: 'Operations on the top of the stack.' },
-    { name: 'Queue (Enqueue/Dequeue)', time: 'Θ(1)', space: '-', notes: 'Amortized time for array-based implementations.' },
+    { name: 'Array (Access)', time: 'I~(1)', space: '-', notes: 'Direct memory access.' },
+    { name: 'Stack (Push/Pop)', time: 'I~(1)', space: '-', notes: 'Operations on the top of the stack.' },
+    { name: 'Queue (Enqueue/Dequeue)', time: 'I~(1)', space: '-', notes: 'Amortized time for array-based implementations.' },
     { name: 'Linked List (Search/Insert)', time: 'O(n)', space: '-', notes: 'Insertion at head/tail is O(1), but finding the node is O(n).' },
-    { name: 'Hash Table (Search/Insert/Delete)', time: 'O(1)', space: 'O(n)', notes: 'Average case is Θ(1). Worst case (due to collisions) is O(n).' },
-    { name: 'Binary Search Tree (BST)', time: 'O(n)', space: 'O(n)', notes: 'Average case for balanced trees is Θ(log n). Worst case for unbalanced trees is O(n).' },
-    { name: 'AVL Tree / Red-Black Tree', time: 'Θ(log n)', space: 'O(n)', notes: 'Self-balancing BSTs that guarantee logarithmic performance.' },
+    { name: 'Hash Table (Search/Insert/Delete)', time: 'O(1)', space: 'O(n)', notes: 'Average case is I~(1). Worst case (due to collisions) is O(n).' },
+    { name: 'Binary Search Tree (BST)', time: 'O(n)', space: 'O(n)', notes: 'Average case for balanced trees is I~(log n). Worst case for unbalanced trees is O(n).' },
+    { name: 'AVL Tree / Red-Black Tree', time: 'I~(log n)', space: 'O(n)', notes: 'Self-balancing BSTs that guarantee logarithmic performance.' },
   ],
   graph: [
-    { name: 'Breadth-First Search (BFS)', time: 'Θ(V+E)', space: 'Θ(V)', notes: 'V is vertices, E is edges. Explores level by level. Uses a queue.' },
-    { name: 'Depth-First Search (DFS)', time: 'Θ(V+E)', space: 'Θ(V)', notes: 'Goes as deep as possible. Uses a stack (or recursion).' },
+    { name: 'Breadth-First Search (BFS)', time: 'I~(V+E)', space: 'I~(V)', notes: 'V is vertices, E is edges. Explores level by level. Uses a queue.' },
+    { name: 'Depth-First Search (DFS)', time: 'I~(V+E)', space: 'I~(V)', notes: 'Goes as deep as possible. Uses a stack (or recursion).' },
     { name: "Dijkstra's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'With a binary heap. Finds the shortest path in a weighted graph with non-negative weights.' },
     { name: "Prim's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'Finds a Minimum Spanning Tree. Similar implementation to Dijkstra.' },
   ]
@@ -177,8 +176,8 @@ const keyTakeaways = [
     detail: 'Complexity is about how resource needs scale, not about precise timings.',
   },
   {
-    title: 'O, Ω, and Θ Answer Different Questions',
-    detail: 'Use O for an upper bound (guarantee), Ω for a lower bound (minimum effort), and Θ for a tight, precise description.',
+    title: 'O, Ic, and I~ Answer Different Questions',
+    detail: 'Use O for an upper bound (guarantee), Ic for a lower bound (minimum effort), and I~ for a tight, precise description.',
   },
   {
     title: 'Know Your Classes',
@@ -190,111 +189,319 @@ const keyTakeaways = [
   },
 ]
 
+const styles = `
+* { box-sizing: border-box; }
+.win95-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #C0C0C0;
+  margin: 0;
+  padding: 0;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+  color: #000;
+}
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  border: 2px outset;
+  border-color: #fff #404040 #404040 #fff;
+  display: flex;
+  flex-direction: column;
+}
+.win95-title-bar {
+  background: #000080;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  height: 32px;
+  box-sizing: border-box;
+}
+.win95-title {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+  text-shadow: 1px 1px #000;
+}
+.win95-close {
+  min-width: 26px;
+  height: 22px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  color: #000;
+  font-weight: bold;
+  padding: 0;
+  cursor: pointer;
+}
+.win95-close:active {
+  border-color: #404040 #fff #fff #404040;
+  background: #808080;
+}
+.win95-close:focus {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+.win95-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+fieldset.win95-section {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  background: #C0C0C0;
+  padding: 10px;
+  margin: 0;
+}
+fieldset.win95-section legend {
+  padding: 0 6px;
+  font-weight: bold;
+  background: #C0C0C0;
+  font-size: 13px;
+}
+.win95-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+}
+.win95-panel {
+  background: #C0C0C0;
+  border: 2px inset;
+  border-color: #808080 #fff #fff #808080;
+  padding: 10px;
+}
+.win95-panel.raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+h1 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+}
+h2 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+}
+h3, h4 {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+}
+p {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+ul {
+  margin: 6px 0 0 16px;
+  padding: 0;
+  font-size: 12px;
+}
+li {
+  margin-bottom: 4px;
+}
+.win95-math {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+.win95-code {
+  background: #C0C0C0;
+  border: 2px inset;
+  border-color: #404040 #fff #fff #404040;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+table.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #C0C0C0;
+}
+table.win95-table th,
+table.win95-table td {
+  border: 1px solid #808080;
+  padding: 8px;
+  vertical-align: top;
+}
+table.win95-table th {
+  font-weight: bold;
+  background: #dcdcdc;
+}
+a {
+  color: #000;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+button:focus, a:focus {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+.win95-note {
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 4px;
+}
+.win95-subheader {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+.mono {
+  font-family: 'Courier New', monospace;
+}
+`
+
 export default function ComplexityAnalysisPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Complexity Analysis"
-      subtitle="The Language of Algorithmic Performance"
-      intro="Complexity analysis provides the essential vocabulary to discuss how an algorithm's performance scales with the size of the input. It abstracts away machine-specific details to give us a pure, mathematical lens to compare different approaches and build systems that last."
-    >
-      <TopicSection heading="The Big Picture">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {bigPicture.map((item) => (
-            <div key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-              <p className="mt-1 text-sm text-white/80">{item.detail}</p>
-              {item.note && <p className="mt-2 text-xs text-white/60 italic">{item.note}</p>}
-            </div>
-          ))}
+    <div className="win95-page">
+      <style>{styles}</style>
+      <div className="win95-window">
+        <div className="win95-title-bar">
+          <span className="win95-title">Complexity Analysis</span>
+          <button className="win95-close" aria-label="Close window">
+            X
+          </button>
         </div>
-      </TopicSection>
-      
-      <TopicSection heading="The Asymptotic Notations: O, Ω, and Θ">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {asymptoticNotations.map((item) => (
-            <div key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-              <p className="mt-2 text-sm text-white/80">{item.detail}</p>
-              <p className="mt-4 font-mono text-xs text-amber-400">{item.math}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 rounded-lg border border-sky-500/50 bg-sky-500/10 p-4 text-sm text-white/90">
-            <h4 className="font-bold text-sky-400">Analogy: Speed Limits</h4>
-            <p className="mt-1">
-                <strong>Big O</strong> is like the <span className="font-semibold">speed limit</span>. You are guaranteed not to go faster than this.
-                <br />
-                <strong>Big Ω</strong> is like the <span className="font-semibold">minimum speed</span> on a highway. You are guaranteed not to go slower.
-                <br />
-                <strong>Big Θ</strong> is when the speed limit and minimum speed are the same. You travel at a <span className="font-semibold">fixed speed</span>.
-            </p>
-        </div>
-      </TopicSection>
 
-      <TopicSection heading="A Tour of Common Complexity Classes">
-        <div className="space-y-6">
-          {complexityClasses.map((c) => (
-            <div key={c.class} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h3 className="font-mono text-lg font-semibold text-white">{c.class}</h3>
-              <p className="mt-2 text-sm text-white/80">{c.explanation}</p>
-              <div className="mt-4 rounded bg-black/30 p-2">
-                <pre><code className="language-js text-xs">{c.code.trim()}</code></pre>
+        <div className="win95-content">
+          <fieldset className="win95-section">
+            <legend>Overview</legend>
+            <div className="win95-stack">
+              <h1>Complexity Analysis</h1>
+              <h2>The Language of Algorithmic Performance</h2>
+              <p>
+                Complexity analysis provides the essential vocabulary to discuss how an algorithm's performance scales
+                with the size of the input. It abstracts away machine-specific details to give us a pure, mathematical
+                lens to compare different approaches and build systems that last.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>The Big Picture</legend>
+            <div className="win95-grid">
+              {bigPicture.map((item) => (
+                <div key={item.title} className="win95-panel raised">
+                  <h3>{item.title}</h3>
+                  <p>{item.detail}</p>
+                  {item.note && <p className="win95-note">{item.note}</p>}
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>The Asymptotic Notations: O, Ic, and I~</legend>
+            <div className="win95-stack">
+              <div className="win95-grid">
+                {asymptoticNotations.map((item) => (
+                  <div key={item.title} className="win95-panel raised">
+                    <h3>{item.title}</h3>
+                    <p>{item.detail}</p>
+                    <p className="win95-math">{item.math}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="win95-panel">
+                <h4>Analogy: Speed Limits</h4>
+                <p>
+                  <strong>Big O</strong> is like the <span className="win95-subheader">speed limit</span>. You are
+                  guaranteed not to go faster than this.
+                  <br />
+                  <strong>Big Ic</strong> is like the <span className="win95-subheader">minimum speed</span> on a
+                  highway. You are guaranteed not to go slower.
+                  <br />
+                  <strong>Big I~</strong> is when the speed limit and minimum speed are the same. You travel at a{' '}
+                  <span className="win95-subheader">fixed speed</span>.
+                </p>
               </div>
             </div>
-          ))}
-        </div>
-      </TopicSection>
+          </fieldset>
 
-      <TopicSection heading="The Great Algorithm Complexity Cheat Sheet">
-        {Object.entries(algorithmCheatSheet).map(([category, algorithms]) => (
-           <div key={category} className="mb-8">
-             <h3 className="text-xl font-semibold capitalize text-white">{category}</h3>
-             <div className="mt-4 overflow-x-auto">
-               <table className="w-full min-w-max table-auto text-left">
-                 <thead>
-                   <tr className="border-b border-white/20">
-                     <th className="p-3 text-sm font-semibold text-white">Algorithm</th>
-                     <th className="p-3 text-sm font-semibold text-white">Time Complexity</th>
-                     <th className="p-3 text-sm font-semibold text-white">Space Complexity</th>
-                     <th className="p-3 text-sm font-semibold text-white">Notes</th>
-                   </tr>
-                 </thead>
-                 <tbody className="text-sm text-white/80">
-                   {algorithms.map(algo => (
-                     <tr key={algo.name} className="border-b border-white/10">
-                       <td className="p-3 font-semibold">{algo.name}</td>
-                       <td className="p-3 font-mono">{algo.time}</td>
-                       <td className="p-3 font-mono">{algo.space}</td>
-                       <td className="p-3">{algo.notes}</td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
-             </div>
-           </div>
-        ))}
-      </TopicSection>
-      
-      <TopicSection heading="Common Pitfalls & Mistakes">
-        <div className="rounded-lg bg-white/5 p-6">
-            <h3 className="text-lg font-semibold text-rose-400">Pitfalls to Avoid</h3>
-            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-white/80">
-              {pitfalls.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Key Takeaways">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {keyTakeaways.map((item) => (
-            <div key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-              <p className="mt-1 text-sm text-white/80">{item.detail}</p>
+          <fieldset className="win95-section">
+            <legend>A Tour of Common Complexity Classes</legend>
+            <div className="win95-stack">
+              {complexityClasses.map((item) => (
+                <div key={item.class} className="win95-panel raised">
+                  <h3 className="mono">{item.class}</h3>
+                  <p>{item.explanation}</p>
+                  <div className="win95-code">
+                    <code>{item.code.trim()}</code>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </TopicSection>
+          </fieldset>
 
-    </TopicLayout>
+          <fieldset className="win95-section">
+            <legend>The Great Algorithm Complexity Cheat Sheet</legend>
+            <div className="win95-stack">
+              {Object.entries(algorithmCheatSheet).map(([category, algorithms]) => (
+                <div key={category} className="win95-panel">
+                  <h3 className="win95-subheader" style={{ textTransform: 'capitalize' }}>
+                    {category}
+                  </h3>
+                  <table className="win95-table">
+                    <thead>
+                      <tr>
+                        <th>Algorithm</th>
+                        <th>Time Complexity</th>
+                        <th>Space Complexity</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {algorithms.map((algo) => (
+                        <tr key={algo.name}>
+                          <td className="mono">{algo.name}</td>
+                          <td className="mono">{algo.time}</td>
+                          <td className="mono">{algo.space}</td>
+                          <td>{algo.notes}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Common Pitfalls &amp; Mistakes</legend>
+            <div className="win95-panel raised">
+              <h3 className="win95-subheader">Pitfalls to Avoid</h3>
+              <ul>
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Key Takeaways</legend>
+            <div className="win95-grid">
+              {keyTakeaways.map((item) => (
+                <div key={item.title} className="win95-panel raised">
+                  <h3>{item.title}</h3>
+                  <p>{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
   )
 }
