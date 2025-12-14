@@ -1,5 +1,3 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
-
 import type { JSX } from 'react'
 
 const historicalMilestones = [
@@ -246,153 +244,364 @@ const takeaways = [
   "Cross-verify tricks with trusted sources such as CLRS, Hacker's Delight, GeeksforGeeks, or LeetCode discussions to avoid folklore bugs.",
 ]
 
+const styles = `
+  * {
+    box-sizing: border-box;
+  }
+
+  .win95-page {
+    width: 100%;
+    min-height: 100vh;
+    background: #C0C0C0;
+    color: #000;
+    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+    font-size: 12px;
+    line-height: 1.35;
+    -webkit-font-smoothing: none;
+    text-rendering: optimizeSpeed;
+    margin: 0;
+    padding: 0;
+  }
+
+  .win95-window {
+    width: 100%;
+    min-height: 100vh;
+    border: 2px solid;
+    border-color: #fff #404040 #404040 #fff;
+    background: #C0C0C0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .win95-title-bar {
+    background: #000080;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px;
+    gap: 8px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+  }
+
+  .win95-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .win95-close {
+    background: #C0C0C0;
+    color: #000;
+    border: 2px solid;
+    border-color: #fff #404040 #404040 #fff;
+    font-weight: bold;
+    padding: 2px 10px;
+    min-width: 28px;
+    cursor: pointer;
+  }
+
+  .win95-close:active {
+    border-color: #404040 #fff #fff #404040;
+    background: #9c9c9c;
+  }
+
+  .win95-close:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+  }
+
+  .win95-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .win95-section {
+    border: 2px solid;
+    border-color: #808080 #404040 #404040 #808080;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .win95-section legend {
+    padding: 0 6px;
+    font-weight: bold;
+  }
+
+  .win95-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .win95-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 8px;
+  }
+
+  .win95-grid.tight {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 6px;
+  }
+
+  .win95-panel {
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    background: #C0C0C0;
+    padding: 8px;
+  }
+
+  .win95-panel.raised {
+    border-color: #fff #404040 #404040 #fff;
+  }
+
+  .win95-panel code,
+  .win95-panel strong {
+    font-weight: bold;
+  }
+
+  .win95-text {
+    margin: 0;
+  }
+
+  .win95-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .win95-ordered {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .win95-code {
+    margin: 8px 0 6px;
+    padding: 8px;
+    background: #bdbdbd;
+    border: 2px solid;
+    border-color: #404040 #fff #fff #404040;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    overflow-x: auto;
+    color: #000;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: 2px;
+  }
+
+  button {
+    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+    font-size: 12px;
+  }
+
+  .win95-caption {
+    margin: 6px 0 0;
+  }
+`
+
 export default function BitManipulationPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Bit Manipulation"
-      subtitle="Binary control for speed, space, and determinism"
-      intro="Bit manipulation treats integers as dense packs of truth values and low-level fields. It compresses many boolean decisions into word-sized operations that the CPU executes in a single cycle. Used well, it improves cache locality, eliminates branches, and unlocks algorithms that would be infeasible with higher-level structures."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Bits are the native language of hardware. They let you store dozens of flags in one cache line,
-          scan through subsets without allocations, and implement error detection with tiny constant factors.
-          The same ideas explain why file permissions, chess engines, compression codecs, and circuit design all
-          converge on the same handful of bitwise primitives.
-        </p>
-        <p className="text-white/80">
-          Thinking in bits also exposes trade-offs. You gain predictability and compactness, but you pay in readability
-          and sometimes in portability when you lean on undefined shift behavior. The goal is not to use bit tricks
-          everywhere, but to know when they turn a hot path from microseconds to nanoseconds.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMilestones.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
+    <div className="win95-page">
+      <style>{styles}</style>
+      <div className="win95-window">
+        <div className="win95-title-bar">
+          <span className="win95-title">Bit Manipulation</span>
+          <button type="button" className="win95-close" aria-label="Close">
+            X
+          </button>
         </div>
-      </TopicSection>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((model) => (
-            <article key={model.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{model.title}</p>
-              <p className="text-sm text-white/75">{model.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+        <div className="win95-content">
+          <fieldset className="win95-section">
+            <legend>The big picture</legend>
+            <div className="win95-panel">
+              <p className="win95-text">
+                Bits are the native language of hardware. They let you store dozens of flags in one cache line, scan through
+                subsets without allocations, and implement error detection with tiny constant factors. The same ideas explain
+                why file permissions, chess engines, compression codecs, and circuit design all converge on the same handful
+                of bitwise primitives.
+              </p>
+              <p className="win95-text win95-caption">
+                Thinking in bits also exposes trade-offs. You gain predictability and compactness, but you pay in readability
+                and sometimes in portability when you lean on undefined shift behavior. The goal is not to use bit tricks
+                everywhere, but to know when they turn a hot path from microseconds to nanoseconds.
+              </p>
+            </div>
+          </fieldset>
 
-      <TopicSection heading="How it works in practice">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {operations.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/75">
-                {block.bullets.map((item) => (
+          <fieldset className="win95-section">
+            <legend>Historical context</legend>
+            <div className="win95-grid">
+              {historicalMilestones.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid">
+              {mentalModels.map((model) => (
+                <div key={model.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{model.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{model.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>How it works in practice</legend>
+            <div className="win95-grid tight">
+              {operations.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{block.heading}</strong>
+                  </p>
+                  <ul className="win95-list">
+                    {block.bullets.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="win95-text win95-caption">
+              These identities show up in LeetCode, HackerRank, and systems code alike. The mechanics never change: choose a
+              mask, combine with AND, OR, XOR, or shifts, and interpret the resulting pattern. The art is in choosing
+              representations that make those operations express the problem naturally.
+            </p>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Complexity analysis</legend>
+            <div className="win95-grid">
+              {complexityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <p className="win95-text win95-caption">
+              Real-world implication: if your inner loop already fits in L1 cache, a branch misprediction costs 10 to 20
+              cycles while a bitwise AND costs 1. That gap widens on superscalar CPUs with POPCNT and BMI2 available.
+            </p>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid">
+              {applications.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.context}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {practicalExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{example.title}</strong>
+                  </p>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text win95-caption">{example.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Common pitfalls and debugging cues</legend>
+            <ul className="win95-list">
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <p className="win95-text win95-caption">
+              When debugging, print masks in binary with leading zeros so alignment bugs are visible. Many failures boil down
+              to an off-by-one shift or a mask that does not cover the intended range.
+            </p>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>When to use it</legend>
+            <ol className="win95-ordered">
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Advanced insights and optimizations</legend>
+            <div className="win95-grid">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <p className="win95-text win95-caption">
+              Sources: CLRS, Hacker&apos;s Delight by Warren, GeeksforGeeks bit manipulation series, and LeetCode discussions all
+              catalog these patterns with proofs and edge cases. Cross-referencing them prevents subtle portability bugs.
+            </p>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel raised">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
         </div>
-        <p className="mt-3 text-sm text-white/70">
-          These identities show up in LeetCode, HackerRank, and systems code alike. The mechanics never change:
-          choose a mask, combine with AND, OR, XOR, or shifts, and interpret the resulting pattern. The art is
-          in choosing representations that make those operations express the problem naturally.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Real-world implication: if your inner loop already fits in L1 cache, a branch misprediction costs 10 to 20 cycles
-          while a bitwise AND costs 1. That gap widens on superscalar CPUs with POPCNT and BMI2 available.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {applications.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {practicalExamples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/75">{example.note}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls and debugging cues">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-        <p className="mt-3 text-sm text-white/70">
-          When debugging, print masks in binary with leading zeros so alignment bugs are visible. Many failures boil down to an
-          off-by-one shift or a mask that does not cover the intended range.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and optimizations">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Sources: CLRS, Hacker's Delight by Warren, GeeksforGeeks bit manipulation series, and LeetCode discussions all
-          catalog these patterns with proofs and edge cases. Cross-referencing them prevents subtle portability bugs.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
