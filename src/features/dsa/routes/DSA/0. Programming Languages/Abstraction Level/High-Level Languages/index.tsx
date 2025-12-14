@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import type { JSX } from 'react'
 
 const milestones = [
@@ -276,6 +278,35 @@ const styles = `
     padding: 10px;
   }
 
+  .win95-header-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 4px;
+  }
+
+  .win95-button {
+    padding: 3px 10px 2px;
+    background: #C0C0C0;
+    border: 2px solid;
+    border-color: #fff #404040 #404040 #fff;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1.2;
+    text-decoration: none;
+    color: #000;
+  }
+
+  .win95-button:active {
+    border-color: #404040 #fff #fff #404040;
+    background: #9c9c9c;
+  }
+
+  .win95-button:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -3px;
+  }
+
   .win95-section {
     border: 2px solid;
     border-color: #808080 #404040 #404040 #808080;
@@ -390,6 +421,12 @@ export default function HighLevelLanguagesPage(): JSX.Element {
         </div>
 
         <div className="win95-content">
+          <div className="win95-header-row">
+            <Link to="/algoViz" className="win95-button">
+              BACK TO CATALOG
+            </Link>
+          </div>
+
           <fieldset className="win95-section">
             <legend>The big picture</legend>
             <div className="win95-panel">
