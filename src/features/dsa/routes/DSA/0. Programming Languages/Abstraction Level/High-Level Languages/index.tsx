@@ -1,5 +1,3 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
-
 import type { JSX } from 'react'
 
 const milestones = [
@@ -202,142 +200,355 @@ const takeaways = [
   'Use FFI or selective lower-level modules to balance hotspots without sacrificing overall productivity.',
 ]
 
+const styles = `
+  * {
+    box-sizing: border-box;
+  }
+
+  .win95-page {
+    width: 100%;
+    min-height: 100vh;
+    background: #C0C0C0;
+    color: #000;
+    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+    font-size: 12px;
+    line-height: 1.35;
+    -webkit-font-smoothing: none;
+    text-rendering: optimizeSpeed;
+    margin: 0;
+    padding: 0;
+  }
+
+  .win95-window {
+    width: 100%;
+    min-height: 100vh;
+    border: 2px solid;
+    border-color: #fff #404040 #404040 #fff;
+    background: #C0C0C0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .win95-title-bar {
+    background: #000080;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px;
+    gap: 8px;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+  }
+
+  .win95-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .win95-close {
+    background: #C0C0C0;
+    color: #000;
+    border: 2px solid;
+    border-color: #fff #404040 #404040 #fff;
+    font-weight: bold;
+    padding: 2px 10px;
+    min-width: 28px;
+    cursor: pointer;
+  }
+
+  .win95-close:active {
+    border-color: #404040 #fff #fff #404040;
+    background: #9c9c9c;
+  }
+
+  .win95-close:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+  }
+
+  .win95-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .win95-section {
+    border: 2px solid;
+    border-color: #808080 #404040 #404040 #808080;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .win95-section legend {
+    padding: 0 6px;
+    font-weight: bold;
+  }
+
+  .win95-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 8px;
+  }
+
+  .win95-grid.tight {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 6px;
+  }
+
+  .win95-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .win95-panel {
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    background: #C0C0C0;
+    padding: 8px;
+  }
+
+  .win95-panel.raised {
+    border-color: #fff #404040 #404040 #fff;
+  }
+
+  .win95-panel strong,
+  .win95-panel h4,
+  .win95-panel h3 {
+    font-weight: bold;
+  }
+
+  .win95-text {
+    margin: 0;
+  }
+
+  .win95-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .win95-ordered {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 6px;
+  }
+
+  .win95-code {
+    margin: 8px 0 6px;
+    padding: 8px;
+    background: #bdbdbd;
+    border: 2px solid;
+    border-color: #404040 #fff #fff #404040;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    overflow-x: auto;
+    color: #000;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 1px dotted #000;
+    outline-offset: 2px;
+  }
+
+  button {
+    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+    font-size: 12px;
+  }
+
+  .win95-caption {
+    margin: 6px 0 0;
+  }
+`
+
 export default function HighLevelLanguagesPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="High-Level Languages"
-      subtitle="Abstractions that prioritize developer velocity"
-      intro="High-level languages raise the floor of expressiveness: they hide registers and manual memory, ship rich libraries, and let teams express intent directly. The cost is additional runtime machinery, but the payoff is faster iteration, safer defaults, and ecosystems that encode decades of practice."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          These languages exist to let humans think in domain terms rather than machine minutiae. They trade control of layout and
-          registers for readability, safety features, and batteries-included libraries. The critical skill is knowing when that
-          trade still meets your latency, memory, and observability needs.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {milestones.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
+    <div className="win95-page">
+      <style>{styles}</style>
+      <div className="win95-window">
+        <div className="win95-title-bar">
+          <span className="win95-title">High-Level Languages</span>
+          <button type="button" className="win95-close" aria-label="Close">
+            X
+          </button>
         </div>
-      </TopicSection>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+        <div className="win95-content">
+          <fieldset className="win95-section">
+            <legend>The big picture</legend>
+            <div className="win95-panel">
+              <p className="win95-text">
+                These languages exist to let humans think in domain terms rather than machine minutiae. They trade control of
+                layout and registers for readability, safety features, and batteries-included libraries. The critical skill is
+                knowing when that trade still meets your latency, memory, and observability needs.
+              </p>
+            </div>
+          </fieldset>
 
-      <TopicSection heading="How it works">
-        <div className="grid gap-3 md:grid-cols-3">
-          {howItWorks.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
+          <fieldset className="win95-section">
+            <legend>Historical context</legend>
+            <div className="win95-grid">
+              {milestones.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid">
+              {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>How it works</legend>
+            <div className="win95-grid tight">
+              {howItWorks.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{block.heading}</strong>
+                  </p>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Complexity analysis and performance intuition</legend>
+            <div className="win95-grid">
+              {complexity.map((note) => (
+                <div key={note.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{note.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{note.detail}</p>
+                </div>
+              ))}
+            </div>
+            <p className="win95-text win95-caption">
+              Profile before optimizing. Many high-level systems are IO-bound; improvements come from batching requests,
+              reducing allocations, and moving compute into vectorized or native paths rather than abandoning the language.
+            </p>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid">
+              {applications.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.context}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{example.title}</strong>
+                  </p>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text win95-caption">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Common pitfalls</legend>
+            <ul className="win95-list">
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>When to use it</legend>
+            <ol className="win95-ordered">
+              {decisionPoints.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Advanced insights and frontiers</legend>
+            <div className="win95-grid">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <p className="win95-text">
+                    <strong>{item.title}</strong>
+                  </p>
+                  <p className="win95-text win95-caption">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Further reading and sources</legend>
+            <ul className="win95-list">
+              {sources.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </fieldset>
+
+          <fieldset className="win95-section">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel raised">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
         </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexity.map((note) => (
-            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
-              <p className="text-sm text-white/80">{note.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Profile before optimizing. Many high-level systems are IO-bound; improvements come from batching requests, reducing
-          allocations, and moving compute into vectorized or native paths rather than abandoning the language.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {applications.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionPoints.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and frontiers">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Further reading and sources">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {sources.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
