@@ -1,6 +1,204 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
+import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
+
+const win95Styles = `
+.win95-page {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #C0C0C0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-page a:focus,
+.win95-button:focus,
+.win95-control:focus {
+  outline: 1px dotted #000;
+  outline-offset: -2px;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin: 0 0 10px;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  margin: 0 0 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-code {
+  margin: 6px 0 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+}
+`
 
 const milestones = [
   {
@@ -208,140 +406,177 @@ const takeaways = [
 
 export default function ProceduralProgrammingPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Procedural Programming"
-      subtitle="Stepwise instructions and stateful flow"
-      intro="Procedural programming structures software as sequences of commands that transform state. It keeps control flow explicit, making resource management and performance visible, while relying on disciplined scoping and modularity to avoid the pitfalls of sprawling shared state."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Procedures decompose work into ordered steps. When used with clear scopes and limited globals, the style yields readable,
-          predictable code. It remains the backbone of systems software, numerical kernels, and everyday scripting because the cost
-          model is transparent.
-        </p>
-      </TopicSection>
+    <div className="win95-page">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">Procedural Programming</span>
+          <button className="win95-control" type="button" aria-label="Close window">
+            X
+          </button>
+        </header>
+        <div className="win95-content">
+          <div className="win95-header-row">
+            <div className="win95-stack">
+              <div className="win95-subheading">Stepwise instructions and stateful flow</div>
+              <p className="win95-text">
+                Procedural programming structures software as sequences of commands that transform state. It keeps control flow
+                explicit, making resource management and performance visible, while relying on disciplined scoping and modularity
+                to avoid the pitfalls of sprawling shared state.
+              </p>
+              <p className="win95-text">
+                Procedures decompose work into ordered steps. When used with clear scopes and limited globals, the style yields
+                readable, predictable code. It remains the backbone of systems software, numerical kernels, and everyday scripting
+                because the cost model is transparent.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
+          </div>
 
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {milestones.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Historical context</legend>
+            <div className="win95-grid win95-grid-2">
+              {milestones.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid win95-grid-3">
+              {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="How it works">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
+          <fieldset className="win95-fieldset">
+            <legend>How it works</legend>
+            <div className="win95-grid win95-grid-3">
+              {mechanics.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity analysis and performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityNotes.map((note) => (
+                <div key={note.title} className="win95-panel">
+                  <div className="win95-heading">{note.title}</div>
+                  <p className="win95-text">{note.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Favor clear, linear control in hot paths. Reduce indirection, batch memory accesses, and prefer iterative
+                solutions when stack depth is a concern. Measure cache behavior for performance-critical loops.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid win95-grid-2">
+              {applications.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to use it</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionPoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced insights and frontiers</legend>
+            <div className="win95-grid win95-grid-2">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Further reading and sources</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {sources.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
         </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((note) => (
-            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
-              <p className="text-sm text-white/80">{note.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Favor clear, linear control in hot paths. Reduce indirection, batch memory accesses, and prefer iterative solutions when
-          stack depth is a concern. Measure cache behavior for performance-critical loops.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {applications.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionPoints.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and frontiers">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Further reading and sources">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {sources.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
