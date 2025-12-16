@@ -1,6 +1,208 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
+import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
+
+const win95Styles = `
+.win95-page {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #C0C0C0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-page a:focus,
+.win95-button:focus,
+.win95-control:focus {
+  outline: 1px dotted #000;
+  outline-offset: -2px;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin: 0 0 10px;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.win95-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  margin: 0 0 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-code {
+  margin: 6px 0 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+}
+`
 
 const historicalMilestones = [
   {
@@ -251,140 +453,179 @@ const takeaways = [
 
 export default function StacksPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Stacks"
-      subtitle="Last-in, first-out discipline for nested and recent work"
-      intro="Stacks capture recency. Whatever you push last is what you see first, making them perfect for recursion, parsing, backtracking, undo, and single-pass range problems. The simplicity of push and pop keeps reasoning and performance predictable."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Stacks thrive when the newest item matters most. They mirror how call frames, parentheses, and undo steps naturally
-          nest. By restricting access to the top, stacks make correctness proofs and performance analysis straightforward: push
-          and pop are constant-time, and the order is fully determined.
-        </p>
-      </TopicSection>
+    <div className="win95-page">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">Stacks</span>
+          <button className="win95-control" type="button" aria-label="Close window">
+            X
+          </button>
+        </header>
+        <div className="win95-content">
+          <div className="win95-header-row">
+            <div className="win95-stack">
+              <div className="win95-subheading">Last-in, first-out discipline for nested and recent work</div>
+              <p className="win95-text">
+                Stacks capture recency. Whatever you push last is what you see first, making them perfect for recursion, parsing,
+                backtracking, undo, and single-pass range problems. The simplicity of push and pop keeps reasoning and performance
+                predictable.
+              </p>
+              <p className="win95-text">
+                Stacks thrive when the newest item matters most. They mirror how call frames, parentheses, and undo steps naturally
+                nest. By restricting access to the top, stacks make correctness proofs and performance analysis straightforward: push
+                and pop are constant-time, and the order is fully determined.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
+          </div>
 
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMilestones.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Historical context</legend>
+            <div className="win95-grid win95-grid-2">
+              {historicalMilestones.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((model) => (
-            <article key={model.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{model.title}</p>
-              <p className="text-sm text-white/75">{model.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid win95-grid-2">
+              {mentalModels.map((model) => (
+                <div key={model.title} className="win95-panel">
+                  <div className="win95-heading">{model.title}</div>
+                  <p className="win95-text">{model.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="How it works: mechanics and variants">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {mechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/75">
-                {block.bullets.map((item) => (
+          <fieldset className="win95-fieldset">
+            <legend>How it works</legend>
+            <div className="win95-grid win95-grid-4">
+              {mechanics.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised" style={{ marginTop: 6 }}>
+              <p className="win95-text">
+                Array stacks excel when maximum depth is known or bounded; linked stacks excel when churn is high or depth is
+                unknown. Specialized stacks (monotonic, min) adjust stored metadata to answer richer queries while keeping push/pop
+                O(1).
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity and performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Real-world intuition: a cache miss is far more expensive than the O(1) arithmetic of push/pop. Favor contiguous stacks
+                in performance-critical loops and add guards for overflow/underflow in constrained environments.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid win95-grid-3">
+              {applications.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {practicalExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to use it</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionGuidance.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced insights and variations</legend>
+            <div className="win95-grid win95-grid-2">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Sources: CLRS, Sedgewick and Wayne, GeeksforGeeks stack guides, and LeetCode monotonic stack discussions provide proofs,
+                edge cases, and performance notes that back these patterns.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
         </div>
-        <p className="mt-3 text-sm text-white/70">
-          Array stacks excel when maximum depth is known or bounded; linked stacks excel when churn is high or depth is unknown.
-          Specialized stacks (monotonic, min) adjust stored metadata to answer richer queries while keeping push/pop O(1).
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Real-world intuition: a cache miss is far more expensive than the O(1) arithmetic of push/pop. Favor contiguous stacks
-          in performance-critical loops and add guards for overflow/underflow in constrained environments.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {applications.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {practicalExamples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/75">{example.note}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and variations">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/75">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Sources: CLRS, Sedgewick and Wayne, GeeksforGeeks stack guides, and LeetCode monotonic stack discussions provide
-          proofs, edge cases, and performance notes that back these patterns.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
