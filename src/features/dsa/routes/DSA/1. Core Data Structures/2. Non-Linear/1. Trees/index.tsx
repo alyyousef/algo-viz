@@ -604,13 +604,6 @@ export default function TreesPage(): JSX.Element {
                 </div>
               ))}
             </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Further reading: CLRS (Introduction to Algorithms) for fundamentals, Knuth Volume 1 for historical depth,
-                GeeksforGeeks and LeetCode discussions for practice patterns, and Bayer-McCreight or Tarjan papers for original
-                analyses.
-              </p>
-            </div>
           </fieldset>
         </div>
       </div>
