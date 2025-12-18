@@ -1,4 +1,229 @@
+import { Link } from 'react-router-dom'
+
 import type { JSX } from 'react'
+
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
 
 const historicalMoments = [
   {
@@ -244,265 +469,128 @@ const takeaways = [
 export default function TriesPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{`
-        .win95-page {
-          background: #C0C0C0;
-          min-height: 100vh;
-          width: 100%;
-          margin: 0;
-          padding: 0;
-          color: #000;
-          font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-          font-size: 12px;
-          -webkit-font-smoothing: none;
-        }
-        .win95-page * {
-          box-sizing: border-box;
-        }
-        body {
-          margin: 0;
-          background: #C0C0C0;
-        }
-        .win95-window {
-          border: 2px solid;
-          border-color: #fff #404040 #404040 #fff;
-          background: #C0C0C0;
-          width: 100%;
-          min-height: 100vh;
-        }
-        .win95-titlebar {
-          background: #000080;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 4px 6px;
-          height: 28px;
-        }
-        .win95-title {
-          font-weight: bold;
-          font-size: 12px;
-          line-height: 1;
-        }
-        .win95-close {
-          background: #C0C0C0;
-          border: 2px solid;
-          border-color: #fff #404040 #404040 #fff;
-          width: 24px;
-          height: 22px;
-          display: grid;
-          place-items: center;
-          font-weight: bold;
-          font-size: 12px;
-          padding: 0;
-          cursor: pointer;
-        }
-        .win95-close:active {
-          border-color: #404040 #fff #fff #404040;
-        }
-        .win95-content {
-          padding: 12px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-        .win95-panel {
-          border: 2px solid;
-          border-color: #808080 #fff #fff #808080;
-          padding: 10px;
-          background: #C0C0C0;
-        }
-        .win95-panel.raised {
-          border-color: #fff #404040 #404040 #fff;
-        }
-        .win95-fieldset {
-          border: 2px solid;
-          border-color: #808080 #404040 #404040 #808080;
-          padding: 10px;
-          margin: 0;
-        }
-        .win95-fieldset legend {
-          padding: 0 6px;
-          font-weight: bold;
-          font-size: 12px;
-        }
-        .win95-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 8px;
-        }
-        .win95-panel-title {
-          margin: 0 0 4px 0;
-          font-weight: bold;
-          font-size: 12px;
-        }
-        .win95-body-text {
-          margin: 0;
-          line-height: 1.4;
-        }
-        .win95-list {
-          margin: 0;
-          padding-left: 16px;
-          line-height: 1.4;
-        }
-        .win95-code {
-          background: #b0b0b0;
-          border: 2px solid;
-          border-color: #404040 #fff #fff #404040;
-          padding: 8px;
-          font-family: 'Courier New', monospace;
-          font-size: 11px;
-          margin: 6px 0;
-          overflow-x: auto;
-          white-space: pre;
-          color: #000;
-        }
-        a {
-          color: #000;
-          text-decoration: none;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-        button:focus-visible,
-        a:focus-visible {
-          outline: 1px dotted #000;
-        }
-        button:focus-visible {
-          outline-offset: -3px;
-        }
-        a:focus-visible {
-          outline-offset: 1px;
-        }
-        h1 {
-          margin: 0 0 4px 0;
-          font-size: 14px;
-        }
-        .win95-subtitle {
-          margin: 0 0 6px 0;
-          font-size: 11px;
-        }
-        .win95-note {
-          margin: 8px 0 0 0;
-          font-size: 11px;
-        }
-      `}</style>
-
-      <div className="win95-window">
-        <div className="win95-titlebar">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
           <span className="win95-title">Tries (Prefix Trees)</span>
-          <button className="win95-close" aria-label="Close" type="button">
-            X
-          </button>
-        </div>
+          <div className="win95-title-controls">
+            <button className="win95-control" aria-label="Close window">
+              X
+            </button>
+          </div>
+        </header>
 
         <div className="win95-content">
-          <div className="win95-panel raised">
-            <h1>Tries (Prefix Trees)</h1>
-            <p className="win95-subtitle">Prefix-guided lookup, autocomplete, and longest-match data structures</p>
-            <p className="win95-body-text">
-              Tries index strings by walking characters from root to leaf. They buy predictable O(length) lookups,
-              lexicographic traversal, and longest-prefix matching at the cost of extra memory and careful engineering around
-              sparsity and cache locality. This page unpacks how tries work, the variants professionals use, and the pitfalls that
-              have broken routers, search bars, and spell-checkers in the wild.
-            </p>
+          <div className="win95-header-row">
+            <div>
+              <div className="win95-subheading">Prefix-guided lookup, autocomplete, and longest-match data structures</div>
+              <p className="win95-text">
+                Tries index strings by walking characters from root to leaf. They buy predictable O(length) lookups, lexicographic
+                traversal, and longest-prefix matching at the cost of extra memory and careful engineering around sparsity and cache
+                locality. This page unpacks how tries work, the variants professionals use, and the pitfalls that have broken routers,
+                search bars, and spell-checkers in the wild.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
           </div>
 
           <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-panel">
-              <p className="win95-body-text">
-                When datasets are strings or tokens, the natural question is how quickly you can answer prefix-heavy queries
-                without hashing the entire string or performing many comparisons. Tries answer by turning each character into a
-                step along a path. The time bound tracks the query length, not the corpus size, so million-scale dictionaries
-                still answer in a handful of steps. The trade-off is space: every possible branching option costs memory unless
-                you compress or encode it smartly.
+              <p className="win95-text">
+                When datasets are strings or tokens, the natural question is how quickly you can answer prefix-heavy queries without
+                hashing the entire string or performing many comparisons. Tries answer by turning each character into a step along a
+                path. The time bound tracks the query length, not the corpus size, so million-scale dictionaries still answer in a
+                handful of steps. The trade-off is space: every possible branching option costs memory unless you compress or encode
+                it smartly.
               </p>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {historicalMoments.map((item) => (
-                <article key={item.title} className="win95-panel">
-                  <p className="win95-panel-title">{item.title}</p>
-                  <p className="win95-body-text">{item.detail}</p>
-                </article>
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
               ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Core concept and mental models</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
-                <article key={item.title} className="win95-panel">
-                  <p className="win95-panel-title">{item.title}</p>
-                  <p className="win95-body-text">{item.detail}</p>
-                </article>
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
               ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid">
+            <legend>How it works: structure and operations</legend>
+            <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
-                <article key={block.heading} className="win95-panel">
-                  <p className="win95-panel-title">{block.heading}</p>
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
                     {block.bullets.map((point) => (
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
-                </article>
+                </div>
               ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity and performance</legend>
-            <div className="win95-grid">
+            <legend>Complexity analysis and performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
-                <article key={note.title} className="win95-panel">
-                  <p className="win95-panel-title">{note.title}</p>
-                  <p className="win95-body-text">{note.detail}</p>
-                </article>
+                <div key={note.title} className="win95-panel">
+                  <div className="win95-heading">{note.title}</div>
+                  <p className="win95-text">{note.detail}</p>
+                </div>
               ))}
             </div>
-            <p className="win95-note">
-              Think in constants: 30 character steps at a few cycles each is microseconds; three cache misses per level can dwarf
-              asymptotic wins. Packed layouts and compression often matter more than shaving a comparison.
-            </p>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Think in constants: 30 character steps at a few cycles each is microseconds; three cache misses per level can dwarf
+                asymptotic wins. Packed layouts and compression often matter more than shaving a comparison.
+              </p>
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {realWorld.map((item) => (
-                <article key={item.context} className="win95-panel">
-                  <p className="win95-panel-title">{item.context}</p>
-                  <p className="win95-body-text">{item.detail}</p>
-                </article>
+                <div key={item.context} className="win95-panel">
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
               ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
-            <div className="win95-panel">
-              <div className="win95-grid">
-                {examples.map((example) => (
-                  <article key={example.title} className="win95-panel raised">
-                    <p className="win95-panel-title">{example.title}</p>
-                    <pre className="win95-code">
-                      <code>{example.code}</code>
-                    </pre>
-                    <p className="win95-body-text">{example.explanation}</p>
-                  </article>
-                ))}
-              </div>
+            <div className="win95-stack">
+              {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -520,7 +608,7 @@ export default function TriesPage(): JSX.Element {
           <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
-              <ol className="win95-list">
+              <ol className="win95-list win95-list--numbered">
                 {decisionGuidance.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -530,19 +618,19 @@ export default function TriesPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Advanced insights and current frontiers</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
-                <article key={item.title} className="win95-panel">
-                  <p className="win95-panel-title">{item.title}</p>
-                  <p className="win95-body-text">{item.detail}</p>
-                </article>
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
               ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel raised">
+            <div className="win95-panel win95-panel--raised">
               <ul className="win95-list">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
