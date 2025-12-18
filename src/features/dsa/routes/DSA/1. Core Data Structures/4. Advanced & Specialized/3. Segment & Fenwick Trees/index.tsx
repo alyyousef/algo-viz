@@ -1,5 +1,3 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
-
 import type { JSX } from 'react'
 
 const historicalMoments = [
@@ -253,132 +251,313 @@ const takeaways = [
 
 export default function SegmentFenwickPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Segment & Fenwick Trees"
-      subtitle="Range queries and updates with logarithmic guarantees"
-      intro="Segment trees and Fenwick trees are the workhorses for range queries on arrays. They provide predictable O(log n) bounds even as data changes, trading modest memory for versatility. This page explores how they work, when to choose one over the other, and the engineering details that make them fast in practice."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Arrays answer random access in O(1) but struggle with dynamic range sums, mins, or maxes. Recomputing from scratch is O(n);
-          both segment and Fenwick trees organize partial aggregates so every query or update touches only O(log n) nodes. The choice
-          hinges on how rich your aggregates and updates must be and how much memory and cache locality you can spare.
-        </p>
-      </TopicSection>
+    <div className="win95-page">
+      <style>{`
+        .win95-page {
+          background: #C0C0C0;
+          min-height: 100vh;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          color: #000;
+          font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+          font-size: 12px;
+          -webkit-font-smoothing: none;
+        }
+        .win95-page * {
+          box-sizing: border-box;
+        }
+        body {
+          margin: 0;
+          background: #C0C0C0;
+        }
+        .win95-window {
+          border: 2px solid;
+          border-color: #fff #404040 #404040 #fff;
+          background: #C0C0C0;
+          width: 100%;
+          min-height: 100vh;
+        }
+        .win95-titlebar {
+          background: #000080;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 4px 6px;
+          height: 28px;
+        }
+        .win95-title {
+          font-weight: bold;
+          font-size: 12px;
+          line-height: 1;
+        }
+        .win95-close {
+          background: #C0C0C0;
+          border: 2px solid;
+          border-color: #fff #404040 #404040 #fff;
+          width: 24px;
+          height: 22px;
+          display: grid;
+          place-items: center;
+          font-weight: bold;
+          font-size: 12px;
+          padding: 0;
+          cursor: pointer;
+        }
+        .win95-close:active {
+          border-color: #404040 #fff #fff #404040;
+        }
+        .win95-content {
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .win95-panel {
+          border: 2px solid;
+          border-color: #808080 #fff #fff #808080;
+          padding: 10px;
+          background: #C0C0C0;
+        }
+        .win95-panel.raised {
+          border-color: #fff #404040 #404040 #fff;
+        }
+        .win95-fieldset {
+          border: 2px solid;
+          border-color: #808080 #404040 #404040 #808080;
+          padding: 10px;
+          margin: 0;
+        }
+        .win95-fieldset legend {
+          padding: 0 6px;
+          font-weight: bold;
+          font-size: 12px;
+        }
+        .win95-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 8px;
+        }
+        .win95-panel-title {
+          margin: 0 0 4px 0;
+          font-weight: bold;
+          font-size: 12px;
+        }
+        .win95-body-text {
+          margin: 0;
+          line-height: 1.4;
+        }
+        .win95-list {
+          margin: 0;
+          padding-left: 16px;
+          line-height: 1.4;
+        }
+        .win95-code {
+          background: #b0b0b0;
+          border: 2px solid;
+          border-color: #404040 #fff #fff #404040;
+          padding: 8px;
+          font-family: 'Courier New', monospace;
+          font-size: 11px;
+          margin: 6px 0;
+          overflow-x: auto;
+          white-space: pre;
+          color: #000;
+        }
+        a {
+          color: #000;
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+        button:focus-visible,
+        a:focus-visible {
+          outline: 1px dotted #000;
+        }
+        button:focus-visible {
+          outline-offset: -3px;
+        }
+        a:focus-visible {
+          outline-offset: 1px;
+        }
+        h1 {
+          margin: 0 0 4px 0;
+          font-size: 14px;
+        }
+        .win95-subtitle {
+          margin: 0 0 6px 0;
+          font-size: 11px;
+        }
+        .win95-note {
+          margin: 8px 0 0 0;
+          font-size: 11px;
+        }
+      `}</style>
 
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMoments.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
+      <div className="win95-window">
+        <div className="win95-titlebar">
+          <span className="win95-title">Segment & Fenwick Trees</span>
+          <button className="win95-close" aria-label="Close" type="button">
+            X
+          </button>
         </div>
-      </TopicSection>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+        <div className="win95-content">
+          <div className="win95-panel raised">
+            <h1>Segment & Fenwick Trees</h1>
+            <p className="win95-subtitle">Range queries and updates with logarithmic guarantees</p>
+            <p className="win95-body-text">
+              Segment trees and Fenwick trees are the workhorses for range queries on arrays. They provide predictable O(log n)
+              bounds even as data changes, trading modest memory for versatility. This page explores how they work, when to choose
+              one over the other, and the engineering details that make them fast in practice.
+            </p>
+          </div>
 
-      <TopicSection heading="How it works: structure and operations">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
+          <fieldset className="win95-fieldset">
+            <legend>The big picture</legend>
+            <div className="win95-panel">
+              <p className="win95-body-text">
+                Arrays answer random access in O(1) but struggle with dynamic range sums, mins, or maxes. Recomputing from scratch
+                is O(n); both segment and Fenwick trees organize partial aggregates so every query or update touches only O(log n)
+                nodes. The choice hinges on how rich your aggregates and updates must be and how much memory and cache locality you
+                can spare.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Historical context</legend>
+            <div className="win95-grid">
+              {historicalMoments.map((item) => (
+                <article key={item.title} className="win95-panel">
+                  <p className="win95-panel-title">{item.title}</p>
+                  <p className="win95-body-text">{item.detail}</p>
+                </article>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid">
+              {mentalModels.map((item) => (
+                <article key={item.title} className="win95-panel">
+                  <p className="win95-panel-title">{item.title}</p>
+                  <p className="win95-body-text">{item.detail}</p>
+                </article>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How it works</legend>
+            <div className="win95-grid">
+              {mechanics.map((block) => (
+                <article key={block.heading} className="win95-panel">
+                  <p className="win95-panel-title">{block.heading}</p>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity and performance</legend>
+            <div className="win95-grid">
+              {complexityNotes.map((note) => (
+                <article key={note.title} className="win95-panel">
+                  <p className="win95-panel-title">{note.title}</p>
+                  <p className="win95-body-text">{note.detail}</p>
+                </article>
+              ))}
+            </div>
+            <p className="win95-note">
+              Measure constants: in practice Fenwick trees often beat segment trees for prefix sums due to tighter loops, while
+              segment trees pay off when you need lazy range updates or non-invertible merges like min with range assignment.
+            </p>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid">
+              {realWorld.map((item) => (
+                <article key={item.context} className="win95-panel">
+                  <p className="win95-panel-title">{item.context}</p>
+                  <p className="win95-body-text">{item.detail}</p>
+                </article>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical examples</legend>
+            <div className="win95-panel">
+              <div className="win95-grid">
+                {examples.map((example) => (
+                  <article key={example.title} className="win95-panel raised">
+                    <p className="win95-panel-title">{example.title}</p>
+                    <pre className="win95-code">
+                      <code>{example.code}</code>
+                    </pre>
+                    <p className="win95-body-text">{example.explanation}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to use it</legend>
+            <div className="win95-panel">
+              <ol className="win95-list">
+                {decisionGuidance.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced insights and current frontiers</legend>
+            <div className="win95-grid">
+              {advancedInsights.map((item) => (
+                <article key={item.title} className="win95-panel">
+                  <p className="win95-panel-title">{item.title}</p>
+                  <p className="win95-body-text">{item.detail}</p>
+                </article>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel raised">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
         </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((note) => (
-            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
-              <p className="text-sm text-white/80">{note.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Measure constants: in practice Fenwick trees often beat segment trees for prefix sums due to tighter loops, while segment
-          trees pay off when you need lazy range updates or non-invertible merges like min with range assignment.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {realWorld.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and current frontiers">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
