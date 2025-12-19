@@ -1,6 +1,234 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
+import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
+
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-page a:focus {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
 
 const historicalMoments = [
   {
@@ -14,9 +242,9 @@ const historicalMoments = [
       'Designed for magnetic disks, B-trees pack many keys per node to reduce I/O. Their fanout keeps height tiny, inspiring nearly every database index and filesystem.',
   },
   {
-    title: 'Red-black trees formalized (Guibas and Sedgewick, 1978)',
+    title: "Red-black trees formalized (Guibas and Sedgewick, 1978)",
     detail:
-      'Red-black trees reframe Bayer’s symmetric binary B-trees with colors and simple rotation rules, balancing update cost with easy implementation.',
+      "Red-black trees reframe Bayer's symmetric binary B-trees with colors and simple rotation rules, balancing update cost with easy implementation.",
   },
   {
     title: '2-3-4 trees connect B-trees and red-black trees (late 1970s)',
@@ -59,7 +287,7 @@ const mechanics = [
     bullets: [
       'Invariant: balance factor of each node (height(left) - height(right)) is -1, 0, or +1.',
       'Updates: single or double rotations (LL, RR, LR, RL) restore balance after inserts/deletes.',
-      'Height bound: h ≤ 1.44 log2(n + 2), giving tighter search depth than red-black.',
+      'Height bound: h <= 1.44 log2(n + 2), giving tighter search depth than red-black.',
     ],
   },
   {
@@ -67,14 +295,14 @@ const mechanics = [
     bullets: [
       'Properties: roots and leaves are black; red nodes have black children; all root-to-leaf paths contain the same number of black nodes.',
       'Fix-up rules: recolor and rotate to resolve red-red violations after insert/delete. At most O(1) rotations per update.',
-      'Height bound: h ≤ 2 log2(n + 1). Looser than AVL but cheaper rebalancing.',
+      'Height bound: h <= 2 log2(n + 1). Looser than AVL but cheaper rebalancing.',
     ],
   },
   {
     heading: 'B-tree essentials',
     bullets: [
       'Order t: each node has between t and 2t children (except root); keys are kept sorted with separators guiding search.',
-      'Node split: when a node overflows, split around the median key and promote it to the parent. Merge/borrow on deletion.',
+      'Node split: when a node overflows, split around the median key and promote it to the parent. Merge or borrow on deletion.',
       'Height: O(log_t n); with fanout 256, a million keys fit in height 3 or 4, minimizing disk or cache misses.',
     ],
   },
@@ -89,7 +317,7 @@ const complexityNotes = [
   {
     title: 'Rotation costs',
     detail:
-      'AVL may rotate up to O(log n) nodes on delete; red-black typically uses a constant number of rotations. B-trees split/merge nodes along a root-to-leaf path, also O(log n).',
+      'AVL may rotate up to O(log n) nodes on delete; red-black typically uses a constant number of rotations. B-trees split or merge nodes along a root-to-leaf path, also O(log n).',
   },
   {
     title: 'Cache and disk behavior',
@@ -99,7 +327,7 @@ const complexityNotes = [
   {
     title: 'Memory footprint',
     detail:
-      'AVL and red-black: one color/height byte plus two child pointers per node. B-trees: arrays of keys and child pointers sized to the block/page; overhead pays off by reducing height.',
+      'AVL and red-black: one color or height byte plus two child pointers per node. B-trees: arrays of keys and child pointers sized to the block or page; overhead pays off by reducing height.',
   },
 ]
 
@@ -160,7 +388,7 @@ while parent(node) is red:
     else: mirror cases
 root.color = black`,
     explanation:
-      'Recoloring handles red-red via 2-3-4 tree “split.” Rotations resolve structural violations. At most a constant number of rotations are needed.',
+      'Recoloring handles red-red via 2-3-4 tree split. Rotations resolve structural violations. At most a constant number of rotations are needed.',
   },
   {
     title: 'B-tree search (order t)',
@@ -173,7 +401,7 @@ root.color = black`,
     if node.isLeaf: return null
     return search(node.children[i], key)`,
     explanation:
-      'Each node acts like a small sorted array; you binary search or linear scan within it, then follow one child. Height stays tiny because each node fans out widely.',
+      'Each node acts like a small sorted array; you scan or binary search within it, then follow one child. Height stays tiny because each node fans out widely.',
   },
 ]
 
@@ -225,132 +453,174 @@ const takeaways = [
 
 export default function AdvancedTreesPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Advanced Trees (AVL, Red-Black, B-Tree)"
-      subtitle="Balanced structures tuned for guarantees and I/O efficiency"
-      intro="Balanced trees enforce logarithmic height so lookups and updates stay predictable. AVL tightens height strictly, red-black eases balancing for cheaper updates, and B-tree families trade depth for wide fanout to minimize cache and disk misses. This page dissects how each works, when to pick them, and how production systems tune them."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Balanced trees solve the same problem with different levers: control height. AVL uses strict balance factors, red-black
-          uses color parity, and B-trees widen nodes to slash depth. The right choice depends on whether your bottleneck is CPU
-          rotations, cache locality, or disk I/O.
-        </p>
-      </TopicSection>
+    <div className="win95-page">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">Advanced Trees (AVL, Red-Black, B-Tree)</span>
+          <div className="win95-title-controls">
+            <button className="win95-control" aria-label="Close window">
+              X
+            </button>
+          </div>
+        </header>
+        <div className="win95-content">
+          <div className="win95-header-row">
+            <div>
+              <div className="win95-subheading">Balanced structures tuned for guarantees and I/O efficiency</div>
+              <p className="win95-text">
+                Balanced trees enforce logarithmic height so lookups and updates stay predictable. AVL tightens height strictly,
+                red-black eases balancing for cheaper updates, and B-tree families trade depth for wide fanout to minimize cache
+                and disk misses. This page dissects how each works, when to pick them, and how production systems tune them.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
+          </div>
 
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMoments.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>The big picture</legend>
+            <div className="win95-panel">
+              <p className="win95-text">
+                Balanced trees solve the same problem with different levers: control height. AVL uses strict balance factors,
+                red-black uses color parity, and B-trees widen nodes to slash depth. The right choice depends on whether your
+                bottleneck is CPU rotations, cache locality, or disk I/O.
+              </p>
+            </div>
+          </fieldset>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Historical context</legend>
+            <div className="win95-grid win95-grid-2">
+              {historicalMoments.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="How it works: structure and operations">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
+          <fieldset className="win95-fieldset">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid win95-grid-2">
+              {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How it works: structure and operations</legend>
+            <div className="win95-grid win95-grid-3">
+              {mechanics.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity analysis and performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityNotes.map((note) => (
+                <div key={note.title} className="win95-panel">
+                  <div className="win95-heading">{note.title}</div>
+                  <p className="win95-text">{note.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Heights differ subtly but matter: AVL height about 1.44 log2 n, red-black about 2 log2 n, B-tree height about log
+                base fanout of n. Cache and I/O dominate constants, so choose structure with your memory hierarchy in mind.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid win95-grid-2">
+              {realWorld.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to use it</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionGuidance.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced insights</legend>
+            <div className="win95-grid win95-grid-2">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
         </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((note) => (
-            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
-              <p className="text-sm text-white/80">{note.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Heights differ subtly but matter: AVL height about 1.44 log2 n, red-black about 2 log2 n, B-tree height about log base
-          fanout of n. Cache and I/O dominate constants, so choose structure with your memory hierarchy in mind.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {realWorld.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and current frontiers">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
