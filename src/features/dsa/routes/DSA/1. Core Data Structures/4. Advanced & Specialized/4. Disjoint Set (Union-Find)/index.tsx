@@ -1,6 +1,234 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
+import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
+
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-page a:focus {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
 
 const historicalMoments = [
   {
@@ -14,9 +242,9 @@ const historicalMoments = [
       'Robert Tarjan analyzed union-find with rank and compression to run in O(alpha(n)) amortized, effectively constant for any practical n.',
   },
   {
-    title: 'Kruskal’s MST popularizes the structure (1956, adopted widely later)',
+    title: "Kruskal's MST popularizes the structure (1956, adopted widely later)",
     detail:
-      'Kruskal’s algorithm relies on disjoint sets to test connectivity while adding edges in weight order, cementing union-find as a graph workhorse.',
+      "Kruskal's algorithm relies on disjoint sets to test connectivity while adding edges in weight order, cementing union-find as a graph workhorse.",
   },
   {
     title: 'Offline dynamic connectivity (1990s-2000s)',
@@ -44,7 +272,7 @@ const mentalModels = [
   {
     title: 'Component IDs as passports',
     detail:
-      'find(x) is stamping a passport with the component’s ID. After compression, future stamps happen in O(1) because you go straight to the embassy.',
+      "find(x) is stamping a passport with the component's ID. After compression, future stamps happen in O(1) because you go straight to the embassy.",
   },
   {
     title: 'Rank/size as a height budget',
@@ -66,7 +294,7 @@ const mechanics = [
     heading: 'Complexity intuition',
     bullets: [
       'With union by rank/size plus path compression, amortized time per operation is O(alpha(n)) where alpha is inverse Ackermann.',
-      'alpha(n) < 5 for any realistic input (even up to 10^80), so performance is effectively constant-time.',
+      'alpha(n) < 5 for any realistic input (even up to 1e80), so performance is effectively constant-time.',
       'Space is O(n) for parent and one auxiliary array (rank or size).',
     ],
   },
@@ -102,7 +330,7 @@ const realWorld = [
   {
     context: 'Minimum spanning trees',
     detail:
-      'Kruskal’s algorithm uses union-find to skip edges that connect already-joined components, keeping MST construction at O(E log V) dominated by sorting.',
+      "Kruskal's algorithm uses union-find to skip edges that connect already-joined components, keeping MST construction at O(E log V) dominated by sorting.",
   },
   {
     context: 'Image processing',
@@ -122,7 +350,7 @@ const realWorld = [
   {
     context: 'Dynamic sets in games',
     detail:
-      'Territory control, guild merges, or region ownership can be tracked with union-find to answer “same faction?” queries in near constant time.',
+      "Territory control, guild merges, or region ownership can be tracked with union-find to answer 'same faction?' queries in near constant time.",
   },
 ]
 
@@ -150,7 +378,7 @@ function union(a, b):
       'Compression flattens trees over time; size-based attachment limits height growth. Together they deliver the inverse Ackermann bound.',
   },
   {
-    title: 'Kruskal’s MST using union-find',
+    title: "Kruskal's MST using union-find",
     code: `function kruskal(V, edges):
     sort edges by weight
     uf = makeSet(V)
@@ -216,7 +444,7 @@ const advancedInsights = [
   {
     title: 'Component metadata',
     detail:
-      'Attach sums, counts, min/max, or custom monoids to roots; merge them during union to answer “component value” queries instantly.',
+      'Attach sums, counts, min/max, or custom monoids to roots; merge them during union to answer component value queries instantly.',
   },
   {
     title: 'Euler tour plus rollback for offline deletions',
@@ -234,133 +462,174 @@ const takeaways = [
 
 export default function DisjointSetPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Disjoint Set (Union-Find)"
-      subtitle="Maintain dynamic connectivity with near-constant operations"
-      intro="Disjoint sets answer a simple question fast: are two elements in the same component, and if not, merge their components. With path compression and union by size or rank, the data structure delivers almost O(1) amortized finds and unions, making it indispensable for connectivity-heavy algorithms from Kruskal’s MST to connected-component labeling."
-    >
-      <TopicSection heading="The big picture">
-        <p className="text-white/80">
-          Graph algorithms repeatedly ask whether two nodes are already connected. Running a full traversal per query is wasteful.
-          Union-find maintains a forest of shallow trees so that each query or merge touches only a handful of pointers, no matter
-          how many elements you track. The cost depends on the inverse Ackermann function, which is smaller than 5 for any
-          realistic input size.
-        </p>
-      </TopicSection>
+    <div className="win95-page">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">Disjoint Set (Union-Find)</span>
+          <div className="win95-title-controls">
+            <button className="win95-control" aria-label="Close window">
+              X
+            </button>
+          </div>
+        </header>
+        <div className="win95-content">
+          <div className="win95-header-row">
+            <div>
+              <div className="win95-subheading">Maintain dynamic connectivity with near-constant operations</div>
+              <p className="win95-text">
+                Disjoint sets answer a simple question fast: are two elements in the same component, and if not, merge their
+                components. With path compression and union by size or rank, the data structure delivers almost O(1) amortized
+                finds and unions, powering everything from MST construction to connected-component labeling.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
+          </div>
 
-      <TopicSection heading="Historical context">
-        <div className="grid gap-3 md:grid-cols-2">
-          {historicalMoments.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>The big picture</legend>
+            <div className="win95-panel">
+              <p className="win95-text">
+                Graph algorithms repeatedly ask whether two nodes are already connected. Running a full traversal per query is
+                wasteful. Union-find keeps a forest of shallow trees so each query or merge touches only a handful of pointers, no
+                matter how many elements you track.
+              </p>
+            </div>
+          </fieldset>
 
-      <TopicSection heading="Core concept and mental models">
-        <div className="grid gap-3 md:grid-cols-2">
-          {mentalModels.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Historical context</legend>
+            <div className="win95-grid win95-grid-2">
+              {historicalMoments.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="How it works: structure and operations">
-        <div className="grid gap-3 md:grid-cols-3">
-          {mechanics.map((block) => (
-            <article key={block.heading} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{block.heading}</p>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-white/80">
-                {block.bullets.map((point) => (
-                  <li key={point}>{point}</li>
+          <fieldset className="win95-fieldset">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid win95-grid-2">
+              {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How it works: structure and operations</legend>
+            <div className="win95-grid win95-grid-3">
+              {mechanics.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity analysis and performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityNotes.map((note) => (
+                <div key={note.title} className="win95-panel">
+                  <div className="win95-heading">{note.title}</div>
+                  <p className="win95-text">{note.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Inverse Ackermann growth means you can treat the cost as constant in benchmarks. Micro-optimizations focus on cache
+                friendliness (iterative find, flattening) rather than asymptotics.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid win95-grid-2">
+              {realWorld.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
-            </article>
-          ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to use it</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionGuidance.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced insights</legend>
+            <div className="win95-grid win95-grid-2">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
         </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity analysis and performance intuition">
-        <div className="grid gap-3 md:grid-cols-2">
-          {complexityNotes.map((note) => (
-            <article key={note.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h4 className="text-sm font-semibold text-white">{note.title}</h4>
-              <p className="text-sm text-white/80">{note.detail}</p>
-            </article>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-white/70">
-          Inverse Ackermann growth means you can treat the cost as constant in benchmarks. Micro-optimizations often focus on
-          cache friendliness (iterative find, flattening) rather than asymptotics.
-        </p>
-      </TopicSection>
-
-      <TopicSection heading="Real-world applications">
-        <div className="grid gap-3 md:grid-cols-2">
-          {realWorld.map((item) => (
-            <article key={item.context} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.context}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Practical examples">
-        <div className="space-y-4">
-          {examples.map((example) => (
-            <article key={example.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{example.title}</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-black/40 p-3 text-xs text-white/90">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Common pitfalls">
-        <ul className="list-disc space-y-2 pl-5 text-sm text-white/80">
-          {pitfalls.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </TopicSection>
-
-      <TopicSection heading="When to use it">
-        <ol className="list-decimal space-y-2 pl-5 text-sm text-white/80">
-          {decisionGuidance.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
-      </TopicSection>
-
-      <TopicSection heading="Advanced insights and current frontiers">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advancedInsights.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Key takeaways">
-        <div className="rounded-lg border border-emerald-400/40 bg-emerald-500/10 p-4">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-emerald-100">
-            {takeaways.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
