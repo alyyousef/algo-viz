@@ -229,12 +229,12 @@ const historicalMilestones = [
   {
     title: 'Tarjan, Kosaraju, and the SCC toolkit (1970s)',
     detail:
-      'Multiple linear-time SCC algorithms emerged: Kosarajuƒ?Ts two-pass DFS, Tarjanƒ?Ts one-pass low-link method, and later Gabowƒ?Ts stack-based approach. Together they cemented SCCs as a core graph primitive.',
+      "Multiple linear-time SCC algorithms emerged: Kosaraju's two-pass DFS, Tarjan's one-pass low-link method, and later Gabow's stack-based approach. Together they cemented SCCs as a core graph primitive.",
   },
   {
     title: 'Cut/condense insight',
     detail:
-      'Viewing SCCs as nodes of a DAG (the condensation graph) clarified why finishing times from one pass order SCCs for the next. This perspective underpins Kosarajuƒ?Ts correctness proof.',
+      "Viewing SCCs as nodes of a DAG (the condensation graph) clarified why finishing times from one pass order SCCs for the next. This perspective underpins Kosaraju's correctness proof.",
   },
   {
     title: 'SCCs in compilers and systems',
@@ -386,7 +386,7 @@ const pitfalls = [
 
 const decisionGuidance = [
   'Need simple, linear-time SCCs and can afford two passes: use Kosaraju.',
-  'Need single-pass SCCs or memory tightness: use Tarjanƒ?Ts algorithm.',
+  "Need single-pass SCCs or memory tightness: use Tarjan's algorithm.",
   'Graph is extremely deep or large: prefer iterative DFS to avoid recursion limits.',
   'Streaming edges sorted by tail/head: consider on-the-fly reverse iteration to avoid building g^T fully.',
 ]
@@ -439,7 +439,7 @@ export default function KosarajusAlgorithmPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Two DFS passes to expose strongly connected components</div>
               <p className="win95-text">
-                Kosarajuƒ?Ts algorithm finds strongly connected components with two DFS passes. The first records finishing order on the
+                Kosaraju's algorithm finds strongly connected components with two DFS passes. The first records finishing order on the
                 original graph; the second, on the reversed graph, peels components in reverse topological order of the condensation DAG.
               </p>
             </div>
