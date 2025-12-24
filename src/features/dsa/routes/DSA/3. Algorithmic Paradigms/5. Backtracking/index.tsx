@@ -1,6 +1,229 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
+import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
+
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
 
 const bigPicture = [
   {
@@ -321,167 +544,207 @@ const keyTakeaways = [
 
 export default function BacktrackingParadigmPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="Backtracking Paradigm"
-      subtitle="Search, prune, and undo with discipline"
-      intro="Backtracking is depth-first search with deliberate undo steps and aggressive pruning. It trades exponential worst cases for practical performance by exposing early contradictions and keeping state reversible."
-    >
-      <TopicSection heading="Big picture">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {bigPicture.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-              <p className="text-xs text-white/60">{item.note}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="History that shaped backtracking">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {history.map((event) => (
-            <article key={event.title} className="rounded-lg bg-white/5 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-white/60">{event.title}</p>
-              <p className="text-sm text-white/80">{event.detail}</p>
-              <p className="text-xs text-white/60">{event.note}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Core pillars and mental hooks">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-3">
-            {pillars.map((pillar) => (
-              <article key={pillar.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-                <h3 className="text-sm font-semibold text-white">{pillar.title}</h3>
-                <p className="text-sm text-white/80">{pillar.detail}</p>
-              </article>
-            ))}
+    <div className="win95-page">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">Backtracking Paradigm</span>
+          <div className="win95-title-controls">
+            <button className="win95-control" aria-label="Close window">
+              X
+            </button>
           </div>
-          <div className="space-y-3">
-            {mentalModels.map((model) => (
-              <article key={model.title} className="rounded-lg bg-white/5 p-4">
-                <h3 className="text-sm font-semibold text-white">{model.title}</h3>
-                <p className="text-sm text-white/80">{model.detail}</p>
-              </article>
-            ))}
+        </header>
+        <div className="win95-content">
+          <div className="win95-header-row">
+            <div>
+              <div className="win95-subheading">Search, prune, and undo with discipline</div>
+              <p className="win95-text">
+                Backtracking is depth-first search with deliberate undo steps and aggressive pruning. It trades exponential worst cases for
+                practical performance by exposing early contradictions and keeping state reversible.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
           </div>
-        </div>
-      </TopicSection>
 
-      <TopicSection heading="How it works, step by step">
-        <div className="grid gap-3 md:grid-cols-3">
-          {howItWorks.map((step, idx) => (
-            <article key={step.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <p className="text-xs font-semibold text-white/60">Step {idx + 1}</p>
-              <h3 className="text-sm font-semibold text-white">{step.title}</h3>
-              <p className="text-sm text-white/80">{step.detail}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Complexity at a glance">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm text-white/80">
-            <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-white/60">
-              <tr>
-                <th className="px-3 py-2">Approach</th>
-                <th className="px-3 py-2">Time</th>
-                <th className="px-3 py-2">Space</th>
-                <th className="px-3 py-2">Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {complexityTable.map((row) => (
-                <tr key={row.approach} className="border-b border-white/5">
-                  <td className="px-3 py-2 font-semibold text-white">{row.approach}</td>
-                  <td className="px-3 py-2 text-white/80">{row.time}</td>
-                  <td className="px-3 py-2 text-white/80">{row.space}</td>
-                  <td className="px-3 py-2 text-white/70">{row.note}</td>
-                </tr>
+          <fieldset className="win95-fieldset">
+            <legend>Big picture</legend>
+            <div className="win95-grid win95-grid-2">
+              {bigPicture.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Where it powers real systems">
-        <div className="grid gap-3 md:grid-cols-2">
-          {applications.map((app) => (
-            <article key={app.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{app.title}</h3>
-              <p className="text-sm text-white/80">{app.detail}</p>
-              <p className="text-xs text-white/60">{app.note}</p>
-            </article>
-          ))}
-        </div>
-        <div className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-100">
-          <p className="font-semibold text-red-200">Failure mode</p>
-          <p>{failureStory}</p>
-        </div>
-      </TopicSection>
-
-      <TopicSection heading="Pitfalls to avoid">
-        <div className="space-y-2 rounded-lg bg-white/5 p-4">
-          {pitfalls.map((item) => (
-            <div key={item.title} className="rounded-md border border-white/5 p-3">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
             </div>
-          ))}
-        </div>
-      </TopicSection>
+          </fieldset>
 
-      <TopicSection heading="When to reach for backtracking">
-        <div className="space-y-2 rounded-lg bg-white/5 p-4">
-          {whenToUse.map((item) => (
-            <div key={item.title} className="rounded-md border border-white/5 p-3">
-              <p className="text-sm font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/80">{item.detail}</p>
+          <fieldset className="win95-fieldset">
+            <legend>History that shaped backtracking</legend>
+            <div className="win95-grid win95-grid-2">
+              {history.map((event) => (
+                <div key={event.title} className="win95-panel">
+                  <div className="win95-heading">{event.title}</div>
+                  <p className="win95-text">{event.detail}</p>
+                  <p className="win95-text">{event.note}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </TopicSection>
+          </fieldset>
 
-      <TopicSection heading="Advanced moves">
-        <div className="grid gap-3 md:grid-cols-2">
-          {advanced.map((item) => (
-            <article key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-              <p className="text-xs text-white/60">{item.note}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>Core pillars and mental hooks</legend>
+            <div className="win95-grid win95-grid-2">
+              <div className="win95-panel">
+                <div className="win95-heading">Core pillars</div>
+                <ul className="win95-list">
+                  {pillars.map((pillar) => (
+                    <li key={pillar.title}>
+                      <strong>{pillar.title}:</strong> {pillar.detail}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="win95-panel">
+                <div className="win95-heading">Mental models</div>
+                <ul className="win95-list">
+                  {mentalModels.map((model) => (
+                    <li key={model.title}>
+                      <strong>{model.title}:</strong> {model.detail}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </fieldset>
 
-      <TopicSection heading="Code examples">
-        <div className="grid gap-3 md:grid-cols-2">
-          {codeExamples.map((example) => (
-            <article key={example.title} className="space-y-2 rounded-lg border border-white/10 bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{example.title}</h3>
-              <pre className="overflow-x-auto rounded-md bg-black/40 p-3 text-xs text-white">
-                <code>{example.code}</code>
-              </pre>
-              <p className="text-sm text-white/80">{example.explanation}</p>
-            </article>
-          ))}
-        </div>
-      </TopicSection>
+          <fieldset className="win95-fieldset">
+            <legend>How it works, step by step</legend>
+            <div className="win95-grid win95-grid-2">
+              {howItWorks.map((step, idx) => (
+                <div key={step.title} className="win95-panel">
+                  <div className="win95-heading">
+                    Step {idx + 1}: {step.title}
+                  </div>
+                  <p className="win95-text">{step.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
-      <TopicSection heading="Key takeaways">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {keyTakeaways.map((item) => (
-            <article key={item.title} className="rounded-lg bg-white/5 p-4">
-              <h3 className="text-sm font-semibold text-white">{item.title}</h3>
-              <p className="text-sm text-white/80">{item.detail}</p>
-            </article>
-          ))}
+          <fieldset className="win95-fieldset">
+            <legend>Complexity at a glance</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Approach</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complexityTable.map((row) => (
+                    <tr key={row.approach}>
+                      <td>{row.approach}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Where it powers real systems</legend>
+            <div className="win95-stack">
+              <div className="win95-grid win95-grid-2">
+                {applications.map((app) => (
+                  <div key={app.title} className="win95-panel">
+                    <div className="win95-heading">{app.title}</div>
+                    <p className="win95-text">{app.detail}</p>
+                    <p className="win95-text">{app.note}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="win95-panel win95-panel--raised">
+                <div className="win95-heading">Failure mode</div>
+                <p className="win95-text">{failureStory}</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Pitfalls to avoid</legend>
+            <div className="win95-stack">
+              {pitfalls.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to reach for backtracking</legend>
+            <div className="win95-stack">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced moves</legend>
+            <div className="win95-grid win95-grid-2">
+              {advanced.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Code examples</legend>
+            <div className="win95-stack">
+              {codeExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-grid win95-grid-2">
+              {keyTakeaways.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
         </div>
-      </TopicSection>
-    </TopicLayout>
+      </div>
+    </div>
   )
 }
