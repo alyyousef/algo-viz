@@ -320,12 +320,17 @@ const styles = `
     flex-direction: column;
     gap: 12px;
     padding: 10px;
+    position: relative;
   }
 
   .win95-header-row {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 4px;
+    margin: 0;
+    z-index: 2;
   }
 
   .win95-button {
