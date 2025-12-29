@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import type { JSX } from 'react'
 
 const win95Styles = `
@@ -217,7 +219,7 @@ const historicalMoments = [
   {
     title: 'Tarjan and Fredman invent Fibonacci heaps (1984-1987)',
     detail:
-      'They introduced amortized O(1) decrease-key and meld, reducing Dijkstraƒ?Ts algorithm to O(E + V log V) and inspiring later pairing and binomial heaps.',
+      'They introduced amortized O(1) decrease-key and meld, reducing DijkstraÆ’?Ts algorithm to O(E + V log V) and inspiring later pairing and binomial heaps.',
   },
   {
     title: 'Pairing heap emerges as a simple meldable heap (1986)',
@@ -472,9 +474,7 @@ export default function HeapsPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Heaps &amp; Priority Queues</span>
           <div className="win95-title-controls">
-            <button className="win95-control" type="button" aria-label="Close window">
-              X
-            </button>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
           </div>
         </header>
         <div className="win95-content">

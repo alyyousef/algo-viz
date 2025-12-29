@@ -417,9 +417,7 @@ export default function InterpretedLanguagesPage(): JSX.Element {
       <div className="win95-window">
         <div className="win95-title-bar">
           <span className="win95-title">Interpreted Languages</span>
-          <button type="button" className="win95-close" aria-label="Close">
-            X
-          </button>
+          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
         </div>
 
         <div className="win95-content">

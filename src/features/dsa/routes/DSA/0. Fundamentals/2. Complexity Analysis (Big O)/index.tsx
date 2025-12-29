@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import type { JSX } from 'react'
 
 const bigPicture = [
@@ -26,13 +28,13 @@ const asymptoticNotations = [
     title: 'Big O (O): The Upper Bound',
     detail:
       "This is the most common notation. It describes the *worst-case* scenario. If an algorithm is O(n^2), it means its execution time will not grow faster than a quadratic function of the input size. It gives a guarantee: 'The performance will be at least this good.'",
-    math: 'f(n) = O(g(n)) if there exist constants c > 0 and nƒ,? >= 0 such that 0 <= f(n) <= c * g(n) for all n >= nƒ,?.',
+    math: 'f(n) = O(g(n)) if there exist constants c > 0 and nÆ’,? >= 0 such that 0 <= f(n) <= c * g(n) for all n >= nÆ’,?.',
   },
   {
     title: 'Big Omega (Ic): The Lower Bound',
     detail:
       "This describes the *best-case* scenario. If an algorithm is Ic(n), it means its execution time will not grow slower than a linear function of the input. It provides a floor: 'It will take at least this much effort, even on a good day.'",
-    math: 'f(n) = Ic(g(n)) if there exist constants c > 0 and nƒ,? >= 0 such that 0 <= c * g(n) <= f(n) for all n >= nƒ,?.',
+    math: 'f(n) = Ic(g(n)) if there exist constants c > 0 and nÆ’,? >= 0 such that 0 <= c * g(n) <= f(n) for all n >= nÆ’,?.',
   },
   {
     title: 'Big Theta (I~): The Tight Bound',
@@ -369,9 +371,7 @@ export default function ComplexityAnalysisPage(): JSX.Element {
       <div className="win95-window">
         <div className="win95-title-bar">
           <span className="win95-title">Complexity Analysis</span>
-          <button className="win95-close" aria-label="Close window">
-            X
-          </button>
+          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
         </div>
 
         <div className="win95-content">

@@ -482,9 +482,7 @@ export default function SegmentFenwickPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Segment & Fenwick Trees</span>
           <div className="win95-title-controls">
-            <button className="win95-control" aria-label="Close window">
-              X
-            </button>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
           </div>
         </header>
 

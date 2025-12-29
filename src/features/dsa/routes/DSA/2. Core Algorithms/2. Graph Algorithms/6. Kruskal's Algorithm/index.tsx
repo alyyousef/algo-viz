@@ -307,7 +307,7 @@ const complexityNotes = [
   {
     title: 'Time',
     detail:
-      "O(E log E) for sorting; Union-Find adds O(E Iñ(V)) (inverse Ackermann, effectively constant). With small integer weights and buckets, sorting can approach O(E).",
+      "O(E log E) for sorting; Union-Find adds O(E IÃ±(V)) (inverse Ackermann, effectively constant). With small integer weights and buckets, sorting can approach O(E).",
   },
   {
     title: 'Space',
@@ -438,7 +438,7 @@ const advancedInsights = [
   {
     title: 'Union-Find amortized costs',
     detail:
-      'With path compression and union by rank, total Union-Find cost is O((V + E) Iñ(V)), effectively constant in practice.',
+      'With path compression and union by rank, total Union-Find cost is O((V + E) IÃ±(V)), effectively constant in practice.',
   },
   {
     title: 'Streaming and external memory',
@@ -467,9 +467,7 @@ export default function KruskalsAlgorithmPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Kruskal's Algorithm</span>
           <div className="win95-title-controls">
-            <button className="win95-control" aria-label="Close window">
-              X
-            </button>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
           </div>
         </header>
         <div className="win95-content">

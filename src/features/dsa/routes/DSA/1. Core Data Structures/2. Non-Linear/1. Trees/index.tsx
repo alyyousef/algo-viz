@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import type { JSX } from 'react'
 
 const win95Styles = `
@@ -450,9 +452,7 @@ export default function TreesPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Trees</span>
           <div className="win95-title-controls">
-            <button className="win95-control" type="button" aria-label="Close window">
-              X
-            </button>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
           </div>
         </header>
         <div className="win95-content">

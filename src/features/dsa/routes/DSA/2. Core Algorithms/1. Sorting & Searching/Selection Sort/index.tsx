@@ -229,7 +229,7 @@ const historicalMilestones = [
   {
     title: '1930s: Tournament method roots',
     detail:
-      'Early sorting research used tournament trees to pick winners. Selection sort is the simplest “pick the winner, remove it, repeat” approach.',
+      'Early sorting research used tournament trees to pick winners. Selection sort is the simplest â€œpick the winner, remove it, repeatâ€ approach.',
   },
   {
     title: '1960s: Textbook staple',
@@ -389,7 +389,7 @@ const advancedInsights = [
   {
     title: 'Cycle sort connection',
     detail:
-      'Cycle sort extends the “place element directly” idea to achieve the theoretical minimum number of writes for a permutation.',
+      'Cycle sort extends the â€œplace element directlyâ€ idea to achieve the theoretical minimum number of writes for a permutation.',
   },
   {
     title: 'Cache behavior',
@@ -418,9 +418,7 @@ export default function SelectionSortPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Selection Sort</span>
           <div className="win95-title-controls">
-            <button className="win95-control" aria-label="Close window">
-              X
-            </button>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
           </div>
         </header>
         <div className="win95-content">

@@ -411,9 +411,7 @@ export default function ScriptingLanguagesPage(): JSX.Element {
       <div className="win95-window" role="presentation">
         <header className="win95-titlebar">
           <span className="win95-title">Scripting Languages</span>
-          <button className="win95-control" type="button" aria-label="Close window">
-            X
-          </button>
+          <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
         </header>
         <div className="win95-content">
           <div className="win95-header-row">

@@ -428,9 +428,7 @@ export default function OOPPage(): JSX.Element {
       <div className="win95-window" role="presentation">
         <header className="win95-titlebar">
           <span className="win95-title">Object-Oriented Programming (OOP)</span>
-          <button className="win95-control" aria-label="Close window">
-            X
-          </button>
+          <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
         </header>
 
         <div className="win95-content">
