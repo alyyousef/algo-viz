@@ -463,9 +463,9 @@ export default function BitManipulationPage(): JSX.Element {
       <div className="win95-window">
         <div className="win95-title-bar">
           <span className="win95-title">Bit Manipulation</span>
-          <button type="button" className="win95-close" aria-label="Close">
+          <Link to="/algoViz" className="win95-close" aria-label="Close">
             X
-          </button>
+          </Link>
         </div>
 
         <div className="win95-content">
