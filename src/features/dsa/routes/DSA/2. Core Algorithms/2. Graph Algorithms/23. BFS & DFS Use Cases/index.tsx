@@ -315,6 +315,45 @@ const coreUseCases = [
       'Iterative deepening combines DFS depth control with BFS-like optimality.',
     ],
   },
+  {
+    heading: 'State space search (BFS vs DFS)',
+    bullets: [
+      'BFS guarantees the fewest moves for puzzles with unit costs.',
+      'DFS explores deeply with pruning, useful when solutions are rare but deep.',
+      'Iterative deepening DFS blends BFS optimality with DFS memory profile.',
+    ],
+  },
+  {
+    heading: 'Graph preprocessing (DFS-heavy)',
+    bullets: [
+      'Order nodes by finish times to build condensation graphs.',
+      'Compute entry/exit times for subtree queries in trees.',
+      'Detect cycles early to short-circuit downstream pipelines.',
+    ],
+  },
+]
+
+const traversalPatterns = [
+  {
+    title: 'Traversal frontier',
+    detail:
+      'BFS keeps a frontier queue of nodes at the current distance. DFS keeps a stack of the current path, diving until it must backtrack.',
+  },
+  {
+    title: 'Discovery guarantees',
+    detail:
+      'BFS discovery order equals shortest hop distance. DFS discovery order encodes ancestry but not shortest paths.',
+  },
+  {
+    title: 'Parent pointers',
+    detail:
+      'BFS parent edges yield shortest paths in unweighted graphs. DFS parent edges yield a spanning tree useful for structure.',
+  },
+  {
+    title: 'Coloring / visitation states',
+    detail:
+      'Using white-gray-black states helps detect back edges (cycles) in DFS and prevents duplicate queue entries in BFS.',
+  },
 ]
 
 const complexityNotes = [
@@ -337,6 +376,62 @@ const complexityNotes = [
     title: 'Traversal order impact',
     detail:
       'DFS order depends on adjacency ordering. BFS is more stable for layer distances but still depends on neighbor ordering.',
+  },
+]
+
+const bfsDfsComparisons = [
+  {
+    title: 'Goal',
+    bfs: 'Shortest hops, layers, distances',
+    dfs: 'Structure, ordering, reachability',
+  },
+  {
+    title: 'Memory profile',
+    bfs: 'High on wide frontiers',
+    dfs: 'Lower, proportional to depth',
+  },
+  {
+    title: 'Typical output',
+    bfs: 'Distance array, shortest path tree',
+    dfs: 'Discovery/finish times, DFS tree',
+  },
+  {
+    title: 'Common pitfalls',
+    bfs: 'Used on weighted edges without adaptation',
+    dfs: 'Assumed to return shortest paths',
+  },
+]
+
+const variantCatalog = [
+  {
+    title: 'Multi-source BFS',
+    detail:
+      'Seed the queue with multiple sources to compute nearest-source distances in one pass.',
+  },
+  {
+    title: 'Bidirectional BFS',
+    detail:
+      'Run BFS from start and goal to meet in the middle, reducing explored nodes in large graphs.',
+  },
+  {
+    title: '0-1 BFS',
+    detail:
+      'Replace the queue with a deque when edge weights are 0 or 1 to keep linear time.',
+  },
+  {
+    title: 'Iterative DFS',
+    detail:
+      'Use an explicit stack to avoid recursion limits and control traversal order.',
+  },
+  {
+    title: 'Iterative deepening DFS',
+    detail:
+      'Run DFS with increasing depth limits to retain DFS memory while approaching BFS optimality.',
+  },
+  {
+    title: 'Layered DFS on BFS levels',
+    detail:
+      'Use BFS to build levels, then DFS within level constraints (matching and flow algorithms).',
   },
 ]
 
@@ -370,6 +465,16 @@ const realWorldUses = [
     context: 'AI and puzzle search',
     detail:
       'BFS ensures shortest solutions; DFS provides deep exploration with pruning heuristics.',
+  },
+  {
+    context: 'Build and deploy pipelines',
+    detail:
+      'DFS detects cycles and orders tasks; BFS helps estimate critical levels or stage-by-stage scheduling.',
+  },
+  {
+    context: 'Security and auditing',
+    detail:
+      'BFS finds shortest escalation paths; DFS enumerates reachable attack surfaces for coverage.',
   },
 ]
 
@@ -407,6 +512,35 @@ Need minimal memory on deep graphs -> DFS or iterative deepening`,
       'Pick the traversal based on the guarantee you need: BFS for shortest hops, DFS for structure.',
   },
   {
+    title: 'BFS layer extraction',
+    code: `levels = []
+queue = [start]
+seen = {start}
+while queue not empty:
+    level = []
+    for i in 1..len(queue):
+        v = pop_front(queue)
+        level.append(v)
+        for w in adj[v]:
+            if w not seen:
+                seen.add(w)
+                push_back(queue, w)
+    levels.append(level)`,
+    explanation:
+      'Layer extraction makes BFS useful for breadth summaries, bipartite checks, and level-based scheduling.',
+  },
+  {
+    title: 'DFS for cycle detection in directed graphs',
+    code: `dfs(v):
+    color[v] = GRAY
+    for w in adj[v]:
+        if color[w] == GRAY: hasCycle = true
+        else if color[w] == WHITE: dfs(w)
+    color[v] = BLACK`,
+    explanation:
+      'Gray-to-gray edges are back edges and signal cycles, which invalidate topo ordering.',
+  },
+  {
     title: 'Iterative DFS to avoid recursion',
     code: `stack = [(start, 0)]
 while stack not empty:
@@ -419,6 +553,19 @@ while stack not empty:
     explanation:
       'Manual stacks avoid recursion limits and enable control over traversal order.',
   },
+  {
+    title: 'Iterative deepening DFS sketch',
+    code: `for depth in 0..maxDepth:
+    if dls(start, depth): return found
+
+function dls(v, depth):
+    if depth == 0: return v == goal
+    for w in adj[v]:
+        if dls(w, depth - 1): return true
+    return false`,
+    explanation:
+      'Iterative deepening finds shortest depth solutions without BFS memory blowups.',
+  },
 ]
 
 const pitfalls = [
@@ -427,6 +574,18 @@ const pitfalls = [
   'Recursion depth overflow in DFS on large graphs.',
   'Assuming BFS works on weighted graphs without Dijkstra or 0-1 BFS.',
   'Ignoring disconnected components by starting from only one node.',
+  'Reusing mutable queues or stacks across test cases without clearing.',
+  'Using recursion without tail-call optimization in deep trees.',
+  'Assuming adjacency order is stable when it is not.',
+]
+
+const implementationChecklist = [
+  'Choose adjacency lists for sparse graphs; avoid adjacency matrices for large V.',
+  'Track visited early (when enqueuing or pushing) to prevent duplicates.',
+  'Store parent pointers if you need to reconstruct paths.',
+  'Start from all unvisited nodes if the graph is disconnected.',
+  'Prefer iterative DFS for deep graphs to avoid stack overflow.',
+  'For weighted edges, switch to Dijkstra or 0-1 BFS as needed.',
 ]
 
 const decisionGuidance = [
@@ -544,6 +703,18 @@ export default function BFSDFSUseCasesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Traversal patterns</legend>
+            <div className="win95-grid win95-grid-2">
+              {traversalPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and tradeoffs</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -558,6 +729,30 @@ export default function BFSDFSUseCasesPage(): JSX.Element {
                 BFS guarantees shortest hop paths but can be memory heavy. DFS is memory light and reveals structure but
                 does not optimize path length. Choose based on the guarantee you need.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>BFS vs DFS quick comparison</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>BFS</th>
+                    <th>DFS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bfsDfsComparisons.map((item) => (
+                    <tr key={item.title}>
+                      <td>{item.title}</td>
+                      <td>{item.bfs}</td>
+                      <td>{item.dfs}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -604,6 +799,18 @@ export default function BFSDFSUseCasesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Variant catalog</legend>
+            <div className="win95-grid win95-grid-3">
+              {variantCatalog.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
@@ -635,6 +842,17 @@ export default function BFSDFSUseCasesPage(): JSX.Element {
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {implementationChecklist.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
