@@ -29,7 +29,7 @@ export default function VisualizationWindowContent({
   }
 
   return (
-    <div className="visualization-window">
+    <div className="visualization-window" data-context-url={node.route || undefined}>
       <header className="visualization-window__header">
         <span className="visualization-window__glyph" aria-hidden="true">
           {node.icon ?? VISUALIZATION_GLYPH}

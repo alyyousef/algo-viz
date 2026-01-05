@@ -24,6 +24,7 @@ export interface DesktopIcon96Props {
   onClick?: (event: ReactMouseEvent<HTMLButtonElement>) => void
   onDoubleClick?: (event: ReactMouseEvent<HTMLButtonElement>) => void
   onContextMenu?: (event: ReactMouseEvent<HTMLButtonElement>) => void
+  contextUrl?: string
   title?: string
 }
 
@@ -38,6 +39,7 @@ export default function DesktopIcon96({
   onClick,
   onDoubleClick,
   onContextMenu,
+  contextUrl,
   title,
 }: DesktopIcon96Props): JSX.Element {
   const isControlled = typeof selected === 'boolean'
@@ -110,6 +112,7 @@ export default function DesktopIcon96({
       type="button"
       className={cn('desktop-icon-96', className)}
       data-selected={isSelected}
+      data-context-url={contextUrl || undefined}
       onClick={handleClick}
       onBlur={handleBlur}
       onDoubleClick={handleDoubleClick}

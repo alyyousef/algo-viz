@@ -1,6 +1,6 @@
-import { BrowserRouter, useNavigate } from 'react-router-dom'
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 
-import { useEffect, useRef, useState, type JSX, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type JSX, type ReactNode } from 'react'
 
 export interface AppProvidersProps {
   children: ReactNode
@@ -50,15 +50,33 @@ const win95ContextMenuStyles = `
 }
 `
 
-function Win95ContextMenu(): JSX.Element {
-  const [menuState, setMenuState] = useState({ open: false, x: 0, y: 0 })
+interface Win95ContextMenuState {
+  open: boolean
+  x: number
+  y: number
+  url: string
+}
+
+function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
+  const [menuState, setMenuState] = useState<Win95ContextMenuState>({
+    open: false,
+    x: 0,
+    y: 0,
+    url: currentUrl,
+  })
   const menuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const handleContextMenu = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target : null
+      const contextElement = target?.closest('[data-context-url]')
+      const rawUrl = contextElement?.getAttribute('data-context-url')?.trim()
+      const resolvedUrl = rawUrl
+        ? new URL(rawUrl, window.location.origin).toString()
+        : currentUrl
       event.preventDefault()
       event.stopPropagation()
-      setMenuState({ open: true, x: event.clientX, y: event.clientY })
+      setMenuState({ open: true, x: event.clientX, y: event.clientY, url: resolvedUrl })
     }
 
     const handleClick = (event: MouseEvent) => {
@@ -91,10 +109,10 @@ function Win95ContextMenu(): JSX.Element {
       window.removeEventListener('scroll', handleDismiss, true)
       window.removeEventListener('resize', handleDismiss)
     }
-  }, [])
+  }, [currentUrl])
 
   const handleOpenInNewTab = () => {
-    window.open(window.location.href, '_blank', 'noopener,noreferrer')
+    window.open(menuState.url, '_blank', 'noopener,noreferrer')
     setMenuState((prev) => ({ ...prev, open: false }))
   }
 
@@ -125,6 +143,15 @@ function Win95ContextMenu(): JSX.Element {
       ) : null}
     </>
   )
+}
+
+function Win95ContextMenuProvider(): JSX.Element {
+  const location = useLocation()
+  const currentUrl = useMemo(() => {
+    return `${window.location.origin}${location.pathname}${location.search}${location.hash}`
+  }, [location])
+
+  return <Win95ContextMenu currentUrl={currentUrl} />
 }
 
 function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
@@ -170,7 +197,7 @@ function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
 export default function AppProviders({ children }: AppProvidersProps): JSX.Element {
   return (
     <BrowserRouter>
-      <Win95ContextMenu />
+      <Win95ContextMenuProvider />
       <Win95ReturnHandler>{children}</Win95ReturnHandler>
     </BrowserRouter>
   )

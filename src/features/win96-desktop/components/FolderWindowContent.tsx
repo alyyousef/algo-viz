@@ -87,6 +87,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
                   key={child.id}
                   label={child.name}
                   icon={icon ?? <span aria-hidden="true">{VISUALIZATION_GLYPH}</span>}
+                  contextUrl={child.route}
                   onDoubleClick={() => openVisualizationWindow(child.id)}
                   title={child.description ?? child.name}
                 />
