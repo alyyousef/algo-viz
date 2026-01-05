@@ -1,9 +1,130 @@
 import { BrowserRouter, useNavigate } from 'react-router-dom'
 
-import { useEffect, type JSX, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type JSX, type ReactNode } from 'react'
 
 export interface AppProvidersProps {
   children: ReactNode
+}
+
+const win95ContextMenuStyles = `
+.win95-context-menu {
+  position: fixed;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  padding: 2px;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  font-size: 11px;
+  color: #000;
+  z-index: 9999;
+  min-width: 180px;
+}
+
+.win95-context-menu__item {
+  width: 100%;
+  padding: 3px 18px 3px 8px;
+  background: #C0C0C0;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+.win95-context-menu__item:hover,
+.win95-context-menu__item:focus {
+  background: #000080;
+  color: #fff;
+}
+
+.win95-context-menu__item:focus {
+  outline: 1px dotted #fff;
+  outline-offset: -3px;
+}
+
+.win95-context-menu__separator {
+  height: 1px;
+  background: #808080;
+  margin: 2px 1px;
+}
+`
+
+function Win95ContextMenu(): JSX.Element {
+  const [menuState, setMenuState] = useState({ open: false, x: 0, y: 0 })
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const handleContextMenu = (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      setMenuState({ open: true, x: event.clientX, y: event.clientY })
+    }
+
+    const handleClick = (event: MouseEvent) => {
+      if (menuRef.current && event.target instanceof Node && menuRef.current.contains(event.target)) {
+        return
+      }
+      setMenuState((prev) => (prev.open ? { ...prev, open: false } : prev))
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuState((prev) => (prev.open ? { ...prev, open: false } : prev))
+      }
+    }
+
+    const handleDismiss = () => {
+      setMenuState((prev) => (prev.open ? { ...prev, open: false } : prev))
+    }
+
+    document.addEventListener('contextmenu', handleContextMenu, true)
+    document.addEventListener('click', handleClick, true)
+    document.addEventListener('keydown', handleKeyDown, true)
+    window.addEventListener('scroll', handleDismiss, true)
+    window.addEventListener('resize', handleDismiss)
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu, true)
+      document.removeEventListener('click', handleClick, true)
+      document.removeEventListener('keydown', handleKeyDown, true)
+      window.removeEventListener('scroll', handleDismiss, true)
+      window.removeEventListener('resize', handleDismiss)
+    }
+  }, [])
+
+  const handleOpenInNewTab = () => {
+    window.open(window.location.href, '_blank', 'noopener,noreferrer')
+    setMenuState((prev) => ({ ...prev, open: false }))
+  }
+
+  const handleClose = () => {
+    setMenuState((prev) => ({ ...prev, open: false }))
+  }
+
+  const menuWidth = 200
+  const menuHeight = 56
+  const maxX = typeof window !== 'undefined' ? window.innerWidth - menuWidth - 6 : menuState.x
+  const maxY = typeof window !== 'undefined' ? window.innerHeight - menuHeight - 6 : menuState.y
+  const left = Math.max(6, Math.min(menuState.x, maxX))
+  const top = Math.max(6, Math.min(menuState.y, maxY))
+
+  return (
+    <>
+      <style>{win95ContextMenuStyles}</style>
+      {menuState.open ? (
+        <div className="win95-context-menu" style={{ left, top }} ref={menuRef} role="menu">
+          <button className="win95-context-menu__item" type="button" onClick={handleOpenInNewTab} role="menuitem">
+            Open in new tab
+          </button>
+          <div className="win95-context-menu__separator" aria-hidden="true" />
+          <button className="win95-context-menu__item" type="button" onClick={handleClose} role="menuitem">
+            Cancel
+          </button>
+        </div>
+      ) : null}
+    </>
+  )
 }
 
 function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
@@ -49,6 +170,7 @@ function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
 export default function AppProviders({ children }: AppProvidersProps): JSX.Element {
   return (
     <BrowserRouter>
+      <Win95ContextMenu />
       <Win95ReturnHandler>{children}</Win95ReturnHandler>
     </BrowserRouter>
   )
