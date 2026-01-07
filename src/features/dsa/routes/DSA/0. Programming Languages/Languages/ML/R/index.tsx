@@ -1,18 +1,622 @@
-import TopicLayout, { TopicSection } from '@/features/dsa/components/TopicLayout'
+import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
+
+const historicalMilestones = [
+  {
+    title: 'R evolves from S (1993)',
+    detail:
+      'R grew out of the S language at Bell Labs, focusing on statistical computing and graphics.',
+  },
+  {
+    title: 'CRAN organizes packages (mid 1990s)',
+    detail:
+      'The Comprehensive R Archive Network standardized package distribution and documentation.',
+  },
+  {
+    title: 'Tidyverse changes workflows (2010s)',
+    detail:
+      'dplyr, ggplot2, tidyr, and friends made data transformation and visualization consistent and expressive.',
+  },
+  {
+    title: 'RStudio and notebooks mature (2010s-2020s)',
+    detail:
+      'IDE and report tools made R popular for reproducible research and analytics.',
+  },
+]
+
+const mentalModels = [
+  {
+    title: 'Statistics-first language',
+    detail:
+      'R treats statistical modeling and visualization as first-class tasks rather than add-ons.',
+  },
+  {
+    title: 'Dataframes as the core object',
+    detail:
+      'Tables are central. Most workflows start with dataframes and end with plots or model outputs.',
+  },
+  {
+    title: 'Pipelines and verbs',
+    detail:
+      'The pipe operator connects data transformation verbs into readable, linear workflows.',
+  },
+]
+
+const ecosystemPillars = [
+  {
+    heading: 'Data wrangling',
+    bullets: [
+      'dplyr for filtering, grouping, and summarizing.',
+      'tidyr for reshaping and cleaning.',
+      'data.table for fast, memory-efficient operations.',
+    ],
+  },
+  {
+    heading: 'Visualization',
+    bullets: [
+      'ggplot2 for layered statistical graphics.',
+      'plotly for interactive charts.',
+      'shiny for dashboards and web apps.',
+    ],
+  },
+  {
+    heading: 'Statistical modeling',
+    bullets: [
+      'lm, glm, and survival models are built-in.',
+      'caret and tidymodels standardize ML workflows.',
+      'Mixed-effects models via lme4.',
+    ],
+  },
+  {
+    heading: 'Machine learning',
+    bullets: [
+      'xgboost and ranger for tree-based models.',
+      'keras and torch bindings for deep learning.',
+      'mlr3 for modular ML pipelines.',
+    ],
+  },
+  {
+    heading: 'Reproducible research',
+    bullets: [
+      'R Markdown and Quarto for reports.',
+      'renv for dependency locking.',
+      'Targets for reproducible pipelines.',
+    ],
+  },
+  {
+    heading: 'Interoperability',
+    bullets: [
+      'reticulate to call Python from R.',
+      'Rcpp for C++ integration.',
+      'Database connectors via DBI.',
+    ],
+  },
+]
+
+const performanceNotes = [
+  {
+    title: 'Vectorize when possible',
+    detail:
+      'Vectorized operations use optimized C loops behind the scenes and avoid per-row overhead.',
+  },
+  {
+    title: 'Use data.table for large data',
+    detail:
+      'data.table is memory-efficient and fast for joins and aggregations.',
+  },
+  {
+    title: 'Profile with profvis',
+    detail:
+      'Identify slow blocks and avoid premature optimization.',
+  },
+  {
+    title: 'Avoid repeated copying',
+    detail:
+      'R often copies data frames; be mindful of large object manipulation.',
+  },
+]
+
+const realWorldUses = [
+  {
+    context: 'Biostatistics and epidemiology',
+    detail:
+      'R is dominant in clinical studies, survival analysis, and statistical reporting.',
+  },
+  {
+    context: 'Experiment analysis',
+    detail:
+      'A/B testing workflows and statistical power analyses are common use cases.',
+  },
+  {
+    context: 'Data journalism',
+    detail:
+      'Analysts use R to clean data and produce publication-quality visuals.',
+  },
+  {
+    context: 'Research and academia',
+    detail:
+      'R excels at reproducible notebooks and advanced statistical methods.',
+  },
+]
+
+const examples = [
+  {
+    title: 'Tidyverse pipeline for summaries',
+    code: `library(dplyr)
+
+sales %>%
+  filter(region == "East") %>%
+  group_by(product) %>%
+  summarize(
+    revenue = sum(price * units),
+    avg_units = mean(units)
+  ) %>%
+  arrange(desc(revenue))`,
+    explanation:
+      'Pipelines connect readable verbs and avoid manual loops.',
+  },
+  {
+    title: 'ggplot2 visualization',
+    code: `library(ggplot2)
+
+ggplot(df, aes(x = age, y = income)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm") +
+  labs(title = "Income vs Age")`,
+    explanation:
+      'ggplot layers build plots with a consistent grammar of graphics.',
+  },
+  {
+    title: 'Fit a logistic regression',
+    code: `model <- glm(
+  churn ~ tenure + monthly_charges + contract_type,
+  data = customers,
+  family = binomial()
+)
+summary(model)`,
+    explanation:
+      'GLM models are built-in and widely used for interpretable classification.',
+  },
+]
+
+const pitfalls = [
+  'Ignoring factor levels and encoding, leading to incorrect model behavior.',
+  'Accidentally converting strings to factors and breaking joins.',
+  'Forgetting to set a random seed for reproducibility.',
+  'Copying large data frames repeatedly and exhausting memory.',
+  'Using base plots for complex visuals when ggplot offers clearer control.',
+]
+
+const decisionGuidance = [
+  'Need advanced statistics and high-quality visuals: R is a great fit.',
+  'Need reproducible reports and notebooks: R Markdown and Quarto are strong.',
+  'Need large-scale production ML services: consider Python or mixed stacks.',
+  'Need fast data manipulation at scale: learn data.table alongside tidyverse.',
+  'Need integration with databases or Python: R has mature interop tooling.',
+]
+
+const advancedInsights = [
+  {
+    title: 'Model interpretability',
+    detail:
+      'R shines in statistical modeling with rich diagnostics and summary tooling.',
+  },
+  {
+    title: 'Functional programming tools',
+    detail:
+      'purrr and the apply family allow concise transformations without manual loops.',
+  },
+  {
+    title: 'Report automation',
+    detail:
+      'Parameterized R Markdown reports make it easy to generate recurring analyses.',
+  },
+  {
+    title: 'Package hygiene',
+    detail:
+      'Use renv or packrat to lock dependencies and prevent environment drift.',
+  },
+]
+
+const takeaways = [
+  'R is the leading language for statistical analysis and visualization.',
+  'Dataframes and pipelines make data exploration fast and readable.',
+  'Performance depends on vectorization and smart data handling.',
+  'R excels in research, analytics, and report automation.',
+]
+
 export default function RPage(): JSX.Element {
   return (
-    <TopicLayout
-      title="R"
-      subtitle="Placeholder"
-      intro="Content for R is coming soon."
-    >
-      <TopicSection heading="Status">
-        <p>Placeholder page for R. Add narrative, visuals, and examples here.</p>
-      </TopicSection>
-    </TopicLayout>
+    <div className="win95-page">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">R</span>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
+        <div className="win95-content">
+          <div className="win95-header-row">
+            <div>
+              <div className="win95-subheading">Statistical computing with expressive data workflows</div>
+              <p className="win95-text">
+                R is purpose-built for statistics, data analysis, and visualization. It combines an interactive environment,
+                an enormous ecosystem of statistical packages, and a culture of reproducible research, making it a mainstay
+                in analytics and data science.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
+          </div>
+
+          <fieldset className="win95-fieldset">
+            <legend>The big picture</legend>
+            <div className="win95-panel">
+              <p className="win95-text">
+                R focuses on data exploration, statistical inference, and visualization. It excels when the goal is insight,
+                model interpretability, and report-ready charts rather than raw system throughput.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Historical context</legend>
+            <div className="win95-grid win95-grid-2">
+              {historicalMilestones.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Core concept and mental models</legend>
+            <div className="win95-grid win95-grid-2">
+              {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How it works: ecosystem pillars</legend>
+            <div className="win95-grid win95-grid-3">
+              {ecosystemPillars.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                R performance comes from vectorization and memory awareness. The fastest workflows keep data operations in
+                optimized libraries rather than per-row loops.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-world applications</legend>
+            <div className="win95-grid win95-grid-2">
+              {realWorldUses.map((item) => (
+                <div key={item.context} className="win95-panel">
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical examples</legend>
+            <div className="win95-stack">
+              {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to use it</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionGuidance.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Advanced insights</legend>
+            <div className="win95-grid win95-grid-2">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {takeaways.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
   )
 }
 
