@@ -229,22 +229,37 @@ const historicalMilestones = [
   {
     title: 'Early assembly languages codify bytes and words (1950s)',
     detail:
-      'Programmers moved from raw machine code to assembly, formalizing the notions of bytes, words, and registers as the atoms of computation.',
+      'Programmers moved from raw machine code to assembly, formalizing bytes, words, and registers as the atoms of computation.',
+  },
+  {
+    title: 'ASCII standardizes 7-bit text (1963)',
+    detail:
+      'A shared character set enabled portability of text across machines, motivating distinct byte/character semantics.',
   },
   {
     title: 'C popularizes portable primitive types (1972)',
     detail:
-      'C mapped directly to hardware while promising portability. Its int, char, and float influenced type systems in C++, Java, Go, and Rust.',
+      'C mapped directly to hardware while promising portability. Its int, char, and float influenced many later type systems.',
+  },
+  {
+    title: 'Two\'s complement becomes ubiquitous (1970s)',
+    detail:
+      'Signed integer representation converged on two\'s complement, simplifying arithmetic and overflow behavior in hardware.',
   },
   {
     title: 'IEEE 754 standardizes floating point (1985)',
     detail:
-      'A uniform representation for real numbers stabilized behavior across CPUs, enabling reliable numerical software and hardware acceleration.',
+      'A uniform representation for real numbers stabilized behavior across CPUs, enabling reliable numerical software.',
   },
   {
     title: 'Unicode expands the notion of character (1991)',
     detail:
-      'Characters became code points instead of single bytes, forcing developers to distinguish between encoded bytes and textual units.',
+      'Characters became code points instead of bytes, forcing developers to distinguish encoding from text semantics.',
+  },
+  {
+    title: '64-bit architectures go mainstream (2000s)',
+    detail:
+      'Pointer sizes and default integer widths expanded, changing ABI expectations and memory layout decisions.',
   },
 ]
 
@@ -252,16 +267,27 @@ const mentalModels = [
   {
     title: 'Atoms and measuring cups',
     detail:
-      'Primitive types are the atoms of data. They have fixed size and shape like measuring cups, making them predictable for memory layout and performance.',
+      'Primitive types are the atoms of data. Fixed size and shape make memory layout predictable and fast to move.',
   },
   {
     title: 'Bits as budget',
-    detail: 'Every bit is capacity. Choosing int16 over int64 is deciding how much numeric range and memory you budget for the task.',
+    detail:
+      'Every bit is capacity. Choosing int16 over int64 is a concrete memory and range budget choice.',
   },
   {
     title: 'Contracts with hardware',
     detail:
-      'Primitive types are contracts between your code and the CPU about how many bits to read, how to interpret them, and how to align them in memory.',
+      'Primitive types define how many bits the CPU reads, how it interprets them, and how it aligns them in memory.',
+  },
+  {
+    title: 'Encoding is not meaning',
+    detail:
+      'Bytes are storage; encoding tells you how to interpret them as characters. Confusing the two causes bugs.',
+  },
+  {
+    title: 'Fast path vs safe path',
+    detail:
+      'Primitive operations are fast but low-level; safety comes from clear ranges, explicit conversions, and checks.',
   },
 ]
 
@@ -269,40 +295,59 @@ const primitiveCategories = [
   {
     heading: 'Integers',
     bullets: [
-      'Signed vs unsigned. Range determined by bit width (int8 to int64, BigInt for arbitrary precision).',
-      'Two complement dominates modern CPUs, simplifying addition and subtraction hardware.',
-      'Use fixed width for protocols and storage; BigInt when correctness requires unbounded range.',
+      'Signed vs unsigned; range is determined by bit width (int8 to int64, BigInt for arbitrary precision).',
+      'Two\'s complement dominates CPUs, simplifying arithmetic and overflow behavior.',
+      'Fixed-width integers are essential for protocols, file formats, and binary storage.',
+      'Choose the smallest width that fits to reduce memory and cache pressure.',
     ],
   },
   {
     heading: 'Floating point',
     bullets: [
-      'IEEE 754 single (32-bit) and double (64-bit) are ubiquitous. Provide sign, exponent, mantissa.',
-      'Special values: NaN, +Infinity, -Infinity, signed zero. They simplify hardware pipelines but surprise comparisons.',
-      'Not exact for most decimals; use decimal types or rationals for money and precise fractions.',
+      'IEEE 754 single (32-bit) and double (64-bit) provide sign, exponent, mantissa.',
+      'Special values: NaN, +Infinity, -Infinity, signed zero. Comparisons can be surprising.',
+      'Most decimals are not exact in binary; use decimal or integer cents for money.',
+      'Rounding modes and precision loss matter in loops and reductions.',
+    ],
+  },
+  {
+    heading: 'Fixed-point / decimals',
+    bullets: [
+      'Store scaled integers (value * scale) to represent decimals exactly.',
+      'Great for currency, inventory, and deterministic business logic.',
+      'Trade range for precision; choose scale carefully.',
     ],
   },
   {
     heading: 'Characters and bytes',
     bullets: [
-      'Bytes are 8-bit raw units. Text requires encodings like UTF-8 or UTF-16 to map code points to bytes.',
-      'Code point versus glyph: multiple code points can render as one visual symbol. Length in bytes differs from length in characters.',
-      'Use byte slices for I/O and cryptography; use string abstractions that respect encoding for text.',
+      'Bytes are 8-bit raw units. Text requires encodings like UTF-8 or UTF-16.',
+      'Code point vs glyph: multiple code points can render as one symbol.',
+      'Length in bytes differs from length in characters; slicing by bytes can corrupt text.',
     ],
   },
   {
     heading: 'Booleans',
     bullets: [
-      'Stored as a byte or a bit-packed flag. Represent truth values but often incur alignment padding.',
-      'Branching on booleans can cause pipeline stalls; vectorized code may favor bit masks.',
+      'Stored as a byte or bit-packed flags; alignment padding can waste space.',
+      'Vectorized code may prefer bit masks over branching for speed.',
+      'Serialization formats often encode booleans as 0/1 bytes.',
     ],
   },
   {
     heading: 'Pointers and references',
     bullets: [
-      'Hold memory addresses. Size matches machine word (32-bit or 64-bit).',
-      'Nullability is a property; languages vary in how they enforce non-null references.',
-      'Pointer arithmetic is powerful and dangerous; managed languages abstract it away for safety.',
+      'Hold memory addresses; size matches machine word (32-bit or 64-bit).',
+      'Nullability varies by language: null, optional, or non-null references.',
+      'Pointer arithmetic is powerful but unsafe; managed languages abstract it away.',
+    ],
+  },
+  {
+    heading: 'Bitfields and flags',
+    bullets: [
+      'Pack multiple small values into one word using masks and shifts.',
+      'Improves locality but adds complexity and endianness concerns.',
+      'Common in embedded systems, protocols, and graphics.',
     ],
   },
 ]
@@ -311,22 +356,32 @@ const machineConsiderations = [
   {
     title: 'Word size and alignment',
     detail:
-      'CPUs fetch data in word-sized chunks. Aligning 64-bit values on 8-byte boundaries avoids extra memory cycles. Misalignment penalties vary by architecture.',
+      'CPUs fetch data in word-sized chunks. Aligning 64-bit values on 8-byte boundaries avoids extra memory cycles.',
   },
   {
     title: 'Endianness',
     detail:
-      'Little endian stores least significant byte first; big endian stores most significant first. Network protocols often standardize on big endian (network byte order).',
+      'Little endian stores least significant byte first; big endian stores most significant first. Protocols often fix byte order.',
   },
   {
     title: 'Cache behavior',
     detail:
-      'Dense primitive arrays leverage cache lines better than sparse object graphs. Packing flags into bitsets can improve locality but adds bit manipulation cost.',
+      'Dense primitive arrays leverage cache lines better than sparse object graphs. Packing flags improves locality but adds bit ops.',
   },
   {
     title: 'SIMD and vector units',
     detail:
-      'Vector instructions operate on multiple primitive elements at once. Choosing contiguous, properly aligned primitive buffers unlocks SIMD speedups.',
+      'Vector instructions operate on multiple primitive elements at once. Contiguous, aligned buffers unlock SIMD speedups.',
+  },
+  {
+    title: 'ABI and calling conventions',
+    detail:
+      'Primitive sizes dictate stack layout, parameter passing, and struct padding across language boundaries.',
+  },
+  {
+    title: 'Atomicity and concurrency',
+    detail:
+      'Some primitive widths are atomic on a given CPU; others need locks. Misaligned atomics can be slow or unsafe.',
   },
 ]
 
@@ -334,22 +389,27 @@ const complexityNotes = [
   {
     title: 'Time cost',
     detail:
-      'Primitive operations are O(1), but constants differ: integer addition is cheaper than floating point; integer division is slower than multiplication; memory access dominates arithmetic when data is not cache resident.',
+      'Primitive operations are O(1), but constants differ: integer add < float add; division is slower than multiply; memory access can dominate.',
   },
   {
     title: 'Space cost',
     detail:
-      'Bit width drives memory footprint. Millions of records with an int64 field consume 8 MB per column, while int32 halves that. Bit packing booleans can reduce space by up to 8x in dense arrays.',
+      'Bit width drives footprint. Millions of int64 values consume 8 MB per column; int32 halves that. Bit packing booleans can cut space 8x.',
   },
   {
     title: 'Precision versus range',
     detail:
-      'Floats trade precision for range through exponents. Decimal types trade range for precise base-10 arithmetic. Choosing the wrong primitive shifts errors into downstream calculations.',
+      'Floats trade precision for range. Fixed-point trades range for exactness. Wrong choices leak error into downstream computations.',
   },
   {
     title: 'Overflow and underflow',
     detail:
-      'Overflow wraps for unsigned integers and two complement signed integers in many languages. Checked arithmetic or wider types mitigate silent bugs.',
+      'Overflow often wraps. Checked arithmetic, saturating math, or wider types prevent silent bugs.',
+  },
+  {
+    title: 'Conversion cost',
+    detail:
+      'Casting between types can be expensive in tight loops, especially float <-> int or big integer conversions.',
   },
 ]
 
@@ -357,27 +417,37 @@ const realWorldUses = [
   {
     context: 'Network protocols',
     detail:
-      'Protocol headers specify exact bit widths (uint16 for ports, uint32 for sequence numbers) to guarantee interoperability and compactness.',
+      'Headers specify exact widths (uint16 ports, uint32 sequence numbers) to guarantee interoperability and compactness.',
   },
   {
     context: 'Databases',
     detail:
-      'Column types dictate on-disk and in-memory layout. Choosing INT versus BIGINT changes index size and cache fit, impacting query latency.',
+      'Column types dictate on-disk and in-memory layout. INT vs BIGINT changes index size and cache fit.',
   },
   {
     context: 'Graphics and signal processing',
     detail:
-      'RGBA pixels often use four 8-bit channels; audio samples use 16-bit or 24-bit integers or floats. SIMD thrives on tightly packed primitives.',
+      'RGBA pixels use four 8-bit channels; audio samples use 16-bit or 24-bit integers or floats.',
   },
   {
     context: 'Cryptography',
     detail:
-      'Operations depend on exact bit widths and endian conversions. Misinterpreting byte order or padding breaks protocols and security guarantees.',
+      'Exact bit widths and endianness are mandatory. Misinterpreting byte order breaks protocols and security.',
   },
   {
     context: 'Embedded systems',
     detail:
-      'Memory is scarce. Using uint8 and bitfields conserves RAM, while floating point may be absent or emulated, influencing algorithm choices.',
+      'Memory is scarce. uint8 and bitfields conserve RAM; floating point may be emulated.',
+  },
+  {
+    context: 'Machine learning',
+    detail:
+      'FP16/BF16 reduce memory and bandwidth, while int8 quantization boosts throughput for inference.',
+  },
+  {
+    context: 'Time and finance',
+    detail:
+      'Timestamps often use int64 epoch counts; money uses fixed-point to avoid rounding drift.',
   },
 ]
 
@@ -393,7 +463,7 @@ function encodeHeader({ version, length, flags }):
     buffer[5] = flags
     return buffer`,
     explanation:
-      'Explicit widths prevent ambiguity across languages and architectures. Big endian keeps multi-byte fields consistent on the wire.',
+      'Explicit widths prevent ambiguity across languages and architectures. Big endian keeps fields consistent on the wire.',
   },
   {
     title: 'Avoiding floating point for currency',
@@ -405,7 +475,7 @@ class Money {
     multiply(factor) { return new Money(this.cents * BigInt(factor)) }
 }`,
     explanation:
-      'Base-10 currency math demands exactness. Using integers or decimal libraries avoids binary floating point rounding drift.',
+      'Base-10 currency math demands exactness. Integers or decimal libraries avoid floating point drift.',
   },
   {
     title: 'Bit packing booleans',
@@ -416,54 +486,89 @@ function packFlags(flags[8]):
         if flags[i]: byte |= (1 << i)
     return byte`,
     explanation:
-      'Packing improves cache locality and reduces memory, valuable in tight loops and large bitsets. The tradeoff is extra bit manipulation per access.',
+      'Packing improves locality and reduces memory, valuable in dense datasets and tight loops.',
+  },
+  {
+    title: 'Safe narrowing with checks',
+    code: `// Avoid silent overflow when narrowing
+function toUInt16(x):
+    if x < 0 or x > 65535:
+        throw RangeError("out of range")
+    return x`,
+    explanation:
+      'Explicit range checks prevent accidental truncation or wraparound during casts.',
+  },
+  {
+    title: 'Fixed-point representation',
+    code: `// Fixed-point with 2 decimals
+const SCALE = 100
+function addMoney(a, b):
+    return a + b // both stored in cents
+function formatMoney(cents):
+    return (cents / SCALE) + "." + (cents % SCALE)`,
+    explanation:
+      'Fixed-point keeps precise decimals while preserving integer arithmetic performance.',
   },
 ]
 
 const pitfalls = [
-  'Assuming char equals byte. Unicode code points need encodings; counting characters by bytes breaks multibyte scripts.',
-  'Relying on default integer sizes across platforms. int can be 32-bit or 64-bit depending on compiler and architecture.',
-  'Using floating point for equality checks. Rounding error makes direct comparison unreliable; compare within tolerances.',
-  'Ignoring overflow. Loop counters and accumulators that exceed their bit width silently wrap, producing logic bugs or security issues.',
-  'Misaligned or endianness-mismatched data in network or file I/O. Always specify byte order when serializing multi-byte primitives.',
+  'Assuming char equals byte. Unicode code points need encodings; byte length differs from character length.',
+  'Relying on default integer sizes across platforms. int can be 32-bit or 64-bit.',
+  'Using floating point for equality checks. Compare with tolerances instead.',
+  'Ignoring overflow. Counters and accumulators can silently wrap.',
+  'Misaligned or endianness-mismatched data in I/O. Always specify byte order.',
+  'Implicit narrowing casts that truncate high bits or change sign.',
+  'Storing time in 32-bit seconds and hitting the 2038 limit.',
 ]
 
 const decisionGuidance = [
-  'Need exact counts, indexes, or identifiers within known ranges: choose the smallest fixed-width integer that safely fits the range.',
-  'Need fractional values with tolerable rounding: use float or double and document acceptable error margins.',
-  'Need exact decimal arithmetic (currency, billing, inventory): prefer integers representing base units or decimal libraries.',
-  'Need compact flags over large datasets: pack booleans into bitsets or use typed arrays of uint8 for simplicity.',
-  'Need portability across systems: specify endianness and explicit widths in protocols and file formats; avoid platform dependent defaults.',
+  'Need exact counts, indexes, or identifiers: choose the smallest fixed-width integer that fits the range.',
+  'Need fractional values with tolerable rounding: use float or double and document error margins.',
+  'Need exact decimal arithmetic (currency, billing, inventory): use fixed-point or decimal libraries.',
+  'Need compact flags over large datasets: pack booleans or use bitsets.',
+  'Need portability: specify endianness and widths in protocols and file formats.',
+  'Need huge ranges: use BigInt or bignum libraries, but account for slower arithmetic.',
 ]
 
 const advancedInsights = [
   {
     title: 'Alignment-driven struct design',
     detail:
-      'Reordering fields to place wider primitives first can reduce padding, shrinking struct size. Profilers and sizeof checks verify savings.',
+      'Reordering fields to place wider primitives first can reduce padding, shrinking structs significantly.',
   },
   {
-    title: 'SIMD friendly layouts',
+    title: 'SIMD-friendly layouts',
     detail:
-      'Structure of arrays (SoA) layouts keep primitive columns contiguous, unlocking vectorization and better cache use versus array of structures (AoS).',
+      'Structure of arrays (SoA) keeps primitives contiguous, improving cache and vectorization versus array of structures.',
   },
   {
     title: 'Arbitrary precision tradeoffs',
     detail:
-      'BigInt and bignum libraries enable cryptography and exact math but increase memory and asymptotic cost. Use them when overflow is unacceptable.',
+      'BigInt enables exact math but increases memory use and algorithmic cost. Use only when overflow is unacceptable.',
   },
   {
-    title: 'Checked arithmetic',
+    title: 'Checked and saturating arithmetic',
     detail:
-      'Languages like Rust offer checked, saturating, and wrapping arithmetic. Picking the right mode documents intent and prevents hidden overflow.',
+      'Many languages offer checked, saturating, and wrapping modes. Picking the right mode documents intent.',
+  },
+  {
+    title: 'NaN propagation strategy',
+    detail:
+      'IEEE 754 NaNs propagate through calculations. Decide whether to sanitize or allow them to surface errors.',
+  },
+  {
+    title: 'Quantization strategies',
+    detail:
+      'Reducing precision (float16, int8) can boost performance but needs error analysis and calibration.',
   },
 ]
 
 const takeaways = [
-  'Primitive types define how bits turn into meaning. Choosing the right size and representation is a design decision, not a default.',
-  'Performance hinges on layout. Align data, batch primitives, and avoid unnecessary widening to keep caches hot.',
-  'Correctness often fails at the boundaries: overflow, rounding, encoding, and endianness.',
+  'Primitive types define how bits turn into meaning; size and representation are core design choices.',
+  'Performance hinges on layout, alignment, and cache behavior; choose widths intentionally.',
+  'Correctness often fails at boundaries: overflow, rounding, encoding, and endianness.',
   'Portability improves when widths and byte order are explicit in protocols, files, and interfaces.',
+  'Use the smallest type that meets range and precision needs, and document why.',
 ]
 
 export default function PrimitiveTypesPage(): JSX.Element {
