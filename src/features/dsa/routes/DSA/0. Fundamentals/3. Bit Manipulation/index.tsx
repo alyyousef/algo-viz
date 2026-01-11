@@ -2,6 +2,230 @@ import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
+
 const historicalMilestones = [
   {
     title: 'George Boole links algebra to logic (1854)',
@@ -11,27 +235,27 @@ const historicalMilestones = [
   {
     title: 'Claude Shannon shows circuits implement Boolean algebra (1937)',
     detail:
-      'Shannon proved that relays and gates can compute logical expressions. Modern CPUs expose those gates as bitwise instructions that run in a single cycle.',
+      'Shannon proved that relays and gates can compute logical expressions. Modern CPUs expose those gates as bitwise instructions.',
   },
   {
     title: 'Richard Hamming introduces parity and error correction (1950)',
     detail:
-      'Hamming codes rely on XOR parity bits to detect and fix single-bit errors in memory and communication links, a direct application of bit manipulation.',
-  },
-  {
-    title: 'Brian Kernighan popularizes the x & (x - 1) trick (1970s)',
-    detail:
-      'A tiny loop that drops the lowest set bit enabled fast population counts before hardware POPCNT existed and still appears in CLRS and GeeksforGeeks tutorials.',
+      'Hamming codes rely on XOR parity bits to detect and fix single-bit errors in memory and communication links.',
   },
   {
     title: 'Bloom filters demonstrate probabilistic bitsets (1970)',
     detail:
-      'Burton Bloom showed how a compact bit array plus multiple hashes can represent large sets with controlled false positives, an early win for space-efficient bit work.',
+      'A compact bit array plus hashes represents large sets with controlled false positives, a major win for space efficiency.',
   },
   {
     title: 'Bitboards reshape chess engines (1980s)',
     detail:
-      'Representing a chessboard as a 64-bit integer let engines like Crafty and modern Stockfish evaluate moves with a handful of bitwise operations per piece.',
+      'Representing a board as a 64-bit integer lets engines evaluate moves with a few bitwise ops per piece.',
+  },
+  {
+    title: 'Modern CPU bit instructions (2000s)',
+    detail:
+      'Hardware POPCNT, CLZ, and BMI2 instructions turn loops into single-cycle operations.',
   },
 ]
 
@@ -39,116 +263,215 @@ const mentalModels = [
   {
     title: 'Light switch panel',
     detail:
-      'A mask selects which switches you can reach. AND tests a switch, OR turns it on, XOR flips it. Shifts slide the whole panel left or right.',
+      'A mask selects which switches you can reach. AND tests a switch, OR turns it on, XOR flips it.',
   },
   {
     title: 'Transparent overlay',
     detail:
-      'Shifting by k is like sliding an overlay by k columns so every mark now lines up with a different position. It preserves pattern shape while changing its alignment.',
+      'Shifts slide the overlay left or right. The pattern stays the same, but its position changes.',
   },
   {
     title: 'Parity ledger',
     detail:
-      'XOR behaves like a running ledger for parity: adding the same entry twice cancels it. That intuition powers error detection and fast toggles.',
+      'XOR is a parity ledger: adding the same entry twice cancels it. That powers toggles and checksums.',
   },
   {
     title: 'Tiny backpack',
     detail:
-      'A W-bit integer stores W booleans in a single cache line. Bitsets trade readability for extreme locality and constant-time bulk operations.',
+      'A 64-bit word stores 64 booleans. Bitsets trade readability for tight memory locality.',
+  },
+  {
+    title: 'Number line of powers of two',
+    detail:
+      'Each bit position is a power of two. Setting bits adds those values together.',
   },
 ]
 
-const operations = [
+const bitFundamentals = [
+  {
+    title: 'Bit numbering',
+    detail:
+      'Bit 0 is the least significant bit (LSB). Bit 31 or 63 is the most significant bit (MSB).',
+  },
+  {
+    title: 'Two\'s complement',
+    detail:
+      'Signed integers use two\'s complement. Negation is bitwise NOT plus 1.',
+  },
+  {
+    title: 'Unsigned vs signed shifts',
+    detail:
+      'Logical shifts fill with zeros; arithmetic shifts preserve the sign bit for signed values.',
+  },
+  {
+    title: 'Masks as filters',
+    detail:
+      'AND keeps bits where the mask has 1s. OR sets bits where the mask has 1s.',
+  },
+  {
+    title: 'Bitwise vs logical',
+    detail:
+      'Bitwise operators act on every bit; logical operators act on whole boolean values.',
+  },
+  {
+    title: 'Endianness',
+    detail:
+      'Endianness changes byte order in memory, not the bit numbering inside a byte.',
+  },
+]
+
+const coreOperations = [
   {
     heading: 'Test and inspect',
     bullets: [
-      'Mask then AND: (x & (1 << k)) checks if the kth bit is set.',
-      'Combine multiple tests: (x & mask) === mask asserts every targeted bit is on.',
-      'Extract ranges by masking then shifting back down to bit 0.',
+      'Test bit k: (x & (1 << k)) !== 0.',
+      'Check multiple bits: (x & mask) === mask.',
+      'Extract a range: (x >> l) & ((1 << width) - 1).',
     ],
   },
   {
-    heading: 'Set, clear, and toggle',
+    heading: 'Set, clear, toggle',
     bullets: [
-      'Set with OR: x | (1 << k). Clear with AND of the inverted mask: x & ~(1 << k).',
-      'Toggle with XOR: x ^ (1 << k). Reapplying the same toggle reverts the change.',
-      'Clear lowest set bit with x & (x - 1); isolate it with x & -x.',
+      'Set bit k: x | (1 << k).',
+      'Clear bit k: x & ~(1 << k).',
+      'Toggle bit k: x ^ (1 << k).',
     ],
   },
   {
     heading: 'Shift and align',
     bullets: [
-      'Left shift multiplies by 2^k for unsigned values and creates room for new flags.',
-      'Right shift unsigned divides by 2^k with floor semantics. Arithmetic right shift preserves sign for signed integers.',
-      'Round up to powers of two with a sequence of shifts and ORs, then add 1. Useful for memory alignment.',
+      'Left shift by k multiplies by 2^k for unsigned values.',
+      'Right shift by k divides by 2^k with floor for unsigned.',
+      'Use shifts to align to powers of two in allocators.',
     ],
   },
   {
     heading: 'Aggregate quickly',
     bullets: [
-      "Population count (Hamming weight) counts set bits. Modern CPUs expose POPCNT; fall back to Kernighan's loop or SWAR tricks.",
-      'Bitwise DP iterates submasks with for (s = mask; s; s = (s - 1) & mask).',
-      'Prefix masks let you apply the same transformation to many flags without branching.',
+      'Popcount counts set bits; use hardware intrinsics when available.',
+      'Iterate set bits with x & (x - 1) to skip zeros.',
+      'Enumerate submasks: for (s = mask; s; s = (s - 1) & mask).',
     ],
+  },
+  {
+    heading: 'Isolate and clear',
+    bullets: [
+      'Lowest set bit: x & -x.',
+      'Clear lowest set bit: x & (x - 1).',
+      'Check power of two: x > 0 and (x & (x - 1)) == 0.',
+    ],
+  },
+]
+
+const identities = [
+  {
+    title: 'x & (x - 1)',
+    detail:
+      'Drops the lowest set bit. Great for iterating set bits or counting bits.',
+  },
+  {
+    title: 'x & -x',
+    detail:
+      'Isolates the lowest set bit. Useful for Fenwick trees and subset iteration.',
+  },
+  {
+    title: 'x ^ x = 0',
+    detail:
+      'XOR cancels duplicates; use it to find the unique element in a paired list.',
+  },
+  {
+    title: 'x | (x + 1)',
+    detail:
+      'Sets the lowest zero bit to 1. Useful in some indexing tricks.',
+  },
+  {
+    title: 'x & ~x = 0',
+    detail:
+      'No bit can be both 1 and 0; a sanity check for masks.',
+  },
+  {
+    title: 'masking ranges',
+    detail:
+      'Low k bits mask: (1 << k) - 1. High bits: ~((1 << k) - 1).',
   },
 ]
 
 const complexityNotes = [
   {
-    title: 'Constant time, constant cache footprint',
+    title: 'Constant time, tiny constants',
     detail:
-      'Single bitwise instructions are O(1) with tiny constant factors. Packing 64 flags in one 64-bit word keeps all updates inside a cache line, which is often more important than the instruction count.',
+      'Bitwise instructions are O(1) and often single-cycle. Packed flags reduce cache misses.',
   },
   {
-    title: 'Word size limits',
+    title: 'Word-size scaling',
     detail:
-      'Bit tricks operate on machine word width (typically 32 or 64 bits). Larger bitsets use arrays of words, so operations become O(n / wordSize) but remain predictable and vectorizable.',
+      'Bit tricks operate on 32- or 64-bit words. Larger bitsets scale as O(n / wordSize).',
   },
   {
     title: 'Hardware assists',
     detail:
-      'Instructions like POPCNT, CLZ, and BMI1/BMI2 on x86 or ARM NEON intrinsics collapse loops into one or two cycles. Knowing whether your target CPU has them informs algorithm choice.',
+      'POPCNT, CLZ, and bit scan instructions collapse loops into one or two operations.',
   },
   {
-    title: 'Numerical stability',
+    title: 'Branch elimination',
     detail:
-      'Bitwise operations avoid rounding error common in floating point math, which is why graphics pipelines and cryptography lean on them for deterministic behavior.',
+      'Bitwise code often avoids branches, reducing misprediction penalties in tight loops.',
+  },
+  {
+    title: 'Determinism',
+    detail:
+      'Integer bit operations avoid floating point rounding, a win for crypto and graphics.',
   },
 ]
 
-const applications = [
+const useCases = [
   {
     context: 'Operating systems and permissions',
     detail:
-      'Unix permission bits, page table flags, and interrupt masks store many booleans inside a single word so kernel checks stay branch-light and cache friendly.',
+      'Unix permission bits, page table flags, and interrupt masks store many booleans in one word.',
   },
   {
-    context: 'Compilers and virtual machines',
+    context: 'Networking and protocols',
     detail:
-      'Register allocation and instruction selection often use bitsets to represent live ranges and feature sets. SSA optimizations rely on fast subset and union checks.',
+      'Headers pack multiple fields into bit ranges; masks extract them quickly.',
   },
   {
-    context: 'Search and recommendation',
+    context: 'Graphics and games',
     detail:
-      'Bitsets represent user attributes or document features so filters become fast AND/OR scans across roaring bitmaps. Systems like Elasticsearch and analytics engines rely on these layouts.',
+      'Bitboards, collision masks, and shader flags use bitwise math for fast updates.',
   },
   {
-    context: 'Games and simulations',
+    context: 'Databases and search',
     detail:
-      'Chess bitboards, cellular automata, and physics masks evaluate many interactions at once. One 64-bit operation can update an entire row of cells.',
+      'Bitmap indexes and roaring bitmaps let filters become fast AND/OR scans.',
   },
   {
-    context: 'Networking and compression',
+    context: 'Error detection',
     detail:
-      'Protocol headers pack control fields into specific bit ranges. Variable-length codes in compression formats peel bits off streams with masks and shifts.',
+      'Parity and CRC checks rely on XOR to detect transmission errors.',
   },
+  {
+    context: 'Compression',
+    detail:
+      'Variable-length codes peel bits from a stream with shifts and masks.',
+  },
+]
+
+const cheatSheet = [
+  { op: 'Set bit k', expr: 'x | (1 << k)', note: 'Turn on a flag.' },
+  { op: 'Clear bit k', expr: 'x & ~(1 << k)', note: 'Turn off a flag.' },
+  { op: 'Toggle bit k', expr: 'x ^ (1 << k)', note: 'Flip a flag.' },
+  { op: 'Test bit k', expr: '(x & (1 << k)) != 0', note: 'Check a flag.' },
+  { op: 'Low k bits', expr: '(1 << k) - 1', note: 'Mask of k ones.' },
+  { op: 'Isolate LSB', expr: 'x & -x', note: 'Lowest set bit.' },
+  { op: 'Clear LSB', expr: 'x & (x - 1)', note: 'Drop lowest set bit.' },
+  { op: 'Power of two', expr: 'x > 0 && (x & (x - 1)) == 0', note: 'Exactly one bit set.' },
 ]
 
 const practicalExamples = [
   {
     title: 'Subset DP with bitmasks',
-    code: `// Count ways to cover all tasks with given masks
-function minTeams(masks, fullMask):
+    code: `function minTeams(masks, fullMask):
     INF = 1e9
     dp = array[1 << bits] filled with INF
     dp[0] = 0
@@ -157,377 +480,202 @@ function minTeams(masks, fullMask):
             nextMask = mask | m
             dp[nextMask] = min(dp[nextMask], dp[mask] + 1)
     return dp[fullMask]`,
-    note:
-      "Represent each team's skills as a mask. OR accumulates coverage. Complexity is O(2^n * teams), far faster than enumerating subsets of subsets explicitly.",
+    explanation:
+      'Represent each team as a bitmask. OR combines skills. Complexity is O(2^n * teams).',
   },
   {
-    title: 'Isolate and clear bits safely',
-    code: `// JavaScript
-function lowestSetBit(x) {
-  return x & -x
-}
-
-function clearLowestSetBit(x) {
-  return x & (x - 1)
-}
-
-// Use cases: iterate through set bits without branches
-for (let bits = mask; bits !== 0; bits &= bits - 1) {
-  const bit = bits & -bits
-  // process bit
-}`,
-    note:
-      "These identities rely on two's complement representation. They avoid scanning every position and scale with the number of set bits, not word size.",
+    title: 'Count set bits fast',
+    code: `function popcount(x):
+    count = 0
+    while x != 0:
+        x &= x - 1
+        count += 1
+    return count`,
+    explanation:
+      'Loops only over set bits, not all bit positions.',
   },
   {
-    title: 'Bitboards for chess moves',
-    code: `// 64-bit integer board. 1 means a white rook occupies that square.
-rook = 0x0000000000000080  // h1
-fileMask = 0x0101010101010101  // file A mask
-
-// Shift by 1 to move east, 8 to move north on a little-endian board
-eastMoves = (rook << 1) & 0xfefefefefefefefe  // avoid wrapping to next rank
-northMoves = rook << 8
-reachable = eastMoves | northMoves`,
-    note:
-      'Precomputed edge masks prevent wraparound. Engines combine masks for sliding pieces and use occupancy bitboards to block movement in constant time.',
+    title: 'Find the unique element',
+    code: `function singleNumber(arr):
+    acc = 0
+    for x in arr:
+        acc ^= x
+    return acc`,
+    explanation:
+      'Pairs cancel out with XOR, leaving the unique value.',
+  },
+  {
+    title: 'Round up to next power of two',
+    code: `function nextPow2(x):
+    x -= 1
+    x |= x >> 1
+    x |= x >> 2
+    x |= x >> 4
+    x |= x >> 8
+    x |= x >> 16
+    return x + 1`,
+    explanation:
+      'Sets all bits below the MSB, then adds 1.',
+  },
+  {
+    title: 'Bitboard move generation',
+    code: `rook = 0x0000000000000080  // h1
+east = (rook << 1) & 0xfefefefefefefefe
+north = rook << 8
+reachable = east | north`,
+    explanation:
+      'Edge masks prevent wraparound; shifts simulate moves.',
+  },
+  {
+    title: 'Set range of bits',
+    code: `function setRange(x, l, r):
+    mask = ((1 << (r - l + 1)) - 1) << l
+    return x | mask`,
+    explanation:
+      'Build a block of ones and shift it into place.',
   },
 ]
 
 const pitfalls = [
-  'Shifting a signed integer right can propagate the sign bit. Prefer unsigned types or explicit logical shifts when the sign should be ignored.',
-  'Overflow from left shifts is undefined in C and C++. Use unsigned integers or narrow masks to keep behavior portable.',
-  'Mask precedence surprises: 1 << k + 3 equals 1 << (k + 3) because << binds lower than +. Parenthesize intent.',
-  "Bit tricks trade clarity for speed. Without comments or references, they become maintenance hazards. Link to a source such as Hacker's Delight when using dense idioms.",
-  'Endianness matters when reading packed data from the wire. Masks must match the byte order used by the protocol.',
+  'Right shifting signed integers can propagate the sign bit; use unsigned when needed.',
+  'Left shifting into the sign bit is undefined in C/C++; use unsigned types.',
+  'Operator precedence: 1 << k + 1 means 1 << (k + 1). Add parentheses.',
+  'Mixing endianness with bit offsets leads to wrong masks on serialized data.',
+  'Bit hacks reduce clarity; document the identity and add tests.',
+  'Overflow in (1 << k) when k equals word size; use 1ULL or guard k.',
 ]
 
 const decisionGuidance = [
-  'Choose bitsets when you have a bounded universe of flags and need O(1) unions, intersections, and membership with tight memory locality.',
-  'Use masks and branchless operations in hot paths where branch misprediction dominates cost, such as parsing or inner loops of simulations.',
-  'Switch to higher-level sets or hash tables when the domain is sparse or unbounded. Bitsets waste space when the maximum index grows large.',
-  "Prefer language intrinsics like std::bitset, std::popcount, or Java's BitSet to avoid reimplementing primitives and to gain hardware acceleration.",
-  'Document any non-obvious identity (x & -x, x & (x - 1), Gray code conversions) and add small tests to catch accidental regressions.',
+  'Use bitsets when the universe is bounded and dense.',
+  'Use hashing or sets when the universe is sparse or unbounded.',
+  'Use bitwise operations in hot paths where branching is costly.',
+  'Prefer language intrinsics for popcount, leading zeros, and bit scan.',
+  'Document tricks and link to references like Hacker\'s Delight.',
 ]
 
 const advancedInsights = [
   {
-    title: 'Vectorized and word-parallel techniques',
+    title: 'SWAR and word-parallelism',
     detail:
-      'SWAR (SIMD Within A Register) packs many small fields into one word and uses masks to operate on them in parallel. Libraries like SIMD bitsets and roaring bitmaps leverage this to scan millions of flags per millisecond.',
+      'SIMD Within A Register packs many small fields in one word and processes them with masks.',
   },
   {
-    title: 'Hardware popcount and leading-zero counts',
+    title: 'Bit slicing in crypto',
     detail:
-      'Modern CPUs expose POPCNT, LZCNT, and CLZ instructions. Use compiler builtins like __builtin_popcountll (GCC/Clang) or std::popcount (C++20) to let the compiler pick the optimal instruction.',
+      'Bit slicing computes multiple blocks in parallel with boolean ops, improving constant-time behavior.',
   },
   {
-    title: 'Gray codes and enumeration order',
+    title: 'Compressed bitsets',
     detail:
-      'Gray code sequences change only one bit between neighbors, reducing glitching in digital circuits and enabling smooth traversal of subset spaces in algorithms that benefit from single-bit diffs.',
+      'Roaring and EWAH compress sparse bitsets while keeping fast AND/OR operations.',
   },
   {
-    title: 'Bit slicing and cryptography',
+    title: 'Bitwise DP optimizations',
     detail:
-      'Block ciphers and hash functions sometimes implement S-boxes with bit slicing to process multiple blocks in parallel using bitwise logic. This improves constant-time behavior and resists timing attacks.',
+      'Subset enumeration and meet-in-the-middle often reduce exponential work by half.',
   },
   {
-    title: 'Memory-friendly compressed bitsets',
+    title: 'Hamming distance at scale',
     detail:
-      'Roaring bitmaps and EWAH compress sparse bitsets while preserving fast bitwise operations. They are widely used in analytics systems like Apache Lucene and Druid.',
+      'XOR then popcount gives the number of differing bits, useful in similarity search.',
+  },
+  {
+    title: 'Fenwick and segment trees',
+    detail:
+      'Lowest set bit identities drive index jumps in Fenwick tree updates.',
   },
 ]
 
 const takeaways = [
-  'Bits are about locality and determinism. They reduce many boolean decisions to a single word operation.',
-  'Master a handful of identities (masking, toggling, x & -x, submask iteration) and you cover most interview and systems tasks.',
-  'Hardware support like POPCNT and BMI2 shifts the balance: always check what your target CPU offers before inventing software loops.',
-  'Readable comments and small assertions keep clever bit hacks from turning into maintenance traps.',
-  "Cross-verify tricks with trusted sources such as CLRS, Hacker's Delight, GeeksforGeeks, or LeetCode discussions to avoid folklore bugs.",
+  'Bits are about compactness and speed: many booleans in one word.',
+  'Learn a small set of identities and you can solve many problems.',
+  'Hardware intrinsics change performance; use them when available.',
+  'Clarity matters: comment tricks and test edge cases.',
 ]
-
-const styles = `
-  * {
-    box-sizing: border-box;
-  }
-
-  .win95-page {
-    width: 100%;
-    min-height: 100vh;
-    background: #C0C0C0;
-    color: #000;
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-    line-height: 1.35;
-    -webkit-font-smoothing: none;
-    text-rendering: optimizeSpeed;
-    margin: 0;
-    padding: 0;
-  }
-
-  .win95-window {
-    width: 100%;
-    min-height: 100vh;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    background: #C0C0C0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .win95-title-bar {
-    background: #000080;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 6px;
-    gap: 8px;
-    font-weight: bold;
-    letter-spacing: 0.2px;
-  }
-
-  .win95-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .win95-close {
-    background: #C0C0C0;
-    color: #000;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-weight: bold;
-    padding: 2px 10px;
-    min-width: 28px;
-    cursor: pointer;
-  }
-
-  .win95-close:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-close:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -4px;
-  }
-
-  .win95-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
-    position: relative;
-  }
-
-  .win95-header-row {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    justify-content: flex-end;
-    margin: 0;
-    z-index: 2;
-  }
-
-  .win95-button {
-    padding: 3px 10px 2px;
-    background: #C0C0C0;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1.2;
-    text-decoration: none;
-    color: #000;
-  }
-
-  .win95-button:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -3px;
-  }
-
-  .win95-section {
-    border: 2px solid;
-    border-color: #808080 #404040 #404040 #808080;
-    padding: 10px;
-    margin: 0;
-  }
-
-  .win95-section legend {
-    padding: 0 6px;
-    font-weight: bold;
-  }
-
-  .win95-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .win95-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 8px;
-  }
-
-  .win95-grid.tight {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 6px;
-  }
-
-  .win95-panel {
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
-    background: #C0C0C0;
-    padding: 8px;
-  }
-
-  .win95-panel.raised {
-    border-color: #fff #404040 #404040 #fff;
-  }
-
-  .win95-panel code,
-  .win95-panel strong {
-    font-weight: bold;
-  }
-
-  .win95-text {
-    margin: 0;
-  }
-
-  .win95-list {
-    margin: 0;
-    padding-left: 18px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-ordered {
-    margin: 0;
-    padding-left: 20px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-code {
-    margin: 8px 0 6px;
-    padding: 8px;
-    background: #bdbdbd;
-    border: 2px solid;
-    border-color: #404040 #fff #fff #404040;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    overflow-x: auto;
-    color: #000;
-  }
-
-  a {
-    color: #000;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible,
-  button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: 2px;
-  }
-
-  button {
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-  }
-
-  .win95-caption {
-    margin: 6px 0 0;
-  }
-`
 
 export default function BitManipulationPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{styles}</style>
-      <div className="win95-window">
-        <div className="win95-title-bar">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
           <span className="win95-title">Bit Manipulation</span>
-          <Link to="/algoViz" className="win95-close" aria-label="Close">
-            X
-          </Link>
-        </div>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
-            <Link to="/algoViz" className="win95-button">
+            <div>
+              <div className="win95-subheading">Fast, compact, and deterministic operations on raw binary state</div>
+              <p className="win95-text">
+                Bit manipulation is the art of using AND, OR, XOR, shifts, and masks to inspect and transform data at the bit level.
+                It powers everything from permissions and compression to graphics and cryptography, and it turns many O(n) loops into
+                O(1) operations on packed words.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
               BACK TO CATALOG
             </Link>
           </div>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                Bits are the native language of hardware. They let you store dozens of flags in one cache line, scan through
-                subsets without allocations, and implement error detection with tiny constant factors. The same ideas explain
-                why file permissions, chess engines, compression codecs, and circuit design all converge on the same handful
-                of bitwise primitives.
+                Bits are the native language of hardware. A single 64-bit word can store 64 booleans, letting you update many flags
+                in one instruction. The cost is readability, so the key is to use bit tricks where locality and speed matter most.
               </p>
-              <p className="win95-text win95-caption">
-                Thinking in bits also exposes trade-offs. You gain predictability and compactness, but you pay in readability
-                and sometimes in portability when you lean on undefined shift behavior. The goal is not to use bit tricks
-                everywhere, but to know when they turn a hot path from microseconds to nanoseconds.
+              <p className="win95-text">
+                Great bit manipulation is about representation. Choose an encoding where AND/OR/XOR expresses the problem directly,
+                then the CPU does the heavy lifting with constant-time operations.
               </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Core concept and mental models</legend>
-            <div className="win95-grid">
-              {mentalModels.map((model) => (
-                <div key={model.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{model.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{model.detail}</p>
+            <div className="win95-grid win95-grid-2">
+              {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Bit fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {bitFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works in practice</legend>
-            <div className="win95-grid tight">
-              {operations.map((block) => (
+            <div className="win95-grid win95-grid-3">
+              {coreOperations.map((block) => (
                 <div key={block.heading} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{block.heading}</strong>
-                  </p>
+                  <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
                     {block.bullets.map((item) => (
                       <li key={item}>{item}</li>
@@ -536,105 +684,132 @@ export default function BitManipulationPage(): JSX.Element {
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              These identities show up in LeetCode, HackerRank, and systems code alike. The mechanics never change: choose a
-              mask, combine with AND, OR, XOR, or shifts, and interpret the resulting pattern. The art is in choosing
-              representations that make those operations express the problem naturally.
-            </p>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Identity toolbox</legend>
+            <div className="win95-grid win95-grid-2">
+              {identities.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                If you only memorize a few identities, focus on x &amp; (x - 1) and x &amp; -x. They unlock fast bit iteration,
+                Fenwick trees, and constant-time power-of-two checks.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {complexityNotes.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              Real-world implication: if your inner loop already fits in L1 cache, a branch misprediction costs 10 to 20
-              cycles while a bitwise AND costs 1. That gap widens on superscalar CPUs with POPCNT and BMI2 available.
-            </p>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Bit manipulation cheat sheet</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Operation</th>
+                    <th>Expression</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cheatSheet.map((row) => (
+                    <tr key={row.op}>
+                      <td>{row.op}</td>
+                      <td className="win95-mono">{row.expr}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid">
-              {applications.map((item) => (
+            <div className="win95-grid win95-grid-2">
+              {useCases.map((item) => (
                 <div key={item.context} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.context}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {practicalExamples.map((example) => (
                 <div key={example.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{example.title}</strong>
-                  </p>
+                  <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text win95-caption">{example.note}</p>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls and debugging cues</legend>
-            <ul className="win95-list">
-              {pitfalls.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <p className="win95-text win95-caption">
-              When debugging, print masks in binary with leading zeros so alignment bugs are visible. Many failures boil down
-              to an off-by-one shift or a mask that does not cover the intended range.
-            </p>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
-            <ol className="win95-ordered">
-              {decisionGuidance.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionGuidance.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights and optimizations</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              Sources: CLRS, Hacker&apos;s Delight by Warren, GeeksforGeeks bit manipulation series, and LeetCode discussions all
-              catalog these patterns with proofs and edge cases. Cross-referencing them prevents subtle portability bugs.
-            </p>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                References: CLRS, Hacker&apos;s Delight, and well-documented bitset libraries are the best sources for edge cases.
+                Always validate assumptions about word size and signedness on your target platform.
+              </p>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel raised">
+            <div className="win95-panel">
               <ul className="win95-list">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
