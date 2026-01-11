@@ -631,29 +631,79 @@ const machineConsiderations = [
 
 const complexityNotes = [
   {
-    title: 'Time cost',
+    title: 'Time cost is constant, but not equal',
     detail:
-      'Primitive operations are O(1), but constants differ: integer add < float add; division is slower than multiply; memory access can dominate.',
+      'Adds and bitwise ops are fastest; multiply is slower; division and modulo are slower still. Branches and memory access often dominate.',
   },
   {
-    title: 'Space cost',
+    title: 'Memory footprint governs scale',
     detail:
-      'Bit width drives footprint. Millions of int64 values consume 8 MB per column; int32 halves that. Bit packing booleans can cut space 8x.',
+      'Bit width determines cache density. Replacing int64 with int32 doubles cache residency and can halve memory bandwidth.',
   },
   {
-    title: 'Precision versus range',
+    title: 'Precision budget is finite',
     detail:
-      'Floats trade precision for range. Fixed-point trades range for exactness. Wrong choices leak error into downstream computations.',
+      'Float32 holds about 7 decimal digits and float64 about 15-16; values beyond that lose exactness.',
   },
   {
-    title: 'Overflow and underflow',
+    title: 'Overflow/underflow policy is a design choice',
     detail:
-      'Overflow often wraps. Checked arithmetic, saturating math, or wider types prevent silent bugs.',
+      'Wrapping is fast but dangerous; checked or saturating arithmetic trades speed for correctness.',
   },
   {
-    title: 'Conversion cost',
+    title: 'Conversions have hidden cost',
     detail:
-      'Casting between types can be expensive in tight loops, especially float <-> int or big integer conversions.',
+      'Crossing domains (int <-> float, BigInt <-> int) can trigger slow paths, allocations, or precision loss.',
+  },
+  {
+    title: 'Alignment impacts throughput',
+    detail:
+      'Misaligned loads may require multiple memory reads; aligned data enables SIMD and stable performance.',
+  },
+]
+
+const complexityTable = [
+  {
+    operation: 'Integer add / bitwise',
+    time: 'O(1), very low',
+    space: 'O(1)',
+    notes: 'Often single-cycle; ideal for tight loops.',
+  },
+  {
+    operation: 'Integer multiply',
+    time: 'O(1), moderate',
+    space: 'O(1)',
+    notes: 'Slightly slower; still fast on modern CPUs.',
+  },
+  {
+    operation: 'Integer divide / modulo',
+    time: 'O(1), high',
+    space: 'O(1)',
+    notes: 'Typically the slowest primitive op; avoid in inner loops.',
+  },
+  {
+    operation: 'Float add / multiply',
+    time: 'O(1), moderate',
+    space: 'O(1)',
+    notes: 'Fast but non-associative; rounding error accumulates.',
+  },
+  {
+    operation: 'Float divide',
+    time: 'O(1), high',
+    space: 'O(1)',
+    notes: 'Slower and more error-prone; precompute reciprocals when possible.',
+  },
+  {
+    operation: 'BigInt arithmetic',
+    time: 'Varies with digits',
+    space: 'O(n) digits',
+    notes: 'Precision grows with input size; avoids overflow at a cost.',
+  },
+  {
+    operation: 'Memory load/store',
+    time: 'O(1), latency-bound',
+    space: 'O(1)',
+    notes: 'Cache misses dominate; compact types improve cache hit rate.',
   },
 ]
 
@@ -1001,6 +1051,32 @@ export default function PrimitiveTypesPage(): JSX.Element {
                 Every primitive choice balances range, precision, memory, and speed. The right call depends on the data domain,
                 error tolerance, and performance envelope you need to hit.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity snapshot</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Operation</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complexityTable.map((row) => (
+                    <tr key={row.operation}>
+                      <td>{row.operation}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 

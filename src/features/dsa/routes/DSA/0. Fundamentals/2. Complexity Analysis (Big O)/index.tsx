@@ -2,45 +2,284 @@ import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+
+.win95-math {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.win95-note {
+  font-size: 11px;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.win95-mono {
+  font-family: 'Courier New', monospace;
+}
+`
+
 const bigPicture = [
   {
-    title: 'What It Is',
+    title: 'What it is',
     detail:
-      'Complexity analysis is a way to measure how the resource needs of an algorithm (like time or memory) grow as the input size (n) increases. It gives us a high-level, hardware-independent way to compare algorithms.',
-    note: "It's not about exact seconds, but about the rate of growth.",
+      'Complexity analysis measures how resource usage (time or memory) grows as input size n increases. It focuses on growth rate, not exact seconds.',
+    note: 'Think of it as a performance trend line.',
   },
   {
-    title: 'Why It Exists',
+    title: 'Why it exists',
     detail:
-      'To make informed engineering decisions. An algorithm that is fast on a small test case might become disastrously slow with production-scale data. Complexity analysis helps us predict and prevent this.',
-    note: 'It saves us from building systems that do not scale.',
+      'It helps you avoid algorithms that collapse at scale and choose approaches that remain practical as data grows.',
+    note: 'It is a scaling safety check.',
   },
   {
-    title: 'Where It Shows Up',
+    title: 'Where it shows up',
     detail:
-      'Everywhere. From choosing a sorting algorithm in a library, to designing a database index, to understanding why a web page is slow. It is the fundamental language for discussing algorithm performance.',
-    note: 'It is a core concept in technical interviews and system design.',
+      'Everywhere: sorting libraries, database indexing, search, and system design tradeoffs all rely on complexity intuition.',
+    note: 'It is the shared language of performance.',
   },
 ]
 
 const asymptoticNotations = [
   {
-    title: 'Big O (O): The Upper Bound',
+    title: 'Big O (O): Upper bound',
     detail:
-      "This is the most common notation. It describes the *worst-case* scenario. If an algorithm is O(n^2), it means its execution time will not grow faster than a quadratic function of the input size. It gives a guarantee: 'The performance will be at least this good.'",
-    math: 'f(n) = O(g(n)) if there exist constants c > 0 and nÆ’,? >= 0 such that 0 <= f(n) <= c * g(n) for all n >= nÆ’,?.',
+      'Describes the worst-case growth. If an algorithm is O(n^2), it will not grow faster than a quadratic function.',
+    math: 'f(n) = O(g(n)) if there exist c > 0 and n0 such that 0 <= f(n) <= c * g(n) for all n >= n0.',
   },
   {
-    title: 'Big Omega (Ic): The Lower Bound',
+    title: 'Big Omega (Omega): Lower bound',
     detail:
-      "This describes the *best-case* scenario. If an algorithm is Ic(n), it means its execution time will not grow slower than a linear function of the input. It provides a floor: 'It will take at least this much effort, even on a good day.'",
-    math: 'f(n) = Ic(g(n)) if there exist constants c > 0 and nÆ’,? >= 0 such that 0 <= c * g(n) <= f(n) for all n >= nÆ’,?.',
+      'Describes the best-case growth. If an algorithm is Omega(n), it will not grow slower than linear.',
+    math: 'f(n) = Omega(g(n)) if there exist c > 0 and n0 such that 0 <= c * g(n) <= f(n) for all n >= n0.',
   },
   {
-    title: 'Big Theta (I~): The Tight Bound',
+    title: 'Big Theta (Theta): Tight bound',
     detail:
-      'This is the most precise notation. It is used when an algorithm\'s best-case and worst-case performance are of the same order. If an algorithm is I~(n log n), it means it grows as fast as n log n, no slower and no faster.',
-    math: 'f(n) = I~(g(n)) if f(n) = O(g(n)) and f(n) = Ic(g(n)). It is \'squeezed\' between two multiples of g(n).',
+      'Used when upper and lower bounds match. If an algorithm is Theta(n log n), it grows at that rate tightly.',
+    math: 'f(n) = Theta(g(n)) if f(n) is both O(g(n)) and Omega(g(n)).',
   },
 ]
 
@@ -48,15 +287,15 @@ const complexityClasses = [
   {
     class: 'O(1) - Constant',
     explanation:
-      'The algorithm takes the same amount of time regardless of the input size. Operations like accessing an array element by index or pushing to a stack are typically O(1).',
+      'Runtime is independent of input size. Example: array access by index.',
     code: `function getFirstElement(arr) {
-  return arr[0]; // Always one operation
+  return arr[0];
 }`,
   },
   {
     class: 'O(log n) - Logarithmic',
     explanation:
-      'The algorithm\'s time complexity grows logarithmically. This is typical for algorithms that divide the problem space in each step, like binary search. Doubling the input size adds only a single constant unit of work.',
+      'Each step reduces the problem space, as in binary search.',
     code: `function binarySearch(arr, target) {
   let left = 0, right = arr.length - 1;
   while (left <= right) {
@@ -64,17 +303,17 @@ const complexityClasses = [
     if (arr[mid] === target) return mid;
     if (arr[mid] < target) left = mid + 1;
     else right = mid - 1;
-  } // Each step halves the search space
+  }
 }`,
   },
   {
     class: 'O(n) - Linear',
     explanation:
-      'The runtime grows directly in proportion to the input size. A simple loop through all elements of an array is a classic example. If you double the input, you double the work.',
+      'Work grows in direct proportion to input size, like a full scan.',
     code: `function findSum(arr) {
   let sum = 0;
   for (const element of arr) {
-    sum += element; // Operation runs n times
+    sum += element;
   }
   return sum;
 }`,
@@ -82,26 +321,22 @@ const complexityClasses = [
   {
     class: 'O(n log n) - Linearithmic',
     explanation:
-      'This is a very common complexity for efficient sorting algorithms. It represents doing O(log n) work for each of the n elements. Merge Sort and Quick Sort are prime examples.',
-    code: `// Merge Sort conceptually
-function mergeSort(arr) {
+      'Sorting and divide-and-conquer algorithms often land here.',
+    code: `function mergeSort(arr) {
   if (arr.length <= 1) return arr;
-  // O(log n) levels of division
   let mid = Math.floor(arr.length / 2);
   let left = mergeSort(arr.slice(0, mid));
   let right = mergeSort(arr.slice(mid));
-  // O(n) work to merge
   return merge(left, right);
 }`,
   },
   {
     class: 'O(n^2) - Quadratic',
     explanation:
-      'The runtime is proportional to the square of the input size. This often occurs with nested loops, where for each element, you iterate through the list again. Inefficient for large datasets.',
+      'Nested loops over the same data lead to quadratic growth.',
     code: `function findPairs(arr) {
   for (let i = 0; i < arr.length; i++) {
     for (let j = 0; j < arr.length; j++) {
-      // Operation runs n * n times
       console.log(arr[i], arr[j]);
     }
   }
@@ -110,348 +345,176 @@ function mergeSort(arr) {
   {
     class: 'O(2^n) - Exponential',
     explanation:
-      'The runtime doubles with each addition to the input dataset. This is common in brute-force algorithms that explore all subsets of a set. Feasible only for very small input sizes.',
-    code: `// Recursive solution for Fibonacci
-function fibonacci(n) {
+      'Work doubles with each added input element; brute-force subset search is typical.',
+    code: `function fibonacci(n) {
   if (n <= 1) return n;
-  // Two recursive calls for each n
   return fibonacci(n - 1) + fibonacci(n - 2);
 }`,
   },
   {
     class: 'O(n!) - Factorial',
     explanation:
-      'The runtime grows factorially, which is even faster than exponential. This often involves generating all permutations of a set, like in the brute-force solution to the Traveling Salesperson Problem.',
-    code: `// Concept for finding all permutations
-function permutations(arr, current = []) {
+      'Enumerating all permutations grows factorially and becomes infeasible quickly.',
+    code: `function permutations(arr, current = []) {
   if (arr.length === 0) console.log(current);
   for (let i = 0; i < arr.length; i++) {
     let rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
     permutations(rest, [...current, arr[i]]);
-  } // n! possible paths
+  }
 }`,
   },
 ]
 
 const algorithmCheatSheet = {
   sorting: [
-    { name: 'Bubble Sort', time: 'I~(n^2)', space: 'O(1)', notes: 'Simple but inefficient. The I~ bound applies because even in the best case, it must pass through the list.' },
-    { name: 'Insertion Sort', time: 'O(n^2)', space: 'O(1)', notes: 'Best case is Ic(n) if nearly sorted. Good for small or almost-sorted datasets.' },
-    { name: 'Selection Sort', time: 'I~(n^2)', space: 'O(1)', notes: 'Always finds the minimum n times, so performance does not change with input order.' },
-    { name: 'Merge Sort', time: 'I~(n log n)', space: 'O(n)', notes: 'Consistent, not in-place. Its performance is very predictable. Great for external sorting.' },
-    { name: 'Quick Sort', time: 'O(n^2)', space: 'O(log n)', notes: 'Average case is I~(n log n). Worst case occurs with bad pivots (e.g., on sorted data). In-place and fast in practice.' },
-    { name: 'Heap Sort', time: 'I~(n log n)', space: 'O(1)', notes: 'In-place but generally slower in practice than a well-implemented Quick Sort due to cache performance.' },
-    { name: 'Radix Sort', time: 'I~(nk)', space: 'O(n+k)', notes: 'Not comparison-based. k is the number of digits. Very fast for integers or fixed-size strings.' },
+    { name: 'Bubble Sort', time: 'Theta(n^2)', space: 'O(1)', notes: 'Simple but inefficient; even best case still quadratic.' },
+    { name: 'Insertion Sort', time: 'O(n^2)', space: 'O(1)', notes: 'Best case is Omega(n) on nearly sorted data.' },
+    { name: 'Selection Sort', time: 'Theta(n^2)', space: 'O(1)', notes: 'Always scans for a minimum; order does not help.' },
+    { name: 'Merge Sort', time: 'Theta(n log n)', space: 'O(n)', notes: 'Predictable performance; great for external sorting.' },
+    { name: 'Quick Sort', time: 'O(n^2)', space: 'O(log n)', notes: 'Average Theta(n log n); worst case on bad pivots.' },
+    { name: 'Heap Sort', time: 'Theta(n log n)', space: 'O(1)', notes: 'In-place but slower in practice than tuned quicksort.' },
+    { name: 'Radix Sort', time: 'Theta(nk)', space: 'O(n + k)', notes: 'k is number of digits; not comparison-based.' },
   ],
   searching: [
-    { name: 'Linear Search', time: 'O(n)', space: 'O(1)', notes: 'Worst case is O(n), best case is Ic(1). Simple but inefficient for large, static datasets.' },
-    { name: 'Binary Search', time: 'O(log n)', space: 'O(1)', notes: 'Requires a sorted data structure. Extremely efficient.' },
+    { name: 'Linear Search', time: 'O(n)', space: 'O(1)', notes: 'Worst case is linear; best case is Omega(1).' },
+    { name: 'Binary Search', time: 'O(log n)', space: 'O(1)', notes: 'Requires sorted data; extremely efficient.' },
   ],
   dataStructures: [
-    { name: 'Array (Access)', time: 'I~(1)', space: '-', notes: 'Direct memory access.' },
-    { name: 'Stack (Push/Pop)', time: 'I~(1)', space: '-', notes: 'Operations on the top of the stack.' },
-    { name: 'Queue (Enqueue/Dequeue)', time: 'I~(1)', space: '-', notes: 'Amortized time for array-based implementations.' },
-    { name: 'Linked List (Search/Insert)', time: 'O(n)', space: '-', notes: 'Insertion at head/tail is O(1), but finding the node is O(n).' },
-    { name: 'Hash Table (Search/Insert/Delete)', time: 'O(1)', space: 'O(n)', notes: 'Average case is I~(1). Worst case (due to collisions) is O(n).' },
-    { name: 'Binary Search Tree (BST)', time: 'O(n)', space: 'O(n)', notes: 'Average case for balanced trees is I~(log n). Worst case for unbalanced trees is O(n).' },
-    { name: 'AVL Tree / Red-Black Tree', time: 'I~(log n)', space: 'O(n)', notes: 'Self-balancing BSTs that guarantee logarithmic performance.' },
+    { name: 'Array (Access)', time: 'Theta(1)', space: '-', notes: 'Direct memory access.' },
+    { name: 'Stack (Push/Pop)', time: 'Theta(1)', space: '-', notes: 'Operations on the top of the stack.' },
+    { name: 'Queue (Enqueue/Dequeue)', time: 'Theta(1)', space: '-', notes: 'Amortized for array-based implementations.' },
+    { name: 'Linked List (Search/Insert)', time: 'O(n)', space: '-', notes: 'Insert is O(1) with pointer; search is O(n).' },
+    { name: 'Hash Table (Search/Insert/Delete)', time: 'O(1)', space: 'O(n)', notes: 'Average Theta(1); worst case O(n) with collisions.' },
+    { name: 'Binary Search Tree (BST)', time: 'O(n)', space: 'O(n)', notes: 'Balanced trees are Theta(log n); unbalanced is linear.' },
+    { name: 'AVL Tree / Red-Black Tree', time: 'Theta(log n)', space: 'O(n)', notes: 'Self-balancing trees with guaranteed log n.' },
   ],
   graph: [
-    { name: 'Breadth-First Search (BFS)', time: 'I~(V+E)', space: 'I~(V)', notes: 'V is vertices, E is edges. Explores level by level. Uses a queue.' },
-    { name: 'Depth-First Search (DFS)', time: 'I~(V+E)', space: 'I~(V)', notes: 'Goes as deep as possible. Uses a stack (or recursion).' },
-    { name: "Dijkstra's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'With a binary heap. Finds the shortest path in a weighted graph with non-negative weights.' },
-    { name: "Prim's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'Finds a Minimum Spanning Tree. Similar implementation to Dijkstra.' },
-  ]
+    { name: 'Breadth-First Search (BFS)', time: 'Theta(V + E)', space: 'Theta(V)', notes: 'Explores level by level using a queue.' },
+    { name: 'Depth-First Search (DFS)', time: 'Theta(V + E)', space: 'Theta(V)', notes: 'Deep traversal using stack or recursion.' },
+    { name: "Dijkstra's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'Binary heap; non-negative edge weights.' },
+    { name: "Prim's Algorithm", time: 'O(E log V)', space: 'O(V)', notes: 'Minimum spanning tree; similar to Dijkstra.' },
+  ],
 }
 
 const pitfalls = [
-  'Constants Matter: An algorithm that is O(n) but has a constant factor of 1000 will be slower than an O(n^2) algorithm with a constant of 1 for small n.',
-  'Ignoring the "n": Is n the number of elements, the number of bits in an element, or something else? Be precise.',
-  'Premature Optimization: Do not sacrifice code readability and correctness for a minor complexity improvement unless performance profiling proves it is a bottleneck.',
-  'Average vs. Worst Case: Relying on the average case can be dangerous in security contexts or real-time systems where the worst case can be triggered deliberately or by chance.',
-  'Space Complexity is Real: An algorithm with great time complexity but requires terabytes of RAM is not practical on most machines.',
+  'Constants matter: an O(n) algorithm with large constants can lose to O(n^2) on small n.',
+  'Define what n means: elements, digits, vertices, or edges.',
+  'Average vs worst case can matter in security and real-time systems.',
+  'Space complexity is real; fast time with huge memory can be impractical.',
+  'Optimizing without profiling can harm clarity with little payoff.',
 ]
 
 const keyTakeaways = [
   {
-    title: 'It is a Language of Growth',
-    detail: 'Complexity is about how resource needs scale, not about precise timings.',
+    title: 'A language of growth',
+    detail: 'Complexity focuses on scale trends, not exact timings.',
   },
   {
-    title: 'O, Ic, and I~ Answer Different Questions',
-    detail: 'Use O for an upper bound (guarantee), Ic for a lower bound (minimum effort), and I~ for a tight, precise description.',
+    title: 'Bounds answer different questions',
+    detail: 'O gives a ceiling, Omega gives a floor, Theta gives a tight description.',
   },
   {
-    title: 'Know Your Classes',
-    detail: 'Being able to instantly recognize O(1), O(log n), O(n), O(n log n), and O(n^2) patterns in code is a vital skill.',
+    title: 'Recognize common classes',
+    detail: 'O(1), O(log n), O(n), O(n log n), and O(n^2) show up everywhere.',
   },
   {
-    title: 'Theory Guides, Practice Decides',
-    detail: 'Complexity analysis is a powerful tool for eliminating bad choices, but final performance decisions should be backed by real-world profiling.',
+    title: 'Theory guides, practice decides',
+    detail: 'Use complexity to eliminate bad choices, then validate with profiling.',
   },
 ]
-
-const styles = `
-* { box-sizing: border-box; }
-.win95-page {
-  width: 100%;
-  min-height: 100vh;
-  background: #C0C0C0;
-  margin: 0;
-  padding: 0;
-  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-  -webkit-font-smoothing: none;
-  color: #000;
-}
-.win95-window {
-  width: 100%;
-  min-height: 100vh;
-  border: 2px outset;
-  border-color: #fff #404040 #404040 #fff;
-  display: flex;
-  flex-direction: column;
-}
-.win95-title-bar {
-  background: #000080;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 8px;
-  height: 32px;
-  box-sizing: border-box;
-}
-.win95-title {
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 0.3px;
-  text-shadow: 1px 1px #000;
-}
-.win95-close {
-  min-width: 26px;
-  height: 22px;
-  background: #C0C0C0;
-  border: 2px solid;
-  border-color: #fff #404040 #404040 #fff;
-  color: #000;
-  font-weight: bold;
-  padding: 0;
-  cursor: pointer;
-}
-.win95-close:active {
-  border-color: #404040 #fff #fff #404040;
-  background: #808080;
-}
-.win95-close:focus {
-  outline: 1px dotted #000;
-  outline-offset: 1px;
-}
-.win95-content {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-fieldset.win95-section {
-  border: 2px solid;
-  border-color: #808080 #404040 #404040 #808080;
-  background: #C0C0C0;
-  padding: 10px;
-  margin: 0;
-}
-fieldset.win95-section legend {
-  padding: 0 6px;
-  font-weight: bold;
-  background: #C0C0C0;
-  font-size: 13px;
-}
-.win95-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 8px;
-}
-.win95-panel {
-  background: #C0C0C0;
-  border: 2px inset;
-  border-color: #808080 #fff #fff #808080;
-  padding: 10px;
-}
-.win95-panel.raised {
-  border-color: #fff #404040 #404040 #fff;
-}
-.win95-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-h1 {
-  margin: 0 0 6px 0;
-  font-size: 16px;
-}
-h2 {
-  margin: 0 0 6px 0;
-  font-size: 14px;
-}
-h3, h4 {
-  margin: 0 0 6px 0;
-  font-size: 13px;
-}
-p {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  line-height: 1.4;
-}
-ul {
-  margin: 6px 0 0 16px;
-  padding: 0;
-  font-size: 12px;
-}
-li {
-  margin-bottom: 4px;
-}
-.win95-math {
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-}
-.win95-code {
-  background: #C0C0C0;
-  border: 2px inset;
-  border-color: #404040 #fff #fff #404040;
-  padding: 8px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  white-space: pre-wrap;
-}
-table.win95-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  background: #C0C0C0;
-}
-table.win95-table th,
-table.win95-table td {
-  border: 1px solid #808080;
-  padding: 8px;
-  vertical-align: top;
-}
-table.win95-table th {
-  font-weight: bold;
-  background: #dcdcdc;
-}
-a {
-  color: #000;
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-button:focus, a:focus {
-  outline: 1px dotted #000;
-  outline-offset: 1px;
-}
-.win95-note {
-  font-size: 12px;
-  font-style: italic;
-  margin-top: 4px;
-}
-.win95-subheader {
-  font-size: 13px;
-  font-weight: bold;
-  margin: 0 0 8px 0;
-}
-.mono {
-  font-family: 'Courier New', monospace;
-}
-`
 
 export default function ComplexityAnalysisPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{styles}</style>
-      <div className="win95-window">
-        <div className="win95-title-bar">
-          <span className="win95-title">Complexity Analysis</span>
-          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
-        </div>
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
+          <span className="win95-title">Complexity Analysis (Big O)</span>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
 
         <div className="win95-content">
-          <fieldset className="win95-section">
+          <div className="win95-header-row">
+            <div>
+              <div className="win95-subheading">The language of algorithmic growth and scalability</div>
+              <p className="win95-text">
+                Complexity analysis explains how time and memory demands scale with input size. It ignores constant factors and
+                hardware details so you can compare algorithms by growth rate and avoid choices that collapse at scale.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
+              BACK TO CATALOG
+            </Link>
+          </div>
+
+          <fieldset className="win95-fieldset">
             <legend>Overview</legend>
-            <div className="win95-stack">
-              <h1>Complexity Analysis</h1>
-              <h2>The Language of Algorithmic Performance</h2>
-              <p>
-                Complexity analysis provides the essential vocabulary to discuss how an algorithm's performance scales
-                with the size of the input. It abstracts away machine-specific details to give us a pure, mathematical
-                lens to compare different approaches and build systems that last.
+            <div className="win95-panel">
+              <p className="win95-text">
+                Complexity analysis provides the essential vocabulary to discuss how an algorithm&apos;s performance scales with the
+                size of the input. It abstracts away machine-specific details to give us a mathematical lens to compare approaches
+                and build systems that last.
               </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid">
+          <fieldset className="win95-fieldset">
+            <legend>The big picture</legend>
+            <div className="win95-grid win95-grid-2">
               {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel raised">
-                  <h3>{item.title}</h3>
-                  <p>{item.detail}</p>
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                   {item.note && <p className="win95-note">{item.note}</p>}
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>The Asymptotic Notations: O, Ic, and I~</legend>
-            <div className="win95-stack">
-              <div className="win95-grid">
-                {asymptoticNotations.map((item) => (
-                  <div key={item.title} className="win95-panel raised">
-                    <h3>{item.title}</h3>
-                    <p>{item.detail}</p>
-                    <p className="win95-math">{item.math}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="win95-panel">
-                <h4>Analogy: Speed Limits</h4>
-                <p>
-                  <strong>Big O</strong> is like the <span className="win95-subheader">speed limit</span>. You are
-                  guaranteed not to go faster than this.
-                  <br />
-                  <strong>Big Ic</strong> is like the <span className="win95-subheader">minimum speed</span> on a
-                  highway. You are guaranteed not to go slower.
-                  <br />
-                  <strong>Big I~</strong> is when the speed limit and minimum speed are the same. You travel at a{' '}
-                  <span className="win95-subheader">fixed speed</span>.
-                </p>
-              </div>
+          <fieldset className="win95-fieldset">
+            <legend>Asymptotic notations: O, Omega, Theta</legend>
+            <div className="win95-grid win95-grid-2">
+              {asymptoticNotations.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-math">{item.math}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Big O is the speed limit (upper bound), Big Omega is the minimum speed (lower bound), and Big Theta means both limits
+                match, so the growth rate is tightly pinned down.
+              </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>A Tour of Common Complexity Classes</legend>
+          <fieldset className="win95-fieldset">
+            <legend>A tour of common complexity classes</legend>
             <div className="win95-stack">
               {complexityClasses.map((item) => (
-                <div key={item.class} className="win95-panel raised">
-                  <h3 className="mono">{item.class}</h3>
-                  <p>{item.explanation}</p>
-                  <div className="win95-code">
+                <div key={item.class} className="win95-panel">
+                  <div className="win95-heading win95-mono">{item.class}</div>
+                  <p className="win95-text">{item.explanation}</p>
+                  <pre className="win95-code">
                     <code>{item.code.trim()}</code>
-                  </div>
+                  </pre>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>The Great Algorithm Complexity Cheat Sheet</legend>
+          <fieldset className="win95-fieldset">
+            <legend>Algorithm complexity cheat sheet</legend>
             <div className="win95-stack">
               {Object.entries(algorithmCheatSheet).map(([category, algorithms]) => (
                 <div key={category} className="win95-panel">
-                  <h3 className="win95-subheader" style={{ textTransform: 'capitalize' }}>
+                  <div className="win95-subheading" style={{ textTransform: 'capitalize' }}>
                     {category}
-                  </h3>
+                  </div>
                   <table className="win95-table">
                     <thead>
                       <tr>
@@ -464,9 +527,9 @@ export default function ComplexityAnalysisPage(): JSX.Element {
                     <tbody>
                       {algorithms.map((algo) => (
                         <tr key={algo.name}>
-                          <td className="mono">{algo.name}</td>
-                          <td className="mono">{algo.time}</td>
-                          <td className="mono">{algo.space}</td>
+                          <td className="win95-mono">{algo.name}</td>
+                          <td className="win95-mono">{algo.time}</td>
+                          <td className="win95-mono">{algo.space}</td>
                           <td>{algo.notes}</td>
                         </tr>
                       ))}
@@ -477,11 +540,11 @@ export default function ComplexityAnalysisPage(): JSX.Element {
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Common Pitfalls &amp; Mistakes</legend>
-            <div className="win95-panel raised">
-              <h3 className="win95-subheader">Pitfalls to Avoid</h3>
-              <ul>
+          <fieldset className="win95-fieldset">
+            <legend>Common pitfalls &amp; mistakes</legend>
+            <div className="win95-panel">
+              <div className="win95-subheading">Pitfalls to avoid</div>
+              <ul className="win95-list">
                 {pitfalls.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -489,13 +552,13 @@ export default function ComplexityAnalysisPage(): JSX.Element {
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid">
+          <fieldset className="win95-fieldset">
+            <legend>Key takeaways</legend>
+            <div className="win95-grid win95-grid-2">
               {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel raised">
-                  <h3>{item.title}</h3>
-                  <p>{item.detail}</p>
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
