@@ -352,6 +352,250 @@ const primitiveCategories = [
   },
 ]
 
+const representationTable = [
+  {
+    type: 'uint8',
+    bits: '8',
+    range: '0 to 255',
+    notes: 'Common for bytes, ASCII, raw buffers.',
+  },
+  {
+    type: 'int8',
+    bits: '8',
+    range: '-128 to 127',
+    notes: 'Two\'s complement signed byte.',
+  },
+  {
+    type: 'uint16',
+    bits: '16',
+    range: '0 to 65,535',
+    notes: 'Ports, checksums, small IDs.',
+  },
+  {
+    type: 'int32',
+    bits: '32',
+    range: '-2,147,483,648 to 2,147,483,647',
+    notes: 'Default integer in many runtimes.',
+  },
+  {
+    type: 'uint64',
+    bits: '64',
+    range: '0 to 18,446,744,073,709,551,615',
+    notes: 'File sizes, counters, timestamps.',
+  },
+  {
+    type: 'float32',
+    bits: '32',
+    range: 'approx 1.18e-38 to 3.4e38',
+    notes: '7 decimal digits of precision.',
+  },
+  {
+    type: 'float64',
+    bits: '64',
+    range: 'approx 2.23e-308 to 1.79e308',
+    notes: '15-16 decimal digits of precision.',
+  },
+]
+
+const integerDetails = [
+  {
+    title: 'Two\'s complement layout',
+    detail:
+      'The highest bit is the sign. Negatives are represented by bitwise inversion plus one, making addition uniform.',
+  },
+  {
+    title: 'Overflow behavior',
+    detail:
+      'Many languages wrap on overflow in release mode, while others throw or clamp; always verify your language rules.',
+  },
+  {
+    title: 'Unsigned pitfalls',
+    detail:
+      'Mixing signed and unsigned can create surprising comparisons (e.g., -1 becomes a huge unsigned value).',
+  },
+  {
+    title: 'Bitwise operations',
+    detail:
+      'Shifts, masks, and rotates are constant time but rely on exact bit widths and operator semantics.',
+  },
+  {
+    title: 'Modulo arithmetic',
+    detail:
+      'Wraparound arithmetic is intentional in hashing and crypto, but risky in counters and money.',
+  },
+  {
+    title: 'Endianness interactions',
+    detail:
+      'Integer byte order matters in serialization; always define network order explicitly.',
+  },
+]
+
+const floatingPointDetails = [
+  {
+    title: 'Sign, exponent, mantissa',
+    detail:
+      'Float32 uses 1 sign bit, 8 exponent bits, 23 mantissa bits; float64 uses 1, 11, 52.',
+  },
+  {
+    title: 'ULP and rounding',
+    detail:
+      'Units in the last place define spacing between representable numbers; rounding is inevitable.',
+  },
+  {
+    title: 'NaN and infinity',
+    detail:
+      'NaN propagates through most operations; infinity appears on overflow and divides by zero.',
+  },
+  {
+    title: 'Associativity loss',
+    detail:
+      'Floating point addition is not associative; reordering can change results in reductions.',
+  },
+  {
+    title: 'Denormals',
+    detail:
+      'Very small magnitudes fall into subnormal numbers, which are slower and less precise.',
+  },
+  {
+    title: 'Stable comparisons',
+    detail:
+      'Use epsilon comparisons or relative error checks instead of direct equality.',
+  },
+]
+
+const encodingDetails = [
+  {
+    title: 'UTF-8 as dominant encoding',
+    detail:
+      'UTF-8 uses 1 to 4 bytes per code point and preserves ASCII for the first 128 values.',
+  },
+  {
+    title: 'UTF-16 surrogate pairs',
+    detail:
+      'Some code points require two 16-bit code units; length in code units is not character count.',
+  },
+  {
+    title: 'Normalization',
+    detail:
+      'Different byte sequences can represent the same visual text; normalization matters in security and search.',
+  },
+  {
+    title: 'Grapheme clusters',
+    detail:
+      'What users see as one character may be multiple code points; slicing by code points can still break text.',
+  },
+  {
+    title: 'Binary vs text I/O',
+    detail:
+      'Text I/O uses encodings and line endings; binary I/O is raw bytes with no interpretation.',
+  },
+  {
+    title: 'Locale and formatting',
+    detail:
+      'Numeric formatting depends on locale, but primitive storage should remain locale-free.',
+  },
+]
+
+const memoryLayoutExamples = [
+  {
+    title: 'Struct padding example',
+    code: `// Layout on a 64-bit system
+struct Example {
+    uint8  a   // offset 0
+    uint64 b   // offset 8 (7 bytes padding)
+    uint16 c   // offset 16 (6 bytes padding to align)
+}`,
+    explanation:
+      'Ordering fields from largest to smallest can shrink padding and reduce memory footprint.',
+  },
+  {
+    title: 'Array of structs vs struct of arrays',
+    code: `// AoS (easy but cache-unfriendly)
+struct Particle { float x, y, z, vx, vy, vz }
+Particle particles[N]
+
+// SoA (SIMD-friendly)
+float x[N], y[N], z[N], vx[N], vy[N], vz[N]`,
+    explanation:
+      'SoA keeps each field contiguous, improving cache behavior and vectorization.',
+  },
+]
+
+const conversionRules = [
+  {
+    title: 'Widening conversions',
+    detail:
+      'Going from int32 to int64 is safe for values, but may affect performance and memory.',
+  },
+  {
+    title: 'Narrowing conversions',
+    detail:
+      'Int64 to int32 can lose high bits; prefer explicit checks and range guards.',
+  },
+  {
+    title: 'Float to int',
+    detail:
+      'Fractional parts are truncated or rounded depending on language; NaN and infinity need handling.',
+  },
+  {
+    title: 'Int to float',
+    detail:
+      'Large integers lose precision once they exceed float mantissa capacity (about 16 million for float32).',
+  },
+  {
+    title: 'Signedness changes',
+    detail:
+      'Casting a negative signed value to unsigned reinterprets the bits, producing a huge number.',
+  },
+  {
+    title: 'Parsing vs casting',
+    detail:
+      'Parsing interprets text; casting reinterprets or converts numeric values. Mixing them is a bug magnet.',
+  },
+]
+
+const languageQuirks = [
+  {
+    title: 'C and C++',
+    detail:
+      'Integer widths can vary by platform; signed overflow is undefined behavior; use fixed-width types for safety.',
+  },
+  {
+    title: 'Java',
+    detail:
+      'Primitive sizes are fixed (int32, long64). Overflow wraps; float uses IEEE 754.',
+  },
+  {
+    title: 'JavaScript / TypeScript',
+    detail:
+      'Numbers are float64; integers are safe up to 2^53 - 1. BigInt exists for larger exact values.',
+  },
+  {
+    title: 'Python',
+    detail:
+      'Ints are arbitrary precision; floats are float64. Numeric performance depends on object overhead.',
+  },
+  {
+    title: 'Go',
+    detail:
+      'int is word-sized; use int64 or uint64 for stable widths; conversion between numeric types is explicit.',
+  },
+  {
+    title: 'Rust',
+    detail:
+      'Fixed-width types with explicit signedness. Debug builds check overflow; release wraps unless checked.',
+  },
+]
+
+const selectionChecklist = [
+  'Confirm the range of values and whether they can be negative.',
+  'Decide if you need exact decimals or can tolerate rounding.',
+  'Estimate memory impact at scale (arrays, tables, caches).',
+  'Choose byte order and serialization format for portability.',
+  'Define overflow behavior explicitly (wrap, clamp, error).',
+  'Add tests around boundary values and conversions.',
+]
+
 const machineConsiderations = [
   {
     title: 'Word size and alignment',
@@ -648,12 +892,95 @@ export default function PrimitiveTypesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Bit-width reference snapshot</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Bits</th>
+                    <th>Range / Precision</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {representationTable.map((row) => (
+                    <tr key={row.type}>
+                      <td>{row.type}</td>
+                      <td>{row.bits}</td>
+                      <td>{row.range}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Integer details and overflow behavior</legend>
+            <div className="win95-grid win95-grid-2">
+              {integerDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Floating point deep dive</legend>
+            <div className="win95-grid win95-grid-2">
+              {floatingPointDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                If you need predictable decimal math, move to fixed-point or decimal libraries. Float is excellent for scientific
+                ranges but must be treated as approximate.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Text and encoding realities</legend>
+            <div className="win95-grid win95-grid-2">
+              {encodingDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: machine considerations</legend>
             <div className="win95-grid win95-grid-2">
               {machineConsiderations.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Memory layout patterns</legend>
+            <div className="win95-stack">
+              {memoryLayoutExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
@@ -674,6 +1001,18 @@ export default function PrimitiveTypesPage(): JSX.Element {
                 Every primitive choice balances range, precision, memory, and speed. The right call depends on the data domain,
                 error tolerance, and performance envelope you need to hit.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Conversion rules and casting hazards</legend>
+            <div className="win95-grid win95-grid-2">
+              {conversionRules.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -705,6 +1044,18 @@ export default function PrimitiveTypesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language-specific differences</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageQuirks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -712,6 +1063,17 @@ export default function PrimitiveTypesPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Type selection checklist</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {selectionChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
             </div>
           </fieldset>
 
