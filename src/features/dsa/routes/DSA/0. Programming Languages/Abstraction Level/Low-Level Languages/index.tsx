@@ -441,6 +441,99 @@ const applications = [
   },
 ]
 
+const comparisonTable = [
+  {
+    dimension: 'Memory management',
+    low: 'Manual allocation, explicit lifetime, custom allocators.',
+    high: 'Garbage collection or managed runtimes handle lifetimes.',
+  },
+  {
+    dimension: 'Performance profile',
+    low: 'Low constant factors; predictable latency when designed well.',
+    high: 'Higher constant factors; latency can include GC pauses.',
+  },
+  {
+    dimension: 'Safety defaults',
+    low: 'Undefined behavior possible; safety depends on discipline and tooling.',
+    high: 'Bounds checks, runtime errors, and safe defaults reduce crash risk.',
+  },
+  {
+    dimension: 'Portability',
+    low: 'Requires platform-specific build targets and ABI awareness.',
+    high: 'VMs and runtimes offer broad portability across OS/CPU.',
+  },
+  {
+    dimension: 'Tooling & ecosystem',
+    low: 'Strong debuggers/profilers; fewer batteries-included libraries.',
+    high: 'Huge libraries and frameworks accelerate product delivery.',
+  },
+  {
+    dimension: 'Concurrency model',
+    low: 'Threads, atomics, fences; explicit synchronization.',
+    high: 'Richer concurrency primitives; often abstracted by runtime.',
+  },
+  {
+    dimension: 'Typical domains',
+    low: 'Kernels, drivers, embedded, real-time, HPC.',
+    high: 'Web apps, data analysis, automation, prototyping.',
+  },
+]
+
+const abiNotes = [
+  {
+    title: 'Calling conventions',
+    detail:
+      'ABIs define how arguments are passed (registers vs stack), who saves registers, and how return values are handled.',
+  },
+  {
+    title: 'Data layout and alignment',
+    detail:
+      'Struct padding and alignment rules ensure fields are placed at offsets the CPU can load efficiently.',
+  },
+  {
+    title: 'Name mangling',
+    detail:
+      'C++ encodes type information in symbol names; extern "C" disables mangling for FFI.',
+  },
+  {
+    title: 'Endianness and word size',
+    detail:
+      'The ABI fixes assumptions about byte order and pointer size. Mixing 32-bit and 64-bit builds breaks compatibility.',
+  },
+  {
+    title: 'Stack frames and unwinding',
+    detail:
+      'ABIs define stack frame layout and metadata for exception handling and debugging.',
+  },
+  {
+    title: 'Binary compatibility',
+    detail:
+      'Changing struct layouts or function signatures can silently break dynamic linking. Versioning matters.',
+  },
+]
+
+const abiExamples = [
+  {
+    title: 'C++ to C FFI',
+    code: `// C++ function exported with C linkage
+extern "C" int add(int a, int b) {
+  return a + b;
+}`,
+    explanation:
+      'extern "C" uses the C ABI so other languages can link without C++ name mangling.',
+  },
+  {
+    title: 'Struct layout mismatch',
+    code: `// C side
+struct Point { int x; int y; };
+
+// C++ side (different packing)
+struct PointPacked { char tag; int x; int y; };`,
+    explanation:
+      'Extra fields or different packing changes offsets. Both sides must agree on layout.',
+  },
+]
+
 const examples = [
   {
     title: 'Cache-friendly traversal (C++)',
@@ -675,9 +768,56 @@ export default function LowLevelLanguagesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Low-level vs high-level comparison</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Low-level</th>
+                    <th>High-level</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.dimension}>
+                      <td>{row.dimension}</td>
+                      <td>{row.low}</td>
+                      <td>{row.high}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>ABI deep dive</legend>
+            <div className="win95-grid win95-grid-2">
+              {abiNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-stack">
+              {abiExamples.map((example) => (
                 <div key={example.title} className="win95-panel">
                   <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
