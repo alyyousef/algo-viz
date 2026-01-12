@@ -318,6 +318,203 @@ const coreBuildingBlocks = [
   },
 ]
 
+const queryPatterns = [
+  {
+    title: 'Point lookups',
+    detail:
+      'Use primary keys or unique indexes for O(log n) access with minimal IO.',
+  },
+  {
+    title: 'Range scans',
+    detail:
+      'B-tree indexes support range filters and ordered scans; match index order to your query.',
+  },
+  {
+    title: 'Joins on selective keys',
+    detail:
+      'Filter early with WHERE clauses and selective join keys to reduce row explosion.',
+  },
+  {
+    title: 'Aggregation workloads',
+    detail:
+      'GROUP BY and window functions handle rollups; materialized views can precompute heavy aggregates.',
+  },
+  {
+    title: 'Pagination',
+    detail:
+      'Keyset pagination avoids OFFSET scan costs; use WHERE (id, created_at) > last_seen.',
+  },
+  {
+    title: 'Analytical scans',
+    detail:
+      'Columnar or partitioned tables improve large scans and reduce IO.',
+  },
+]
+
+const indexingStrategies = [
+  {
+    title: 'Single-column indexes',
+    detail:
+      'Best for simple filters; keep them on high-selectivity columns.',
+  },
+  {
+    title: 'Composite indexes',
+    detail:
+      'Order matters: index (a, b) supports filters on a and ranges on b.',
+  },
+  {
+    title: 'Covering indexes',
+    detail:
+      'Include all columns needed by the query to avoid table lookups.',
+  },
+  {
+    title: 'Partial indexes',
+    detail:
+      'Index a subset of rows to reduce size and improve selectivity.',
+  },
+  {
+    title: 'Functional indexes',
+    detail:
+      'Index expressions (lower(email), date(created_at)) to accelerate derived filters.',
+  },
+  {
+    title: 'Index maintenance cost',
+    detail:
+      'Every index adds write overhead; measure before adding more.',
+  },
+]
+
+const executionPlans = [
+  {
+    title: 'Sequential scan',
+    detail:
+      'Reads all rows; acceptable for small tables or very low selectivity.',
+  },
+  {
+    title: 'Index scan',
+    detail:
+      'Uses B-tree to find matching rows quickly, then fetches table pages.',
+  },
+  {
+    title: 'Index-only scan',
+    detail:
+      'Serves query entirely from index when all columns are covered.',
+  },
+  {
+    title: 'Hash join',
+    detail:
+      'Builds a hash table of one input, then probes it; good for large joins.',
+  },
+  {
+    title: 'Merge join',
+    detail:
+      'Requires sorted inputs; efficient for range joins and large datasets.',
+  },
+  {
+    title: 'Nested loop join',
+    detail:
+      'Good for small inputs or highly selective lookups; can be slow otherwise.',
+  },
+]
+
+const transactionPatterns = [
+  {
+    title: 'Optimistic concurrency',
+    detail:
+      'Use version columns and compare-and-swap updates to avoid lost updates.',
+  },
+  {
+    title: 'Pessimistic locking',
+    detail:
+      'SELECT ... FOR UPDATE prevents concurrent changes but can reduce throughput.',
+  },
+  {
+    title: 'Idempotent writes',
+    detail:
+      'Design operations so retries do not duplicate effects (e.g., unique constraints).',
+  },
+  {
+    title: 'Saga workflows',
+    detail:
+      'Coordinate multi-step processes with compensating actions instead of long transactions.',
+  },
+]
+
+const operationalNotes = [
+  {
+    title: 'Backups and recovery',
+    detail:
+      'Use point-in-time recovery with WAL or binlog to restore to exact moments.',
+  },
+  {
+    title: 'Replication',
+    detail:
+      'Read replicas scale reads; async replication can lag, affecting read consistency.',
+  },
+  {
+    title: 'Partitioning',
+    detail:
+      'Range or hash partitioning splits large tables for maintenance and performance.',
+  },
+  {
+    title: 'Vacuum and bloat',
+    detail:
+      'MVCC systems require vacuuming; bloat hurts performance if ignored.',
+  },
+  {
+    title: 'Connection pooling',
+    detail:
+      'Pools reduce connection overhead and protect databases from bursts.',
+  },
+  {
+    title: 'Monitoring',
+    detail:
+      'Track slow queries, lock contention, and buffer cache hit rates.',
+  },
+]
+
+const sqlVsNosql = [
+  {
+    dimension: 'Schema',
+    sql: 'Rigid schema, enforced constraints.',
+    nosql: 'Flexible schema, validation in app or optional.',
+  },
+  {
+    dimension: 'Transactions',
+    sql: 'Strong ACID across multiple tables.',
+    nosql: 'Often single-document/record; limited multi-entity transactions.',
+  },
+  {
+    dimension: 'Scaling',
+    sql: 'Vertical scale with sharding/partitioning extensions.',
+    nosql: 'Horizontal scale by default.',
+  },
+  {
+    dimension: 'Querying',
+    sql: 'Joins and rich SQL expressions.',
+    nosql: 'Model-specific queries; joins often avoided or precomputed.',
+  },
+  {
+    dimension: 'Consistency',
+    sql: 'Strong by default.',
+    nosql: 'Often eventual or tunable.',
+  },
+  {
+    dimension: 'Best fit',
+    sql: 'Transactional systems, reporting, data integrity.',
+    nosql: 'Flexible, high-scale, specialized access patterns.',
+  },
+]
+
+const antiPatterns = [
+  'Using OR-heavy predicates that defeat indexes.',
+  'Large OFFSET pagination on big tables.',
+  'N+1 queries instead of joins or batch fetches.',
+  'No indexes on foreign keys used in joins.',
+  'Long-running transactions that hold locks.',
+  'Overusing triggers for core business logic.',
+]
+
 const queryLifecycle = [
   {
     title: 'Parsing and validation',
@@ -487,6 +684,16 @@ const advancedInsights = [
     detail:
       'Analytical queries become concise with OVER clauses, removing the need for complex self-joins.',
   },
+  {
+    title: 'Distributed SQL tradeoffs',
+    detail:
+      'Distributed SQL provides horizontal scaling with SQL semantics, but global transactions add latency.',
+  },
+  {
+    title: 'MVCC internals',
+    detail:
+      'Multi-version concurrency control keeps readers and writers separate but increases storage overhead.',
+  },
 ]
 
 const takeaways = [
@@ -574,9 +781,45 @@ export default function SqlDatabasePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Query patterns and access design</legend>
+            <div className="win95-grid win95-grid-2">
+              {queryPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Indexing strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {indexingStrategies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Query lifecycle</legend>
             <div className="win95-grid win95-grid-2">
               {queryLifecycle.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Execution plan building blocks</legend>
+            <div className="win95-grid win95-grid-2">
+              {executionPlans.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -616,6 +859,18 @@ export default function SqlDatabasePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Transaction patterns</legend>
+            <div className="win95-grid win95-grid-2">
+              {transactionPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Normalization and schema design</legend>
             <div className="win95-grid win95-grid-2">
               {normalizationNotes.map((item) => (
@@ -624,6 +879,42 @@ export default function SqlDatabasePage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Operations checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {operationalNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>SQL vs NoSQL comparison</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>SQL</th>
+                    <th>NoSQL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sqlVsNosql.map((row) => (
+                    <tr key={row.dimension}>
+                      <td>{row.dimension}</td>
+                      <td>{row.sql}</td>
+                      <td>{row.nosql}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -659,6 +950,17 @@ export default function SqlDatabasePage(): JSX.Element {
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Anti-patterns to avoid</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {antiPatterns.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
