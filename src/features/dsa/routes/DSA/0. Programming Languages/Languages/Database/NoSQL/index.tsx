@@ -345,6 +345,193 @@ const architectureBlocks = [
   },
 ]
 
+const queryPatterns = [
+  {
+    title: 'Point lookups',
+    detail:
+      'Design keys so the most common queries are O(1) key fetches. Cache these aggressively.',
+  },
+  {
+    title: 'Range scans',
+    detail:
+      'Sort keys (timestamps, sequence IDs) enable fast range queries within a partition.',
+  },
+  {
+    title: 'Fan-out reads',
+    detail:
+      'Avoid scatter-gather across many partitions; precompute or denormalize to reduce fan-out.',
+  },
+  {
+    title: 'Time-window queries',
+    detail:
+      'Time-series stores rely on TTL, downsampling, and windowed aggregations to keep costs stable.',
+  },
+  {
+    title: 'Relationship traversals',
+    detail:
+      'Graph DBs optimize multi-hop traversals; other models often require application-side joins.',
+  },
+  {
+    title: 'Search and relevance',
+    detail:
+      'Use search indexes for text, faceting, and scoring rather than forcing it into key-value patterns.',
+  },
+]
+
+const storageEngines = [
+  {
+    title: 'LSM trees',
+    detail:
+      'Log-structured merge trees excel at write-heavy workloads with compaction to maintain read performance.',
+  },
+  {
+    title: 'B-trees and variants',
+    detail:
+      'Balanced trees handle mixed read/write workloads and range queries with consistent latency.',
+  },
+  {
+    title: 'In-memory engines',
+    detail:
+      'Prioritize speed with RAM-first storage; durability depends on snapshots and logs.',
+  },
+  {
+    title: 'Columnar layouts',
+    detail:
+      'Store column blocks for analytics; great for aggregations but slower for point updates.',
+  },
+  {
+    title: 'Secondary indexes',
+    detail:
+      'Enable flexible querying but add write amplification and storage cost.',
+  },
+  {
+    title: 'Change streams',
+    detail:
+      'Expose updates as ordered logs for downstream processing and materialized views.',
+  },
+]
+
+const consistencyMechanisms = [
+  {
+    title: 'Quorum reads/writes',
+    detail:
+      'Require a majority (or configurable) of replicas to agree, trading latency for consistency.',
+  },
+  {
+    title: 'Read repair',
+    detail:
+      'Background reconciliation fixes stale replicas after reads detect divergence.',
+  },
+  {
+    title: 'Hinted handoff',
+    detail:
+      'Temporary writes are queued when a replica is down, then replayed later.',
+  },
+  {
+    title: 'Vector clocks',
+    detail:
+      'Track causality to detect conflicts and enable resolution strategies.',
+  },
+  {
+    title: 'CRDTs',
+    detail:
+      'Conflict-free replicated data types merge automatically for eventual consistency.',
+  },
+  {
+    title: 'Transactional fences',
+    detail:
+      'Lightweight transactions or CAS operations provide conditional updates when needed.',
+  },
+]
+
+const transactionModels = [
+  {
+    title: 'Single-record atomicity',
+    detail:
+      'Most NoSQL systems guarantee atomic updates within a single key/document.',
+  },
+  {
+    title: 'Multi-record transactions',
+    detail:
+      'Some engines provide limited multi-document transactions with higher latency.',
+  },
+  {
+    title: 'Conditional updates',
+    detail:
+      'Compare-and-set or version checks prevent lost updates in concurrent writers.',
+  },
+  {
+    title: 'Idempotent writes',
+    detail:
+      'Design APIs so retries do not duplicate effects, especially in eventual consistency.',
+  },
+]
+
+const operationsChecklist = [
+  {
+    title: 'Backups and snapshots',
+    detail:
+      'Validate restore procedures; many NoSQL systems require special snapshot flows.',
+  },
+  {
+    title: 'Capacity planning',
+    detail:
+      'Plan for compaction overhead, replication, and index storage growth.',
+  },
+  {
+    title: 'Monitoring and alerts',
+    detail:
+      'Track tail latency, replication lag, compaction queue, and hot partitions.',
+  },
+  {
+    title: 'Schema validation',
+    detail:
+      'Enforce contracts at the app layer or via schema validators to prevent drift.',
+  },
+  {
+    title: 'TTL and data lifecycle',
+    detail:
+      'Use retention policies to bound storage and avoid hot partitions.',
+  },
+  {
+    title: 'Load testing',
+    detail:
+      'Simulate read/write mixes and burst traffic; tune partition keys accordingly.',
+  },
+]
+
+const migrationStrategies = [
+  {
+    title: 'Dual write with backfill',
+    detail:
+      'Write to both old and new stores, backfill historical data, then cut over.',
+  },
+  {
+    title: 'Change data capture',
+    detail:
+      'Stream updates from the primary DB into NoSQL for read scaling or analytics.',
+  },
+  {
+    title: 'Read-through cache',
+    detail:
+      'Gradually populate a NoSQL cache with production traffic to reduce risk.',
+  },
+  {
+    title: 'Feature-flagged cutover',
+    detail:
+      'Use flags to switch traffic per cohort, enabling rollback if issues appear.',
+  },
+]
+
+const antiPatterns = [
+  'Using a single hot partition key for all traffic.',
+  'Modeling many-to-many queries without precomputed views or graph storage.',
+  'Creating secondary indexes for every query pattern.',
+  'Storing huge documents that need frequent partial updates.',
+  'Relying on eventual consistency for financial or transactional data.',
+  'Ignoring compaction and disk amplification in LSM-based systems.',
+]
+
 const capMatrix = [
   {
     model: 'Strong consistency',
@@ -598,6 +785,30 @@ export default function NoSqlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Query patterns and access design</legend>
+            <div className="win95-grid win95-grid-2">
+              {queryPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Storage engines and indexing</legend>
+            <div className="win95-grid win95-grid-2">
+              {storageEngines.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Consistency and CAP tradeoffs</legend>
             <div className="win95-panel">
               <table className="win95-table">
@@ -630,9 +841,57 @@ export default function NoSqlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Consistency mechanics in the real world</legend>
+            <div className="win95-grid win95-grid-2">
+              {consistencyMechanisms.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Transaction and constraint models</legend>
+            <div className="win95-grid win95-grid-2">
+              {transactionModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Data modeling patterns</legend>
             <div className="win95-grid win95-grid-2">
               {dataModelingPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Operations checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {operationsChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Migration and integration strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {migrationStrategies.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -673,6 +932,17 @@ export default function NoSqlPage(): JSX.Element {
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Anti-patterns to avoid</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {antiPatterns.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
