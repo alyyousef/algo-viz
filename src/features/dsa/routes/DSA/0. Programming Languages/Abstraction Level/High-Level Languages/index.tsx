@@ -2,31 +2,260 @@ import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
+
 const milestones = [
   {
     title: 'FORTRAN proves compilers can rival hand assembly (1957)',
     detail:
-      'Backus and the IBM team shipped FORTRAN I, showing that higher-level notation could generate efficient machine code. Developer productivity jumped without catastrophic performance loss.',
+      'FORTRAN I demonstrated that high-level notation could produce efficient machine code, launching modern compiler design.',
   },
   {
     title: 'ALGOL and structured programming (1960s)',
     detail:
-      'ALGOL 60 introduced block structure and clear scoping, seeding ideas for modern syntax, recursion, and structured control that still anchor C, JavaScript, and Go.',
+      'ALGOL 60 introduced block structure, lexical scoping, and clean syntax that influenced C, Pascal, and modern languages.',
   },
   {
-    title: 'Smalltalk and the birth of interactive OOP (1970s)',
+    title: 'Smalltalk and interactive OOP (1970s)',
     detail:
-      'Alan Kay and the Xerox PARC group used Smalltalk to explore objects, message passing, and live environments, influencing GUI tooling and dynamic runtimes.',
+      'Smalltalk pioneered live environments, message passing, and object orientation, reshaping language design.',
   },
   {
-    title: 'Python and Java democratize batteries-included ecosystems (1990s)',
+    title: 'C++ and Java scale OOP (1980s-1990s)',
     detail:
-      'Guido van Rossum emphasized readability and a rich standard library; Java popularized the JVM and write-once-run-anywhere portability for servers and desktops.',
+      'C++ brought performance with abstraction; Java popularized VM portability and large-scale library ecosystems.',
   },
   {
-    title: 'JavaScript everywhere and JIT acceleration (2000s-2010s)',
+    title: 'Python and JavaScript democratize scripting (1990s-2000s)',
     detail:
-      'V8 and modern JITs turned a browser scripting language into a performant general-purpose tool, enabling Node.js, npm, and ubiquitous web application stacks.',
+      'Readable syntax and batteries-included libraries made high-level languages the default for rapid product iteration.',
+  },
+  {
+    title: 'JITs and tiered runtimes (2000s-2020s)',
+    detail:
+      'Modern runtimes compile hot paths at runtime, narrowing the performance gap with low-level languages.',
   },
 ]
 
@@ -34,62 +263,120 @@ const mentalModels = [
   {
     title: 'Abstraction ladder',
     detail:
-      'High-level languages climb a ladder: you trade direct hardware control for expressive constructs. The ladder is safe when lower rungs (runtime, libraries, OS) remain visible enough to diagnose cost.',
+      'You trade direct hardware control for expressive constructs. The ladder is safe when you can still see the cost.',
   },
   {
     title: 'Productivity budget',
     detail:
-      'Think of performance, correctness, and delivery speed as a budget. High-level constructs spend a few CPU cycles to buy clearer intent, safer defaults, and faster iteration.',
+      'Time saved in implementation and debugging often outweighs raw CPU cycles in product development.',
   },
   {
     title: 'Leaky shields',
     detail:
-      'Abstractions shield you from registers and layout, but leaks appear at interfaces: FFI boundaries, data copies, garbage collection pauses, and implicit allocations.',
+      'Garbage collection, copies, and FFI boundaries are where abstractions leak and performance surprises appear.',
+  },
+  {
+    title: 'Ecosystem gravity',
+    detail:
+      'Libraries, tooling, and community support often determine language choice more than syntax.',
+  },
+  {
+    title: 'Correctness by default',
+    detail:
+      'High-level languages bake in bounds checks, memory safety, or exceptions to prevent common bugs.',
   },
 ]
 
 const howItWorks = [
   {
-    heading: 'Compilation and interpretation',
+    heading: 'Compilation and execution',
     bullets: [
-      'Source is lowered to bytecode or an AST; a VM or interpreter executes it stepwise. Examples: CPython bytecode, Ruby YARV, Lua VM.',
-      'Ahead-of-time (AOT) compilers emit native code (Rust, Go) while retaining high-level syntax and safety checks.',
-      'Hybrid paths JIT hot code paths at runtime to recover speed (JavaScript V8, Java HotSpot, PyPy).',
+      'Interpreters execute bytecode or AST nodes step by step (CPython, Ruby).',
+      'JITs compile hot code paths to native machine code (V8, HotSpot, PyPy).',
+      'AOT compilers emit native code ahead of time while keeping high-level syntax (Go, Rust).',
     ],
   },
   {
     heading: 'Runtime services',
     bullets: [
-      'Garbage collectors reclaim unreachable memory; strategies differ (mark-sweep, generational, concurrent).',
-      'Dynamic dispatch, reflection, and metaprogramming provide late binding and flexible APIs at the cost of predictability.',
-      'Standard libraries offer batteries: file IO, networking, containers, concurrency primitives, cryptography, and testing frameworks.',
+      'Garbage collectors reclaim unreachable memory; strategies include generational, concurrent, and incremental GC.',
+      'Dynamic dispatch, reflection, and metaprogramming enable flexible APIs but add runtime overhead.',
+      'Standard libraries provide IO, networking, concurrency, and testing with consistent APIs.',
     ],
   },
   {
     heading: 'Portability layers',
     bullets: [
-      'Virtual machines abstract hardware quirks so the same bytecode runs on Windows, macOS, Linux, or mobile.',
-      'Foreign function interfaces (FFI) bridge to C or system calls when performance or OS access is needed.',
-      'Package managers (pip, npm, Maven) distribute code and manage dependency graphs, enabling ecosystem-scale reuse.',
+      'VMs abstract OS and hardware differences so bytecode runs anywhere.',
+      'FFI bridges to C/C++ or system calls for performance or platform access.',
+      'Package managers enable ecosystem-scale reuse (pip, npm, Maven, Cargo).',
     ],
   },
 ]
 
-const complexity = [
+const languageFamilies = [
   {
-    title: 'Asymptotic neutrality, constant-factor costs',
+    title: 'Dynamic scripting',
     detail:
-      'Algorithms keep their big-O, but high-level runtimes add constant factors: bounds checks, dynamic dispatch, and GC barriers. For CPU-bound hot loops, those factors are visible; for IO-bound services, they are often dwarfed by network latency.',
+      'Python, Ruby, JavaScript: high flexibility, rapid iteration, strong metaprogramming, higher runtime overhead.',
   },
   {
-    title: 'Garbage collection and pause dynamics',
+    title: 'Managed static',
     detail:
-      'Throughput collectors maximize overall speed but may introduce pauses; concurrent or incremental collectors trade peak throughput for latency. Tuning heap sizes and generations is a practical skill.',
+      'Java, C#, Kotlin: static types, GC, robust tooling, strong server and enterprise ecosystems.',
   },
   {
-    title: 'Developer time vs machine time',
+    title: 'Modern systems-high-level',
     detail:
-      'Hours saved in implementation and defect reduction often outweigh milliseconds of runtime in products that evolve quickly. For extreme throughput (trading, kernels), low-level control reclaims constants at the cost of slower iteration.',
+      'Rust, Go, Swift: higher-level ergonomics with control over performance and concurrency.',
+  },
+  {
+    title: 'Functional',
+    detail:
+      'Haskell, OCaml, F#: immutability and pure functions improve reasoning and concurrency.',
+  },
+  {
+    title: 'Data-oriented and scientific',
+    detail:
+      'Julia, R, MATLAB: optimized numeric kernels and domain-specific syntax for math-heavy workloads.',
+  },
+  {
+    title: 'Domain-specific',
+    detail:
+      'SQL, Prolog, MATLAB: specialized syntax that encodes problem structure for concise solutions.',
+  },
+]
+
+const performanceFactors = [
+  {
+    title: 'Allocation overhead',
+    detail:
+      'High-level code allocates more objects; GC overhead appears in tight loops or high-throughput services.',
+  },
+  {
+    title: 'Dispatch and boxing',
+    detail:
+      'Dynamic types and boxed values add indirection; JITs can remove some overhead with specialization.',
+  },
+  {
+    title: 'Vectorization boundaries',
+    detail:
+      'Libraries like NumPy or BLAS speed up bulk work; falling back to per-element loops is slow.',
+  },
+  {
+    title: 'I/O dominance',
+    detail:
+      'Many applications are I/O-bound; optimizing CPU-heavy paths helps only after reducing network or disk latency.',
+  },
+  {
+    title: 'Warm-up and steady state',
+    detail:
+      'JIT runtimes need warm-up time. Benchmarks should measure both cold and hot performance.',
+  },
+  {
+    title: 'Interop costs',
+    detail:
+      'FFI boundaries can copy data or require marshaling; minimize crossings for performance.',
   },
 ]
 
@@ -97,381 +384,197 @@ const applications = [
   {
     context: 'Web backends',
     detail:
-      'Frameworks like Django, Rails, and Express turn routing, auth, and templating into configuration. Teams ship features quickly while relying on native extensions or proxies for hotspots.',
+      'Frameworks like Django, Rails, and Express ship features quickly; hotspots can move to native extensions.',
   },
   {
-    context: 'Data science and machine learning',
+    context: 'Data science and ML',
     detail:
-      'Python wraps high-performance kernels (BLAS, cuDNN) with NumPy and PyTorch, letting scientists express math naturally while libraries handle vectorized C and CUDA code.',
+      'Python and Julia wrap optimized kernels, giving scientists expressive code with native performance inside libraries.',
   },
   {
     context: 'Automation and scripting',
     detail:
-      'Shell replacements and task runners (Python scripts, Node CLIs) orchestrate APIs and filesystems with minimal ceremony, ideal for glue logic and prototyping.',
+      'Task runners and CLI tools coordinate systems, APIs, and files with minimal ceremony.',
   },
   {
     context: 'Cross-platform clients',
     detail:
-      'React Native and Flutter lift UI development to declarative layers while bridging to platform widgets and graphics libraries under the hood.',
+      'React Native, Flutter, and SwiftUI lift UI development while bridging to native rendering layers.',
+  },
+  {
+    context: 'DevOps and infrastructure',
+    detail:
+      'IaC tools and build pipelines use high-level languages for maintainable automation.',
+  },
+  {
+    context: 'Education and prototyping',
+    detail:
+      'Readable syntax reduces cognitive load, enabling rapid experimentation and teaching.',
   },
 ]
 
 const examples = [
   {
-    title: 'Readable data transformation (Python)',
+    title: 'Readable transformation (Python)',
     code: `def top_titles_by_score(rows, limit=5):
-    # rows: list of dicts with 'title' and 'score'
     sorted_rows = sorted(rows, key=lambda r: r["score"], reverse=True)
     return [row["title"] for row in sorted_rows[:limit]]`,
     explanation:
-      'A comprehension expresses intent without manual pointer arithmetic or memory allocation. The interpreter handles ordering and slicing; clarity invites quick reviews.',
+      'Expressive syntax and standard library tools replace manual loops and temporary buffers.',
   },
   {
-    title: 'Concurrent IO without threads (JavaScript)',
+    title: 'Async IO without threads (JavaScript)',
     code: `async function fetchProfiles(ids) {
-    const requests = ids.map((id) => fetch(\`/api/users/\${id}\`));
-    const responses = await Promise.all(requests);
-    return Promise.all(responses.map((r) => r.json()));
+  const requests = ids.map((id) => fetch(\`/api/users/\${id}\`));
+  const responses = await Promise.all(requests);
+  return Promise.all(responses.map((r) => r.json()));
 }`,
     explanation:
-      'The event loop and promises hide scheduling complexity. Await syntax keeps control flow linear while the runtime multiplexes network IO.',
+      'The runtime handles scheduling; async/await keeps logic readable and sequential.',
   },
   {
-    title: 'When abstraction leaks (Python + NumPy vs pure Python)',
-    code: `# Fast path: vectorized in C
-scores = np.array(raw_scores)
-adjusted = scores * 1.1 + 3
+    title: 'Vectorized math vs loops (Python + NumPy)',
+    code: `scores = np.array(raw_scores)
+adjusted = scores * 1.1 + 3  # vectorized in C
 
-# Slow path: Python loop with per-iteration overhead
-adjusted = [s * 1.1 + 3 for s in raw_scores]`,
+adjusted = [s * 1.1 + 3 for s in raw_scores]  # Python loop`,
     explanation:
-      'The same math expressed differently can hit very different execution engines. Knowing when to stay in vectorized kernels preserves performance without abandoning high-level syntax.',
+      'The same math can run in optimized native code or slow per-element interpretation.',
+  },
+  {
+    title: 'Type safety with high-level syntax (TypeScript)',
+    code: `type User = { id: string; plan: "free" | "pro" }
+function upgrade(user: User): User {
+  return { ...user, plan: "pro" }
+}`,
+    explanation:
+      'Strong typing catches errors at compile time without sacrificing readability.',
   },
 ]
 
 const pitfalls = [
-  'Assuming abstraction erases cost: dynamic dispatch, hidden allocations, and reflection can dominate hot paths.',
-  'Ignoring memory profiles: GC pauses or accidental data copies can surface under latency-sensitive workloads.',
-  'Overreliance on magical defaults: frameworks generate convenience, but unexamined defaults (N+1 queries, unbounded concurrency) become scaling bottlenecks.',
-  'Shaky dependency hygiene: large ecosystems make supply chain vetting, pinning versions, and license awareness essential.',
-  'Forgetting observability: without profiling and tracing hooks, it is hard to map high-level code to real CPU, memory, or network behavior.',
+  'Assuming abstraction erases cost: dynamic dispatch, hidden allocations, and reflection add overhead.',
+  'Ignoring memory profiles: GC pauses and data copies can surface under latency-sensitive workloads.',
+  'Overreliance on defaults: frameworks can hide N+1 queries, unbounded concurrency, or slow JSON parsing.',
+  'Dependency bloat: large ecosystems require version pinning, security review, and license awareness.',
+  'Missing observability: without profiling and tracing, mapping high-level code to CPU usage is hard.',
 ]
 
 const decisionPoints = [
-  'Optimize for iteration speed and readability: choose high-level languages for product discovery, research, and most networked services.',
-  'Need predictable latency with tight budgets: profile first; if GC or dispatch dominates, consider lower-level segments or FFI for hotspots.',
-  'Operate in constrained environments (firmware, kernels): prefer languages with explicit memory control or subsets that compile efficiently.',
-  'Team expertise and ecosystem weight: pick the runtime with the richest libraries and operational tooling for your domain.',
+  'Optimize for iteration speed and clarity when product discovery matters most.',
+  'Profile hotspots before rewriting; move only critical paths to lower-level code.',
+  'Pick ecosystems with strong tooling, testing, and deployment support.',
+  'Use high-level languages for I/O-bound services where latency is dominated by network or disk.',
+  'Prefer explicit memory control only when latency and throughput targets demand it.',
 ]
 
 const advancedInsights = [
   {
-    title: 'JIT and tiered compilation',
+    title: 'Tiered compilation',
     detail:
-      'Modern runtimes observe code, speculate on shapes, and emit optimized machine code. Guard failures deoptimize. Warm-up time matters for short-lived processes.',
+      'Runtimes profile code, compile hot paths, and deoptimize when assumptions break. Warm-up matters for short jobs.',
   },
   {
-    title: 'Static types in high-level guise',
+    title: 'Gradual typing',
     detail:
-      'TypeScript, Kotlin, and Rust show that expressive syntax can pair with strong static guarantees. Gradual typing (Python typing, Sorbet for Ruby) adds safety without abandoning dynamism.',
+      'Type hints in Python or TypeScript add safety and tooling without giving up dynamism.',
   },
   {
-    title: 'FFI and polyglot runtimes',
+    title: 'Polyglot runtimes',
     detail:
-      'Bridging to C, Rust, or Java lets teams write most code in a high-level language and delegate critical loops to native modules. Polyglot VMs like GraalVM blur boundaries further.',
+      'GraalVM and WebAssembly let multiple languages share a runtime and call each other efficiently.',
   },
   {
-    title: 'Determinism and reproducibility',
+    title: 'Determinism controls',
     detail:
-      'Containerized runtimes, pinned dependencies, and reproducible builds tame the variability often blamed on dynamic languages. This discipline is as critical as language choice.',
+      'Pinned dependencies, containers, and reproducible builds reduce runtime variability.',
   },
-]
-
-const sources = [
-  'Dragon Book (Aho, Lam, Sethi, Ullman) for compiler pipelines and optimization theory.',
-  'Structure and Interpretation of Computer Programs for the role of abstraction in program design.',
-  'GeeksforGeeks: differences between high-level and low-level languages for quick comparisons.',
-  'V8 design docs and PyPy papers for modern JIT and interpreter strategies.',
-  'Tanenbaum: Modern Operating Systems for how runtimes interact with OS scheduling and memory.',
+  {
+    title: 'FFI design',
+    detail:
+      'Batch data across the boundary to amortize marshaling costs and avoid per-call overhead.',
+  },
+  {
+    title: 'Runtime tuning',
+    detail:
+      'GC configuration, heap sizing, and JIT flags can shift latency vs throughput tradeoffs.',
+  },
 ]
 
 const takeaways = [
-  'High-level languages trade constant-factor performance for dramatic gains in clarity, safety, and delivery speed.',
-  'Abstractions still leak: understand garbage collection, dispatch, and data movement to avoid surprises.',
-  'Ecosystems and tooling often matter more than raw language speed; leverage libraries and profilers before reaching for rewrites.',
-  'Use FFI or selective lower-level modules to balance hotspots without sacrificing overall productivity.',
+  'High-level languages maximize readability, safety, and speed of delivery.',
+  'Performance costs are mostly constant factors: allocation, dispatch, GC, and data movement.',
+  'Ecosystem and tooling often matter more than raw speed.',
+  'Use profiling and selective native code to keep hotspots fast.',
 ]
-
-const styles = `
-  * {
-    box-sizing: border-box;
-  }
-
-  .win95-page {
-    width: 100%;
-    min-height: 100vh;
-    background: #C0C0C0;
-    color: #000;
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-    line-height: 1.35;
-    -webkit-font-smoothing: none;
-    text-rendering: optimizeSpeed;
-    margin: 0;
-    padding: 0;
-  }
-
-  .win95-window {
-    width: 100%;
-    min-height: 100vh;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    background: #C0C0C0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .win95-title-bar {
-    background: #000080;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 6px;
-    gap: 8px;
-    font-weight: bold;
-    letter-spacing: 0.2px;
-  }
-
-  .win95-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .win95-close {
-    background: #C0C0C0;
-    color: #000;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-weight: bold;
-    padding: 2px 10px;
-    min-width: 28px;
-    cursor: pointer;
-  }
-
-  .win95-close:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-close:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -4px;
-  }
-
-  .win95-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
-  }
-
-  .win95-header-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4px;
-  }
-
-  .win95-button {
-    padding: 3px 10px 2px;
-    background: #C0C0C0;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1.2;
-    text-decoration: none;
-    color: #000;
-  }
-
-  .win95-button:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -3px;
-  }
-
-  .win95-section {
-    border: 2px solid;
-    border-color: #808080 #404040 #404040 #808080;
-    padding: 10px;
-    margin: 0;
-  }
-
-  .win95-section legend {
-    padding: 0 6px;
-    font-weight: bold;
-  }
-
-  .win95-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 8px;
-  }
-
-  .win95-grid.tight {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 6px;
-  }
-
-  .win95-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .win95-panel {
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
-    background: #C0C0C0;
-    padding: 8px;
-  }
-
-  .win95-panel.raised {
-    border-color: #fff #404040 #404040 #fff;
-  }
-
-  .win95-panel strong,
-  .win95-panel h4,
-  .win95-panel h3 {
-    font-weight: bold;
-  }
-
-  .win95-text {
-    margin: 0;
-  }
-
-  .win95-list {
-    margin: 0;
-    padding-left: 18px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-ordered {
-    margin: 0;
-    padding-left: 20px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-code {
-    margin: 8px 0 6px;
-    padding: 8px;
-    background: #bdbdbd;
-    border: 2px solid;
-    border-color: #404040 #fff #fff #404040;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    overflow-x: auto;
-    color: #000;
-  }
-
-  a {
-    color: #000;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible,
-  button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: 2px;
-  }
-
-  button {
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-  }
-
-  .win95-caption {
-    margin: 6px 0 0;
-  }
-`
 
 export default function HighLevelLanguagesPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{styles}</style>
-      <div className="win95-window">
-        <div className="win95-title-bar">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
           <span className="win95-title">High-Level Languages</span>
-          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
-        </div>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
-            <Link to="/algoViz" className="win95-button">
+            <div>
+              <div className="win95-subheading">Expressive languages that trade hardware control for productivity</div>
+              <p className="win95-text">
+                High-level languages let developers express intent with rich syntax, strong libraries, and safer defaults. They
+                reduce boilerplate, accelerate iteration, and push many low-level details into compilers, runtimes, and VMs.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
               BACK TO CATALOG
             </Link>
           </div>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                These languages exist to let humans think in domain terms rather than machine minutiae. They trade control of
-                layout and registers for readability, safety features, and batteries-included libraries. The critical skill is
+                These languages exist to let humans think in domain terms rather than machine minutiae. They trade direct control
+                of layout and registers for readability, safety features, and batteries-included libraries. The critical skill is
                 knowing when that trade still meets your latency, memory, and observability needs.
               </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {milestones.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Core concept and mental models</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>How it works</legend>
-            <div className="win95-grid tight">
+            <div className="win95-grid win95-grid-3">
               {howItWorks.map((block) => (
                 <div key={block.heading} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{block.heading}</strong>
-                  </p>
+                  <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
                     {block.bullets.map((point) => (
                       <li key={point}>{point}</li>
@@ -482,99 +585,100 @@ export default function HighLevelLanguagesPage(): JSX.Element {
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid">
-              {complexity.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{note.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{note.detail}</p>
+          <fieldset className="win95-fieldset">
+            <legend>Language families</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFamilies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              Profile before optimizing. Many high-level systems are IO-bound; improvements come from batching requests,
-              reducing allocations, and moving compute into vectorized or native paths rather than abandoning the language.
-            </p>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceFactors.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Many high-level systems are I/O-bound. Optimize the data path first: batching, caching, and avoiding needless
+                serialization often beat micro-optimizations in code.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.context}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
                 <div key={example.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{example.title}</strong>
-                  </p>
+                  <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text win95-caption">{example.explanation}</p>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
-            <ul className="win95-list">
-              {pitfalls.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
-            <ol className="win95-ordered">
-              {decisionPoints.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionPoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights and frontiers</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Further reading and sources</legend>
-            <ul className="win95-list">
-              {sources.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </fieldset>
-
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel raised">
+            <div className="win95-panel">
               <ul className="win95-list">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
