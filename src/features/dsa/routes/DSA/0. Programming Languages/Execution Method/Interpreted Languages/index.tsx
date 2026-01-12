@@ -2,31 +2,260 @@ import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
+
 const milestones = [
   {
     title: 'LISP and REPL culture (1950s-1960s)',
     detail:
-      'John McCarthy and Steve Russell implemented eval for LISP, birthing interactive development with read-eval-print loops that let developers experiment live.',
+      'Interactive read-eval-print loops made it possible to evolve programs without a compile step.',
   },
   {
     title: 'Shells and scripting glue (1970s-1980s)',
     detail:
-      'Unix shells (sh, csh, later bash) popularized interpreted pipelines for automation, showing that small scripts could orchestrate powerful native tools.',
+      'Unix shells showed that quick scripts could orchestrate powerful native tools.',
   },
   {
     title: 'Perl, Python, Ruby mainstream dynamic scripting (1990s)',
     detail:
-      'These languages prioritized expressiveness and batteries-included libraries, making interpreted execution the default for web apps, sysadmin tasks, and data munging.',
+      'Expressive syntax and batteries-included libraries made interpreted execution the default for automation and web.',
   },
   {
     title: 'JavaScript in browsers (mid-1990s)',
     detail:
-      'Netscape introduced JavaScript to let pages run logic without plugins. Interpretation enabled instant ship cycles across heterogeneous clients.',
+      'Interpretation enabled instant deployment across heterogeneous clients.',
   },
   {
     title: 'JIT-accelerated interpreters (2000s-2010s)',
     detail:
-      'V8, PyPy, and JavaScriptCore added just-in-time compilation to interpreters, blending dynamic flexibility with near-compiled speed on hot paths.',
+      'V8, PyPy, and JavaScriptCore blended interpretation with JIT compilation on hot paths.',
+  },
+  {
+    title: 'Polyglot runtimes and WebAssembly (2010s-2020s)',
+    detail:
+      'Interpreters increasingly interop with native and WASM modules for speed.',
   },
 ]
 
@@ -34,17 +263,27 @@ const mentalModels = [
   {
     title: 'Script as conversation',
     detail:
-      'Interpreted programs converse with a runtime line by line or bytecode by bytecode. The runtime remains present, mediating every operation.',
+      'The runtime stays present for each operation; execution is a dialogue with the interpreter.',
   },
   {
     title: 'Late binding as a superpower',
     detail:
-      'Types and bindings are often resolved at runtime. This enables metaprogramming, dynamic imports, and rapid iteration, but shifts more checks to execution time.',
+      'Names, types, and methods resolve at runtime, enabling dynamic imports and metaprogramming.',
   },
   {
-    title: 'Runtime as an operating system',
+    title: 'Runtime as a mini-OS',
     detail:
-      'The interpreter provides its own scheduler, garbage collector, module loader, and standard library. Understanding that mini-OS helps explain performance and behavior.',
+      'Interpreters provide GC, schedulers, module loaders, and often a standard library ecosystem.',
+  },
+  {
+    title: 'Fast feedback loop',
+    detail:
+      'Edit-run cycles are short; correctness is validated through rapid iteration and tests.',
+  },
+  {
+    title: 'Data over code',
+    detail:
+      'Many interpreted systems are I/O-bound; performance depends more on batching and caches than CPU.',
   },
 ]
 
@@ -52,44 +291,92 @@ const mechanics = [
   {
     heading: 'Source to bytecode',
     bullets: [
-      'Many interpreters tokenize and parse source, then emit bytecode for a virtual machine (Python CPython, Lua).',
-      'Some execute ASTs directly or threaded code without a stable bytecode format (early Ruby).',
-      'Dynamic features (eval, reflection) can introduce new code at runtime, forcing the VM to stay adaptable.',
+      'Many interpreters parse source and emit bytecode (CPython, Lua, Ruby).',
+      'Some execute ASTs directly or use threaded code without stable bytecode formats.',
+      'Dynamic features like eval and reflection can inject code at runtime.',
     ],
   },
   {
     heading: 'Execution engines',
     bullets: [
-      'Bytecode interpreters loop over opcodes, dispatching to handlers. Dispatch overhead is a key cost.',
-      'Tracing JITs record hot paths and compile them to native code, adding guards to ensure dynamic assumptions hold.',
-      'Baseline JITs quickly emit simple native code, while optimizing tiers recompile hotspots with aggressive inlining and speculation.',
+      'Bytecode dispatch loops interpret opcodes; dispatch overhead is a primary cost.',
+      'Baseline JITs emit simple native code quickly; optimizing tiers recompile hotspots.',
+      'Tracing JITs record hot traces through loops and compile them with guards.',
     ],
   },
   {
     heading: 'Runtime services',
     bullets: [
-      'Garbage collection manages memory automatically, often with generational or incremental collectors.',
-      'Dynamic dispatch resolves method lookups at runtime; inline caches and hidden classes speed repeated shapes.',
-      'Module systems and package managers load code on demand, enabling rapid updates without recompilation.',
+      'Garbage collection manages memory, often with generational or incremental strategies.',
+      'Dynamic dispatch uses inline caches or hidden classes to speed method lookups.',
+      'Package managers and module loaders enable rapid updates without recompilation.',
     ],
   },
 ]
 
-const complexityNotes = [
+const runtimeArchitecture = [
   {
-    title: 'Asymptotics unaffected, constants shift',
+    title: 'Bytecode VM',
     detail:
-      'An O(n log n) sort stays O(n log n), but interpreter dispatch, dynamic type checks, and GC introduce higher constant factors than compiled equivalents.',
+      'A compact instruction set with an interpreter loop; good for portability and simplicity.',
   },
   {
-    title: 'Startup and warm-up behavior',
+    title: 'Object model',
     detail:
-      'Interpreted code starts instantly, a boon for CLIs and lambdas. JIT warm-up can delay peak speed; short-lived scripts may never reach optimized tiers.',
+      'Dynamic objects use dictionaries or shapes; changes to object shape can deoptimize hot paths.',
   },
   {
-    title: 'Memory overhead',
+    title: 'Garbage collector',
     detail:
-      'Object headers, dictionaries for dynamic attributes, and runtime metadata increase footprint. Compact representations (small ints, hidden classes) mitigate some overhead.',
+      'Generational GC assumes most objects die young. Tuning heap sizes affects pauses.',
+  },
+  {
+    title: 'Inline caches',
+    detail:
+      'Caches memoize method lookups so repeated calls stay fast when shapes are stable.',
+  },
+  {
+    title: 'Native extensions',
+    detail:
+      'FFI bridges to C/C++ for heavy computation, often where performance matters most.',
+  },
+  {
+    title: 'Event loop and concurrency',
+    detail:
+      'Many runtimes use event loops for I/O concurrency rather than OS threads.',
+  },
+]
+
+const performanceFactors = [
+  {
+    title: 'Dispatch overhead',
+    detail:
+      'Each opcode dispatch adds cost. Tight loops are slower than in compiled code.',
+  },
+  {
+    title: 'Warm-up behavior',
+    detail:
+      'JITs need time and stable shapes to optimize. Short-lived scripts may never get fast.',
+  },
+  {
+    title: 'Object overhead',
+    detail:
+      'Dynamic objects store metadata and hash tables; memory footprints grow.',
+  },
+  {
+    title: 'GC pauses',
+    detail:
+      'Stop-the-world pauses or incremental GC can affect tail latency.',
+  },
+  {
+    title: 'I/O dominance',
+    detail:
+      'Most apps are I/O-bound; batching and caching often provide bigger wins than CPU tuning.',
+  },
+  {
+    title: 'Interop costs',
+    detail:
+      'Crossing into native code or JIT tiers can copy data and incur marshaling overhead.',
   },
 ]
 
@@ -97,22 +384,27 @@ const applications = [
   {
     context: 'Web frontends',
     detail:
-      'Browsers interpret and JIT JavaScript to make pages interactive. Rapid deploys and dynamic typing allow shipping new logic without client recompiles.',
+      'JavaScript in the browser enables rapid, cross-platform deployment of UI logic.',
   },
   {
     context: 'Scripting and automation',
     detail:
-      'Python, Ruby, and shell excel at glue code: file manipulation, API calls, DevOps pipelines, and test harnesses where developer speed beats raw throughput.',
+      'Python, Ruby, and shell excel at glue code, integration, and workflow automation.',
   },
   {
     context: 'Data analysis and ML prototyping',
     detail:
-      'Scientists iterate quickly in Python notebooks while heavy lifting occurs in compiled extensions (NumPy, PyTorch) that the interpreter orchestrates.',
+      'Notebooks and interactive environments let researchers iterate quickly on datasets.',
   },
   {
     context: 'Serverless and CLIs',
     detail:
-      'Fast startup makes interpreted languages attractive for short-lived functions and command-line tools, provided cold start overhead is acceptable.',
+      'Fast startup and packaging make interpreted languages attractive for short-lived tasks.',
+  },
+  {
+    context: 'Education and teaching',
+    detail:
+      'Readable syntax and interactive feedback lower the barrier to learning.',
   },
 ]
 
@@ -124,356 +416,162 @@ const examples = [
 >>> [math.sin(math.radians(a)) for a in angles]
 [0.0, 0.5, 0.7071067811865475, 0.8660254037844386, 1.0]`,
     explanation:
-      'Immediate feedback encourages experimentation. The interpreter compiles each line to bytecode and executes it on the spot.',
+      'Immediate feedback encourages experimentation; each line is compiled to bytecode and executed.',
   },
   {
     title: 'Dynamic dispatch in practice (JavaScript)',
     code: `function format(user) {
-    if (user.premium) return user.name.toUpperCase();
-    return user.name;
+  if (user.premium) return user.name.toUpperCase();
+  return user.name;
 }
 format({ name: "Ada", premium: true });`,
     explanation:
-      'Properties can appear at runtime; inline caches in modern engines memoize shapes to keep repeated calls fast despite late binding.',
+      'Property lookup and dynamic shapes can be optimized with inline caches.',
   },
   {
-    title: 'When interpretation bottlenecks',
-    code: `# Python: slow loop
-total = 0
+    title: 'Vectorized math vs loops (Python + NumPy)',
+    code: `total = 0
 for x in data:
-    total += x * 1.1
+  total += x * 1.1
 
-# Faster: push work into vectorized native code
 arr = np.array(data, dtype=np.float64)
 total = (arr * 1.1).sum()`,
     explanation:
-      'Interpreter overhead per iteration can dominate. Offloading hot loops to compiled extensions keeps high-level ergonomics while regaining speed.',
+      'Interpreter overhead per iteration can dominate; vectorized native code is faster.',
+  },
+  {
+    title: 'Cache-aware batch processing',
+    code: `def process(ids, fetch):
+    batches = [ids[i:i+100] for i in range(0, len(ids), 100)]
+    return [fetch(batch) for batch in batches]`,
+    explanation:
+      'Batching reduces per-call overhead and improves I/O efficiency in interpreted environments.',
   },
 ]
 
 const pitfalls = [
-  'Assuming speed without measurement: interpreter dispatch and dynamic types can surprise in hot loops.',
-  'Ignoring warm-up: JIT optimizations need stable shapes and time; microbenchmarks that stop early mislead.',
-  'Memory leaks via lingering references: long-lived servers need profiling to catch reference cycles or caches.',
-  'Unbounded dynamism: excessive use of eval or runtime code generation complicates security, tooling, and performance.',
-  'Deployment drift: relying on system interpreters can lead to version mismatches; pin and vendor runtimes when reproducibility matters.',
+  'Assuming speed without measurement: interpreter dispatch and dynamic types can surprise.',
+  'Ignoring warm-up: JIT optimization needs stable shapes and time.',
+  'Memory leaks via references: caches and globals can prevent GC from freeing objects.',
+  'Excessive eval or runtime code generation complicates security and tooling.',
+  'Deployment drift: unpinned runtime versions cause subtle behavior changes.',
+  'Hot loops in pure script: move heavy work to native or vectorized libraries.',
 ]
 
 const decisionPoints = [
-  'Optimize for iteration speed and flexibility: use interpreted languages for scripting, glue, and fast-changing products.',
-  'Need low latency with stable throughput: measure. If interpreter overhead dominates, move hotspots to native extensions or choose compiled paths.',
-  'Short-lived workloads: prefer interpreters with minimal warm-up or avoid heavy JIT tiers.',
-  'Operational simplicity: choose portable runtimes with easy packaging (single-file executables, containers) to avoid environment drift.',
+  'Choose interpreted languages for iteration speed, scripting, and glue logic.',
+  'For CPU-bound hotspots, use native extensions or compiled modules.',
+  'Short-lived workloads favor interpreters with minimal warm-up.',
+  'Use packaging tools to lock runtime versions and dependencies.',
+  'Prioritize observability to connect runtime behavior to performance.',
 ]
 
 const advancedInsights = [
   {
-    title: 'Inline caches and hidden classes',
+    title: 'Inline caches and shapes',
     detail:
-      'Engines like V8 create shapes for objects and attach inline caches to call sites. Stable shapes lead to monomorphic call sites that JIT well; polymorphic sites deoptimize.',
+      'Stable object shapes lead to monomorphic call sites that JIT well; polymorphism deoptimizes.',
   },
   {
     title: 'Tracing vs method JITs',
     detail:
-      'Tracing JITs record hot traces through loops, while method JITs compile hot functions. Workload characteristics determine which strategy yields better speed and stability.',
+      'Tracing JITs optimize loops; method JITs optimize functions. Workload shape determines which wins.',
   },
   {
-    title: 'Garbage collection tuning',
+    title: 'GC tuning',
     detail:
-      'Adjust heap sizes and generations for latency vs throughput. Incremental and concurrent GC reduce pause times for interactive apps; throughput GCs suit batch workloads.',
+      'Heap sizing and generational tuning trade throughput for latency and pause times.',
   },
   {
-    title: 'FFI bridges and polyglot runtimes',
+    title: 'FFI and polyglot runtimes',
     detail:
-      'FFI lets interpreted code call native libraries. Polyglot platforms (GraalVM) allow mixing languages while sharing optimizations and tooling.',
+      'GraalVM, WASM, and FFI let interpreted code call native code with shared tooling.',
   },
-]
-
-const sources = [
-  'Structure and Interpretation of Computer Programs for the philosophy of interpreters and evaluators.',
-  'V8 and PyPy papers for modern JIT and inline cache strategies.',
-  'Dragon Book chapters on interpretation vs compilation trade-offs.',
-  'GeeksforGeeks: interpreted vs compiled language overviews for quick contrasts.',
-  'Official docs for CPython, Ruby MRI, and Lua for bytecode and VM designs.',
+  {
+    title: 'Runtime instrumentation',
+    detail:
+      'Sampling profilers and tracing are critical for tracking interpreter overhead.',
+  },
+  {
+    title: 'Packaging for predictability',
+    detail:
+      'Bundling runtimes and dependencies avoids version drift in production.',
+  },
 ]
 
 const takeaways = [
-  'Interpreted languages prioritize developer speed, flexibility, and immediate feedback, often trading raw performance.',
-  'Warm-up, dispatch overhead, and GC shape runtime profiles; measure real workloads before optimizing or rewriting.',
-  'JITs narrow the gap when workloads are stable; for hot loops, offload to native extensions or vectorized libraries.',
-  'Control your runtime environment: pin versions, manage dependencies, and use profiling and GC tuning to keep systems healthy.',
+  'Interpreted languages maximize flexibility and fast iteration.',
+  'Dispatch overhead, GC, and warm-up shape performance profiles.',
+  'JITs narrow the gap but require stable shapes and warm-up time.',
+  'Keep hot loops in native or vectorized code when performance matters.',
 ]
-
-const styles = `
-  * {
-    box-sizing: border-box;
-  }
-
-  .win95-page {
-    width: 100%;
-    min-height: 100vh;
-    background: #C0C0C0;
-    color: #000;
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-    line-height: 1.35;
-    -webkit-font-smoothing: none;
-    text-rendering: optimizeSpeed;
-    margin: 0;
-    padding: 0;
-  }
-
-  .win95-window {
-    width: 100%;
-    min-height: 100vh;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    background: #C0C0C0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .win95-title-bar {
-    background: #000080;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 6px;
-    gap: 8px;
-    font-weight: bold;
-    letter-spacing: 0.2px;
-  }
-
-  .win95-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .win95-close {
-    background: #C0C0C0;
-    color: #000;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-weight: bold;
-    padding: 2px 10px;
-    min-width: 28px;
-    cursor: pointer;
-  }
-
-  .win95-close:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-close:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -4px;
-  }
-
-  .win95-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
-  }
-
-  .win95-header-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4px;
-  }
-
-  .win95-button {
-    padding: 3px 10px 2px;
-    background: #C0C0C0;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1.2;
-    text-decoration: none;
-    color: #000;
-  }
-
-  .win95-button:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -3px;
-  }
-
-  .win95-section {
-    border: 2px solid;
-    border-color: #808080 #404040 #404040 #808080;
-    padding: 10px;
-    margin: 0;
-  }
-
-  .win95-section legend {
-    padding: 0 6px;
-    font-weight: bold;
-  }
-
-  .win95-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 8px;
-  }
-
-  .win95-grid.tight {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 6px;
-  }
-
-  .win95-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .win95-panel {
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
-    background: #C0C0C0;
-    padding: 8px;
-  }
-
-  .win95-panel.raised {
-    border-color: #fff #404040 #404040 #fff;
-  }
-
-  .win95-panel strong,
-  .win95-panel h4,
-  .win95-panel h3 {
-    font-weight: bold;
-  }
-
-  .win95-text {
-    margin: 0;
-  }
-
-  .win95-list {
-    margin: 0;
-    padding-left: 18px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-ordered {
-    margin: 0;
-    padding-left: 20px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-code {
-    margin: 8px 0 6px;
-    padding: 8px;
-    background: #bdbdbd;
-    border: 2px solid;
-    border-color: #404040 #fff #fff #404040;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    overflow-x: auto;
-    color: #000;
-  }
-
-  a {
-    color: #000;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible,
-  button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: 2px;
-  }
-
-  button {
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-  }
-
-  .win95-caption {
-    margin: 6px 0 0;
-  }
-`
 
 export default function InterpretedLanguagesPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{styles}</style>
-      <div className="win95-window">
-        <div className="win95-title-bar">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
           <span className="win95-title">Interpreted Languages</span>
-          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
-        </div>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
-            <Link to="/algoViz" className="win95-button">
+            <div>
+              <div className="win95-subheading">Dynamic runtimes that trade raw speed for flexibility</div>
+              <p className="win95-text">
+                Interpreted languages execute through a runtime that stays present for every operation. The tradeoff is higher
+                constant factors in exchange for fast iteration, portability, and expressive dynamism.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
               BACK TO CATALOG
             </Link>
           </div>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                Interpreters keep the runtime in the loop for every operation. They favor flexibility, portability, and fast
-                edit-run cycles over the last drop of performance. Understanding the interpreter and its JIT, if present, helps
-                predict when code will be fast enough and when to reach for native helpers.
+                Interpreters keep the runtime in the loop for every operation. They favor flexibility, portability, and quick
+                edit-run cycles. When performance matters, you lean on JIT tiers, vectorized libraries, or native extensions.
               </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {milestones.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Core concept and mental models</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>How it works</legend>
-            <div className="win95-grid tight">
+            <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
                 <div key={block.heading} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{block.heading}</strong>
-                  </p>
+                  <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
                     {block.bullets.map((point) => (
                       <li key={point}>{point}</li>
@@ -484,99 +582,99 @@ export default function InterpretedLanguagesPage(): JSX.Element {
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{note.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{note.detail}</p>
+          <fieldset className="win95-fieldset">
+            <legend>Runtime architecture</legend>
+            <div className="win95-grid win95-grid-2">
+              {runtimeArchitecture.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              Expect more variability than ahead-of-time binaries. Warm-up, GC pauses, and shape stability affect tail latency.
-              Profile real request patterns, not just microbenchmarks.
-            </p>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceFactors.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Measure real workloads. Warm-up, GC pauses, and object shapes can affect tail latency more than average runtime.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.context}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
                 <div key={example.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{example.title}</strong>
-                  </p>
+                  <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text win95-caption">{example.explanation}</p>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
-            <ul className="win95-list">
-              {pitfalls.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
-            <ol className="win95-ordered">
-              {decisionPoints.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionPoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights and frontiers</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Further reading and sources</legend>
-            <ul className="win95-list">
-              {sources.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </fieldset>
-
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel raised">
+            <div className="win95-panel">
               <ul className="win95-list">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
