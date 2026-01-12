@@ -2,31 +2,260 @@ import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
+
 const milestones = [
   {
     title: 'Assembly languages codify processor manuals (1950s)',
     detail:
-      'Mnemonic opcodes replaced raw binary, letting programmers name registers and memory addresses directly while matching the hardware one-to-one.',
+      'Mnemonic opcodes replaced raw binary, letting programmers name registers and memory addresses directly.',
   },
   {
     title: 'C unifies portability and control (1972)',
     detail:
-      'Dennis Ritchie built C for Unix, offering pointer arithmetic and manual memory while compiling efficiently on many architectures. It became the lingua franca for kernels and runtimes.',
+      'C mapped cleanly to hardware while staying portable, becoming the lingua franca of kernels and runtimes.',
   },
   {
     title: 'C++ adds zero-cost abstractions (1980s)',
     detail:
-      'Bjarne Stroustrup aimed to add classes and strong type support without paying runtime overhead, shaping the idea of zero-cost abstractions that compile down to efficient code.',
+      'Templates, RAII, and inlining enabled higher-level structure without mandatory runtime overhead.',
+  },
+  {
+    title: 'Modern compilers and optimizers (1990s-2000s)',
+    detail:
+      'LLVM and GCC matured optimization pipelines, linking low-level control with aggressive optimization.',
   },
   {
     title: 'Rust emphasizes safety with control (2010s)',
     detail:
-      'Rust kept deterministic performance but introduced a borrow checker to prevent data races and many memory errors at compile time, pushing system code toward safer defaults.',
+      'Rust introduced ownership and borrowing to prevent memory bugs without a garbage collector.',
   },
   {
     title: 'SIMD and vector intrinsics go mainstream',
     detail:
-      'Instruction set extensions (SSE, AVX, NEON) encouraged explicit vectorization. Intrinsics exposed these capabilities to low-level code for tight loops in media and numerical workloads.',
+      'SSE, AVX, and NEON exposed explicit vectorization for media and numerical workloads.',
   },
 ]
 
@@ -34,62 +263,148 @@ const mentalModels = [
   {
     title: 'Bare metal contract',
     detail:
-      'Low-level code is a contract with the CPU and memory hierarchy. You control layout, lifetime, and ordering, which yields speed when honored and chaos when broken.',
+      'You control layout, lifetime, and ordering. Violations become undefined behavior or security bugs.',
   },
   {
     title: 'Cost is visible',
     detail:
-      'Every abstraction is measurable: an extra branch mispredict, a cache line split, an unexpected allocation. Thinking in cycles per cache line helps decisions.',
+      'Every allocation, branch, and cache miss is measurable; performance is shaped by the memory hierarchy.',
   },
   {
     title: 'Deterministic tools',
     detail:
-      'There is little runtime safety net. Determinism comes from explicit ownership, RAII patterns, and disciplined concurrency rather than garbage collectors or dynamic checks.',
+      'No GC pauses. Predictability comes from explicit ownership, careful synchronization, and manual tuning.',
+  },
+  {
+    title: 'Hardware-first thinking',
+    detail:
+      'Data structures are chosen for cache lines, alignment, and vector width, not just big-O.',
+  },
+  {
+    title: 'Sharp edges, sharp tools',
+    detail:
+      'You gain power and risk. Tooling and discipline are essential to stay safe.',
   },
 ]
 
-const mechanics = [
+const coreMechanics = [
   {
     heading: 'Compilation pipeline',
     bullets: [
-      'Parsing to an AST, lowering to IR (LLVM IR, GCC GIMPLE), then machine-specific codegen. Optimizations like inlining and vectorization aim for predictable layout and branch patterns.',
-      'Linkers resolve symbols and lay out segments (.text, .data, .bss). Static linking yields self-contained binaries; dynamic linking trades size for flexibility.',
-      'Debug info (DWARF, PDB) maps machine code back to source for profilers and debuggers.',
+      'Source to AST, then lowered to IR (LLVM IR, GCC GIMPLE) and machine code.',
+      'Linkers resolve symbols, layout segments, and decide static vs dynamic linking.',
+      'Debug info (DWARF, PDB) maps assembly back to source for profiling and debugging.',
     ],
   },
   {
     heading: 'Memory and layout control',
     bullets: [
-      'Stack vs heap decisions are explicit. Placement new, custom allocators, and arenas control fragmentation and lifetime.',
-      'Alignment and padding affect cache lines and SIMD safety; struct packing can reduce size but may hurt performance.',
-      'Pointer arithmetic exposes aliasing risks; qualifiers like restrict and compiler hints guide optimization.',
+      'Stack vs heap decisions are explicit; custom allocators and arenas manage lifetimes.',
+      'Alignment and padding affect cache lines, SIMD safety, and ABI correctness.',
+      'Pointer arithmetic and aliasing rules guide optimization and safety.',
     ],
   },
   {
     heading: 'Concurrency and ordering',
     bullets: [
-      'Threads share memory directly; synchronization uses mutexes, atomics, and fences.',
-      'Memory models define ordering guarantees. C++11 atomics and Rust provide acquire-release and sequentially consistent primitives.',
-      'Lock-free structures use compare-and-swap or load-linked/store-conditional; correctness hinges on careful progress guarantees.',
+      'Threads share memory; synchronization uses mutexes, atomics, and fences.',
+      'Memory models define ordering guarantees; misuse leads to subtle data races.',
+      'Lock-free structures rely on CAS/LL-SC with careful progress guarantees.',
     ],
+  },
+]
+
+const hardwareModel = [
+  {
+    title: 'Registers and pipelines',
+    detail:
+      'Modern CPUs pipeline instructions; register pressure can spill to memory and slow hot loops.',
+  },
+  {
+    title: 'Cache hierarchy',
+    detail:
+      'L1/L2/L3 caches reward spatial locality. Layout and access patterns dominate throughput.',
+  },
+  {
+    title: 'Branch prediction',
+    detail:
+      'Mispredicts cost dozens of cycles. Data-oriented layouts and branchless code help.',
+  },
+  {
+    title: 'SIMD width',
+    detail:
+      'Vector units process multiple elements per instruction. Align data to vector width for best results.',
+  },
+  {
+    title: 'NUMA effects',
+    detail:
+      'On multi-socket machines, memory locality affects latency; pin threads or allocate locally.',
+  },
+  {
+    title: 'I/O and syscalls',
+    detail:
+      'Crossing into the kernel is expensive; batch syscalls and reduce context switches.',
+  },
+]
+
+const toolingAndSafety = [
+  {
+    title: 'Sanitizers',
+    detail:
+      'ASan, UBSan, and TSan catch memory and concurrency bugs early, often with minimal effort.',
+  },
+  {
+    title: 'Profilers',
+    detail:
+      'perf, VTune, Instruments, and flamegraphs reveal cache misses and hot functions.',
+  },
+  {
+    title: 'Static analysis',
+    detail:
+      'Clang-Tidy, Coverity, and Rust Clippy catch API misuse and dangerous patterns.',
+  },
+  {
+    title: 'Fuzzing',
+    detail:
+      'libFuzzer and AFL discover edge cases that manual testing misses.',
+  },
+  {
+    title: 'Memory checking',
+    detail:
+      'Valgrind and AddressSanitizer highlight leaks, use-after-free, and double frees.',
+  },
+  {
+    title: 'Build flags',
+    detail:
+      'Optimization levels, LTO, and CPU targets change performance drastically; measure with the real build.',
   },
 ]
 
 const complexityNotes = [
   {
-    title: 'Asymptotics match algorithms; constants dominate reality',
+    title: 'Asymptotics stay, constants shrink',
     detail:
-      'Low-level code shines by shrinking constant factors: fewer cache misses, vectorized loops, and reduced allocations. Big-O is unchanged, but practical throughput improves.',
-  },
-  {
-    title: 'Cache and branch behavior',
-    detail:
-      'Traversal patterns that respect spatial and temporal locality often deliver multi-x speedups. Branch mispredicts can cost dozens of cycles; predictable branches or SIMD masks help.',
+      'Low-level code improves constant factors via cache locality, SIMD, and reduced allocations.',
   },
   {
     title: 'Deterministic latency',
     detail:
-      'Without garbage collection pauses, latency distributions narrow. The trade is manual lifetime management and potential stalls from locks or page faults.',
+      'No GC pauses, but lock contention and page faults can still cause spikes.',
+  },
+  {
+    title: 'Layout-driven speed',
+    detail:
+      'SoA layouts often outperform AoS when vectorizing or scanning large arrays.',
+  },
+  {
+    title: 'Memory bandwidth limits',
+    detail:
+      'For large datasets, bandwidth caps performance regardless of instruction count.',
+  },
+  {
+    title: 'Binary size vs instruction cache',
+    detail:
+      'Over-inlining can bloat binaries and hurt i-cache performance.',
   },
 ]
 
@@ -97,27 +412,32 @@ const applications = [
   {
     context: 'Operating systems and kernels',
     detail:
-      'Schedulers, virtual memory, and drivers depend on deterministic memory and hardware access. C and Rust dominate here for control and predictable footprints.',
-  },
-  {
-    context: 'Game engines and real-time graphics',
-    detail:
-      'Tight loops over spatial data benefit from cache-aware ECS architectures, SIMD math, and explicit memory arenas to keep frame times stable.',
+      'Schedulers, drivers, and memory managers require deterministic control and minimal overhead.',
   },
   {
     context: 'Embedded and firmware',
     detail:
-      'Resource-constrained devices need precise memory use and timing. Bare-metal C, Rust, and sometimes assembly ensure predictable interrupts and power budgets.',
+      'Resource-constrained devices demand precise memory use and predictable interrupts.',
+  },
+  {
+    context: 'Game engines and graphics',
+    detail:
+      'Real-time frame budgets depend on data-oriented design, SIMD math, and memory arenas.',
+  },
+  {
+    context: 'Networking and storage',
+    detail:
+      'Low latency packet processing and disk I/O benefit from tight control and zero-copy buffers.',
   },
   {
     context: 'Cryptography and compression',
     detail:
-      'Implementations rely on constant-time operations, bit-level control, and vector intrinsics to maximize throughput without leaking side-channel information.',
+      'Constant-time operations and bit-level control protect security and maximize throughput.',
   },
   {
     context: 'High-performance computing',
     detail:
-      'Numerical kernels use explicit vectorization, tiling, and cache blocking. MPI and OpenMP integrate with C, C++, and Fortran for parallel scaling.',
+      'Vectorization, tiling, and MPI/OpenMP drive throughput at scale.',
   },
 ]
 
@@ -125,362 +445,171 @@ const examples = [
   {
     title: 'Cache-friendly traversal (C++)',
     code: `double sum_rows(const std::vector<std::vector<double>>& m) {
-    double s = 0.0;
-    for (const auto& row : m) {
-        // contiguous inner vectors keep access sequential
-        for (double v : row) s += v;
-    }
-    return s;
+  double s = 0.0;
+  for (const auto& row : m) {
+    for (double v : row) s += v;
+  }
+  return s;
 }`,
     explanation:
-      'Row-major, contiguous storage keeps accesses within cache lines, reducing misses compared to scattered pointers. The code is explicit about iteration order and layout expectations.',
+      'Row-major storage keeps memory sequential, minimizing cache misses.',
   },
   {
-    title: 'Manual memory and RAII (C++)',
+    title: 'Manual memory with RAII (C++)',
     code: `struct Buffer {
-    size_t n;
-    double* data;
-    Buffer(size_t n) : n(n), data(static_cast<double*>(malloc(n * sizeof(double)))) {}
-    ~Buffer() { free(data); }
+  size_t n;
+  double* data;
+  Buffer(size_t n) : n(n), data(static_cast<double*>(malloc(n * sizeof(double)))) {}
+  ~Buffer() { free(data); }
 };`,
     explanation:
-      'Allocation and deallocation are explicit, and RAII ensures cleanup even on exceptions. There is no hidden collector, so lifetime discipline is required.',
+      'Lifetime is explicit; RAII guarantees cleanup without a garbage collector.',
   },
   {
     title: 'Safe systems control (Rust)',
     code: `fn increment_all(xs: &mut [i32]) {
-    for v in xs.iter_mut() {
-        *v += 1;
-    }
+  for v in xs.iter_mut() {
+    *v += 1;
+  }
 }`,
     explanation:
-      'Rust borrows give mutable access without aliasing, enabling bounds checks to be optimized away in release builds. You retain predictable performance with compile-time safety.',
+      'Borrowing prevents aliasing and enables compiler optimizations.',
+  },
+  {
+    title: 'Branchless clamp (C)',
+    code: `int clamp(int x, int lo, int hi) {
+  if (x < lo) return lo;
+  if (x > hi) return hi;
+  return x;
+}`,
+    explanation:
+      'Even simple conditionals matter in hot loops; measure branch behavior.',
   },
 ]
 
 const pitfalls = [
-  'Undefined behavior: out-of-bounds access, use-after-free, and data races can silently corrupt state.',
-  'Aliasing surprises: overlapping pointers can block vectorization unless the compiler can prove independence.',
-  'Endianness and alignment: incorrect assumptions break portability or trigger traps on stricter architectures.',
-  'Concurrency hazards: missing fences or misuse of atomics leads to heisenbugs that resist reproduction.',
-  'Security risks: unchecked inputs can yield buffer overflows, format string exploits, or timing leaks.',
+  'Undefined behavior: out-of-bounds access and use-after-free corrupt state silently.',
+  'Aliasing surprises: overlapping pointers can block vectorization.',
+  'Alignment mistakes: misaligned loads can crash on some architectures.',
+  'Concurrency hazards: missing fences or misuse of atomics leads to heisenbugs.',
+  'Security risks: unchecked inputs can yield buffer overflows and timing leaks.',
+  'Premature micro-optimizations that reduce clarity without measurable wins.',
 ]
 
 const decisionPoints = [
-  'Need deterministic latency or tight control of memory layout: choose low-level languages and measure cache and branch behavior.',
-  'Operating close to hardware (kernels, drivers, firmware): require explicit control and predictable binaries.',
-  'Performance hotspots inside a larger system: rewrite critical paths in C, C++, or Rust while keeping higher-level orchestration elsewhere.',
-  'Team experience and safety posture: if memory safety is critical and expertise is limited, consider Rust or stricter subsets before raw C.',
+  'Need deterministic latency or tight control of memory layout: choose low-level languages.',
+  'Operating close to hardware (kernels, drivers, firmware) requires explicit control.',
+  'Use low-level modules for hotspots and keep orchestration in higher-level code.',
+  'If memory safety is critical and expertise is limited, prefer Rust or safe subsets.',
+  'Benchmark with realistic workloads before committing to low-level rewrites.',
 ]
 
 const advancedInsights = [
   {
     title: 'Memory ordering and atomics',
     detail:
-      'Acquire-release and relaxed atomics give fine-grained ordering control. Misusing them can pass tests and still fail under load. Tools like ThreadSanitizer and Loom help validate behavior.',
-  },
-  {
-    title: 'SIMD and data layout',
-    detail:
-      'Struct-of-arrays often vectorizes better than array-of-structs. Aligning data to 32 or 64 bytes can avoid penalties and enable wider loads and stores.',
+      'Acquire-release vs relaxed atomics define visibility guarantees; misuse can pass tests and fail under load.',
   },
   {
     title: 'Zero-cost abstractions',
     detail:
-      'Templates, constexpr, and inlining can express high-level patterns that disappear at compile time. The cost model must remain clear; poor inlining can still bloat code or hurt cache.',
+      'Inlining and templates can express high-level patterns that compile away, but overuse can bloat binaries.',
   },
   {
-    title: 'Tooling for correctness',
+    title: 'Data-oriented design',
     detail:
-      'Sanitizers (ASan, UBSan, TSan), valgrind, perf, and flamegraphs are essential. They map machine-level faults back to source while preserving the mental model of the hardware.',
+      'Struct-of-arrays layouts and fixed-size pools reduce cache misses and improve vectorization.',
   },
-]
-
-const sources = [
-  'The C Programming Language (Kernighan and Ritchie) for idioms and portability rules.',
-  'C++ references: Stroustrup and cppreference for zero-cost abstraction patterns and memory model.',
-  'Rustonomicon and Rust Book for safe systems patterns and ownership semantics.',
-  'Intel and ARM architecture manuals for cache, SIMD, and memory ordering specifics.',
-  'GeeksforGeeks: differences between high-level and low-level languages for quick contrasts.',
+  {
+    title: 'Link-time optimization',
+    detail:
+      'LTO enables cross-module inlining and dead-code elimination, often with large speed gains.',
+  },
+  {
+    title: 'Constant-time discipline',
+    detail:
+      'Crypto code must avoid data-dependent branches and memory access to prevent timing leaks.',
+  },
+  {
+    title: 'Platform-specific tuning',
+    detail:
+      'Targeting CPU features (AVX2, AVX-512, NEON) can yield huge gains but reduces portability.',
+  },
 ]
 
 const takeaways = [
-  'Low-level languages expose hardware directly, enabling deterministic performance and tight memory control.',
-  'Safety nets are thin: undefined behavior and concurrency errors are the main failure modes; tooling and discipline are mandatory.',
-  'Cache behavior, layout, and branch predictability often matter more than big-O once you pick a low-level tool.',
-  'Blend approaches: keep orchestration in higher-level code while isolating critical loops and device access in low-level modules.',
+  'Low-level languages expose hardware for deterministic performance and tight memory control.',
+  'The main risks are undefined behavior and concurrency bugs; tooling is not optional.',
+  'Cache locality and data layout often matter more than algorithmic tweaks once big-O is fixed.',
+  'Blend approaches: keep control where it matters and avoid rewriting everything.',
 ]
-
-const styles = `
-  * {
-    box-sizing: border-box;
-  }
-
-  .win95-page {
-    width: 100%;
-    min-height: 100vh;
-    background: #C0C0C0;
-    color: #000;
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-    line-height: 1.35;
-    -webkit-font-smoothing: none;
-    text-rendering: optimizeSpeed;
-    margin: 0;
-    padding: 0;
-  }
-
-  .win95-window {
-    width: 100%;
-    min-height: 100vh;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    background: #C0C0C0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .win95-title-bar {
-    background: #000080;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 6px;
-    gap: 8px;
-    font-weight: bold;
-    letter-spacing: 0.2px;
-  }
-
-  .win95-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .win95-close {
-    background: #C0C0C0;
-    color: #000;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-weight: bold;
-    padding: 2px 10px;
-    min-width: 28px;
-    cursor: pointer;
-  }
-
-  .win95-close:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-close:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -4px;
-  }
-
-  .win95-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
-  }
-
-  .win95-header-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4px;
-  }
-
-  .win95-button {
-    padding: 3px 10px 2px;
-    background: #C0C0C0;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1.2;
-    text-decoration: none;
-    color: #000;
-  }
-
-  .win95-button:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -3px;
-  }
-
-  .win95-section {
-    border: 2px solid;
-    border-color: #808080 #404040 #404040 #808080;
-    padding: 10px;
-    margin: 0;
-  }
-
-  .win95-section legend {
-    padding: 0 6px;
-    font-weight: bold;
-  }
-
-  .win95-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 8px;
-  }
-
-  .win95-grid.tight {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 6px;
-  }
-
-  .win95-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .win95-panel {
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
-    background: #C0C0C0;
-    padding: 8px;
-  }
-
-  .win95-panel.raised {
-    border-color: #fff #404040 #404040 #fff;
-  }
-
-  .win95-panel strong,
-  .win95-panel h4,
-  .win95-panel h3 {
-    font-weight: bold;
-  }
-
-  .win95-text {
-    margin: 0;
-  }
-
-  .win95-list {
-    margin: 0;
-    padding-left: 18px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-ordered {
-    margin: 0;
-    padding-left: 20px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-code {
-    margin: 8px 0 6px;
-    padding: 8px;
-    background: #bdbdbd;
-    border: 2px solid;
-    border-color: #404040 #fff #fff #404040;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    overflow-x: auto;
-    color: #000;
-  }
-
-  a {
-    color: #000;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible,
-  button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: 2px;
-  }
-
-  button {
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-  }
-
-  .win95-caption {
-    margin: 6px 0 0;
-  }
-`
 
 export default function LowLevelLanguagesPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{styles}</style>
-      <div className="win95-window">
-        <div className="win95-title-bar">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
           <span className="win95-title">Low-Level Languages</span>
-          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
-        </div>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
-            <Link to="/algoViz" className="win95-button">
+            <div>
+              <div className="win95-subheading">Direct control over memory, layout, and performance</div>
+              <p className="win95-text">
+                Low-level languages expose hardware details so you can tune cache behavior, memory layout, and concurrency.
+                They demand precision and discipline, but they deliver deterministic performance when done right.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
               BACK TO CATALOG
             </Link>
           </div>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                These languages prioritize control over convenience. They expose registers, memory, and calling conventions so
-                you can tune cache usage, branch behavior, and binary size. They demand an accurate mental model of the CPU,
-                memory hierarchy, and operating system to avoid undefined behavior.
+                These languages prioritize control over convenience. You manage allocation, lifetime, and layout explicitly, which
+                enables tight latency budgets and predictable binaries. The cost is complexity and the risk of undefined behavior.
               </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {milestones.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Core concept and mental models</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>How it works</legend>
-            <div className="win95-grid tight">
-              {mechanics.map((block) => (
+            <div className="win95-grid win95-grid-3">
+              {coreMechanics.map((block) => (
                 <div key={block.heading} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{block.heading}</strong>
-                  </p>
+                  <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
                     {block.bullets.map((point) => (
                       <li key={point}>{point}</li>
@@ -491,99 +620,112 @@ export default function LowLevelLanguagesPage(): JSX.Element {
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{note.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{note.detail}</p>
+          <fieldset className="win95-fieldset">
+            <legend>Hardware cost model</legend>
+            <div className="win95-grid win95-grid-2">
+              {hardwareModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              Once algorithms are chosen, gains come from memory locality, vectorization, and minimizing synchronization.
-              Measure with perf, flamegraphs, and cache-aware benchmarks before rewriting interfaces.
-            </p>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Performance intuition</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Once algorithms are chosen, most gains come from layout, vectorization, and minimizing synchronization. Measure
+                first, optimize second.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and safety net</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingAndSafety.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.context}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
                 <div key={example.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{example.title}</strong>
-                  </p>
+                  <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text win95-caption">{example.explanation}</p>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
-            <ul className="win95-list">
-              {pitfalls.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
-            <ol className="win95-ordered">
-              {decisionPoints.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionPoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights and frontiers</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Further reading and sources</legend>
-            <ul className="win95-list">
-              {sources.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </fieldset>
-
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel raised">
+            <div className="win95-panel">
               <ul className="win95-list">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
