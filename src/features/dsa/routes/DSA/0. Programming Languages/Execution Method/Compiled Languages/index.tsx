@@ -2,31 +2,260 @@ import { Link } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
+const win95Styles = `
+.win95-page {
+  min-height: 100vh;
+  background: #C0C0C0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+  -webkit-font-smoothing: none;
+}
+
+.win95-page * {
+  box-sizing: border-box;
+}
+
+.win95-page a {
+  color: #000;
+  text-decoration: none;
+}
+
+.win95-page a:hover {
+  text-decoration: underline;
+}
+
+.win95-window {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #C0C0C0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.win95-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #000080;
+  color: #fff;
+  padding: 4px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.win95-title {
+  display: inline-block;
+}
+
+.win95-title-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.win95-control {
+  width: 22px;
+  height: 20px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.win95-control:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-control:focus,
+.win95-button:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.win95-content {
+  padding: 10px;
+}
+
+.win95-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.win95-button {
+  padding: 3px 10px 2px;
+  background: #C0C0C0;
+  border: 2px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.win95-button:active {
+  border-color: #404040 #fff #fff #404040;
+}
+
+.win95-fieldset {
+  border: 2px solid;
+  border-color: #808080 #404040 #404040 #808080;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+  background: #C0C0C0;
+}
+
+.win95-fieldset legend {
+  padding: 0 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.win95-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.win95-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.win95-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+.win95-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+.win95-panel {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+  background: #C0C0C0;
+  padding: 8px;
+  border-radius: 0;
+}
+
+.win95-panel--raised {
+  border-color: #fff #404040 #404040 #fff;
+}
+
+.win95-heading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.win95-subheading {
+  font-weight: 700;
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.win95-text {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.win95-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.win95-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.win95-list li {
+  margin-bottom: 4px;
+}
+
+.win95-list--numbered {
+  list-style: decimal;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.win95-table th,
+.win95-table td {
+  border: 1px solid #808080;
+  padding: 6px 6px 4px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win95-table th {
+  font-weight: 700;
+}
+
+.win95-code {
+  margin: 6px 0;
+  background: #C0C0C0;
+  color: #000;
+  padding: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  overflow-x: auto;
+  border-radius: 0;
+}
+`
+
 const milestones = [
   {
-    title: 'FORTRAN I shows compiled code can rival assembly (1957)',
+    title: 'FORTRAN I proves compiled code can rival assembly (1957)',
     detail:
-      'John Backus and team proved an ahead-of-time compiler could optimize high-level math into machine code that matched hand-written assembly for numerical workloads.',
+      'The success of FORTRAN I established the idea that compilers can generate fast native code from high-level notation.',
   },
   {
     title: 'C standardizes portable systems compilation (1970s)',
     detail:
-      'Dennis Ritchie and the Unix group built C to compile efficiently on multiple architectures, anchoring the model of portable source with target-specific binaries.',
+      'C balanced portability with control, enabling the same codebase to target multiple architectures.',
   },
   {
     title: 'Optimizing compilers go mainstream (1980s-1990s)',
     detail:
-      'GCC and commercial toolchains added aggressive optimizations like inlining, loop unrolling, and register allocation guided by SSA, making -O2 the default expectation.',
+      'SSA, register allocation, and inlining became standard, making -O2 a baseline expectation.',
   },
   {
     title: 'Link-time and whole-program optimization',
     detail:
-      'LTO enabled optimizations across translation units, shrinking binaries and speeding hot paths by analyzing the entire program rather than single files.',
+      'LTO merged IR across modules, enabling global inlining and dead-code elimination.',
   },
   {
     title: 'Modern safe systems languages',
     detail:
-      'Rust and Go keep ahead-of-time compilation but add safety or concurrency defaults, reinforcing that compiled does not have to mean unsafe or low ergonomics.',
+      'Rust and Go kept AOT compilation while improving memory safety and concurrency ergonomics.',
+  },
+  {
+    title: 'Multi-target toolchains',
+    detail:
+      'LLVM and GCC matured cross-compilation, enabling one host to build for many targets.',
   },
 ]
 
@@ -34,43 +263,120 @@ const mentalModels = [
   {
     title: 'Blueprint to concrete',
     detail:
-      'Source code is a blueprint; the compiler pours concrete into the exact shape of your CPU. Once cast, behavior is fixed unless you rebuild.',
+      'Source is a blueprint; compilation pours it into a fixed binary that executes without interpretation.',
   },
   {
-    title: 'Cost visibility',
+    title: 'Front-loaded cost',
     detail:
-      'Ahead-of-time compilation exposes cost at build time. Binary size, inlining, and layout are inspectable before shipping, making performance budgeting explicit.',
+      'Work happens at build time: type checking, optimization, and layout decisions before runtime.',
   },
   {
     title: 'Static contracts',
     detail:
-      'Types and lifetimes are enforced before execution. Errors are surfaced during compilation rather than at runtime, shifting defect discovery earlier.',
+      'Types, lifetimes, and visibility are enforced before execution, shifting errors earlier.',
+  },
+  {
+    title: 'The binary is the product',
+    detail:
+      'Deployment ships compiled artifacts; behavior is determined by flags and toolchain versions.',
+  },
+  {
+    title: 'Performance by design',
+    detail:
+      'Predictable performance comes from explicit choices: data layout, inlining, and CPU targets.',
   },
 ]
 
-const mechanics = [
+const pipelineStages = [
   {
-    heading: 'Front-end parsing and typing',
+    heading: 'Front-end',
     bullets: [
-      'Lexer and parser build an AST from source. Static analyzers resolve types, scopes, and detect errors before code generation.',
-      'Modern compilers produce an intermediate representation (IR) such as SSA form to enable optimizations independent of syntax.',
+      'Lexing and parsing build an AST and resolve scopes.',
+      'Type checking and semantic analysis catch errors early.',
+      'Lowering to IR provides a machine-agnostic optimization target.',
     ],
   },
   {
-    heading: 'Optimization pipelines',
+    heading: 'Middle-end',
     bullets: [
-      'Passes perform constant folding, dead code elimination, inlining, loop unrolling, and vectorization when safe.',
-      'Profile-guided optimization (PGO) feeds runtime profiles back into the compiler to guide branch layout and inlining decisions.',
-      'Link-time optimization (LTO) merges IR across modules to remove redundant code and inline across translation units.',
+      'IR optimizations: constant folding, DCE, CSE, inlining, loop unrolling.',
+      'Vectorization and auto-parallelization attempt to use SIMD or threads.',
+      'PGO uses runtime profiles to guide inlining and branch layout.',
     ],
   },
   {
-    heading: 'Code generation and linking',
+    heading: 'Back-end',
     bullets: [
-      'Back-ends map IR to target instructions, manage registers, and schedule instructions for pipelines and caches.',
-      'Assemblers encode instructions; linkers resolve symbols, relocate addresses, and lay out segments into an executable or shared library.',
-      'Build systems orchestrate dependency graphs, incremental rebuilds, and artifact caching.',
+      'Instruction selection maps IR to target opcodes.',
+      'Register allocation and scheduling minimize stalls.',
+      'Assembly and linking produce executables or shared libraries.',
     ],
+  },
+]
+
+const buildArtifacts = [
+  {
+    title: 'Object files',
+    detail:
+      'Per-translation-unit machine code plus relocation info, later stitched by the linker.',
+  },
+  {
+    title: 'Static libraries',
+    detail:
+      'Archive of object files linked into the final binary; increases size but simplifies deployment.',
+  },
+  {
+    title: 'Shared libraries',
+    detail:
+      'Dynamic linking reduces binary size but adds runtime dependency management.',
+  },
+  {
+    title: 'Debug symbols',
+    detail:
+      'Mappings from machine addresses to source lines for debugging and profiling.',
+  },
+  {
+    title: 'Stripped binaries',
+    detail:
+      'Remove symbols to reduce size; keep separate debug artifacts for production.',
+  },
+  {
+    title: 'PDB/DWARF metadata',
+    detail:
+      'Platform-specific debug formats used by profilers and debuggers.',
+  },
+]
+
+const optimizationLevels = [
+  {
+    title: '-O0 / Debug',
+    detail:
+      'Fast compile, maximal debug info, minimal optimization. Good for iteration.',
+  },
+  {
+    title: '-O1',
+    detail:
+      'Light optimizations without long compile times; useful for development builds.',
+  },
+  {
+    title: '-O2',
+    detail:
+      'Balanced optimization; default for release builds in many projects.',
+  },
+  {
+    title: '-O3',
+    detail:
+      'Aggressive inlining and vectorization; can bloat code or hurt cache.',
+  },
+  {
+    title: 'PGO',
+    detail:
+      'Profile-guided optimization uses real workloads to guide hot paths.',
+  },
+  {
+    title: 'LTO',
+    detail:
+      'Whole-program optimization across translation units; improves inlining and DCE.',
   },
 ]
 
@@ -78,17 +384,27 @@ const complexityNotes = [
   {
     title: 'Runtime speed and deterministic overheads',
     detail:
-      'Compiled binaries execute without interpreter dispatch. Overheads come from function calls, cache behavior, and branch prediction rather than dynamic dispatch loops.',
+      'Compiled binaries execute without interpreter dispatch. Overheads come from calls, cache behavior, and branches.',
   },
   {
     title: 'Compile time as a resource',
     detail:
-      'Heavy optimization and large codebases increase compile time. Build caching, incremental builds, and selective optimization levels balance developer velocity against runtime speed.',
+      'Large codebases and heavy optimization increase build time; caching and incremental builds are essential.',
   },
   {
-    title: 'Memory footprint',
+    title: 'Binary size vs performance',
     detail:
-      'Binaries can be small when avoiding dynamic runtimes. Static linking raises size but simplifies deployment; dynamic linking shrinks size but adds versioning complexity.',
+      'Inlining and static linking boost speed but can inflate binary size and hurt i-cache.',
+  },
+  {
+    title: 'CPU target matters',
+    detail:
+      'Targeting AVX2 or NEON can speed hot loops but reduces portability.',
+  },
+  {
+    title: 'Determinism vs flexibility',
+    detail:
+      'Ahead-of-time binaries are predictable but less flexible than JIT-optimized code for dynamic workloads.',
   },
 ]
 
@@ -96,22 +412,27 @@ const applications = [
   {
     context: 'Systems software',
     detail:
-      'Kernels, hypervisors, and databases rely on compiled code for predictable performance, fine-grained memory control, and minimal runtime dependencies.',
+      'Kernels, databases, and runtimes rely on compiled code for predictable performance and tight resource control.',
   },
   {
-    context: 'High-performance computing and numerical code',
+    context: 'High-performance computing',
     detail:
-      'C, C++, and Fortran dominate HPC, where vectorization, cache blocking, and predictable layouts are critical for dense linear algebra and simulation.',
+      'Vectorization, cache blocking, and parallelism dominate; compiled languages provide control.',
   },
   {
-    context: 'Tooling and compilers themselves',
+    context: 'Tooling and infrastructure',
     detail:
-      'Compilers, linkers, and build tools are compiled to maximize startup speed and handle large code graphs without interpreter overhead.',
+      'Compilers, build systems, and CLI tools need fast startup and low overhead.',
   },
   {
     context: 'Game engines and real-time graphics',
     detail:
-      'Frame budgets demand deterministic timing. Compiled languages allow explicit control over memory layouts, SIMD, and threading to hit frame targets.',
+      'Frame budgets demand deterministic timing and explicit control of memory and threading.',
+  },
+  {
+    context: 'Embedded systems',
+    detail:
+      'Small binaries and predictable timing make compiled languages ideal for firmware.',
   },
 ]
 
@@ -119,22 +440,22 @@ const examples = [
   {
     title: 'Tight loop with predictable layout (C)',
     code: `double dot(const double* a, const double* b, size_t n) {
-    double s = 0.0;
-    for (size_t i = 0; i < n; ++i) {
-        s += a[i] * b[i];
-    }
-    return s;
+  double s = 0.0;
+  for (size_t i = 0; i < n; ++i) {
+    s += a[i] * b[i];
+  }
+  return s;
 }`,
     explanation:
-      'Ahead-of-time compilation lets the compiler unroll, vectorize, and schedule loads and multiplies for the target CPU without interpreter dispatch.',
+      'AOT compilation allows vectorization and instruction scheduling for the target CPU.',
   },
   {
-    title: 'Compile-time safety with zero-cost abstractions (Rust)',
+    title: 'Zero-cost abstractions (Rust)',
     code: `fn sum_pairs(xs: &[(i32, i32)]) -> i32 {
-    xs.iter().map(|(a, b)| a + b).sum()
+  xs.iter().map(|(a, b)| a + b).sum()
 }`,
     explanation:
-      'Iterators compile down to simple loops after inlining and monomorphization. Bounds checks are optimized away in release builds when provably safe.',
+      'Iterators are inlined and optimized away, leaving a simple loop in release builds.',
   },
   {
     title: 'Link-time optimization across modules (C++)',
@@ -145,333 +466,133 @@ int add(int a, int b) { return a + b; }
 extern int add(int, int);
 int main() { return add(2, 3); }`,
     explanation:
-      'With LTO, the compiler can inline add into main across translation units, removing call overhead and enabling further constant folding.',
+      'With LTO, add can be inlined into main even across translation units.',
   },
 ]
 
 const pitfalls = [
-  'Undefined behavior: out-of-bounds access or data races can silently corrupt state; the compiler may optimize assuming such cases never happen.',
-  'Optimization surprises: aggressive inlining or vectorization can bloat code size or change cache behavior; measure in context.',
-  'Portability gaps: endianness, alignment, and ABI differences require attention when targeting multiple architectures.',
-  'Build system drift: mismatched flags or stale objects lead to subtle bugs; reproducible builds and clean rebuilds are essential.',
-  'Slow edit-compile-run loops: without incremental builds or caching, heavy optimization slows developers and can hide regressions behind long feedback cycles.',
+  'Undefined behavior: out-of-bounds access and data races can be optimized into incorrect behavior.',
+  'Optimization surprises: aggressive inlining can bloat code and hurt cache performance.',
+  'Portability gaps: ABIs, endianness, and alignment differ across platforms.',
+  'Build system drift: mismatched flags or stale objects cause subtle inconsistencies.',
+  'Slow edit-compile-run loops: heavy optimization slows iteration and hides regressions.',
 ]
 
 const decisionPoints = [
-  'Need maximum predictable performance with minimal runtime overhead: prefer compiled languages.',
-  'Deploying in environments with restricted runtimes or tight binary size: ahead-of-time binaries simplify distribution.',
-  'Interfacing tightly with hardware or system calls: compiled code offers direct access and clear calling conventions.',
-  'If iteration speed dominates and latency is relaxed: consider higher-level or hybrid approaches; otherwise invest in build speed tooling.',
+  'Need maximum predictable performance with minimal runtime overhead: choose compiled languages.',
+  'Shipping in constrained environments: ahead-of-time binaries simplify deployment.',
+  'Hardware access or ABI control: compiled code gives explicit calling conventions and layout.',
+  'If iteration speed dominates: use faster builds or hybrid approaches for orchestration.',
+  'Treat build tooling as part of the product; invest in caching and reproducibility.',
 ]
 
 const advancedInsights = [
   {
     title: 'Profile-guided optimization',
     detail:
-      'Collect real workload profiles, then recompile so the optimizer can reorder branches, inline hot paths, and tune code layout. Gains often exceed manual micro-optimizations.',
+      'PGO reorders branches and inlines hot functions based on real usage patterns.',
   },
   {
     title: 'Cache-aware code generation',
     detail:
-      'Compilers can tile loops and align data, but they need hints: restrict qualifiers, explicit vector types, and data layout choices affect auto-vectorization success.',
-  },
-  {
-    title: 'Static analysis and sanitizers',
-    detail:
-      'AddressSanitizer, ThreadSanitizer, and static analyzers surface memory and concurrency bugs early. They complement the stronger guarantees of languages like Rust.',
+      'Data layout and hints like restrict or alignment pragmas influence vectorization.',
   },
   {
     title: 'Deterministic builds',
     detail:
-      'Pinned toolchains, hermetic builds, and content-addressed caches reduce drift across environments and make performance reproducibility possible.',
+      'Pinned toolchains and hermetic builds reduce drift across environments.',
+  },
+  {
+    title: 'Cross-compilation',
+    detail:
+      'One host can build for many targets; CI pipelines often produce multi-arch binaries.',
+  },
+  {
+    title: 'Security hardening',
+    detail:
+      'Stack canaries, PIE, and ASLR-friendly binaries reduce exploitability.',
+  },
+  {
+    title: 'ABI compatibility',
+    detail:
+      'Stable ABI and symbol versioning matter for shared libraries and plugin ecosystems.',
   },
 ]
 
-const sources = [
-  'The Dragon Book (Aho, Lam, Sethi, Ullman) for compiler theory and optimization pipelines.',
-  'Compilers: Principles, Techniques, and Tools for SSA, register allocation, and code generation foundations.',
-  'GeeksforGeeks: differences between compiled and interpreted languages for quick contrasts.',
-  'Rust Book and C++ references for zero-cost abstractions and monomorphization.',
-  'Intel and ARM optimization manuals for cache-aware and vectorization strategies.',
-]
-
 const takeaways = [
-  'Compiled languages trade slower build times for fast, predictable runtime performance and small deployment footprints.',
-  'Static typing and ahead-of-time analysis move many errors to compile time, but undefined behavior remains a core risk in unsafe subsets.',
-  'Optimization is a feedback loop: measure, profile, and let the compiler help through PGO and LTO before hand-tuning.',
-  'Choose compiled when you need control over layout, latency, and runtime dependencies; pair with faster-build layers for orchestration when iteration speed matters.',
+  'Compiled languages trade build time for fast, predictable runtime behavior.',
+  'Optimization is a feedback loop: measure, profile, then tune flags and layout.',
+  'Binary size, ABI stability, and deployment strategy are part of the design.',
+  'Use PGO and LTO before manual micro-optimizations.',
 ]
-
-const styles = `
-  * {
-    box-sizing: border-box;
-  }
-
-  .win95-page {
-    width: 100%;
-    min-height: 100vh;
-    background: #C0C0C0;
-    color: #000;
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-    line-height: 1.35;
-    -webkit-font-smoothing: none;
-    text-rendering: optimizeSpeed;
-    margin: 0;
-    padding: 0;
-  }
-
-  .win95-window {
-    width: 100%;
-    min-height: 100vh;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    background: #C0C0C0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .win95-title-bar {
-    background: #000080;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 6px;
-    gap: 8px;
-    font-weight: bold;
-    letter-spacing: 0.2px;
-  }
-
-  .win95-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .win95-close {
-    background: #C0C0C0;
-    color: #000;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-weight: bold;
-    padding: 2px 10px;
-    min-width: 28px;
-    cursor: pointer;
-  }
-
-  .win95-close:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-close:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -4px;
-  }
-
-  .win95-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 10px;
-  }
-
-  .win95-header-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 4px;
-  }
-
-  .win95-button {
-    padding: 3px 10px 2px;
-    background: #C0C0C0;
-    border: 2px solid;
-    border-color: #fff #404040 #404040 #fff;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1.2;
-    text-decoration: none;
-    color: #000;
-  }
-
-  .win95-button:active {
-    border-color: #404040 #fff #fff #404040;
-    background: #9c9c9c;
-  }
-
-  .win95-button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: -3px;
-  }
-
-  .win95-section {
-    border: 2px solid;
-    border-color: #808080 #404040 #404040 #808080;
-    padding: 10px;
-    margin: 0;
-  }
-
-  .win95-section legend {
-    padding: 0 6px;
-    font-weight: bold;
-  }
-
-  .win95-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 8px;
-  }
-
-  .win95-grid.tight {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 6px;
-  }
-
-  .win95-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .win95-panel {
-    border: 2px solid;
-    border-color: #808080 #fff #fff #808080;
-    background: #C0C0C0;
-    padding: 8px;
-  }
-
-  .win95-panel.raised {
-    border-color: #fff #404040 #404040 #fff;
-  }
-
-  .win95-panel strong,
-  .win95-panel h4,
-  .win95-panel h3 {
-    font-weight: bold;
-  }
-
-  .win95-text {
-    margin: 0;
-  }
-
-  .win95-list {
-    margin: 0;
-    padding-left: 18px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-ordered {
-    margin: 0;
-    padding-left: 20px;
-    display: grid;
-    gap: 6px;
-  }
-
-  .win95-code {
-    margin: 8px 0 6px;
-    padding: 8px;
-    background: #bdbdbd;
-    border: 2px solid;
-    border-color: #404040 #fff #fff #404040;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    overflow-x: auto;
-    color: #000;
-  }
-
-  a {
-    color: #000;
-    text-decoration: none;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:focus-visible,
-  button:focus-visible {
-    outline: 1px dotted #000;
-    outline-offset: 2px;
-  }
-
-  button {
-    font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-    font-size: 12px;
-  }
-
-  .win95-caption {
-    margin: 6px 0 0;
-  }
-`
 
 export default function CompiledLanguagesPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{styles}</style>
-      <div className="win95-window">
-        <div className="win95-title-bar">
+      <style>{win95Styles}</style>
+      <div className="win95-window" role="presentation">
+        <header className="win95-titlebar">
           <span className="win95-title">Compiled Languages</span>
-          <Link to="/algoViz" className="win95-close" aria-label="Close window">X</Link>
-        </div>
+          <div className="win95-title-controls">
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+          </div>
+        </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
-            <Link to="/algoViz" className="win95-button">
+            <div>
+              <div className="win95-subheading">Ahead-of-time binaries for predictable performance and deployment</div>
+              <p className="win95-text">
+                Compiled languages transform source code into native binaries before execution. They emphasize predictable runtime
+                behavior, explicit hardware control, and minimal dependencies at deployment time.
+              </p>
+            </div>
+            <Link to="/algoViz" className="win95-button" role="button">
               BACK TO CATALOG
             </Link>
           </div>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                Compiled languages focus on predictable performance, direct hardware access, and small runtime footprints. Work
-                happens up front during builds, giving you visibility into binary size, calling conventions, and layout long before
-                deployment.
+                The compiler front-loads work: parsing, type checks, optimization, and layout are completed before the program runs.
+                The result is a self-contained binary with predictable performance and explicit control over calling conventions,
+                memory layout, and runtime dependencies.
               </p>
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {milestones.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Core concept and mental models</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>How it works</legend>
-            <div className="win95-grid tight">
-              {mechanics.map((block) => (
+          <fieldset className="win95-fieldset">
+            <legend>Compilation pipeline</legend>
+            <div className="win95-grid win95-grid-3">
+              {pipelineStages.map((block) => (
                 <div key={block.heading} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{block.heading}</strong>
-                  </p>
+                  <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
                     {block.bullets.map((point) => (
                       <li key={point}>{point}</li>
@@ -482,100 +603,112 @@ export default function CompiledLanguagesPage(): JSX.Element {
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
+            <legend>Build artifacts and linking</legend>
+            <div className="win95-grid win95-grid-2">
+              {buildArtifacts.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Optimization levels and knobs</legend>
+            <div className="win95-grid win95-grid-2">
+              {optimizationLevels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Build-time tuning is part of performance engineering. Use fast builds for iteration and selective PGO/LTO for
+                critical release paths.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
                 <div key={note.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{note.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{note.detail}</p>
+                  <div className="win95-heading">{note.title}</div>
+                  <p className="win95-text">{note.detail}</p>
                 </div>
               ))}
             </div>
-            <p className="win95-text win95-caption">
-              Choose optimization levels by need: -O0 for fast iteration, -O2 for balanced speed and size, -O3 or PGO for hot
-              paths. Measure the tail latencies and cache misses that matter to your workload rather than relying on intuition
-              alone.
-            </p>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.context}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
                 <div key={example.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{example.title}</strong>
-                  </p>
+                  <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text win95-caption">{example.explanation}</p>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
-            <ul className="win95-list">
-              {pitfalls.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
-            <ol className="win95-ordered">
-              {decisionPoints.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionPoints.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
           </fieldset>
 
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights and frontiers</legend>
-            <div className="win95-grid">
+            <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
-                  <p className="win95-text">
-                    <strong>{item.title}</strong>
-                  </p>
-                  <p className="win95-text win95-caption">{item.detail}</p>
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
-          <fieldset className="win95-section">
-            <legend>Further reading and sources</legend>
-            <ul className="win95-list">
-              {sources.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </fieldset>
-
-          <fieldset className="win95-section">
+          <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel raised">
+            <div className="win95-panel">
               <ul className="win95-list">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
