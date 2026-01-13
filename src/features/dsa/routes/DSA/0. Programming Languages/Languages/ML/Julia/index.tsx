@@ -237,6 +237,11 @@ const historicalMilestones = [
       'The language introduced multiple dispatch, JIT compilation, and a syntax tuned for numerical computing.',
   },
   {
+    title: 'Early community growth (2014-2016)',
+    detail:
+      'A core package registry, the REPL, and early scientific libraries established Julia as a serious research platform.',
+  },
+  {
     title: '1.0 release with stability promise (2018)',
     detail:
       'Julia 1.0 committed to language stability, accelerating ecosystem growth across data science, ML, and simulation.',
@@ -245,6 +250,11 @@ const historicalMilestones = [
     title: 'High-performance packages mature (2020s)',
     detail:
       'Libraries for differential equations, optimization, and GPU computing made Julia competitive in research and production.',
+  },
+  {
+    title: 'Industry adoption expands (2020s)',
+    detail:
+      'Finance, energy, and simulation-heavy teams adopted Julia for speedups without leaving high-level workflows.',
   },
 ]
 
@@ -264,6 +274,16 @@ const mentalModels = [
     detail:
       'Array operations and dot broadcasting fuse elementwise loops, yielding concise code with strong performance.',
   },
+  {
+    title: 'Types as performance contracts',
+    detail:
+      'You can write dynamic code, but stable types let the compiler optimize like a static language.',
+  },
+  {
+    title: 'Generic code is the fast path',
+    detail:
+      'Well-typed generic functions compile into specialized kernels for each concrete usage.',
+  },
 ]
 
 const coreFeatures = [
@@ -273,6 +293,7 @@ const coreFeatures = [
       'Method selection depends on the types of all parameters.',
       'Enables clean generic programming without heavy inheritance.',
       'Optimizes for specialized code paths when types are known.',
+      'Supports trait-like patterns using dispatch on abstract types.',
     ],
   },
   {
@@ -281,6 +302,7 @@ const coreFeatures = [
       'LLVM-based compilation produces optimized native code.',
       'Hot paths can be as fast as C or Fortran.',
       'First call incurs compile latency; subsequent calls are fast.',
+      'Cacheable code lowers latency across sessions with precompile.',
     ],
   },
   {
@@ -289,6 +311,7 @@ const coreFeatures = [
       'Dynamic by default with optional type annotations.',
       'Parametric types support reusable data structures.',
       'Type stability drives performance-critical code.',
+      'Multiple numeric types enable exactness or speed tradeoffs.',
     ],
   },
   {
@@ -297,6 +320,7 @@ const coreFeatures = [
       'First-class support for dense and sparse matrices.',
       'Broadcast fusion eliminates temporary allocations.',
       'BLAS and LAPACK backends accelerate primitives.',
+      'Custom array types allow domain-specific storage layouts.',
     ],
   },
   {
@@ -305,6 +329,7 @@ const coreFeatures = [
       'Built-in support for threads and distributed workers.',
       'Task-based concurrency with async scheduling.',
       'GPU computing via CUDA and related packages.',
+      'Composable parallel patterns via Dagger and ThreadsX.',
     ],
   },
   {
@@ -313,6 +338,7 @@ const coreFeatures = [
       'Pkg manages reproducible environments and registries.',
       'Strong libraries for SciML, optimization, and plotting.',
       'Interoperability with Python, R, and C libraries.',
+      'Precompilation improves load times for complex stacks.',
     ],
   },
 ]
@@ -338,6 +364,11 @@ const performanceChecklist = [
     detail:
       'Julia loops are fast. Use broadcast for clarity and fused operations, but do not fear explicit loops.',
   },
+  {
+    title: 'Measure with tools',
+    detail:
+      'Use @time, @btime (BenchmarkTools), and @code_warntype to validate performance assumptions.',
+  },
 ]
 
 const realWorldUses = [
@@ -360,6 +391,16 @@ const realWorldUses = [
     context: 'Financial modeling',
     detail:
       'Fast numerical kernels and time series analysis suit pricing models and risk analytics.',
+  },
+  {
+    context: 'Signal processing',
+    detail:
+      'DSP, FFTs, and control systems benefit from composable numeric code and visualization.',
+  },
+  {
+    context: 'Robotics and physics engines',
+    detail:
+      'Rigid-body and kinematics calculations stay readable while running at high speed.',
   },
 ]
 
@@ -400,6 +441,29 @@ optimize!(model)`,
     explanation:
       'JuMP expresses optimization problems clearly and compiles them to efficient solvers.',
   },
+  {
+    title: 'Type stability check',
+    code: `f(x) = x > 0 ? x : 0
+@code_warntype f(3)
+
+g(x) = x > 0 ? x : 0.0
+@code_warntype g(3)`,
+    explanation:
+      'Mixed return types trigger instability; keep branches consistent to enable specialization.',
+  },
+  {
+    title: 'Threads for simple parallelism',
+    code: `using Base.Threads
+function threaded_sum(xs)
+  s = zeros(Float64, nthreads())
+  @threads for i in eachindex(xs)
+    s[threadid()] += xs[i]
+  end
+  return sum(s)
+end`,
+    explanation:
+      'Thread-local accumulation avoids contention while still using a simple loop.',
+  },
 ]
 
 const pitfalls = [
@@ -408,6 +472,8 @@ const pitfalls = [
   'Overusing global variables instead of functions and modules.',
   'Allocating inside tight loops instead of preallocating buffers.',
   'Assuming vectorization is always faster than explicit loops.',
+  'Loading heavy packages inside tight loops instead of once at startup.',
+  'Relying on default RNG or global state in parallel code without care.',
 ]
 
 const decisionGuidance = [
@@ -416,6 +482,7 @@ const decisionGuidance = [
   'Need fastest startup time for short scripts: consider alternatives or build system images.',
   'Need broad production tooling and large enterprise support: evaluate ecosystem maturity.',
   'Need integration with Python or C: Julia provides solid interop options.',
+  'Need to prototype math-heavy algorithms quickly: Julia is designed for this workflow.',
 ]
 
 const advancedInsights = [
@@ -439,6 +506,11 @@ const advancedInsights = [
     detail:
       'Automatic differentiation integrates deeply with Julia code, enabling gradient-based optimization on custom models.',
   },
+  {
+    title: 'Custom array types',
+    detail:
+      'Domain-specific arrays (lazy, sparse, GPU) plug into generic algorithms through interfaces.',
+  },
 ]
 
 const takeaways = [
@@ -446,6 +518,243 @@ const takeaways = [
   'Multiple dispatch drives composability and performance across the ecosystem.',
   'Type stability and allocation control are the main performance levers.',
   'It shines in scientific computing, optimization, and ML research workflows.',
+  'The ecosystem is rich for research, with growing production adoption.',
+]
+
+const languageFundamentals = [
+  {
+    title: 'Syntax with math-first ergonomics',
+    detail:
+      'Unicode-friendly operators, 1-based indexing, and array literals make math and linear algebra read naturally.',
+  },
+  {
+    title: 'Functions are the unit of performance',
+    detail:
+      'Julia specializes functions per argument types, so small, composable functions perform well.',
+  },
+  {
+    title: 'Multiple dispatch over inheritance',
+    detail:
+      'Behavior is organized around functions, not classes, enabling cross-cutting APIs.',
+  },
+  {
+    title: 'Metaprogramming is practical',
+    detail:
+      'Macros and generated functions allow domain-specific syntax without sacrificing speed.',
+  },
+]
+
+const typeSystemDetails = [
+  {
+    title: 'Abstract vs concrete types',
+    detail:
+      'Abstract types define interfaces; concrete types store data and are instantiated.',
+  },
+  {
+    title: 'Parametric types',
+    detail:
+      'Types can be parameterized by element types and dimensions, enabling reusable data containers.',
+  },
+  {
+    title: 'Union types',
+    detail:
+      'Small unions are optimized, but broad unions can hamper inference in hot paths.',
+  },
+  {
+    title: 'Type annotations',
+    detail:
+      'Hints can improve clarity, but overly strict annotations can reduce generic reuse.',
+  },
+]
+
+const toolingWorkflow = [
+  {
+    title: 'REPL and Revise.jl',
+    detail:
+      'Interactive development with live code reloading keeps iteration fast.',
+  },
+  {
+    title: 'Pkg environments',
+    detail:
+      'Project and Manifest files capture exact dependencies for reproducibility.',
+  },
+  {
+    title: 'Testing and docs',
+    detail:
+      'Built-in Test plus Documenter.jl support robust test suites and docs.',
+  },
+  {
+    title: 'Profiling',
+    detail:
+      'Profile, ProfileView, and TimerOutputs reveal allocation hotspots and latency.',
+  },
+]
+
+const ecosystemHighlights = [
+  {
+    title: 'SciML and differential equations',
+    detail:
+      'Comprehensive solvers with sensitivity analysis and GPU-ready pipelines.',
+  },
+  {
+    title: 'DataFrames and data tools',
+    detail:
+      'DataFrames.jl plus CSV.jl provide a familiar data-wrangling toolkit.',
+  },
+  {
+    title: 'Plotting and visualization',
+    detail:
+      'Makie, Plots, and Gadfly cover interactive and publication-quality visuals.',
+  },
+  {
+    title: 'Optimization and algebra',
+    detail:
+      'JuMP, Optim, and LinearAlgebra handle convex and non-convex workflows.',
+  },
+  {
+    title: 'GPU computing',
+    detail:
+      'CUDA.jl and AMDGPU.jl bring native GPU kernels with familiar syntax.',
+  },
+  {
+    title: 'Probabilistic programming',
+    detail:
+      'Turing.jl enables Bayesian modeling with automatic inference.',
+  },
+]
+
+const concurrencyModel = [
+  {
+    title: 'Tasks and async',
+    detail:
+      'Lightweight tasks with cooperative scheduling power IO-heavy workflows.',
+  },
+  {
+    title: 'Threads',
+    detail:
+      'Multi-threading via @threads and Threads.@spawn enables shared-memory parallelism.',
+  },
+  {
+    title: 'Distributed workers',
+    detail:
+      'The Distributed standard library scales computation across processes and machines.',
+  },
+  {
+    title: 'GPU kernels',
+    detail:
+      'KernelAbstractions and CUDA allow writing kernels directly in Julia.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'Python interoperability',
+    detail:
+      'PyCall and PythonCall bridge Julia with NumPy, Pandas, and PyTorch workflows.',
+  },
+  {
+    title: 'C and Fortran',
+    detail:
+      'ccall and bindings provide zero-copy access to native libraries.',
+  },
+  {
+    title: 'R integration',
+    detail:
+      'RCall enables importing R packages and data frames into Julia.',
+  },
+  {
+    title: 'Shared libraries',
+    detail:
+      'PackageCompiler can build shared libraries for integration into other systems.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'Scripts and CLI tools',
+    detail:
+      'Write command-line apps with ArgParse or Comonicon and package them with Project environments.',
+  },
+  {
+    title: 'System images',
+    detail:
+      'Custom system images reduce startup latency for production services.',
+  },
+  {
+    title: 'Server and API usage',
+    detail:
+      'HTTP.jl and Genie.jl support web services; tasks handle concurrency.',
+  },
+  {
+    title: 'Binary distribution',
+    detail:
+      'Create standalone apps using PackageCompiler and artifact bundling.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to Python',
+    detail:
+      'Julia offers faster numeric kernels without C extensions but has higher startup latency.',
+  },
+  {
+    title: 'Compared to MATLAB',
+    detail:
+      'Julia is open-source and general-purpose, with similar matrix-centric syntax.',
+  },
+  {
+    title: 'Compared to C++',
+    detail:
+      'Julia trades long compile times and manual memory work for interactive speed and simplicity.',
+  },
+  {
+    title: 'Compared to R',
+    detail:
+      'Julia provides faster loops and stronger general programming constructs for large systems.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Start with core syntax',
+    detail:
+      'Learn arrays, broadcasting, and functions; write small numerical kernels.',
+  },
+  {
+    title: 'Understand types',
+    detail:
+      'Read @code_warntype output to build intuition for performance.',
+  },
+  {
+    title: 'Adopt packages',
+    detail:
+      'Use Pkg environments and explore the SciML and DataFrames ecosystems.',
+  },
+  {
+    title: 'Scale performance',
+    detail:
+      'Profile allocations, preallocate, and explore threading or GPU options.',
+  },
+]
+
+const compilationStages = [
+  {
+    stage: 'Parsing',
+    description: 'Julia parses code into an AST ready for lowering.',
+  },
+  {
+    stage: 'Lowering',
+    description: 'High-level syntax is transformed into a simpler intermediate form.',
+  },
+  {
+    stage: 'Type inference',
+    description: 'The compiler infers types to specialize and optimize code.',
+  },
+  {
+    stage: 'LLVM codegen',
+    description: 'LLVM emits optimized native machine code.',
+  },
 ]
 
 export default function JuliaPage(): JSX.Element {
@@ -510,6 +819,18 @@ export default function JuliaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: core features</legend>
             <div className="win95-grid win95-grid-3">
               {coreFeatures.map((block) => (
@@ -522,6 +843,40 @@ export default function JuliaPage(): JSX.Element {
                   </ul>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Type system deep dive</legend>
+            <div className="win95-grid win95-grid-2">
+              {typeSystemDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compilation pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compilationStages.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -544,11 +899,47 @@ export default function JuliaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Ecosystem highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {ecosystemHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -571,6 +962,26 @@ export default function JuliaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -582,6 +993,18 @@ export default function JuliaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -589,6 +1012,18 @@ export default function JuliaPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
