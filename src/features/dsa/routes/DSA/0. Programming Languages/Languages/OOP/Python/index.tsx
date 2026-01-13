@@ -246,6 +246,11 @@ const historicalMilestones = [
     detail:
       'PEP 544 and PEP 557 make structural typing and data-oriented classes first-class, guiding large codebases.',
   },
+  {
+    title: 'Performance improvements in 3.10+ (2020s)',
+    detail:
+      'Faster CPython and specialization work improved common OOP workloads without changing APIs.',
+  },
 ]
 
 const mentalModels = [
@@ -263,6 +268,99 @@ const mentalModels = [
     title: 'Duck typing over rigid hierarchies',
     detail:
       'Behavior matters more than lineage. If an object responds to a protocol, it can be used regardless of its base class.',
+  },
+  {
+    title: 'Explicit is better than implicit',
+    detail:
+      'Readable naming and clear interfaces outweigh clever inheritance tricks.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Interpreted and dynamic',
+    detail:
+      'Python executes bytecode in an interpreter, favoring flexibility and fast iteration.',
+  },
+  {
+    title: 'Class-based object model',
+    detail:
+      'Classes define behavior, while instances hold state and delegate to class methods.',
+  },
+  {
+    title: 'First-class functions',
+    detail:
+      'Functions are objects, enabling decorators, callbacks, and strategy patterns.',
+  },
+  {
+    title: 'Batteries included',
+    detail:
+      'The standard library provides IO, networking, data formats, and testing tools.',
+  },
+]
+
+const runtimePipeline = [
+  {
+    stage: 'Parse and compile',
+    description: 'Source code compiles to bytecode for the CPython VM.',
+  },
+  {
+    stage: 'Bytecode execution',
+    description: 'The interpreter executes bytecode instructions.',
+  },
+  {
+    stage: 'C-extensions',
+    description: 'Performance-sensitive modules run in optimized native code.',
+  },
+  {
+    stage: 'GC and ref counting',
+    description: 'Reference counting and cycle detection manage memory.',
+  },
+]
+
+const typeSystemDetails = [
+  {
+    title: 'Dynamic typing',
+    detail:
+      'Types are enforced at runtime, enabling rapid change but requiring tests.',
+  },
+  {
+    title: 'Type hints',
+    detail:
+      'Optional annotations improve tooling and documentation without changing runtime.',
+  },
+  {
+    title: 'Protocols and ABCs',
+    detail:
+      'Protocols define structural typing; ABCs define explicit contracts.',
+  },
+  {
+    title: 'Dataclasses and attrs',
+    detail:
+      'Data-centric classes reduce boilerplate and make intent clearer.',
+  },
+]
+
+const standardLibraryHighlights = [
+  {
+    title: 'Collections and dataclasses',
+    detail:
+      'collections and dataclasses provide structured containers and helpers.',
+  },
+  {
+    title: 'asyncio',
+    detail:
+      'Async event loops for high-concurrency IO workloads.',
+  },
+  {
+    title: 'pathlib and typing',
+    detail:
+      'Modern APIs for file paths and type annotations.',
+  },
+  {
+    title: 'unittest and logging',
+    detail:
+      'Built-in testing and structured logging tools.',
   },
 ]
 
@@ -368,6 +466,11 @@ const performanceTradeoffs = [
     detail:
       'The GIL simplifies object safety but limits CPU-bound threading; use multiprocessing or native extensions for parallelism.',
   },
+  {
+    title: 'Import and startup cost',
+    detail:
+      'Large dependency graphs increase startup time; keep modules lean for short-lived tasks.',
+  },
 ]
 
 const realWorldUses = [
@@ -390,6 +493,16 @@ const realWorldUses = [
     context: 'Gaming and simulation',
     detail:
       'Entity systems model characters, states, and interactions; composition keeps behavior modular.',
+  },
+  {
+    context: 'DevOps and platform tooling',
+    detail:
+      'Infrastructure scripts and CLIs use OOP to encapsulate environments and tasks.',
+  },
+  {
+    context: 'Desktop apps',
+    detail:
+      'Qt and Tkinter use classes for widgets, signals, and event handling.',
   },
 ]
 
@@ -455,6 +568,37 @@ def save(serializer: Serializer, data):
     explanation:
       'Any object with a dumps method works, regardless of inheritance, reinforcing interface-based design.',
   },
+  {
+    title: 'Context manager with __enter__',
+    code: `class Timer:
+    def __enter__(self):
+        import time
+        self._start = time.time()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        import time
+        self.elapsed = time.time() - self._start
+
+with Timer() as t:
+    _ = sum(range(100000))
+print(t.elapsed)`,
+    explanation:
+      'Context managers model resource lifecycles cleanly and predictably.',
+  },
+  {
+    title: 'Mixin for shared behavior',
+    code: `class JsonMixin:
+    def to_json(self):
+        import json
+        return json.dumps(self.__dict__)
+
+class User(JsonMixin):
+    def __init__(self, name):
+        self.name = name`,
+    explanation:
+      'Mixins share behavior without deep inheritance.',
+  },
 ]
 
 const pitfalls = [
@@ -463,6 +607,8 @@ const pitfalls = [
   'Skipping super() breaks cooperative multiple inheritance and mixins.',
   'Confusing is with == leads to identity bugs when comparing values.',
   'Monkey patching can hide dependencies and make tests flaky.',
+  'Relying on __del__ for cleanup instead of context managers.',
+  'Overusing inheritance when composition would be clearer.',
 ]
 
 const decisionGuidance = [
@@ -471,6 +617,7 @@ const decisionGuidance = [
   'Prefer composition and small, testable collaborators to deep inheritance trees.',
   'Introduce protocols or ABCs when you need explicit contracts across modules.',
   'Use __slots__ for large numbers of simple objects to save memory.',
+  'Choose async patterns for IO-heavy systems, multiprocessing for CPU-heavy ones.',
 ]
 
 const advancedInsights = [
@@ -494,6 +641,11 @@ const advancedInsights = [
     detail:
       '__slots__ shrink memory but remove __dict__ by default; add __weakref__ if instances need weak references.',
   },
+  {
+    title: 'Typing for scale',
+    detail:
+      'Type hints, Protocols, and mypy reduce regressions in large OOP systems.',
+  },
 ]
 
 const takeaways = [
@@ -501,6 +653,150 @@ const takeaways = [
   'Good design leans on composition, protocols, and small interfaces over deep inheritance.',
   'Performance comes from minimizing dynamic overhead in hot paths and using optimized libraries.',
   'Type hints and dataclasses scale OOP to larger teams without sacrificing readability.',
+  'Clear boundaries and tests are essential in dynamic systems.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Typing and linting',
+    detail:
+      'mypy, ruff, and pylint keep large class hierarchies consistent.',
+  },
+  {
+    title: 'Testing',
+    detail:
+      'pytest and unittest cover unit and integration tests.',
+  },
+  {
+    title: 'Packaging',
+    detail:
+      'Poetry, uv, and pip manage environments and dependencies.',
+  },
+  {
+    title: 'Profiling',
+    detail:
+      'cProfile and py-spy reveal hot paths and allocation costs.',
+  },
+]
+
+const concurrencyOptions = [
+  {
+    title: 'asyncio',
+    detail:
+      'Cooperative concurrency for IO-bound tasks and servers.',
+  },
+  {
+    title: 'multiprocessing',
+    detail:
+      'Multiple processes bypass the GIL for CPU-heavy tasks.',
+  },
+  {
+    title: 'threading',
+    detail:
+      'Threads are best for IO-bound work due to the GIL.',
+  },
+  {
+    title: 'native extensions',
+    detail:
+      'Cython, Rust, or C extensions unlock parallel CPU work.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'C and C++ bindings',
+    detail:
+      'ctypes, cffi, and pybind11 expose native libraries.',
+  },
+  {
+    title: 'Java and .NET',
+    detail:
+      'JPype and pythonnet bridge managed runtimes.',
+  },
+  {
+    title: 'Web and JS',
+    detail:
+      'Pyodide and WebAssembly run Python in the browser.',
+  },
+  {
+    title: 'RPC and APIs',
+    detail:
+      'gRPC and REST are common integration paths.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'Web services',
+    detail:
+      'Deploy APIs with FastAPI, Django, or Flask.',
+  },
+  {
+    title: 'CLI tools',
+    detail:
+      'Typer and Click build command-line apps.',
+  },
+  {
+    title: 'Packaging apps',
+    detail:
+      'PyInstaller and zipapp bundle applications.',
+  },
+  {
+    title: 'Containers',
+    detail:
+      'Docker images standardize runtime environments.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to Java',
+    detail:
+      'Python is more flexible but lacks static enforcement and JVM performance.',
+  },
+  {
+    title: 'Compared to C++',
+    detail:
+      'Python trades low-level control for speed of development and readability.',
+  },
+  {
+    title: 'Compared to Ruby',
+    detail:
+      'Python has a larger ecosystem and broader tooling adoption.',
+  },
+  {
+    title: 'Compared to Go',
+    detail:
+      'Python is more dynamic, Go offers simpler concurrency and faster binaries.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Core syntax and classes',
+    detail:
+      'Learn classes, methods, and instance vs class attributes.',
+  },
+  {
+    title: 'Dataclasses and type hints',
+    detail:
+      'Adopt dataclasses and typing for clarity in larger projects.',
+  },
+  {
+    title: 'Protocols and ABCs',
+    detail:
+      'Use Protocols and ABCs to design clean interfaces.',
+  },
+  {
+    title: 'Performance awareness',
+    detail:
+      'Profile, use __slots__, and lean on optimized libraries.',
+  },
+  {
+    title: 'Production patterns',
+    detail:
+      'Test, package, and deploy with standard tooling.',
+  },
 ]
 
 export default function PythonOopPage(): JSX.Element {
@@ -565,6 +861,64 @@ export default function PythonOopPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Runtime pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {runtimePipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Type system and design</legend>
+            <div className="win95-grid win95-grid-2">
+              {typeSystemDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Standard library highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {standardLibraryHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: OOP pillars in Python</legend>
             <div className="win95-grid win95-grid-2">
               {oopPillars.map((block) => (
@@ -575,6 +929,18 @@ export default function PythonOopPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -596,6 +962,18 @@ export default function PythonOopPage(): JSX.Element {
             <legend>Data model protocols</legend>
             <div className="win95-grid win95-grid-2">
               {dataModelProtocols.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyOptions.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -635,6 +1013,26 @@ export default function PythonOopPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -661,6 +1059,18 @@ export default function PythonOopPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -668,6 +1078,18 @@ export default function PythonOopPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
