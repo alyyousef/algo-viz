@@ -246,6 +246,11 @@ const historicalMilestones = [
     detail:
       'Django embraces async execution for long-lived connections without dropping its batteries-included identity.',
   },
+  {
+    title: 'Modern Django releases (2021+)',
+    detail:
+      'Long-term support releases focus on stability, security, and incremental async support.',
+  },
 ]
 
 const mentalModels = [
@@ -264,6 +269,76 @@ const mentalModels = [
     detail:
       'Django leans on sensible defaults to speed delivery, while still allowing deep customization.',
   },
+  {
+    title: 'Explicit structure beats magic',
+    detail:
+      'Settings, URLs, and apps make dependencies visible for large teams.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Python-first ergonomics',
+    detail:
+      'Django leans on Python readability and explicitness over DSL-heavy configuration.',
+  },
+  {
+    title: 'Model-centric design',
+    detail:
+      'Models are the single source of truth for data shape and business rules.',
+  },
+  {
+    title: 'Explicit request lifecycle',
+    detail:
+      'Middleware and views define the full path from request to response.',
+  },
+  {
+    title: 'Security by default',
+    detail:
+      'CSRF protection, secure cookies, and clickjacking defenses are on by default.',
+  },
+]
+
+const architecturePipeline = [
+  {
+    stage: 'ASGI/WSGI entry',
+    description: 'Requests enter through an ASGI or WSGI server.',
+  },
+  {
+    stage: 'Middleware stack',
+    description: 'Security, sessions, and auth run before views.',
+  },
+  {
+    stage: 'URL routing',
+    description: 'URLconf dispatches to function or class-based views.',
+  },
+  {
+    stage: 'ORM and templates',
+    description: 'Views fetch data and render templates or JSON.',
+  },
+]
+
+const standardLibraryHighlights = [
+  {
+    title: 'Admin interface',
+    detail:
+      'Auto-generated admin saves weeks of back-office tooling.',
+  },
+  {
+    title: 'Authentication system',
+    detail:
+      'Built-in user model, permissions, and session management.',
+  },
+  {
+    title: 'Forms and validation',
+    detail:
+      'Form classes centralize validation and error reporting.',
+  },
+  {
+    title: 'Migrations framework',
+    detail:
+      'Schema evolution is tracked and replayable across environments.',
+  },
 ]
 
 const coreConcepts = [
@@ -273,6 +348,7 @@ const coreConcepts = [
       'Models define schema with Python classes; migrations evolve databases safely.',
       'QuerySets compose filters and joins with lazy evaluation.',
       'Managers encapsulate data access patterns and reusable queries.',
+      'Signals hook into create/update events for cross-cutting behavior.',
     ],
   },
   {
@@ -281,6 +357,7 @@ const coreConcepts = [
       'URLs map to views (function-based or class-based).',
       'Request/response objects carry headers, cookies, and data.',
       'Middleware shapes the request lifecycle, handling auth, sessions, and security.',
+      'View mixins compose common CRUD logic.',
     ],
   },
   {
@@ -289,6 +366,7 @@ const coreConcepts = [
       'Template language separates presentation from data.',
       'Context processors inject global data into templates.',
       'Template inheritance encourages reusable layout structure.',
+      'Template tags and filters extend rendering safely.',
     ],
   },
   {
@@ -297,6 +375,7 @@ const coreConcepts = [
       'Admin auto-generates CRUD interfaces from models.',
       'Authentication and permissions ship as first-class modules.',
       'Signals and forms integrate validation with data workflows.',
+      'Custom user models enable long-term flexibility.',
     ],
   },
 ]
@@ -322,6 +401,11 @@ const architectureNotes = [
     detail:
       'Built-in protections include CSRF, SQL injection prevention, and clickjacking defense headers.',
   },
+  {
+    title: 'App layering',
+    detail:
+      'Keep domain logic in apps, and avoid business logic in templates.',
+  },
 ]
 
 const performanceTradeoffs = [
@@ -345,6 +429,11 @@ const performanceTradeoffs = [
     detail:
       'Async support exists, but many third-party packages remain sync-bound.',
   },
+  {
+    title: 'Database bottlenecks',
+    detail:
+      'Most performance issues are query count or indexing problems.',
+  },
 ]
 
 const realWorldUses = [
@@ -367,6 +456,16 @@ const realWorldUses = [
     context: 'APIs and microservices',
     detail:
       'Django + DRF provides robust API layers with authentication, permissions, and pagination.',
+  },
+  {
+    context: 'Marketplace platforms',
+    detail:
+      'Relational models and admin workflows fit multi-tenant product catalogs.',
+  },
+  {
+    context: 'Education and analytics',
+    detail:
+      'Django handles auth, permissions, and reporting dashboards cleanly.',
   },
 ]
 
@@ -414,6 +513,30 @@ class TimingMiddleware:
     explanation:
       'Middleware wraps the request pipeline to add cross-cutting behavior.',
   },
+  {
+    title: 'DRF serializer sketch',
+    code: `from rest_framework import serializers
+from .models import Article
+
+class ArticleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Article
+        fields = ["id", "title", "published_at"]`,
+    explanation:
+      'DRF serializers define API payloads and validation rules.',
+  },
+  {
+    title: 'Signal for audit trail',
+    code: `from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Article)
+def article_audit(sender, instance, created, **kwargs):
+    if created:
+        AuditLog.objects.create(action="created", ref_id=instance.id)`,
+    explanation:
+      'Signals keep cross-cutting concerns out of model methods.',
+  },
 ]
 
 const pitfalls = [
@@ -422,6 +545,8 @@ const pitfalls = [
   'Mixing sync-only libraries into async views.',
   'Hardcoding settings instead of using environment-specific config.',
   'Neglecting migrations leads to drift between dev and production databases.',
+  'Overusing signals for core logic, making flow hard to trace.',
+  'Skipping indexes on high-traffic queries.',
 ]
 
 const decisionGuidance = [
@@ -430,6 +555,7 @@ const decisionGuidance = [
   'Pair Django with DRF when building APIs with authentication and permissions.',
   'Avoid Django for ultra-light microservices where minimal dependencies matter.',
   'Plan caching and async task queues early for data-heavy systems.',
+  'Use Django when relational data and admin tooling are key requirements.',
 ]
 
 const advancedInsights = [
@@ -453,6 +579,11 @@ const advancedInsights = [
     detail:
       'Schema-per-tenant or row-level isolation requires strict query filtering and authorization.',
   },
+  {
+    title: 'Observability',
+    detail:
+      'Structured logging and query tracing reveal hotspots early.',
+  },
 ]
 
 const takeaways = [
@@ -460,6 +591,104 @@ const takeaways = [
   'The ORM and admin reduce boilerplate while staying flexible for complex domains.',
   'Performance hinges on query optimization and caching strategy.',
   'Its conventions support large, long-lived codebases.',
+  'Good architecture keeps models lean and services explicit.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Development setup',
+    detail:
+      'manage.py, settings modules, and dotenv-style config are the baseline.',
+  },
+  {
+    title: 'Testing',
+    detail:
+      'pytest-django and built-in test runner cover unit and integration tests.',
+  },
+  {
+    title: 'Background jobs',
+    detail:
+      'Celery, RQ, and cron tasks handle async work.',
+  },
+  {
+    title: 'Debugging',
+    detail:
+      'Django Debug Toolbar and logging help isolate slow queries.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'WSGI deployments',
+    detail:
+      'Gunicorn or uWSGI serve traditional sync Django apps.',
+  },
+  {
+    title: 'ASGI deployments',
+    detail:
+      'Daphne or Uvicorn handle async views and WebSocket support.',
+  },
+  {
+    title: 'Caching and queues',
+    detail:
+      'Redis or Memcached support caching and background jobs.',
+  },
+  {
+    title: 'Static assets',
+    detail:
+      'Collectstatic plus a CDN or object storage serves static files.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to Flask',
+    detail:
+      'Django is full-stack, Flask is lightweight and more manual.',
+  },
+  {
+    title: 'Compared to FastAPI',
+    detail:
+      'Django has stronger admin and ORM; FastAPI excels at async APIs.',
+  },
+  {
+    title: 'Compared to Rails',
+    detail:
+      'Django is Pythonic and explicit, Rails is more convention-driven.',
+  },
+  {
+    title: 'Compared to Node.js',
+    detail:
+      'Django offers batteries-included backend structure; Node excels in event-driven IO.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Core Django models',
+    detail:
+      'Learn models, migrations, and QuerySets.',
+  },
+  {
+    title: 'Views and templates',
+    detail:
+      'Practice function-based and class-based views with templates.',
+  },
+  {
+    title: 'Authentication and admin',
+    detail:
+      'Customize user models and admin screens.',
+  },
+  {
+    title: 'APIs and DRF',
+    detail:
+      'Build serializers, viewsets, and permissions.',
+  },
+  {
+    title: 'Scaling and ops',
+    detail:
+      'Add caching, background jobs, and observability.',
+  },
 ]
 
 export default function DjangoPage(): JSX.Element {
@@ -522,6 +751,52 @@ export default function DjangoPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Request lifecycle</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {architecturePipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Built-in highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {standardLibraryHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: core Django components</legend>
             <div className="win95-grid win95-grid-2">
               {coreConcepts.map((block) => (
@@ -532,6 +807,18 @@ export default function DjangoPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -580,6 +867,18 @@ export default function DjangoPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Deployment and ops</legend>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -606,6 +905,18 @@ export default function DjangoPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -613,6 +924,18 @@ export default function DjangoPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
