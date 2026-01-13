@@ -246,6 +246,11 @@ const historicalMilestones = [
     detail:
       'Rust gains official acceptance for kernel components, validating its safety-focused mission.',
   },
+  {
+    title: 'Rust Foundation and ecosystem maturity (2021+)',
+    detail:
+      'The language governance and ecosystem tooling stabilize for long-term industrial adoption.',
+  },
 ]
 
 const mentalModels = [
@@ -264,6 +269,76 @@ const mentalModels = [
     detail:
       'The type system prevents data races at compile time, so safe code can share across threads.',
   },
+  {
+    title: 'Make invalid states unrepresentable',
+    detail:
+      'Enums and types encode state machines, replacing ad-hoc flags and nulls.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Compiled to native code',
+    detail:
+      'Rust produces platform-native binaries without a runtime or GC.',
+  },
+  {
+    title: 'Expression-oriented',
+    detail:
+      'Blocks evaluate to values, enabling concise, predictable control flow.',
+  },
+  {
+    title: 'Pattern matching everywhere',
+    detail:
+      'match and if let express branching with exhaustiveness checks.',
+  },
+  {
+    title: 'Traits drive polymorphism',
+    detail:
+      'Static dispatch is the default; dynamic dispatch is explicit.',
+  },
+]
+
+const compilationPipeline = [
+  {
+    stage: 'Parse and expand',
+    description: 'Macros expand and code is lowered for compilation.',
+  },
+  {
+    stage: 'Borrow check',
+    description: 'Ownership and lifetimes are validated before codegen.',
+  },
+  {
+    stage: 'LLVM codegen',
+    description: 'Rust compiles to optimized native code through LLVM.',
+  },
+  {
+    stage: 'Link',
+    description: 'Crates and native libraries are linked into binaries.',
+  },
+]
+
+const standardLibraryHighlights = [
+  {
+    title: 'Collections',
+    detail:
+      'Vec, HashMap, and BTreeMap provide core data structures.',
+  },
+  {
+    title: 'Option and Result',
+    detail:
+      'Algebraic data types make nulls and errors explicit.',
+  },
+  {
+    title: 'Iterators',
+    detail:
+      'Lazy iterator chains enable zero-cost data pipelines.',
+  },
+  {
+    title: 'Concurrency',
+    detail:
+      'std::thread, channels, and atomics support safe parallelism.',
+  },
 ]
 
 const coreConcepts = [
@@ -273,6 +348,7 @@ const coreConcepts = [
       'Moves transfer ownership; copies only happen for Copy types.',
       'Borrowing uses references with explicit lifetimes.',
       'The borrow checker enforces aliasing and mutation rules.',
+      'Lifetimes encode validity ranges in APIs.',
     ],
   },
   {
@@ -281,6 +357,7 @@ const coreConcepts = [
       'Traits define shared behavior and act like interfaces.',
       'Generics compile to monomorphized code, avoiding runtime overhead.',
       'Trait bounds express constraints for reusable components.',
+      'Associated types keep APIs expressive and ergonomic.',
     ],
   },
   {
@@ -289,6 +366,7 @@ const coreConcepts = [
       'Rust offers manual control without garbage collection.',
       'Unsafe blocks allow low-level operations with explicit boundaries.',
       'Pattern matching and enums model states without nulls.',
+      'Ownership enables deterministic destruction (Drop).',
     ],
   },
   {
@@ -297,6 +375,7 @@ const coreConcepts = [
       'Cargo manages builds, dependencies, and reproducible environments.',
       'Modules and crates provide clear namespace boundaries.',
       'The compiler surfaces errors early with detailed diagnostics.',
+      'Feature flags gate optional dependencies and capabilities.',
     ],
   },
 ]
@@ -322,6 +401,11 @@ const languageNotes = [
     detail:
       'Rust interoperates with C via stable ABIs, making it suitable for gradual adoption.',
   },
+  {
+    title: 'Borrowed vs owned types',
+    detail:
+      'String vs &str and Vec vs &[T] encode ownership in API boundaries.',
+  },
 ]
 
 const performanceTradeoffs = [
@@ -345,6 +429,11 @@ const performanceTradeoffs = [
     detail:
       'Async/await is fast but requires understanding executors and pinning when building runtimes.',
   },
+  {
+    title: 'Binary size and generics',
+    detail:
+      'Monomorphization can increase binary size in heavily generic code.',
+  },
 ]
 
 const realWorldUses = [
@@ -367,6 +456,16 @@ const realWorldUses = [
     context: 'Security-sensitive software',
     detail:
       'Memory safety reduces exploitable bugs in cryptographic and networking stacks.',
+  },
+  {
+    context: 'Blockchain and distributed systems',
+    detail:
+      'Rust powers high-performance nodes, runtimes, and cryptographic tooling.',
+  },
+  {
+    context: 'Game engines',
+    detail:
+      'ECS frameworks and safe multithreading make Rust appealing for engine cores.',
   },
 ]
 
@@ -425,6 +524,30 @@ fn main() {
     explanation:
       'Ownership and Send/Sync bounds keep threading safe, with mutexes for mutable shared state.',
   },
+  {
+    title: 'Result-based error handling',
+    code: `use std::fs::File;
+use std::io::Read;
+
+fn read_config(path: &str) -> Result<String, std::io::Error> {
+    let mut file = File::open(path)?;
+    let mut data = String::new();
+    file.read_to_string(&mut data)?;
+    Ok(data)
+}`,
+    explanation:
+      'Errors are values; the ? operator propagates failures cleanly.',
+  },
+  {
+    title: 'Enum state modeling',
+    code: `enum ConnectionState {
+    Disconnected,
+    Connecting(u32),
+    Connected { since: u64 },
+}`,
+    explanation:
+      'Enums model valid states explicitly and avoid invalid flag combos.',
+  },
 ]
 
 const pitfalls = [
@@ -433,6 +556,8 @@ const pitfalls = [
   'Assuming unsafe blocks are faster without measuring.',
   'Ignoring lifetime annotations in APIs can leak complexity to callers.',
   'Building async systems without understanding executor behavior.',
+  'Cloning large data unnecessarily instead of borrowing.',
+  'Using unsafe without tight encapsulation and tests.',
 ]
 
 const decisionGuidance = [
@@ -441,6 +566,7 @@ const decisionGuidance = [
   'Adopt Rust gradually via FFI in existing C or C++ codebases.',
   'Invest in tooling and training to overcome the borrow checker learning curve.',
   'Avoid Rust when time-to-market is more critical than safety guarantees.',
+  'Use Rust for services where reliability outweighs development speed.',
 ]
 
 const advancedInsights = [
@@ -464,6 +590,11 @@ const advancedInsights = [
     detail:
       'Encapsulate unsafe code behind safe APIs so invariants are enforced at the boundary.',
   },
+  {
+    title: 'Trait object boundaries',
+    detail:
+      'dyn Trait enables runtime polymorphism with explicit costs.',
+  },
 ]
 
 const takeaways = [
@@ -471,6 +602,150 @@ const takeaways = [
   'Ownership and borrowing enable predictable performance without garbage collection.',
   'Traits and enums produce expressive, reliable APIs.',
   'The ecosystem favors tooling and explicitness over hidden magic.',
+  'Good design makes ownership obvious and reuse natural.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Cargo and workspaces',
+    detail:
+      'Cargo manages dependencies, builds, and reproducible environments.',
+  },
+  {
+    title: 'Linting and formatting',
+    detail:
+      'clippy and rustfmt enforce consistency and catch mistakes.',
+  },
+  {
+    title: 'Testing',
+    detail:
+      'Built-in test harness supports unit, integration, and doc tests.',
+  },
+  {
+    title: 'Profiling',
+    detail:
+      'perf and flamegraphs reveal CPU and allocation hot spots.',
+  },
+]
+
+const concurrencyOptions = [
+  {
+    title: 'Threads and channels',
+    detail:
+      'std::thread and mpsc channels model safe communication.',
+  },
+  {
+    title: 'Async runtimes',
+    detail:
+      'Tokio and async-std power non-blocking servers.',
+  },
+  {
+    title: 'Atomics',
+    detail:
+      'std::sync::atomic enables lock-free algorithms.',
+  },
+  {
+    title: 'Message passing',
+    detail:
+      'Ownership-based message passing avoids shared mutable state.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'C FFI',
+    detail:
+      'Extern functions and #[repr(C)] structs allow seamless C interop.',
+  },
+  {
+    title: 'C++ via cxx',
+    detail:
+      'The cxx crate enables safe C++ interop with minimal glue.',
+  },
+  {
+    title: 'WebAssembly',
+    detail:
+      'wasm-bindgen exposes Rust to JS and browser APIs.',
+  },
+  {
+    title: 'Python bindings',
+    detail:
+      'pyo3 and maturin build native Python extensions.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'Static binaries',
+    detail:
+      'Single binaries simplify deployment for servers and tools.',
+  },
+  {
+    title: 'WASM modules',
+    detail:
+      'Ship Rust as portable WebAssembly packages.',
+  },
+  {
+    title: 'Embedded firmware',
+    detail:
+      'no_std builds target microcontrollers and bare metal.',
+  },
+  {
+    title: 'Shared libraries',
+    detail:
+      'cdylib outputs are used for FFI and plugin systems.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to C',
+    detail:
+      'Rust provides memory safety and modern tooling while keeping low-level control.',
+  },
+  {
+    title: 'Compared to C++',
+    detail:
+      'Rust enforces safety at compile time; C++ relies on discipline and tooling.',
+  },
+  {
+    title: 'Compared to Go',
+    detail:
+      'Rust provides more control and safety guarantees; Go is simpler to learn.',
+  },
+  {
+    title: 'Compared to Zig',
+    detail:
+      'Rust has stronger safety guarantees and a larger ecosystem.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Ownership basics',
+    detail:
+      'Learn moves, borrows, and lifetimes with small programs.',
+  },
+  {
+    title: 'Traits and generics',
+    detail:
+      'Practice trait bounds, generics, and iterator patterns.',
+  },
+  {
+    title: 'Error handling',
+    detail:
+      'Use Result, Option, and thiserror for robust APIs.',
+  },
+  {
+    title: 'Async or concurrency',
+    detail:
+      'Choose Tokio or threads based on workloads.',
+  },
+  {
+    title: 'Systems integration',
+    detail:
+      'Learn FFI, no_std, and build pipelines.',
+  },
 ]
 
 export default function RustPage(): JSX.Element {
@@ -535,6 +810,52 @@ export default function RustPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compilation pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compilationPipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Standard library highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {standardLibraryHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: Rust fundamentals</legend>
             <div className="win95-grid win95-grid-2">
               {coreConcepts.map((block) => (
@@ -551,9 +872,33 @@ export default function RustPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: language mechanics</legend>
             <div className="win95-grid win95-grid-2">
               {languageNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyOptions.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -593,6 +938,26 @@ export default function RustPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -619,6 +984,18 @@ export default function RustPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -626,6 +1003,18 @@ export default function RustPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
