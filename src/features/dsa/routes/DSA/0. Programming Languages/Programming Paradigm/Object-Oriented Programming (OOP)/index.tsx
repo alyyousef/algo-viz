@@ -29,6 +29,21 @@ const milestones = [
     detail:
       'The Gang of Four cataloged reusable OOP structures; SOLID offered guidance for dependency direction, interface design, and extensibility.',
   },
+  {
+    title: 'Managed runtimes mature (2000s)',
+    detail:
+      'JVM and .NET profiling, JIT optimizations, and generics make large-scale OOP more performant and maintainable.',
+  },
+  {
+    title: 'Mobile and app platforms scale OOP (2010s)',
+    detail:
+      'Android and iOS SDKs make object models the default for app architecture.',
+  },
+  {
+    title: 'Hybrid paradigms rise (2010s-2020s)',
+    detail:
+      'Modern systems blend OOP with FP and data-oriented design to balance clarity and performance.',
+  },
 ]
 
 const mentalModels = [
@@ -47,6 +62,21 @@ const mentalModels = [
     detail:
       'Reuse by assembling objects with narrow roles instead of deep class trees. Composition reduces coupling and fragility when domains evolve.',
   },
+  {
+    title: 'Contracts as boundaries',
+    detail:
+      'Interfaces formalize expectations and allow collaborators to change independently.',
+  },
+  {
+    title: 'State is owned',
+    detail:
+      'Each object owns its state, and encapsulation prevents accidental mutation from the outside.',
+  },
+  {
+    title: 'Polymorphism enables substitution',
+    detail:
+      'Callers depend on behavior, not type; implementations can vary without changing usage.',
+  },
 ]
 
 const mechanics = [
@@ -55,6 +85,7 @@ const mechanics = [
     bullets: [
       'Visibility (private/protected/public) controls who can mutate state. Invariants are guarded by methods that validate changes.',
       'Interfaces define contracts without exposing data layout, enabling substitution and mocking.',
+      'Value objects capture immutable domain facts while entities manage identity and lifecycle.',
     ],
   },
   {
@@ -63,6 +94,7 @@ const mechanics = [
       'Subtype polymorphism lets code operate on interface types while concrete classes provide behavior.',
       'Dynamic dispatch typically uses vtables or inline caches to select the correct method at runtime.',
       'Parametric polymorphism (generics) enables reuse without sacrificing type safety, reducing the need for base classes.',
+      'Overriding contracts must honor Liskov Substitution to avoid runtime surprises.',
     ],
   },
   {
@@ -71,6 +103,15 @@ const mechanics = [
       'Inheritance shares code and contracts but couples base and derived classes; changes in base can ripple unexpectedly.',
       'Composition delegates behavior to contained objects. Decorator and Strategy patterns formalize this approach.',
       'Mixins and traits offer horizontal reuse without deep hierarchies in some languages.',
+      'Dependency injection inverts control and makes composition testable.',
+    ],
+  },
+  {
+    heading: 'Lifecycle and resource management',
+    bullets: [
+      'Constructors and factories control object creation and enforce invariants.',
+      'Destructors, dispose patterns, or finalizers manage resources safely.',
+      'Object pooling can reduce allocation pressure for hot paths.',
     ],
   },
 ]
@@ -90,6 +131,11 @@ const complexityNotes = [
     title: 'Dependency graphs',
     detail:
       'Large class hierarchies can slow builds and complicate change. Interface segregation and stable abstractions keep dependency depth manageable.',
+  },
+  {
+    title: 'Cache locality tradeoffs',
+    detail:
+      'Object graphs scatter memory; hot loops can benefit from flattening or data-oriented structures.',
   },
 ]
 
@@ -113,6 +159,16 @@ const applications = [
     context: 'Mobile apps',
     detail:
       'iOS and Android SDKs expose lifecycles and UI elements as objects; inheritance provides hooks, while composition organizes features.',
+  },
+  {
+    context: 'Backend services',
+    detail:
+      'Controllers, services, and repositories encapsulate business logic behind clear APIs.',
+  },
+  {
+    context: 'Simulation systems',
+    detail:
+      'OOP maps naturally to entities and interactions in physics and modeling systems.',
   },
 ]
 
@@ -165,6 +221,29 @@ double total_area(const std::vector<Shape*>& shapes) {
     explanation:
       'Virtual calls add indirection. If this is hot, consider batching by type, static polymorphism, or devirtualization.',
   },
+  {
+    title: 'Encapsulated value object (C#)',
+    code: `public readonly record struct Money(decimal Amount, string Currency) {
+    public Money Add(Money other) =>
+        Currency == other.Currency ? new(Amount + other.Amount, Currency)
+                                   : throw new InvalidOperationException();
+}`,
+    explanation:
+      'Value objects model domain rules without exposing mutable state.',
+  },
+  {
+    title: 'Strategy pattern',
+    code: `interface PricingStrategy { price(base: number): number }
+class Standard implements PricingStrategy { price(b) { return b } }
+class Discount implements PricingStrategy { price(b) { return b * 0.9 } }
+
+class Checkout {
+  constructor(private strategy: PricingStrategy) {}
+  total(base: number) { return this.strategy.price(base) }
+}`,
+    explanation:
+      'Strategies swap behavior without subclassing, keeping dependencies explicit.',
+  },
 ]
 
 const pitfalls = [
@@ -173,6 +252,8 @@ const pitfalls = [
   'Mutability everywhere leads to shared-state bugs; prefer immutable value objects and controlled mutation.',
   'Overusing patterns for their own sake adds ceremony without clarity.',
   'Null references as defaults cause runtime failures; prefer safe defaults or option types when available.',
+  'Tight coupling between layers makes refactoring painful.',
+  'Violating LSP leads to subtle runtime bugs in polymorphic code.',
 ]
 
 const decisionPoints = [
@@ -180,6 +261,7 @@ const decisionPoints = [
   'Need runtime extensibility: interfaces and dynamic dispatch allow new behaviors without changing callers.',
   'Performance critical data pipelines: consider data oriented or functional styles to improve locality and parallelism.',
   'Team and tooling: static OOP languages pair well with refactoring tools; dynamic OOP eases metaprogramming but needs strong tests.',
+  'Large teams with evolving requirements benefit from stable interfaces and substitution.',
 ]
 
 const advancedInsights = [
@@ -203,6 +285,16 @@ const advancedInsights = [
     detail:
       'Compilers can optimize virtual calls to direct calls when classes are final or call sites are monomorphic, cutting dispatch overhead in hot loops.',
   },
+  {
+    title: 'Domain-driven design',
+    detail:
+      'Entities, aggregates, and bounded contexts bring clarity to complex business models.',
+  },
+  {
+    title: 'Composition at scale',
+    detail:
+      'Dependency injection containers manage wiring but require disciplined boundaries to avoid magic.',
+  },
 ]
 
 const sources = [
@@ -218,6 +310,96 @@ const takeaways = [
   'Composition is safer than deep inheritance; use inheritance sparingly for true is-a relationships.',
   'Indirection and object graphs add constant overhead; be mindful of dispatch costs, allocation, and cache behavior in hot paths.',
   'Clear contracts, immutability where possible, and disciplined use of patterns keep OOP codebases maintainable.',
+  'Interfaces and dependency direction matter more than class count for long-term sustainability.',
+  'Blend OOP with FP or data-oriented techniques where performance or clarity demands it.',
+]
+
+const toolingEcosystem = [
+  {
+    title: 'Languages',
+    detail:
+      'Java, C#, C++, Swift, Kotlin, and Python offer different balances of safety, performance, and expressiveness.',
+  },
+  {
+    title: 'Testing and tooling',
+    detail:
+      'Mocking frameworks, contract tests, and refactoring tools strengthen OOP workflows.',
+  },
+  {
+    title: 'Frameworks',
+    detail:
+      'Spring, .NET, and Cocoa provide conventions and dependency management for large systems.',
+  },
+  {
+    title: 'Architecture',
+    detail:
+      'Layered and hexagonal architectures keep dependencies flowing inward.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Trace object lifecycles',
+    detail:
+      'Profile allocations and garbage collection to locate leaks or hotspots.',
+  },
+  {
+    title: 'Inspect polymorphism',
+    detail:
+      'Confirm dynamic dispatch targets when behavior is unexpected.',
+  },
+  {
+    title: 'Test boundaries',
+    detail:
+      'Use interface-driven tests to isolate side effects and dependencies.',
+  },
+  {
+    title: 'Reduce coupling',
+    detail:
+      'Refactor large classes into focused objects to improve clarity.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Design',
+    detail:
+      'Validate boundaries and ensure responsibilities are clear.',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Measure dispatch-heavy code paths and reduce object churn.',
+  },
+  {
+    title: 'Reliability',
+    detail:
+      'Guard invariants and enforce contracts through tests and types.',
+  },
+  {
+    title: 'Maintainability',
+    detail:
+      'Prefer composition and small interfaces over deep inheritance.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Classes, objects, encapsulation, and inheritance basics.',
+  },
+  {
+    step: 'Design principles',
+    detail: 'SOLID, design patterns, and dependency direction.',
+  },
+  {
+    step: 'Architecture',
+    detail: 'Layering, DI, and domain-driven design.',
+  },
+  {
+    step: 'Performance and tooling',
+    detail: 'Profiling, testing, and memory management.',
+  },
 ]
 
 export default function OOPPage(): JSX.Element {
@@ -328,6 +510,18 @@ export default function OOPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and ecosystem</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingEcosystem.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -343,6 +537,18 @@ export default function OOPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -350,6 +556,18 @@ export default function OOPPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -370,6 +588,18 @@ export default function OOPPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
