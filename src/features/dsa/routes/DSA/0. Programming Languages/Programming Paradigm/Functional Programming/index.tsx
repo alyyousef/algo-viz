@@ -29,6 +29,21 @@ const milestones = [
     detail:
       'Scala, Clojure, F#, and functional JavaScript patterns brought immutability, higher-order functions, and monadic abstractions into mainstream backend and frontend development.',
   },
+  {
+    title: 'Persistent data structures popularized (1990s-2000s)',
+    detail:
+      'Okasaki and later Clojure show how structural sharing can make immutability practical at scale.',
+  },
+  {
+    title: 'FP in mainstream tooling (2010s)',
+    detail:
+      'Libraries like RxJS, Lodash/fp, and Elm-style architectures bring FP ideas to the web.',
+  },
+  {
+    title: 'Effect systems gain traction (2020s)',
+    detail:
+      'Languages and libraries explore algebraic effects, typed effects, and safer effect handling.',
+  },
 ]
 
 const mentalModels = [
@@ -47,6 +62,21 @@ const mentalModels = [
     detail:
       'By default, values are not mutated. New values are derived from old ones. This reduces aliasing bugs and simplifies concurrency because readers cannot observe partial writes.',
   },
+  {
+    title: 'Effects are explicit',
+    detail:
+      'Side effects are modeled as values or constrained at the edges, making data flow predictable.',
+  },
+  {
+    title: 'Types describe domains',
+    detail:
+      'ADTs and sum types make illegal states unrepresentable and improve refactoring safety.',
+  },
+  {
+    title: 'Composition over inheritance',
+    detail:
+      'Small functions compose into larger behavior without deep class hierarchies.',
+  },
 ]
 
 const mechanics = [
@@ -56,6 +86,7 @@ const mechanics = [
       'Pure functions have no side effects and always produce the same output for the same input, enabling equational reasoning and easy testing.',
       'Referential transparency allows replacing a function call with its result without changing program behavior.',
       'Effects (IO, randomness, state) are pushed to the boundaries and modeled explicitly (monads, algebraic effects).',
+      'Idempotent functions simplify retries and distributed workflows.',
     ],
   },
   {
@@ -64,6 +95,7 @@ const mechanics = [
       'Eager (strict) evaluation computes arguments before function application (OCaml, F#, most JS).',
       'Lazy (non-strict) defers computation until needed (Haskell). Laziness enables infinite streams but requires care to avoid space leaks.',
       'Thunks and memoization: lazy runtimes wrap expressions in thunks and may cache results to avoid recomputation.',
+      'Strictness annotations and eager folds prevent accidental memory blowups.',
     ],
   },
   {
@@ -72,6 +104,15 @@ const mechanics = [
       'Algebraic data types (ADTs) and pattern matching encode domain shapes clearly and exhaustively.',
       'Type inference (Hindley-Milner) reduces annotation noise while keeping strong static guarantees.',
       'Higher-order functions (map, fold, filter) and function composition operators build pipelines concisely.',
+      'Monoids and functors give reusable algebraic structure for composition.',
+    ],
+  },
+  {
+    heading: 'Effects and state',
+    bullets: [
+      'State is passed explicitly or modeled as a value (State monad, reducers).',
+      'IO is isolated in effectful layers to keep core logic pure.',
+      'Effect systems make dependencies visible and enforce safe ordering.',
     ],
   },
 ]
@@ -91,6 +132,11 @@ const complexityNotes = [
     title: 'Laziness and space',
     detail:
       'Deferred computation can improve speed by avoiding unused work or hurt by retaining thunks and large unevaluated structures. Profiling for space leaks is essential in lazy settings.',
+  },
+  {
+    title: 'Parallelism vs overhead',
+    detail:
+      'Pure functions parallelize easily, but coordination and data transfer add overhead that must be measured.',
   },
 ]
 
@@ -114,6 +160,16 @@ const applications = [
     context: 'Frontend UI architectures',
     detail:
       'React popularized pure render functions and immutable props; state updates are modeled as pure reducers (Redux), enabling predictable UI changes.',
+  },
+  {
+    context: 'Data science and analytics',
+    detail:
+      'Functional pipelines enable reproducible transformations and clean data lineage.',
+  },
+  {
+    context: 'Streaming systems',
+    detail:
+      'Functional streams model continuous data with composable transformations.',
   },
 ]
 
@@ -149,6 +205,25 @@ firstTenSquares = take 10 (map (^2) naturals)`,
     explanation:
       'Non-strict evaluation allows infinite structures. Only the demanded prefix is computed, but careless retention can cause space leaks.',
   },
+  {
+    title: 'Pure state reducer (JavaScript)',
+    code: `const reducer = (state, action) => {
+  switch (action.type) {
+    case 'add': return { ...state, count: state.count + 1 }
+    case 'reset': return { ...state, count: 0 }
+    default: return state
+  }
+}`,
+    explanation:
+      'Reducers make state transitions explicit and easy to test without side effects.',
+  },
+  {
+    title: 'Function composition',
+    code: `const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x)
+const normalize = pipe(trim, toLower, removePunctuation)`,
+    explanation:
+      'Composition builds pipelines from small reusable transformations.',
+  },
 ]
 
 const pitfalls = [
@@ -157,6 +232,8 @@ const pitfalls = [
   'Mixing side effects into "pure" code erodes referential transparency, complicating tests and reasoning.',
   'Abstracting too aggressively can obscure control flow and make debugging harder without good tooling.',
   'Assuming immutability alone makes code correct; domain modeling and invariants still matter.',
+  'Forgetting to control strictness in critical loops can cause memory spikes.',
+  'Over-using monads or abstractions without team alignment can slow development.',
 ]
 
 const decisionPoints = [
@@ -164,6 +241,7 @@ const decisionPoints = [
   'Building concurrent or distributed systems: immutable messages and pure handlers reduce shared-state bugs.',
   'Performance-critical inner loops: measure. If allocation overhead dominates, use strictness annotations, specialized data structures, or drop to controlled mutation.',
   'Team experience and tooling: choose languages with solid profilers, type tooling, and library support for your domain.',
+  'Domain modeling with rich types: FP shines when you can encode business rules in ADTs.',
 ]
 
 const advancedInsights = [
@@ -187,6 +265,16 @@ const advancedInsights = [
     detail:
       'Dependent and refinement types (Idris, Liquid Haskell) encode invariants in the type system, catching domain errors at compile time.',
   },
+  {
+    title: 'Free monads and interpreters',
+    detail:
+      'Define programs as data, then interpret them for different runtimes or test environments.',
+  },
+  {
+    title: 'Category theory in practice',
+    detail:
+      'Concepts like functors and monoids formalize composition and reusable abstractions.',
+  },
 ]
 
 const sources = [
@@ -202,6 +290,96 @@ const takeaways = [
   'Performance hinges on allocation patterns, laziness, and data structure choices; measure and tune with awareness of the runtime.',
   'Effects should be explicit and localized, whether via monads, effect handlers, or disciplined boundaries.',
   'Persistent data and higher-order abstractions enable safe concurrency and clearer domain modeling when used with care.',
+  'Good FP mixes purity with pragmatism: isolate mutation where it wins and keep interfaces pure.',
+  'Teams benefit most when they adopt shared conventions and tooling for FP patterns.',
+]
+
+const fpTooling = [
+  {
+    title: 'Languages',
+    detail:
+      'Haskell, Elm, F#, OCaml, Clojure, Scala, and functional JS all trade purity for pragmatism.',
+  },
+  {
+    title: 'Libraries',
+    detail:
+      'FP libraries like RxJS, fp-ts, and Ramda provide higher-order utilities and type-safe patterns.',
+  },
+  {
+    title: 'Tooling',
+    detail:
+      'REPLs, property-based testing, and type-driven tooling accelerate feedback loops.',
+  },
+  {
+    title: 'Runtime support',
+    detail:
+      'Runtimes with good profilers and GC insights are critical for performance tuning.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Profile allocations',
+    detail:
+      'Measure heap growth and GC pauses to detect space leaks or hot paths.',
+  },
+  {
+    title: 'Check strictness',
+    detail:
+      'Validate evaluation strategy to ensure thunks are not piling up.',
+  },
+  {
+    title: 'Property-based tests',
+    detail:
+      'Generators explore edge cases that example tests often miss.',
+  },
+  {
+    title: 'Trace effects',
+    detail:
+      'Log and observe effect boundaries to ensure IO and state changes are isolated.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Performance',
+    detail:
+      'Profile pipelines, limit allocations, and apply strictness where needed.',
+  },
+  {
+    title: 'Correctness',
+    detail:
+      'Use types and property tests to encode domain invariants.',
+  },
+  {
+    title: 'Reliability',
+    detail:
+      'Isolate side effects and use pure cores with effectful shells.',
+  },
+  {
+    title: 'Team alignment',
+    detail:
+      'Document FP conventions to avoid abstraction sprawl.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Pure functions, immutability, and higher-order functions.',
+  },
+  {
+    step: 'Types and data',
+    detail: 'ADTs, pattern matching, and type inference.',
+  },
+  {
+    step: 'Effects and concurrency',
+    detail: 'Monads, effect systems, and functional concurrency models.',
+  },
+  {
+    step: 'Performance',
+    detail: 'Persistent data structures, strictness, and profiling.',
+  },
 ]
 
 export default function FunctionalProgrammingPage(): JSX.Element {
@@ -311,6 +489,18 @@ export default function FunctionalProgrammingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and ecosystem</legend>
+            <div className="win95-grid win95-grid-2">
+              {fpTooling.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -326,6 +516,18 @@ export default function FunctionalProgrammingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -333,6 +535,18 @@ export default function FunctionalProgrammingPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -353,6 +567,18 @@ export default function FunctionalProgrammingPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
