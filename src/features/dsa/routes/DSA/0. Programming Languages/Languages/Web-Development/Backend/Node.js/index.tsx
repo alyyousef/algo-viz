@@ -246,6 +246,21 @@ const historicalMilestones = [
     detail:
       'Modern JavaScript features become first-class in server-side development.',
   },
+  {
+    title: 'Serverless and containers mainstream (2018+)',
+    detail:
+      'Fast startup and low memory footprints make Node a default for cloud workloads.',
+  },
+  {
+    title: 'LTS cadence matures (2019+)',
+    detail:
+      'Predictable long-term support aligns Node with enterprise upgrade cycles.',
+  },
+  {
+    title: 'TypeScript becomes the backend default (2020+)',
+    detail:
+      'Typed JS improves large codebase safety and collaboration across teams.',
+  },
 ]
 
 const mentalModels = [
@@ -264,6 +279,21 @@ const mentalModels = [
     detail:
       'Frontend and backend can share language, reducing context switching and enabling shared tooling.',
   },
+  {
+    title: 'Queues, not threads',
+    detail:
+      'Work is scheduled through task queues; responsiveness depends on keeping those queues short.',
+  },
+  {
+    title: 'Everything is a stream',
+    detail:
+      'I/O flows through streams with backpressure, which keeps memory usage stable under load.',
+  },
+  {
+    title: 'Runtime plus host APIs',
+    detail:
+      'Node is V8 plus libuv and system APIs like fs, net, crypto, and timers.',
+  },
 ]
 
 const coreConcepts = [
@@ -273,6 +303,7 @@ const coreConcepts = [
       'V8 compiles JavaScript to optimized machine code.',
       'CommonJS and ES modules provide dependency boundaries.',
       'npm scripts and package.json define build and runtime workflows.',
+      'Package resolution and conditional exports influence runtime compatibility.',
     ],
   },
   {
@@ -281,6 +312,7 @@ const coreConcepts = [
       'Callbacks, promises, and async/await model asynchronous workflows.',
       'The libuv thread pool handles filesystem and DNS operations.',
       'Backpressure in streams prevents memory blowups.',
+      'Microtasks (promises) and macrotasks (timers/I/O) have different priority.',
     ],
   },
   {
@@ -289,6 +321,7 @@ const coreConcepts = [
       'Built-in http module exposes low-level server building blocks.',
       'Frameworks like Express or Fastify add routing and middleware layers.',
       'Middleware composes cross-cutting concerns like auth and logging.',
+      'HTTP/2 and ALPN enable multiplexed streams and improved latency.',
     ],
   },
   {
@@ -297,6 +330,23 @@ const coreConcepts = [
       'Profilers and the inspector help detect slow requests and leaks.',
       'Structured logging and tracing are essential at scale.',
       'Process managers like PM2 keep services alive and clustered.',
+      'Health checks and graceful shutdowns protect in-flight requests.',
+    ],
+  },
+  {
+    heading: 'Data and concurrency',
+    bullets: [
+      'Worker threads allow CPU-bound work without blocking the main loop.',
+      'Child processes isolate heavy tasks and provide fault boundaries.',
+      'Atomic operations and shared memory are available but require caution.',
+    ],
+  },
+  {
+    heading: 'Security basics',
+    bullets: [
+      'Use secure TLS defaults and validate input consistently.',
+      'Keep dependencies updated and lock versions for reproducible builds.',
+      'Handle secrets via environment variables or managed vaults.',
     ],
   },
 ]
@@ -322,6 +372,16 @@ const architectureNotes = [
     detail:
       'Twelve-factor practices keep config outside code via environment variables.',
   },
+  {
+    title: 'Graceful shutdown',
+    detail:
+      'Handle SIGTERM/SIGINT to stop accepting new requests and drain existing connections.',
+  },
+  {
+    title: 'Load balancing',
+    detail:
+      'Use a reverse proxy to route traffic and enforce timeouts and headers.',
+  },
 ]
 
 const performanceTradeoffs = [
@@ -344,6 +404,16 @@ const performanceTradeoffs = [
     title: 'Garbage collection',
     detail:
       'GC pauses are typically short but can affect latency-sensitive services.',
+  },
+  {
+    title: 'Memory profile',
+    detail:
+      'Large heaps improve throughput but can increase GC pause times.',
+  },
+  {
+    title: 'Native add-ons',
+    detail:
+      'Native modules can improve performance but add build complexity.',
   },
 ]
 
@@ -368,6 +438,16 @@ const realWorldUses = [
     detail:
       'CLIs, build tools, and compilers often leverage Node for cross-platform scripting.',
   },
+  {
+    context: 'Streaming pipelines',
+    detail:
+      'Data ingest, ETL, and log processing benefit from streaming and backpressure.',
+  },
+  {
+    context: 'Edge and CDN logic',
+    detail:
+      'Lightweight handlers run close to users with low latency requirements.',
+  },
 ]
 
 const examples = [
@@ -376,19 +456,19 @@ const examples = [
     code: `import http from "http";
 
 const server = http.createServer((req, res) => {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Hello Node");
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Hello Node");
 });
 
 server.listen(3000);`,
     explanation:
-      'Node’s core HTTP module provides low-level access for building servers or frameworks.',
+      "Node's core HTTP module provides low-level access for building servers or frameworks.",
   },
   {
     title: 'Async/await with database calls',
     code: `async function fetchUser(db, id) {
-    const user = await db.users.findOne({ id });
-    return user;
+  const user = await db.users.findOne({ id });
+  return user;
 }`,
     explanation:
       'Async/await reads like synchronous code but keeps I/O non-blocking.',
@@ -402,6 +482,27 @@ readStream.pipe(process.stdout);`,
     explanation:
       'Streams handle large data efficiently by applying backpressure automatically.',
   },
+  {
+    title: 'Graceful shutdown',
+    code: `const shutdown = () => {
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(1), 10000).unref();
+};
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);`,
+    explanation:
+      'Stop accepting new requests, drain existing ones, and exit cleanly.',
+  },
+  {
+    title: 'Worker thread for CPU work',
+    code: `import { Worker } from "worker_threads";
+
+const worker = new Worker("./heavy-task.js");
+worker.on("message", (result) => console.log(result));`,
+    explanation:
+      'Offload expensive computation to keep the event loop responsive.',
+  },
 ]
 
 const pitfalls = [
@@ -410,6 +511,9 @@ const pitfalls = [
   'Memory leaks via global caches or event listeners accumulate quickly.',
   'Callback-style code can become hard to maintain without async patterns.',
   'Relying on too many dependencies increases attack surface and build time.',
+  'Missing timeouts can lead to resource exhaustion under load.',
+  'Ignoring backpressure can cause memory spikes and process crashes.',
+  'Mixing ESM and CommonJS without a plan creates runtime failures.',
 ]
 
 const decisionGuidance = [
@@ -418,6 +522,8 @@ const decisionGuidance = [
   'Adopt worker threads or external services for CPU-heavy workloads.',
   'Leverage TypeScript and linting to scale large Node codebases.',
   'Avoid Node for low-latency numeric computing or heavy batch processing.',
+  'Adopt a framework when you need conventions, validation, and middleware.',
+  'Invest in observability early to prevent silent performance regressions.',
 ]
 
 const advancedInsights = [
@@ -441,6 +547,16 @@ const advancedInsights = [
     detail:
       'Lightweight handlers and minimal dependencies keep latency low in edge environments.',
   },
+  {
+    title: 'Backpressure signals',
+    detail:
+      'Streams return false from write when buffers are full; honoring it prevents overload.',
+  },
+  {
+    title: 'Runtime flags',
+    detail:
+      'V8 and Node flags can tune memory limits, debugging, and stack traces.',
+  },
 ]
 
 const takeaways = [
@@ -448,6 +564,78 @@ const takeaways = [
   'It excels at I/O workloads but needs careful handling of CPU-bound tasks.',
   'The npm ecosystem accelerates development, but dependency hygiene matters.',
   'Modern tooling and TypeScript help large Node services stay maintainable.',
+  'Streams, timeouts, and observability are critical for production reliability.',
+  'Graceful shutdown and scaling strategies prevent user-facing outages.',
+]
+
+const ecosystemLandscape = [
+  {
+    heading: 'Popular frameworks',
+    bullets: [
+      'Express: minimal, ubiquitous middleware-first framework.',
+      'Fastify: high-performance routing with schema-based validation.',
+      'NestJS: opinionated architecture with DI and modules.',
+      'Hono/Koa: smaller surface area for custom middleware stacks.',
+    ],
+  },
+  {
+    heading: 'Data and messaging',
+    bullets: [
+      'Postgres/MySQL with connection pools for consistent throughput.',
+      'Redis for cache, rate limiting, and pub/sub.',
+      'Kafka/NATS/RabbitMQ for asynchronous workflows and events.',
+    ],
+  },
+  {
+    heading: 'Observability',
+    bullets: [
+      'OpenTelemetry for tracing, metrics, and logs.',
+      'Structured logging with JSON (pino, winston).',
+      'APM tooling for profiling and slow request detection.',
+    ],
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Reliability',
+    detail:
+      'Set timeouts, retries with backoff, and circuit breakers for upstream calls.',
+  },
+  {
+    title: 'Security',
+    detail:
+      'Use strict headers, validate input, and keep dependencies patched.',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Warm caches, reuse connections, and measure p95/p99 latencies.',
+  },
+  {
+    title: 'Deployability',
+    detail:
+      'Graceful shutdown, health probes, and rolling deploys reduce downtime.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Fundamentals',
+    detail: 'Event loop, async patterns, modules, and basic HTTP servers.',
+  },
+  {
+    step: 'Production APIs',
+    detail: 'Validation, auth, rate limits, logging, and error handling.',
+  },
+  {
+    step: 'Scaling',
+    detail: 'Clustering, queues, caching, and horizontal scaling.',
+  },
+  {
+    step: 'Deep internals',
+    detail: 'V8 profiling, libuv, streams, and native modules.',
+  },
 ]
 
 export default function NodeJsPage(): JSX.Element {
@@ -468,6 +656,7 @@ export default function NodeJsPage(): JSX.Element {
               <p className="win95-text">
                 Node.js brings JavaScript to the server with a non-blocking event loop and a huge ecosystem of packages.
                 It shines in I/O-heavy applications, realtime systems, and tooling, while requiring care around CPU-heavy workloads.
+                Under the hood, V8, libuv, and streams cooperate to keep latency low and throughput high.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -481,7 +670,8 @@ export default function NodeJsPage(): JSX.Element {
               <p className="win95-text">
                 Node.js is a runtime built around an event loop that handles thousands of concurrent connections without
                 spawning a thread per request. Its model is simple and fast for I/O-bound systems, but design choices
-                around asynchronous execution and CPU offloading are critical.
+                around asynchronous execution, timeouts, and CPU offloading are critical. Production systems rely on
+                streams, connection pooling, and careful observability to stay stable under load.
               </p>
             </div>
           </fieldset>
@@ -514,6 +704,22 @@ export default function NodeJsPage(): JSX.Element {
             <legend>How it works: Node.js fundamentals</legend>
             <div className="win95-grid win95-grid-2">
               {coreConcepts.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Ecosystem landscape</legend>
+            <div className="win95-grid win95-grid-2">
+              {ecosystemLandscape.map((block) => (
                 <div key={block.heading} className="win95-panel">
                   <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
@@ -595,6 +801,18 @@ export default function NodeJsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -611,6 +829,18 @@ export default function NodeJsPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
