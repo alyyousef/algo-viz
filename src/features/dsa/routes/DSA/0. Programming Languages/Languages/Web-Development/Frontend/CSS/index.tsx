@@ -25,6 +25,21 @@ const historicalMilestones = [
     detail:
       'Specifications split into modules (Flexbox, Grid, Transforms, Animations) so layout, motion, and typography could evolve independently.',
   },
+  {
+    title: 'Flexbox and Grid become standard (2013-2017)',
+    detail:
+      'Modern layout systems make responsive design far less dependent on floats and hacks.',
+  },
+  {
+    title: 'Custom properties and layers (2016+)',
+    detail:
+      'CSS variables and @layer bring design tokens and explicit cascade ordering to native CSS.',
+  },
+  {
+    title: 'Container queries and new units (2022+)',
+    detail:
+      'Components respond to their containers, and viewport units like svh/dvh improve mobile sizing.',
+  },
 ]
 
 const mentalModels = [
@@ -43,6 +58,21 @@ const mentalModels = [
     detail:
       'A selector is a pattern that matches elements. Efficient CSS targets the smallest necessary subset so styling is clear and maintainable.',
   },
+  {
+    title: 'Layout is constraint solving',
+    detail:
+      'You define constraints (sizes, alignment, available space), and the layout engine resolves them into final geometry.',
+  },
+  {
+    title: 'Tokens are shared language',
+    detail:
+      'Design tokens (spacing, color, type) are the vocabulary that keeps interfaces consistent across components.',
+  },
+  {
+    title: 'Rendering is staged',
+    detail:
+      'Style, layout, paint, and composite are distinct stages; changes hit different stages with different performance costs.',
+  },
 ]
 
 const cssPillars = [
@@ -52,6 +82,7 @@ const cssPillars = [
       'Target elements by type, class, attribute, or relationship (descendant, child, sibling).',
       'Specificity ranks selectors. Inline styles override classes, classes override elements, and later rules win ties.',
       'Use low specificity and utility classes for predictable overrides. Avoid !important unless you are fighting third-party CSS.',
+      'Prefer class selectors over IDs for reusable components and easier overrides.',
     ],
   },
   {
@@ -60,6 +91,7 @@ const cssPillars = [
       'The cascade resolves conflicts between competing declarations from different sources and layers.',
       'Inherited properties (fonts, color) flow down the DOM; non-inherited properties (margin, border) do not.',
       'Use CSS layers and component boundaries to keep cascades understandable in large systems.',
+      'Reset or normalize styles to create a consistent baseline across browsers.',
     ],
   },
   {
@@ -68,6 +100,7 @@ const cssPillars = [
       'Content size plus padding and border determines final box size. Margin adds external spacing.',
       'Box-sizing: border-box makes width include padding and border, simplifying layout math.',
       'Min, max, and clamp let you define flexible ranges that respond to available space.',
+      'Intrinsic sizing keywords (min-content, max-content, fit-content) help balance layout and text flow.',
     ],
   },
   {
@@ -76,6 +109,7 @@ const cssPillars = [
       'Normal flow stacks blocks and aligns inline content. Floats and positioning are older layout tools.',
       'Flexbox handles one-dimensional alignment: rows or columns with distribution and alignment controls.',
       'Grid manages two-dimensional layouts with explicit tracks and areas.',
+      'Subgrid and container queries improve alignment and component autonomy.',
     ],
   },
   {
@@ -84,6 +118,7 @@ const cssPillars = [
       'Font stacks, line-height, and letter-spacing shape readability; use unitless line-heights for scale.',
       'Color and contrast must support accessibility. Color functions (rgb, hsl, lab) give modern control.',
       'Variable fonts and font-display improve performance while still allowing expressive typography.',
+      'Use clamp for responsive type scales that adjust smoothly between breakpoints.',
     ],
   },
   {
@@ -92,6 +127,7 @@ const cssPillars = [
       'Transitions smooth state changes; animations define keyframe timelines.',
       'Prefer transform and opacity for better performance; avoid animating layout-affecting properties.',
       'Respect prefers-reduced-motion so interfaces remain comfortable for all users.',
+      'Use easing curves and durations consistently so motion feels intentional.',
     ],
   },
 ]
@@ -117,6 +153,11 @@ const cascadeRules = [
     detail:
       'Inherited properties pass down; non-inherited properties reset unless explicitly set. Use inherit or unset to control flow.',
   },
+  {
+    title: 'Cascade layers',
+    detail:
+      '@layer lets you group styles and define explicit precedence between base, components, and utilities.',
+  },
 ]
 
 const layoutSystems = [
@@ -139,6 +180,11 @@ const layoutSystems = [
     title: 'Grid',
     detail:
       'Define rows and columns simultaneously. Use repeat, minmax, and auto-fit to build responsive tracks.',
+  },
+  {
+    title: 'Multi-column layout',
+    detail:
+      'Split long text into columns with column-count and column-gap for magazine-like flows.',
   },
 ]
 
@@ -163,6 +209,11 @@ const unitsAndSizing = [
     detail:
       'min(), max(), and clamp() let you define adaptable ranges without media queries.',
   },
+  {
+    title: 'Character and line units',
+    detail:
+      'ch and lh approximate character width and line height, useful for readable measure and rhythm.',
+  },
 ]
 
 const responsivePatterns = [
@@ -186,6 +237,16 @@ const responsivePatterns = [
     detail:
       'Use clamp() for headings to scale between min and max sizes, keeping readability on all screens.',
   },
+  {
+    title: 'Responsive media',
+    detail:
+      'Use max-width: 100% and aspect-ratio to keep images and videos fluid.',
+  },
+  {
+    title: 'Fluid spacing',
+    detail:
+      'Define spacing tokens with clamp so layouts breathe across device sizes.',
+  },
 ]
 
 const accessibilityNotes = [
@@ -203,6 +264,16 @@ const accessibilityNotes = [
     title: 'Reduced motion',
     detail:
       'Use prefers-reduced-motion to reduce or remove large motion effects for sensitive users.',
+  },
+  {
+    title: 'Hit targets',
+    detail:
+      'Ensure interactive elements are large enough to tap comfortably on touch devices.',
+  },
+  {
+    title: 'Focus visibility',
+    detail:
+      'Use :focus-visible to show focus when it is useful without distracting mouse users.',
   },
 ]
 
@@ -222,6 +293,16 @@ const performanceNotes = [
     detail:
       'Inline above-the-fold styles and defer non-critical CSS to reduce render-blocking overhead.',
   },
+  {
+    title: 'Containment and content-visibility',
+    detail:
+      'Contain and content-visibility limit layout and paint work for large or offscreen sections.',
+  },
+  {
+    title: 'Font loading',
+    detail:
+      'Use font-display and preload to reduce layout shifts and improve first render.',
+  },
 ]
 
 const toolingStack = [
@@ -239,6 +320,16 @@ const toolingStack = [
     title: 'CSS Modules and utility frameworks',
     detail:
       'Modules scope styles to components. Utility-first frameworks provide small, composable classes for rapid layout and design.',
+  },
+  {
+    title: 'Linting and formatting',
+    detail:
+      'Stylelint and consistent formatting prevent accidental specificity and syntax mistakes.',
+  },
+  {
+    title: 'Design tokens',
+    detail:
+      'Token systems and style dictionaries keep spacing, color, and typography consistent across apps.',
   },
 ]
 
@@ -280,6 +371,49 @@ const examples = [
     explanation:
       'The card adapts based on its own width rather than the viewport, making it flexible inside dashboards and sidebars.',
   },
+  {
+    title: 'Design tokens with custom properties',
+    code: `:root {
+  --space-2: 8px;
+  --space-4: 16px;
+  --radius: 6px;
+}
+
+.panel {
+  padding: var(--space-4);
+  border-radius: var(--radius);
+}`,
+    explanation:
+      'Tokens keep spacing and shape consistent while still allowing easy theme overrides.',
+  },
+  {
+    title: 'Grid areas for layout clarity',
+    code: `.layout {
+  display: grid;
+  grid-template-areas:
+    "nav nav"
+    "side main";
+  grid-template-columns: 240px 1fr;
+  gap: 12px;
+}
+
+.nav { grid-area: nav; }
+.side { grid-area: side; }
+.main { grid-area: main; }`,
+    explanation:
+      'Named areas make complex layouts easier to read and maintain.',
+  },
+  {
+    title: 'Motion with reduced-motion support',
+    code: `.card { transition: transform 150ms ease; }
+.card:hover { transform: translateY(-2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+}`,
+    explanation:
+      'Motion remains subtle for most users and disables when a reduced-motion preference is set.',
+  },
 ]
 
 const pitfalls = [
@@ -288,6 +422,9 @@ const pitfalls = [
   'Mixing layout systems without intent (floats + grid + absolute positioning) leading to brittle layouts.',
   'Ignoring box-sizing, causing widths to overflow when padding and borders are added.',
   'Relying on fixed heights that break when content or localization changes.',
+  'Sprinkling inline styles that bypass the cascade and make refactors harder.',
+  'Shipping huge unused CSS that slows page load and rendering.',
+  'Forgetting focus styles on custom interactive elements.',
 ]
 
 const decisionGuidance = [
@@ -296,6 +433,8 @@ const decisionGuidance = [
   'Prefer class-based selectors over tag selectors for reusable UI components.',
   'Use modern layout features (gap, minmax, clamp) before adding extra wrappers or breakpoints.',
   'Document design tokens in CSS variables so themes and modes are easy to maintain.',
+  'Reach for container queries when components must live in multiple layouts.',
+  'Use @layer to prevent utility overrides from accidentally clobbering components.',
 ]
 
 const advancedInsights = [
@@ -319,6 +458,16 @@ const advancedInsights = [
     detail:
       'Use margin-inline and padding-block to support right-to-left and vertical writing modes without duplicating styles.',
   },
+  {
+    title: 'Composited animation',
+    detail:
+      'Animations that stay in the composite stage (transform, opacity) remain smooth under load.',
+  },
+  {
+    title: 'Scoping strategies',
+    detail:
+      'Scope global styles narrowly and use utility or module patterns to prevent leakage.',
+  },
 ]
 
 const takeaways = [
@@ -326,6 +475,119 @@ const takeaways = [
   'Layout decisions are easier when you pick the right system early: normal flow, flexbox, or grid.',
   'Modern CSS reduces the need for heavy frameworks when you leverage custom properties, clamp, and container queries.',
   'Performance and accessibility are built into CSS choices, not added later.',
+  'Design tokens and layers keep large codebases predictable and scalable.',
+  'Rendering knowledge helps you diagnose jank and layout bugs quickly.',
+]
+
+const renderingPipeline = [
+  {
+    title: 'Style calculation',
+    detail:
+      'The browser resolves CSS rules to computed styles for each element.',
+  },
+  {
+    title: 'Layout',
+    detail:
+      'Element geometry is computed from the box model and layout constraints.',
+  },
+  {
+    title: 'Paint',
+    detail:
+      'Pixels are drawn for backgrounds, borders, text, and shadows.',
+  },
+  {
+    title: 'Composite',
+    detail:
+      'Layers are combined on the GPU; transforms and opacity can update here.',
+  },
+]
+
+const designSystemNotes = [
+  {
+    title: 'Token scales',
+    detail:
+      'Define color, spacing, and typography scales once and reuse everywhere.',
+  },
+  {
+    title: 'Component boundaries',
+    detail:
+      'Scope styles to components to avoid unintended cross-page effects.',
+  },
+  {
+    title: 'States and variants',
+    detail:
+      'Design consistent hover, focus, active, and disabled states across UI.',
+  },
+  {
+    title: 'Theming',
+    detail:
+      'Use CSS variables to swap themes without rewriting components.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Use DevTools',
+    detail:
+      'Inspect computed styles and see which rules win in the cascade.',
+  },
+  {
+    title: 'Outline layout',
+    detail:
+      'Temporary outlines on containers make spacing and flow issues visible.',
+  },
+  {
+    title: 'Toggle constraints',
+    detail:
+      'Disable or isolate styles to pinpoint which rule causes a bug.',
+  },
+  {
+    title: 'Test responsive states',
+    detail:
+      'Resize and emulate devices to validate breakpoints and container queries.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Consistency',
+    detail:
+      'Use tokens, scales, and shared utilities to keep styling uniform.',
+  },
+  {
+    title: 'Accessibility',
+    detail:
+      'Verify focus states, contrast, and reduced-motion behavior.',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Remove unused CSS and avoid heavy effects on scroll or hover.',
+  },
+  {
+    title: 'Maintainability',
+    detail:
+      'Limit specificity and document global rules to prevent collisions.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Selectors, cascade, box model, and typography basics.',
+  },
+  {
+    step: 'Layout mastery',
+    detail: 'Flexbox, grid, positioning, and responsive patterns.',
+  },
+  {
+    step: 'Advanced features',
+    detail: 'Custom properties, container queries, and modern units.',
+  },
+  {
+    step: 'Production CSS',
+    detail: 'Design tokens, tooling, performance, and accessibility.',
+  },
 ]
 
 export default function CssPage(): JSX.Element {
@@ -484,9 +746,45 @@ export default function CssPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Rendering pipeline</legend>
+            <div className="win95-grid win95-grid-2">
+              {renderingPipeline.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Tooling and workflows</legend>
             <div className="win95-grid win95-grid-2">
               {toolingStack.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Design system practices</legend>
+            <div className="win95-grid win95-grid-2">
+              {designSystemNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -522,6 +820,18 @@ export default function CssPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use what</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -538,6 +848,18 @@ export default function CssPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
