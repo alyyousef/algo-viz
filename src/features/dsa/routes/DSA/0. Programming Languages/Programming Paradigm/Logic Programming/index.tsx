@@ -29,6 +29,21 @@ const milestones = [
     detail:
       'Stable model semantics and SAT/SMT integrations widened use in planning, configuration, and verification, demonstrating that declarative encodings can ride on top of powerful search engines.',
   },
+  {
+    title: 'Datalog resurgence in tooling (2000s-2010s)',
+    detail:
+      'Datalog and fixed-point engines power program analysis, security policy, and data lineage at scale.',
+  },
+  {
+    title: 'Probabilistic logic programming (2010s)',
+    detail:
+      'Extensions like ProbLog and Markov logic blend uncertainty with logical inference.',
+  },
+  {
+    title: 'Neuro-symbolic systems (2020s)',
+    detail:
+      'Logic constraints increasingly complement ML models for explainability and safety.',
+  },
 ]
 
 const mentalModels = [
@@ -47,6 +62,21 @@ const mentalModels = [
     detail:
       'Variables stand for unknowns and can be partially instantiated. Unification tries to make structures identical, propagating bindings through a proof attempt.',
   },
+  {
+    title: 'Knowledge base as database',
+    detail:
+      'Facts are stored like rows; rules define derived relations queried on demand.',
+  },
+  {
+    title: 'Backtracking as control flow',
+    detail:
+      'Control emerges from search; the engine explores alternatives automatically.',
+  },
+  {
+    title: 'Constraints prune early',
+    detail:
+      'Constraints act like filters that cut branches before full enumeration.',
+  },
 ]
 
 const mechanics = [
@@ -55,6 +85,7 @@ const mechanics = [
     bullets: [
       'Facts assert base truths. Rules encode implications using Horn clauses. Queries ask if a goal can be satisfied given the knowledge base.',
       'The engine tries to prove a query by chaining rules until it reaches facts, instantiating variables along the way.',
+      'The closed-world assumption treats unprovable statements as false in many logic systems.',
     ],
   },
   {
@@ -63,6 +94,7 @@ const mechanics = [
       'Unification matches terms by finding bindings that make them identical, failing if structures clash.',
       'Backtracking explores alternatives when a path fails. Choice points record where to resume search.',
       'Occurs checks prevent infinite self references, though many Prolog implementations skip it for speed.',
+      'Cuts commit to a path and can eliminate expensive search branches.',
     ],
   },
   {
@@ -71,6 +103,15 @@ const mechanics = [
       'The WAM compiles Prolog to efficient instructions: environment frames, choice points, trail stacks, and indexing for fast clause selection.',
       'Depth first search with left to right goal order is standard; it is incomplete for some programs but efficient in practice.',
       'Constraint logic programming integrates domain specific solvers to tighten variable domains during search.',
+      'Tabling memoizes subgoals to avoid recomputation and guarantee termination for some recursion.',
+    ],
+  },
+  {
+    heading: 'Constraint solving',
+    bullets: [
+      'CLP(FD) handles finite domains with propagation and domain reduction.',
+      'CLP(R) solves over real numbers with specialized solvers.',
+      'Constraints can be combined with search to find optimal solutions.',
     ],
   },
 ]
@@ -90,6 +131,11 @@ const complexityNotes = [
     title: 'Determinism vs completeness',
     detail:
       'Cuts and committed choice reduce search and improve speed but can sacrifice completeness by discarding alternative proofs.',
+  },
+  {
+    title: 'Indexing impact',
+    detail:
+      'Good indexing reduces clause scanning dramatically and can turn unusable programs into fast queries.',
   },
 ]
 
@@ -113,6 +159,16 @@ const applications = [
     context: 'Program analysis and verification',
     detail:
       'Datalog based tools (Souffle, Flix) compute data flow, alias analysis, and security properties over codebases using fixed point evaluation.',
+  },
+  {
+    context: 'Knowledge graphs',
+    detail:
+      'Logic rules infer new edges and relationships in graph data.',
+  },
+  {
+    context: 'Configuration and policy',
+    detail:
+      'Declarative rules validate infrastructure configs and access control.',
   },
 ]
 
@@ -152,6 +208,26 @@ solve(X, Y, Z) :-
     explanation:
       'Finite domain constraints prune values early, shrinking the search tree before full enumeration.',
   },
+  {
+    title: 'Datalog reachability',
+    code: `edge(a, b).
+edge(b, c).
+
+path(X, Y) :- edge(X, Y).
+path(X, Y) :- edge(X, Z), path(Z, Y).`,
+    explanation:
+      'Datalog computes the transitive closure with fixed-point evaluation and avoids infinite loops.',
+  },
+  {
+    title: 'Rule-based policy',
+    code: `allow(User, Resource) :-
+  member(User, admins).
+
+allow(User, Resource) :-
+  owns(User, Resource).`,
+    explanation:
+      'Policies are expressed as rules; query evaluation determines access.',
+  },
 ]
 
 const pitfalls = [
@@ -160,6 +236,8 @@ const pitfalls = [
   'Overuse of cut (!) for performance can hide valid solutions and make logic non declarative.',
   'Impure features (assert/retract, global variables) break referential transparency and complicate reasoning.',
   'Scaling without indexing or constraints can explode search space; performance tuning is often about better clause indexing and ordering.',
+  'Mixing logical and procedural constructs makes programs hard to reason about.',
+  'Assuming completeness when cuts or ordering prune valid solutions.',
 ]
 
 const decisionPoints = [
@@ -167,6 +245,7 @@ const decisionPoints = [
   'Need combinatorial search with constraints: choose constraint logic programming or answer set programming to prune effectively.',
   'Performance critical loops over numeric arrays: prefer imperative or functional approaches; logic runtimes are not optimized for tight numeric kernels.',
   'Team familiarity and tooling: ensure debugging, tracing, and solver integration meet operational needs.',
+  'Use Datalog when recursion and fixed-point evaluation fit your query model.',
 ]
 
 const advancedInsights = [
@@ -190,6 +269,16 @@ const advancedInsights = [
     detail:
       'Some Prolog variants and Mercury use determinism declarations to optimize and catch missing cases, guiding both compiler and reader about expected solution counts.',
   },
+  {
+    title: 'Constraint propagation strategies',
+    detail:
+      'Propagation strength and ordering determine how aggressively constraints prune the search space.',
+  },
+  {
+    title: 'Explainable inference',
+    detail:
+      'Proof traces provide a clear audit trail for decisions, important in regulated domains.',
+  },
 ]
 
 const sources = [
@@ -205,6 +294,96 @@ const takeaways = [
   'Performance is governed by search shape: goal order, indexing, constraints, and cuts decide practicality.',
   'Purity aids reasoning, but impure shortcuts and missing occurs checks can break soundness or completeness.',
   'Use it where explainability and constraint solving matter more than raw numeric throughput.',
+  'Datalog and ASP bring logic programming to large-scale analysis and planning.',
+  'Successful systems combine declarative models with careful control of search.',
+]
+
+const logicTooling = [
+  {
+    title: 'Languages and systems',
+    detail:
+      'Prolog, Datalog, Mercury, Answer Set Programming, and CLP variants each balance control and declarativity.',
+  },
+  {
+    title: 'Solvers and engines',
+    detail:
+      'SAT/SMT solvers and CLP engines power efficient search and constraint propagation.',
+  },
+  {
+    title: 'Tooling',
+    detail:
+      'Trace tools, debuggers, and visualizers help interpret search and proof paths.',
+  },
+  {
+    title: 'Integration',
+    detail:
+      'Many systems embed logic engines within larger applications or data pipelines.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Trace proofs',
+    detail:
+      'Follow unification and backtracking to locate failing goals.',
+  },
+  {
+    title: 'Inspect indexing',
+    detail:
+      'Check which clauses are being selected to avoid unnecessary scans.',
+  },
+  {
+    title: 'Add constraints early',
+    detail:
+      'Place constraints near the top of rules to prune faster.',
+  },
+  {
+    title: 'Use deterministic subsets',
+    detail:
+      'Prefer deterministic clauses where possible to reduce backtracking.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Performance',
+    detail:
+      'Profile search depth, clause order, and indexing strategies.',
+  },
+  {
+    title: 'Correctness',
+    detail:
+      'Validate constraints and avoid incomplete cuts unless intended.',
+  },
+  {
+    title: 'Maintainability',
+    detail:
+      'Document rules and keep logic declarative for future changes.',
+  },
+  {
+    title: 'Observability',
+    detail:
+      'Capture proof traces for auditing and debugging.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Facts, rules, unification, and queries.',
+  },
+  {
+    step: 'Search control',
+    detail: 'Backtracking, cuts, and goal ordering.',
+  },
+  {
+    step: 'Constraints',
+    detail: 'CLP and finite domain reasoning.',
+  },
+  {
+    step: 'Scaling',
+    detail: 'Datalog, tabling, and solver integrations.',
+  },
 ]
 
 export default function LogicProgrammingPage(): JSX.Element {
@@ -314,6 +493,18 @@ export default function LogicProgrammingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and ecosystem</legend>
+            <div className="win95-grid win95-grid-2">
+              {logicTooling.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -329,6 +520,18 @@ export default function LogicProgrammingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -336,6 +539,18 @@ export default function LogicProgrammingPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -356,6 +571,18 @@ export default function LogicProgrammingPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
