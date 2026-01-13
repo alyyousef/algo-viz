@@ -232,6 +232,11 @@ const historicalMilestones = [
       'Guido van Rossum released Python with a focus on clear syntax and batteries-included standard libraries.',
   },
   {
+    title: 'Python 2 era and ecosystem growth (2000s)',
+    detail:
+      'The language gained momentum with web frameworks and early numerical libraries that set the stage for ML.',
+  },
+  {
     title: 'Scientific stack forms (2000s)',
     detail:
       'NumPy, SciPy, and matplotlib built a foundation for numerical computing on top of Python.',
@@ -242,9 +247,19 @@ const historicalMilestones = [
       'pandas, scikit-learn, and Jupyter notebooks turned Python into the default data science workflow.',
   },
   {
+    title: 'Python 3 transition completes (2020)',
+    detail:
+      'The community converged on Python 3, enabling better typing, async patterns, and long-term maintenance.',
+  },
+  {
     title: 'Deep learning acceleration (2010s-2020s)',
     detail:
       'Frameworks like TensorFlow and PyTorch made Python the main interface for GPU-accelerated ML.',
+  },
+  {
+    title: 'Modern packaging and tooling (2020s)',
+    detail:
+      'Tools like pip, Poetry, uv, and conda improved dependency management for production ML systems.',
   },
 ]
 
@@ -263,6 +278,76 @@ const mentalModels = [
     title: 'Vectors and tensors as core data',
     detail:
       'NumPy arrays and tensors are the workhorses; Python coordinates them while heavy lifting happens underneath.',
+  },
+  {
+    title: 'Ecosystem-first productivity',
+    detail:
+      'The language is simple; the power comes from libraries that compose across the ML lifecycle.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Dynamic, interpreted execution',
+    detail:
+      'Python executes code line by line in an interpreter, emphasizing flexibility over compile-time checks.',
+  },
+  {
+    title: 'Batteries-included standard library',
+    detail:
+      'Networking, data formats, and tooling utilities reduce external dependencies for many workflows.',
+  },
+  {
+    title: 'Everything is an object',
+    detail:
+      'Uniform object model enables introspection, dynamic attributes, and metaprogramming.',
+  },
+  {
+    title: 'Readable control flow',
+    detail:
+      'Indentation-based blocks and clean syntax reduce boilerplate in data pipelines and models.',
+  },
+]
+
+const runtimePipeline = [
+  {
+    stage: 'Parse and compile',
+    description: 'Source code compiles to bytecode for the CPython VM.',
+  },
+  {
+    stage: 'Bytecode execution',
+    description: 'The interpreter loop executes bytecode instructions.',
+  },
+  {
+    stage: 'C-extension dispatch',
+    description: 'Vectorized NumPy/Torch calls jump into optimized native kernels.',
+  },
+  {
+    stage: 'GPU kernels',
+    description: 'CUDA/XLA kernels run on accelerators while Python coordinates.',
+  },
+]
+
+const typingAndDesign = [
+  {
+    title: 'Dynamic typing',
+    detail:
+      'Types are checked at runtime, enabling fast iteration and flexible APIs.',
+  },
+  {
+    title: 'Static hints via typing',
+    detail:
+      'Type hints help with tooling, linters, and IDEs without changing runtime behavior.',
+  },
+  {
+    title: 'Validation libraries',
+    detail:
+      'Pydantic and attrs help enforce schemas at runtime and document expectations.',
+  },
+  {
+    title: 'Protocol-driven design',
+    detail:
+      'Structural typing via protocols enables flexible interfaces across libraries.',
   },
 ]
 
@@ -284,6 +369,14 @@ const ecosystemPillars = [
     ],
   },
   {
+    heading: 'Data pipelines',
+    bullets: [
+      'Prefect, Dagster, and Airflow for orchestration.',
+      'Great Expectations and Pandera for data validation.',
+      'Feast for feature stores and consistency.',
+    ],
+  },
+  {
     heading: 'Machine learning',
     bullets: [
       'scikit-learn for classical ML algorithms.',
@@ -297,6 +390,14 @@ const ecosystemPillars = [
       'PyTorch and TensorFlow for neural networks.',
       'JAX for accelerated, composable transformations.',
       'Lightning and Keras for high-level training loops.',
+    ],
+  },
+  {
+    heading: 'MLOps and serving',
+    bullets: [
+      'MLflow for experiments and model registry.',
+      'FastAPI and BentoML for inference APIs.',
+      'Ray for distributed training and serving.',
     ],
   },
   {
@@ -324,6 +425,11 @@ const performanceNotes = [
       'Use NumPy operations instead of Python loops to stay in optimized C routines.',
   },
   {
+    title: 'Avoid per-row pandas operations',
+    detail:
+      'Prefer vectorized columns, groupby, or query-style operations over apply loops.',
+  },
+  {
     title: 'Profile before optimizing',
     detail:
       'Tools like cProfile and line_profiler identify real bottlenecks before refactors.',
@@ -337,6 +443,11 @@ const performanceNotes = [
     title: 'Mind the GIL',
     detail:
       'CPU-bound threads do not run in parallel under CPython. Use multiprocessing or native extensions for parallel CPU work.',
+  },
+  {
+    title: 'Be intentional about memory',
+    detail:
+      'Large arrays copy easily; watch dtypes, views, and serialization overhead.',
   },
 ]
 
@@ -361,6 +472,16 @@ const realWorldUses = [
     detail:
       'Readable syntax and rich libraries make it the default in many courses and labs.',
   },
+  {
+    context: 'Computer vision and NLP',
+    detail:
+      'Python frameworks and pretrained models power applied AI in products.',
+  },
+  {
+    context: 'Scientific computing',
+    detail:
+      'Domain libraries for bioinformatics, physics, and geoscience accelerate discovery.',
+  },
 ]
 
 const examples = [
@@ -374,6 +495,19 @@ std = X.std(axis=0)
 X_norm = (X - mean) / (std + 1e-8)`,
     explanation:
       'Vectorized operations keep computation in fast native code and avoid slow Python loops.',
+  },
+  {
+    title: 'pandas feature engineering sketch',
+    code: `import pandas as pd
+
+df = pd.read_parquet("events.parquet")
+df["day"] = pd.to_datetime(df["timestamp"]).dt.date
+agg = df.groupby(["user_id", "day"]).agg(
+  clicks=("event", "count"),
+  spend=("amount", "sum"),
+).reset_index()`,
+    explanation:
+      'Groupby and vectorized transforms keep data work efficient and expressive.',
   },
   {
     title: 'Train a simple classifier',
@@ -412,6 +546,35 @@ optimizer.step()`,
     explanation:
       'PyTorch exposes tensors and autograd while still letting you write Python control flow.',
   },
+  {
+    title: 'JAX jit for compiled speed',
+    code: `import jax
+import jax.numpy as jnp
+
+@jax.jit
+def softmax(x):
+  e = jnp.exp(x - x.max())
+  return e / e.sum()
+
+softmax(jnp.array([1.0, 2.0, 3.0]))`,
+    explanation:
+      'JAX compiles Python-defined functions into optimized XLA kernels.',
+  },
+  {
+    title: 'Profile a slow section',
+    code: `import cProfile
+import pstats
+
+def pipeline():
+  ...
+
+with cProfile.Profile() as pr:
+  pipeline()
+
+pstats.Stats(pr).sort_stats("tottime").print_stats(10)`,
+    explanation:
+      'Profiling reveals the true bottlenecks before you rewrite code.',
+  },
 ]
 
 const pitfalls = [
@@ -420,6 +583,8 @@ const pitfalls = [
   'Mixing incompatible array types (NumPy vs pandas vs Torch) without explicit conversion.',
   'Underestimating memory usage when copying large arrays and dataframes.',
   'Relying on the GIL for CPU-bound parallelism; use multiprocessing or native code.',
+  'Data leakage from improper train-test splitting or feature generation.',
+  'Version conflicts between CUDA, drivers, and ML frameworks.',
 ]
 
 const decisionGuidance = [
@@ -428,6 +593,7 @@ const decisionGuidance = [
   'Need high throughput numerical kernels: use vectorization, JIT, or native libraries.',
   'Need minimal dependencies and tiny binaries: consider lower-level options.',
   'Need strict static typing and compile-time guarantees: evaluate alternatives like Rust or Julia.',
+  'Need best-in-class MLOps tooling: Python has the widest vendor support.',
 ]
 
 const advancedInsights = [
@@ -442,6 +608,11 @@ const advancedInsights = [
       'Pin versions with lock files, use virtual environments, and containerize to keep ML runs reproducible.',
   },
   {
+    title: 'Async for IO-heavy systems',
+    detail:
+      'asyncio enables high-concurrency data ingestion and API services without threads.',
+  },
+  {
     title: 'Mixed precision training',
     detail:
       'Using float16 or bfloat16 can accelerate training while saving memory, but requires careful loss scaling.',
@@ -451,6 +622,11 @@ const advancedInsights = [
     detail:
       'Export models to ONNX or TorchScript to run in optimized runtimes outside Python.',
   },
+  {
+    title: 'Distributed training patterns',
+    detail:
+      'Data parallelism and sharding are often handled by libraries like DDP, Ray, or DeepSpeed.',
+  },
 ]
 
 const takeaways = [
@@ -458,6 +634,150 @@ const takeaways = [
   'Performance comes from vectorization and native extensions, not raw Python loops.',
   'Reproducibility and environment control are as important as model accuracy.',
   'Python excels at orchestrating ML systems even when heavy compute runs elsewhere.',
+  'Its tooling spans every stage from data to deployment.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Interactive notebooks',
+    detail:
+      'Jupyter and Colab support rapid exploration and communication.',
+  },
+  {
+    title: 'Testing and quality',
+    detail:
+      'pytest, ruff, and mypy keep ML codebases maintainable.',
+  },
+  {
+    title: 'Packaging and environments',
+    detail:
+      'Use venv/conda plus Poetry or uv for reproducible installs.',
+  },
+  {
+    title: 'Experiment tracking',
+    detail:
+      'Track metrics and artifacts with MLflow, W&B, or TensorBoard.',
+  },
+]
+
+const concurrencyOptions = [
+  {
+    title: 'asyncio',
+    detail:
+      'Best for IO-bound workloads like API calls and streaming data.',
+  },
+  {
+    title: 'Multiprocessing',
+    detail:
+      'Bypasses the GIL for CPU-heavy tasks using multiple processes.',
+  },
+  {
+    title: 'Native parallelism',
+    detail:
+      'NumPy, PyTorch, and XGBoost release the GIL inside native kernels.',
+  },
+  {
+    title: 'Distributed systems',
+    detail:
+      'Ray, Dask, and Spark coordinate tasks across machines.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'C/C++ extensions',
+    detail:
+      'pybind11 and Cython expose native performance to Python APIs.',
+  },
+  {
+    title: 'Rust bindings',
+    detail:
+      'PyO3 and maturin make it easy to ship fast Rust-backed modules.',
+  },
+  {
+    title: 'JVM ecosystems',
+    detail:
+      'Py4J and JPype integrate with Java or Scala data platforms.',
+  },
+  {
+    title: 'Web and JS',
+    detail:
+      'Pyodide and WebAssembly make Python usable in the browser.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'Batch inference',
+    detail:
+      'Schedule pipelines with Airflow or Prefect and write results to data warehouses.',
+  },
+  {
+    title: 'Online serving',
+    detail:
+      'FastAPI, Flask, and BentoML expose models as low-latency APIs.',
+  },
+  {
+    title: 'Model export',
+    detail:
+      'ONNX and TorchScript enable serving in non-Python runtimes.',
+  },
+  {
+    title: 'Edge and embedded',
+    detail:
+      'Quantization and smaller runtimes help deploy to constrained devices.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to Julia',
+    detail:
+      'Python has a larger ecosystem, while Julia offers faster native numerical kernels with less glue.',
+  },
+  {
+    title: 'Compared to R',
+    detail:
+      'Python is more general-purpose and better suited for production services.',
+  },
+  {
+    title: 'Compared to C++',
+    detail:
+      'Python trades raw speed for developer productivity and library breadth.',
+  },
+  {
+    title: 'Compared to Java',
+    detail:
+      'Python is more flexible for research; Java often wins in strict enterprise systems.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Core language and data structures',
+    detail:
+      'Master lists, dicts, functions, and modules before diving into ML libraries.',
+  },
+  {
+    title: 'Numerical computing',
+    detail:
+      'Learn NumPy arrays, broadcasting, and vectorized thinking.',
+  },
+  {
+    title: 'Classical ML stack',
+    detail:
+      'Use pandas and scikit-learn to build and evaluate models.',
+  },
+  {
+    title: 'Deep learning fundamentals',
+    detail:
+      'Pick PyTorch or TensorFlow and learn autograd and training loops.',
+  },
+  {
+    title: 'MLOps and deployment',
+    detail:
+      'Track experiments, build pipelines, and deploy models reliably.',
+  },
 ]
 
 export default function PythonMlPage(): JSX.Element {
@@ -521,6 +841,52 @@ export default function PythonMlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Runtime pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {runtimePipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Type system and design</legend>
+            <div className="win95-grid win95-grid-2">
+              {typingAndDesign.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: ecosystem pillars</legend>
             <div className="win95-grid win95-grid-3">
               {ecosystemPillars.map((block) => (
@@ -531,6 +897,18 @@ export default function PythonMlPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -555,11 +933,43 @@ export default function PythonMlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -593,6 +1003,18 @@ export default function PythonMlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -600,6 +1022,18 @@ export default function PythonMlPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
