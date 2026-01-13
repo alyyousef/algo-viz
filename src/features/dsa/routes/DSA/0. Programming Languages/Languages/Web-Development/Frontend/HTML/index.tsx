@@ -25,6 +25,21 @@ const historicalMilestones = [
     detail:
       'Living standards add semantic tags, audio/video, canvas, and APIs that reduce reliance on plugins.',
   },
+  {
+    title: 'Living standard evolves (2016+)',
+    detail:
+      'HTML becomes a continuously updated spec with new elements and attributes landing incrementally.',
+  },
+  {
+    title: 'Interop and platform APIs expand (2018+)',
+    detail:
+      'New media, form, and accessibility features reduce the need for heavy JavaScript fallbacks.',
+  },
+  {
+    title: 'Web components and templates mature (2020+)',
+    detail:
+      'Native components and template primitives allow reusable markup without frameworks.',
+  },
 ]
 
 const mentalModels = [
@@ -43,6 +58,21 @@ const mentalModels = [
     detail:
       'Well-structured HTML delivers core content even when CSS or JavaScript fail, making it the fallback foundation.',
   },
+  {
+    title: 'Semantics drive accessibility',
+    detail:
+      'Elements convey roles and relationships to assistive technologies without extra ARIA.',
+  },
+  {
+    title: 'Metadata shapes discovery',
+    detail:
+      'Head tags and structured data are how browsers, bots, and social platforms understand your page.',
+  },
+  {
+    title: 'Default behaviors are features',
+    detail:
+      'Native inputs, links, and buttons carry built-in keyboard and focus support you should preserve.',
+  },
 ]
 
 const coreBuildingBlocks = [
@@ -52,6 +82,7 @@ const coreBuildingBlocks = [
       'Elements are the semantic units: headings, paragraphs, lists, buttons, and more.',
       'Tags define the start and end of an element; some are void (img, input, br) and never close.',
       'Nesting determines hierarchy; invalid nesting can still render but breaks accessibility and scripts.',
+      'Custom elements extend HTML with new tags while keeping a valid DOM tree.',
     ],
   },
   {
@@ -60,6 +91,7 @@ const coreBuildingBlocks = [
       'Attributes add metadata: ids, classes, data-* values, ARIA roles, and resource URLs.',
       'Boolean attributes (disabled, checked) are true by presence, not by value.',
       'Global attributes apply to most elements, enabling consistent hooks for CSS and JS.',
+      'Use aria-* only when native semantics are insufficient.',
     ],
   },
   {
@@ -68,6 +100,15 @@ const coreBuildingBlocks = [
       'Block elements form vertical layout by default, while inline elements flow within text.',
       'Default display can be overridden with CSS, but semantic meaning should stay intact.',
       'Line breaks and whitespace collapse in HTML; layout comes from structure, not spacing.',
+      'Intrinsic size and baseline alignment influence layout in subtle ways.',
+    ],
+  },
+  {
+    heading: 'Links and navigation',
+    bullets: [
+      'Anchors are the backbone of the web; use real links for navigation.',
+      'Nav menus and breadcrumbs improve orientation and crawler discovery.',
+      'Skip links help keyboard users bypass repetitive content.',
     ],
   },
 ]
@@ -93,6 +134,11 @@ const documentAnatomy = [
     detail:
       'CSS can live in link tags or style blocks. Scripts run in order unless async/defer changes timing.',
   },
+  {
+    title: 'Document language',
+    detail:
+      'lang sets the default language; use hreflang or lang attributes for mixed-language content.',
+  },
 ]
 
 const semanticsAndLandmarks = [
@@ -115,6 +161,11 @@ const semanticsAndLandmarks = [
     title: 'Meaning over appearance',
     detail:
       'Pick elements for what they are, not how they look. CSS handles appearance; HTML communicates intent.',
+  },
+  {
+    title: 'Buttons vs links',
+    detail:
+      'Use buttons for actions and links for navigation; mixing them breaks expectations and accessibility.',
   },
 ]
 
@@ -139,6 +190,11 @@ const formsAndInput = [
     detail:
       'fieldset and legend group related fields; disabled and readonly express intent without scripts.',
   },
+  {
+    title: 'Autocomplete and UX',
+    detail:
+      'autocomplete tokens help users fill forms faster and more accurately.',
+  },
 ]
 
 const mediaAndGraphics = [
@@ -161,6 +217,11 @@ const mediaAndGraphics = [
     title: 'Embeds and iframes',
     detail:
       'iframes isolate external content; use sandbox and allow attributes to limit capabilities.',
+  },
+  {
+    title: 'Figures and captions',
+    detail:
+      'figure and figcaption provide semantic grouping for images, charts, and media.',
   },
 ]
 
@@ -185,6 +246,11 @@ const parsingAndRendering = [
     detail:
       'Browsers map semantic elements into an accessibility tree used by screen readers and automation tools.',
   },
+  {
+    title: 'Preload scanner',
+    detail:
+      'Browsers scan HTML for critical resources early to speed up rendering.',
+  },
 ]
 
 const performanceAndDelivery = [
@@ -207,6 +273,11 @@ const performanceAndDelivery = [
     title: 'Server rendering choices',
     detail:
       'Static or server-rendered HTML delivers content faster, then hydration adds interactivity.',
+  },
+  {
+    title: 'Streaming and partials',
+    detail:
+      'Streaming HTML can reveal content faster while async components finish rendering.',
   },
 ]
 
@@ -262,6 +333,40 @@ const examples = [
     explanation:
       'Labels, fieldsets, and native input types provide validation, semantics, and accessibility without extra scripts.',
   },
+  {
+    title: 'Responsive image with art direction',
+    code: `<picture>
+  <source media="(min-width: 800px)" srcset="/hero-wide.jpg" />
+  <img src="/hero.jpg" alt="Team collaborating in a studio" />
+</picture>`,
+    explanation:
+      'picture lets you serve different crops for different layouts while keeping a single semantic image.',
+  },
+  {
+    title: 'Metadata for SEO and sharing',
+    code: `<head>
+  <title>Design Systems 101</title>
+  <meta name="description" content="A practical guide to building UI systems." />
+  <meta property="og:title" content="Design Systems 101" />
+  <meta property="og:image" content="/share.jpg" />
+</head>`,
+    explanation:
+      'Search engines and social platforms use metadata to display previews and summaries.',
+  },
+  {
+    title: 'Dialog and details UI',
+    code: `<dialog id="help">
+  <h2>Need help?</h2>
+  <p>Native dialog provides focus trapping and close behavior.</p>
+</dialog>
+
+<details>
+  <summary>More info</summary>
+  <p>Details/summary creates accessible disclosure without JavaScript.</p>
+</details>`,
+    explanation:
+      'Modern HTML provides interactive primitives that reduce custom scripting.',
+  },
 ]
 
 const pitfalls = [
@@ -270,6 +375,9 @@ const pitfalls = [
   'Breaking heading order, creating confusing navigation for screen readers and SEO crawlers.',
   'Relying on HTML for layout spacing (extra br or nbsp) instead of structural tags and CSS.',
   'Using non-unique ids or missing label associations, causing form and script bugs.',
+  'Using link or button roles incorrectly and confusing keyboard behavior.',
+  'Shipping huge HTML responses with unnecessary wrappers and duplicated markup.',
+  'Nesting interactive controls (button inside link) causing invalid HTML and bugs.',
 ]
 
 const decisionGuidance = [
@@ -278,6 +386,8 @@ const decisionGuidance = [
   'If a media asset conveys meaning, use descriptive alt text and captions to preserve context.',
   'For navigation and page sections, use landmarks so users can jump through the document easily.',
   'When performance matters, ship HTML that renders the primary content without waiting on JavaScript.',
+  'Use native elements like details, dialog, and summary before building custom widgets.',
+  'Leverage metadata and structured data when SEO or sharing previews matter.',
 ]
 
 const advancedInsights = [
@@ -301,6 +411,16 @@ const advancedInsights = [
     detail:
       'Open Graph and Twitter card tags in the head control link previews and improve click-through.',
   },
+  {
+    title: 'Structured data',
+    detail:
+      'JSON-LD helps search engines understand entities, reviews, and events for rich results.',
+  },
+  {
+    title: 'Form enhancements',
+    detail:
+      'Constraint validation APIs and input modes reduce the need for custom validation logic.',
+  },
 ]
 
 const takeaways = [
@@ -308,6 +428,165 @@ const takeaways = [
   'Well-formed markup improves accessibility, SEO, and reliability across devices.',
   'Native elements provide free functionality: validation, keyboard support, and built-in states.',
   'Performance starts with HTML delivery: smaller, meaningful documents render faster.',
+  'Metadata and structured data make your content discoverable and shareable.',
+  'Progressive enhancement keeps experiences resilient as browsers vary.',
+]
+
+const seoAndMetadata = [
+  {
+    title: 'Title and description',
+    detail:
+      'Unique titles and meta descriptions improve search snippets and click-through.',
+  },
+  {
+    title: 'Open Graph and cards',
+    detail:
+      'Social previews use og:title, og:image, and twitter:card metadata.',
+  },
+  {
+    title: 'Canonical URLs',
+    detail:
+      'Canonical tags reduce duplicate content issues across URLs.',
+  },
+  {
+    title: 'Structured data',
+    detail:
+      'JSON-LD helps search engines interpret entities, products, and reviews.',
+  },
+]
+
+const htmlApis = [
+  {
+    title: 'Media and graphics',
+    detail:
+      'video, audio, canvas, and svg cover native media without plugins.',
+  },
+  {
+    title: 'Interactive elements',
+    detail:
+      'details, summary, dialog, and popover provide built-in UI affordances.',
+  },
+  {
+    title: 'Data and templates',
+    detail:
+      'template and slot support reusable UI via web components.',
+  },
+  {
+    title: 'Forms and validation',
+    detail:
+      'Form-associated elements and validity states support accessible input handling.',
+  },
+]
+
+const securityNotes = [
+  {
+    title: 'Safe embedding',
+    detail:
+      'Use sandboxed iframes and strict allow lists for third-party content.',
+  },
+  {
+    title: 'Content security policy',
+    detail:
+      'CSP in meta or headers limits script, style, and media sources.',
+  },
+  {
+    title: 'Link safety',
+    detail:
+      'Add rel="noopener noreferrer" to external links opened with target="_blank".',
+  },
+  {
+    title: 'Input trust',
+    detail:
+      'Validate and sanitize user input server-side even if HTML validation exists.',
+  },
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Validators and linters',
+    detail:
+      'Use the W3C validator or HTML linters to catch invalid markup early.',
+  },
+  {
+    title: 'Static site generators',
+    detail:
+      'SSG tools produce fast HTML with predictable structure and caching.',
+  },
+  {
+    title: 'Component libraries',
+    detail:
+      'Reusable components keep structure consistent across pages and teams.',
+  },
+  {
+    title: 'Testing',
+    detail:
+      'Accessibility tests and snapshots verify structure and semantics.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Inspect the DOM',
+    detail:
+      'Use DevTools to confirm nesting, attributes, and computed accessibility roles.',
+  },
+  {
+    title: 'Validate semantics',
+    detail:
+      'Check heading order and landmark structure with accessibility tools.',
+  },
+  {
+    title: 'Audit performance',
+    detail:
+      'Measure HTML payload size and render-blocking resources in Lighthouse.',
+  },
+  {
+    title: 'Test without CSS/JS',
+    detail:
+      'Disable CSS or scripts to confirm progressive enhancement holds up.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Semantics',
+    detail:
+      'Use correct elements, headings, and landmarks for navigability.',
+  },
+  {
+    title: 'Accessibility',
+    detail:
+      'Ensure labels, alt text, and focus order are complete and meaningful.',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Keep HTML lean and leverage resource hints for critical assets.',
+  },
+  {
+    title: 'SEO and sharing',
+    detail:
+      'Add metadata and structured data for discovery and previews.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Elements, attributes, nesting rules, and document anatomy.',
+  },
+  {
+    step: 'Semantics',
+    detail: 'Landmarks, forms, and accessible content structure.',
+  },
+  {
+    step: 'Modern HTML',
+    detail: 'Media, templates, and interactive primitives.',
+  },
+  {
+    step: 'Production HTML',
+    detail: 'SEO, performance, security, and progressive enhancement.',
+  },
 ]
 
 export default function HtmlPage(): JSX.Element {
@@ -330,7 +609,8 @@ export default function HtmlPage(): JSX.Element {
               <p className="win95-text">
                 HTML defines the structure and meaning of web content. It is the contract between authors, browsers, and assistive
                 technologies. Everything else on the front end builds on this foundation, so mastering HTML means mastering how a page
-                is read, parsed, and experienced.
+                is read, parsed, and experienced. Modern HTML also includes interactive primitives, media support, and metadata that
+                shape SEO, accessibility, and performance.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -343,7 +623,7 @@ export default function HtmlPage(): JSX.Element {
             <div className="win95-panel">
               <p className="win95-text">
                 HTML turns raw text into a structured document tree. That structure powers layout, accessibility, search indexing, and
-                how scripts locate and update content. When the HTML is correct, everything else becomes easier.
+                how scripts locate and update content. When the HTML is correct, everything else becomes easier and more reliable.
               </p>
             </div>
           </fieldset>
@@ -437,6 +717,30 @@ export default function HtmlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>HTML platform APIs</legend>
+            <div className="win95-grid win95-grid-2">
+              {htmlApis.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>SEO and metadata</legend>
+            <div className="win95-grid win95-grid-2">
+              {seoAndMetadata.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Parsing and rendering pipeline</legend>
             <div className="win95-grid win95-grid-2">
               {parsingAndRendering.map((item) => (
@@ -467,6 +771,42 @@ export default function HtmlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Security considerations</legend>
+            <div className="win95-grid win95-grid-2">
+              {securityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -493,6 +833,18 @@ export default function HtmlPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -509,6 +861,18 @@ export default function HtmlPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
