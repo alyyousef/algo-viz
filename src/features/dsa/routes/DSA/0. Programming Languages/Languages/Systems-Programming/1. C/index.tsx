@@ -246,6 +246,16 @@ const historicalMilestones = [
     detail:
       'Declaring variables anywhere, inline functions, and better numeric types make C more expressive.',
   },
+  {
+    title: 'C11 and atomics (2011)',
+    detail:
+      'C11 adds threads, atomics, and a formal memory model for concurrency.',
+  },
+  {
+    title: 'C18 and C23 refinements',
+    detail:
+      'Smaller updates improve consistency and clarify the standard without major changes.',
+  },
 ]
 
 const mentalModels = [
@@ -264,6 +274,76 @@ const mentalModels = [
     detail:
       'C grants the compiler freedom to optimize by leaving some operations undefined. Correctness demands discipline.',
   },
+  {
+    title: 'Build is part of the language',
+    detail:
+      'Headers, the preprocessor, and the linker are essential to how C programs are structured.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Compiled, not managed',
+    detail:
+      'C compiles directly to machine code with no runtime or garbage collector.',
+  },
+  {
+    title: 'Minimal abstractions',
+    detail:
+      'The language is small; most complexity lives in libraries and code conventions.',
+  },
+  {
+    title: 'Pointers as power tools',
+    detail:
+      'Pointers expose memory directly, enabling performance and portability.',
+  },
+  {
+    title: 'Explicit control flow',
+    detail:
+      'No exceptions or closures; error handling and lifetime are manual.',
+  },
+]
+
+const compilationPipeline = [
+  {
+    stage: 'Preprocess',
+    description: 'Macros expand and includes pull in headers.',
+  },
+  {
+    stage: 'Compile',
+    description: 'Source files compile into object files.',
+  },
+  {
+    stage: 'Assemble',
+    description: 'Assembly turns into machine code (often within compile step).',
+  },
+  {
+    stage: 'Link',
+    description: 'Object files and libraries combine into an executable or library.',
+  },
+]
+
+const standardLibraryHighlights = [
+  {
+    title: 'libc basics',
+    detail:
+      'stdio, stdlib, string, and math provide core utilities and IO.',
+  },
+  {
+    title: 'POSIX APIs',
+    detail:
+      'Open, read, mmap, and sockets enable low-level system interaction.',
+  },
+  {
+    title: 'Time and threading',
+    detail:
+      'time.h and threads.h (C11) provide timers and threading primitives.',
+  },
+  {
+    title: 'Memory utilities',
+    detail:
+      'malloc/free and memcpy/memmove define core memory operations.',
+  },
 ]
 
 const coreConcepts = [
@@ -273,6 +353,7 @@ const coreConcepts = [
       'Primitive types map to machine word sizes; sizeof and alignment drive struct layout.',
       'Pointers are raw addresses. Pointer arithmetic assumes contiguous memory.',
       'Bitfields and unions expose packed representations for protocols and hardware registers.',
+      'const and volatile guide correctness and hardware access.',
     ],
   },
   {
@@ -281,6 +362,7 @@ const coreConcepts = [
       'Stack allocation is automatic; heap allocation uses malloc/free and friends.',
       'Lifetime is explicit: use-after-free and leaks are common pitfalls.',
       'RAII does not exist in C; cleanup must be coded on every exit path.',
+      'Allocation strategies include arenas and pools for speed.',
     ],
   },
   {
@@ -289,6 +371,7 @@ const coreConcepts = [
       'Translation units compile separately; headers declare interfaces.',
       'The preprocessor handles macros and conditional compilation.',
       'Linkers resolve symbols, producing libraries or executables.',
+      'Static vs shared libraries change deployment and ABI concerns.',
     ],
   },
   {
@@ -297,6 +380,7 @@ const coreConcepts = [
       'Return codes, errno, and out-parameters dominate; no exceptions.',
       'Defensive checks and clear ownership rules prevent silent corruption.',
       'APIs often follow "init/use/destroy" lifecycles.',
+      'Consistent error conventions make systems debuggable.',
     ],
   },
 ]
@@ -322,6 +406,11 @@ const memoryModelNotes = [
     detail:
       'Compilers insert padding for alignment. Reordering fields can reduce wasted space.',
   },
+  {
+    title: 'Atomics and memory order',
+    detail:
+      'C11 atomics define ordering guarantees; misuse can cause data races.',
+  },
 ]
 
 const performanceTradeoffs = [
@@ -345,6 +434,11 @@ const performanceTradeoffs = [
     detail:
       'Sanitizers, static analyzers, and fuzzers are essential to keep low-level code reliable.',
   },
+  {
+    title: 'Portability cost',
+    detail:
+      'Cross-platform code often needs conditional compilation and careful ABI handling.',
+  },
 ]
 
 const realWorldUses = [
@@ -367,6 +461,16 @@ const realWorldUses = [
     context: 'Networking stacks',
     detail:
       'Packet parsing and protocol state machines require tight control over bytes and performance.',
+  },
+  {
+    context: 'Cryptography and security',
+    detail:
+      'Low-level primitives and constant-time code are often written in C.',
+  },
+  {
+    context: 'Performance-critical libraries',
+    detail:
+      'C powers core libraries consumed by higher-level languages.',
   },
 ]
 
@@ -419,6 +523,40 @@ int has_flag(int flags, int mask) {
     explanation:
       'Bit flags are compact and fast, ideal for permissions or hardware registers.',
   },
+  {
+    title: 'Error code pattern',
+    code: `int parse_config(const char *path, Config *out) {
+    FILE *fp = fopen(path, "r");
+    if (!fp) return -1;
+    int status = read_config(fp, out);
+    fclose(fp);
+    return status;
+}`,
+    explanation:
+      'C APIs often return status codes and require explicit cleanup on each path.',
+  },
+  {
+    title: 'Struct with init/destroy',
+    code: `typedef struct {
+    char *data;
+    size_t len;
+} Buffer;
+
+int buffer_init(Buffer *b, size_t len) {
+    b->data = malloc(len);
+    if (!b->data) return -1;
+    b->len = len;
+    return 0;
+}
+
+void buffer_destroy(Buffer *b) {
+    free(b->data);
+    b->data = NULL;
+    b->len = 0;
+}`,
+    explanation:
+      'Explicit init/destroy patterns document ownership and lifecycle.',
+  },
 ]
 
 const pitfalls = [
@@ -427,6 +565,8 @@ const pitfalls = [
   'Forgetting to free memory causes leaks; double-free causes corruption.',
   'Assuming sizeof(int) or endianness is portable across platforms.',
   'Undefined behavior (shift overflow, aliasing violations) can break optimizations.',
+  'Mixing signed and unsigned arithmetic can hide bugs.',
+  'Neglecting error codes leads to silent failure paths.',
 ]
 
 const decisionGuidance = [
@@ -435,6 +575,7 @@ const decisionGuidance = [
   'Avoid C when safety and rapid iteration matter more than raw control.',
   'Lean on static analyzers and sanitizers for production-grade codebases.',
   'Document ownership and lifetimes explicitly in APIs.',
+  'Prefer modern alternatives if memory safety is a hard requirement.',
 ]
 
 const advancedInsights = [
@@ -458,6 +599,11 @@ const advancedInsights = [
     detail:
       'MISRA C and CERT C define rule sets that reduce undefined behavior in critical systems.',
   },
+  {
+    title: 'Fuzzing as a habit',
+    detail:
+      'libFuzzer and AFL find edge cases in parsers and protocol handlers.',
+  },
 ]
 
 const takeaways = [
@@ -465,6 +611,150 @@ const takeaways = [
   'The power comes with risk: correctness depends on rigorous discipline and tooling.',
   'C remains essential for kernels, embedded systems, and performance-critical libraries.',
   'Well-designed APIs clarify ownership, lifetimes, and error handling for users.',
+  'Tooling is not optional; it is part of safe C development.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Build systems',
+    detail:
+      'Make, CMake, and Meson manage builds across platforms.',
+  },
+  {
+    title: 'Static analysis',
+    detail:
+      'clang-tidy, cppcheck, and Coverity catch defects early.',
+  },
+  {
+    title: 'Sanitizers',
+    detail:
+      'ASan, UBSan, and MSan detect memory and undefined behavior issues.',
+  },
+  {
+    title: 'Debugging',
+    detail:
+      'gdb and lldb inspect memory, call stacks, and registers.',
+  },
+]
+
+const concurrencyOptions = [
+  {
+    title: 'C11 threads',
+    detail:
+      'threads.h provides a portable API for threads and mutexes.',
+  },
+  {
+    title: 'POSIX threads',
+    detail:
+      'pthread remains the standard on Unix-like systems.',
+  },
+  {
+    title: 'Atomics',
+    detail:
+      'stdatomic.h enables lock-free algorithms with memory ordering.',
+  },
+  {
+    title: 'Event-driven IO',
+    detail:
+      'epoll, kqueue, and io_uring enable scalable servers.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'Stable C ABI',
+    detail:
+      'C APIs are the default interop boundary for many languages.',
+  },
+  {
+    title: 'FFI and bindings',
+    detail:
+      'Python, Rust, and Go use C bindings for performance.',
+  },
+  {
+    title: 'Shared libraries',
+    detail:
+      '.so and .dll files export symbols for integration.',
+  },
+  {
+    title: 'Embedded firmware',
+    detail:
+      'C integrates directly with bootloaders and hardware SDKs.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'Static binaries',
+    detail:
+      'Static linking simplifies deployment for embedded devices.',
+  },
+  {
+    title: 'Shared libraries',
+    detail:
+      'Dynamic linking reduces binary size and supports plugins.',
+  },
+  {
+    title: 'Cross-compilation',
+    detail:
+      'Toolchains target microcontrollers and custom OSes.',
+  },
+  {
+    title: 'Firmware images',
+    detail:
+      'Build artifacts often deploy as flashable images.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to C++',
+    detail:
+      'C is smaller and more predictable; C++ offers RAII and safer abstractions.',
+  },
+  {
+    title: 'Compared to Rust',
+    detail:
+      'Rust enforces memory safety at compile time; C relies on discipline and tooling.',
+  },
+  {
+    title: 'Compared to Go',
+    detail:
+      'C offers lower-level control; Go provides easier concurrency and safer memory.',
+  },
+  {
+    title: 'Compared to Assembly',
+    detail:
+      'C is portable and expressive while still enabling low-level optimization.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Core syntax and pointers',
+    detail:
+      'Learn types, pointers, arrays, and struct layout.',
+  },
+  {
+    title: 'Memory and ownership',
+    detail:
+      'Practice malloc/free patterns and error handling.',
+  },
+  {
+    title: 'Systems APIs',
+    detail:
+      'Use file IO, sockets, and process APIs.',
+  },
+  {
+    title: 'Tooling and debugging',
+    detail:
+      'Master sanitizers, gdb, and static analysis.',
+  },
+  {
+    title: 'Concurrency',
+    detail:
+      'Learn threads, atomics, and memory ordering.',
+  },
 ]
 
 export default function CPage(): JSX.Element {
@@ -528,6 +818,52 @@ export default function CPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compilation pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compilationPipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Standard library highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {standardLibraryHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: C fundamentals</legend>
             <div className="win95-grid win95-grid-2">
               {coreConcepts.map((block) => (
@@ -544,9 +880,33 @@ export default function CPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: memory model</legend>
             <div className="win95-grid win95-grid-2">
               {memoryModelNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyOptions.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -586,6 +946,26 @@ export default function CPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -612,6 +992,18 @@ export default function CPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -619,6 +1011,18 @@ export default function CPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
