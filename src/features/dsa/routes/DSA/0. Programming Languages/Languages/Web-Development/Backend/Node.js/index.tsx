@@ -3,11 +3,20 @@ import { Link } from 'react-router-dom'
 import type { JSX } from 'react'
 
 const win95Styles = `
+:root {
+  --win95-bg: #C0C0C0;
+  --win95-border-dark: #404040;
+  --win95-border-mid: #808080;
+  --win95-border-light: #fff;
+  --win95-accent: #000080;
+  --win95-text: #000;
+}
+
 .win95-page {
   min-height: 100vh;
-  background: #C0C0C0;
+  background: linear-gradient(135deg, #d2d2d2 0%, #c0c0c0 45%, #bcbcbc 100%);
   padding: 0;
-  color: #000;
+  color: var(--win95-text);
   font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
   -webkit-font-smoothing: none;
 }
@@ -17,7 +26,7 @@ const win95Styles = `
 }
 
 .win95-page a {
-  color: #000;
+  color: var(--win95-text);
   text-decoration: none;
 }
 
@@ -30,9 +39,9 @@ const win95Styles = `
   min-height: 100vh;
   margin: 0;
   border: 2px solid;
-  border-color: #fff #404040 #404040 #fff;
-  background: #C0C0C0;
-  box-shadow: none;
+  border-color: var(--win95-border-light) var(--win95-border-dark) var(--win95-border-dark) var(--win95-border-light);
+  background: var(--win95-bg);
+  box-shadow: inset 0 0 0 1px #b0b0b0;
   border-radius: 0;
 }
 
@@ -40,7 +49,7 @@ const win95Styles = `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #000080;
+  background: linear-gradient(90deg, #000060 0%, #000080 60%, #0000a0 100%);
   color: #fff;
   padding: 4px 6px;
   font-weight: 700;
@@ -60,9 +69,9 @@ const win95Styles = `
 .win95-control {
   width: 22px;
   height: 20px;
-  background: #C0C0C0;
+  background: var(--win95-bg);
   border: 2px solid;
-  border-color: #fff #404040 #404040 #fff;
+  border-color: var(--win95-border-light) var(--win95-border-dark) var(--win95-border-dark) var(--win95-border-light);
   border-radius: 0;
   font-weight: 700;
   font-size: 12px;
@@ -72,7 +81,7 @@ const win95Styles = `
 }
 
 .win95-control:active {
-  border-color: #404040 #fff #fff #404040;
+  border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
 }
 
 .win95-control:focus,
@@ -82,51 +91,69 @@ const win95Styles = `
 }
 
 .win95-content {
-  padding: 10px;
+  padding: 12px;
+}
+
+.win95-content > .win95-fieldset:last-of-type {
+  margin-bottom: 18px;
 }
 
 .win95-header-row {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  padding: 8px;
+  border: 2px solid;
+  border-color: var(--win95-border-light) var(--win95-border-dark) var(--win95-border-dark) var(--win95-border-light);
+  background: linear-gradient(180deg, #cfcfcf 0%, #bfbfbf 100%);
+}
+
+.win95-header-row .win95-subheading {
+  font-size: 13px;
+}
+
+.win95-header-row .win95-text {
+  max-width: 720px;
 }
 
 .win95-button {
   padding: 3px 10px 2px;
-  background: #C0C0C0;
+  background: var(--win95-bg);
   border: 2px solid;
-  border-color: #fff #404040 #404040 #fff;
+  border-color: var(--win95-border-light) var(--win95-border-dark) var(--win95-border-dark) var(--win95-border-light);
   border-radius: 0;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   line-height: 1.2;
+  letter-spacing: 0.2px;
 }
 
 .win95-button:active {
-  border-color: #404040 #fff #fff #404040;
+  border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
 }
 
 .win95-fieldset {
   border: 2px solid;
-  border-color: #808080 #404040 #404040 #808080;
+  border-color: var(--win95-border-mid) var(--win95-border-dark) var(--win95-border-dark) var(--win95-border-mid);
   padding: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   border-radius: 0;
-  background: #C0C0C0;
+  background: var(--win95-bg);
 }
 
 .win95-fieldset legend {
   padding: 0 6px;
   font-weight: 700;
   font-size: 12px;
+  color: #000060;
 }
 
 .win95-grid {
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 
 .win95-grid-2 {
@@ -140,19 +167,21 @@ const win95Styles = `
 .win95-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 
 .win95-panel {
   border: 2px solid;
-  border-color: #808080 #fff #fff #808080;
-  background: #C0C0C0;
+  border-color: var(--win95-border-mid) var(--win95-border-light) var(--win95-border-light) var(--win95-border-mid);
+  background: var(--win95-bg);
   padding: 8px;
   border-radius: 0;
+  box-shadow: inset 0 0 0 1px #cfcfcf;
 }
 
 .win95-panel--raised {
-  border-color: #fff #404040 #404040 #fff;
+  border-color: var(--win95-border-light) var(--win95-border-dark) var(--win95-border-dark) var(--win95-border-light);
+  background: linear-gradient(180deg, #cfcfcf 0%, #bfbfbf 100%);
 }
 
 .win95-heading {
@@ -165,6 +194,7 @@ const win95Styles = `
   font-weight: 700;
   font-size: 12px;
   margin: 0 0 6px;
+  color: #000060;
 }
 
 .win95-text {
@@ -202,7 +232,7 @@ const win95Styles = `
 
 .win95-table th,
 .win95-table td {
-  border: 1px solid #808080;
+  border: 1px solid var(--win95-border-mid);
   padding: 6px 6px 4px;
   text-align: left;
 }
@@ -213,13 +243,13 @@ const win95Styles = `
 
 .win95-code {
   margin: 6px 0;
-  background: #C0C0C0;
+  background: #d6d6d6;
   color: #000;
   padding: 8px;
   font-family: 'Courier New', monospace;
   font-size: 11px;
   border: 2px solid;
-  border-color: #404040 #fff #fff #404040;
+  border-color: var(--win95-border-dark) var(--win95-border-light) var(--win95-border-light) var(--win95-border-dark);
   overflow-x: auto;
   border-radius: 0;
 }
