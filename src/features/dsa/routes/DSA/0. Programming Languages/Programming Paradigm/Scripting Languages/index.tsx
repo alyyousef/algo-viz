@@ -30,6 +30,21 @@ const milestones = [
     detail:
       'Tools like Ansible and Terraform adopt script-like DSLs to define environments declaratively, treating automation as first class code.',
   },
+  {
+    title: 'JIT and modern runtimes mature (2010s)',
+    detail:
+      'V8, PyPy, and modern interpreters improve performance, enabling scripts to scale beyond small tasks.',
+  },
+  {
+    title: 'Serverless and edge scripting (2015+)',
+    detail:
+      'Cloud functions push scripts into production paths, making packaging and cold-start optimization critical.',
+  },
+  {
+    title: 'Modern package ecosystems consolidate (2020s)',
+    detail:
+      'Lockfiles, virtual environments, and reproducible builds make scripting safer in production.',
+  },
 ]
 
 const mentalModels = [
@@ -48,6 +63,21 @@ const mentalModels = [
     detail:
       'Many scripts parse and emit text streams. Robust parsing and error handling guard against brittle assumptions about external tools.',
   },
+  {
+    title: 'Automation is policy',
+    detail:
+      'Scripts encode operational decisions; treat them as production code when they become critical.',
+  },
+  {
+    title: 'Boundaries reduce risk',
+    detail:
+      'Well-defined inputs, outputs, and validation prevent cascading failures.',
+  },
+  {
+    title: 'Latency over throughput',
+    detail:
+      'Scripts often value quick startup and developer feedback more than raw speed.',
+  },
 ]
 
 const mechanics = [
@@ -56,6 +86,7 @@ const mechanics = [
     bullets: [
       'Interpreted execution runs code line by line or via bytecode with minimal startup cost, ideal for REPLs and rapid edits.',
       'Dynamic types and duck typing keep code concise but shift some errors to runtime.',
+      'Runtime introspection (reflection, eval) speeds iteration but increases risk if misused.',
     ],
   },
   {
@@ -64,6 +95,7 @@ const mechanics = [
       'Shelling out to system utilities, piping streams, and handling exit codes are core tasks.',
       'Async IO primitives (asyncio, Node promises) let scripts multiplex network calls without threads.',
       'Environment variables and simple config files often carry parameters; validation is crucial.',
+      'Timeouts and retries protect against flaky external systems.',
     ],
   },
   {
@@ -71,6 +103,15 @@ const mechanics = [
     bullets: [
       'Package managers (pip, npm, RubyGems) distribute reusable modules.',
       'Single-file scripts or zipapp/pex bundles ease deployment; container images and standalone runtimes avoid version drift.',
+      'Lockfiles and virtual environments stabilize dependencies across machines.',
+    ],
+  },
+  {
+    heading: 'Observability and safety',
+    bullets: [
+      'Structured logging and exit codes make automation auditable.',
+      'Feature flags and dry-run modes reduce operational risk.',
+      'Idempotent scripts prevent repeated execution from causing harm.',
     ],
   },
 ]
@@ -90,6 +131,11 @@ const complexityNotes = [
     title: 'Reliability costs',
     detail:
       'Lax typing can defer bugs to production. Defensive checks and linting recover safety without losing speed of iteration.',
+  },
+  {
+    title: 'IO bottlenecks',
+    detail:
+      'Most scripts are IO bound; optimizing compute rarely matters as much as network or disk latency.',
   },
 ]
 
@@ -113,6 +159,16 @@ const applications = [
     context: 'Prototyping and experiments',
     detail:
       'Short scripts validate ideas before committing to larger systems. REPLs and notebooks encourage exploration.',
+  },
+  {
+    context: 'Data pipelines',
+    detail:
+      'Batch jobs stitch together ETL steps and dispatch workloads to data stores.',
+  },
+  {
+    context: 'Monitoring and alerts',
+    detail:
+      'Lightweight scripts probe services and trigger notifications.',
   },
 ]
 
@@ -153,6 +209,28 @@ async function readConfigs(paths) {
     explanation:
       'Async primitives keep scripts responsive when handling multiple files or network requests concurrently.',
   },
+  {
+    title: 'Safe subprocess execution (Python)',
+    code: `import subprocess
+
+result = subprocess.run(
+    ["curl", "-fsS", "https://example.com/health"],
+    check=False,
+    capture_output=True,
+    text=True,
+)
+
+if result.returncode != 0:
+    raise SystemExit("Health check failed")`,
+    explanation:
+      'Capture output and validate exit codes so failures are explicit.',
+  },
+  {
+    title: 'Idempotent file update (Bash)',
+    code: `grep -q "option=1" app.conf || echo "option=1" >> app.conf`,
+    explanation:
+      'Idempotent operations let scripts run repeatedly without duplicating work.',
+  },
 ]
 
 const pitfalls = [
@@ -161,6 +239,8 @@ const pitfalls = [
   'Unchecked dynamic typing can hide bugs until runtime; add validation and linters for guardrails.',
   'Hardcoding credentials or paths creates security and portability problems; prefer env vars or secrets managers.',
   'Version drift between environments causes "works on my machine" incidents; pin interpreter and dependency versions.',
+  'Ignoring idempotency leads to repeated side effects in automation.',
+  'Unbounded retries or loops cause runaway resource usage.',
 ]
 
 const decisionPoints = [
@@ -168,6 +248,7 @@ const decisionPoints = [
   'Performance critical compute: move hotspots to native extensions or compiled services while keeping orchestration scripted.',
   'Operational constraints: if startup time or runtime availability is limited, bundle or compile to a single artifact.',
   'Team skills and portability: choose the scripting runtime with best ecosystem and deployment story for your environment.',
+  'If scripts become services, introduce testing, logging, and deployment pipelines.',
 ]
 
 const advancedInsights = [
@@ -191,6 +272,16 @@ const advancedInsights = [
     detail:
       'Add logging around external calls, parse errors, and retries. Small scripts benefit from the same telemetry as services when they become critical.',
   },
+  {
+    title: 'Concurrency control',
+    detail:
+      'Limit parallelism to avoid overwhelming downstream systems.',
+  },
+  {
+    title: 'Configurable scripts',
+    detail:
+      'Use flags and environment-based configuration to avoid hardcoded behavior.',
+  },
 ]
 
 const sources = [
@@ -206,6 +297,96 @@ const takeaways = [
   'Interpreter overhead is often irrelevant for IO bound tasks; robustness hinges on error handling and stable interfaces.',
   'Guard against brittleness with validation, logging, and pinned environments; offload heavy compute to native paths when needed.',
   'Treat important scripts like software: tests, version control, and packaging pay off as scripts become operationally critical.',
+  'Idempotency and observability turn scripts into dependable automation.',
+  'Modern scripting runtimes and tooling make production scripting safer than ever.',
+]
+
+const toolingEcosystem = [
+  {
+    title: 'Languages',
+    detail:
+      'Bash, Python, Ruby, JavaScript, PowerShell, and Perl dominate automation across platforms.',
+  },
+  {
+    title: 'Package managers',
+    detail:
+      'pip, npm, gem, and Poetry manage dependencies and lock versions.',
+  },
+  {
+    title: 'Linting and formatting',
+    detail:
+      'ShellCheck, black, ruff, ESLint, and shfmt reduce errors and improve consistency.',
+  },
+  {
+    title: 'Runtimes and packaging',
+    detail:
+      'Zipapps, containers, and standalone runtimes improve reproducibility.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Reproduce locally',
+    detail:
+      'Capture inputs and environment variables to recreate issues.',
+  },
+  {
+    title: 'Trace execution',
+    detail:
+      'Use verbose flags or tracing modes to follow command execution.',
+  },
+  {
+    title: 'Check exit codes',
+    detail:
+      'Fail fast when subprocesses error rather than continuing silently.',
+  },
+  {
+    title: 'Add logs',
+    detail:
+      'Log key decisions and external calls to speed up diagnosis.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Reliability',
+    detail:
+      'Handle errors, timeouts, and retries consistently.',
+  },
+  {
+    title: 'Security',
+    detail:
+      'Avoid hardcoded secrets and sanitize inputs.',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Limit concurrency and avoid unnecessary heavy dependencies.',
+  },
+  {
+    title: 'Maintainability',
+    detail:
+      'Document usage, flags, and expected outputs.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Shell basics, file IO, and process execution.',
+  },
+  {
+    step: 'Scripting skills',
+    detail: 'Parsing, error handling, and modular scripts.',
+  },
+  {
+    step: 'Automation at scale',
+    detail: 'CI/CD, configuration management, and packaging.',
+  },
+  {
+    step: 'Production scripting',
+    detail: 'Observability, security, and reproducibility.',
+  },
 ]
 
 export default function ScriptingLanguagesPage(): JSX.Element {
@@ -307,6 +488,18 @@ export default function ScriptingLanguagesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and ecosystem</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingEcosystem.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -322,6 +515,18 @@ export default function ScriptingLanguagesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -329,6 +534,18 @@ export default function ScriptingLanguagesPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -349,6 +566,18 @@ export default function ScriptingLanguagesPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
