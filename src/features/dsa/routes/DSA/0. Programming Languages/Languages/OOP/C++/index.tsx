@@ -232,6 +232,11 @@ const historicalMilestones = [
       'Bjarne Stroustrup extended C with classes to support object-oriented design without abandoning low-level control.',
   },
   {
+    title: 'Standardization begins (1998)',
+    detail:
+      'The first ISO C++ standard established a stable core language and library baseline.',
+  },
+  {
     title: 'Templates and the STL (1994)',
     detail:
       'Generic programming arrived with templates and the Standard Template Library, bringing vectors, maps, and algorithms.',
@@ -245,6 +250,11 @@ const historicalMilestones = [
     title: 'Continuous evolution (C++17, C++20, C++23)',
     detail:
       'Ranges, concepts, modules, and coroutines improved expressiveness and compile time structure.',
+  },
+  {
+    title: 'Tooling and safety culture grows (2010s-2020s)',
+    detail:
+      'Sanitizers, static analyzers, and guidelines pushed the community toward safer defaults.',
   },
 ]
 
@@ -264,6 +274,99 @@ const mentalModels = [
     detail:
       'Encapsulation groups data and behavior while protecting invariants through constructors and private state.',
   },
+  {
+    title: 'Pay for what you use',
+    detail:
+      'Features like exceptions, RTTI, and virtual dispatch are optional and can be avoided when needed.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Compiled with direct memory access',
+    detail:
+      'C++ compiles to native code and exposes pointers for low-level control.',
+  },
+  {
+    title: 'Multiple paradigms',
+    detail:
+      'Supports OOP, generic programming, and functional styles in one language.',
+  },
+  {
+    title: 'Strong static typing',
+    detail:
+      'Types are checked at compile time, enabling optimization and early error detection.',
+  },
+  {
+    title: 'Deterministic destructors',
+    detail:
+      'Object lifetime is deterministic, making cleanup predictable and safe.',
+  },
+]
+
+const compilationPipeline = [
+  {
+    stage: 'Preprocess',
+    description: 'Headers are expanded and macros are applied.',
+  },
+  {
+    stage: 'Compile',
+    description: 'Source files compile into object files with optimizations.',
+  },
+  {
+    stage: 'Link',
+    description: 'Object files and libraries combine into an executable or library.',
+  },
+  {
+    stage: 'Runtime',
+    description: 'Static initialization and program startup occur before main.',
+  },
+]
+
+const typeSystemDetails = [
+  {
+    title: 'Value and reference types',
+    detail:
+      'Value types copy by default, references provide aliasing without ownership.',
+  },
+  {
+    title: 'RAII ownership',
+    detail:
+      'std::unique_ptr and std::shared_ptr express ownership explicitly.',
+  },
+  {
+    title: 'Templates and concepts',
+    detail:
+      'Templates enable generic code; concepts add constraints and better diagnostics.',
+  },
+  {
+    title: 'Move semantics',
+    detail:
+      'Moves avoid expensive copies for large objects and resources.',
+  },
+]
+
+const standardLibraryHighlights = [
+  {
+    title: 'Containers',
+    detail:
+      'vector, map, unordered_map, deque, and array cover common data structures.',
+  },
+  {
+    title: 'Algorithms',
+    detail:
+      'A rich algorithm library encourages reuse and composability.',
+  },
+  {
+    title: 'Concurrency',
+    detail:
+      'Threads, atomics, mutexes, and futures support parallel workflows.',
+  },
+  {
+    title: 'Ranges and views',
+    detail:
+      'Lazy views express pipelines without extra allocations.',
+  },
 ]
 
 const coreOopFeatures = [
@@ -273,6 +376,7 @@ const coreOopFeatures = [
       'Classes group data and methods with access control.',
       'Constructors enforce valid initialization.',
       'Private members protect invariants.',
+      'const correctness protects logical state.',
     ],
   },
   {
@@ -281,6 +385,7 @@ const coreOopFeatures = [
       'Derived classes reuse and extend base behavior.',
       'Virtual methods enable polymorphism.',
       'Use with care to avoid fragile hierarchies.',
+      'Prefer interface inheritance over deep trees.',
     ],
   },
   {
@@ -289,6 +394,7 @@ const coreOopFeatures = [
       'Dynamic dispatch via virtual functions.',
       'Interfaces modeled with pure virtual classes.',
       'Prefer composition when possible.',
+      'Type erasure offers runtime polymorphism without inheritance.',
     ],
   },
   {
@@ -297,6 +403,7 @@ const coreOopFeatures = [
       'Resource acquisition is initialization.',
       'Objects clean up resources in destructors.',
       'Deterministic cleanup for files, locks, and memory.',
+      'Scope guards handle error paths safely.',
     ],
   },
   {
@@ -305,6 +412,7 @@ const coreOopFeatures = [
       'Compile-time polymorphism via templates.',
       'Generic containers and algorithms.',
       'Concepts add constraints and clearer errors.',
+      'constexpr enables compile-time evaluation.',
     ],
   },
   {
@@ -313,6 +421,7 @@ const coreOopFeatures = [
       'Manual control of allocation and layout.',
       'Smart pointers enforce ownership.',
       'Undefined behavior requires discipline.',
+      'Alignment and cache locality impact performance.',
     ],
   },
 ]
@@ -329,6 +438,11 @@ const performanceNotes = [
       'Move semantics make value types efficient and easier to reason about than shared mutable state.',
   },
   {
+    title: 'Minimize virtual dispatch',
+    detail:
+      'Use templates or final where polymorphism costs are not needed.',
+  },
+  {
     title: 'Profile with real data',
     detail:
       'Use profilers to locate hot paths and verify optimizations.',
@@ -337,6 +451,11 @@ const performanceNotes = [
     title: 'Keep abstractions thin',
     detail:
       'Inlining and templates help avoid runtime overhead in performance-critical paths.',
+  },
+  {
+    title: 'Use sanitizers early',
+    detail:
+      'AddressSanitizer and UndefinedBehaviorSanitizer catch costly bugs.',
   },
 ]
 
@@ -360,6 +479,16 @@ const realWorldUses = [
     context: 'Embedded and robotics',
     detail:
       'C++ balances hardware control with abstractions for complex behavior.',
+  },
+  {
+    context: 'High performance computing',
+    detail:
+      'Numerical simulation and scientific computing depend on tuned C++ kernels.',
+  },
+  {
+    context: 'Graphics and media',
+    detail:
+      'Renderers, video pipelines, and codecs rely on C++ for throughput.',
   },
 ]
 
@@ -424,6 +553,38 @@ int main() {
     explanation:
       'Templates provide compile-time polymorphism without runtime dispatch overhead.',
   },
+  {
+    title: 'Modern value type with move',
+    code: `#include <vector>
+#include <string>
+
+struct Packet {
+  std::vector<int> data;
+  std::string tag;
+};
+
+Packet makePacket() {
+  Packet p;
+  p.data.reserve(1024);
+  p.tag = "frame";
+  return p;
+}`,
+    explanation:
+      'Return values move efficiently in modern C++ without extra copies.',
+  },
+  {
+    title: 'std::unique_ptr ownership',
+    code: `#include <memory>
+
+struct Node {
+  int value;
+  std::unique_ptr<Node> next;
+};
+
+auto head = std::make_unique<Node>();`,
+    explanation:
+      'unique_ptr makes ownership explicit and prevents accidental leaks.',
+  },
 ]
 
 const pitfalls = [
@@ -432,6 +593,8 @@ const pitfalls = [
   'Undefined behavior from out-of-bounds access or lifetime bugs.',
   'Ignoring rule of three or five when managing resources.',
   'Slow builds due to heavy template usage without modularization.',
+  'Mixing raw and smart pointers without clear ownership rules.',
+  'Excessive header coupling that increases compile times.',
 ]
 
 const decisionGuidance = [
@@ -440,6 +603,7 @@ const decisionGuidance = [
   'Need fast startup and low-level system integration: C++ delivers.',
   'Need rapid scripting or minimal complexity: consider higher-level languages.',
   'Need safe memory without manual discipline: consider Rust or managed runtimes.',
+  'Need cross-platform native libraries: C++ is a common choice.',
 ]
 
 const advancedInsights = [
@@ -454,14 +618,19 @@ const advancedInsights = [
       'Value semantics reduce aliasing bugs. Immutability simplifies multithreaded reasoning.',
   },
   {
+    title: 'ABI boundaries',
+    detail:
+      'C++ ABI stability varies by compiler and version. Expose C APIs when needed.',
+  },
+  {
     title: 'Modern C++ concurrency',
     detail:
       'std::thread, atomics, and async support many concurrency models when used carefully.',
   },
   {
-    title: 'ABI and binary boundaries',
+    title: 'Build and tooling discipline',
     detail:
-      'C++ ABI stability varies by compiler. Expose C APIs for cross-language boundaries.',
+      'Use CMake, clang-tidy, and sanitizers for quality in large codebases.',
   },
 ]
 
@@ -470,6 +639,150 @@ const takeaways = [
   'Performance and determinism are its core strengths.',
   'Safety depends on disciplined ownership and modern best practices.',
   'Modern C++ features make safer, more expressive code possible.',
+  'Tooling is essential to keep large C++ systems maintainable.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Build systems',
+    detail:
+      'CMake and Meson manage cross-platform builds and dependencies.',
+  },
+  {
+    title: 'Package managers',
+    detail:
+      'vcpkg and Conan help standardize third-party libraries.',
+  },
+  {
+    title: 'Static analysis',
+    detail:
+      'clang-tidy and cppcheck catch issues early.',
+  },
+  {
+    title: 'Profiling',
+    detail:
+      'perf, VTune, and Tracy help diagnose performance bottlenecks.',
+  },
+]
+
+const concurrencyOptions = [
+  {
+    title: 'Threads and tasks',
+    detail:
+      'std::thread, std::async, and thread pools power parallel work.',
+  },
+  {
+    title: 'Lock-free and atomics',
+    detail:
+      'Atomics enable high-performance synchronization when used carefully.',
+  },
+  {
+    title: 'Coroutines',
+    detail:
+      'C++20 coroutines support async IO and lazy generators.',
+  },
+  {
+    title: 'Parallel STL',
+    detail:
+      'Parallel algorithms can speed up data processing workloads.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'C compatibility',
+    detail:
+      'Expose C-style APIs for stable ABI and broad language support.',
+  },
+  {
+    title: 'Python bindings',
+    detail:
+      'pybind11 makes it easy to call C++ from Python.',
+  },
+  {
+    title: 'Rust and Zig',
+    detail:
+      'C ABI bridges allow safe interop with modern systems languages.',
+  },
+  {
+    title: '.NET and Java',
+    detail:
+      'C++/CLI and JNI integrate with managed runtimes.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'Static and shared libraries',
+    detail:
+      'Ship performance-critical components as .a or .so/.dll.',
+  },
+  {
+    title: 'Native executables',
+    detail:
+      'Standalone binaries are common for tools and services.',
+  },
+  {
+    title: 'Embedded targets',
+    detail:
+      'Cross-compile with toolchains for microcontrollers and devices.',
+  },
+  {
+    title: 'Plugins and SDKs',
+    detail:
+      'Expose ABI-stable plugin boundaries for extensions.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to Rust',
+    detail:
+      'Rust offers stronger compile-time safety, while C++ has broader legacy and ecosystem.',
+  },
+  {
+    title: 'Compared to Java',
+    detail:
+      'C++ provides lower-level control and faster startup, Java offers managed safety.',
+  },
+  {
+    title: 'Compared to C',
+    detail:
+      'C++ adds RAII, templates, and OOP while keeping low-level access.',
+  },
+  {
+    title: 'Compared to Python',
+    detail:
+      'C++ is far faster for hot paths but slower to develop for quick prototypes.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Core syntax and RAII',
+    detail:
+      'Learn classes, constructors, destructors, and ownership rules.',
+  },
+  {
+    title: 'STL mastery',
+    detail:
+      'Use vectors, maps, algorithms, and iterators idiomatically.',
+  },
+  {
+    title: 'Modern C++ features',
+    detail:
+      'Practice move semantics, smart pointers, and lambdas.',
+  },
+  {
+    title: 'Performance and debugging',
+    detail:
+      'Use sanitizers, profilers, and careful measurement.',
+  },
+  {
+    title: 'Systems and concurrency',
+    detail:
+      'Learn threads, atomics, and low-level system integration.',
+  },
 ]
 
 export default function CPlusPlusPage(): JSX.Element {
@@ -533,6 +846,64 @@ export default function CPlusPlusPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compilation pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compilationPipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Type system and ownership</legend>
+            <div className="win95-grid win95-grid-2">
+              {typeSystemDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Standard library highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {standardLibraryHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: OOP and core features</legend>
             <div className="win95-grid win95-grid-3">
               {coreOopFeatures.map((block) => (
@@ -543,6 +914,18 @@ export default function CPlusPlusPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -567,11 +950,43 @@ export default function CPlusPlusPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -605,6 +1020,18 @@ export default function CPlusPlusPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -612,6 +1039,18 @@ export default function CPlusPlusPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 

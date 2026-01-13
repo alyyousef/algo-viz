@@ -232,6 +232,11 @@ const historicalMilestones = [
       'Java launched with the JVM, promising portability and safer memory management than C++.',
   },
   {
+    title: 'J2EE and enterprise patterns (late 1990s)',
+    detail:
+      'Servlets, EJBs, and early app servers established Java as the enterprise default.',
+  },
+  {
     title: 'Enterprise dominance (2000s)',
     detail:
       'Java became the backbone of large-scale enterprise systems with robust tooling and frameworks.',
@@ -242,9 +247,19 @@ const historicalMilestones = [
       'Lambdas, streams, and functional features modernized the language while keeping backward compatibility.',
   },
   {
+    title: 'Faster release cadence (Java 9+)',
+    detail:
+      'The six-month release cycle accelerated feature delivery and JVM improvements.',
+  },
+  {
     title: 'Cloud-native and microservices era',
     detail:
       'Frameworks like Spring Boot and Quarkus pushed Java into fast-starting microservices and cloud deployments.',
+  },
+  {
+    title: 'Modern JVM era (2020s)',
+    detail:
+      'Records, sealed classes, and Loom brought improved data modeling and concurrency.',
   },
 ]
 
@@ -264,6 +279,99 @@ const mentalModels = [
     detail:
       'Static types and interfaces help teams manage complexity and reduce runtime errors.',
   },
+  {
+    title: 'Frameworks as productivity layers',
+    detail:
+      'Spring, Jakarta EE, and friends provide conventions that scale teams and systems.',
+  },
+]
+
+const languageFundamentals = [
+  {
+    title: 'Compiled to bytecode',
+    detail:
+      'Java source compiles to JVM bytecode, enabling portability across platforms.',
+  },
+  {
+    title: 'Class-based OOP',
+    detail:
+      'Everything is organized into classes with encapsulation and access control.',
+  },
+  {
+    title: 'Managed memory',
+    detail:
+      'The GC manages allocation and cleanup, removing manual memory errors.',
+  },
+  {
+    title: 'Strong standard library',
+    detail:
+      'Collections, IO, networking, and concurrency are built in and battle-tested.',
+  },
+]
+
+const runtimePipeline = [
+  {
+    stage: 'Compile',
+    description: 'javac produces bytecode (.class files).',
+  },
+  {
+    stage: 'Class loading',
+    description: 'The JVM loads classes on demand with verification.',
+  },
+  {
+    stage: 'JIT optimization',
+    description: 'Hot methods are compiled to native code for speed.',
+  },
+  {
+    stage: 'GC and runtime services',
+    description: 'Memory is reclaimed and runtime services manage threads and IO.',
+  },
+]
+
+const typeSystemDetails = [
+  {
+    title: 'Static typing',
+    detail:
+      'Types are checked at compile time for safer refactoring and maintenance.',
+  },
+  {
+    title: 'Generics',
+    detail:
+      'Parameterized types add reuse while preserving type safety.',
+  },
+  {
+    title: 'Records and sealed classes',
+    detail:
+      'Records model immutable data; sealed classes constrain hierarchies.',
+  },
+  {
+    title: 'Null safety discipline',
+    detail:
+      'Nulls are allowed, so Optional and annotations help prevent errors.',
+  },
+]
+
+const standardLibraryHighlights = [
+  {
+    title: 'Collections framework',
+    detail:
+      'Lists, sets, maps, and queues cover most data structures.',
+  },
+  {
+    title: 'Streams and functional tools',
+    detail:
+      'Streams provide declarative data processing and parallelization.',
+  },
+  {
+    title: 'Concurrency utilities',
+    detail:
+      'Executors, locks, atomics, and concurrent collections support safe parallelism.',
+  },
+  {
+    title: 'IO and NIO',
+    detail:
+      'NIO enables non-blocking IO for scalable servers.',
+  },
 ]
 
 const coreOopFeatures = [
@@ -273,6 +381,7 @@ const coreOopFeatures = [
       'Encapsulation with access modifiers.',
       'Constructors enforce initialization logic.',
       'Classes define reusable, modular code.',
+      'Records simplify immutable data carriers.',
     ],
   },
   {
@@ -281,6 +390,7 @@ const coreOopFeatures = [
       'Single inheritance with interfaces for multiple contracts.',
       'Polymorphism via method overriding.',
       'Use composition to avoid fragile hierarchies.',
+      'Sealed classes constrain inheritance trees.',
     ],
   },
   {
@@ -289,6 +399,7 @@ const coreOopFeatures = [
       'Interfaces define contracts without implementation.',
       'Default methods enable evolution without breaking code.',
       'Abstract classes share partial behavior.',
+      'Functional interfaces power lambdas.',
     ],
   },
   {
@@ -297,6 +408,7 @@ const coreOopFeatures = [
       'Automatic garbage collection prevents manual memory bugs.',
       'Tuning JVM parameters can reduce pause times.',
       'Heap sizing affects performance and latency.',
+      'Escape analysis reduces allocations.',
     ],
   },
   {
@@ -305,6 +417,7 @@ const coreOopFeatures = [
       'Threads and executors support parallel workloads.',
       'Concurrent collections simplify thread-safe programming.',
       'Modern features include CompletableFuture and virtual threads.',
+      'Structured concurrency is emerging in modern Java.',
     ],
   },
   {
@@ -313,6 +426,7 @@ const coreOopFeatures = [
       'Maven and Gradle for dependency management.',
       'Spring for enterprise development.',
       'Profilers and JVM tools for diagnostics.',
+      'JFR provides built-in production profiling.',
     ],
   },
 ]
@@ -338,6 +452,11 @@ const performanceNotes = [
     detail:
       'JFR and async-profiler help identify CPU and allocation hotspots.',
   },
+  {
+    title: 'Watch startup time',
+    detail:
+      'Class loading and warmup can dominate short-lived services.',
+  },
 ]
 
 const realWorldUses = [
@@ -360,6 +479,16 @@ const realWorldUses = [
     context: 'Low-latency services',
     detail:
       'Financial firms use Java with tuned JVMs for reliable low-latency systems.',
+  },
+  {
+    context: 'Cloud-native microservices',
+    detail:
+      'Spring Boot, Quarkus, and Micronaut power containerized services.',
+  },
+  {
+    context: 'Developer tooling',
+    detail:
+      'Build tools, IDEs, and static analyzers rely on Java libraries.',
   },
 ]
 
@@ -413,6 +542,23 @@ double avg = scores.stream()
     explanation:
       'Streams make data transformations declarative and parallelizable.',
   },
+  {
+    title: 'CompletableFuture for async work',
+    code: `CompletableFuture<String> result =
+  CompletableFuture.supplyAsync(() -> fetchUser())
+    .thenApply(user -> enrich(user))
+    .thenApply(data -> data.toString());`,
+    explanation:
+      'CompletableFuture chains asynchronous work without blocking threads.',
+  },
+  {
+    title: 'Record for immutable data',
+    code: `record Point(int x, int y) {}
+
+Point p = new Point(3, 4);`,
+    explanation:
+      'Records reduce boilerplate for simple immutable data carriers.',
+  },
 ]
 
 const pitfalls = [
@@ -421,6 +567,8 @@ const pitfalls = [
   'Using heavy frameworks for tiny services, increasing startup time.',
   'Allocating excessive objects in tight loops.',
   'Skipping profiling and guessing performance bottlenecks.',
+  'Blocking IO on request threads without timeouts.',
+  'Ignoring JVM warmup when benchmarking.',
 ]
 
 const decisionGuidance = [
@@ -429,6 +577,7 @@ const decisionGuidance = [
   'Need low-latency services: Java works with careful tuning.',
   'Need minimal memory footprint and fast startup: evaluate alternatives.',
   'Need safe concurrency and strong typing: Java is reliable.',
+  'Need long-lived services with predictable ops: Java is a good fit.',
 ]
 
 const advancedInsights = [
@@ -452,6 +601,11 @@ const advancedInsights = [
     detail:
       'Project Loom introduces lightweight threads for highly concurrent servers.',
   },
+  {
+    title: 'Observability',
+    detail:
+      'JMX, JFR, and OpenTelemetry are common for production visibility.',
+  },
 ]
 
 const takeaways = [
@@ -459,6 +613,150 @@ const takeaways = [
   'The JVM provides performance via JIT and safety via GC.',
   'Concurrency and tooling make it a workhorse for backend systems.',
   'Modern features keep Java competitive in cloud-native development.',
+  'Operational maturity is a key Java advantage.',
+]
+
+const toolingWorkflow = [
+  {
+    title: 'Build and dependencies',
+    detail:
+      'Maven and Gradle handle builds, tests, and dependency graphs.',
+  },
+  {
+    title: 'IDE support',
+    detail:
+      'IntelliJ IDEA and Eclipse provide deep refactoring and debugging.',
+  },
+  {
+    title: 'Testing',
+    detail:
+      'JUnit, Testcontainers, and Mockito cover unit and integration tests.',
+  },
+  {
+    title: 'Monitoring',
+    detail:
+      'JFR, JMX, and APM agents provide runtime visibility.',
+  },
+]
+
+const concurrencyOptions = [
+  {
+    title: 'Executors and pools',
+    detail:
+      'ExecutorService manages thread pools for scalable workloads.',
+  },
+  {
+    title: 'CompletableFuture',
+    detail:
+      'Async pipelines reduce blocking and improve throughput.',
+  },
+  {
+    title: 'Virtual threads',
+    detail:
+      'Loom enables massive concurrency with simple code.',
+  },
+  {
+    title: 'Reactive stacks',
+    detail:
+      'Project Reactor and RxJava support reactive programming.',
+  },
+]
+
+const interopOptions = [
+  {
+    title: 'JVM language interop',
+    detail:
+      'Kotlin, Scala, and Groovy run on the JVM and interoperate with Java.',
+  },
+  {
+    title: 'Native libraries',
+    detail:
+      'JNI and Panama provide access to C and system libraries.',
+  },
+  {
+    title: 'JavaScript',
+    detail:
+      'GraalVM enables JS and polyglot runtimes alongside Java.',
+  },
+  {
+    title: 'Messaging and APIs',
+    detail:
+      'Kafka, gRPC, and REST are common integration layers.',
+  },
+]
+
+const deploymentOptions = [
+  {
+    title: 'JARs and fat jars',
+    detail:
+      'Ship services as executable JARs with embedded servers.',
+  },
+  {
+    title: 'Containers',
+    detail:
+      'Docker images with tuned JVM flags are standard for cloud deployments.',
+  },
+  {
+    title: 'Native images',
+    detail:
+      'GraalVM native images reduce startup time and memory.',
+  },
+  {
+    title: 'App servers',
+    detail:
+      'Deploy to Tomcat, Jetty, or Jakarta EE servers.',
+  },
+]
+
+const comparisonNotes = [
+  {
+    title: 'Compared to C++',
+    detail:
+      'Java trades low-level control for GC safety and portability.',
+  },
+  {
+    title: 'Compared to Go',
+    detail:
+      'Java has a larger ecosystem; Go offers faster startup and simpler tooling.',
+  },
+  {
+    title: 'Compared to Python',
+    detail:
+      'Java is faster for long-running services but slower to prototype.',
+  },
+  {
+    title: 'Compared to Kotlin',
+    detail:
+      'Kotlin is more concise but runs on the same JVM runtime.',
+  },
+]
+
+const learningPath = [
+  {
+    title: 'Core syntax and OOP',
+    detail:
+      'Learn classes, interfaces, and access modifiers.',
+  },
+  {
+    title: 'Collections and generics',
+    detail:
+      'Use lists, maps, and generic types effectively.',
+  },
+  {
+    title: 'Concurrency basics',
+    detail:
+      'Understand threads, executors, and synchronization.',
+  },
+  {
+    title: 'Frameworks',
+    detail:
+      'Build services with Spring Boot or Jakarta EE.',
+  },
+  {
+    title: 'Performance and ops',
+    detail:
+      'Profile, tune GC, and use observability tooling.',
+  },
 ]
 
 export default function JavaPage(): JSX.Element {
@@ -523,6 +821,64 @@ export default function JavaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Language fundamentals</legend>
+            <div className="win95-grid win95-grid-2">
+              {languageFundamentals.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Runtime pipeline</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Stage</th>
+                    <th>What happens</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {runtimePipeline.map((item) => (
+                    <tr key={item.stage}>
+                      <td>{item.stage}</td>
+                      <td>{item.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Type system and design</legend>
+            <div className="win95-grid win95-grid-2">
+              {typeSystemDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Standard library highlights</legend>
+            <div className="win95-grid win95-grid-2">
+              {standardLibraryHighlights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: OOP and core features</legend>
             <div className="win95-grid win95-grid-3">
               {coreOopFeatures.map((block) => (
@@ -533,6 +889,18 @@ export default function JavaPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tooling and workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -557,11 +925,43 @@ export default function JavaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Concurrency and parallelism</legend>
+            <div className="win95-grid win95-grid-2">
+              {concurrencyOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Interoperability and deployment</legend>
+            <div className="win95-grid win95-grid-2">
+              {interopOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {deploymentOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -595,6 +995,18 @@ export default function JavaPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons and tradeoffs</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -602,6 +1014,18 @@ export default function JavaPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
