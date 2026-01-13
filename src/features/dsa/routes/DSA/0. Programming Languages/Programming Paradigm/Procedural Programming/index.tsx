@@ -25,6 +25,21 @@ const milestones = [
     detail:
       'Operating systems, databases, and embedded firmware established procedural style as the backbone for predictable control and tight resource management.',
   },
+  {
+    title: 'POSIX and C standardization (1980s-1990s)',
+    detail:
+      'Standard libraries and system calls made procedural code portable across Unix-like systems.',
+  },
+  {
+    title: 'Embedded and real-time growth (2000s)',
+    detail:
+      'Microcontrollers and RTOS environments reinforced procedural styles for determinism and memory control.',
+  },
+  {
+    title: 'Procedural cores in modern stacks',
+    detail:
+      'Even in OO or functional systems, performance-critical paths often remain procedural for clarity and speed.',
+  },
 ]
 
 const mentalModels = [
@@ -43,6 +58,21 @@ const mentalModels = [
     detail:
       'Procedures operate on shared data structures. Keeping data layout clear and minimizing hidden side effects prevents sprawling coupling.',
   },
+  {
+    title: 'Control is the asset',
+    detail:
+      'Procedural programming makes execution order explicit, which is critical for resource management and performance.',
+  },
+  {
+    title: 'Ownership prevents chaos',
+    detail:
+      'Clear ownership rules for data and resources keep mutation safe and predictable.',
+  },
+  {
+    title: 'Interfaces are conventions',
+    detail:
+      'Function signatures and module boundaries act as the main contracts.',
+  },
 ]
 
 const mechanics = [
@@ -52,6 +82,7 @@ const mechanics = [
       'Sequence, selection (if/else, switch), and iteration (for/while) compose most procedural logic.',
       'Procedures/functions encapsulate reusable steps, with parameters defining inputs and return values outputs.',
       'Explicit stack frames track local variables and call state; recursion uses the same mechanism as iteration.',
+      'Structured exits and early returns can simplify error handling when used consistently.',
     ],
   },
   {
@@ -60,6 +91,7 @@ const mechanics = [
       'Local scope contains transient state; global or module scope holds shared state. Uncontrolled globals lead to implicit coupling.',
       'Pass-by-value vs pass-by-reference affects whether callees can mutate caller-owned data.',
       'Structured types (records/structs) group related fields; clear ownership rules prevent accidental aliasing.',
+      'Const correctness prevents unintended mutation in shared structures.',
     ],
   },
   {
@@ -68,6 +100,15 @@ const mechanics = [
       'Headers or module interfaces declare procedure signatures and shared types, separating declaration from definition.',
       'Cohesive modules reduce the surface of global state. Stable interfaces allow independent compilation and testing.',
       'Error handling uses return codes, exceptions, or out parameters; consistent conventions keep control flow readable.',
+      'Defensive programming with clear preconditions avoids undefined states.',
+    ],
+  },
+  {
+    heading: 'Resource management',
+    bullets: [
+      'Explicit allocation and deallocation make lifetimes clear but require discipline.',
+      'RAII-style patterns in procedural code use scoped wrappers to ensure cleanup.',
+      'Handles and context objects bundle related state for cleaner APIs.',
     ],
   },
 ]
@@ -87,6 +128,11 @@ const complexityNotes = [
     title: 'Global state and coupling',
     detail:
       'Shared mutable state can create hidden dependencies that complicate reasoning and concurrency. Discipline around globals and side effects is crucial.',
+  },
+  {
+    title: 'Branching costs',
+    detail:
+      'Complex branching and unpredictable control flow can hurt CPU branch prediction and performance.',
   },
 ]
 
@@ -110,6 +156,16 @@ const applications = [
     context: 'Legacy business logic',
     detail:
       'COBOL and PL/SQL style procedural code still runs critical batch processing and transaction systems, prized for explicit control flows.',
+  },
+  {
+    context: 'Game engine subsystems',
+    detail:
+      'Physics, animation, and AI often use procedural loops for predictable frame timing.',
+  },
+  {
+    context: 'Networking and IO',
+    detail:
+      'Protocol parsers and packet processing benefit from explicit state machines.',
   },
 ]
 
@@ -153,6 +209,26 @@ Renderer* globalRenderer;`,
     explanation:
       'Explicit parameters make dependencies visible and reduce coupling. Global state invites implicit dependencies and concurrency hazards.',
   },
+  {
+    title: 'Error handling convention (C)',
+    code: `int read_config(const char* path, Config* out) {
+  FILE* f = fopen(path, "r");
+  if (!f) return -1;
+  int ok = parse_config(f, out);
+  fclose(f);
+  return ok ? 0 : -2;
+}`,
+    explanation:
+      'Consistent error codes simplify control flow and make failures predictable.',
+  },
+  {
+    title: 'Data-oriented loop (C)',
+    code: `for (size_t i = 0; i < count; i++) {
+  sum += values[i] * weights[i];
+}`,
+    explanation:
+      'Simple loops over arrays maximize cache locality and are easy to optimize.',
+  },
 ]
 
 const pitfalls = [
@@ -161,6 +237,8 @@ const pitfalls = [
   'Error handling scattered across code paths can become inconsistent; centralize conventions.',
   'Long procedures with mixed levels of abstraction become brittle and hard to test; refactor into coherent units.',
   'Recursion without guardrails can overflow the stack; iterative equivalents may be safer in constrained environments.',
+  'Implicit assumptions about global state break reusability and testing.',
+  'Hidden resource ownership causes leaks and double-frees.',
 ]
 
 const decisionPoints = [
@@ -168,6 +246,7 @@ const decisionPoints = [
   'Working in low-level or embedded environments: simple procedures and predictable control fit constrained runtimes.',
   'Building small scripts or utilities: procedural flow is quick to write and easy to follow.',
   'When domains grow complex: consider layering with modular boundaries or mixing in FP/OOP patterns for better abstraction.',
+  'When performance is critical, procedural loops often beat abstracted pipelines.',
 ]
 
 const advancedInsights = [
@@ -191,6 +270,16 @@ const advancedInsights = [
     detail:
       'Static analyzers, linters, and formal methods (SPARK Ada) can enforce contracts and prove properties in procedural code, reducing runtime defects.',
   },
+  {
+    title: 'Finite state machines',
+    detail:
+      'Procedural state machines provide explicit, testable control for protocols and workflows.',
+  },
+  {
+    title: 'Boundary-driven design',
+    detail:
+      'Clear API boundaries and data ownership prevent accidental coupling across subsystems.',
+  },
 ]
 
 const sources = [
@@ -206,6 +295,96 @@ const takeaways = [
   'Clarity depends on disciplined use of scope, minimal globals, and coherent procedure boundaries.',
   'Performance benefits from predictable loops and data locality; beware recursion depth and unmanaged shared state.',
   'Mixing procedural cores with selective abstraction (modules, pure helpers) balances simplicity with maintainability.',
+  'Explicit resource management is powerful but demands consistency and testing.',
+  'Procedural style remains essential for systems where transparency and performance dominate.',
+]
+
+const toolingEcosystem = [
+  {
+    title: 'Languages',
+    detail:
+      'C, Pascal, Ada, Fortran, and procedural subsets of modern languages remain widely used.',
+  },
+  {
+    title: 'Tooling',
+    detail:
+      'Compilers, static analyzers, and sanitizers catch memory and control-flow bugs early.',
+  },
+  {
+    title: 'Build systems',
+    detail:
+      'Make, CMake, and Bazel enable modular compilation and reproducible builds.',
+  },
+  {
+    title: 'Testing',
+    detail:
+      'Unit tests and integration harnesses validate procedural flows and edge cases.',
+  },
+]
+
+const debuggingWorkflow = [
+  {
+    title: 'Trace execution',
+    detail:
+      'Use debuggers and logging to follow control flow step-by-step.',
+  },
+  {
+    title: 'Validate invariants',
+    detail:
+      'Assert preconditions and postconditions near critical operations.',
+  },
+  {
+    title: 'Check ownership',
+    detail:
+      'Track who allocates and frees resources to avoid leaks.',
+  },
+  {
+    title: 'Profile hot loops',
+    detail:
+      'Measure hotspots to guide optimization instead of guessing.',
+  },
+]
+
+const productionChecklist = [
+  {
+    title: 'Correctness',
+    detail:
+      'Use consistent error handling and validate inputs early.',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Keep hot loops tight and memory access predictable.',
+  },
+  {
+    title: 'Reliability',
+    detail:
+      'Avoid hidden globals and enforce clear data ownership.',
+  },
+  {
+    title: 'Maintainability',
+    detail:
+      'Refactor long procedures and keep modules cohesive.',
+  },
+]
+
+const learningPath = [
+  {
+    step: 'Foundations',
+    detail: 'Control flow, procedures, and scope rules.',
+  },
+  {
+    step: 'Data and memory',
+    detail: 'Pointers, structs, and ownership patterns.',
+  },
+  {
+    step: 'Modularity',
+    detail: 'Headers, modules, and interface design.',
+  },
+  {
+    step: 'Performance',
+    detail: 'Profiling, caching, and optimization basics.',
+  },
 ]
 
 export default function ProceduralProgrammingPage(): JSX.Element {
@@ -308,6 +487,18 @@ export default function ProceduralProgrammingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Tooling and ecosystem</legend>
+            <div className="win95-grid win95-grid-2">
+              {toolingEcosystem.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Practical examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
@@ -323,6 +514,18 @@ export default function ProceduralProgrammingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingWorkflow.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -330,6 +533,18 @@ export default function ProceduralProgrammingPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Production checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {productionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -350,6 +565,18 @@ export default function ProceduralProgrammingPage(): JSX.Element {
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Learning path</legend>
+            <div className="win95-grid win95-grid-2">
+              {learningPath.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
