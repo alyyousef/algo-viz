@@ -16,6 +16,11 @@ const historicalMilestones = [
       'Semaphores and producer-consumer problems established queues as the primitive for coordinating threads and managing buffers safely.',
   },
   {
+    title: 'Little\'s Law guides capacity planning (1960s)',
+    detail:
+      'Average items in system (L) equals arrival rate (lambda) times time in system (W), giving engineers a practical sizing rule for queues.',
+  },
+  {
     title: 'Breadth-first search popularizes FIFO in algorithms (1959+)',
     detail:
       'BFS uses a queue to explore graph layers level by level, proving that FIFO ordering can guarantee shortest paths in unweighted graphs.',
@@ -24,6 +29,11 @@ const historicalMilestones = [
     title: 'Network routers use packet queues',
     detail:
       'Input and output buffers smooth bursts and enforce fairness; drop-tail and RED policies show how queue design influences congestion and latency.',
+  },
+  {
+    title: 'Event loops and async runtimes',
+    detail:
+      'Task queues power event-driven systems, letting callbacks and microtasks execute in strict arrival order.',
   },
   {
     title: 'Message brokers industrialize queues',
@@ -42,6 +52,11 @@ const mentalModels = [
     title: 'Two-pointer conveyor belt',
     detail:
       'Head removes, tail adds. Moving the pointers is cheaper than moving the boxes, so nothing shifts even when items come and go.',
+  },
+  {
+    title: 'Water tank buffer',
+    detail:
+      'Producers pour in, consumers drain out. Level rising or falling shows backpressure and capacity pressure.',
   },
   {
     title: 'Pressure valve',
@@ -63,6 +78,7 @@ const mechanics = [
       'dequeue(): remove and return head in O(1); underflow if empty.',
       'peek(): inspect head without removing.',
       'size/empty/full: track occupancy to enforce limits.',
+      'clear(): drop all elements by resetting indices.',
     ],
   },
   {
@@ -71,6 +87,7 @@ const mechanics = [
       'Fixed capacity; head/tail wrap with modulo arithmetic.',
       'No shifting; overwrite or block when full depending on policy.',
       'Cache-friendly and predictable for real-time systems.',
+      'Power-of-two capacity enables cheap masking instead of modulo.',
     ],
   },
   {
@@ -79,6 +96,7 @@ const mechanics = [
       'Unbounded except by memory; head/tail pointers give O(1) enqueue/dequeue.',
       'More allocations and pointer chasing; less cache locality.',
       'Good when peak size is unknown or highly variable.',
+      'Pooling nodes improves locality and reduces allocator churn.',
     ],
   },
   {
@@ -87,7 +105,92 @@ const mechanics = [
       'Double-ended queue (deque) supports push/pop at both ends.',
       'Priority queue reorders by key instead of arrival (uses a heap).',
       'Lock-free queues use atomic CAS to avoid locks in concurrent producers/consumers.',
+      'Work-stealing deques balance load across worker threads.',
     ],
+  },
+]
+
+const anatomy = [
+  {
+    title: 'Head and tail indices',
+    detail:
+      'Queues track the front (head) and back (tail). Moving indices is cheaper than moving elements.',
+  },
+  {
+    title: 'Capacity and size',
+    detail:
+      'Bounded queues store size and capacity. Full/empty checks prevent overwrite or underflow.',
+  },
+  {
+    title: 'Sentinel nodes',
+    detail:
+      'Linked queues can use a dummy node to avoid null checks on enqueue and dequeue.',
+  },
+  {
+    title: 'Ownership model',
+    detail:
+      'Define who owns queued items to avoid leaks or double-free in manual memory systems.',
+  },
+]
+
+const operationsTable = [
+  {
+    op: 'enqueue',
+    circular: 'O(1)',
+    linked: 'O(1)',
+    twoStack: 'O(1) amortized',
+    note: 'Circular buffers require space; two-stack queues defer cost to dequeue.',
+  },
+  {
+    op: 'dequeue',
+    circular: 'O(1)',
+    linked: 'O(1)',
+    twoStack: 'O(1) amortized',
+    note: 'Two-stack dequeue may move many elements at once.',
+  },
+  {
+    op: 'peek',
+    circular: 'O(1)',
+    linked: 'O(1)',
+    twoStack: 'O(1)',
+    note: 'Peek reads head without removal.',
+  },
+  {
+    op: 'memory overhead',
+    circular: 'low',
+    linked: '1 pointer per node',
+    twoStack: '2 arrays',
+    note: 'Linked queues pay allocator overhead per node.',
+  },
+  {
+    op: 'locality',
+    circular: 'excellent',
+    linked: 'poor',
+    twoStack: 'good',
+    note: 'Circular buffers are cache-friendly.',
+  },
+]
+
+const memoryNotes = [
+  {
+    title: 'Full vs empty ambiguity',
+    detail:
+      'In circular buffers, head == tail can mean empty or full. Track size or reserve one slot.',
+  },
+  {
+    title: 'Clearing slots',
+    detail:
+      'Managed languages retain references. Clear dequeued slots to allow GC to reclaim memory.',
+  },
+  {
+    title: 'Bounded queue behavior',
+    detail:
+      'When full, choose a policy: block, drop newest, drop oldest, or resize.',
+  },
+  {
+    title: 'False sharing risk',
+    detail:
+      'Shared head/tail in multi-threaded queues can cause cache-line ping-pong.',
   },
 ]
 
@@ -111,6 +214,11 @@ const complexityNotes = [
     title: 'Throughput vs latency',
     detail:
       'Larger buffers increase throughput by smoothing bursts but increase tail latency. Backpressure and drop policies tune this trade-off.',
+  },
+  {
+    title: 'Predictability',
+    detail:
+      'Bounded queues provide stable memory use and latency; unbounded queues risk latency spikes under load.',
   },
 ]
 
@@ -139,6 +247,16 @@ const applications = [
     context: 'User-facing features',
     detail:
       'Undo/redo can be modeled with two stacks and a queue of redoable operations; print spoolers and job schedulers are literal queues.',
+  },
+  {
+    context: 'Rate limiting and throttling',
+    detail:
+      'Queues smooth bursts in API gateways and task workers to keep throughput within service budgets.',
+  },
+  {
+    context: 'GUI event handling',
+    detail:
+      'Event loops use queues to serialize input events, timers, and callbacks in a deterministic order.',
   },
 ]
 
@@ -209,6 +327,116 @@ const practicalExamples = [
     note:
       'Queue preserves arrival order so children are processed after their parents, level by level.',
   },
+  {
+    title: 'Queue with head index (avoid O(n) shift)',
+    code: `function bfs(root):
+    if root is null: return []
+    q = [root]
+    head = 0
+    while head < len(q):
+        node = q[head]
+        head += 1
+        if node.left: q.push(node.left)
+        if node.right: q.push(node.right)`,
+    note:
+      'Using a head index keeps dequeue O(1) in array-backed queues.',
+  },
+  {
+    title: 'Deque for sliding window maximum',
+    code: `function maxSlidingWindow(nums, k):
+    dq = []  // holds indices, values decreasing
+    res = []
+    for i in 0..len(nums)-1:
+        while dq not empty and dq[0] <= i - k:
+            dq.shift()
+        while dq not empty and nums[i] >= nums[dq[-1]]:
+            dq.pop()
+        dq.push(i)
+        if i >= k - 1:
+            res.push(nums[dq[0]])
+    return res`,
+    note:
+      'Deque stores candidates for the max; each index enters and leaves once.',
+  },
+]
+
+const patterns = [
+  {
+    title: 'Producer-consumer',
+    detail:
+      'Queues decouple producers and consumers. Bounded queues apply backpressure when consumers fall behind.',
+  },
+  {
+    title: 'Two-stack queue',
+    detail:
+      'Use a pair of stacks to implement FIFO behavior with amortized O(1) operations.',
+  },
+  {
+    title: 'Level-order traversal',
+    detail:
+      'BFS processes nodes in layers by enqueuing children of the current frontier.',
+  },
+  {
+    title: 'Work queues',
+    detail:
+      'Task queues drive workers in thread pools and job schedulers.',
+  },
+  {
+    title: 'Token buckets',
+    detail:
+      'Queues represent available tokens or requests, enforcing rate limits.',
+  },
+]
+
+const variants = [
+  {
+    title: 'Deque',
+    detail:
+      'Double-ended queue supports push/pop at both ends and powers sliding window algorithms.',
+  },
+  {
+    title: 'Priority queue',
+    detail:
+      'Orders by priority rather than arrival. Implemented with heaps or balanced trees.',
+  },
+  {
+    title: 'Blocking queue',
+    detail:
+      'Producers or consumers wait when full or empty; common in threaded pipelines.',
+  },
+  {
+    title: 'Lock-free queue',
+    detail:
+      'Uses atomic operations to avoid locks for multi-producer/multi-consumer use.',
+  },
+  {
+    title: 'Work-stealing deque',
+    detail:
+      'Workers pop from one end, thieves steal from the other, reducing contention.',
+  },
+]
+
+const invariants = [
+  {
+    title: 'FIFO order',
+    detail:
+      'Items must leave in the same order they entered.',
+  },
+  {
+    title: 'Head/tail correctness',
+    detail:
+      'After enqueue, tail advances; after dequeue, head advances.',
+  },
+  {
+    title: 'Capacity accounting',
+    detail:
+      'Size must stay between 0 and capacity for bounded queues.',
+  },
+  {
+    title: 'No lost items',
+    detail:
+      'Each enqueue must be matched by a dequeue or an explicit drop policy.',
+  },
 ]
 
 const pitfalls = [
@@ -217,6 +445,8 @@ const pitfalls = [
   'Contention in multi-threaded queues if not synchronized; lock-free designs must handle ABA and memory reclamation.',
   'Using FIFO when priority is required leads to head-of-line blocking; pick a priority queue instead.',
   'In managed languages, not clearing dequeued slots can retain objects and leak memory.',
+  'Array-based dequeue via shift is O(n) and can dominate BFS or event loops at scale.',
+  'Drop policies can violate fairness if not documented and tested.',
 ]
 
 const decisionGuidance = [
@@ -225,6 +455,7 @@ const decisionGuidance = [
   'Unknown or elastic size: use a linked queue or two-stack queue; watch allocator costs.',
   'Multi-producer/multi-consumer: choose a thread-safe or lock-free queue implementation.',
   'If prioritization matters, switch to a heap-based priority queue; if both ends are needed, use a deque.',
+  'If latency matters, size buffers carefully and measure tail latency, not just throughput.',
 ]
 
 const advancedInsights = [
@@ -253,6 +484,11 @@ const advancedInsights = [
     detail:
       'Message queues append to logs (Kafka) or journals to survive crashes. Acknowledgments and idempotent consumers handle duplicates.',
   },
+  {
+    title: 'Queueing theory metrics',
+    detail:
+      'Use Little\'s Law (L = lambda W) and utilization (rho) to reason about backlog and expected wait time.',
+  },
 ]
 
 const takeaways = [
@@ -261,6 +497,14 @@ const takeaways = [
   'Buffer sizing and backpressure dictate latency and memory behavior; choose policies deliberately.',
   'Concurrency requires proper synchronization or lock-free algorithms to keep O(1) behavior under load.',
   'Authoritative references: CLRS, Sedgewick and Wayne, GeeksforGeeks, and papers on MPMC queues and router queueing.',
+]
+
+const checkpoints = [
+  'Explain how a circular buffer distinguishes full vs empty.',
+  'Implement a queue with two stacks and justify amortized O(1).',
+  'Describe when a priority queue is more appropriate than FIFO.',
+  'Show how to avoid O(n) dequeue in array-backed queues.',
+  'Pick a backpressure policy and explain its trade-offs.',
 ]
 
 export default function QueuesPage(): JSX.Element {
@@ -337,6 +581,18 @@ export default function QueuesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Structural anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {anatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity and performance intuition</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((item) => (
@@ -351,6 +607,46 @@ export default function QueuesPage(): JSX.Element {
                 A cache miss can cost 100 cycles; a lock can add microseconds. Queue choice and synchronization strategy dominate
                 performance more than the O(1) algorithm itself when concurrency and high throughput are involved.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Operations matrix</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Operation</th>
+                    <th>Circular</th>
+                    <th>Linked</th>
+                    <th>Two-Stack</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {operationsTable.map((row) => (
+                    <tr key={row.op}>
+                      <td>{row.op}</td>
+                      <td>{row.circular}</td>
+                      <td>{row.linked}</td>
+                      <td>{row.twoStack}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Memory layout and safety</legend>
+            <div className="win95-grid win95-grid-2">
+              {memoryNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -382,10 +678,57 @@ export default function QueuesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Patterns and techniques</legend>
+            <div className="win95-grid win95-grid-2">
+              {patterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and extensions</legend>
+            <div className="win95-grid win95-grid-2">
+              {variants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Invariants to keep safe</legend>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Quick self-checks</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {checkpoints.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
