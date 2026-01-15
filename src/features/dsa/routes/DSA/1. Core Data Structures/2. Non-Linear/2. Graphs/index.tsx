@@ -55,6 +55,82 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'Vertex, edge, adjacency',
+    detail:
+      'Vertices are entities. Edges are relationships. Adjacency means two vertices share an edge.',
+  },
+  {
+    term: 'Directed vs undirected',
+    detail:
+      'Directed edges have orientation; undirected edges are bidirectional. Algorithms often change with direction.',
+  },
+  {
+    term: 'Weighted vs unweighted',
+    detail:
+      'Weights model costs or distances. Unweighted graphs assume unit cost per edge.',
+  },
+  {
+    term: 'Degree, indegree, outdegree',
+    detail:
+      'Degree counts incident edges; indegree/outdegree split incoming and outgoing edges in directed graphs.',
+  },
+  {
+    term: 'Path, walk, cycle',
+    detail:
+      'A walk can repeat vertices/edges; a path cannot. A cycle returns to the start without repeating edges.',
+  },
+  {
+    term: 'Connectedness',
+    detail:
+      'Connected components group reachable vertices. In directed graphs, SCCs capture mutual reachability.',
+  },
+  {
+    term: 'Bipartite and DAG',
+    detail:
+      'Bipartite graphs split vertices into two sets with edges only across. DAGs are directed graphs with no cycles.',
+  },
+]
+
+const graphTypes = [
+  {
+    title: 'Simple graphs',
+    detail:
+      'No self-loops or parallel edges. Most textbook algorithms assume this baseline.',
+  },
+  {
+    title: 'Multigraphs',
+    detail:
+      'Allow parallel edges; needed for modeling multiple relationships or capacities.',
+  },
+  {
+    title: 'Directed acyclic graphs (DAGs)',
+    detail:
+      'No cycles. Enable topological ordering, DP on graphs, and scheduling.',
+  },
+  {
+    title: 'Weighted graphs',
+    detail:
+      'Edges carry costs. Choice of algorithm depends on weight properties (non-negative, bounded, etc.).',
+  },
+  {
+    title: 'Bipartite graphs',
+    detail:
+      'Two disjoint sets; edges cross the partition. Perfect for matching and assignment problems.',
+  },
+  {
+    title: 'Planar and geometric graphs',
+    detail:
+      'Planar graphs embed without crossings; geometric graphs use spatial distance, enabling specialized algorithms.',
+  },
+  {
+    title: 'Hypergraphs',
+    detail:
+      'Edges can connect many vertices at once, modeling group relationships.',
+  },
+]
+
 const mechanics = [
   {
     heading: 'Representations',
@@ -79,6 +155,108 @@ const mechanics = [
       'Connectivity and structure: Union-Find for components and MSTs; Tarjan or Kosaraju for SCC; Kahn or DFS for topological sort.',
       'Flows and cuts: Edmonds-Karp (BFS augmentations), Dinic (level graph plus blocking flow), Push-Relabel for high-capacity networks.',
     ],
+  },
+]
+
+const traversalCheatSheet = [
+  {
+    title: 'BFS',
+    detail:
+      'Level-order expansion. Shortest paths on unweighted graphs; detects bipartiteness by level coloring.',
+  },
+  {
+    title: 'DFS',
+    detail:
+      'Depth-first exploration. Reveals cycles, topological order (postorder), and structure like SCCs.',
+  },
+  {
+    title: 'Bidirectional search',
+    detail:
+      'Search from source and target simultaneously; reduces explored nodes in large graphs.',
+  },
+  {
+    title: '0-1 BFS',
+    detail:
+      'Deque-based BFS for graphs with edge weights 0 or 1; O(V+E) time.',
+  },
+]
+
+const invariantChecks = [
+  {
+    title: 'Graph validity',
+    detail:
+      'Index bounds, symmetric adjacency for undirected graphs, and no missing reverse edges.',
+  },
+  {
+    title: 'DAG property',
+    detail:
+      'No cycles: verify with DFS color states or Kahn indegree method.',
+  },
+  {
+    title: 'Shortest path correctness',
+    detail:
+      'Dijkstra requires non-negative weights; Bellman-Ford handles negatives and detects negative cycles.',
+  },
+  {
+    title: 'Flow constraints',
+    detail:
+      'Capacity and conservation must hold for all internal vertices in flow networks.',
+  },
+]
+
+const representationTradeoffs = [
+  {
+    title: 'Adjacency list',
+    detail:
+      'O(V+E) storage, best for sparse graphs and traversal-heavy workloads.',
+  },
+  {
+    title: 'Adjacency matrix',
+    detail:
+      'O(V^2) storage, O(1) edge checks; good for dense graphs or bitset operations.',
+  },
+  {
+    title: 'CSR/CSC (compressed sparse)',
+    detail:
+      'Packed arrays with offsets; excellent cache locality and GPU friendliness.',
+  },
+  {
+    title: 'Edge list',
+    detail:
+      'Compact input format; ideal for Kruskal, offline analytics, and streaming.',
+  },
+]
+
+const algorithmFamilies = [
+  {
+    title: 'Shortest paths',
+    detail:
+      'BFS (unweighted), Dijkstra (non-negative), Bellman-Ford (negatives), A* (heuristic), Johnson (all-pairs).',
+  },
+  {
+    title: 'Connectivity and components',
+    detail:
+      'Union-Find, DFS/BFS, SCC algorithms (Tarjan, Kosaraju), bridges/articulation points.',
+  },
+  {
+    title: 'Spanning structures',
+    detail:
+      'MST via Prim/Kruskal; maximum spanning for bottleneck and clustering applications.',
+  },
+  {
+    title: 'Flows and matchings',
+    detail:
+      'Max flow (Dinic, Push-Relabel), bipartite matching (Hopcroft-Karp), min-cost flow.',
+  },
+  {
+    title: 'Ordering and scheduling',
+    detail:
+      'Topological sort for DAGs; longest path in DAGs via DP; critical path scheduling.',
+  },
+  {
+    title: 'Graph analytics',
+    detail:
+      'Centrality, PageRank, community detection, and spectral methods for clustering.',
   },
 ]
 
@@ -107,6 +285,29 @@ const complexityNotes = [
     title: 'Memory and locality',
     detail:
       'Graphs stress memory bandwidth. Compact adjacency (CSR or CSC) improves cache hits and vectorization. For 100 million edges, 64-bit endpoints alone consume about 1.6 GB; metadata doubles that if not packed.',
+  },
+]
+
+const performanceNotes = [
+  {
+    title: 'Memory dominates',
+    detail:
+      'Graph workloads often bottleneck on memory bandwidth rather than arithmetic. CSR/CSC layouts help.',
+  },
+  {
+    title: 'Frontier size matters',
+    detail:
+      'BFS performance depends on the size of each level. Power-law graphs can explode early.',
+  },
+  {
+    title: 'Priority queues cost',
+    detail:
+      'Dijkstra performance is often dominated by heap operations. Buckets help when weights are small.',
+  },
+  {
+    title: 'Parallel traversals',
+    detail:
+      'Frontier-based BFS and label propagation parallelize well; DFS is harder to parallelize safely.',
   },
 ]
 
@@ -204,6 +405,40 @@ function bfs(graph, start):
     explanation:
       "Kahn's algorithm returns a valid execution order for DAGs. If nodes remain with indegree greater than zero, the graph has a cycle and no valid ordering.",
   },
+  {
+    title: 'Union-Find for components',
+    code: `function find(x):
+    if parent[x] != x:
+        parent[x] = find(parent[x])
+    return parent[x]
+
+function union(a, b):
+    ra = find(a)
+    rb = find(b)
+    if ra == rb: return
+    if rank[ra] < rank[rb]: swap(ra, rb)
+    parent[rb] = ra
+    if rank[ra] == rank[rb]: rank[ra] += 1`,
+    explanation:
+      'Union-Find with path compression and union by rank keeps find/union near O(1) amortized and powers MST and connectivity checks.',
+  },
+  {
+    title: 'Bridge detection with DFS low-links',
+    code: `function dfs(u, parent):
+    visited[u] = true
+    tin[u] = low[u] = timer++
+    for v in adj[u]:
+        if v == parent: continue
+        if visited[v]:
+            low[u] = min(low[u], tin[v])
+        else:
+            dfs(v, u)
+            low[u] = min(low[u], low[v])
+            if low[v] > tin[u]:
+                bridge(u, v)`,
+    explanation:
+      'An edge is a bridge if its removal disconnects the graph. Low-link values capture the earliest reachable ancestor.',
+  },
 ]
 
 const pitfalls = [
@@ -212,6 +447,9 @@ const pitfalls = [
   'Forgetting visited sets in cyclic graphs causes infinite loops or exponential revisits.',
   'Not normalizing weights or units mixes costs (time versus distance), producing meaningless shortest paths.',
   'Assuming connectivity: many datasets have multiple components; algorithms must initialize across all or detect unreachable nodes.',
+  'Treating a directed graph as undirected breaks SCCs, flow constraints, and topological order.',
+  'Using recursion for deep DFS can overflow; prefer iterative stacks on large graphs.',
+  'Failing to clear visited state between passes causes subtle bugs in multi-phase algorithms.',
 ]
 
 const decisionGuidance = [
@@ -220,6 +458,8 @@ const decisionGuidance = [
   'Need build or task ordering: use topological sort on DAGs; detect and break cycles before scheduling.',
   'Need minimum backbone: use Prim or Kruskal for MST; Union-Find accelerates Kruskal on sparse graphs.',
   'Need capacities or matchings: start with Dinic or Push-Relabel for flow; specialize to bipartite matching with Hopcroft-Karp.',
+  'Need community structure or centrality: consider PageRank, spectral clustering, or label propagation.',
+  'Need dynamic connectivity: Euler tour trees or link-cut trees for fully dynamic updates.',
 ]
 
 const advancedInsights = [
@@ -248,6 +488,24 @@ const advancedInsights = [
     detail:
       'Property tests ensure invariants (no negative edges in Dijkstra, DAG checks before topo sort). Cross-check with reference implementations on small graphs. In safety-critical systems, formal models guard against overflow, disconnected components, and priority queue errors.',
   },
+]
+
+const testingChecklist = [
+  'Check adjacency integrity (symmetry for undirected graphs).',
+  'Validate results on small hand-crafted graphs with known answers.',
+  'Cross-check shortest paths with brute force on tiny graphs.',
+  'Inject negative edges to verify Bellman-Ford or Johnson behavior.',
+  'Test disconnected graphs, single-node graphs, and empty edge sets.',
+  'Fuzz graphs to catch visited-state bugs and overflow in distances.',
+]
+
+const practicePrompts = [
+  'Implement BFS/DFS iteratively and compare memory usage.',
+  'Build Dijkstra with a binary heap and with buckets; benchmark.',
+  'Implement SCC with both Tarjan and Kosaraju.',
+  'Solve bipartite matching and min-cost flow on sample datasets.',
+  'Write a topological sorter that detects cycles with good error output.',
+  'Add a graph serializer to CSR/CSC and compare traversal speed.',
 ]
 
 export default function GraphsPage(): JSX.Element {
@@ -309,6 +567,30 @@ export default function GraphsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology that unlocks the rest</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Graph types you should recognize</legend>
+            <div className="win95-grid win95-grid-2">
+              {graphTypes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: representations, traversal, optimization</legend>
             <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
@@ -328,6 +610,50 @@ export default function GraphsPage(): JSX.Element {
                 an intractable search into a linear or near-linear pass.
               </p>
             </div>
+            <div className="win95-grid win95-grid-2">
+              {traversalCheatSheet.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Representation trade-offs</legend>
+            <div className="win95-grid win95-grid-2">
+              {representationTradeoffs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Algorithm families at a glance</legend>
+            <div className="win95-grid win95-grid-2">
+              {algorithmFamilies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Invariants and correctness checks</legend>
+            <div className="win95-grid win95-grid-2">
+              {invariantChecks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -346,6 +672,18 @@ export default function GraphsPage(): JSX.Element {
                 layouts, batching, and parallel traversals matter as much as algorithmic complexity, especially in production
                 engines like routing or stream processors.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance considerations in practice</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -388,6 +726,17 @@ export default function GraphsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -395,6 +744,17 @@ export default function GraphsPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice and build challenges</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {practicePrompts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
