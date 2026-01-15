@@ -45,6 +45,80 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'Key universe (k)',
+    detail:
+      'The number of distinct key values the input can take, typically maxKey - minKey + 1.',
+  },
+  {
+    term: 'Histogram',
+    detail:
+      'The array of counts for each key value.',
+  },
+  {
+    term: 'Prefix sum',
+    detail:
+      'Cumulative counts; used to compute final positions for stable placement.',
+  },
+  {
+    term: 'Stable placement',
+    detail:
+      'Writing elements in reverse input order so equal keys retain their order.',
+  },
+  {
+    term: 'Key compression',
+    detail:
+      'Mapping sparse keys to a dense range 0..m-1 before counting.',
+  },
+]
+
+const stepByStep = [
+  {
+    title: 'Find key range',
+    detail:
+      'Scan once to find minKey and maxKey so you can size the count array.',
+  },
+  {
+    title: 'Build histogram',
+    detail:
+      'Count each key into count[key - minKey].',
+  },
+  {
+    title: 'Prefix transform',
+    detail:
+      'Convert counts into exclusive end positions by accumulating counts.',
+  },
+  {
+    title: 'Stable placement',
+    detail:
+      'Scan input from right to left; place and decrement each key position.',
+  },
+  {
+    title: 'Return output',
+    detail:
+      'Output array is sorted; optionally copy back if in-place is required.',
+  },
+]
+
+const invariants = [
+  {
+    title: 'Count correctness',
+    detail:
+      'After counting, sum(count) equals n and each count[i] matches key frequency.',
+  },
+  {
+    title: 'Prefix semantics',
+    detail:
+      'After prefix sums, count[i] equals the exclusive end index for key i.',
+  },
+  {
+    title: 'Stability',
+    detail:
+      'Reverse placement preserves relative order of equal keys.',
+  },
+]
+
 const mechanics = [
   {
     heading: 'Count',
@@ -76,6 +150,85 @@ const mechanics = [
   },
 ]
 
+const performanceNotes = [
+  {
+    title: 'When k is small',
+    detail:
+      'Counting sort is fast and cache-friendly. The cost is dominated by linear scans.',
+  },
+  {
+    title: 'When k is large',
+    detail:
+      'Count array becomes the bottleneck. Consider radix or compression.',
+  },
+  {
+    title: 'Memory reuse',
+    detail:
+      'Reuse count/output buffers across passes to reduce allocations.',
+  },
+  {
+    title: 'Branch predictability',
+    detail:
+      'The algorithm is branch-light, often faster than comparison sorts on small integer ranges.',
+  },
+]
+
+const comparisonGrid = [
+  {
+    feature: 'Best case',
+    counting: 'O(n + k)',
+    quick: 'O(n log n)',
+    merge: 'O(n log n)',
+    radix: 'O(d * (n + k))',
+  },
+  {
+    feature: 'Worst case',
+    counting: 'O(n + k)',
+    quick: 'O(n^2)',
+    merge: 'O(n log n)',
+    radix: 'O(d * (n + k))',
+  },
+  {
+    feature: 'Stable',
+    counting: 'Yes',
+    quick: 'No',
+    merge: 'Yes',
+    radix: 'Yes (with stable digit sort)',
+  },
+  {
+    feature: 'Extra space',
+    counting: 'O(n + k)',
+    quick: 'O(log n) stack',
+    merge: 'O(n)',
+    radix: 'O(n + k)',
+  },
+  {
+    feature: 'Needs small key range',
+    counting: 'Yes',
+    quick: 'No',
+    merge: 'No',
+    radix: 'Yes (per digit)',
+  },
+]
+
+const rangeTuning = [
+  {
+    title: 'Negative keys',
+    detail:
+      'Offset by minKey so array indices start at 0.',
+  },
+  {
+    title: 'Sparse keys',
+    detail:
+      'Compress keys to a dense range via sorting unique keys.',
+  },
+  {
+    title: 'Large keys',
+    detail:
+      'Use radix sort with a small base to keep k manageable per digit.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time',
@@ -96,6 +249,29 @@ const complexityNotes = [
     title: 'Cache behavior',
     detail:
       'Counting and prefix phases are sequential and cache-friendly. Placement scatters writes across the output but remains predictable and branch-light.',
+  },
+]
+
+const realWorldPatterns = [
+  {
+    title: 'Event bucketing',
+    detail:
+      'Group events by small integer categories before aggregation.',
+  },
+  {
+    title: 'Age or score bands',
+    detail:
+      'Sort records by bounded numeric fields (0-120, 0-1000).',
+  },
+  {
+    title: 'Telemetry histograms',
+    detail:
+      'Counting and prefix sums feed percentile estimates and dashboards.',
+  },
+  {
+    title: 'GPU pre-sorting',
+    detail:
+      'Fast histogram + prefix sums partition data for parallel pipelines.',
   },
 ]
 
@@ -168,6 +344,32 @@ const examples = [
     explanation:
       'Using 256 as the digit alphabet keeps k small and cacheable. Each byte pass is stable, letting later passes respect earlier ordering.',
   },
+  {
+    title: 'Counting with key compression',
+    code: `function countingSortCompressed(arr):
+    keys = sort(unique(arr))
+    index = map key -> rank in keys
+    count = Array(keys.length).fill(0)
+    out = Array(arr.length)
+    for x in arr: count[index[x]] += 1
+    for i in 1..count.length-1: count[i] += count[i-1]
+    for i from arr.length-1 down to 0:
+        k = index[arr[i]]
+        count[k] -= 1
+        out[count[k]] = arr[i]
+    return out`,
+    explanation:
+      'Compression keeps k small even when keys are large or sparse, while preserving stability.',
+  },
+  {
+    title: 'Histogram-only use (no sort)',
+    code: `// Count frequencies, skip placement
+count = Array(k).fill(0)
+for x in arr: count[x - minKey] += 1
+// count now answers frequency queries and supports percentiles`,
+    explanation:
+      'Sometimes the histogram itself is the goal; sorting is optional.',
+  },
 ]
 
 const pitfalls = [
@@ -176,6 +378,16 @@ const pitfalls = [
   'Dropping stability by scanning forward during placement, which breaks radix-sort correctness on duplicates.',
   'Using counting sort when keys are sparse over a giant range instead of compressing keys first.',
   'Allocating an output array per pass in radix pipelines without reusing buffers, increasing memory pressure.',
+  'Using a non-stable variant in radix pipelines breaks digit ordering.',
+  'Skipping min/max detection can waste memory if k is large.',
+]
+
+const testingChecklist = [
+  'Arrays with negative numbers to verify minKey offset.',
+  'Arrays with all identical keys to verify stability.',
+  'Sparse keys with large gaps to test compression.',
+  'Large n with small k to validate O(n + k) scaling.',
+  'Random inputs compared against a reference sort.',
 ]
 
 const decisionGuidance = [
@@ -184,6 +396,7 @@ const decisionGuidance = [
   'Sparse keys in a wide range: compress to dense indices, then count; otherwise choose O(n log n) comparisons.',
   'Streaming with tight memory: avoid counting sort unless k is tiny or you can reuse shared buffers.',
   'Need stable grouping before aggregation: counting-sort-like histograms are a cheap pre-step.',
+  'Need to sort objects by small integer key: counting sort plus stable placement is ideal.',
 ]
 
 const advancedInsights = [
@@ -207,6 +420,23 @@ const advancedInsights = [
     detail:
       'Counting sort is chosen not just for speed but to guarantee stable ordering before downstream operations. Preserve that property unless every consumer is under your control.',
   },
+  {
+    title: 'In-place variants are tricky',
+    detail:
+      'In-place counting sorts exist but are complex and usually unstable. The extra buffer is the common trade-off.',
+  },
+  {
+    title: 'Hybrid with comparison sorts',
+    detail:
+      'If k grows too large at runtime, fall back to quicksort or merge sort based on memory and stability needs.',
+  },
+]
+
+const practiceIdeas = [
+  'Implement counting sort for objects with a small integer key.',
+  'Swap between counting and radix based on k threshold.',
+  'Build a histogram and compute percentiles from prefix sums.',
+  'Compare stability by sorting pairs (key, originalIndex).',
 ]
 
 const takeaways = [
@@ -278,6 +508,38 @@ export default function CountingSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Step-by-step technique</legend>
+            <div className="win95-grid win95-grid-2">
+              {stepByStep.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: histogram to layout</legend>
             <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
@@ -288,6 +550,18 @@ export default function CountingSortPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Range and key tuning</legend>
+            <div className="win95-grid win95-grid-2">
+              {rangeTuning.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -313,11 +587,63 @@ export default function CountingSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Performance notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Counting sort vs alternatives</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Counting</th>
+                    <th>Quick</th>
+                    <th>Merge</th>
+                    <th>Radix</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonGrid.map((row) => (
+                    <tr key={row.feature}>
+                      <td>{row.feature}</td>
+                      <td>{row.counting}</td>
+                      <td>{row.quick}</td>
+                      <td>{row.merge}</td>
+                      <td>{row.radix}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Use cases in practice</legend>
+            <div className="win95-grid win95-grid-2">
+              {realWorldPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -351,6 +677,17 @@ export default function CountingSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -358,6 +695,17 @@ export default function CountingSortPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice and build ideas</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {practiceIdeas.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
