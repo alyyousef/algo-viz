@@ -55,6 +55,47 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'Inversion',
+    detail:
+      'A pair (i, j) with i < j but a[i] > a[j]. Bubble sort fixes inversions one swap at a time.',
+  },
+  {
+    term: 'Pass',
+    detail:
+      'A full left-to-right sweep that pushes the current maximum to the end.',
+  },
+  {
+    term: 'Boundary',
+    detail:
+      'The rightmost index of the unsorted prefix; shrinks by one each pass.',
+  },
+  {
+    term: 'Swapped flag',
+    detail:
+      'A boolean that detects if any swap occurred, enabling early exit.',
+  },
+]
+
+const invariants = [
+  {
+    title: 'Suffix sortedness',
+    detail:
+      'After k passes, the last k elements are in final sorted positions.',
+  },
+  {
+    title: 'Local order repairs',
+    detail:
+      'Each swap eliminates at least one inversion.',
+  },
+  {
+    title: 'Stability',
+    detail:
+      'Equal elements never swap if you use a strict greater-than comparison.',
+  },
+]
+
 const mechanics = [
   {
     heading: 'One pass',
@@ -82,6 +123,52 @@ const mechanics = [
   },
 ]
 
+const stepByStep = [
+  {
+    title: 'Initialize end',
+    detail:
+      'Set the boundary to the last index; the unsorted portion is [0..end].',
+  },
+  {
+    title: 'Scan and swap',
+    detail:
+      'Compare neighbors and swap if out of order; track if any swap happens.',
+  },
+  {
+    title: 'Shrink boundary',
+    detail:
+      'The largest element has bubbled to end; decrement end.',
+  },
+  {
+    title: 'Early exit',
+    detail:
+      'If no swaps occurred, the array is already sorted.',
+  },
+]
+
+const variantsDeepDive = [
+  {
+    title: 'Cocktail shaker',
+    detail:
+      'Sweeps both directions to pull small items left and large items right in one round.',
+  },
+  {
+    title: 'Odd-even transposition',
+    detail:
+      'Alternates comparing odd-even pairs; parallel-friendly on SIMD or meshes.',
+  },
+  {
+    title: 'Comb sort',
+    detail:
+      'Starts with a large gap and shrinks it, reducing slow-moving turtles.',
+  },
+  {
+    title: 'Bubble with last swap',
+    detail:
+      'Track the last swap index to skip already-sorted tail work.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Asymptotic cost',
@@ -102,6 +189,49 @@ const complexityNotes = [
     title: 'Practical scale',
     detail:
       'At 10,000 elements, bubble sort performs about 50 million comparisons. A good O(n log n) sort on the same data will complete in milliseconds where bubble sort may take seconds.',
+  },
+]
+
+const comparisonTable = [
+  {
+    feature: 'Best case',
+    bubble: 'O(n)',
+    insertion: 'O(n)',
+    selection: 'O(n^2)',
+    merge: 'O(n log n)',
+    quick: 'O(n log n)',
+  },
+  {
+    feature: 'Average case',
+    bubble: 'O(n^2)',
+    insertion: 'O(n^2)',
+    selection: 'O(n^2)',
+    merge: 'O(n log n)',
+    quick: 'O(n log n)',
+  },
+  {
+    feature: 'Worst case',
+    bubble: 'O(n^2)',
+    insertion: 'O(n^2)',
+    selection: 'O(n^2)',
+    merge: 'O(n log n)',
+    quick: 'O(n^2)',
+  },
+  {
+    feature: 'Stable',
+    bubble: 'Yes',
+    insertion: 'Yes',
+    selection: 'No',
+    merge: 'Yes',
+    quick: 'No',
+  },
+  {
+    feature: 'Extra space',
+    bubble: 'O(1)',
+    insertion: 'O(1)',
+    selection: 'O(1)',
+    merge: 'O(n)',
+    quick: 'O(log n) stack',
   },
 ]
 
@@ -180,6 +310,22 @@ const examples = [
     explanation:
       "This variant preserves bubble sort's neighbor-only communication, allowing SIMD lanes or GPU threads to operate on disjoint pairs simultaneously.",
   },
+  {
+    title: 'Bubble sort trace (short array)',
+    code: `array: [5, 1, 4, 2]
+pass 1:
+  compare 5,1 -> swap => [1,5,4,2]
+  compare 5,4 -> swap => [1,4,5,2]
+  compare 5,2 -> swap => [1,4,2,5]
+pass 2:
+  compare 1,4 -> ok
+  compare 4,2 -> swap => [1,2,4,5]
+  compare 4,5 -> ok
+pass 3:
+  no swaps => stop`,
+    explanation:
+      'Each pass places the current max at the end. Early exit stops once a pass performs no swaps.',
+  },
 ]
 
 const pitfalls = [
@@ -188,6 +334,16 @@ const pitfalls = [
   'Misinterpreting stability: if you swap when elements are equal, you lose stability. Use a strict greater-than comparison.',
   'Using bubble sort on large random inputs leads to severe performance regressions; it should not back your production sorting paths.',
   'Counting swaps instead of comparisons when analyzing complexity can mask the quadratic comparison cost that dominates run time.',
+  'Not shrinking the boundary wastes comparisons against the already-sorted suffix.',
+  'Sorting unstable records (if using >=) breaks relative order of equals.',
+]
+
+const testingChecklist = [
+  'Already sorted input (best case).',
+  'Reverse sorted input (worst case).',
+  'Array with many duplicates to verify stability.',
+  'Small arrays of size 0, 1, and 2.',
+  'Random arrays with a known sorted baseline.',
 ]
 
 const decisionGuidance = [
@@ -219,6 +375,13 @@ const advancedInsights = [
     detail:
       "Sorting networks like the odd-even transposition network mirror bubble sort's neighbor-exchange logic, illustrating how to map comparison sequences to hardware without data-dependent control flow.",
   },
+]
+
+const practiceIdeas = [
+  'Add a last-swap optimization and measure comparisons saved.',
+  'Implement cocktail shaker and compare passes on nearly sorted data.',
+  'Compare bubble vs insertion on random arrays of size 50.',
+  'Count inversions via bubble swaps and verify with a brute-force counter.',
 ]
 
 const takeaways = [
@@ -291,6 +454,26 @@ export default function BubbleSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: pass-by-pass motion</legend>
             <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
@@ -301,6 +484,30 @@ export default function BubbleSortPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Step-by-step technique</legend>
+            <div className="win95-grid win95-grid-2">
+              {stepByStep.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variant gallery</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsDeepDive.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -321,6 +528,36 @@ export default function BubbleSortPage(): JSX.Element {
                 Rule of thumb: if you need to sort beyond a handful of nearly sorted items, move to insertion sort for small n or
                 to O(n log n) algorithms like quicksort or merge sort. Bubble sort is a clarity benchmark, not a throughput tool.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Bubble sort vs other basic sorts</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Bubble</th>
+                    <th>Insertion</th>
+                    <th>Selection</th>
+                    <th>Merge</th>
+                    <th>Quick</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.feature}>
+                      <td>{row.feature}</td>
+                      <td>{row.bubble}</td>
+                      <td>{row.insertion}</td>
+                      <td>{row.selection}</td>
+                      <td>{row.merge}</td>
+                      <td>{row.quick}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -363,6 +600,17 @@ export default function BubbleSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -370,6 +618,17 @@ export default function BubbleSortPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice and build ideas</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {practiceIdeas.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
