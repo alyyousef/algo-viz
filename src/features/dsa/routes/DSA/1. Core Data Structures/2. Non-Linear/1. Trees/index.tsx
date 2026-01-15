@@ -55,6 +55,82 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'Node, edge, root',
+    detail:
+      'Nodes store values. Edges connect parents to children. The root is the unique entry point; every other node has exactly one parent.',
+  },
+  {
+    term: 'Leaf, internal node',
+    detail:
+      'Leaves have no children. Internal nodes route searches and aggregate information (sizes, sums, min/max).',
+  },
+  {
+    term: 'Depth, height, level',
+    detail:
+      'Depth counts edges from root to a node. Height counts edges from a node to its deepest leaf. Level is depth + 1.',
+  },
+  {
+    term: 'Subtree, ancestor, descendant',
+    detail:
+      'A subtree is a node plus all its descendants. Ancestors are nodes on the path to root; descendants are nodes below.',
+  },
+  {
+    term: 'Degree and branching factor',
+    detail:
+      'Degree is the number of children for a node. Branching factor is the average degree and largely controls height.',
+  },
+  {
+    term: 'Shapes',
+    detail:
+      'Full (0 or 2 children), perfect (all leaves same depth), complete (levels filled left-to-right), balanced (height near log n), degenerate (list-like).',
+  },
+]
+
+const treeFamilies = [
+  {
+    title: 'Binary search tree (BST)',
+    detail:
+      'Ordered by key: left < node < right. Enables sorted traversals and range queries but needs balancing to avoid O(n).',
+  },
+  {
+    title: 'Self-balancing BSTs',
+    detail:
+      'AVL, Red-Black, Treap, Splay, and Scapegoat trees enforce height guarantees via rotations or rebuilds.',
+  },
+  {
+    title: 'Heaps and priority queues',
+    detail:
+      'Heap order (parent <= children for min-heap) supports fast min/max access and O(log n) inserts/removals.',
+  },
+  {
+    title: 'Tries and radix trees',
+    detail:
+      'Edges labeled by characters or bits. Great for prefix, lexicographic, and range queries. Compress paths to save space.',
+  },
+  {
+    title: 'Multiway and disk-friendly trees',
+    detail:
+      'B-trees and B+ trees store many keys per node to minimize disk I/O and enable fast range scans.',
+  },
+  {
+    title: 'Range query structures',
+    detail:
+      'Segment trees and Fenwick trees maintain aggregates (sum, min, max) over intervals with log-time updates.',
+  },
+  {
+    title: 'Spatial trees',
+    detail:
+      'KD-trees, quadtrees, octrees, and BVHs index points and volumes for fast geometric queries.',
+  },
+  {
+    title: 'String and suffix trees',
+    detail:
+      'Suffix trees and suffix arrays support fast substring searches, pattern matching, and LCP queries.',
+  },
+]
+
 const mechanics = [
   {
     heading: 'Structure',
@@ -82,6 +158,145 @@ const mechanics = [
   },
 ]
 
+const traversalCheatSheet = [
+  {
+    title: 'Preorder',
+    detail:
+      'Visit node before children. Useful for copying trees, serializing structure, and prefix notation (expression trees).',
+  },
+  {
+    title: 'Inorder',
+    detail:
+      'Left, node, right. Produces sorted order in BSTs and supports range queries by early stopping.',
+  },
+  {
+    title: 'Postorder',
+    detail:
+      'Visit children before node. Ideal for safe deletion, freeing memory, and evaluating expression trees.',
+  },
+  {
+    title: 'Level-order (BFS)',
+    detail:
+      'Visit nodes by depth. Finds nearest targets and supports width or level computations.',
+  },
+]
+
+const balancingSnapshot = [
+  {
+    title: 'AVL',
+    detail:
+      'Strict balance (|bf| <= 1). More rotations on updates, slightly faster lookups due to tighter height bound.',
+  },
+  {
+    title: 'Red-Black',
+    detail:
+      'Looser balance (black-height rules). Fewer rotations, great for frequent inserts/deletes and ordered maps.',
+  },
+  {
+    title: 'Treap',
+    detail:
+      'BST by key + heap by random priority. Expected O(log n) without explicit balance bookkeeping.',
+  },
+  {
+    title: 'Splay',
+    detail:
+      'Self-adjusting via splaying to root. Amortized O(log n), strong locality benefits, simple implementation.',
+  },
+  {
+    title: 'B/B+ trees',
+    detail:
+      'High fanout, fewer levels. B+ keeps data in leaves for efficient range scans and sequential I/O.',
+  },
+  {
+    title: 'Scapegoat/Weight-balanced',
+    detail:
+      'Rebuilds subtrees when size ratios drift. Fewer small rotations, good for batchy workloads.',
+  },
+]
+
+const invariants = [
+  {
+    title: 'BST ordering',
+    detail:
+      'Left subtree keys are smaller, right subtree keys are larger. Every rotation must preserve this invariant.',
+  },
+  {
+    title: 'Heap property',
+    detail:
+      'Every parent is <= (min-heap) or >= (max-heap) its children. Structure is usually complete for array storage.',
+  },
+  {
+    title: 'AVL and Red-Black rules',
+    detail:
+      'AVL keeps balance factor in {-1,0,1}. Red-Black enforces black-height and no red-red edges for looser balance.',
+  },
+  {
+    title: 'B-tree node sizes',
+    detail:
+      'Each node stores a range of keys (t-1 to 2t-1). Splits and merges maintain these bounds and keep height low.',
+  },
+  {
+    title: 'Trie prefix paths',
+    detail:
+      'Every path from root to node spells a prefix. Terminal markers distinguish full keys from prefixes.',
+  },
+]
+
+const storageLayouts = [
+  {
+    title: 'Pointer-based nodes',
+    detail:
+      'Flexible and easy to update but suffer cache misses. Best for mutable in-memory trees.',
+  },
+  {
+    title: 'Array-backed heaps',
+    detail:
+      'Implicit tree layout in arrays: parent i, children 2i+1/2i+2. Great locality and minimal pointer overhead.',
+  },
+  {
+    title: 'Packed arrays (B-trees)',
+    detail:
+      'Store many keys and child pointers in a node aligned to cache line or disk page for high throughput.',
+  },
+  {
+    title: 'Van Emde Boas layout',
+    detail:
+      'Recursively layout subtrees to improve cache locality without changing logical structure.',
+  },
+  {
+    title: 'Succinct trees',
+    detail:
+      'Bit-vector encodings (LOUDS, balanced parentheses) compress structure with rank/select support.',
+  },
+]
+
+const operationsPlaybook = [
+  {
+    heading: 'Search and query',
+    bullets: [
+      'Path length equals height. Balanced trees guarantee O(log n) searches.',
+      'In BSTs, inorder traversal yields sorted output; range queries prune whole subtrees.',
+      'In tries, search cost depends on key length, not the number of keys.',
+    ],
+  },
+  {
+    heading: 'Insert and delete',
+    bullets: [
+      'BST insert/delete is O(h); balance with rotations or rebuilds to avoid degeneration.',
+      'Heaps bubble up/down to restore order; deletes require swapping with last element.',
+      'B-trees split on overflow and merge/borrow on underflow to keep node sizes bounded.',
+    ],
+  },
+  {
+    heading: 'Merge, split, and join',
+    bullets: [
+      'Treaps and AVL trees can join or split in O(log n) by key boundaries.',
+      'B-trees and LSM trees batch merges to amortize write cost.',
+      'Persistent trees share structure so snapshots are cheap and safe.',
+    ],
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Search, insert, delete',
@@ -103,6 +318,40 @@ const complexityNotes = [
     detail:
       'Fine-grained locking (hand-over-hand), optimistic reads, or lock-free trees reduce contention. Height reduction (higher branching factor) cuts critical sections.',
   },
+]
+
+const performanceNotes = [
+  {
+    title: 'Branching factor versus height',
+    detail:
+      'Doubling branching factor can drop height by a constant factor, which multiplies into cache and I/O savings.',
+  },
+  {
+    title: 'Recursion cost',
+    detail:
+      'Recursive traversals are elegant but can overflow on deep trees. Iterative stacks or tail-call elimination mitigate this.',
+  },
+  {
+    title: 'Mutation patterns',
+    detail:
+      'Many inserts in sorted order skew naive BSTs; randomized insert or periodic rebalancing avoids degeneration.',
+  },
+  {
+    title: 'Hot paths',
+    detail:
+      'Keep frequently accessed metadata (size, height, balance) close to node data to reduce cache-line fetches.',
+  },
+]
+
+const augmentationIdeas = [
+  'Subtree size for order statistics (kth smallest, rank queries).',
+  'Subtree sums/min/max for range queries and interval pruning.',
+  'Parent pointers or Euler tours for LCA and subtree queries.',
+  'Lazy propagation for segment trees to batch range updates.',
+  'Binary lifting tables for fast ancestor jumps in O(log n).',
+  'Heavy-light decomposition to reduce tree paths to log segments.',
+  'Augment with min/max depth to detect imbalance or optimize pruning.',
+  'Store subtree hashes for Merkle proofs and tamper detection.',
 ]
 
 const realWorld = [
@@ -197,6 +446,58 @@ cost_balanced   ~= 20 * 100 ns = 2 microseconds`,
     explanation:
       'Asymptotic notation hides constants, but the height gap dominates real latency. Balancing turns a perceptible pause into a microsecond-scale operation.',
   },
+  {
+    title: 'Lowest common ancestor (binary lifting)',
+    code: `// Precompute up[k][v] = 2^k-th ancestor
+function build_lca(root):
+    dfs(root, parent = null):
+        up[0][v] = parent
+        depth[v] = depth[parent] + 1
+        for k in 1..LOG:
+            up[k][v] = up[k-1][ up[k-1][v] ]
+        for child in v.children:
+            dfs(child, v)
+
+function lca(a, b):
+    if depth[a] < depth[b]: swap(a, b)
+    lift a up to depth[b]
+    if a == b: return a
+    for k from LOG down to 0:
+        if up[k][a] != up[k][b]:
+            a = up[k][a]
+            b = up[k][b]
+    return up[0][a]`,
+    explanation:
+      'Binary lifting answers LCA queries in O(log n) after O(n log n) preprocessing. It powers distance queries, subtree checks, and path aggregations.',
+  },
+  {
+    title: 'B-tree split in a nutshell',
+    code: `// Node with order t overflows when it has 2t keys
+function insert_btree(node, key):
+    if node is full:
+        split node into left + right around middle key
+        promote middle key to parent
+        pick child (left/right) and continue insert
+    if node is leaf:
+        insert key into sorted position
+    else:
+        recurse into correct child`,
+    explanation:
+      'B-trees keep nodes within [t-1, 2t-1] keys. Splits and merges keep height small and nodes densely packed for disk I/O.',
+  },
+  {
+    title: 'Segment tree range sum with lazy propagation',
+    code: `function range_add(node, l, r, val):
+    if node range fully inside [l, r]:
+        node.sum += val * node.length
+        node.lazy += val
+        return
+    push(node.lazy to children)
+    recurse to children
+    node.sum = left.sum + right.sum`,
+    explanation:
+      'Lazy propagation defers updates to keep range updates and queries both O(log n). The trick is storing pending deltas.',
+  },
 ]
 
 const pitfalls = [
@@ -205,6 +506,10 @@ const pitfalls = [
   'Pointer-heavy implementations thrash caches; favor packed nodes or higher branching factors when memory bandwidth is the bottleneck.',
   'Tries without compression waste memory on sparse alphabets; use radix compression or hash edges.',
   'Misusing recursion on deep trees risks stack overflow; provide iterative variants or tail recursion elimination.',
+  'Failing to define duplicate-key policy leads to subtle bugs; decide on counts, lists, or strict uniqueness.',
+  'Confusing height and depth causes off-by-one errors in balancing and complexity estimates.',
+  'Overlooking memory reclamation in persistent trees can leak space; use reference counting or arenas.',
+  'Mixing inclusive/exclusive ranges in segment trees yields silent off-by-one errors.',
 ]
 
 const decisionGuidance = [
@@ -213,6 +518,10 @@ const decisionGuidance = [
   'Need prefix lookups: tries or radix trees outperform hash tables for range and lexicographic queries.',
   'Need balanced general-purpose ordered map in memory: use AVL for tighter balance or Red-Black for cheaper rotations; in high-concurrency settings, consider skip lists or Bw-trees.',
   'Need mutable hierarchies with cheap snapshots: use persistent trees (path copying) so old versions remain accessible.',
+  'Need geometric proximity queries: use KD-trees for points, quadtrees or octrees for spatial partitioning.',
+  'Need interval aggregates: choose segment trees for generic operations or Fenwick for prefix sums.',
+  'Need heavy write throughput with eventual compaction: consider LSM trees with memtable trees and SSTables.',
+  'Need lexicographic range scans with prefixes: use tries or B+ trees depending on key length and storage.',
 ]
 
 const advancedInsights = [
@@ -241,6 +550,24 @@ const advancedInsights = [
     detail:
       'Property tests that assert BST invariants, heap order, or B-tree node size constraints catch subtle bugs. Tools like model checking or Coq proofs back high-assurance storage engines, such as verified B-trees in the FSCQ file system paper.',
   },
+]
+
+const testingChecklist = [
+  'Verify ordering: inorder traversal is sorted for BSTs.',
+  'Validate balance constraints (AVL bf, RB colors, B-tree key bounds).',
+  'Round-trip inserts and deletes on random data and sorted data.',
+  'Check structure invariants after every rotation or split/merge.',
+  'Property tests: rank/select consistency with subtree sizes.',
+  'Fuzz range queries with brute-force baseline for segment trees.',
+]
+
+const practicePrompts = [
+  'Implement a BST with parent pointers and iterative traversals.',
+  'Add subtree sizes and support kth-smallest queries.',
+  'Build a trie with path compression and compare memory usage.',
+  'Implement an LRU cache with a tree-backed ordered map and benchmark.',
+  'Write a segment tree with range add and range min queries.',
+  'Build an interval tree and test overlap queries against brute force.',
 ]
 
 export default function TreesPage(): JSX.Element {
@@ -303,6 +630,30 @@ export default function TreesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology that unlocks the rest</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Major tree families</legend>
+            <div className="win95-grid win95-grid-2">
+              {treeFamilies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: structure, traversal, and balance</legend>
             <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
@@ -323,6 +674,66 @@ export default function TreesPage(): JSX.Element {
                 short-circuit searches based on partial information.
               </p>
             </div>
+            <div className="win95-grid win95-grid-2">
+              {traversalCheatSheet.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Balancing approaches at a glance</legend>
+            <div className="win95-grid win95-grid-2">
+              {balancingSnapshot.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Invariants that keep trees correct</legend>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Storage layouts and memory behavior</legend>
+            <div className="win95-grid win95-grid-2">
+              {storageLayouts.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Operations playbook</legend>
+            <div className="win95-grid win95-grid-3">
+              {operationsPlaybook.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -341,6 +752,29 @@ export default function TreesPage(): JSX.Element {
                 higher branching factors collapse height, reducing cache misses and I/O. This is why B-trees dominate storage
                 engines and why cache-aware van Emde Boas layouts boost traversal speed.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance considerations in practice</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Augmentations that add power</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {augmentationIdeas.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -383,6 +817,17 @@ export default function TreesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -390,6 +835,17 @@ export default function TreesPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice and build challenges</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {practicePrompts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
