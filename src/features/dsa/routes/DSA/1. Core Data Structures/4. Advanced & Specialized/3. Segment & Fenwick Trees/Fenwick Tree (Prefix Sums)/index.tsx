@@ -45,6 +45,34 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'lowbit(i)',
+    detail:
+      'lowbit(i) = i & -i gives the size of the range covered by tree[i].',
+  },
+  {
+    term: 'Bucket range',
+    detail:
+      'tree[i] stores the sum of values in (i - lowbit(i) + 1) .. i.',
+  },
+  {
+    term: '1-indexed array',
+    detail:
+      'Index 0 is unused so lowbit math works cleanly.',
+  },
+  {
+    term: 'Prefix sum',
+    detail:
+      'Sum of values from 1 to i, computed by walking down the lowbit chain.',
+  },
+  {
+    term: 'Point update',
+    detail:
+      'Add delta to one index and propagate to all buckets that cover it.',
+  },
+]
+
 const coreConcepts = [
   {
     heading: 'Indexing discipline',
@@ -96,6 +124,52 @@ const coreConcepts = [
   },
 ]
 
+const invariants = [
+  {
+    title: 'Bucket correctness',
+    detail:
+      'For every i, tree[i] equals the sum of a fixed range length lowbit(i).',
+  },
+  {
+    title: 'Prefix decomposition',
+    detail:
+      'Any prefix [1..i] can be decomposed into disjoint buckets following i -= lowbit(i).',
+  },
+  {
+    title: 'Monotonic prefixes for kth',
+    detail:
+      'Order-statistic search assumes all values are non-negative so prefix sums are non-decreasing.',
+  },
+  {
+    title: '1-based indexing',
+    detail:
+      'All update and query loops terminate correctly only when indices start at 1.',
+  },
+]
+
+const operationVariants = [
+  {
+    title: 'Point update + prefix query',
+    detail:
+      'The classic Fenwick use case. O(log n) update and query.',
+  },
+  {
+    title: 'Range update + point query',
+    detail:
+      'Store a difference array in the tree; update [l, r] by add(l, delta), add(r+1, -delta).',
+  },
+  {
+    title: 'Range update + range query',
+    detail:
+      'Use two trees to support range adds and prefix sums in O(log n).',
+  },
+  {
+    title: '2D and 3D Fenwick',
+    detail:
+      'Extend loops across dimensions: O(log^d n) for d dimensions.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time cost',
@@ -117,6 +191,82 @@ const complexityNotes = [
     detail:
       'Supports associative operations that decompose by prefixes (sum, count). Not ideal for min/max without extra tricks.',
   },
+]
+
+const performanceNotes = [
+  {
+    title: 'Small constants',
+    detail:
+      'Tight loops and contiguous arrays make Fenwick fast in practice.',
+  },
+  {
+    title: 'Memory locality',
+    detail:
+      'Access patterns are predictable and cache friendly compared to pointer trees.',
+  },
+  {
+    title: 'Build strategy',
+    detail:
+      'Linear build saves time when initializing from static data.',
+  },
+  {
+    title: 'Type width',
+    detail:
+      'Use 64-bit for sums unless you can guarantee small totals.',
+  },
+]
+
+const rangeUpdateMath = [
+  {
+    title: 'Difference trick',
+    detail:
+      'If D is the difference array, adding delta to [l, r] is D[l] += delta, D[r+1] -= delta.',
+  },
+  {
+    title: 'Two-tree formula',
+    detail:
+      'Prefix sum after range adds: sum(i) = i * query(B1, i) - query(B2, i).',
+  },
+  {
+    title: 'Update formula',
+    detail:
+      'Range add [l, r] by: add(B1, l, delta), add(B1, r+1, -delta), add(B2, l, delta*(l-1)), add(B2, r+1, -delta*r).',
+  },
+]
+
+const coordinateCompression = [
+  {
+    title: 'Why compress',
+    detail:
+      'Fenwick needs dense indices. Compress sparse keys to 1..m to keep memory small.',
+  },
+  {
+    title: 'How to compress',
+    detail:
+      'Sort unique keys, map each key to its rank, then use the rank in updates and queries.',
+  },
+  {
+    title: 'Use cases',
+    detail:
+      'Inversion counting, offline queries, and frequency tracking over large domains.',
+  },
+]
+
+const testingChecklist = [
+  'Verify prefix sums against a brute-force array after random updates.',
+  'Test edge indices: 1, n, and empty prefixes.',
+  'Validate range sum by comparing prefix(r) - prefix(l - 1).',
+  'Confirm kth selection with non-negative data and duplicates.',
+  'Check that linear build matches repeated updates.',
+  'Stress test with large values for overflow issues.',
+]
+
+const practiceIdeas = [
+  'Count inversions in O(n log n) using coordinate compression and a Fenwick.',
+  'Maintain a multiset with kth element queries using binary lifting.',
+  'Implement range add + range sum with two trees and validate formulas.',
+  'Build a 2D Fenwick for dynamic grid updates.',
+  'Compare Fenwick vs segment tree on the same workload.',
 ]
 
 const realWorldUses = [
@@ -204,6 +354,53 @@ function kth(k):
     explanation:
       'Binary lifting walks the implicit tree to locate the k-th element in O(log n). Requires non-negative frequencies.',
   },
+  {
+    title: 'Range add + range sum with two trees',
+    code: `// Internal helpers
+function add(bit, i, delta):
+    while i <= n:
+        bit[i] += delta
+        i += i & -i
+
+function sum(bit, i):
+    res = 0
+    while i > 0:
+        res += bit[i]
+        i -= i & -i
+    return res
+
+// Range add [l, r] by delta
+function rangeAdd(l, r, delta):
+    add(B1, l, delta)
+    add(B1, r + 1, -delta)
+    add(B2, l, delta * (l - 1))
+    add(B2, r + 1, -delta * r)
+
+// Prefix sum after range adds
+function prefix(i):
+    return i * sum(B1, i) - sum(B2, i)
+
+function rangeSum(l, r):
+    return prefix(r) - prefix(l - 1)`,
+    explanation:
+      'Two Fenwick trees convert range updates into prefix sums using a standard algebraic transform.',
+  },
+  {
+    title: '2D Fenwick sketch',
+    code: `function add(x, y, delta):
+    for i = x; i <= n; i += i & -i:
+        for j = y; j <= m; j += j & -j:
+            tree[i][j] += delta
+
+function sum(x, y):
+    res = 0
+    for i = x; i > 0; i -= i & -i:
+        for j = y; j > 0; j -= j & -j:
+            res += tree[i][j]
+    return res`,
+    explanation:
+      'Nested lowbit loops generalize Fenwick to 2D for dynamic rectangle sums.',
+  },
 ]
 
 const pitfalls = [
@@ -212,6 +409,9 @@ const pitfalls = [
   'Using negative frequencies and then applying order-statistic queries breaks monotonicity.',
   'Building with O(n log n) updates when a linear build is available.',
   'Assuming Fenwick supports arbitrary range updates or min/max queries without extra transforms.',
+  'Not compressing sparse keys leads to huge, mostly empty arrays.',
+  'Using kth selection when counts can go negative breaks correctness.',
+  'Forgetting to clamp r + 1 in range updates can write past the array.',
 ]
 
 const decisionGuidance = [
@@ -242,6 +442,16 @@ const advancedInsights = [
     title: 'Cache efficiency is a feature',
     detail:
       'Fenwick loops touch contiguous memory with predictable strides, often beating segment trees for pure prefix sums.',
+  },
+  {
+    title: 'Fenwick as a prefix monoid',
+    detail:
+      'Fenwick works for any invertible prefix operation that can be decomposed; sums are the most common, but XOR also works.',
+  },
+  {
+    title: 'Offline queries with sorting',
+    detail:
+      'Combine Fenwick with sorting by key or time to answer offline range queries efficiently.',
   },
 ]
 
@@ -314,6 +524,26 @@ export default function FenwickTreePrefixSumsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: structure and operations</legend>
             <div className="win95-grid win95-grid-3">
               {coreConcepts.map((block) => (
@@ -324,6 +554,18 @@ export default function FenwickTreePrefixSumsPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Operation variants</legend>
+            <div className="win95-grid win95-grid-2">
+              {operationVariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -344,6 +586,18 @@ export default function FenwickTreePrefixSumsPage(): JSX.Element {
                 Fenwick trees are ideal when your query is a prefix sum and your update is a point change. When you need
                 full range updates, min/max, or complex aggregates, a segment tree or other structure is a better fit.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -390,6 +644,30 @@ export default function FenwickTreePrefixSumsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Range update math (two-tree trick)</legend>
+            <div className="win95-grid win95-grid-2">
+              {rangeUpdateMath.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Coordinate compression</legend>
+            <div className="win95-grid win95-grid-2">
+              {coordinateCompression.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
@@ -428,6 +706,17 @@ export default function FenwickTreePrefixSumsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -435,6 +724,17 @@ export default function FenwickTreePrefixSumsPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice and build ideas</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {practiceIdeas.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
