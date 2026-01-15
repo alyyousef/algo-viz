@@ -55,6 +55,123 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'Bucket and slot',
+    detail:
+      'A bucket is a logical container for keys that map to the same index. In open addressing, buckets are physical slots.',
+  },
+  {
+    term: 'Load factor (alpha)',
+    detail:
+      'alpha = n / capacity. Controls collision probability and expected probe length.',
+  },
+  {
+    term: 'Collision',
+    detail:
+      'Two distinct keys hash to the same bucket. Collision policy determines how they are stored.',
+  },
+  {
+    term: 'Probe sequence',
+    detail:
+      'The deterministic order of alternative slots checked after a collision (linear, quadratic, double-hash).',
+  },
+  {
+    term: 'Tombstone',
+    detail:
+      'A deletion marker in open addressing that preserves probe sequences for future lookups.',
+  },
+  {
+    term: 'Rehash',
+    detail:
+      'Recompute bucket positions, typically after resizing or changing hash parameters.',
+  },
+]
+
+const tableDesigns = [
+  {
+    title: 'Separate chaining',
+    detail:
+      'Buckets store short lists or arrays. Tolerates high load factors but uses pointers and extra memory.',
+  },
+  {
+    title: 'Linear probing',
+    detail:
+      'Simple open addressing with contiguous probes. Great cache locality but primary clustering risk.',
+  },
+  {
+    title: 'Quadratic probing',
+    detail:
+      'Probes at i^2 offsets to reduce clustering. Requires careful capacity choices to guarantee coverage.',
+  },
+  {
+    title: 'Double hashing',
+    detail:
+      'Second hash function sets the probe step. Reduces clustering; sensitive to good hash choices.',
+  },
+  {
+    title: 'Robin Hood',
+    detail:
+      'Keeps probe lengths even by swapping with shorter-distance entries. Low variance for lookups.',
+  },
+  {
+    title: 'Cuckoo hashing',
+    detail:
+      'Two or more candidate slots per key. Constant-time lookups; inserts may trigger relocations.',
+  },
+  {
+    title: 'Hopscotch hashing',
+    detail:
+      'Maintains a small neighborhood for each bucket, balancing locality and insertion success rates.',
+  },
+]
+
+const hashFunctionChecklist = [
+  {
+    title: 'Uniformity',
+    detail:
+      'Small changes in key should scramble output bits. Avoid simple modulo of sequential keys.',
+  },
+  {
+    title: 'Speed and stability',
+    detail:
+      'Fast enough for hot paths; deterministic for persistence or random-seeded for security.',
+  },
+  {
+    title: 'Keyed defense',
+    detail:
+      'Use SipHash or random seeds when inputs are attacker-controlled to prevent hash-flooding.',
+  },
+  {
+    title: 'Width and mixing',
+    detail:
+      'Ensure output uses high-quality mixing, especially when capacity is a power of two.',
+  },
+]
+
+const deletionStrategies = [
+  {
+    title: 'Chaining delete',
+    detail:
+      'Remove from the bucket list; often O(1) when bucket is small.',
+  },
+  {
+    title: 'Tombstones',
+    detail:
+      'Mark slots as deleted in open addressing. Required for correctness but degrades over time.',
+  },
+  {
+    title: 'Backward shift deletion',
+    detail:
+      'Compacts runs after delete (used in SwissTable variants). Avoids tombstones but needs careful logic.',
+  },
+  {
+    title: 'Rebuild on delete ratio',
+    detail:
+      'Trigger rehash when tombstones exceed a threshold to restore probe lengths.',
+  },
+]
+
 const mechanics = [
   {
     heading: 'Hash function selection',
@@ -102,6 +219,52 @@ const complexityNotes = [
     title: 'Cache behavior',
     detail:
       'Open addressing favors cache because data is contiguous; chaining chases pointers and can thrash caches. Compact bucket arrays plus small inline overflow areas improve locality.',
+  },
+]
+
+const performanceNotes = [
+  {
+    title: 'Open addressing loves cache',
+    detail:
+      'Contiguous probes hit fewer cache lines. Flat hash maps exploit SIMD to scan control bytes quickly.',
+  },
+  {
+    title: 'Chaining loves high alpha',
+    detail:
+      'Chaining stays stable at higher load factors but pointer chasing hurts locality.',
+  },
+  {
+    title: 'Resize spikes',
+    detail:
+      'Full rehashing is O(n) and can cause latency spikes; incremental rehash spreads the cost.',
+  },
+  {
+    title: 'Key size matters',
+    detail:
+      'Large keys dominate time; consider storing hashes or interning strings for speed.',
+  },
+]
+
+const correctnessInvariants = [
+  {
+    title: 'Lookup correctness',
+    detail:
+      'If key exists, the probe sequence must reach it. Deletions must not break this invariant.',
+  },
+  {
+    title: 'No duplicate keys',
+    detail:
+      'Insert must update existing key rather than creating duplicates within a bucket or probe chain.',
+  },
+  {
+    title: 'Load-factor policy',
+    detail:
+      'Resizing thresholds must guarantee probe sequences stay bounded in expectation.',
+  },
+  {
+    title: 'Hash stability',
+    detail:
+      'Keys must not mutate after insertion or their hash and equality change.',
   },
 ]
 
@@ -214,6 +377,33 @@ function insert_robin_hood(table, key, value):
     explanation:
       'Robin Hood hashing reduces variance of probe lengths, improving worst-case lookup even if average is similar. This matters in latency-sensitive systems.',
   },
+  {
+    title: 'Cuckoo hashing insert sketch',
+    code: `function insert_cuckoo(table, key, value):
+    for kick in 0 .. MAX_KICKS:
+        if table.slot1(key) is EMPTY:
+            place at slot1
+            return
+        if table.slot2(key) is EMPTY:
+            place at slot2
+            return
+        // kick out an existing entry
+        swap(key, value, table.slot1(key))
+    rehash to larger table`,
+    explanation:
+      'Cuckoo hashing guarantees O(1) lookups (check two positions). Insertions may loop, so a rehash or stash handles cycles.',
+  },
+  {
+    title: 'Consistent hashing ring',
+    code: `function place_nodes(nodes):
+    ring = sort(hash(node_id) for node in nodes)
+
+function lookup(key):
+    h = hash(key)
+    return first node clockwise from h (wrap if needed)`,
+    explanation:
+      'Consistent hashing maps keys onto a ring; adding or removing a node moves only nearby keys, minimizing churn.',
+  },
 ]
 
 const pitfalls = [
@@ -223,6 +413,8 @@ const pitfalls = [
   'For open addressing, forgetting tombstones or probe continuation after deletion breaks future lookups.',
   'Mutable keys change their hash mid-life; never use mutable objects as keys unless you freeze or copy them.',
   'Unseeded predictable hashes invite hash-flood attacks on public-facing services; use randomized seeds or keyed hashes like SipHash.',
+  'Letting tombstones accumulate can make performance collapse; rebuild when delete ratios climb.',
+  'Storing large values inline bloats buckets; store pointers or small structs to improve cache behavior.',
 ]
 
 const decisionGuidance = [
@@ -231,6 +423,8 @@ const decisionGuidance = [
   'Need range queries: choose balanced search trees or B-trees; hashing discards order.',
   'Need memory efficiency with low variance: consider Robin Hood hashing or hopscotch hashing; avoid oversized buckets in small-memory environments.',
   'Need distributed sharding: use consistent hashing to reduce data movement when nodes join or leave.',
+  'Need adversarial resilience: use keyed hashes and enforce per-bucket limits or rehash on collision storms.',
+  'Need mostly reads with fixed key set: consider perfect hashing or frozen hash maps for minimal memory.',
 ]
 
 const advancedInsights = [
@@ -259,6 +453,24 @@ const advancedInsights = [
     detail:
       'Property tests should assert lookup(find(k)) == v after randomized inserts and deletes, that load factor stays below thresholds, and that probe sequences remain intact after deletions. Cross-validate against reference maps on small datasets.',
   },
+]
+
+const testingChecklist = [
+  'Verify insert/lookup/delete on random and adversarial keys.',
+  'Check that duplicates overwrite rather than create two entries.',
+  'Fuzz with random deletes to expose tombstone bugs.',
+  'Measure probe lengths as load factor increases.',
+  'Cross-validate against a reference map on small datasets.',
+  'Stress test with long strings and large keys for hash stability.',
+]
+
+const practicePrompts = [
+  'Implement linear probing with tombstones and measure probe lengths.',
+  'Add Robin Hood swapping and compare variance of lookups.',
+  'Build a chained hash map with dynamic bucket arrays.',
+  'Implement incremental rehashing to cap latency spikes.',
+  'Build a consistent hashing ring with virtual nodes.',
+  'Compare SipHash vs xxHash for speed and collision behavior.',
 ]
 
 export default function HashTablesPage(): JSX.Element {
@@ -322,6 +534,54 @@ export default function HashTablesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology that unlocks the rest</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Table designs and collision policies</legend>
+            <div className="win95-grid win95-grid-2">
+              {tableDesigns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Hash function checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {hashFunctionChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Deletion strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {deletionStrategies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: hashing, collisions, resizing</legend>
             <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
@@ -345,6 +605,18 @@ export default function HashTablesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Correctness invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and performance intuition</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -360,6 +632,18 @@ export default function HashTablesPage(): JSX.Element {
                 about variance and latency spikes as about big-O. Modern designs cap probe lengths, batch rehashing, and use
                 cache-friendly layouts to stabilize tail latency.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance considerations in practice</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -402,6 +686,17 @@ export default function HashTablesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -409,6 +704,17 @@ export default function HashTablesPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice and build challenges</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {practicePrompts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
