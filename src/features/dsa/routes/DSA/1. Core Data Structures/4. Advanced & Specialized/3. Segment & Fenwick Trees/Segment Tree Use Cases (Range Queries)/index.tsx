@@ -60,6 +60,57 @@ const mentalModels = [
   },
 ]
 
+const terminology = [
+  {
+    term: 'Segment',
+    detail:
+      'A contiguous interval [l, r] represented by a node.',
+  },
+  {
+    term: 'Merge function',
+    detail:
+      'Associative function combining two child summaries into a parent.',
+  },
+  {
+    term: 'Identity element',
+    detail:
+      'Neutral value for merge (0 for sum, +inf for min, -inf for max).',
+  },
+  {
+    term: 'Lazy tag',
+    detail:
+      'Deferred update stored at a node to be pushed when needed.',
+  },
+  {
+    term: 'Query cover',
+    detail:
+      'A range query decomposes into a minimal set of fully covered nodes.',
+  },
+]
+
+const invariants = [
+  {
+    title: 'Correct summaries',
+    detail:
+      'Every node must reflect the merge of its children or the base value at a leaf.',
+  },
+  {
+    title: 'Lazy consistency',
+    detail:
+      'Pending updates must be applied or propagated before using child data.',
+  },
+  {
+    title: 'Associativity',
+    detail:
+      'Merge order should not change results; otherwise queries can break.',
+  },
+  {
+    title: 'Range boundaries',
+    detail:
+      'All nodes respect inclusive boundaries and align with input indices.',
+  },
+]
+
 const queryTypes = [
   {
     heading: 'Range sum / prefix sum',
@@ -102,6 +153,70 @@ const queryTypes = [
       'Store multiple values: sum + max prefix + max suffix to answer max subarray.',
       'Design node structs to support advanced queries like longest run.',
     ],
+  },
+]
+
+const updateTypes = [
+  {
+    title: 'Point update',
+    detail:
+      'Change a single value and recompute along the root path.',
+  },
+  {
+    title: 'Range add',
+    detail:
+      'Add delta to all values in [l, r] with lazy propagation.',
+  },
+  {
+    title: 'Range assign',
+    detail:
+      'Overwrite a range with a fixed value; needs assignment lazy tags.',
+  },
+  {
+    title: 'Range min/max chmin/chmax',
+    detail:
+      'Segment tree beats support conditional range updates efficiently.',
+  },
+]
+
+const buildOptions = [
+  {
+    title: 'Recursive build',
+    detail:
+      'Build with divide-and-conquer; easy to reason about.',
+  },
+  {
+    title: 'Iterative build',
+    detail:
+      'Store leaves at n..2n and build parents downward; cache-friendly.',
+  },
+  {
+    title: 'Lazy initialization',
+    detail:
+      'Create nodes on demand for sparse arrays to save memory.',
+  },
+]
+
+const lazyPropagationNotes = [
+  {
+    title: 'Push down',
+    detail:
+      'Before visiting children, apply pending updates to them.',
+  },
+  {
+    title: 'Compose tags',
+    detail:
+      'Range add and range assign tags must combine in the correct order.',
+  },
+  {
+    title: 'Query correctness',
+    detail:
+      'If a node is fully covered, you can return its summary without exploring children.',
+  },
+  {
+    title: 'Multiple lazy types',
+    detail:
+      'Complex updates require storing more metadata per node.',
   },
 ]
 
@@ -148,6 +263,101 @@ const complexityNotes = [
     title: 'Associativity requirement',
     detail:
       'Merge must be associative. Non-associative operations break correctness because grouping differs.',
+  },
+]
+
+const performanceNotes = [
+  {
+    title: 'Constants matter',
+    detail:
+      'Segment trees are heavier than Fenwick; iterative versions reduce overhead.',
+  },
+  {
+    title: 'Cache locality',
+    detail:
+      'Array-based trees improve locality versus pointer-based nodes.',
+  },
+  {
+    title: 'Recursion depth',
+    detail:
+      'Deep recursion can overflow on large n; iterative implementations avoid this.',
+  },
+  {
+    title: 'Memory usage',
+    detail:
+      'Storing multiple metrics or lazy tags can double memory footprint.',
+  },
+]
+
+const realWorldPatterns = [
+  {
+    title: 'Time series dashboards',
+    detail:
+      'Range sums and maxes over dynamic windows for operational metrics.',
+  },
+  {
+    title: 'Game and simulation maps',
+    detail:
+      'Range buffs, damage fields, and resource totals in map slices.',
+  },
+  {
+    title: 'Financial analytics',
+    detail:
+      'Rolling highs/lows, volatility bands, and live range queries on prices.',
+  },
+  {
+    title: 'Scheduling capacity',
+    detail:
+      'Check capacity and assign work across time slots using range queries.',
+  },
+]
+
+const examplesExpanded = [
+  {
+    title: 'Iterative segment tree range sum',
+    code: `// leaves at [n..2n)
+build(values):
+  for i in 0..n-1: tree[n+i] = values[i]
+  for i in n-1 down to 1:
+    tree[i] = tree[2*i] + tree[2*i+1]
+
+query(l, r): // inclusive
+  l += n; r += n
+  res = 0
+  while l <= r:
+    if (l % 2 == 1): res += tree[l++]
+    if (r % 2 == 0): res += tree[r--]
+    l /= 2; r /= 2
+  return res`,
+    explanation:
+      'Iterative trees avoid recursion and are often faster in practice for tight loops.',
+  },
+  {
+    title: 'Range assign with lazy',
+    code: `rangeAssign(node, l, r, value):
+  if node.range inside [l, r]:
+    node.sum = value * node.length
+    node.lazyAssign = value
+    node.lazyAdd = 0
+    return
+  pushDown(node)
+  recurse children
+  node.sum = left.sum + right.sum`,
+    explanation:
+      'Range assign requires overwriting pending adds; ordering of lazy tags matters.',
+  },
+  {
+    title: 'Max subarray sum node',
+    code: `struct Node:
+  sum, bestPrefix, bestSuffix, bestSubarray
+
+merge(a, b):
+  sum = a.sum + b.sum
+  bestPrefix = max(a.bestPrefix, a.sum + b.bestPrefix)
+  bestSuffix = max(b.bestSuffix, b.sum + a.bestSuffix)
+  bestSubarray = max(a.bestSubarray, b.bestSubarray, a.bestSuffix + b.bestPrefix)`,
+    explanation:
+      'Storing composite summaries enables queries like maximum subarray sum in O(log n).',
   },
 ]
 
@@ -231,6 +441,9 @@ const pitfalls = [
   'Mishandling inclusive vs exclusive ranges causes off-by-one errors.',
   'Not accounting for overflow when sums can exceed 32-bit limits.',
   'Overusing recursion without tail safeguards can hit stack limits for huge arrays.',
+  'Forgetting to propagate lazy tags before merging children yields wrong summaries.',
+  'Mixing 0-based and 1-based indices causes silent range shifts.',
+  'Using inclusive ranges in some functions and exclusive in others breaks consistency.',
 ]
 
 const decisionGuidance = [
@@ -239,6 +452,7 @@ const decisionGuidance = [
   'Need range updates and range queries: segment tree with lazy propagation is the right fit.',
   'Need immutable history or time travel queries: consider a persistent segment tree.',
   'Need range queries over sparse or huge coordinates: combine with coordinate compression.',
+  'Need many offline queries: consider Mo’s algorithm or prefix arrays if updates are rare.',
 ]
 
 const advancedInsights = [
@@ -261,6 +475,16 @@ const advancedInsights = [
     title: 'Custom node structs',
     detail:
       'Combine multiple metrics to answer richer queries, like longest increasing run or max subarray sum.',
+  },
+  {
+    title: 'Coordinate compression',
+    detail:
+      'Map sparse coordinates to dense indices for memory-efficient segment trees on large domains.',
+  },
+  {
+    title: 'Hybrid segment + Fenwick',
+    detail:
+      'Use Fenwick for prefix sums and segment trees for min/max when both are needed.',
   },
 ]
 
@@ -334,6 +558,26 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Terminology and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {terminology.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Query types segment trees excel at</legend>
             <div className="win95-grid win95-grid-3">
               {queryTypes.map((block) => (
@@ -344,6 +588,38 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Update types and lazy propagation</legend>
+            <div className="win95-grid win95-grid-2">
+              {updateTypes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {lazyPropagationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Build options</legend>
+            <div className="win95-grid win95-grid-2">
+              {buildOptions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -368,6 +644,18 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Performance notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and tradeoffs</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -382,6 +670,18 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
                 Segment trees trade extra memory and code complexity for speed and flexibility. If your data changes and queries
                 are frequent, that trade is often worth it.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Use cases in practice</legend>
+            <div className="win95-grid win95-grid-2">
+              {realWorldPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -409,6 +709,15 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
                   <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
+              {examplesExpanded.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -419,6 +728,19 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
                 {pitfalls.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Testing checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                <li>Compare segment tree queries with brute-force arrays for random tests.</li>
+                <li>Test boundary ranges: [1,1], [n,n], and full range.</li>
+                <li>Validate lazy propagation by mixing range updates with queries.</li>
+                <li>Ensure identity values are correct for empty and partial overlaps.</li>
+                <li>Verify iterative and recursive builds match for the same input.</li>
               </ul>
             </div>
           </fieldset>
