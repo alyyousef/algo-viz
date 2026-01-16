@@ -65,6 +65,47 @@ const mechanics = [
   },
 ]
 
+const loopInvariants = [
+  {
+    title: 'Sorted prefix invariant',
+    detail:
+      'Before each outer-loop iteration i, the subarray a[0..i-1] is sorted and contains the same elements as the original prefix.',
+  },
+  {
+    title: 'Hole invariant',
+    detail:
+      'During the inner loop, there is a single hole at index j + 1, and all elements in a[0..i-1] greater than key have been shifted right by one.',
+  },
+  {
+    title: 'Stability guarantee',
+    detail:
+      'Only elements strictly greater than key are shifted, so equal keys never cross each other.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Start',
+    state: '[7, 3, 5, 2]',
+    note: 'Prefix of length 1 is trivially sorted.',
+  },
+  {
+    step: 'Insert 3',
+    state: '[3, 7, 5, 2]',
+    note: 'Shift 7 right, place 3 at index 0.',
+  },
+  {
+    step: 'Insert 5',
+    state: '[3, 5, 7, 2]',
+    note: 'Shift 7 right, place 5 at index 1.',
+  },
+  {
+    step: 'Insert 2',
+    state: '[2, 3, 5, 7]',
+    note: 'Shift 7, 5, 3 right; place 2 at index 0.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time',
@@ -78,6 +119,24 @@ const complexityNotes = [
     title: 'Constant factors',
     detail:
       'Excellent data locality and branch predictability on nearly sorted data make it fast for small n despite quadratic asymptotics.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Comparisons',
+    detail:
+      'Worst case ~ n(n-1)/2 comparisons. Best case n-1 comparisons (already sorted). With binary insertion, comparisons drop to O(n log n) but shifts still dominate.',
+  },
+  {
+    title: 'Data movement',
+    detail:
+      'Shifts are proportional to the number of inversions. Each inversion causes one element move, so total writes are O(n + inversions).',
+  },
+  {
+    title: 'Adaptive behavior',
+    detail:
+      'Nearly sorted input yields few inversions, so runtime approaches linear even for moderately sized arrays.',
   },
 ]
 
@@ -96,6 +155,29 @@ const realWorldUses = [
     context: 'Online insertion',
     detail:
       'When elements arrive one by one and must be kept sorted immediately (small priority lists, leaderboard snippets), insertion sort incremental nature is simple and predictable.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Binary insertion sort',
+    detail:
+      'Use binary search to find the insertion point, reducing comparisons. Shifts remain O(n) so total time is still O(n^2).',
+  },
+  {
+    title: 'Sentinel optimization',
+    detail:
+      'Place a guaranteed minimum value at a[0] to remove the j >= 0 bound check in the inner loop, improving branch prediction.',
+  },
+  {
+    title: 'Gapped insertion (Shell sort)',
+    detail:
+      'Insertion sort on gapped elements is the core of Shell sort. Gaps reduce inversions quickly before a final insertion pass.',
+  },
+  {
+    title: 'Partial insertion for TimSort',
+    detail:
+      'Extend short runs to a minimum run length with insertion sort, then merge. This exploits existing order for large arrays.',
   },
 ]
 
@@ -134,6 +216,25 @@ const examples = [
     explanation:
       'Small partitions skip recursive overhead and branch mispredictions by finishing with insertion sort. Tail recursion elimination keeps stack depth shallow.',
   },
+  {
+    title: 'Stable insertion of objects by key',
+    code: `type Item = { key: number; payload: string };
+
+function insertionSortByKey(items: Item[]): Item[] {
+  for (let i = 1; i < items.length; i += 1) {
+    const keyItem = items[i];
+    let j = i - 1;
+    while (j >= 0 && items[j].key > keyItem.key) {
+      items[j + 1] = items[j];
+      j -= 1;
+    }
+    items[j + 1] = keyItem;
+  }
+  return items;
+}`,
+    explanation:
+      'Use a strict greater-than comparison on the key to preserve stability when payloads share the same key value.',
+  },
 ]
 
 const pitfalls = [
@@ -141,6 +242,7 @@ const pitfalls = [
   'Applying insertion sort to large, random data leads to severe O(n^2) slowdowns.',
   'Forgetting to tune hybrid cutoffs can leave performance on the table (too low wastes recursion, too high wastes quadratic work).',
   'Inner loop bounds errors (j >= 0) can underflow or skip the first element.',
+  'Comparing with >= instead of > breaks stability by reordering equal keys.',
 ]
 
 const decisionGuidance = [
@@ -173,6 +275,48 @@ const advancedInsights = [
   },
 ]
 
+const implementationTips = [
+  {
+    title: 'Use a local key variable',
+    detail:
+      'Store a[i] in a temporary key to avoid repeated array reads while shifting.',
+  },
+  {
+    title: 'Prefer index arithmetic over swaps',
+    detail:
+      'Shifting contiguous memory is faster than repeated swapping and preserves stability.',
+  },
+  {
+    title: 'Short-circuit sorted prefixes',
+    detail:
+      'If a[i] >= a[i - 1], skip the inner loop entirely; this is common on nearly sorted data.',
+  },
+  {
+    title: 'Avoid extra allocations',
+    detail:
+      'Insertion sort is in-place; avoid creating new arrays unless you need a persistent original.',
+  },
+]
+
+const quickChecks = [
+  {
+    q: 'Is insertion sort stable?',
+    a: 'Yes, when you shift only elements that are strictly greater than the key.',
+  },
+  {
+    q: 'Why does it perform well on nearly sorted input?',
+    a: 'Few inversions mean few shifts, so the inner loop runs a tiny number of steps.',
+  },
+  {
+    q: 'Can we make it faster with binary search?',
+    a: 'Binary search reduces comparisons but cannot avoid the O(n) shifts per insertion.',
+  },
+  {
+    q: 'When should I avoid it?',
+    a: 'Large random arrays or data with many inversions; use O(n log n) sorts instead.',
+  },
+]
+
 const takeaways = [
   'Insertion sort is stable, in-place, and adaptive, excelling on tiny or nearly sorted inputs.',
   'Quadratic worst-case time limits it to small ranges or hybrid base cases.',
@@ -197,7 +341,8 @@ export default function InsertionSortPage(): JSX.Element {
               <div className="win95-subheading">Grow a sorted prefix one element at a time</div>
               <p className="win95-text">
                 Insertion sort builds a sorted prefix by shifting larger elements right to make space for each new key. It is stable,
-                in-place, and adaptive on nearly sorted data, which makes it a staple for tiny arrays and hybrid cutoffs.
+                in-place, and adaptive on nearly sorted data, which makes it a staple for tiny arrays, streaming inserts, and hybrid
+                cutoffs in faster sorts.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -257,6 +402,33 @@ export default function InsertionSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny array</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and intuition</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -275,11 +447,35 @@ export default function InsertionSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-3">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -313,6 +509,18 @@ export default function InsertionSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -330,6 +538,18 @@ export default function InsertionSortPage(): JSX.Element {
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Quick checks</legend>
+            <div className="win95-grid win95-grid-2">
+              {quickChecks.map((item) => (
+                <div key={item.q} className="win95-panel">
+                  <div className="win95-heading">{item.q}</div>
+                  <p className="win95-text">{item.a}</p>
                 </div>
               ))}
             </div>
