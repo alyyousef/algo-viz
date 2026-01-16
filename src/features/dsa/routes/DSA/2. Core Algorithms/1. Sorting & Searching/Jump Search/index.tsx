@@ -96,6 +96,83 @@ const coreConcepts = [
   },
 ]
 
+const problemPatterns = [
+  {
+    title: 'Coarse-to-fine search',
+    detail:
+      'If you can quickly skip across the space and then scan locally, jump search is a natural fit.',
+  },
+  {
+    title: 'Block-aligned data',
+    detail:
+      'When data lives in fixed-size blocks (pages, cache lines), jumping by block size reduces random access.',
+  },
+  {
+    title: 'Sorted ranges with cheap sequential scans',
+    detail:
+      'If sequential access is much cheaper than random access, a block scan can beat binary search.',
+  },
+]
+
+const reasoningSteps = [
+  {
+    title: 'Confirm sorted order',
+    detail:
+      'Jump search relies on sorted data so you can stop early when the block end exceeds the target.',
+  },
+  {
+    title: 'Choose a step size',
+    detail:
+      'Start with sqrt(n) as a safe default, then adjust if caches or pages suggest a better stride.',
+  },
+  {
+    title: 'Find candidate block',
+    detail:
+      'Jump until the block end is >= target, then linearly scan within that block.',
+  },
+  {
+    title: 'Validate early exit',
+    detail:
+      'If the target is outside [blockStart, blockEnd], return not found immediately.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Block invariant',
+    detail:
+      'Before each linear scan, the target can only be in the current block or later; all previous blocks are too small.',
+  },
+  {
+    title: 'Sorted scan invariant',
+    detail:
+      'During the linear scan, if arr[i] > target, you can stop early because the rest of the block is larger.',
+  },
+  {
+    title: 'Progress invariant',
+    detail:
+      'Each jump advances the block boundary by step, guaranteeing termination after at most n/step jumps.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Start',
+    state: 'arr = [1, 3, 7, 9, 12, 15, 18, 21, 24], target = 18',
+    note: 'n = 9, step = floor(sqrt(9)) = 3.',
+  },
+  {
+    step: 'Jump phase',
+    state: 'Check arr[2] = 7 < 18 -> jump, arr[5] = 15 < 18 -> jump, arr[8] = 24 >= 18',
+    note: 'Candidate block is indices 6..8.',
+  },
+  {
+    step: 'Linear scan',
+    state: 'Scan arr[6] = 18',
+    note: 'Found the target at index 6.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time cost',
@@ -116,6 +193,62 @@ const complexityNotes = [
     title: 'Prerequisites',
     detail:
       'The data must be sorted and accessible by index. Jump search is not suited for linked lists.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Best-case speed',
+    detail:
+      'If the target lands on a block boundary, the search ends after a few jumps.',
+  },
+  {
+    title: 'Worst-case behavior',
+    detail:
+      'You do about sqrt(n) jumps plus sqrt(n) linear checks, giving O(sqrt(n)).',
+  },
+  {
+    title: 'Access patterns',
+    detail:
+      'Jumping is sparse; scanning is contiguous. This can be friendlier than binary search on slow memory.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Jump search',
+    time: 'O(sqrt(n))',
+    space: 'O(1)',
+    sorted: 'Yes',
+    notes: 'Simple, cache-friendly blocks; slower than binary search on CPU arrays.',
+  },
+  {
+    algorithm: 'Binary search',
+    time: 'O(log n)',
+    space: 'O(1)',
+    sorted: 'Yes',
+    notes: 'Fast and reliable; random access pattern.',
+  },
+  {
+    algorithm: 'Exponential search',
+    time: 'O(log i)',
+    space: 'O(1)',
+    sorted: 'Yes',
+    notes: 'Best when size is unknown or target is near front.',
+  },
+  {
+    algorithm: 'Interpolation search',
+    time: 'O(log log n) avg',
+    space: 'O(1)',
+    sorted: 'Yes',
+    notes: 'Great on uniform data, but can degrade to O(n).',
+  },
+  {
+    algorithm: 'Linear search',
+    time: 'O(n)',
+    space: 'O(1)',
+    sorted: 'No',
+    notes: 'Works on unsorted data; simplest but slowest.',
   },
 ]
 
@@ -150,6 +283,13 @@ const realWorldUses = [
     detail:
       'A coarse jump table plus local scan can form the core of a simple index strategy.',
   },
+]
+
+const thinkingShortcuts = [
+  'If you can cheaply scan blocks, jump search can beat binary search on slow storage.',
+  'If the data is in memory and comparisons are cheap, binary search usually wins.',
+  'If you do repeated searches, build a jump table of block starts.',
+  'If blocks are huge, reduce step size to avoid long scans.',
 ]
 
 const examples = [
@@ -197,6 +337,29 @@ const pitfalls = [
   'Not checking array bounds when the last block is smaller than step.',
   'Assuming it beats binary search on modern CPU caches for all inputs.',
   'Stopping the linear scan too late and reading past the block end.',
+]
+
+const implementationTips = [
+  {
+    title: 'Compute step once',
+    detail:
+      'Use a constant step for the whole search to keep bounds predictable.',
+  },
+  {
+    title: 'Clamp block end',
+    detail:
+      'Always use min(step, n) - 1 when checking the block end.',
+  },
+  {
+    title: 'Early exit in scan',
+    detail:
+      'Stop the scan when arr[i] > target to avoid useless comparisons.',
+  },
+  {
+    title: 'Consider a jump table',
+    detail:
+      'Precomputing every k-th key gives a fast coarse index for repeated queries.',
+  },
 ]
 
 const decisionGuidance = [
@@ -314,6 +477,53 @@ export default function JumpSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Reasoning steps and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {reasoningSteps.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny array</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and tradeoffs</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -328,6 +538,46 @@ export default function JumpSearchPage(): JSX.Element {
                 Jump search is rarely faster than binary search on CPU arrays, but it is easier to implement, and its
                 linear access patterns can be better for systems where random access is expensive.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-3">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Sorted?</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.sorted}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -403,6 +653,29 @@ export default function JumpSearchPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Thinking shortcuts</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {thinkingShortcuts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
