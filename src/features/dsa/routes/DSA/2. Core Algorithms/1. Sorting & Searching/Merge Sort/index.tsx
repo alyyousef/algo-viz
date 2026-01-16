@@ -70,6 +70,60 @@ const mechanics = [
   },
 ]
 
+const problemPatterns = [
+  {
+    title: 'Stable ordering required',
+    detail:
+      'If equal keys must keep their original order (e.g., sorting by secondary fields), merge sort is a safe default.',
+  },
+  {
+    title: 'Large data, sequential access',
+    detail:
+      'When random access is expensive (disk, tape, network streams), merge sort uses sequential scans efficiently.',
+  },
+  {
+    title: 'Linked structures',
+    detail:
+      'Linked lists lack random access; merge sort preserves O(n log n) time with pointer relinking.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Sorted halves invariant',
+    detail:
+      'Before each merge, the left and right halves are already sorted.',
+  },
+  {
+    title: 'Merge buffer invariant',
+    detail:
+      'At any point during merge, the buffer contains the smallest elements seen so far in sorted order.',
+  },
+  {
+    title: 'Stability invariant',
+    detail:
+      'When keys are equal, elements from the left half are emitted first, preserving original ordering.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Split',
+    state: '[8, 3, 7, 4, 2, 6] -> [8, 3, 7] | [4, 2, 6]',
+    note: 'Recursively split into halves until singletons.',
+  },
+  {
+    step: 'Sort halves',
+    state: '[8, 3, 7] -> [3, 7, 8], [4, 2, 6] -> [2, 4, 6]',
+    note: 'Each half becomes sorted independently.',
+  },
+  {
+    step: 'Merge',
+    state: '[3, 7, 8] + [2, 4, 6] -> [2, 3, 4, 6, 7, 8]',
+    note: 'Pick the smaller head each time until one side empties.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time complexity',
@@ -93,6 +147,62 @@ const complexityNotes = [
   },
 ]
 
+const performanceProfile = [
+  {
+    title: 'Sequential access',
+    detail:
+      'Reads and writes are mostly sequential, which is ideal for disks, SSDs, and large memory scans.',
+  },
+  {
+    title: 'Predictable runtime',
+    detail:
+      'Always O(n log n), avoiding worst-case spikes seen in naive quicksort.',
+  },
+  {
+    title: 'Memory bandwidth',
+    detail:
+      'The merge buffer doubles memory traffic, which can bottleneck in memory-bound workloads.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Merge sort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Reliable, stable, great for sequential access.',
+  },
+  {
+    algorithm: 'Quick sort',
+    time: 'O(n log n) avg',
+    space: 'O(log n)',
+    stable: 'No',
+    notes: 'Fast on arrays, but worst case can be O(n^2).',
+  },
+  {
+    algorithm: 'Heap sort',
+    time: 'O(n log n)',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'In-place with good worst-case bounds, but cache unfriendly.',
+  },
+  {
+    algorithm: 'TimSort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Adaptive on real-world runs; used by many standard libraries.',
+  },
+  {
+    algorithm: 'Insertion sort',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    stable: 'Yes',
+    notes: 'Great for tiny arrays; often used as a merge base case.',
+  },
+]
+
 const applications = [
   {
     context: 'Standard library defaults',
@@ -113,6 +223,29 @@ const applications = [
     context: 'Linked list ordering',
     detail:
       'Without random access, quicksort and heapsort stumble. Merge sort on linked lists stays O(n log n) and stable with no extra buffer.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Bottom-up merge sort',
+    detail:
+      'Iteratively merge runs of size 1, 2, 4, ... to avoid recursion depth limits.',
+  },
+  {
+    title: 'Natural runs',
+    detail:
+      'Detect already-sorted stretches and merge them, reducing work on partially sorted data.',
+  },
+  {
+    title: 'In-place merge variants',
+    detail:
+      'Algorithms exist to reduce buffer size, but they are complex and often slower in practice.',
+  },
+  {
+    title: 'K-way merge',
+    detail:
+      'Merge more than two runs at once using a min-heap; essential for external sorting.',
   },
 ]
 
@@ -181,6 +314,29 @@ const decisionGuidance = [
   'Sorting data larger than memory: external merge sort is the default approach.',
   'Memory is tight and stability is optional: quicksort or heapsort may be better.',
   'Real-world partially sorted data: use Timsort or a merge hybrid that exploits natural runs.',
+]
+
+const implementationTips = [
+  {
+    title: 'Reuse a single buffer',
+    detail:
+      'Allocate one auxiliary array and reuse it across merges to avoid O(n log n) allocations.',
+  },
+  {
+    title: 'Cut over to insertion sort',
+    detail:
+      'Switch to insertion sort for tiny subarrays (often < 32) to reduce overhead.',
+  },
+  {
+    title: 'Avoid repeated slicing',
+    detail:
+      'Pass indices rather than slicing arrays to reduce allocations and copying.',
+  },
+  {
+    title: 'Stable tie handling',
+    detail:
+      'Use <= for left-first comparison to preserve stability.',
+  },
 ]
 
 const advancedInsights = [
@@ -298,6 +454,45 @@ export default function MergeSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny array</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -310,11 +505,63 @@ export default function MergeSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-3">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Stable?</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.stable}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -344,6 +591,18 @@ export default function MergeSortPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
