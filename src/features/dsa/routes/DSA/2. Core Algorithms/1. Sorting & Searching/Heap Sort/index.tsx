@@ -70,6 +70,65 @@ const mechanics = [
   },
 ]
 
+const heapProperties = [
+  {
+    title: 'Heap order property',
+    detail:
+      'In a max-heap, every parent is >= its children. This guarantees the maximum element sits at the root.',
+  },
+  {
+    title: 'Shape property',
+    detail:
+      'The heap is a complete binary tree: all levels are full except possibly the last, filled left to right.',
+  },
+  {
+    title: 'Implicit tree',
+    detail:
+      'The tree lives in the array layout; no pointer objects are needed, which keeps memory overhead tiny.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Heap boundary invariant',
+    detail:
+      'Before each extraction, a[0..heapSize-1] is a valid max-heap and a[heapSize..n-1] is sorted in ascending order.',
+  },
+  {
+    title: 'Root is current maximum',
+    detail:
+      'Because of the heap order property, the largest element in the heap boundary is always at index 0.',
+  },
+  {
+    title: 'Sift-down correctness',
+    detail:
+      'Sift-down restores heap order by pushing the root down until both children are smaller.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Build heap',
+    state: '[4, 10, 3, 5, 1] -> [10, 5, 3, 4, 1]',
+    note: 'Heapify converts the array into a max-heap in-place.',
+  },
+  {
+    step: 'Extract max',
+    state: '[10, 5, 3, 4, 1] -> [1, 5, 3, 4, 10]',
+    note: 'Swap root with end. Heap boundary shrinks to index 3.',
+  },
+  {
+    step: 'Sift-down',
+    state: '[1, 5, 3, 4, 10] -> [5, 4, 3, 1, 10]',
+    note: 'Restore heap property in the reduced boundary.',
+  },
+  {
+    step: 'Repeat',
+    state: '[5, 4, 3, 1, 10] -> [1, 4, 3, 5, 10] -> [4, 1, 3, 5, 10]',
+    note: 'Continue extracting until the array is fully sorted.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time',
@@ -89,6 +148,62 @@ const complexityNotes = [
     title: 'Cache behavior',
     detail:
       'Pointer-like jumps (2i+1, 2i+2) hurt locality, so heapsort often lags quicksort or mergesort in wall-clock time despite the same asymptotic bound.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Comparison count',
+    detail:
+      'Each sift-down compares a node with up to two children per level, making comparisons dense but predictable.',
+  },
+  {
+    title: 'Writes and swaps',
+    detail:
+      'Heapsort uses swaps heavily, which can be expensive for large records; consider indirect sorting with indices when needed.',
+  },
+  {
+    title: 'Cache locality',
+    detail:
+      'Jumping between parents and children causes cache misses, often making heapsort slower than quicksort in practice.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Heap sort',
+    time: 'O(n log n)',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'Great worst-case bounds; weaker cache locality.',
+  },
+  {
+    algorithm: 'Quick sort',
+    time: 'O(n log n) avg',
+    space: 'O(log n)',
+    stable: 'No',
+    notes: 'Fast in practice; worst case O(n^2) without safeguards.',
+  },
+  {
+    algorithm: 'Merge sort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Stable and predictable but needs extra memory.',
+  },
+  {
+    algorithm: 'TimSort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Adaptive on real-world data; dominates many standard libraries.',
+  },
+  {
+    algorithm: 'Selection sort',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'Simple but too slow for large arrays.',
   },
 ]
 
@@ -112,6 +227,29 @@ const realWorldUses = [
     context: 'External sorting pipelines',
     detail:
       'Deterministic memory use makes heaps useful when producing fixed-size runs for external merge sort or constrained batch jobs.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Bottom-up sift',
+    detail:
+      'Instead of swapping on every level, move the hole down and place the root once; reduces writes.',
+  },
+  {
+    title: 'Heaps on indices',
+    detail:
+      'Sort indices instead of records to avoid copying large objects; stable order can be added with index ties.',
+  },
+  {
+    title: 'Min-heap for descending',
+    detail:
+      'Using a min-heap produces descending order; max-heap yields ascending order.',
+  },
+  {
+    title: 'D-ary heaps',
+    detail:
+      'Increase branching factor to reduce height; trades extra comparisons for fewer levels.',
   },
 ]
 
@@ -201,6 +339,7 @@ const pitfalls = [
   'Forgetting to shrink the heap boundary after swapping root with end causes already-sorted elements to be reheapified.',
   'Assuming stability: plain heapsort can reorder equal keys unless you tag original positions.',
   'Expecting quicksort-like cache behavior: scattered accesses can make heapsort slower in practice despite O(n log n) bounds.',
+  'Ignoring record size: swapping large objects is costly; use indices or pointers when items are heavy.',
 ]
 
 const decisionGuidance = [
@@ -231,6 +370,29 @@ const advancedInsights = [
     title: 'Stable heapsort variants',
     detail:
       'Stability can be achieved by pairing each key with its original index and comparing tuples. Time stays O(n log n), space rises to O(n).',
+  },
+]
+
+const implementationTips = [
+  {
+    title: 'Keep sift-down tight',
+    detail:
+      'Use iterative loops and hoist bounds checks to reduce overhead in inner loops.',
+  },
+  {
+    title: 'Choose max-heap for ascending',
+    detail:
+      'If you build a max-heap, each extraction places the next-largest at the end, yielding ascending order.',
+  },
+  {
+    title: 'Minimize swaps',
+    detail:
+      'Use a temporary root value and move children up until the correct spot is found.',
+  },
+  {
+    title: 'Prefer Floyd heapify',
+    detail:
+      'Bottom-up heap construction is linear time; repeated inserts are not.',
   },
 ]
 
@@ -326,6 +488,45 @@ export default function HeapSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Heap properties</legend>
+            <div className="win95-grid win95-grid-3">
+              {heapProperties.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny array</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -338,11 +539,63 @@ export default function HeapSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-3">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Stable?</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.stable}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -372,6 +625,18 @@ export default function HeapSortPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
