@@ -8,7 +8,7 @@ const historicalMilestones = [
   {
     title: '1930s: Tournament method roots',
     detail:
-      'Early sorting research used tournament trees to pick winners. Selection sort is the simplest â€œpick the winner, remove it, repeatâ€ approach.',
+      'Early sorting research used tournament trees to pick winners. Selection sort is the simplest "pick the winner, remove it, repeat" approach.',
   },
   {
     title: '1960s: Textbook staple',
@@ -38,6 +38,11 @@ const mentalModels = [
     detail:
       'Exactly one swap per pass minimizes writes, trading extra comparisons for write efficiency.',
   },
+  {
+    title: 'Tournament bracket',
+    detail:
+      'Every pass plays a tournament among the remaining elements; the minimum wins and is placed into its final slot.',
+  },
 ]
 
 const mechanics = [
@@ -65,6 +70,75 @@ const mechanics = [
   },
 ]
 
+const problemPatterns = [
+  {
+    title: 'Write-limited storage',
+    detail:
+      'When writes are costly or limited (flash, EEPROM), selection sort keeps writes low with one swap per pass.',
+  },
+  {
+    title: 'Small fixed-size buffers',
+    detail:
+      'Sorting tiny arrays where the constant factors of more advanced algorithms do not pay off.',
+  },
+  {
+    title: 'Deterministic behavior',
+    detail:
+      'No data-dependent early exits: cost is predictable and independent of input order.',
+  },
+  {
+    title: 'Teaching invariants',
+    detail:
+      'Great for explaining loop invariants and the idea of growing a sorted prefix.',
+  },
+  {
+    title: 'Not for large datasets',
+    detail:
+      'Quadratic comparisons make it unsuitable for large arrays or performance-sensitive paths.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Sorted prefix invariant',
+    detail:
+      'At the start of pass i, the subarray a[0..i-1] is sorted and contains the i smallest elements.',
+  },
+  {
+    title: 'Minimum tracking invariant',
+    detail:
+      'During the inner scan, index min always points to the smallest element seen so far in a[i..j].',
+  },
+  {
+    title: 'Permutation invariant',
+    detail:
+      'Selection sort only swaps elements, so the output is a permutation of the input.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Start',
+    state: '[7, 2, 5, 1, 4]',
+    note: 'i = 0, scan the whole array to find the minimum.',
+  },
+  {
+    step: 'Pass 1',
+    state: 'min = 1 at index 3, swap -> [1, 2, 5, 7, 4]',
+    note: 'The smallest element is now fixed at position 0.',
+  },
+  {
+    step: 'Pass 2',
+    state: 'scan [2, 5, 7, 4], min = 2 at index 1, no swap',
+    note: 'Position 1 already holds the minimum of the suffix.',
+  },
+  {
+    step: 'Pass 3',
+    state: 'scan [5, 7, 4], min = 4 at index 4, swap -> [1, 2, 4, 7, 5]',
+    note: 'Sorted prefix grows; only a small suffix remains.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time',
@@ -83,6 +157,90 @@ const complexityNotes = [
   },
 ]
 
+const inputSensitivity = [
+  {
+    title: 'Already sorted input',
+    detail:
+      'Still O(n^2) comparisons because the inner scan always runs. It only saves swaps.',
+  },
+  {
+    title: 'Reverse sorted input',
+    detail:
+      'Same number of comparisons as any input. Swaps are still one per pass.',
+  },
+  {
+    title: 'Many duplicates',
+    detail:
+      'Comparisons remain quadratic; naive swapping can reorder equal elements and break stability.',
+  },
+  {
+    title: 'Random input',
+    detail:
+      'Behavior is essentially identical to sorted or reverse input because comparisons do not adapt.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Comparisons',
+    detail:
+      'About n(n-1)/2 comparisons every time, which dominates runtime.',
+  },
+  {
+    title: 'Swaps',
+    detail:
+      'At most n-1 swaps. This is the main advantage over bubble or insertion sort.',
+  },
+  {
+    title: 'Memory',
+    detail:
+      'In-place with O(1) extra memory and simple control flow.',
+  },
+  {
+    title: 'Branch predictability',
+    detail:
+      'The inner loop is regular and predictable, but still heavy for large n.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Selection sort',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'Minimal swaps, but heavy comparisons.',
+  },
+  {
+    algorithm: 'Insertion sort',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    stable: 'Yes',
+    notes: 'Adaptive on nearly sorted data; more writes.',
+  },
+  {
+    algorithm: 'Bubble sort',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    stable: 'Yes',
+    notes: 'Many swaps; simple but usually slower.',
+  },
+  {
+    algorithm: 'Merge sort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Fast and stable but uses extra memory.',
+  },
+  {
+    algorithm: 'Quick sort',
+    time: 'O(n log n) avg',
+    space: 'O(log n)',
+    stable: 'No',
+    notes: 'Faster for large arrays, but pivot-sensitive.',
+  },
+]
+
 const realWorldUses = [
   {
     context: 'Write-constrained environments',
@@ -98,6 +256,29 @@ const realWorldUses = [
     context: 'Pedagogical contrast',
     detail:
       'Used in classrooms to highlight invariants, swap minimization, and why O(n^2) comparisons dominate time.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Bidirectional selection',
+    detail:
+      'Find min and max in one pass, then place them at the front and back to shrink faster.',
+  },
+  {
+    title: 'Stable selection',
+    detail:
+      'Replace swaps with element shifts to preserve order. This increases writes and loses the main advantage.',
+  },
+  {
+    title: 'Heap-based selection',
+    detail:
+      'Use a heap to repeatedly extract mins. This becomes heap sort and changes time complexity.',
+  },
+  {
+    title: 'Index selection',
+    detail:
+      'Sort indices instead of data when data writes are expensive and indirection is acceptable.',
   },
 ]
 
@@ -143,6 +324,25 @@ const examples = [
     explanation:
       'Shrinks from both ends, halving passes. Comparisons remain quadratic; writes stay low (two swaps per pass).',
   },
+  {
+    title: 'Stable selection (shift instead of swap)',
+    code: `function stableSelectionSort(a: number[]): number[] {
+  for (let i = 0; i < a.length - 1; i += 1) {
+    let min = i;
+    for (let j = i + 1; j < a.length; j += 1) {
+      if (a[j] < a[min]) min = j;
+    }
+    const value = a[min];
+    for (let j = min; j > i; j -= 1) {
+      a[j] = a[j - 1];
+    }
+    a[i] = value;
+  }
+  return a;
+}`,
+    explanation:
+      'Shifting preserves stability but increases writes; it is slower when writes are not expensive.',
+  },
 ]
 
 const pitfalls = [
@@ -150,6 +350,30 @@ const pitfalls = [
   'Unstable due to swaps; equal elements can flip order.',
   'Bidirectional variant must adjust max index if it was swapped with the min.',
   'Using it on large datasets causes obvious performance collapse versus O(n log n) sorts.',
+  'Stable variants shift many elements, which can be worse than insertion sort in practice.',
+]
+
+const implementationTips = [
+  {
+    title: 'Skip redundant swaps',
+    detail:
+      'Check min !== i before swapping to avoid useless writes when the minimum is already in place.',
+  },
+  {
+    title: 'Track both min and max',
+    detail:
+      'The bidirectional variant cuts passes in half at the cost of a slightly more careful swap order.',
+  },
+  {
+    title: 'Avoid for large n',
+    detail:
+      'Selection sort is quadratic with no best case. Use O(n log n) sorts for real workloads.',
+  },
+  {
+    title: 'Document stability',
+    detail:
+      'Call out whether your implementation is stable; the default swap-based version is not.',
+  },
 ]
 
 const decisionGuidance = [
@@ -157,6 +381,7 @@ const decisionGuidance = [
   'Need stability: prefer insertion or merge-based sorts; stable selection costs extra writes.',
   'Need speed on average data: quicksort, merge sort, or TimSort dominate.',
   'Want fewer passes: bidirectional selection reduces passes but not the quadratic comparisons.',
+  'Need predictable cost with trivial control flow: selection sort is easy to reason about.',
 ]
 
 const advancedInsights = [
@@ -168,7 +393,7 @@ const advancedInsights = [
   {
     title: 'Cycle sort connection',
     detail:
-      'Cycle sort extends the â€œplace element directlyâ€ idea to achieve the theoretical minimum number of writes for a permutation.',
+      'Cycle sort extends the "place element directly" idea to achieve the theoretical minimum number of writes for a permutation.',
   },
   {
     title: 'Cache behavior',
@@ -180,6 +405,11 @@ const advancedInsights = [
     detail:
       'Cost is fixed at Theta(n^2) regardless of input pattern; there is no pivot sensitivity as in quicksort.',
   },
+  {
+    title: 'Swap minimization',
+    detail:
+      'Selection sort is optimal among sorts that swap only once per pass, but that constraint limits overall speed.',
+  },
 ]
 
 const takeaways = [
@@ -187,6 +417,7 @@ const takeaways = [
   'It is unstable unless modified; stability costs extra writes and undercuts its main advantage.',
   'Use it when writes are expensive and n is small; otherwise prefer adaptive or O(n log n) algorithms.',
   'Bidirectional selection can cut passes but not the quadratic comparison count.',
+  'References: Knuth Volume 3, standard CS texts, and flash-memory literature on write-sensitive algorithms.',
 ]
 
 export default function SelectionSortPage(): JSX.Element {
@@ -267,6 +498,45 @@ export default function SelectionSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny array</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -279,11 +549,75 @@ export default function SelectionSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Stable?</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.stable}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -313,6 +647,18 @@ export default function SelectionSortPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -354,4 +700,3 @@ export default function SelectionSortPage(): JSX.Element {
     </div>
   )
 }
-
