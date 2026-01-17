@@ -70,7 +70,7 @@ const mechanics = [
     bullets: [
       'Binary heap: O((V + E) log V) with simple code and predictable constants.',
       'Fibonacci or pairing heap: better asymptotic decrease-key for dense graphs, higher constants in practice.',
-      'Bucket queues (Dial, radix, 0-1 BFS): near-linear when weights are small integers or in {0,1}.',
+      "Bucket queues (Dial, radix, 0-1 BFS): near-linear when weights are small integers or in {0,1}.",
     ],
   },
   {
@@ -80,6 +80,75 @@ const mechanics = [
       'Settling at extract-min locks a node; no future path can improve it because all unsettled nodes are at least as far.',
       'Outdated heap entries are harmless if you verify dist on pop before relaxing neighbors.',
     ],
+  },
+]
+
+const problemPatterns = [
+  {
+    title: 'Weighted shortest paths',
+    detail:
+      'Find cheapest routes when edges represent time, cost, or risk and are non-negative.',
+  },
+  {
+    title: 'Single-source distance maps',
+    detail:
+      'Compute the best cost from one origin to all nodes, then reuse results for multiple queries.',
+  },
+  {
+    title: 'Navigation and routing',
+    detail:
+      'When weights encode travel time or latency, Dijkstra delivers optimal paths without heuristics.',
+  },
+  {
+    title: 'Not for negative edges',
+    detail:
+      'If any edge weight is negative, the greedy settle order is invalid; use Bellman-Ford or Johnson.',
+  },
+  {
+    title: 'Multi-query optimization',
+    detail:
+      'If many sources are queried repeatedly, consider preprocessing or multi-level variants.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Settled invariant',
+    detail:
+      'When a node is extracted from the priority queue, its recorded distance is final and minimal among all remaining paths.',
+  },
+  {
+    title: 'Upper-bound invariant',
+    detail:
+      'All recorded distances are upper bounds on the true shortest path; relaxations monotonically tighten them.',
+  },
+  {
+    title: 'Frontier invariant',
+    detail:
+      'The priority queue always contains the next best candidate distances for unsettled nodes.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Initialize',
+    state: 'Source A at 0; others infinity. Queue: (A, 0)',
+    note: 'We start with only the source settled.',
+  },
+  {
+    step: 'Settle A',
+    state: 'Relax A->B (2), A->C (5). Queue: (B, 2), (C, 5)',
+    note: 'Shortest costs are tentative until popped.',
+  },
+  {
+    step: 'Settle B',
+    state: 'Relax B->C (1) => dist[C] = 3. Queue: (C, 3), (C, 5)',
+    note: 'Stale entries remain but are ignored when popped.',
+  },
+  {
+    step: 'Settle C',
+    state: 'C popped with 3, finalize dist[C].',
+    note: 'First time we pop a node is its optimal cost.',
   },
 ]
 
@@ -97,12 +166,89 @@ const complexityNotes = [
   {
     title: 'Integer weight shortcuts',
     detail:
-      'Dial buckets achieve O(V + E + W) when weights are small non-negative integers and W is the maximum edge weight. 0-1 BFS specializes further to O(V + E).',
+      "Dial buckets achieve O(V + E + W) when weights are small non-negative integers and W is the maximum edge weight. 0-1 BFS specializes further to O(V + E).",
   },
   {
     title: 'Memory footprint',
     detail:
       'Distance and parent arrays cost O(V); the queue can hold up to O(E) entries when reinserting instead of decrease-key.',
+  },
+]
+
+const inputSensitivity = [
+  {
+    title: 'Negative edges',
+    detail:
+      'Any negative edge breaks correctness; Dijkstra can return suboptimal paths.',
+  },
+  {
+    title: 'Wide weight ranges',
+    detail:
+      'Large weights can cause integer overflow if distances are stored in small numeric types.',
+  },
+  {
+    title: 'Sparse graphs',
+    detail:
+      'Adjacency lists and heaps perform well; Dijkstra scales nearly linearly with edges.',
+  },
+  {
+    title: 'Dense graphs',
+    detail:
+      'Priority queues add overhead; O(V^2) array-based Dijkstra may be competitive.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Heap operations',
+    detail:
+      'Most runtime is spent in pop-min and push; choose a heap with good constants.',
+  },
+  {
+    title: 'Decrease-key vs reinsertion',
+    detail:
+      'Reinsertion keeps code simple but increases heap size; decrease-key lowers queue growth at complexity cost.',
+  },
+  {
+    title: 'Cache locality',
+    detail:
+      'Contiguous adjacency lists and compact node IDs reduce cache misses in large graphs.',
+  },
+  {
+    title: 'Early exit',
+    detail:
+      'If only one target is needed, exit on first pop of that node to save work.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Dijkstra',
+    time: 'O((V + E) log V)',
+    space: 'O(V)',
+    bestFor: 'Non-negative weights',
+    notes: 'Reliable for single-source shortest paths.',
+  },
+  {
+    algorithm: 'BFS',
+    time: 'O(V + E)',
+    space: 'O(V)',
+    bestFor: 'Unit weights',
+    notes: 'Simpler and faster when all weights are equal.',
+  },
+  {
+    algorithm: '0-1 BFS',
+    time: 'O(V + E)',
+    space: 'O(V)',
+    bestFor: 'Weights 0 or 1',
+    notes: 'Deque-based and faster than Dijkstra in this case.',
+  },
+  {
+    algorithm: 'Bellman-Ford',
+    time: 'O(VE)',
+    space: 'O(V)',
+    bestFor: 'Negative weights',
+    notes: 'Slower but handles negatives and detects cycles.',
   },
 ]
 
@@ -131,6 +277,29 @@ const realWorldUses = [
     context: 'Compilers and analysis',
     detail:
       'Dataflow and call graph analyses use Dijkstra when edge weights encode risk or frequency, revealing cheapest witnesses through code.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Bidirectional Dijkstra',
+    detail:
+      'Run from source and target and meet in the middle to shrink explored states on undirected graphs.',
+  },
+  {
+    title: "Dial's buckets",
+    detail:
+      'Bucket queues remove the log factor for small integer weights.',
+  },
+  {
+    title: 'Radix heap',
+    detail:
+      'Exploits monotone keys to speed up integer-weight graphs.',
+  },
+  {
+    title: 'A* overlay',
+    detail:
+      'Add a heuristic to focus search toward a goal while preserving optimality.',
   },
 ]
 
@@ -185,6 +354,18 @@ const examples = [
       'Because the queue orders by cost, the first extraction of the target certifies its shortest path. Stopping here avoids needless work.',
   },
   {
+    title: 'Path reconstruction',
+    code: `function reconstruct(parent, target):
+    path = []
+    node = target
+    while node is not null:
+        path.push(node)
+        node = parent[node]
+    return reverse(path)`,
+    explanation:
+      'Parents collected during relaxations give the exact path at the end without another search.',
+  },
+  {
     title: "Dial's buckets for small integer weights",
     code: `function dial(graph, source, maxW):
     dist = map with default infinity
@@ -210,7 +391,7 @@ const examples = [
 
     return dist`,
     explanation:
-      'When weights are bounded small integers, bucket indices act as exact keys and remove the log factor, approaching O(V + E + W).',
+      'When weights are bounded small integers, bucket indices act as exact keys and remove the log factor.',
   },
 ]
 
@@ -220,6 +401,7 @@ const pitfalls = [
   'Overflowing distance sums on large weights breaks comparisons; use 64-bit or bigint distances.',
   'Using adjacency matrices on sparse graphs inflates runtime and memory; prefer adjacency lists.',
   'Skipping parent tracking forces extra passes or prevents route reconstruction after the run.',
+  'Assuming the first time a node is discovered is optimal; only extraction from the min-heap finalizes it.',
 ]
 
 const decisionGuidance = [
@@ -229,6 +411,34 @@ const decisionGuidance = [
   'Negative weights present: use Bellman-Ford or Johnson (for many sources).',
   'Single target and a good heuristic: use A* to narrow the search.',
   'Many queries on a static graph: preprocess with contraction hierarchies or multi-level Dijkstra for faster responses.',
+]
+
+const implementationTips = [
+  {
+    title: 'Pick the right number type',
+    detail:
+      'Use 64-bit integers or bigints if weights and paths can be large.',
+  },
+  {
+    title: 'Use adjacency lists',
+    detail:
+      'They avoid O(V^2) scans and keep runtime proportional to edges.',
+  },
+  {
+    title: 'Prefer early exit',
+    detail:
+      'If you only need one destination, stop at the first pop of that node.',
+  },
+  {
+    title: 'Handle stale heap entries',
+    detail:
+      'Skip nodes whose popped distance no longer matches dist[u].',
+  },
+  {
+    title: 'Store parents for paths',
+    detail:
+      'Capture parent pointers on relaxation so paths are available without extra passes.',
+  },
 ]
 
 const advancedInsights = [
@@ -264,6 +474,7 @@ const takeaways = [
   'Priority queue choice controls constants: binary heaps are dependable, buckets excel on bounded integers, Fibonacci heaps push asymptotics.',
   'Stale-entry checks or real decrease-key keep reinsertion strategies correct.',
   'Match the algorithm to the graph: BFS for unit weights, 0-1 BFS for {0,1}, Bellman-Ford for negatives, A* when a goal and heuristic exist.',
+  'References: Dijkstra 1959, CLRS shortest paths, and routing protocol literature.',
 ]
 
 export default function DijkstrasPage(): JSX.Element {
@@ -344,6 +555,45 @@ export default function DijkstrasPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny graph</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and performance intuition</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -362,11 +612,75 @@ export default function DijkstrasPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Best for</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.bestFor}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -396,6 +710,18 @@ export default function DijkstrasPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -437,4 +763,3 @@ export default function DijkstrasPage(): JSX.Element {
     </div>
   )
 }
-
