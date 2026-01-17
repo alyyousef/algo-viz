@@ -82,6 +82,75 @@ const mechanics = [
   },
 ]
 
+const problemPatterns = [
+  {
+    title: 'Shortest hop paths',
+    detail:
+      'When every edge has equal cost, BFS gives the exact shortest path in number of edges.',
+  },
+  {
+    title: 'Level-based properties',
+    detail:
+      'Layered expansion supports bipartite checks, distance labels, and k-step neighborhoods.',
+  },
+  {
+    title: 'Reachability and components',
+    detail:
+      'BFS can discover all nodes reachable from a source and can be repeated to find components.',
+  },
+  {
+    title: 'Grid or maze navigation',
+    detail:
+      'Uniform-cost movement on grids makes BFS a reliable baseline before weighted planners.',
+  },
+  {
+    title: 'Not for weighted graphs',
+    detail:
+      'If edges have different costs, BFS is not optimal; use Dijkstra or 0-1 BFS.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Distance invariant',
+    detail:
+      'When a node is dequeued, its distance equals the shortest possible number of edges from the source.',
+  },
+  {
+    title: 'Queue order invariant',
+    detail:
+      'Nodes in the queue are ordered by nondecreasing distance, so earlier nodes cannot be farther than later nodes.',
+  },
+  {
+    title: 'Visited invariant',
+    detail:
+      'A node is enqueued at most once; the first time it is discovered, the recorded parent yields a shortest path.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Start',
+    state: 'Graph: A-B, A-C, B-D, C-D, D-E; start = A',
+    note: 'Initialize queue with A at distance 0.',
+  },
+  {
+    step: 'Layer 1',
+    state: 'Dequeue A -> enqueue B, C (dist 1)',
+    note: 'Frontier now holds all nodes at distance 1.',
+  },
+  {
+    step: 'Layer 2',
+    state: 'Dequeue B -> enqueue D (dist 2); dequeue C -> D already visited',
+    note: 'Visited-on-enqueue prevents duplicate work.',
+  },
+  {
+    step: 'Layer 3',
+    state: 'Dequeue D -> enqueue E (dist 3)',
+    note: 'First time E is seen is the shortest hop count.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Asymptotic cost',
@@ -102,6 +171,83 @@ const complexityNotes = [
     title: 'Latency vs. throughput',
     detail:
       'Level-synchronous BFS has clear barriers: process frontier, build next. In parallel settings, frontier compaction and work-stealing determine throughput more than big-O.',
+  },
+]
+
+const inputSensitivity = [
+  {
+    title: 'High branching factor',
+    detail:
+      'Frontiers explode quickly. Memory becomes the limiting factor well before time.',
+  },
+  {
+    title: 'Sparse vs dense graphs',
+    detail:
+      'Sparse graphs benefit from adjacency lists; dense graphs can make BFS close to O(V^2).',
+  },
+  {
+    title: 'Disconnected graphs',
+    detail:
+      'Single-source BFS only reaches the connected component of the start; remaining nodes are unreachable.',
+  },
+  {
+    title: 'Weighted edges',
+    detail:
+      'BFS assumptions break if edge weights differ; shortest paths become incorrect.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Memory footprint',
+    detail:
+      'Visited arrays, parent pointers, and large frontiers dominate memory usage.',
+  },
+  {
+    title: 'Queue behavior',
+    detail:
+      'A fast queue implementation avoids overhead; array-based queues are common in practice.',
+  },
+  {
+    title: 'Cache locality',
+    detail:
+      'Neighbor scans are sequential, but random access to adjacency lists can limit cache efficiency.',
+  },
+  {
+    title: 'Early exit',
+    detail:
+      'If searching for a target, stop at first dequeue or first discovery to cut work.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'BFS',
+    time: 'O(V + E)',
+    space: 'O(V)',
+    bestFor: 'Unweighted shortest paths',
+    notes: 'Optimal in hops, memory heavy.',
+  },
+  {
+    algorithm: 'DFS',
+    time: 'O(V + E)',
+    space: 'O(V)',
+    bestFor: 'Reachability, topological structure',
+    notes: 'Lower memory in practice, but no shortest path guarantee.',
+  },
+  {
+    algorithm: 'Dijkstra',
+    time: 'O((V + E) log V)',
+    space: 'O(V)',
+    bestFor: 'Positive weights',
+    notes: 'Uses a priority queue for weighted shortest paths.',
+  },
+  {
+    algorithm: '0-1 BFS',
+    time: 'O(V + E)',
+    space: 'O(V)',
+    bestFor: 'Weights 0 or 1',
+    notes: 'Deque-based and faster than Dijkstra in this case.',
   },
 ]
 
@@ -130,6 +276,29 @@ const realWorldUses = [
     context: 'Puzzles and games',
     detail:
       "Rubik's Cube pattern databases, word ladders, and chess endgame tablebases use BFS to enumerate states in concentric layers and prove optimal move counts.",
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Multi-source BFS',
+    detail:
+      'Seed the queue with multiple sources to compute nearest-source labels and distances in one pass.',
+  },
+  {
+    title: 'Bidirectional BFS',
+    detail:
+      'Search from start and goal simultaneously; meet in the middle to reduce explored states.',
+  },
+  {
+    title: '0-1 BFS',
+    detail:
+      'Use a deque to handle edges with weights 0 or 1 in linear time.',
+  },
+  {
+    title: 'Level-by-level BFS',
+    detail:
+      'Track frontier sizes to process explicit layers and handle fixed-depth constraints.',
   },
 ]
 
@@ -201,6 +370,18 @@ const examples = [
     explanation:
       'Zero-cost edges stay on the current frontier; one-cost edges move to the back. The deque preserves Dijkstra-like optimality with O(V + E) work.',
   },
+  {
+    title: 'Reconstructing a shortest path',
+    code: `function buildPath(parent, target):
+    path = []
+    node = target
+    while node is not null:
+        path.push(node)
+        node = parent[node]
+    return reverse(path)`,
+    explanation:
+      'Parent pointers from BFS let you reconstruct the exact shortest path without another search.',
+  },
 ]
 
 const pitfalls = [
@@ -209,6 +390,7 @@ const pitfalls = [
   'Storing adjacency in dense matrices for sparse graphs increases memory and kills cache performance.',
   'Forgetting to track parents makes path reconstruction expensive or impossible after the fact.',
   'Large branching factors make naive BFS infeasible; prune states or switch to informed search to control explosion.',
+  'Assuming BFS finds shortest paths when edges differ in cost or have negative weights.',
 ]
 
 const decisionGuidance = [
@@ -217,6 +399,34 @@ const decisionGuidance = [
   'Need reachability or component checks: BFS or DFS both work; choose BFS when level ordering is useful.',
   'Need shallow optimal solutions in huge branching spaces: prefer bidirectional BFS when start and goal are both known.',
   'Need any path but have tight memory: favor DFS or iterative deepening; BFS may exhaust RAM.',
+]
+
+const implementationTips = [
+  {
+    title: 'Mark visited at enqueue time',
+    detail:
+      'This avoids duplicate work and preserves the shortest-path guarantee.',
+  },
+  {
+    title: 'Use array-based queues',
+    detail:
+      'Simple arrays with head/tail indices are faster than shift-based queues.',
+  },
+  {
+    title: 'Keep parent pointers',
+    detail:
+      'Parents make shortest path reconstruction cheap and deterministic.',
+  },
+  {
+    title: 'Stop early when possible',
+    detail:
+      'If you only need a single target, terminate at first discovery or dequeue.',
+  },
+  {
+    title: 'Choose adjacency lists',
+    detail:
+      'They preserve O(V + E) performance on sparse graphs.',
+  },
 ]
 
 const advancedInsights = [
@@ -252,6 +462,7 @@ const takeaways = [
   'Queues and early visited marking preserve the guarantee; relax them and you lose optimality.',
   'Memory, not time, is usually the limiting factor; manage branching and representation to stay within budget.',
   'Variants like multi-source, bidirectional, and 0-1 BFS carry the same spirit to wider problem classes.',
+  'References: Moore 1959, Lee routing, CLRS graph chapter, and Graph500 BFS benchmarks.',
 ]
 
 export default function BreadthFirstSearchPage(): JSX.Element {
@@ -332,6 +543,45 @@ export default function BreadthFirstSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny graph</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and performance intuition</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -350,11 +600,75 @@ export default function BreadthFirstSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Best for</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.bestFor}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -384,6 +698,18 @@ export default function BreadthFirstSearchPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -425,4 +751,3 @@ export default function BreadthFirstSearchPage(): JSX.Element {
     </div>
   )
 }
-
