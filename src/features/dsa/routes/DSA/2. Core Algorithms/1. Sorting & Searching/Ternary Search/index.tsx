@@ -43,6 +43,11 @@ const mentalModels = [
     detail:
       'The extra probe trades more comparisons for a slightly smaller remaining interval each step.',
   },
+  {
+    title: 'Hill hunting',
+    detail:
+      'For unimodal functions, you compare two heights and walk toward the higher slope until the peak remains in a small interval.',
+  },
 ]
 
 const workflowSteps = [
@@ -65,6 +70,57 @@ const workflowSteps = [
     title: 'Repeat until small',
     detail:
       'Stop when the range is small enough, then finish with a linear scan or direct check.',
+  },
+  {
+    title: 'Finalize precisely',
+    detail:
+      'On continuous domains, stop after enough iterations to meet precision and return the midpoint of the remaining interval.',
+  },
+]
+
+const problemPatterns = [
+  {
+    title: 'Unimodal optimization',
+    detail:
+      'Maximize or minimize a function that increases then decreases (or vice versa) without derivatives.',
+  },
+  {
+    title: 'Discrete peak finding',
+    detail:
+      'Find the peak of a unimodal array when gradients are noisy or unavailable.',
+  },
+  {
+    title: 'Parameter tuning',
+    detail:
+      'Tune a scalar hyperparameter where performance rises to a peak and then falls.',
+  },
+  {
+    title: 'Not for arbitrary arrays',
+    detail:
+      'If data is not unimodal or sorted, ternary search can converge to the wrong answer.',
+  },
+  {
+    title: 'Precision-bounded search',
+    detail:
+      'Use when you can accept an approximate argmax/argmin within a tolerance.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Unimodal invariant',
+    detail:
+      'If the function is unimodal on [l, r], the global optimum remains within the retained interval after each step.',
+  },
+  {
+    title: 'Array search invariant',
+    detail:
+      'If the target exists in a sorted array, it is always contained in the current [low, high] range.',
+  },
+  {
+    title: 'Monotone region invariant',
+    detail:
+      'After comparing f(m1) and f(m2), one of the outer thirds is guaranteed not to contain the optimum.',
   },
 ]
 
@@ -90,6 +146,7 @@ const complexityRows = [
   { label: 'Sorted array time', value: 'O(log n), but with more comparisons than binary search.' },
   { label: 'Unimodal function time', value: 'O(log n) iterations, two evaluations per step.' },
   { label: 'Extra space', value: 'O(1) iterative; O(log n) recursive stack.' },
+  { label: 'Evaluations per step', value: '2 evaluations for functions; 2 to 4 comparisons for arrays.' },
 ]
 
 const comparisonNotes = [
@@ -110,11 +167,27 @@ const comparisonNotes = [
   },
 ]
 
-const walkthroughSteps = [
-  'Array: [2, 5, 8, 12, 16, 23, 38, 56], target = 23.',
-  'm1 = index 2 (8), m2 = index 5 (23). Target equals arr[m2], so return index 5.',
-  'If target were 12, it would lie between arr[m1] and arr[m2], so we would keep the middle third.',
-  'Each step keeps only two thirds of the array, so the interval shrinks quickly.',
+const stepTrace = [
+  {
+    step: 'Setup',
+    state: 'Array: [2, 5, 8, 12, 16, 23, 38, 56], target = 23',
+    note: 'We want the index of 23 in a sorted array.',
+  },
+  {
+    step: 'Compute midpoints',
+    state: 'low = 0, high = 7, m1 = 2 (8), m2 = 5 (23)',
+    note: 'Two probes split the range into thirds.',
+  },
+  {
+    step: 'Compare and decide',
+    state: 'arr[m2] equals target, return 5',
+    note: 'If the target had been 12, we would keep the middle third.',
+  },
+  {
+    step: 'Shrink for unimodal',
+    state: 'If f(m1) < f(m2), move left to m1; else move right to m2',
+    note: 'The higher value points toward the peak.',
+  },
 ]
 
 const examples = [
@@ -138,7 +211,7 @@ const examples = [
       'Two probes split the range into thirds. The target can only exist in one of the three segments.',
   },
   {
-    title: 'Maximizing a unimodal function',
+    title: 'Maximizing a unimodal function (continuous)',
     code: `function ternarySearchMax(f, left, right, steps):
     for i in 0..steps:
         m1 = left + (right - left) / 3
@@ -164,6 +237,18 @@ function peakIndex(arr):
     explanation:
       'When the interval is small, a final scan is cheaper than more splits.',
   },
+  {
+    title: 'Minimizing a convex function',
+    code: `function ternarySearchMin(f, left, right, steps):
+    for i in 0..steps:
+        m1 = left + (right - left) / 3
+        m2 = right - (right - left) / 3
+        if f(m1) > f(m2): left = m1
+        else: right = m2
+    return (left + right) / 2`,
+    explanation:
+      'Flip the comparison to find a minimum on a convex curve.',
+  },
 ]
 
 const realWorldUses = [
@@ -187,6 +272,111 @@ const realWorldUses = [
     detail:
       'Tune a value to maximize engagement or fairness when the score behaves like a single hill.',
   },
+  {
+    context: 'Operations research',
+    detail:
+      'Select batch sizes or thresholds that minimize cost in unimodal cost curves.',
+  },
+]
+
+const inputSensitivity = [
+  {
+    title: 'Non-unimodal functions',
+    detail:
+      'Multiple peaks break the invariant. Ternary search can converge to a local peak instead of the global one.',
+  },
+  {
+    title: 'Flat plateaus',
+    detail:
+      'If the function is flat across a range, ties require careful handling; shrink both sides evenly.',
+  },
+  {
+    title: 'Noisy evaluations',
+    detail:
+      'Noise can mislead comparisons; smoothing or averaging evaluations improves stability.',
+  },
+  {
+    title: 'Sorted arrays',
+    detail:
+      'Works, but binary search is usually faster due to fewer comparisons.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Iteration count',
+    detail:
+      'Each step keeps two thirds of the interval, so convergence is logarithmic but slower than binary for lookup.',
+  },
+  {
+    title: 'Evaluation cost',
+    detail:
+      'Function evaluations dominate runtime. If f(x) is expensive, consider golden section search.',
+  },
+  {
+    title: 'Precision control',
+    detail:
+      'Choose steps based on desired error: more steps yield tighter intervals.',
+  },
+  {
+    title: 'Deterministic control flow',
+    detail:
+      'Simple loop structure makes it easy to reason about and test.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Binary search',
+    time: 'O(log n)',
+    space: 'O(1)',
+    bestFor: 'Sorted arrays',
+    notes: 'Fewer comparisons than ternary in practice.',
+  },
+  {
+    algorithm: 'Ternary search',
+    time: 'O(log n)',
+    space: 'O(1)',
+    bestFor: 'Unimodal peaks',
+    notes: 'Two probes per step; best for optimization tasks.',
+  },
+  {
+    algorithm: 'Golden section',
+    time: 'O(log n)',
+    space: 'O(1)',
+    bestFor: 'Expensive f(x)',
+    notes: 'Reuses evaluations to reduce function calls.',
+  },
+  {
+    algorithm: 'Linear scan',
+    time: 'O(n)',
+    space: 'O(1)',
+    bestFor: 'Tiny ranges',
+    notes: 'Used as a finish when interval is small.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Discrete finish scan',
+    detail:
+      'Stop once the range is smaller than a threshold and scan for the exact best index.',
+  },
+  {
+    title: 'Fixed-iteration search',
+    detail:
+      'For real numbers, run a fixed number of iterations to guarantee precision.',
+  },
+  {
+    title: 'Caching evaluations',
+    detail:
+      'Store f(m1) and f(m2) when possible to avoid redundant work in expensive functions.',
+  },
+  {
+    title: 'Hybrid with golden section',
+    detail:
+      'Switch to golden section for expensive functions to reduce evaluation count.',
+  },
 ]
 
 const pitfalls = [
@@ -195,6 +385,7 @@ const pitfalls = [
   'Stopping too early for continuous search and returning low precision results.',
   'Rounding midpoints incorrectly on integers, which can lead to infinite loops.',
   'Recomputing f(m1) and f(m2) with expensive functions without caching.',
+  'Ignoring plateaus: if f(m1) == f(m2), shrink both sides carefully to avoid stalling.',
 ]
 
 const decisionGuidance = [
@@ -202,6 +393,35 @@ const decisionGuidance = [
   'Use it for peak finding in unimodal arrays if you prefer a simple, robust method.',
   'Prefer binary search for plain sorted array lookup.',
   'Use golden section search when function evaluations are costly and you want fewer repeats.',
+  'If the interval is tiny, just scan: it is simpler and often faster.',
+]
+
+const implementationTips = [
+  {
+    title: 'Handle equal values',
+    detail:
+      'If f(m1) == f(m2), move both bounds inward to guarantee progress.',
+  },
+  {
+    title: 'Choose a stopping rule',
+    detail:
+      'For floats, stop after N iterations or when right-left is below epsilon.',
+  },
+  {
+    title: 'Avoid overflow',
+    detail:
+      'Compute m1 and m2 from low and high using differences, not (low+high)/3.',
+  },
+  {
+    title: 'Scan small ranges',
+    detail:
+      'For integers, finish with a scan when the range is under 3-5 elements.',
+  },
+  {
+    title: 'Memoize f(x)',
+    detail:
+      'When f(x) is expensive, cache evaluations to avoid recomputation.',
+  },
 ]
 
 const advancedInsights = [
@@ -225,12 +445,19 @@ const advancedInsights = [
     detail:
       'For integers, stop when the interval is smaller than a threshold and scan. This avoids off-by-one errors.',
   },
+  {
+    title: 'Floating point stability',
+    detail:
+      'For long ranges and high precision, use epsilon-based stopping instead of a fixed loop count.',
+  },
 ]
 
 const takeaways = [
   'Ternary search shrinks an interval by comparing two midpoints and discarding one third.',
   'It is best for unimodal functions, not for basic sorted array lookup.',
   'It trades extra comparisons for a simple and reliable selection of the correct region.',
+  'Precision and correctness depend on a good stopping rule and unimodality.',
+  'References: numerical optimization texts, competitive programming guides, and golden section search notes.',
 ]
 
 export default function TernarySearchPage(): JSX.Element {
@@ -307,6 +534,30 @@ export default function TernarySearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Where it applies</legend>
             <div className="win95-grid win95-grid-3">
               {variants.map((item) => (
@@ -359,13 +610,69 @@ export default function TernarySearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Walkthrough example</legend>
+            <legend>Worked trace on a tiny example</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
             <div className="win95-panel">
-              <ul className="win95-list">
-                {walkthroughSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ul>
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Best for</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.bestFor}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -397,6 +704,18 @@ export default function TernarySearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -404,6 +723,18 @@ export default function TernarySearchPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -445,4 +776,3 @@ export default function TernarySearchPage(): JSX.Element {
     </div>
   )
 }
-
