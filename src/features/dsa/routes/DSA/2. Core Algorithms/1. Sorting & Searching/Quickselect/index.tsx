@@ -43,6 +43,11 @@ const mentalModels = [
     detail:
       'Quickselect gives you a single correctly placed element. Everything on the left is smaller, everything on the right is larger, but neither side is sorted.',
   },
+  {
+    title: 'Threshold finding',
+    detail:
+      'Imagine drawing a cutoff line: values below go left, values above go right. Quickselect finds the exact cutoff value for top-k or percentile queries.',
+  },
 ]
 
 const workflowSteps = [
@@ -66,6 +71,57 @@ const workflowSteps = [
     detail:
       'The active range shrinks quickly on average. When low equals high, the remaining element is the answer.',
   },
+  {
+    title: 'Stop early',
+    detail:
+      'Unlike quicksort, quickselect never explores both sides. The discarded side is already known to be too small or too large.',
+  },
+]
+
+const problemPatterns = [
+  {
+    title: 'Order statistics',
+    detail:
+      'Find the kth smallest, median, or percentile without sorting everything.',
+  },
+  {
+    title: 'Top-k thresholding',
+    detail:
+      'Find a cutoff value so you can filter the largest k items in one extra scan.',
+  },
+  {
+    title: 'Large arrays, single query',
+    detail:
+      'When you only need one rank, O(n log n) sorting is wasted work.',
+  },
+  {
+    title: 'Memory-sensitive pipelines',
+    detail:
+      'Quickselect is in-place with minimal extra memory, making it friendly for large arrays.',
+  },
+  {
+    title: 'Not stable ordering',
+    detail:
+      'If you need stable or fully sorted output, quickselect is the wrong tool.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Partition invariant',
+    detail:
+      'After partitioning, every element left of the pivot is <= pivot and every element right is >= pivot (strictness depends on the scheme).',
+  },
+  {
+    title: 'Rank invariant',
+    detail:
+      'The pivot index equals the number of elements <= pivot in the active range, so it is in its final rank.',
+  },
+  {
+    title: 'Search space invariant',
+    detail:
+      'The kth element always lies within the current [low, high] range. Discarded regions can never contain it.',
+  },
 ]
 
 const partitionSchemes = [
@@ -84,12 +140,18 @@ const partitionSchemes = [
     detail:
       'Splits into less than, equal to, and greater than pivot. This reduces recursion when many duplicates exist.',
   },
+  {
+    title: 'Stable partition (rare)',
+    detail:
+      'Stable partitioning keeps equal elements in order, but usually needs extra space and is not typical for quickselect.',
+  },
 ]
 
 const complexityRows = [
   { label: 'Expected time', value: 'O(n) with a randomized or good pivot strategy.' },
   { label: 'Worst-case time', value: 'O(n^2) if pivots are consistently poor.' },
-  { label: 'Extra space', value: 'O(1) in-place; O(log n) recursion stack on average.' },
+  { label: 'Extra space', value: 'O(1) in-place; O(log n) recursion stack on average (or O(1) iterative).' },
+  { label: 'Comparisons (avg)', value: 'About 2n comparisons on average with random pivots, less than sorting.' },
 ]
 
 const pivotStrategies = [
@@ -113,13 +175,34 @@ const pivotStrategies = [
     detail:
       'Pick a small sample and choose an approximate median. Improves stability for large arrays with little overhead.',
   },
+  {
+    title: 'Introselect',
+    detail:
+      'Track recursion depth and fall back to deterministic selection when depth is too high. Keeps practical speed with worst-case guarantees.',
+  },
 ]
 
-const walkthroughSteps = [
-  'Array: [9, 2, 7, 4, 1, 5, 8], k = 2 (0-based, third smallest).',
-  'Pick pivot 4. Partition -> [2, 1, 4, 9, 7, 5, 8]. Pivot index is 2.',
-  'k equals pivot index, so the answer is 4. Elements left of it are smaller; elements right are larger.',
-  'If k had been 5, we would recurse into the right side only: [9, 7, 5, 8].',
+const stepTrace = [
+  {
+    step: 'Choose a target',
+    state: 'Array: [9, 2, 7, 4, 1, 5, 8], k = 2 (0-based)',
+    note: 'We want the third smallest element.',
+  },
+  {
+    step: 'Partition',
+    state: 'Pivot = 4, array -> [2, 1, 4, 9, 7, 5, 8]',
+    note: 'Pivot index is 2; everything left is smaller, right is larger.',
+  },
+  {
+    step: 'Match k',
+    state: 'k = 2 equals pivot index',
+    note: 'Answer is 4; no further recursion needed.',
+  },
+  {
+    step: 'Alternate path',
+    state: 'If k = 5, recurse right on [9, 7, 5, 8]',
+    note: 'Only the right side can contain the kth element.',
+  },
 ]
 
 const examples = [
@@ -154,6 +237,30 @@ topK = values.filter(v => v >= threshold)`,
     explanation:
       'Quickselect positions the kth largest threshold. You can then scan once to collect the top segment.',
   },
+  {
+    title: 'Kth largest directly',
+    code: `// kth largest => convert to index for kth smallest
+index = values.length - 1 - (k - 1)
+kthLargest = quickselect(values, index)`,
+    explanation:
+      'Converting kth largest to a smallest-index avoids rewriting the algorithm.',
+  },
+  {
+    title: 'Multi-select (reuse partitions)',
+    code: `// find k1 and k2 in one pass
+function multiselect(arr, ks):
+    worklist = [[0, arr.length - 1, ks]]
+    while worklist not empty:
+        [lo, hi, targets] = pop(worklist)
+        if targets empty: continue
+        pivot = partition(arr, lo, hi, choosePivot(arr, lo, hi))
+        left = targets.filter(k => k < pivot)
+        right = targets.filter(k => k > pivot)
+        if left not empty: push([lo, pivot - 1, left])
+        if right not empty: push([pivot + 1, hi, right])`,
+    explanation:
+      'When you need several order statistics, reuse partitions instead of running quickselect repeatedly.',
+  },
 ]
 
 const realWorldUses = [
@@ -185,6 +292,7 @@ const pitfalls = [
   'Using a naive pivot on already ordered data, which can trigger worst-case O(n^2).',
   'Ignoring duplicate values when using Hoare partition. Use three-way partitioning to reduce work.',
   'Recursive implementations without depth limits can overflow the stack on adversarial inputs.',
+  'Forgetting that quickselect mutates the array. Clone if you need the original order preserved.',
 ]
 
 const decisionGuidance = [
@@ -192,6 +300,135 @@ const decisionGuidance = [
   'Need top-k elements quickly, then refine or sort just that subset.',
   'Have large arrays where O(n log n) sorting is too expensive for one query.',
   'Can tolerate randomized performance rather than worst-case guarantees.',
+  'Want a simple in-place solution over a more complex heap-based alternative.',
+]
+
+const inputSensitivity = [
+  {
+    title: 'Already sorted input',
+    detail:
+      'Naive pivots cause worst-case behavior. Randomized or median-of-three pivots stabilize performance.',
+  },
+  {
+    title: 'Reverse sorted input',
+    detail:
+      'Same pathology as sorted data; use randomized or sampled pivots.',
+  },
+  {
+    title: 'Many duplicates',
+    detail:
+      'Two-way partitioning can stall. Three-way partitioning shrinks the problem quickly.',
+  },
+  {
+    title: 'Adversarial inputs',
+    detail:
+      'Deterministic pivots can be attacked. Randomization or introselect guards against this.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Average case',
+    detail:
+      'Expected linear time and low constant factors make quickselect excellent for one-off rank queries.',
+  },
+  {
+    title: 'Worst case',
+    detail:
+      'Bad pivot choices can degrade to O(n^2). Guard with randomization or deterministic selection.',
+  },
+  {
+    title: 'Cache behavior',
+    detail:
+      'Partitioning is a sequential scan, which is cache-friendly compared with heap-based selection.',
+  },
+  {
+    title: 'Mutation cost',
+    detail:
+      'In-place partitioning scrambles order. Copy if you need to preserve input order.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Quickselect',
+    time: 'O(n) avg',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'Best for single order statistic; mutates input.',
+  },
+  {
+    algorithm: 'Full sort',
+    time: 'O(n log n)',
+    space: 'Varies',
+    stable: 'Maybe',
+    notes: 'Needed only if you require full ordering.',
+  },
+  {
+    algorithm: 'Heap selection',
+    time: 'O(n log k)',
+    space: 'O(k)',
+    stable: 'No',
+    notes: 'Good for streaming top-k with limited memory.',
+  },
+  {
+    algorithm: 'Median of medians',
+    time: 'O(n)',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'Guaranteed linear time with higher constants.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Three-way quickselect',
+    detail:
+      'Partition into <, =, > pivot so duplicates collapse into one band, reducing work.',
+  },
+  {
+    title: 'Iterative implementation',
+    detail:
+      'Replace recursion with a loop for predictable stack usage and easy instrumentation.',
+  },
+  {
+    title: 'Introselect hybrid',
+    detail:
+      'Randomized selection with a depth limit that falls back to deterministic selection.',
+  },
+  {
+    title: 'Parallel selection (advanced)',
+    detail:
+      'Partitioning can be parallelized for large arrays, but overhead often dominates on small inputs.',
+  },
+]
+
+const implementationTips = [
+  {
+    title: 'Define k clearly',
+    detail:
+      'Decide 0-based vs 1-based and stick to it. Document the conversion for kth largest.',
+  },
+  {
+    title: 'Use a robust pivot',
+    detail:
+      'Random or median-of-three pivots prevent bad behavior on ordered inputs.',
+  },
+  {
+    title: 'Prefer three-way partition with duplicates',
+    detail:
+      'If many equal keys are expected, a Dutch-flag partition reduces recursion.',
+  },
+  {
+    title: 'Avoid recursion overflow',
+    detail:
+      'Iterative quickselect is simple and avoids call stack limits.',
+  },
+  {
+    title: 'Preserve input when needed',
+    detail:
+      'Quickselect mutates the array. Clone first if you need the original order intact.',
+  },
 ]
 
 const advancedInsights = [
@@ -215,12 +452,19 @@ const advancedInsights = [
     detail:
       'For streaming data, quickselect is not ideal. Use heaps or quantile sketches when the full array is not available.',
   },
+  {
+    title: 'Selection as a building block',
+    detail:
+      'Quickselect powers percentile cutoffs, robust statistics, and approximate clustering where full sorting is unnecessary.',
+  },
 ]
 
 const takeaways = [
   'Quickselect finds the kth smallest element by partitioning and discarding irrelevant regions.',
   'It is expected linear time, in-place, and simple, but worst-case can be quadratic without a good pivot strategy.',
   'It is the right tool when you only need one rank, not a fully sorted array.',
+  'Random pivots or introselect guard against adversarial inputs.',
+  'References: Hoare 1961, CLRS Chapter 9, and Blum-Floyd-Pratt-Rivest-Tarjan for median-of-medians.',
 ]
 
 export default function QuickselectPage(): JSX.Element {
@@ -297,6 +541,30 @@ export default function QuickselectPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Partition strategies</legend>
             <div className="win95-grid win95-grid-3">
               {partitionSchemes.map((scheme) => (
@@ -340,12 +608,68 @@ export default function QuickselectPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Walkthrough example</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
             <div className="win95-panel">
-              <ul className="win95-list">
-                {walkthroughSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ul>
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Stable?</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.stable}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -377,6 +701,18 @@ export default function QuickselectPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -384,6 +720,18 @@ export default function QuickselectPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
