@@ -16,9 +16,9 @@ const historicalMilestones = [
       'Joseph Kruskal formalized the sort-edges-then-union approach, proving it optimal via the cut and cycle properties.',
   },
   {
-    title: 'Floyd and Warshall streamline graph computation (1960s)',
+    title: 'Union-Find accelerates MSTs (1960s-1970s)',
     detail:
-      'Contemporaries refined graph primitives and data structures; Union-Find plus Kruskal became a standard MST recipe.',
+      'Disjoint-set forests with path compression and union by rank turned Kruskal into a practical near-linear tool after sorting.',
   },
   {
     title: 'Tarjan analyzes Union-Find (1975)',
@@ -48,6 +48,11 @@ const mentalModels = [
     detail:
       'A single global ordering of edges drives purely local decisions about connectivity. Union-Find keeps those connectivity checks constant-time in practice.',
   },
+  {
+    title: 'Forest to tree',
+    detail:
+      'Kruskal starts with every vertex as a tiny tree and merges them with the cheapest safe edges until only one tree remains.',
+  },
 ]
 
 const mechanics = [
@@ -62,7 +67,7 @@ const mechanics = [
     heading: 'Initialize components',
     bullets: [
       'Make-set for each vertex in a Union-Find.',
-      'Optionally shuffle equal-weight edges to stabilize ties if deterministic forests matter.',
+      'Optionally tie-break equal weights by vertex id for deterministic output.',
     ],
   },
   {
@@ -82,11 +87,85 @@ const mechanics = [
   },
 ]
 
+const problemPatterns = [
+  {
+    title: 'Edge list ready',
+    detail:
+      'If your data already comes as a list of weighted edges, Kruskal fits naturally.',
+  },
+  {
+    title: 'Sparse graphs',
+    detail:
+      'When E is near V, sorting is cheap and Union-Find dominates in speed.',
+  },
+  {
+    title: 'Clustering by connectivity',
+    detail:
+      'Single-linkage clustering is Kruskal plus a cutoff on the heaviest edges.',
+  },
+  {
+    title: 'Baseline cost audits',
+    detail:
+      'MST weight gives a minimal cost benchmark before adding redundancy.',
+  },
+  {
+    title: 'Not for shortest paths',
+    detail:
+      'Kruskal minimizes total tree weight, not the distance between specific pairs.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Forest invariant',
+    detail:
+      'At every step, accepted edges form a forest that can be extended into some MST.',
+  },
+  {
+    title: 'Cycle-free invariant',
+    detail:
+      'Union-Find guarantees no accepted edge creates a cycle.',
+  },
+  {
+    title: 'Cut safety invariant',
+    detail:
+      'Any accepted edge is the lightest edge crossing some cut, so it is safe to include.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Start',
+    state: 'Edges sorted: (A-B 1), (B-C 2), (A-C 3), (C-D 4)',
+    note: 'Kruskal will pick edges in ascending order if they do not form cycles.',
+  },
+  {
+    step: 'Pick A-B (1)',
+    state: 'Forest: {A-B} | {C} | {D}',
+    note: 'No cycle, so include the edge.',
+  },
+  {
+    step: 'Pick B-C (2)',
+    state: 'Forest: {A-B-C} | {D}',
+    note: 'Still no cycle, merge components.',
+  },
+  {
+    step: 'Skip A-C (3)',
+    state: 'Would form cycle A-B-C-A',
+    note: 'Cycle property says the heaviest edge in a cycle is never needed.',
+  },
+  {
+    step: 'Pick C-D (4)',
+    state: 'MST complete with 3 edges',
+    note: 'We now have V - 1 edges, so the MST is complete.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time',
     detail:
-      "O(E log E) for sorting; Union-Find adds O(E IÃ±(V)) (inverse Ackermann, effectively constant). With small integer weights and buckets, sorting can approach O(E).",
+      'O(E log E) for sorting; Union-Find adds O(E alpha(V)) (inverse Ackermann, effectively constant). With small integer weights and buckets, sorting can approach O(E).',
   },
   {
     title: 'Space',
@@ -102,6 +181,83 @@ const complexityNotes = [
     title: 'Determinism',
     detail:
       'Equal-weight edges can yield multiple valid MSTs. Stable sorting or tie-breaking by vertex id makes results reproducible.',
+  },
+]
+
+const inputSensitivity = [
+  {
+    title: 'Disconnected graphs',
+    detail:
+      'Kruskal naturally returns a minimum spanning forest.',
+  },
+  {
+    title: 'Duplicate weights',
+    detail:
+      'Multiple valid MSTs can exist; tests should compare total weight, not exact edge sets.',
+  },
+  {
+    title: 'Dense graphs',
+    detail:
+      'Sorting all edges can be expensive; Prim often wins on dense adjacency-driven graphs.',
+  },
+  {
+    title: 'Small integer weights',
+    detail:
+      'Bucketed sorting drops the log factor and speeds up Kruskal substantially.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Sorting dominates',
+    detail:
+      'Most runtime is spent sorting edges; Union-Find is almost constant-time.',
+  },
+  {
+    title: 'Union-Find quality',
+    detail:
+      'Path compression and union by rank are essential for near-linear behavior.',
+  },
+  {
+    title: 'Memory footprint',
+    detail:
+      'Edges must be held for sorting; consider external sorting on massive graphs.',
+  },
+  {
+    title: 'Early termination',
+    detail:
+      'Once V - 1 edges are chosen, stop scanning to avoid heavy-edge overhead.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Kruskal',
+    time: 'O(E log E)',
+    space: 'O(V + E)',
+    bestFor: 'Sparse graphs with edge list',
+    notes: 'Simple with Union-Find, edge-driven.',
+  },
+  {
+    algorithm: 'Prim',
+    time: 'O((V + E) log V)',
+    space: 'O(V + E)',
+    bestFor: 'Dense graphs or adjacency access',
+    notes: 'Grows from a seed, adjacency-driven.',
+  },
+  {
+    algorithm: 'Boruvka',
+    time: 'O(E log V)',
+    space: 'O(V + E)',
+    bestFor: 'Parallel settings',
+    notes: 'Merges components in rounds.',
+  },
+  {
+    algorithm: 'Reverse-delete',
+    time: 'O(E log E)',
+    space: 'O(V + E)',
+    bestFor: 'Teaching cycle property',
+    notes: 'Removes heavy edges if connectivity remains.',
   },
 ]
 
@@ -125,6 +281,34 @@ const realWorldUses = [
     context: 'Graphics and games',
     detail:
       'Procedural map generation and level design use MSTs to ensure connectivity while removing loops from dungeon graphs.',
+  },
+  {
+    context: 'Infrastructure audits',
+    detail:
+      'MSTs provide a minimal baseline before adding redundant edges for reliability.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Bucketed Kruskal',
+    detail:
+      'Replace comparison sorting with buckets for small integer weights to remove log factors.',
+  },
+  {
+    title: 'Boruvka-Kruskal hybrid',
+    detail:
+      'Use Boruvka rounds to shrink components, then finish with Kruskal on the contracted graph.',
+  },
+  {
+    title: 'Streaming Kruskal',
+    detail:
+      'Sort edges externally and stream once through Union-Find to handle graphs bigger than memory.',
+  },
+  {
+    title: 'Reverse-delete',
+    detail:
+      'Sort edges descending and remove if connectivity is preserved; illustrates the cycle property.',
   },
 ]
 
@@ -190,6 +374,21 @@ class UnionFind {
     explanation:
       'Replacing comparison sort with buckets drops the log factor when weights are bounded, a common optimization in competitive programming and low-range cost graphs.',
   },
+  {
+    title: 'Early stop for k-clustering',
+    code: `function kruskalKClusters(vertices, edges, k):
+    sort edges by w ascending
+    uf = new UnionFind(vertices)
+    clusters = len(vertices)
+    for (u, v, w) in edges:
+        if uf.find(u) != uf.find(v):
+            uf.union(u, v)
+            clusters -= 1
+            if clusters == k:
+                return`,
+    explanation:
+      'Stop once there are k components to get single-linkage clusters. The last accepted edge defines spacing between clusters.',
+  },
 ]
 
 const pitfalls = [
@@ -198,6 +397,7 @@ const pitfalls = [
   'Assuming connectivity: disconnected inputs produce a minimum spanning forest. Handle that if a single tree is expected.',
   'Unstable handling of equal weights can lead to nondeterministic forests; tie-break if reproducibility matters.',
   'Sorting edges from an adjacency matrix of a dense graph is expensive in memory and time; prefer Prim for dense adjacency-driven cases.',
+  'Confusing MST with shortest path trees; MST does not minimize pairwise distances.',
 ]
 
 const decisionGuidance = [
@@ -206,6 +406,34 @@ const decisionGuidance = [
   'Small integer weights: bucketed Kruskal trims the log factor.',
   'Disconnected graphs: Kruskal naturally yields a spanning forest without extra changes.',
   'Need parallelism: consider Boruvka or Boruvka-Kruskal hybrids for component-wise parallel edge picking.',
+]
+
+const implementationTips = [
+  {
+    title: 'Use Union-Find with compression',
+    detail:
+      'Path compression and union by rank keep find/union operations nearly constant.',
+  },
+  {
+    title: 'Early exit',
+    detail:
+      'Stop after V - 1 accepted edges to avoid scanning heavy edges.',
+  },
+  {
+    title: 'Stable tie-breaking',
+    detail:
+      'If weights tie, sort by (w, u, v) to keep output deterministic.',
+  },
+  {
+    title: 'Prefer edge lists',
+    detail:
+      'Kruskal is edge-driven; avoid adjacency matrices on sparse graphs.',
+  },
+  {
+    title: 'Handle forests',
+    detail:
+      'If connectivity is required, verify components after the run.',
+  },
 ]
 
 const advancedInsights = [
@@ -217,7 +445,7 @@ const advancedInsights = [
   {
     title: 'Union-Find amortized costs',
     detail:
-      'With path compression and union by rank, total Union-Find cost is O((V + E) IÃ±(V)), effectively constant in practice.',
+      'With path compression and union by rank, total Union-Find cost is O((V + E) alpha(V)), effectively constant in practice.',
   },
   {
     title: 'Streaming and external memory',
@@ -229,6 +457,11 @@ const advancedInsights = [
     detail:
       'Single-linkage clustering is exactly Kruskal with a cut: halt after forming k components or cut the k - 1 heaviest edges of the MST.',
   },
+  {
+    title: 'Replacement edges',
+    detail:
+      'For sensitivity analysis, replacing one MST edge with a non-tree edge forms a cycle; swapping the heaviest edge on that cycle adjusts the MST with minimal cost impact.',
+  },
 ]
 
 const takeaways = [
@@ -236,6 +469,7 @@ const takeaways = [
   'The algorithm is simple, deterministic with tie-breaks, and excels on sparse edge lists.',
   'Union-Find optimizations are essential; without them the performance degrades sharply.',
   'Use Kruskal when edge lists are ready and weights are sortable; pivot to Prim or Boruvka when density or parallelism demands it.',
+  'References: Kruskal 1956, Tarjan Union-Find, and CLRS MST chapter.',
 ]
 
 export default function KruskalsAlgorithmPage(): JSX.Element {
@@ -316,6 +550,45 @@ export default function KruskalsAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny graph</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and intuition</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -328,11 +601,75 @@ export default function KruskalsAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Best for</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.bestFor}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and extensions</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -362,6 +699,18 @@ export default function KruskalsAlgorithmPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -403,4 +752,3 @@ export default function KruskalsAlgorithmPage(): JSX.Element {
     </div>
   )
 }
-
