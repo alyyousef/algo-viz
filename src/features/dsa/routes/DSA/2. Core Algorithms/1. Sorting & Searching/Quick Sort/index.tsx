@@ -43,6 +43,11 @@ const mentalModels = [
     detail:
       'Instead of halving by index, quicksort halves by property: less than pivot versus greater than pivot. Good pivots make the property split balanced.',
   },
+  {
+    title: 'Sorting by elimination',
+    detail:
+      'Every partition permanently places one element (the pivot) into its final index. The rest of the work is just repeating that elimination on smaller ranges.',
+  },
 ]
 
 const mechanics = [
@@ -51,6 +56,7 @@ const mechanics = [
     bullets: [
       'Options: first element, random element, median-of-three (first, middle, last), or sample median for larger arrays.',
       'Randomization defends against pre-sorted or crafted inputs that cause quadratic behavior.',
+      'Median-of-three reduces the chance of extremely unbalanced splits without a full sort.',
     ],
   },
   {
@@ -59,6 +65,7 @@ const mechanics = [
       'Lomuto: single pass, pivot at end, pointer for smaller region. Simple but more swaps.',
       'Hoare: two pointers from ends moving inward, fewer swaps and good cache behavior.',
       'Three-way partition: split into less than, equal, greater than pivot to handle duplicates efficiently.',
+      'Partitioning is linear time: each element is compared a constant number of times per level.',
     ],
   },
   {
@@ -66,7 +73,72 @@ const mechanics = [
     bullets: [
       'Recurse on left and right partitions. Tail-recurse on the larger side last or turn it into a loop to keep stack depth O(log n) on average.',
       'Switch to insertion sort for tiny partitions (often size < 16) to reduce overhead.',
+      'Stop recursion when a range is empty or a single element; that is already sorted.',
     ],
+  },
+]
+
+const problemPatterns = [
+  {
+    title: 'In-place array sorting',
+    detail:
+      'Quicksort is ideal when you need to sort arrays in place with minimal extra memory and strong average performance.',
+  },
+  {
+    title: 'Cache-friendly workloads',
+    detail:
+      'Partitioning scans sequentially, so quicksort performs well when data fits in cache and memory bandwidth matters.',
+  },
+  {
+    title: 'Randomized expected time',
+    detail:
+      'Random pivots give reliable expected O(n log n) time even for inputs that might be pathological for fixed pivots.',
+  },
+  {
+    title: 'Not stable by default',
+    detail:
+      'If preserving the order of equal keys matters, quicksort is not the right default unless a stable variant is used.',
+  },
+  {
+    title: 'Avoid linked lists',
+    detail:
+      'Linked lists lack random access; quicksort degenerates while merge sort keeps O(n log n) by relinking nodes.',
+  },
+]
+
+const loopInvariants = [
+  {
+    title: 'Lomuto invariant',
+    detail:
+      'At every step, elements before index i are < pivot, elements between i and j are >= pivot, and elements after j are unexamined.',
+  },
+  {
+    title: 'Hoare invariant',
+    detail:
+      'Pointer i moves right until it finds an element >= pivot, pointer j moves left until it finds an element <= pivot; elements left of i are <= pivot and right of j are >= pivot.',
+  },
+  {
+    title: 'Recursive invariant',
+    detail:
+      'After partitioning, the pivot is in its final position and the subarrays are permutations of the original range. Sorting both subarrays yields a fully sorted range.',
+  },
+]
+
+const stepTrace = [
+  {
+    step: 'Pick a pivot',
+    state: '[9, 3, 7, 1, 8, 2], pivot = 7',
+    note: 'Choose a pivot (random, median-of-three, or a fixed index for a demo).',
+  },
+  {
+    step: 'Partition around the pivot',
+    state: '[3, 1, 2, 7, 9, 8]',
+    note: 'All values < 7 are placed left, all values > 7 right. The pivot lands in its final index.',
+  },
+  {
+    step: 'Recurse on each side',
+    state: 'Left [3, 1, 2] -> [1, 2, 3], Right [9, 8] -> [8, 9]',
+    note: 'Each side is smaller, so the recursion converges quickly when partitions stay balanced.',
   },
 ]
 
@@ -91,6 +163,95 @@ const complexityNotes = [
     detail:
       'Standard quicksort is unstable; equal elements can swap relative order. Stable variants exist but lose the simple in-place partition.',
   },
+  {
+    title: 'Comparison count intuition',
+    detail:
+      'Quicksort performs about 1.39 n log2 n comparisons on average with random pivots, which is near-optimal among comparison sorts.',
+  },
+]
+
+const inputSensitivity = [
+  {
+    title: 'Already sorted input',
+    detail:
+      'A fixed first/last pivot causes worst-case behavior. Random or median-of-three avoids this trap.',
+  },
+  {
+    title: 'Reverse sorted input',
+    detail:
+      'Same pathology as sorted input when using naive pivots. Randomization or sampling neutralizes it.',
+  },
+  {
+    title: 'Many equal keys',
+    detail:
+      'Two-way partitioning can stall and create unbalanced splits. Use three-way partitioning for linear-time partitioning on duplicates.',
+  },
+  {
+    title: 'Nearly sorted data',
+    detail:
+      'Partitioning still works well if pivots are randomized; otherwise, naive pivots can degrade severely.',
+  },
+]
+
+const performanceProfile = [
+  {
+    title: 'Balanced partitions',
+    detail:
+      'When the pivot splits roughly in half, quicksort hits its best O(n log n) behavior with shallow recursion.',
+  },
+  {
+    title: 'Skewed partitions',
+    detail:
+      'Bad pivots create long recursion chains. Intro sort caps this by switching to heap sort after a depth threshold.',
+  },
+  {
+    title: 'Duplicates',
+    detail:
+      'Three-way partitioning collapses equal keys into a middle band, reducing recursion and comparisons.',
+  },
+  {
+    title: 'Cache locality',
+    detail:
+      'Partitioning is a linear scan, which keeps caches hot and often beats heap sort in practice.',
+  },
+]
+
+const comparisonTable = [
+  {
+    algorithm: 'Quick sort',
+    time: 'O(n log n) avg',
+    space: 'O(log n)',
+    stable: 'No',
+    notes: 'Fast in-place for arrays, but worst case is O(n^2) without guards.',
+  },
+  {
+    algorithm: 'Merge sort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Deterministic and stable, but needs extra memory.',
+  },
+  {
+    algorithm: 'Heap sort',
+    time: 'O(n log n)',
+    space: 'O(1)',
+    stable: 'No',
+    notes: 'Worst-case safe, but cache-unfriendly and slower constants.',
+  },
+  {
+    algorithm: 'TimSort',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    stable: 'Yes',
+    notes: 'Adaptive on partially sorted data; used by many libraries.',
+  },
+  {
+    algorithm: 'Insertion sort',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    stable: 'Yes',
+    notes: 'Excellent for tiny partitions; common quicksort cutoff.',
+  },
 ]
 
 const applications = [
@@ -113,6 +274,49 @@ const applications = [
     context: 'Randomized algorithms education',
     detail:
       'Quicksort is a primary example of expected-time analysis and randomized algorithms, illustrating how random pivots smooth out adversarial inputs.',
+  },
+  {
+    context: 'In-memory data pipelines',
+    detail:
+      'ETL steps that require fast ordering of moderate-sized arrays often favor quicksort variants because memory overhead is minimal.',
+  },
+  {
+    context: 'Systems with tight memory budgets',
+    detail:
+      'Embedded and performance-sensitive systems like the in-place nature and low allocation overhead of quicksort.',
+  },
+]
+
+const variantsAndTweaks = [
+  {
+    title: 'Randomized quicksort',
+    detail:
+      'Pick a random pivot each time to make bad cases vanishingly unlikely and simplify expected-time analysis.',
+  },
+  {
+    title: 'Median-of-three pivoting',
+    detail:
+      'Take the median of the first, middle, and last elements to reduce the chance of extreme splits.',
+  },
+  {
+    title: 'Three-way partition (Dutch flag)',
+    detail:
+      'Partition into < pivot, = pivot, > pivot. This removes duplicates in one pass and avoids deep recursion.',
+  },
+  {
+    title: 'Dual-pivot quicksort',
+    detail:
+      'Used in Java, this partitions into three regions with two pivots. It reduces comparisons in some distributions.',
+  },
+  {
+    title: 'Introsort hybrid',
+    detail:
+      'Switch to heap sort when recursion depth exceeds a threshold to guarantee O(n log n) worst case.',
+  },
+  {
+    title: 'Iterative quicksort',
+    detail:
+      'Replace recursion with an explicit stack to avoid call stack limits in constrained environments.',
   },
 ]
 
@@ -164,6 +368,42 @@ function swap(a: number[], i: number, j: number): void {
     explanation:
       'Three partitions (< pivot, == pivot, > pivot) shrink recursion when many duplicates exist, preventing the O(n^2) blowup seen with simple two-way partitioning.',
   },
+  {
+    title: 'Iterative quicksort (explicit stack)',
+    code: `function quickSortIterative(a: number[]): void {
+  const stack: Array<[number, number]> = [[0, a.length - 1]]
+  while (stack.length) {
+    const [lo, hi] = stack.pop()!
+    if (lo >= hi) continue
+    const p = partition(a, lo, hi)
+    // push larger range first so smaller range is processed sooner
+    if (p - lo < hi - (p + 1)) {
+      stack.push([p + 1, hi], [lo, p])
+    } else {
+      stack.push([lo, p], [p + 1, hi])
+    }
+  }
+}`,
+    explanation:
+      'Explicit stacks avoid recursion limits. Always process the smaller side first to keep the stack shallow.',
+  },
+  {
+    title: 'Depth-limited quicksort (introsort idea)',
+    code: `function introSort(a: number[]): void {
+  const maxDepth = 2 * Math.floor(Math.log2(a.length || 1))
+  sortRange(a, 0, a.length - 1, maxDepth)
+}
+
+function sortRange(a: number[], lo: number, hi: number, depth: number): void {
+  if (lo >= hi) return
+  if (depth === 0) return heapSortRange(a, lo, hi)
+  const p = partition(a, lo, hi)
+  sortRange(a, lo, p, depth - 1)
+  sortRange(a, p + 1, hi, depth - 1)
+}`,
+    explanation:
+      'Introsort switches to heap sort when recursion gets too deep, preserving average speed while guaranteeing O(n log n).',
+  },
 ]
 
 const pitfalls = [
@@ -172,6 +412,7 @@ const pitfalls = [
   'Recursing on the larger partition first inflates stack depth. Always recurse on the smaller side and loop on the larger to keep depth near O(log n).',
   'Assuming stability: quicksort does not preserve equal-ordering. If stability matters, pick merge sort or Timsort.',
   'Skipping small-array cutoffs hurts performance. Switch to insertion sort for tiny ranges to avoid overhead.',
+  'Mixing Lomuto and Hoare boundaries is a common bug: each scheme returns different pivot boundaries and requires different recursion limits.',
 ]
 
 const decisionGuidance = [
@@ -180,6 +421,34 @@ const decisionGuidance = [
   'Need stability: choose merge sort or Timsort.',
   'Data has many duplicates: use three-way quicksort or pivot sampling to avoid unbalanced partitions.',
   'Input might be adversarial or sorted: randomize pivots or median-of-three to avoid quadratic behavior.',
+]
+
+const implementationTips = [
+  {
+    title: 'Choose a pivot strategy deliberately',
+    detail:
+      'Random or median-of-three pivots make quicksort robust on real data and protect against ordered inputs.',
+  },
+  {
+    title: 'Prefer Hoare partition for fewer swaps',
+    detail:
+      'Hoare partition often outperforms Lomuto because it swaps less and does fewer writes.',
+  },
+  {
+    title: 'Cut over to insertion sort',
+    detail:
+      'Most implementations switch to insertion sort for tiny ranges (8-32 elements) to reduce overhead.',
+  },
+  {
+    title: 'Tail recursion elimination',
+    detail:
+      'Recurse on the smaller partition and loop on the larger to keep stack depth near O(log n).',
+  },
+  {
+    title: 'Use three-way partition for duplicates',
+    detail:
+      'If your data has many repeated keys, the Dutch flag partition prevents degenerate behavior.',
+  },
 ]
 
 const advancedInsights = [
@@ -202,6 +471,11 @@ const advancedInsights = [
     title: 'Parallel quicksort',
     detail:
       'Partitioning both halves in parallel can speed large arrays on multi-core systems, but requires careful scheduling to avoid false sharing and load imbalance.',
+  },
+  {
+    title: 'Branch prediction effects',
+    detail:
+      'Data distributions affect branch predictability. Branchless partitioning can speed up highly random data on modern CPUs.',
   },
 ]
 
@@ -297,6 +571,45 @@ export default function QuickSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to think about similar problems</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Loop invariants (why it is correct)</legend>
+            <div className="win95-grid win95-grid-3">
+              {loopInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked trace on a tiny array</legend>
+            <div className="win95-stack">
+              {stepTrace.map((item) => (
+                <div key={item.step} className="win95-panel">
+                  <div className="win95-heading">{item.step}</div>
+                  <pre className="win95-code">
+                    <code>{item.state}</code>
+                  </pre>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -309,11 +622,75 @@ export default function QuickSortPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Input sensitivity</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputSensitivity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Performance profile</legend>
+            <div className="win95-grid win95-grid-2">
+              {performanceProfile.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and contrast</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Algorithm</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Stable?</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonTable.map((row) => (
+                    <tr key={row.algorithm}>
+                      <td>{row.algorithm}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.stable}</td>
+                      <td>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and performance tweaks</legend>
+            <div className="win95-grid win95-grid-2">
+              {variantsAndTweaks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -343,6 +720,18 @@ export default function QuickSortPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
