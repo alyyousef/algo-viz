@@ -45,6 +45,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Weighted directed graph',
+    detail:
+      'Floyd-Warshall works on directed graphs and supports negative edges.',
+  },
+  {
+    title: 'All-pairs objective',
+    detail:
+      'You want shortest paths between every pair of nodes, not a single source.',
+  },
+  {
+    title: 'No negative cycles',
+    detail:
+      'If a negative cycle exists, shortest paths are undefined (but detectable).',
+  },
+  {
+    title: 'Matrix representation',
+    detail:
+      'The algorithm is matrix-based; O(V^2) memory is required.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E) with weights, or a prebuilt adjacency matrix.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'Distance matrix for all pairs, plus optional next-hop for path reconstruction.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Negative cycle indicator and reachability (via Warshall variant).',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'DP state',
+    detail:
+      'dist[k][i][j] is the shortest path from i to j using intermediates 1..k.',
+  },
+  {
+    title: 'Recurrence',
+    detail:
+      'dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]) for each k.',
+  },
+  {
+    title: 'Initialization',
+    detail:
+      'dist[i][i] = 0, dist[i][j] = w(i, j) if edge exists, else Infinity.',
+  },
+  {
+    title: 'Negative cycle test',
+    detail:
+      'If dist[v][v] < 0 after completion, a negative cycle is present.',
+  },
+]
+
 const coreConcepts = [
   {
     title: 'Intermediate set DP',
@@ -106,6 +170,56 @@ const howItWorks = [
     step: '5. Optional path reconstruction',
     detail:
       'Maintain a next matrix to rebuild actual paths, not just distances.',
+  },
+]
+
+const stepByStepFlow = [
+  'Initialize dist matrix with edge weights and 0 on the diagonal.',
+  'Optionally initialize next[i][j] to j when an edge i->j exists.',
+  'For k from 1..V, allow k as an intermediate vertex.',
+  'For each i, j pair, attempt relaxation through k.',
+  'Update dist (and next) if a shorter path is found.',
+  'After all k, inspect dist[v][v] to detect negative cycles.',
+]
+
+const dataStructures = [
+  {
+    title: 'Distance matrix',
+    detail:
+      'Stores shortest distances between all pairs, updated in place.',
+  },
+  {
+    title: 'Next matrix',
+    detail:
+      'Stores the next hop to reconstruct a path between any i, j pair.',
+  },
+  {
+    title: 'Infinity sentinel',
+    detail:
+      'A large value marking missing edges; must guard against overflow on add.',
+  },
+  {
+    title: 'Vertex ordering',
+    detail:
+      'The k outer loop defines which intermediates are allowed at each stage.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Inductive DP proof',
+    detail:
+      'After processing k, dist[i][j] is optimal using intermediates only from 1..k.',
+  },
+  {
+    title: 'In-place safety',
+    detail:
+      'Updates are safe because the recurrence only depends on k and prior values.',
+  },
+  {
+    title: 'Negative cycle exposure',
+    detail:
+      'Any cycle with negative total weight will make dist[v][v] negative.',
   },
 ]
 
@@ -244,6 +358,26 @@ const examples = [
     explanation:
       'The next matrix stores the first hop. If next[i][j] is null, no path exists.',
   },
+  {
+    title: 'Worked mini-example',
+    code: `Graph:
+1->2 (3), 2->3 (4), 1->3 (10), 3->1 (-8)
+
+Initial dist[1][3] = 10
+When k=2: dist[1][3] becomes 3+4 = 7
+When k=3: dist[1][1] becomes -1 (negative cycle detected)
+
+Result: shortest paths undefined due to negative cycle.`,
+    explanation:
+      'Floyd-Warshall not only finds shorter paths but also exposes negative cycles via diagonal entries.',
+  },
+]
+
+const edgeCases = [
+  'Disconnected nodes: dist remains Infinity and next is null.',
+  'Multiple edges between nodes: keep the minimum weight at initialization.',
+  'Self-loops: use min(0, w) on the diagonal.',
+  'Negative cycle in a disconnected component still appears on its diagonal.',
 ]
 
 const pitfalls = [
@@ -260,6 +394,47 @@ const decisionGuidance = [
   'Need only reachability (not distances): use Warshall transitive closure.',
   'Need to detect negative cycles: Floyd-Warshall exposes them via dist[v][v] < 0.',
   'Need fast online queries on a fixed small graph: precompute once with Floyd-Warshall.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Overflow guards',
+    detail:
+      'Skip relaxation when dist[i][k] or dist[k][j] is Infinity.',
+  },
+  {
+    title: 'Path reconstruction',
+    detail:
+      'If next[i][j] is null, no path exists; otherwise iterate next hops to build the path.',
+  },
+  {
+    title: 'Memory planning',
+    detail:
+      'V^2 space grows fast; consider Johnson for larger sparse graphs.',
+  },
+  {
+    title: 'Loop order',
+    detail:
+      'Use k outermost to maintain correctness; i,j inner loops aid cache locality.',
+  },
+]
+
+const variantTable = [
+  {
+    variant: 'Floyd-Warshall',
+    guarantee: 'All-pairs shortest paths',
+    tradeoff: 'O(V^3) time, O(V^2) memory',
+  },
+  {
+    variant: 'Warshall (boolean)',
+    guarantee: 'Transitive closure',
+    tradeoff: 'Reachability only, no weights',
+  },
+  {
+    variant: 'Johnson',
+    guarantee: 'APSP with negative edges',
+    tradeoff: 'Better for sparse graphs',
+  },
 ]
 
 const advancedInsights = [
@@ -333,6 +508,42 @@ export default function FloydWarshallPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -385,9 +596,44 @@ export default function FloydWarshallPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How it works: step-by-step flow</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Matrix mechanics</legend>
             <div className="win95-grid win95-grid-2">
               {matrixInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Data structures and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -464,6 +710,17 @@ export default function FloydWarshallPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -482,6 +739,42 @@ export default function FloydWarshallPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and tradeoffs</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Variant</th>
+                    <th>Guarantee</th>
+                    <th>Tradeoff</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {variantTable.map((row) => (
+                    <tr key={row.variant}>
+                      <td>{row.variant}</td>
+                      <td>{row.guarantee}</td>
+                      <td>{row.tradeoff}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
