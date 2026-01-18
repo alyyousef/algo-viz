@@ -27,6 +27,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Graph type',
+    detail:
+      'Eulerian checks differ for undirected and directed graphs; pick the correct rules.',
+  },
+  {
+    title: 'Edge-centric goal',
+    detail:
+      'Eulerian paths use every edge exactly once; vertices may repeat.',
+  },
+  {
+    title: 'Connectivity concept',
+    detail:
+      'Only vertices with non-zero degree must be connected (ignore isolated vertices).',
+  },
+  {
+    title: 'Degree bookkeeping',
+    detail:
+      'Undirected graphs need degree parity; directed graphs need in/out balance.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E), directed or undirected, with adjacency lists.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'Eulerian path or cycle as a vertex list, or a failure if none exists.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Status classification: none, path only, or cycle.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Eulerian path (trail)',
+    detail:
+      'A walk that uses each edge exactly once and may start/end at different vertices.',
+  },
+  {
+    title: 'Eulerian cycle (circuit)',
+    detail:
+      'An Eulerian path that starts and ends at the same vertex.',
+  },
+  {
+    title: 'Degree balance (undirected)',
+    detail:
+      'A cycle requires all even degrees; a path requires exactly two odd degrees.',
+  },
+  {
+    title: 'Degree balance (directed)',
+    detail:
+      'A cycle requires in-degree == out-degree for all nodes; a path allows one start and one end mismatch.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Edge coverage, not vertex coverage',
@@ -105,6 +169,56 @@ const algorithmSteps = [
     title: 'Output the reverse stack',
     detail:
       'Hierholzer uses a stack: pop vertices when stuck. The resulting list reversed is the Eulerian path or cycle.',
+  },
+]
+
+const stepByStepFlow = [
+  'Compute degree counts and identify odd-degree (undirected) or imbalance (directed) vertices.',
+  'Check connectivity among non-zero-degree vertices using DFS/BFS.',
+  'Classify as cycle, path, or none based on degree rules.',
+  'Pick a valid start node (odd-degree or imbalance start, else any non-zero-degree node).',
+  'Run Hierholzer with a stack, consuming each edge exactly once.',
+  'Reverse the output stack to produce the trail.',
+]
+
+const dataStructures = [
+  {
+    title: 'Adjacency list with edge IDs',
+    detail:
+      'Track multi-edges and mark each edge used exactly once.',
+  },
+  {
+    title: 'Degree arrays',
+    detail:
+      'Degree counts for undirected; in/out for directed graphs.',
+  },
+  {
+    title: 'Edge-used flags',
+    detail:
+      'Boolean array keyed by edge ID to prevent reuse.',
+  },
+  {
+    title: 'Stack for Hierholzer',
+    detail:
+      'Tracks current walk; vertices are popped into the final trail when stuck.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Degree necessity',
+    detail:
+      'Every time you enter a vertex you must leave it, implying even degree except for endpoints.',
+  },
+  {
+    title: 'Connectivity necessity',
+    detail:
+      'All non-zero-degree vertices must lie in a single component to traverse every edge.',
+  },
+  {
+    title: 'Hierholzer correctness',
+    detail:
+      'Local cycles can be spliced into the tour without breaking edge uniqueness.',
   },
 ]
 
@@ -231,6 +345,24 @@ const examples = [
     explanation:
       'A directed Eulerian path has a unique start with one extra outgoing edge. If none exists, the graph must support a cycle.',
   },
+  {
+    title: 'Worked mini-example (undirected)',
+    code: `Edges:
+A-B, B-C, C-A, C-D, D-C
+
+Degrees: A=2, B=2, C=4, D=2
+All even -> Eulerian cycle exists
+One possible cycle: A-B-C-D-C-A`,
+    explanation:
+      'All vertices have even degree and the graph is connected, so a cycle exists.',
+  },
+]
+
+const edgeCases = [
+  'No edges: trivially Eulerian cycle with an empty trail.',
+  'Exactly two odd vertices: Eulerian path exists, cycle does not.',
+  'Disconnected non-zero-degree vertices: no Eulerian trail exists.',
+  'Parallel edges and self-loops require edge IDs to prevent double-use.',
 ]
 
 const pitfalls = [
@@ -247,6 +379,27 @@ const decisionGuidance = [
   'If you need to visit every vertex exactly once, you want Hamiltonian paths instead of Eulerian paths.',
   'When the graph is not Eulerian, consider Chinese Postman or edge duplication to make it traversable.',
   'For massive graphs, perform degree tests first; they are cheap and can skip costly traversals.',
+]
+
+const variantTable = [
+  {
+    variant: 'Undirected Eulerian trail',
+    graphType: 'Undirected',
+    guarantee: 'Exact edge coverage when degree rules pass',
+    useCase: 'Pen-and-ink puzzles, street routing',
+  },
+  {
+    variant: 'Directed Eulerian trail',
+    graphType: 'Directed',
+    guarantee: 'Exact edge coverage when in/out balance passes',
+    useCase: 'Flow routing, de Bruijn graphs',
+  },
+  {
+    variant: 'Chinese Postman',
+    graphType: 'Undirected or directed',
+    guarantee: 'Shortest closed walk covering all edges',
+    useCase: 'Make non-Eulerian graphs traversable',
+  },
 ]
 
 const advancedInsights = [
@@ -318,6 +471,42 @@ export default function EulerianPathCyclePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -373,6 +562,41 @@ export default function EulerianPathCyclePage(): JSX.Element {
                 trail endpoints. This ensures the local walk can be closed into a cycle or a path segment that can be spliced into the
                 growing tour, covering all edges exactly once.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How it works: step-by-step flow</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Data structures and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -434,6 +658,17 @@ export default function EulerianPathCyclePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -452,6 +687,32 @@ export default function EulerianPathCyclePage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and tradeoffs</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Variant</th>
+                    <th>Graph type</th>
+                    <th>Guarantee</th>
+                    <th>Typical use case</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {variantTable.map((row) => (
+                    <tr key={row.variant}>
+                      <td>{row.variant}</td>
+                      <td>{row.graphType}</td>
+                      <td>{row.guarantee}</td>
+                      <td>{row.useCase}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
