@@ -27,6 +27,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Known start and goal',
+    detail:
+      'Bidirectional search needs a single source and a single target to expand from both ends.',
+  },
+  {
+    title: 'Graph traversal access',
+    detail:
+      'For directed graphs, you must traverse incoming edges on the goal side.',
+  },
+  {
+    title: 'Nonnegative weights for Dijkstra',
+    detail:
+      'Weighted bidirectional search assumes nonnegative edges to preserve shortest paths.',
+  },
+  {
+    title: 'Memory for two visited sets',
+    detail:
+      'You store visited nodes and parents from both sides, which doubles bookkeeping.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E), start s, goal t, and optionally edge weights.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'A shortest path between s and t, or failure if unreachable.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Distance maps from both sides for diagnostics or alternative path choices.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Frontiers',
+    detail:
+      'Two queues or heaps that hold the boundary of the explored region from each side.',
+  },
+  {
+    title: 'Intersection',
+    detail:
+      'A node visited by both sides defines a candidate path through that node.',
+  },
+  {
+    title: 'Meeting cost',
+    detail:
+      'For weighted graphs, total cost is distStart[x] + distGoal[x].',
+  },
+  {
+    title: 'Termination condition',
+    detail:
+      'Stop when no unexplored path can beat the best meeting cost found so far.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Two waves that meet',
@@ -60,6 +124,57 @@ const coreMechanics = [
     title: 'Frontier selection',
     detail:
       'Expand the frontier with fewer nodes or lower total cost to reduce work. This keeps the search balanced and improves worst-case performance.',
+  },
+]
+
+const stepByStepFlow = [
+  'Initialize frontierStart with s and frontierGoal with t.',
+  'Create visited and parent maps for both sides.',
+  'Expand the smaller frontier or the one with smaller min distance.',
+  'Relax neighbors and mark newly discovered nodes.',
+  'Check whether any newly visited node exists in the opposite visited map.',
+  'If found, compute total cost and keep the best meeting node.',
+  'Stop when the termination rule is satisfied and reconstruct the path.',
+]
+
+const dataStructures = [
+  {
+    title: 'Two queues or heaps',
+    detail:
+      'BFS uses queues; Dijkstra uses priority queues for both directions.',
+  },
+  {
+    title: 'Visited and parent maps',
+    detail:
+      'Track which nodes each side has explored and how to reconstruct paths.',
+  },
+  {
+    title: 'Distance arrays',
+    detail:
+      'Store best-known distances from both directions for weighted graphs.',
+  },
+  {
+    title: 'Best meeting record',
+    detail:
+      'Keep the best meeting node and cost found so far.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Unweighted shortest path',
+    detail:
+      'BFS expands in layers. The first intersection yields a shortest path by edge count.',
+  },
+  {
+    title: 'Weighted shortest path',
+    detail:
+      'Dijkstra order and the cost-based stop rule guarantee the best meeting is optimal.',
+  },
+  {
+    title: 'Directed graph handling',
+    detail:
+      'Backward search must use reverse edges to preserve path direction.',
   },
 ]
 
@@ -206,6 +321,13 @@ const examples = [
   },
 ]
 
+const edgeCases = [
+  'Start equals goal: return the single-node path immediately.',
+  'Disconnected graphs: frontiers exhaust without meeting.',
+  'Directed graphs without reverse edges: build reverse adjacency first.',
+  'Weighted graphs with zero-weight edges: still valid for Dijkstra.',
+]
+
 const pitfalls = [
   'Stopping too early in weighted graphs. The first meeting is not guaranteed to be optimal without a proper termination rule.',
   'Forgetting to reverse edges in directed graphs. The backward search must follow incoming edges, not outgoing.',
@@ -220,6 +342,29 @@ const decisionGuidance = [
   'Memory can hold two visited sets, but full one-sided BFS is too expensive.',
   'You can afford extra bookkeeping for parent and distance maps.',
   'You need faster interactive queries, such as navigation or social graph lookups.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Balanced expansion',
+    detail:
+      'Expanding the smaller frontier reduces total explored nodes.',
+  },
+  {
+    title: 'Path stitching',
+    detail:
+      'Reverse the goal-side path before concatenation and avoid duplicating the meeting node.',
+  },
+  {
+    title: 'Termination for Dijkstra',
+    detail:
+      'Use minStart + minGoal >= bestFound to stop safely.',
+  },
+  {
+    title: 'Memory limits',
+    detail:
+      'If visited maps are too large, consider heuristic search or pruning.',
+  },
 ]
 
 const advancedInsights = [
@@ -316,6 +461,42 @@ export default function BidirectionalSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -355,13 +536,9 @@ export default function BidirectionalSearchPage(): JSX.Element {
             <legend>How it works: step-by-step flow</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
-                <li>Initialize the start frontier and the goal frontier with their respective nodes.</li>
-                <li>Create visited maps on each side to store parents and, if weighted, distances.</li>
-                <li>Pick the frontier to expand (often the smaller or lower-cost one).</li>
-                <li>Expand one layer of neighbors and mark each newly discovered node.</li>
-                <li>After each expansion, check if any node appears in both visited maps.</li>
-                <li>When an intersection is found, reconstruct the path by joining the two parent chains.</li>
-                <li>For weighted graphs, stop only when the best possible remaining path cannot beat the best found.</li>
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ol>
             </div>
           </fieldset>
@@ -370,6 +547,14 @@ export default function BidirectionalSearchPage(): JSX.Element {
             <legend>Data structures and invariants</legend>
             <div className="win95-grid win95-grid-2">
               {keyStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -393,6 +578,18 @@ export default function BidirectionalSearchPage(): JSX.Element {
                 The key correctness idea is that each side explores paths in nondecreasing order of length (BFS) or cost
                 (Dijkstra). When the stop condition is satisfied, no shorter path can exist than the best meeting found so far.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -468,6 +665,17 @@ export default function BidirectionalSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -486,6 +694,18 @@ export default function BidirectionalSearchPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
