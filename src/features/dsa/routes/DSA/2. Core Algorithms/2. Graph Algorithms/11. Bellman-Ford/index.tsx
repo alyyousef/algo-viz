@@ -27,6 +27,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Directed weighted graph',
+    detail:
+      'Bellman-Ford works on directed graphs with positive, zero, or negative weights.',
+  },
+  {
+    title: 'Single-source objective',
+    detail:
+      'Computes shortest paths from one source to all reachable nodes.',
+  },
+  {
+    title: 'No negative cycles on shortest paths',
+    detail:
+      'If a reachable negative cycle exists, shortest paths are undefined.',
+  },
+  {
+    title: 'Edge list access',
+    detail:
+      'The algorithm scans all edges repeatedly, so an explicit edge list is ideal.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E) with weights, source s, and optionally a target t.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'Shortest distances to all nodes and parent pointers for paths, or a negative cycle report.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'A list of nodes affected by negative cycles for diagnostics.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Relaxation',
+    detail:
+      'If dist[u] + w < dist[v], update dist[v] and parent[v] = u.',
+  },
+  {
+    title: 'Path length bound',
+    detail:
+      'Any simple path has at most V-1 edges, so V-1 rounds suffice for shortest paths.',
+  },
+  {
+    title: 'Negative cycle test',
+    detail:
+      'If any edge relaxes on round V, a reachable negative cycle exists.',
+  },
+  {
+    title: 'Infinity guard',
+    detail:
+      'Never relax from dist[u] = Infinity to avoid overflow and false updates.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Relaxation as tightening a belt',
@@ -83,6 +147,57 @@ const keyStructures = [
     title: 'Updated flag',
     detail:
       'If no distances change in a full pass, you can stop early because all shortest paths are already settled.',
+  },
+]
+
+const stepByStepFlow = [
+  'Initialize dist[source] = 0 and all other distances to Infinity.',
+  'Repeat V-1 times: scan all edges and relax whenever possible.',
+  'Track parents for nodes that improve to enable path reconstruction.',
+  'If a full pass makes no updates, stop early.',
+  'Run one extra pass to check if any edge can still relax.',
+  'If a relax is possible, report a reachable negative cycle.',
+  'Otherwise, return distances and paths.',
+]
+
+const dataStructures = [
+  {
+    title: 'Edge list',
+    detail:
+      'List of (u, v, w) edges for fast iteration each round.',
+  },
+  {
+    title: 'Distance array',
+    detail:
+      'Best-known distances from the source; Infinity marks unreachable nodes.',
+  },
+  {
+    title: 'Parent array',
+    detail:
+      'Tracks last predecessor for path reconstruction.',
+  },
+  {
+    title: 'Updated flag',
+    detail:
+      'Enables early termination when no edges relax in a round.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Inductive path guarantee',
+    detail:
+      'After i rounds, all shortest paths using at most i edges are correct.',
+  },
+  {
+    title: 'Cycle-free bound',
+    detail:
+      'Shortest paths without negative cycles use at most V-1 edges.',
+  },
+  {
+    title: 'Negative cycle witness',
+    detail:
+      'Any relax on the V-th round implies a reachable negative cycle.',
   },
 ]
 
@@ -201,6 +316,13 @@ run bellmanFord to find shortest distances`,
   },
 ]
 
+const edgeCases = [
+  'Unreachable nodes remain at Infinity.',
+  'Negative cycle not reachable from the source does not affect results.',
+  'Multiple edges between the same nodes should be treated separately.',
+  'Undirected edges must be split into two directed edges.',
+]
+
 const pitfalls = [
   'Skipping the negative cycle check. Without it, you may report incorrect shortest paths.',
   'Using V passes instead of V-1 and then relying on the V-th pass for detection incorrectly.',
@@ -213,13 +335,36 @@ const decisionGuidance = [
   'You need shortest paths with negative edge weights.',
   'You must detect negative cycles or infeasible constraints.',
   'The graph is small to medium, or you can tolerate O(VE) runtime.',
-  'You want a reliable baseline or a subroutine for Johnson’s algorithm.',
+  "You want a reliable baseline or a subroutine for Johnson's algorithm.",
   'You can benefit from early termination in practice.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Early stop is safe',
+    detail:
+      'If no updates occur in a full pass, all shortest paths are final.',
+  },
+  {
+    title: 'Cycle extraction',
+    detail:
+      'To extract a negative cycle, follow parent pointers V times to enter the cycle.',
+  },
+  {
+    title: 'Overflow protection',
+    detail:
+      'Use large sentinels and check dist[u] before adding weights.',
+  },
+  {
+    title: 'Sparse optimization',
+    detail:
+      'SPFA can be faster on average but still has worst-case O(VE).',
+  },
 ]
 
 const advancedInsights = [
   {
-    title: 'Johnson’s algorithm uses Bellman-Ford',
+    title: "Johnson's algorithm uses Bellman-Ford",
     detail:
       'Bellman-Ford computes a potential function to reweight edges and remove negative weights, enabling fast Dijkstra runs from every node.',
   },
@@ -309,6 +454,42 @@ export default function BellmanFordPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -348,13 +529,9 @@ export default function BellmanFordPage(): JSX.Element {
             <legend>How it works: step-by-step flow</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
-                <li>Set all distances to infinity and the source to 0.</li>
-                <li>Repeat V-1 passes over all edges, relaxing each one.</li>
-                <li>Track parents for any node whose distance improves.</li>
-                <li>If an entire pass makes no updates, stop early.</li>
-                <li>Run one extra pass to detect any further improvement.</li>
-                <li>If any edge still relaxes, report a negative cycle.</li>
-                <li>Otherwise, reconstruct paths using the parent array.</li>
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ol>
             </div>
           </fieldset>
@@ -363,6 +540,14 @@ export default function BellmanFordPage(): JSX.Element {
             <legend>Data structures and invariants</legend>
             <div className="win95-grid win95-grid-2">
               {keyStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -386,6 +571,18 @@ export default function BellmanFordPage(): JSX.Element {
                 The correctness guarantee comes from the fact that any shortest path without cycles has at most V-1 edges. Each
                 pass guarantees correctness for paths with one more edge, so V-1 passes suffice unless a negative cycle exists.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -461,6 +658,17 @@ export default function BellmanFordPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -479,6 +687,18 @@ export default function BellmanFordPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
