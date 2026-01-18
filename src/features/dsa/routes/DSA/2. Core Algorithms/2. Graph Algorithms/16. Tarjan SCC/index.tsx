@@ -27,6 +27,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Directed graph',
+    detail:
+      'Tarjan SCC operates on directed graphs and finds mutually reachable components.',
+  },
+  {
+    title: 'Depth-first search',
+    detail:
+      'You need a DFS traversal and a recursion or explicit stack to explore edges.',
+  },
+  {
+    title: 'Stack discipline',
+    detail:
+      'Nodes remain on the stack until their component is finalized.',
+  },
+  {
+    title: 'Discovery ordering',
+    detail:
+      'Each node gets a unique discovery index that anchors lowlink values.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Directed graph G(V, E), usually as adjacency lists.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'List of SCCs or a component ID per node.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Condensation DAG formed by contracting each SCC into a node.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Index',
+    detail:
+      'Discovery time assigned to each node when first visited.',
+  },
+  {
+    title: 'Lowlink',
+    detail:
+      'Smallest discovery index reachable from a node while staying in the current DFS stack.',
+  },
+  {
+    title: 'Root condition',
+    detail:
+      'If lowlink[v] == index[v], v is the root of an SCC.',
+  },
+  {
+    title: 'On-stack constraint',
+    detail:
+      'Only edges to nodes still on the stack can reduce lowlink.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Rubber bands and lowlink',
@@ -83,6 +147,57 @@ const keyStructures = [
     title: 'Component list',
     detail:
       'When a root is found, pop nodes until the root to form one SCC.',
+  },
+]
+
+const stepByStepFlow = [
+  'Initialize index counter to 0 and clear the stack.',
+  'For each unvisited node, run strongConnect(node).',
+  'Assign index and lowlink, then push the node on the stack.',
+  'For each outgoing edge, recurse on unvisited neighbors and update lowlink.',
+  'If a neighbor is on the stack, update lowlink with its index.',
+  'When lowlink == index, pop the stack to emit one SCC.',
+  'Repeat until all nodes have been visited.',
+]
+
+const dataStructures = [
+  {
+    title: 'Index array',
+    detail:
+      'Stores discovery order for each node.',
+  },
+  {
+    title: 'Lowlink array',
+    detail:
+      'Stores the smallest reachable index within the current stack.',
+  },
+  {
+    title: 'Stack and onStack flag',
+    detail:
+      'Track the active DFS path and which nodes can affect lowlink.',
+  },
+  {
+    title: 'Component labels',
+    detail:
+      'Optional array mapping each node to its SCC ID.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Lowlink invariant',
+    detail:
+      'Lowlink tracks reachability to earlier stack nodes, preventing cross-component merging.',
+  },
+  {
+    title: 'Root extraction',
+    detail:
+      'When lowlink equals index, the stack segment up to that node is exactly one SCC.',
+  },
+  {
+    title: 'Single-pass guarantee',
+    detail:
+      'Each edge is examined once during DFS, so SCCs are identified in linear time.',
   },
 ]
 
@@ -197,6 +312,23 @@ for each variable x:
     explanation:
       'The SCC structure reveals contradictions in implication graphs.',
   },
+  {
+    title: 'Worked mini-example',
+    code: `Edges:
+1->2, 2->3, 3->1, 3->4, 4->5, 5->4
+
+SCCs:
+{1,2,3} and {4,5}`,
+    explanation:
+      'Tarjan groups the mutual cycles into two SCCs even though there is a one-way edge from 3 to 4.',
+  },
+]
+
+const edgeCases = [
+  'Isolated nodes form SCCs of size 1.',
+  'Self-loops keep the node in its own SCC but do not change lowlink logic.',
+  'Disconnected graphs require DFS from every unvisited node.',
+  'Deep graphs may overflow recursion; use iterative DFS if needed.',
 ]
 
 const pitfalls = [
@@ -213,6 +345,29 @@ const decisionGuidance = [
   'You need SCCs as a precursor for condensation or cycle analysis.',
   'You can manage recursion depth or implement iterative DFS.',
   'You want a standard, well-tested algorithm with clear invariants.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Iterative DFS',
+    detail:
+      'Avoid recursion limits by simulating DFS with an explicit stack and state.',
+  },
+  {
+    title: 'Edge order',
+    detail:
+      'SCC order can vary; if determinism matters, fix neighbor ordering.',
+  },
+  {
+    title: 'Component IDs',
+    detail:
+      'Assign IDs when popping the stack to build condensation graphs later.',
+  },
+  {
+    title: 'Memory bounds',
+    detail:
+      'Arrays are O(V), so the method is memory efficient for large graphs.',
+  },
 ]
 
 const advancedInsights = [
@@ -308,6 +463,42 @@ export default function TarjanSCCPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -347,13 +538,9 @@ export default function TarjanSCCPage(): JSX.Element {
             <legend>How it works: step-by-step flow</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
-                <li>Initialize index to 0 and clear the stack.</li>
-                <li>For each unvisited node, run the DFS routine.</li>
-                <li>Assign index and lowlink, then push the node on the stack.</li>
-                <li>For each outgoing edge, recurse or update lowlink when a back edge exists.</li>
-                <li>If lowlink equals index, the node is an SCC root.</li>
-                <li>Pop nodes until the root to form a single component.</li>
-                <li>Repeat until all nodes have been visited.</li>
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ol>
             </div>
           </fieldset>
@@ -362,6 +549,14 @@ export default function TarjanSCCPage(): JSX.Element {
             <legend>Data structures and invariants</legend>
             <div className="win95-grid win95-grid-2">
               {keyStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -385,6 +580,18 @@ export default function TarjanSCCPage(): JSX.Element {
                 Correctness hinges on lowlink tracking the smallest discovery index reachable through nodes still on the stack.
                 When lowlink[v] equals index[v], there is no back edge to an earlier node, so v is the root of an SCC.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -460,6 +667,17 @@ export default function TarjanSCCPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -478,6 +696,18 @@ export default function TarjanSCCPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
