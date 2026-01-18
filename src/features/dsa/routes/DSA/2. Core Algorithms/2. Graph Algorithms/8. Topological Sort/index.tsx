@@ -120,7 +120,7 @@ const dataStructures = [
   {
     title: 'Indegree array',
     detail:
-      'Counts remaining prerequisites for each node in Kahn's algorithm.',
+      "Counts remaining prerequisites for each node in Kahn's algorithm.",
   },
   {
     title: 'Queue or priority queue',
