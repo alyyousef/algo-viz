@@ -45,6 +45,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Directed weighted graph',
+    detail:
+      'Johnson works on directed graphs with possible negative edges and no negative cycles.',
+  },
+  {
+    title: 'All-pairs objective',
+    detail:
+      'Designed for APSP on sparse graphs where V runs of Dijkstra are feasible.',
+  },
+  {
+    title: 'Edge list + adjacency list',
+    detail:
+      'Bellman-Ford benefits from an edge list; Dijkstra benefits from adjacency lists.',
+  },
+  {
+    title: 'Nonnegative Dijkstra requirement',
+    detail:
+      'Reweighting must produce nonnegative edges before any Dijkstra run.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E) with weights. Optionally choose a subset of sources.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'All-pairs shortest path distances (or selected rows), or negative cycle report.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Parent pointers for reconstructing paths per source.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Potential h(v)',
+    detail:
+      'Shortest distance from super-source s* to v computed by Bellman-Ford.',
+  },
+  {
+    title: 'Reweighted edge',
+    detail:
+      "w'(u, v) = w(u, v) + h(u) - h(v), guaranteed to be nonnegative.",
+  },
+  {
+    title: 'Distance recovery',
+    detail:
+      "d(u, v) = d'(u, v) - h(u) + h(v).",
+  },
+  {
+    title: 'Negative cycle detection',
+    detail:
+      'If Bellman-Ford relaxes on the V-th pass, shortest paths are undefined.',
+  },
+]
+
 const coreConcepts = [
   {
     title: 'Potential function h(v)',
@@ -101,6 +165,56 @@ const pipelineSteps = [
   {
     step: '5. Recover original distances',
     detail: "Convert d' back to true distances using d(u, v) = d'(u, v) - h(u) + h(v).",
+  },
+]
+
+const stepByStepFlow = [
+  'Add a super-source s* with 0-weight edges to every vertex.',
+  'Run Bellman-Ford from s* to compute potentials h(v).',
+  'If a negative cycle is detected, abort and report it.',
+  "Reweight all edges using w'(u, v) = w(u, v) + h(u) - h(v).",
+  'Run Dijkstra from each source to compute d\'(u, v).',
+  'Recover original distances using d(u, v) = d\'(u, v) - h(u) + h(v).',
+]
+
+const dataStructures = [
+  {
+    title: 'Edge list',
+    detail:
+      'Needed for Bellman-Ford relaxation over all edges.',
+  },
+  {
+    title: 'Adjacency list',
+    detail:
+      'Used by Dijkstra for efficient neighbor iteration.',
+  },
+  {
+    title: 'Potential array h',
+    detail:
+      'Stores Bellman-Ford distances from s* for reweighting.',
+  },
+  {
+    title: 'Distance table',
+    detail:
+      'All-pairs distances stored as V rows or computed on demand.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Nonnegativity guarantee',
+    detail:
+      "Bellman-Ford ensures h(v) <= h(u) + w(u, v), so w'(u, v) >= 0.",
+  },
+  {
+    title: 'Path order preserved',
+    detail:
+      'All paths between the same endpoints shift by the same constant.',
+  },
+  {
+    title: 'Negative cycle stop',
+    detail:
+      'Any negative cycle makes shortest paths undefined, so Johnson must terminate.',
   },
 ]
 
@@ -194,6 +308,13 @@ const realWorldUses = [
   },
 ]
 
+const edgeCases = [
+  'Disconnected vertices: super-source ensures finite potentials, but unreachable pairs remain Infinity after Dijkstra.',
+  'Undirected negative edge: immediately implies a negative cycle and must be rejected.',
+  'Multiple edges: reweight each edge separately; keep minimum when storing adjacency.',
+  'Large graphs: storing full V^2 matrix may be too expensive; compute rows lazily.',
+]
+
 const examples = [
   {
     title: "Johnson's algorithm (high level)",
@@ -239,6 +360,22 @@ for each vertex v:
     explanation:
       'Reweighting preserves path ordering, and the recovery formula restores true distances.',
   },
+  {
+    title: 'Worked mini-example',
+    code: `Edges:
+1->2 (2), 2->3 (-5), 1->3 (4)
+
+Add s* with 0 edges, run Bellman-Ford:
+h(1)=0, h(2)=0, h(3)=-5
+
+Reweight:
+w'(1,2)=2, w'(2,3)=0, w'(1,3)=9
+
+Dijkstra from 1 gives d'(1,3)=2
+Recover: d(1,3)=2 - h(1) + h(3) = -3`,
+    explanation:
+      'Reweighting removes negative edges, but recovered distances preserve original shortest paths.',
+  },
 ]
 
 const pitfalls = [
@@ -255,6 +392,47 @@ const decisionGuidance = [
   'Need only one or few sources: run Bellman-Ford (if negatives) or Dijkstra (if nonnegative).',
   'Need repeated queries after a fixed graph: precompute Johnson once and reuse the distance table.',
   'Need to detect negative cycles: Bellman-Ford already gives the answer, no need for Johnson.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Super-source wiring',
+    detail:
+      'Add s* edges to every vertex with weight 0 so all h values are defined.',
+  },
+  {
+    title: 'Dijkstra optimization',
+    detail:
+      'Binary heap is typically fastest in practice; decrease-key can be emulated with lazy deletes.',
+  },
+  {
+    title: 'Memory strategy',
+    detail:
+      'Store only required source rows if you do not need a full APSP table.',
+  },
+  {
+    title: 'Infinity handling',
+    detail:
+      'Keep Infinity when a node is unreachable from a given source.',
+  },
+]
+
+const variantTable = [
+  {
+    variant: "Johnson's Algorithm",
+    guarantee: 'APSP with negative edges (no negative cycles)',
+    tradeoff: 'O(VE log V) time, needs Bellman-Ford',
+  },
+  {
+    variant: 'Repeated Dijkstra',
+    guarantee: 'APSP with nonnegative edges',
+    tradeoff: 'Same time but no negative edges allowed',
+  },
+  {
+    variant: 'Floyd-Warshall',
+    guarantee: 'APSP for dense graphs',
+    tradeoff: 'O(V^3) time, O(V^2) memory',
+  },
 ]
 
 const advancedInsights = [
@@ -328,6 +506,42 @@ export default function JohnsonSAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -380,9 +594,44 @@ export default function JohnsonSAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How it works: step-by-step flow</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: reweighting details</legend>
             <div className="win95-grid win95-grid-2">
               {reweightingDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Data structures and invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -459,6 +708,17 @@ export default function JohnsonSAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -477,6 +737,42 @@ export default function JohnsonSAlgorithmPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and tradeoffs</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Variant</th>
+                    <th>Guarantee</th>
+                    <th>Tradeoff</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {variantTable.map((row) => (
+                    <tr key={row.variant}>
+                      <td>{row.variant}</td>
+                      <td>{row.guarantee}</td>
+                      <td>{row.tradeoff}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
