@@ -27,6 +27,75 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Graph with non-negative edge weights',
+    detail:
+      'A* assumes non-negative costs so that shorter paths remain valid during expansion.',
+  },
+  {
+    title: 'Heuristic function h(n)',
+    detail:
+      'An estimate of the remaining cost to the goal. Quality of h determines speed.',
+  },
+  {
+    title: 'State representation',
+    detail:
+      'Each node represents a state; neighbors and edge costs must be well-defined.',
+  },
+  {
+    title: 'Start and goal nodes',
+    detail:
+      'A* solves a single-source single-target shortest path problem.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E), start s, goal t, edge costs, and a heuristic h(n).',
+  },
+  {
+    title: 'Output',
+    detail:
+      'Shortest path from s to t and its total cost, or failure if unreachable.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Explored set, cost maps, and parent links for visualization and debugging.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'g(n)',
+    detail:
+      'Cost of the best-known path from start to node n.',
+  },
+  {
+    title: 'h(n)',
+    detail:
+      'Heuristic estimate of the cost from n to the goal.',
+  },
+  {
+    title: 'f(n)',
+    detail:
+      'Evaluation function f(n) = g(n) + h(n) used to rank nodes.',
+  },
+  {
+    title: 'Admissible heuristic',
+    detail:
+      'h(n) never overestimates the true remaining cost.',
+  },
+  {
+    title: 'Consistent heuristic',
+    detail:
+      'h(n) <= cost(n, n2) + h(n2) for every edge (n, n2).',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Best-first with a compass',
@@ -104,6 +173,43 @@ const keyStructures = [
   },
 ]
 
+const stepByStepFlow = [
+  'Initialize open set with start, g(start) = 0, f(start) = h(start).',
+  'Pop the node with the smallest f from the priority queue.',
+  'If it is the goal, reconstruct the path by following parent pointers.',
+  'For each neighbor, compute tentative g and relax if it improves the best known g.',
+  'Update the neighbor f and parent, then push or decrease-key in the open set.',
+  'Mark the current node closed and repeat until open is empty.',
+]
+
+const dataStructures = [
+  {
+    title: 'Priority queue with decrease-key',
+    detail:
+      'Supports efficient updates when a better path to an open node is found.',
+  },
+  {
+    title: 'g-score map',
+    detail:
+      'Tracks best-known cost from start to each node.',
+  },
+  {
+    title: 'f-score map',
+    detail:
+      'Stores g + h to avoid recomputation in the heap.',
+  },
+  {
+    title: 'Parent map',
+    detail:
+      'Allows path reconstruction after reaching the goal.',
+  },
+  {
+    title: 'Closed set',
+    detail:
+      'Prevents redundant expansions when heuristics are consistent.',
+  },
+]
+
 const terminationRules = [
   {
     title: 'Goal popped from open set',
@@ -119,6 +225,24 @@ const terminationRules = [
     title: 'Weighted A*',
     detail:
       'When you inflate h by a weight, you trade optimality for speed and should stop at first goal pop.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Admissibility implies optimality',
+    detail:
+      'If h never overestimates, A* will not skip the optimal path.',
+  },
+  {
+    title: 'Consistency prevents re-openings',
+    detail:
+      'With a consistent h, once a node is closed its best path is final.',
+  },
+  {
+    title: 'Goal pop is a proof',
+    detail:
+      'When the goal is popped, no cheaper path remains in the open set.',
   },
 ]
 
@@ -209,6 +333,29 @@ Octile: max(dx, dy) + (sqrt(2) - 1) * min(dx, dy) for 8-way grids`,
     explanation:
       'Weighted A* sacrifices optimality to reduce search time, useful in real-time systems where speed matters more than perfect paths.',
   },
+  {
+    title: 'Worked mini-example',
+    code: `Edges (cost):
+S-A:1, S-B:4, A-C:2, B-C:1, C-G:3
+Heuristic h: h(S)=5, h(A)=4, h(B)=2, h(C)=2, h(G)=0
+
+Start: g(S)=0 f(S)=5
+Pop S -> relax A (g=1 f=5), B (g=4 f=6)
+Pop A -> relax C (g=3 f=5)
+Pop C -> relax G (g=6 f=6)
+Pop B -> relax C via B (g=5) no improvement
+Pop G -> done
+Path: S-A-C-G cost 6`,
+    explanation:
+      'The heuristic guides the search toward C and G while still proving the optimal route.',
+  },
+]
+
+const edgeCases = [
+  'No path from start to goal: open set empties and returns failure.',
+  'Zero-cost edges: still valid, but heuristics must remain admissible.',
+  'Inconsistent heuristic: may need to re-open nodes when better paths appear.',
+  'Multiple optimal paths: tie-breaking affects which path is returned.',
 ]
 
 const pitfalls = [
@@ -225,6 +372,29 @@ const decisionGuidance = [
   'Optimality matters and negative edges are not involved.',
   'You can afford extra memory for the open set and parent tracking.',
   'You want tunable behavior through heuristics or weights.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Tie-breaking',
+    detail:
+      'When f ties, prefer larger g to reduce zig-zag in grid maps.',
+  },
+  {
+    title: 'Decrease-key workaround',
+    detail:
+      'If the heap lacks decrease-key, push duplicates and ignore stale entries.',
+  },
+  {
+    title: 'Heuristic scaling',
+    detail:
+      'Weighted A* uses f = g + w*h. Pick w carefully to bound suboptimality.',
+  },
+  {
+    title: 'Grid heuristics',
+    detail:
+      'Manhattan for 4-way, octile for 8-way, Euclidean for continuous movement.',
+  },
 ]
 
 const advancedInsights = [
@@ -247,6 +417,24 @@ const advancedInsights = [
     title: 'Tie-breaking strategies',
     detail:
       'When f scores tie, breaking by larger g can reduce path zig-zagging and improve performance in grids.',
+  },
+]
+
+const variants = [
+  {
+    variant: 'A* with consistent heuristic',
+    guarantee: 'Optimal and no node re-expansions',
+    tradeoff: 'Requires careful heuristic design',
+  },
+  {
+    variant: 'Weighted A*',
+    guarantee: 'Bounded suboptimality (if w is fixed)',
+    tradeoff: 'Faster but not always optimal',
+  },
+  {
+    variant: 'IDA*',
+    guarantee: 'Optimal with admissible h',
+    tradeoff: 'Lower memory, more re-expansions',
   },
 ]
 
@@ -320,6 +508,42 @@ export default function AStarSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -359,12 +583,9 @@ export default function AStarSearchPage(): JSX.Element {
             <legend>How it works: step-by-step flow</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
-                <li>Initialize the open set with the start node and g(start) = 0.</li>
-                <li>Repeatedly pop the node with the smallest f = g + h.</li>
-                <li>If the node is the goal, reconstruct the path via parents.</li>
-                <li>Relax each neighbor and update g, parent, and f if improved.</li>
-                <li>Move expanded nodes into the closed set to avoid revisits.</li>
-                <li>Stop when the goal is expanded or when the open set is empty.</li>
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ol>
             </div>
           </fieldset>
@@ -397,6 +618,14 @@ export default function AStarSearchPage(): JSX.Element {
                 </div>
               ))}
             </div>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -418,6 +647,18 @@ export default function AStarSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity analysis and tradeoffs</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -432,6 +673,17 @@ export default function AStarSearchPage(): JSX.Element {
                 A* trades memory for speed. It can be dramatically faster than Dijkstra, but it requires storing the frontier
                 and heuristic metadata.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -511,6 +763,18 @@ export default function AStarSearchPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights</legend>
             <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
@@ -519,6 +783,30 @@ export default function AStarSearchPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and extensions</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Variant</th>
+                    <th>Guarantee</th>
+                    <th>Tradeoff</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {variants.map((row) => (
+                    <tr key={row.variant}>
+                      <td>{row.variant}</td>
+                      <td>{row.guarantee}</td>
+                      <td>{row.tradeoff}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
