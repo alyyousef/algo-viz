@@ -27,6 +27,70 @@ const historicalMilestones = [
   },
 ]
 
+const prerequisites = [
+  {
+    title: 'Undirected graph',
+    detail:
+      'Bridge and articulation definitions apply to undirected graphs. Directed graphs require different notions.',
+  },
+  {
+    title: 'Depth-first search',
+    detail:
+      'The algorithm is a DFS with discovery times and lowlink values.',
+  },
+  {
+    title: 'No parallel-edge ambiguity',
+    detail:
+      'If parallel edges exist, track edge IDs to avoid false bridges.',
+  },
+  {
+    title: 'Connected or disconnected',
+    detail:
+      'The graph can be disconnected; DFS must start from every unvisited node.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Undirected graph G(V, E), typically as adjacency lists with edge IDs.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'Set of bridges and articulation points (or boolean flags per node).',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Biconnected components or a block-cut tree derived from the results.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Discovery time disc[v]',
+    detail:
+      'Time when v is first visited during DFS.',
+  },
+  {
+    title: 'Lowlink low[v]',
+    detail:
+      'Minimum discovery time reachable from v using tree edges plus at most one back edge.',
+  },
+  {
+    title: 'Bridge',
+    detail:
+      'Edge (u, v) is a bridge if low[v] > disc[u] for a DFS tree edge.',
+  },
+  {
+    title: 'Articulation point',
+    detail:
+      'Node u is a cut vertex if removing it increases connected components.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Single point of failure',
@@ -60,6 +124,57 @@ const coreMechanics = [
     title: 'Bridge test',
     detail:
       'Edge (u, v) is a bridge if lowlink[v] > disc[u]. There is no back edge from v or its subtree to u or ancestors.',
+  },
+]
+
+const stepByStepFlow = [
+  'Initialize disc and low to -1, parent to -1, time = 0.',
+  'For each unvisited node, run DFS to cover all components.',
+  'On entry to u: set disc[u] = low[u] = time++.',
+  'For each neighbor v: if unvisited, recurse and update low[u].',
+  'If low[v] > disc[u], mark edge (u, v) as a bridge.',
+  'If u is non-root and low[v] >= disc[u], mark u as articulation.',
+  'If u is root and has more than one child, mark u as articulation.',
+]
+
+const dataStructures = [
+  {
+    title: 'disc and low arrays',
+    detail:
+      'Track discovery time and lowest reachable ancestor.',
+  },
+  {
+    title: 'parent array',
+    detail:
+      'Distinguishes tree edges from back edges.',
+  },
+  {
+    title: 'bridge list',
+    detail:
+      'Collects critical edges identified by the lowlink test.',
+  },
+  {
+    title: 'articulation flags',
+    detail:
+      'Marks vertices that satisfy the cut-vertex rules.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Bridge criterion',
+    detail:
+      'If a child subtree cannot reach u or above, the connecting edge is the only link.',
+  },
+  {
+    title: 'Articulation criterion',
+    detail:
+      'If a child subtree cannot reach above u, removing u disconnects that subtree.',
+  },
+  {
+    title: 'Root special case',
+    detail:
+      'Root is a cut vertex only if it has at least two DFS children.',
   },
 ]
 
@@ -187,6 +302,31 @@ if low[child] >= disc[u] and u is not root:
     explanation:
       'The subtree is stuck below u, so removing u disconnects that subtree from the rest of the graph.',
   },
+  {
+    title: 'Worked mini-example',
+    code: `Edges:
+1-2, 2-3, 3-4, 2-4, 4-5
+
+Bridges: (4,5)
+Articulation points: 4`,
+    explanation:
+      'The cycle 2-3-4 protects those edges, but node 4 is the only connector to 5.',
+  },
+  {
+    title: 'Root articulation rule',
+    code: `// Root with two DFS children is a cut vertex
+if parent[u] == -1 and childCount > 1:
+    articulation[u] = true`,
+    explanation:
+      'The root has no parent, so only multiple child subtrees cause disconnection.',
+  },
+]
+
+const edgeCases = [
+  'Single node: no bridges, no articulation points.',
+  'Two nodes with one edge: the edge is a bridge; both nodes are articulation points only if removing one disconnects.',
+  'Parallel edges: no bridge if a second edge preserves connectivity.',
+  'Disconnected graph: run DFS from every unvisited node.',
 ]
 
 const pitfalls = [
@@ -203,6 +343,29 @@ const decisionGuidance = [
   'The graph is large and you need a single-pass algorithm.',
   'You can manage DFS recursion or use an iterative alternative.',
   'You need connectivity resilience metrics for networks or systems.',
+]
+
+const implementationNotes = [
+  {
+    title: 'Edge IDs for multigraphs',
+    detail:
+      'Use edge IDs to distinguish parallel edges and avoid false bridge detection.',
+  },
+  {
+    title: 'Iterative DFS',
+    detail:
+      'For large graphs, replace recursion with an explicit stack and state.',
+  },
+  {
+    title: 'Parent edge handling',
+    detail:
+      'Ignore the immediate parent edge when processing back edges.',
+  },
+  {
+    title: 'Component outputs',
+    detail:
+      'Bridges partition the graph into edge-biconnected components.',
+  },
 ]
 
 const advancedInsights = [
@@ -298,6 +461,42 @@ export default function BridgesArticulationPointsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -337,13 +536,9 @@ export default function BridgesArticulationPointsPage(): JSX.Element {
             <legend>How it works: step-by-step flow</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
-                <li>Initialize discovery and lowlink arrays to -1.</li>
-                <li>Run DFS from each unvisited node to cover all components.</li>
-                <li>Assign discovery time and push recursion into neighbors.</li>
-                <li>Update lowlink using child lowlink and back edges.</li>
-                <li>Mark bridges when lowlink[child] &gt; disc[parent].</li>
-                <li>Mark articulation points using root and non-root rules.</li>
-                <li>Collect bridges and cut vertices as results.</li>
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ol>
             </div>
           </fieldset>
@@ -352,6 +547,14 @@ export default function BridgesArticulationPointsPage(): JSX.Element {
             <legend>Data structures and invariants</legend>
             <div className="win95-grid win95-grid-2">
               {keyStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -375,6 +578,18 @@ export default function BridgesArticulationPointsPage(): JSX.Element {
                 Lowlink measures the earliest reachable ancestor. When a subtree cannot reach above its parent, the connecting
                 edge is a bridge. When a subtree cannot reach above a node, that node becomes an articulation point.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -450,6 +665,17 @@ export default function BridgesArticulationPointsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -468,6 +694,18 @@ export default function BridgesArticulationPointsPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
