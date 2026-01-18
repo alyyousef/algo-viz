@@ -8,7 +8,7 @@ const historicalMilestones = [
   {
     title: 'Dial style shortest paths for small integer weights',
     detail:
-      'Dial’s algorithm showed that bounded integer weights allow faster queues than full Dijkstra. 0-1 BFS is the minimal case of that idea.',
+      "Dial's algorithm showed that bounded integer weights allow faster queues than full Dijkstra. 0-1 BFS is the minimal case of that idea.",
   },
   {
     title: 'Deque-based optimization becomes popular (1990s)',
@@ -23,7 +23,66 @@ const historicalMilestones = [
   {
     title: 'A specialized Dijkstra substitute',
     detail:
-      '0-1 BFS delivers Dijkstra’s correctness for non-negative weights but with linear-time behavior on binary edges.',
+      "0-1 BFS delivers Dijkstra's correctness for non-negative weights but with linear-time behavior on binary edges.",
+  },
+]
+
+const prerequisites = [
+  {
+    title: 'Binary edge weights',
+    detail:
+      'All edges must have weight 0 or 1. Any other weight breaks the deque ordering.',
+  },
+  {
+    title: 'Nonnegative costs',
+    detail:
+      '0-1 BFS is a special case of Dijkstra and assumes nonnegative weights.',
+  },
+  {
+    title: 'Single-source objective',
+    detail:
+      'Compute shortest paths from one source to all reachable nodes.',
+  },
+  {
+    title: 'Adjacency list',
+    detail:
+      'A list of neighbors with weights keeps the algorithm linear in V + E.',
+  },
+]
+
+const inputsOutputs = [
+  {
+    title: 'Input',
+    detail:
+      'Graph G(V, E) with weights in {0,1} and a source node.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'Shortest distances and optional parents for path reconstruction.',
+  },
+  {
+    title: 'Optional',
+    detail:
+      'Early stop if only a specific target distance is needed.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Relaxation rule',
+    detail:
+      'If dist[u] + w < dist[v], update dist[v] and parent[v] = u.',
+  },
+  {
+    title: 'Deque ordering',
+    detail:
+      'Edges with weight 0 keep distance, weight 1 increases it by one.',
+  },
+  {
+    title: 'Monotone expansion',
+    detail:
+      'Nodes popped from the front are processed in nondecreasing distance.',
   },
 ]
 
@@ -83,6 +142,57 @@ const keyStructures = [
     title: 'Visited or in-queue tracking',
     detail:
       'Not strictly required if you check dist improvements, but can reduce redundant enqueues.',
+  },
+]
+
+const stepByStepFlow = [
+  'Initialize dist[source] = 0 and all other distances to Infinity.',
+  'Push source to the front of the deque.',
+  'Pop from the front and relax each outgoing edge.',
+  'If the edge weight is 0, push the neighbor to the front.',
+  'If the edge weight is 1, push the neighbor to the back.',
+  'Repeat until the deque is empty or the goal is popped.',
+  'Reconstruct a path from the parent array if needed.',
+]
+
+const dataStructures = [
+  {
+    title: 'Deque',
+    detail:
+      'Supports O(1) push front/back to simulate two priority buckets.',
+  },
+  {
+    title: 'Distance array',
+    detail:
+      'Stores shortest known distance from the source.',
+  },
+  {
+    title: 'Parent array',
+    detail:
+      'Captures the edge that last improved a node.',
+  },
+  {
+    title: 'In-queue flag (optional)',
+    detail:
+      'Can reduce duplicate pushes but must not block better relaxations.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Deque preserves order',
+    detail:
+      'Zero-cost edges do not increase distance, so they are processed first.',
+  },
+  {
+    title: 'Equivalent to Dijkstra',
+    detail:
+      'For weights in {0,1}, the deque emulates a priority queue exactly.',
+  },
+  {
+    title: 'Relaxation ensures optimality',
+    detail:
+      'No shorter path can appear after a node is popped at its minimal distance.',
   },
 ]
 
@@ -196,6 +306,29 @@ else: weight = 1`,
     explanation:
       'Any decision that is binary can be modeled as 0 or 1, enabling fast shortest paths.',
   },
+  {
+    title: 'Worked mini-example',
+    code: `Edges:
+S->A (0), S->B (1), A->C (1), B->C (0)
+
+Start: dist[S]=0, deque=[S]
+Pop S -> A (0) push front, B (1) push back
+Deque: [A, B]
+Pop A -> C (1) dist[C]=1 push back
+Deque: [B, C]
+Pop B -> C (0) improves dist[C]=1? no change
+Pop C -> done
+Shortest to C is 1`,
+    explanation:
+      'Zero edges jump to the front, one edges go to the back, preserving distance order.',
+  },
+]
+
+const edgeCases = [
+  'Disconnected nodes remain at Infinity.',
+  'Multiple edges between nodes keep the smallest distance through relaxation.',
+  'All edges are 0: deque behaves like BFS on zero-cost edges.',
+  'All edges are 1: algorithm reduces to standard BFS on unweighted graph.',
 ]
 
 const pitfalls = [
@@ -214,6 +347,29 @@ const decisionGuidance = [
   'You need reliable shortest paths, not just greedy approximations.',
 ]
 
+const implementationNotes = [
+  {
+    title: 'Avoid stale updates',
+    detail:
+      'If you use an in-queue flag, clear it when a node is popped.',
+  },
+  {
+    title: 'Early exit',
+    detail:
+      'You can stop when the goal is popped, not when it is first seen.',
+  },
+  {
+    title: 'Graph modeling',
+    detail:
+      'Convert binary decisions into edges of weight 0 or 1 to exploit 0-1 BFS.',
+  },
+  {
+    title: 'Undirected edges',
+    detail:
+      'Add both directions explicitly with the same weight.',
+  },
+]
+
 const advancedInsights = [
   {
     title: 'Relation to Dijkstra',
@@ -221,7 +377,7 @@ const advancedInsights = [
       '0-1 BFS is a specialized Dijkstra where the priority queue is replaced by a deque due to binary edge weights.',
   },
   {
-    title: 'Dial’s algorithm generalization',
+    title: "Dial's algorithm generalization",
     detail:
       'For weights in 0..C, you can use C+1 buckets. 0-1 BFS is the C=1 case.',
   },
@@ -253,7 +409,7 @@ const variantTable = [
     useCase: 'Binary cost routing, maze breaking, min toggles',
   },
   {
-    variant: 'Dial’s algorithm',
+    variant: "Dial's algorithm",
     graphType: 'Integer weights in [0, C]',
     guarantee: 'Shortest paths by total weight',
     useCase: 'Small bounded weights with bucket queues',
@@ -307,6 +463,42 @@ export default function Topic01BFSPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Prerequisites and definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {prerequisites.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Inputs and outputs</legend>
+            <div className="win95-grid win95-grid-2">
+              {inputsOutputs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal concepts</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
@@ -346,13 +538,9 @@ export default function Topic01BFSPage(): JSX.Element {
             <legend>How it works: step-by-step flow</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
-                <li>Initialize distances to Infinity and set the source to 0.</li>
-                <li>Push the source onto the front of the deque.</li>
-                <li>Pop from the front and relax each outgoing edge.</li>
-                <li>If the edge weight is 0, push the neighbor to the front.</li>
-                <li>If the edge weight is 1, push the neighbor to the back.</li>
-                <li>Repeat until the deque is empty or the goal is popped.</li>
-                <li>Reconstruct the path using the parent array if needed.</li>
+                {stepByStepFlow.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ol>
             </div>
           </fieldset>
@@ -361,6 +549,14 @@ export default function Topic01BFSPage(): JSX.Element {
             <legend>Data structures and invariants</legend>
             <div className="win95-grid win95-grid-2">
               {keyStructures.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -382,8 +578,20 @@ export default function Topic01BFSPage(): JSX.Element {
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
                 The deque ordering preserves nondecreasing distance because any 0 edge keeps distance the same and any 1 edge
-                increases it by one. This mimics Dijkstra’s greedy rule with a simpler data structure.
+                increases it by one. This mimics Dijkstra's greedy rule with a simpler data structure.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -400,7 +608,7 @@ export default function Topic01BFSPage(): JSX.Element {
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
                 0-1 BFS is a perfect fit when weights are binary. If weights drift beyond 0 or 1, switch to Dijkstra or a
-                bucketed variant like Dial’s algorithm.
+                bucketed variant like Dial's algorithm.
               </p>
             </div>
           </fieldset>
@@ -459,6 +667,17 @@ export default function Topic01BFSPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge cases checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {edgeCases.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -477,6 +696,18 @@ export default function Topic01BFSPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
