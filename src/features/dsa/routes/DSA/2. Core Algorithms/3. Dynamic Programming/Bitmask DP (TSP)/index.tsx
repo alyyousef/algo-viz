@@ -48,6 +48,46 @@ const mentalModels = [
     detail:
       'The DP computes best paths that end at every city. The final tour adds the cost to return to the start.',
   },
+  {
+    title: 'Subset frontier',
+    detail:
+      'Each mask represents a frontier of partial tours that share the same visited set.',
+  },
+]
+
+const keyDefinitions = [
+  {
+    heading: 'State',
+    bullets: [
+      'dp[mask][i] = best cost to start at s, visit mask, end at i.',
+      'mask is a subset of visited cities encoded as bits.',
+      'i is the last city in the partial tour.',
+    ],
+  },
+  {
+    heading: 'Transition',
+    bullets: [
+      'dp[mask][i] = min over j in mask: dp[mask ^ (1<<i)][j] + dist[j][i].',
+      'Only valid if i is in mask and start is in mask.',
+      'Represents adding city i last.',
+    ],
+  },
+  {
+    heading: 'Base case',
+    bullets: [
+      'dp[1<<s][s] = 0.',
+      'All other dp values start as INF.',
+      'Ensures paths begin at the fixed start.',
+    ],
+  },
+  {
+    heading: 'Tour cost',
+    bullets: [
+      'Cycle TSP adds dist[i][s] to return to start.',
+      'Path TSP takes min over endpoints without return.',
+      'Fixed end uses the chosen endpoint only.',
+    ],
+  },
 ]
 
 const problemVariants = [
@@ -93,6 +133,29 @@ const problemVariants = [
   },
 ]
 
+const workflowSteps = [
+  {
+    title: 'Choose start and variant',
+    detail:
+      'Decide whether you need a cycle, a path, or a fixed end.',
+  },
+  {
+    title: 'Encode subsets as bitmasks',
+    detail:
+      'Use n-bit masks; ensure the start bit is always included.',
+  },
+  {
+    title: 'Fill dp by mask size',
+    detail:
+      'Iterate masks in increasing size to ensure predecessors are ready.',
+  },
+  {
+    title: 'Recover the tour',
+    detail:
+      'Store parent pointers to rebuild the optimal order of cities.',
+  },
+]
+
 const algorithmSteps = [
   {
     title: 'Index cities and choose a start',
@@ -133,6 +196,16 @@ const implementationNotes = [
       'Use a large sentinel. If dp is INF, skip transitions to avoid overflow.',
   },
   {
+    title: 'Parent reconstruction',
+    detail:
+      'Store parent[mask][i] to rebuild the optimal tour in reverse.',
+  },
+  {
+    title: 'Iterate by subset size',
+    detail:
+      'Loop masks by popcount to ensure transitions use smaller subsets.',
+  },
+  {
     title: 'Space optimization',
     detail:
       'dp has size 2^n * n. For n > 20, memory can be heavy. Consider pruning or meet-in-the-middle.',
@@ -141,6 +214,29 @@ const implementationNotes = [
     title: 'Distance matrix',
     detail:
       'Precompute dist[i][j] for O(1) transitions. For Euclidean cases, compute once.',
+  },
+]
+
+const optimizationNotes = [
+  {
+    title: 'Meet-in-the-middle',
+    detail:
+      'Split cities into halves and merge path costs to reduce memory, at the cost of extra logic.',
+  },
+  {
+    title: 'Pruning with bounds',
+    detail:
+      'Use lower bounds (MST, 1-tree, or min outgoing edges) to cut states in search variants.',
+  },
+  {
+    title: 'Cache locality',
+    detail:
+      'Iterate masks in increasing order and keep dp in contiguous arrays for speed.',
+  },
+  {
+    title: 'Symmetry reduction',
+    detail:
+      'Fix the start city to remove rotational symmetry and reduce states by a factor of n.',
   },
 ]
 
@@ -187,6 +283,39 @@ const realWorldUses = [
     context: 'Genome assembly ordering',
     detail:
       'Ordering a small set of fragments by overlap can be modeled as TSP variants.',
+  },
+  {
+    context: 'Batch job sequencing',
+    detail:
+      'Small sets of tasks with setup costs can be optimized exactly.',
+  },
+  {
+    context: 'Warehouse picking',
+    detail:
+      'Optimal paths through a small number of pick locations when exactness matters.',
+  },
+]
+
+const correctnessSketch = [
+  {
+    title: 'Optimal substructure',
+    detail:
+      'An optimal tour contains an optimal prefix for its visited set and endpoint.',
+  },
+  {
+    title: 'Subset completeness',
+    detail:
+      'All subsets are enumerated, so the optimal tour cannot be missed.',
+  },
+  {
+    title: 'Fixed start',
+    detail:
+      'Pinning the start removes rotational duplicates without changing the optimum.',
+  },
+  {
+    title: 'Return edge',
+    detail:
+      'For cycles, the last step back to start completes the Hamiltonian tour.',
   },
 ]
 
@@ -246,6 +375,20 @@ mask = 0b10110
     explanation:
       'Bits track visited cities. The mask makes subset enumeration efficient and compact.',
   },
+  {
+    title: 'Path reconstruction',
+    code: `mask = full
+end = argmin_i dp[full][i] + dist[i][0]
+tour = []
+while mask != 0:
+    tour.append(end)
+    prev = parent[mask][end]
+    mask = mask ^ (1<<end)
+    end = prev
+tour.reverse()`,
+    explanation:
+      'Track parent pointers to rebuild the optimal route after computing costs.',
+  },
 ]
 
 const pitfalls = [
@@ -254,6 +397,24 @@ const pitfalls = [
   'Overflowing costs when INF is too small or using 32-bit ints.',
   'Assuming symmetry when the distance matrix is asymmetric.',
   'Using bitmask DP for n too large; it grows exponentially.',
+  'Iterating masks without checking the start bit, which wastes work and breaks logic.',
+  'Skipping parent pointers when you need the actual tour, not just its cost.',
+]
+
+const implementationChecklist = [
+  'Fix the start city to remove rotational symmetry.',
+  'Use a flat dp array sized (1<<n) * n.',
+  'Skip masks that do not include the start bit.',
+  'Guard transitions when dp[prev][j] is INF.',
+  'Store parent pointers if a tour is required.',
+]
+
+const testingChecklist = [
+  'n = 1 and n = 2 trivial cases.',
+  'Asymmetric distances to ensure directionality is respected.',
+  'Path vs cycle variants with known answers.',
+  'Disconnected or INF edges to confirm unreachable handling.',
+  'Random small n compared to brute force permutations.',
 ]
 
 const decisionGuidance = [
@@ -262,6 +423,7 @@ const decisionGuidance = [
   'For asymmetric costs, keep directed distances and do not assume symmetry.',
   'If you only need a path, use the path variant to avoid the return edge.',
   'If distances are Euclidean and n is large, use Christofides or local search.',
+  'If you need the actual route, store parents during DP.',
 ]
 
 const advancedInsights = [
@@ -313,7 +475,7 @@ export default function BitmaskDPTSPPage(): JSX.Element {
               <p className="win95-text">
                 Bitmask DP, also called the Held-Karp algorithm, solves the traveling salesman problem exactly by enumerating
                 subsets of visited cities. It trades exponential time for optimality and is the go-to solution for small instances.
-                This page explains the state, transitions, and the variants you will see in interviews and contests.
+                This page explains the state, transitions, variants, and how to reconstruct the optimal tour.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -327,6 +489,7 @@ export default function BitmaskDPTSPPage(): JSX.Element {
               <p className="win95-text">
                 The key idea is to remember which cities have been visited (a bitmask) and where you are now (the endpoint).
                 This captures enough information to extend the path optimally without rechecking all permutations.
+                The DP builds solutions by subset size and guarantees exact optimality for small n.
               </p>
             </div>
           </fieldset>
@@ -356,6 +519,22 @@ export default function BitmaskDPTSPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Definitions that matter</legend>
+            <div className="win95-grid win95-grid-2">
+              {keyDefinitions.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: problem variants</legend>
             <div className="win95-grid win95-grid-3">
               {problemVariants.map((block) => (
@@ -366,6 +545,18 @@ export default function BitmaskDPTSPPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>End-to-end workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {workflowSteps.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -393,6 +584,18 @@ export default function BitmaskDPTSPPage(): JSX.Element {
             <legend>Implementation notes</legend>
             <div className="win95-grid win95-grid-2">
               {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Optimization ideas</legend>
+            <div className="win95-grid win95-grid-2">
+              {optimizationNotes.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -446,10 +649,44 @@ export default function BitmaskDPTSPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Why it is correct (sketch)</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessSketch.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {implementationChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Testing and edge cases</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
