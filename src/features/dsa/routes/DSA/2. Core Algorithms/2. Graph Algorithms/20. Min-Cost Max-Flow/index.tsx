@@ -48,6 +48,11 @@ const mentalModels = [
     detail:
       'Vertex potentials adjust edge prices so all reduced costs stay non-negative, enabling fast Dijkstra.',
   },
+  {
+    title: 'Budgeted pipes',
+    detail:
+      'Capacities are pipe widths, costs are per-unit budgets. You want the largest throughput without overspending.',
+  },
 ]
 
 const coreDefinitions = [
@@ -65,6 +70,14 @@ const coreDefinitions = [
       'Find the maximum possible flow from s to t.',
       'Among all max flows, choose the one with minimum total cost.',
       'Total cost is sum(flow on edge * edge cost).',
+    ],
+  },
+  {
+    heading: 'Min-cost flow (fixed value)',
+    bullets: [
+      'Send a specified amount F from s to t at minimum cost.',
+      'Stop after F units instead of pushing maximum flow.',
+      'Same residual mechanics, different stopping condition.',
     ],
   },
   {
@@ -90,6 +103,37 @@ const coreDefinitions = [
       'Its bottleneck capacity dictates how much flow can be sent.',
       'Augmenting reduces total cost optimally when shortest.',
     ],
+  },
+  {
+    heading: 'Reduced cost optimality',
+    bullets: [
+      'No negative reduced-cost cycles implies optimality.',
+      'Potentials encode a dual solution to the min-cost LP.',
+      'Each augmentation preserves complementary slackness.',
+    ],
+  },
+]
+
+const problemVariants = [
+  {
+    title: 'Fixed-flow min cost',
+    detail:
+      'You already know the required flow value (F). Run the algorithm and stop when totalFlow = F.',
+  },
+  {
+    title: 'Circulation with demands',
+    detail:
+      'Edges have lower bounds and nodes have supply/demand. Convert with a super source and super sink.',
+  },
+  {
+    title: 'Assignment model',
+    detail:
+      'Bipartite matching with costs is min-cost flow with unit capacities and supply/demand of 1.',
+  },
+  {
+    title: 'Min-cost max-flow with penalties',
+    detail:
+      'Add edges with large costs to model penalties or soft constraints.',
   },
 ]
 
@@ -121,6 +165,29 @@ const algorithmSteps = [
   },
 ]
 
+const correctnessSketch = [
+  {
+    title: 'Invariant: feasibility',
+    detail:
+      'Augmenting along a residual path preserves capacity constraints and flow conservation.',
+  },
+  {
+    title: 'Invariant: reduced-cost non-negative',
+    detail:
+      'Potentials reweight edges so Dijkstra is valid, and each found path is shortest in original costs.',
+  },
+  {
+    title: 'Optimality condition',
+    detail:
+      'When no s-to-t path exists, flow is maximum. When no negative reduced-cost cycle exists, cost is minimum.',
+  },
+  {
+    title: 'Why shortest paths work',
+    detail:
+      'Each augmentation is a minimum-cost improvement; repeating until no path remains yields min-cost max-flow.',
+  },
+]
+
 const implementationNotes = [
   {
     title: 'Edge structure',
@@ -136,6 +203,16 @@ const implementationNotes = [
     title: 'Negative edges',
     detail:
       'Dijkstra requires non-negative reduced costs. Always update potentials correctly to preserve that property.',
+  },
+  {
+    title: 'Path reconstruction',
+    detail:
+      'Store parent node and edge index from Dijkstra to rebuild the augmenting path efficiently.',
+  },
+  {
+    title: 'Disconnected graphs',
+    detail:
+      'If t is unreachable, stop. Distances for unreachable nodes should not update potentials.',
   },
   {
     title: 'Stop criteria',
@@ -167,6 +244,29 @@ const complexityNotes = [
   },
 ]
 
+const algorithmVariants = [
+  {
+    title: 'Successive shortest augmenting path',
+    detail:
+      'The standard approach with potentials and Dijkstra. Reliable and simple to implement.',
+  },
+  {
+    title: 'Cycle canceling',
+    detail:
+      'Start with any feasible flow, then cancel negative cycles in the residual graph until none remain.',
+  },
+  {
+    title: 'Cost scaling',
+    detail:
+      'Refines the solution with decreasing cost precision, reducing the number of shortest path runs.',
+  },
+  {
+    title: 'Capacity scaling',
+    detail:
+      'Augment only along edges with large residual capacity first to reduce iterations.',
+  },
+]
+
 const realWorldUses = [
   {
     context: 'Logistics and transport',
@@ -188,6 +288,11 @@ const realWorldUses = [
     detail:
       'Serve ads to impressions with capacity constraints and per-impression costs or penalties.',
   },
+  {
+    context: 'Supply chain planning',
+    detail:
+      'Balance production, transport, and storage costs with limits at each stage.',
+  },
 ]
 
 const examples = [
@@ -206,6 +311,15 @@ min cost chooses s-a-b-t for 1 unit,
 then fills remaining cheapest paths.`,
     explanation:
       'The algorithm sends units along the cheapest residual routes first, using the zero-cost a->b edge to lower total cost.',
+  },
+  {
+    title: 'Fixed-flow variant',
+    code: `Goal: send F = 4 units from s to t.
+- Run SSAP normally
+- Stop when totalFlow = 4 (even if more capacity remains)
+- totalCost is minimal among all flows of value 4`,
+    explanation:
+      'This is useful when you have a strict demand or budget and do not want maximum throughput.',
   },
   {
     title: 'Successive shortest augmenting path (pseudocode)',
@@ -239,6 +353,19 @@ function addFlow(e, amount):
     explanation:
       'Reverse edges allow undoing expensive flow later, which is critical for achieving minimum total cost.',
   },
+  {
+    title: 'Lower bounds transformation (sketch)',
+    code: `For edge u->v with lower L and upper U:
+- Replace capacity with (U-L)
+- Track demand: demand[u] -= L, demand[v] += L
+- Add super source Ss and super sink St
+- Connect Ss -> v with capacity demand[v] (for demand > 0)
+- Connect u -> St with capacity -demand[u] (for demand < 0)
+- Add edge t -> s with capacity INF (for circulation)
+- Feasible circulation exists if max flow from Ss to St saturates all Ss edges`,
+    explanation:
+      'This transforms circulation with lower bounds into a standard min-cost flow problem.',
+  },
 ]
 
 const pitfalls = [
@@ -247,6 +374,17 @@ const pitfalls = [
   'Overflowing total cost with 32-bit integers on large graphs.',
   'Stopping early after a fixed flow when the requirement is max flow.',
   'Ignoring lower bounds or demands when the problem is a circulation with constraints.',
+  'Updating potentials for unreachable nodes, which can introduce negative reduced costs.',
+  'Reusing stale parent pointers when Dijkstra fails to reach t.',
+]
+
+const testingChecklist = [
+  'Zero-cost edges and multiple shortest paths.',
+  'Negative costs with no negative cycles (potentials must handle this).',
+  'Disconnected graphs where no s-to-t path exists.',
+  'Fixed-flow mode: stop exactly at F even if more capacity exists.',
+  'Very large costs or capacities to verify 64-bit totals.',
+  'Lower bounds transformation with a feasible circulation.',
 ]
 
 const decisionGuidance = [
@@ -255,6 +393,7 @@ const decisionGuidance = [
   'If edges have weights but capacity is 1, consider assignment algorithms like Hungarian.',
   'If the graph is undirected, convert each undirected edge into two directed edges.',
   'If you need fixed-flow min cost, stop after reaching that flow instead of max flow.',
+  'If you need feasibility with lower bounds, solve circulation first, then optimize cost.',
 ]
 
 const advancedInsights = [
@@ -278,6 +417,11 @@ const advancedInsights = [
     detail:
       'Potentials correspond to a dual solution in linear programming, explaining why reduced costs stay non-negative.',
   },
+  {
+    title: 'Min-cost max-flow as LP',
+    detail:
+      'It is a linear program with flow conservation and capacity bounds; potentials are the dual variables.',
+  },
 ]
 
 const takeaways = [
@@ -286,6 +430,7 @@ const takeaways = [
   'Successive shortest augmenting paths plus potentials yields a reliable implementation.',
   'Complexity depends on max flow; large flows may need scaling optimizations.',
   'This model underpins logistics, assignment, and network optimization problems.',
+  'Variants handle fixed flow, lower bounds, and circulation with demands.',
 ]
 
 export default function MinCostMaxFlowPage(): JSX.Element {
@@ -366,6 +511,18 @@ export default function MinCostMaxFlowPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Problem variants and modeling tricks</legend>
+            <div className="win95-grid win95-grid-2">
+              {problemVariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: successive shortest augmenting path</legend>
             <div className="win95-grid win95-grid-2">
               {algorithmSteps.map((item) => (
@@ -385,9 +542,33 @@ export default function MinCostMaxFlowPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Why it is correct (sketch)</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessSketch.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Implementation notes</legend>
             <div className="win95-grid win95-grid-2">
               {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Algorithm variants and upgrades</legend>
+            <div className="win95-grid win95-grid-2">
+              {algorithmVariants.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -446,6 +627,17 @@ export default function MinCostMaxFlowPage(): JSX.Element {
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Testing and edge cases</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
