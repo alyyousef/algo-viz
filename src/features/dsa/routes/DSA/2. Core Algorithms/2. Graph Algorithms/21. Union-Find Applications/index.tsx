@@ -43,39 +43,95 @@ const mentalModels = [
     detail:
       'Every element points to a label. Find asks for the label, union relabels one group to match the other.',
   },
+  {
+    title: 'Islands merging',
+    detail:
+      'Each new edge or land cell can merge islands into a larger component.',
+  },
+]
+
+const dsuFundamentals = [
+  {
+    heading: 'Make-set initialization',
+    bullets: [
+      'Each element starts as its own parent.',
+      'Optionally track size or rank for balancing.',
+      'Component count starts at n.',
+    ],
+  },
+  {
+    heading: 'Find with compression',
+    bullets: [
+      'Walk parent pointers to the root.',
+      'Rewrite parents on the path to point directly to the root.',
+      'Amortized time becomes almost constant.',
+    ],
+  },
+  {
+    heading: 'Union by size/rank',
+    bullets: [
+      'Attach the smaller tree under the larger root.',
+      'Keeps depth low even under many unions.',
+      'Works with size or rank arrays.',
+    ],
+  },
+  {
+    heading: 'Component metadata',
+    bullets: [
+      'Store size, min/max, or aggregate data at each root.',
+      'Update metadata only when roots merge.',
+      'Enables queries like largest component size.',
+    ],
+  },
+  {
+    heading: 'Component count tracking',
+    bullets: [
+      'Decrement count only when two different roots merge.',
+      'Useful for online connectivity or island counting.',
+      'Avoids full scans to compute number of groups.',
+    ],
+  },
+  {
+    heading: 'What DSU cannot do',
+    bullets: [
+      'No efficient deletions or split operations.',
+      'Does not return actual paths or distances.',
+      'Use dynamic connectivity or graph search when needed.',
+    ],
+  },
 ]
 
 const coreConcepts = [
   {
     heading: 'Connectivity queries',
     bullets: [
-      'Answer “are u and v in the same component?” in near O(1) time.',
+      'Answer "are u and v in the same component?" in near O(1) time.',
       'Use find(u) == find(v) to test connectivity.',
-      'Works best when unions are common and deletions are rare.',
+      'Best when unions are frequent and deletions are rare.',
     ],
   },
   {
-    heading: 'Union by rank/size',
+    heading: 'Cycle detection (undirected)',
     bullets: [
-      'Always attach the smaller tree to the larger tree root.',
-      'Keeps tree height low and reduces future find cost.',
-      'Stores rank or size arrays for quick comparisons.',
-    ],
-  },
-  {
-    heading: 'Path compression',
-    bullets: [
-      'When finding a root, point every node on the path directly to the root.',
-      'Greatly reduces future lookup cost.',
-      'Combined with union by rank, yields inverse Ackermann time.',
+      'For each edge (u, v), if find(u) == find(v), a cycle exists.',
+      'Works in streaming edge settings.',
+      'Core step inside Kruskal to prevent cycles.',
     ],
   },
   {
     heading: 'Offline graph queries',
     bullets: [
       'Sort edges by weight and union as you process queries.',
-      'Used for MST, connectivity under thresholds, and clustering.',
+      'Answer connectivity under thresholds efficiently.',
       'Works well when all edges are known upfront.',
+    ],
+  },
+  {
+    heading: 'Equivalence classes',
+    bullets: [
+      'Merge items known to be equal (variables, synonyms, accounts).',
+      'Each root defines a class; find gives the class id.',
+      'Check constraints by comparing roots.',
     ],
   },
   {
@@ -84,6 +140,14 @@ const coreConcepts = [
       'Union adjacent pixels or cells to build connected regions.',
       'Used in blob detection, segmentation, and flood analysis.',
       'Avoids repeated BFS/DFS across large grids.',
+    ],
+  },
+  {
+    heading: 'Dynamic island counting',
+    bullets: [
+      'Activate cells over time and union with active neighbors.',
+      'Track number of components as islands merge.',
+      'Used in "Number of Islands II" style problems.',
     ],
   },
   {
@@ -96,11 +160,49 @@ const coreConcepts = [
   },
 ]
 
+const modelingPatterns = [
+  {
+    title: 'Map objects to ids',
+    detail:
+      'Use a map from strings or objects to integer ids to feed DSU arrays.',
+  },
+  {
+    title: 'Online edge arrival',
+    detail:
+      'Union endpoints as edges arrive to keep components current.',
+  },
+  {
+    title: 'Offline threshold queries',
+    detail:
+      'Sort edges and queries by threshold; union edges as you advance.',
+  },
+  {
+    title: 'Grid to graph',
+    detail:
+      'Flatten (r, c) into id = r * cols + c, union neighbors that are active.',
+  },
+  {
+    title: 'Equivalence constraints',
+    detail:
+      'Use DSU to merge items known to be equal, then verify inequalities.',
+  },
+  {
+    title: 'Parity constraints',
+    detail:
+      'Store parity to parent to model bipartite constraints and detect conflicts.',
+  },
+]
+
 const complexityNotes = [
   {
     title: 'Time cost',
     detail:
       'Amortized inverse Ackermann time per operation, effectively constant for all practical input sizes.',
+  },
+  {
+    title: 'Amortized vs worst case',
+    detail:
+      'Single operations can still be longer, but the average over many operations is tiny.',
   },
   {
     title: 'Space cost',
@@ -123,7 +225,7 @@ const realWorldUses = [
   {
     context: 'Minimum spanning trees',
     detail:
-      'Kruskal’s algorithm uses union-find to quickly detect cycles while adding edges.',
+      'Kruskal\'s algorithm uses union-find to quickly detect cycles while adding edges.',
   },
   {
     context: 'Dynamic connectivity',
@@ -149,6 +251,21 @@ const realWorldUses = [
     context: 'Account merging',
     detail:
       'Merge user accounts or profiles that share identifiers (emails, phone numbers).',
+  },
+  {
+    context: 'Constraint solving',
+    detail:
+      'Merge equal variables or types, then check inequality constraints for contradictions.',
+  },
+  {
+    context: 'Online island counting',
+    detail:
+      'Track how many islands exist as land cells are activated over time.',
+  },
+  {
+    context: 'Social graph grouping',
+    detail:
+      'Union friendships to maintain community groups or connected friend circles.',
   },
 ]
 
@@ -201,6 +318,43 @@ for (u, v, w) in edges:
     explanation:
       'Union accounts that share an identifier, then group by find(root) to merge.',
   },
+  {
+    title: 'Offline threshold connectivity',
+    code: `sort edges by weight
+sort queries by threshold
+ptr = 0
+for query in queries:
+    while ptr < edges and edges[ptr].w <= query.threshold:
+        union(edges[ptr].u, edges[ptr].v)
+        ptr++
+    answer = (find(query.u) == find(query.v))`,
+    explanation:
+      'Process queries in weight order to answer connectivity under varying thresholds efficiently.',
+  },
+  {
+    title: 'Number of Islands II (dynamic)',
+    code: `count = 0
+for (r, c) in activations:
+    if not active[r][c]:
+        active[r][c] = true
+        count += 1
+        for neighbor in activeNeighbors(r, c):
+            if find(id(r,c)) != find(id(neighbor)):
+                union(id(r,c), id(neighbor))
+                count -= 1`,
+    explanation:
+      'Each activation starts a new island, then unions with neighbors to merge islands and update the count.',
+  },
+  {
+    title: 'Equality/inequality constraints',
+    code: `for each equation a == b:
+    union(a, b)
+for each equation a != b:
+    if find(a) == find(b):
+        contradiction`,
+    explanation:
+      'Union all equalities first, then verify inequalities by checking if they share a root.',
+  },
 ]
 
 const pitfalls = [
@@ -209,6 +363,26 @@ const pitfalls = [
   'Using union-find for problems that need deletions or split operations.',
   'Assuming it gives distances or paths; it only answers connectivity.',
   'Mixing up zero-based and one-based indices in parent arrays.',
+  'Updating size or rank on the wrong root after union.',
+  'Reusing a stale mapping when elements are created on the fly.',
+  'Applying DSU to directed reachability where connectivity is not symmetric.',
+]
+
+const solvingChecklist = [
+  'Define the elements and map them to stable integer ids.',
+  'Decide when unions happen (edges, equalities, activations).',
+  'Track component metadata if needed (size, min/max, count).',
+  'Choose offline sorting if queries involve thresholds or time.',
+  'Verify constraints by comparing roots after unions.',
+]
+
+const testingChecklist = [
+  'Single element and all elements isolated.',
+  'Many unions that form one big component.',
+  'Repeated union on same pair (should be no-op).',
+  'Queries before any unions and after all unions.',
+  'Dynamic activation order on grids.',
+  'Large ids or sparse mappings (hash map usage).',
 ]
 
 const decisionGuidance = [
@@ -217,6 +391,7 @@ const decisionGuidance = [
   'Need actual paths or distances: pair with BFS/DFS or shortest path algorithms.',
   'Working with sorted edges and MST logic: union-find is the standard choice.',
   'Need connected component labels in grids or images: union-find is simple and fast.',
+  'Need parity or bipartite constraints: use DSU with parity tracking.',
 ]
 
 const advancedInsights = [
@@ -231,6 +406,11 @@ const advancedInsights = [
       'Store history of parent changes to support backtracking in divide-and-conquer offline algorithms.',
   },
   {
+    title: 'DSU with parity',
+    detail:
+      'Track parity to the root to support bipartite constraints and detect odd cycles.',
+  },
+  {
     title: 'Disjoint set union on tree edges',
     detail:
       'DSU-on-tree techniques reuse union-find ideas to process subtree queries efficiently.',
@@ -240,6 +420,11 @@ const advancedInsights = [
     detail:
       'Batch unions and compress in stages for parallel processing on large graphs.',
   },
+  {
+    title: 'Temporal connectivity',
+    detail:
+      'Combine offline sorting with DSU rollback to answer queries over time windows.',
+  },
 ]
 
 const takeaways = [
@@ -248,6 +433,7 @@ const takeaways = [
   'Used everywhere from MSTs to image segmentation and account merging.',
   'Not suited for deletions or path queries without extra algorithms.',
   'Think of it as a component tracker, not a full graph solver.',
+  'Modeling choices (id mapping, thresholds, metadata) make or break solutions.',
 ]
 
 export default function UnionFindApplicationsPage(): JSX.Element {
@@ -267,7 +453,8 @@ export default function UnionFindApplicationsPage(): JSX.Element {
               <div className="win95-subheading">Practical uses of disjoint set union for connectivity problems</div>
               <p className="win95-text">
                 Union-find is a tiny data structure with enormous impact. It tracks connected components as edges appear,
-                enabling fast cycle checks, clustering, and region labeling without repeated full graph traversals.
+                enabling fast cycle checks, clustering, region labeling, and offline connectivity queries without repeated
+                full graph traversals.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -281,7 +468,8 @@ export default function UnionFindApplicationsPage(): JSX.Element {
               <p className="win95-text">
                 Union-find maintains a forest of sets. Each union merges two sets, and each find returns the leader of a set.
                 With path compression and union by rank, the structure becomes almost constant time, making it ideal for large
-                connectivity workloads.
+                connectivity workloads where links only appear and rarely disappear. It powers MSTs, clustering, grid labeling,
+                constraint grouping, and dynamic island counts with a minimal, reliable API.
               </p>
             </div>
           </fieldset>
@@ -311,6 +499,22 @@ export default function UnionFindApplicationsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>DSU fundamentals and operations</legend>
+            <div className="win95-grid win95-grid-3">
+              {dsuFundamentals.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: common applications</legend>
             <div className="win95-grid win95-grid-3">
               {coreConcepts.map((block) => (
@@ -321,6 +525,18 @@ export default function UnionFindApplicationsPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Modeling patterns and recipes</legend>
+            <div className="win95-grid win95-grid-2">
+              {modelingPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -376,6 +592,11 @@ export default function UnionFindApplicationsPage(): JSX.Element {
                     <td>~O(1)</td>
                     <td>Compare find(u) and find(v).</td>
                   </tr>
+                  <tr>
+                    <td>Component size</td>
+                    <td>~O(1)</td>
+                    <td>Read size at the root after find.</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -413,6 +634,28 @@ export default function UnionFindApplicationsPage(): JSX.Element {
             <div className="win95-panel">
               <ul className="win95-list">
                 {pitfalls.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>DSU problem-solving checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {solvingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Testing and edge cases</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {testingChecklist.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
