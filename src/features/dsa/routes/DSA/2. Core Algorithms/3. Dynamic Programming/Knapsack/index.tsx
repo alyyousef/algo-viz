@@ -26,9 +26,32 @@ const historicalMilestones = [
       'Researchers developed fully polynomial-time approximation schemes that trade tiny accuracy loss for true polynomial runtime when exact solutions are too costly.',
   },
   {
-    title: 'Bitset and branch-and-bound optimizations (1990s-2010s)',
+    title: 'Bitset and meet-in-the-middle (1990s-2010s)',
     detail:
       'Bitset convolutions, meet-in-the-middle, and pruning heuristics brought knapsack into competitive programming and high-performance solvers.',
+  },
+]
+
+const formalDefinition = [
+  {
+    title: 'Inputs',
+    detail:
+      'n items, each with weight w_i and value v_i. A capacity W limits total weight.',
+  },
+  {
+    title: 'Decision',
+    detail:
+      'Choose a subset of items (0/1) or a multiset (unbounded) to maximize total value.',
+  },
+  {
+    title: 'Constraint',
+    detail:
+      'Sum of chosen weights must be <= W. Items are indivisible in 0/1 knapsack.',
+  },
+  {
+    title: 'Output',
+    detail:
+      'The maximum achievable value, and optionally the list of chosen items.',
   },
 ]
 
@@ -41,12 +64,12 @@ const mentalModels = [
   {
     title: 'Budget ledger',
     detail:
-      'Capacity is a budget; each item is an expense that yields a return. The DP table is your ledger of best returns for every budget prefix.',
+      'Capacity is a budget; each item is an expense that yields a return. The DP table is your ledger of best returns for every budget.',
   },
   {
     title: 'Frontier of possibilities',
     detail:
-      'Each DP entry is a point on the Pareto frontier for weight and value. Knapsack DP incrementally constructs the frontier without enumerating all subsets.',
+      'Each DP entry is a point on the Pareto frontier for weight and value. Knapsack DP constructs the frontier without enumerating all subsets.',
   },
   {
     title: 'Choices as yes/no switches',
@@ -55,30 +78,134 @@ const mentalModels = [
   },
 ]
 
-const mechanics = [
+const variants = [
   {
-    heading: '0/1 knapsack recurrence',
+    heading: '0/1 knapsack',
     bullets: [
-      'dp[i][w] = maximum value using first i items within capacity w.',
-      'If weight_i > w: dp[i][w] = dp[i-1][w].',
-      'Else: dp[i][w] = max(dp[i-1][w], dp[i-1][w - weight_i] + value_i).',
-      'Space can drop to O(W) by iterating w downward so each item is used at most once per pass.',
+      'Each item is chosen at most once.',
+      'Classic DP: dp[i][w] = max value using first i items with capacity w.',
+      'Backward weight iteration in 1D prevents reusing an item.',
     ],
   },
   {
     heading: 'Unbounded knapsack',
     bullets: [
-      'dp[i][w] = max(dp[i-1][w], dp[i][w - weight_i] + value_i).',
-      'Iterate w upward so an item can be reused multiple times in the same pass.',
-      'Models coin change and crafting problems where supply is unlimited.',
+      'Items can be used unlimited times.',
+      'Transition reuses dp[w - w_i] in the same item loop.',
+      'Forward weight iteration allows multiple uses.',
+    ],
+  },
+  {
+    heading: 'Bounded knapsack',
+    bullets: [
+      'Each item has a limited count c_i.',
+      'Convert to multiple 0/1 items via binary splitting or use monotone queue.',
+    ],
+  },
+  {
+    heading: 'Multi-constraint knapsack',
+    bullets: [
+      'Weights become vectors (weight, volume, cost).',
+      'DP dimension increases; complexity grows quickly.',
+    ],
+  },
+  {
+    heading: 'Fractional knapsack',
+    bullets: [
+      'Items can be split; greedy by value density is optimal.',
+      'Different problem than 0/1; do not confuse them.',
+    ],
+  },
+]
+
+const mechanics = [
+  {
+    heading: '0/1 knapsack recurrence',
+    bullets: [
+      'dp[i][w] = maximum value using first i items within capacity w.',
+      'If w_i > w: dp[i][w] = dp[i-1][w].',
+      'Else: dp[i][w] = max(dp[i-1][w], dp[i-1][w - w_i] + v_i).',
+    ],
+  },
+  {
+    heading: 'Space optimization to 1D',
+    bullets: [
+      'Use dp[w] only, representing the best value at capacity w.',
+      'Iterate w downward for 0/1 to avoid reusing items.',
+      'Iterate w upward for unbounded to allow repeats.',
     ],
   },
   {
     heading: 'Reconstruction',
     bullets: [
-      'Store take/skip decisions or parents to backtrack from dp[n][W] and list chosen items.',
-      'Track total weight alongside value when reporting a solution to confirm feasibility.',
+      'Store a take/skip decision or parent pointer per state.',
+      'Backtrack from dp[n][W] to list chosen items.',
+      'For 1D DP, track last item used and previous weight.',
     ],
+  },
+]
+
+const algorithmSteps = [
+  {
+    title: 'Define state and base cases',
+    detail:
+      'Set dp[0][w] = 0 (no items). Decide if dp is item-major (i, w) or weight-only (w).',
+  },
+  {
+    title: 'Choose transition',
+    detail:
+      'Include or exclude item i, respecting capacity. Use the correct loop direction.',
+  },
+  {
+    title: 'Fill DP table',
+    detail:
+      'Iterate items then capacities. Each cell depends on smaller item counts.',
+  },
+  {
+    title: 'Extract and rebuild',
+    detail:
+      'Answer is dp[n][W]. Backtrack to recover the chosen items if needed.',
+  },
+]
+
+const workedExample = [
+  {
+    title: 'Items and capacity',
+    detail:
+      'Items: (w, v) = (2, 6), (2, 10), (3, 12). Capacity W = 5.',
+  },
+  {
+    title: '2D table idea',
+    detail:
+      'dp has rows for items and columns for capacity 0..5. dp[i][w] stores best value.',
+  },
+  {
+    title: 'Row updates',
+    detail:
+      'After item 1: best is 6 at w >= 2. After item 2: best is 16 at w >= 4.',
+  },
+  {
+    title: 'Final answer',
+    detail:
+      'dp[3][5] = 22 by taking items (2, 10) and (3, 12).',
+  },
+]
+
+const reconstructionSteps = [
+  {
+    title: 'Check last row',
+    detail:
+      'If dp[i][w] == dp[i-1][w], item i was not taken. Otherwise it was taken.',
+  },
+  {
+    title: 'Move to previous state',
+    detail:
+      'If taken, set w = w - w_i and continue with i-1.',
+  },
+  {
+    title: 'Reverse the list',
+    detail:
+      'You collect items from last to first. Reverse to output in original order.',
   },
 ]
 
@@ -86,22 +213,22 @@ const complexityNotes = [
   {
     title: 'Pseudo-polynomial runtime',
     detail:
-      'Classic DP runs in O(nW) time and O(nW) or O(W) space, polynomial in numeric capacity W but exponential in its bit length. Large capacities demand optimizations or approximations.',
+      'Classic DP is O(nW) time and O(nW) or O(W) space. It is polynomial in W but exponential in log W.',
   },
   {
     title: 'Bitset speedups',
     detail:
-      'When values or weights are small, bitset convolution can pack transitions into word-level parallelism, accelerating dense instances.',
+      'When weights are small, bitset shifts compute reachable weights fast, often 32x or 64x speedups.',
   },
   {
     title: 'Meet-in-the-middle',
     detail:
-      'Splitting items in half and enumerating subsets of each part yields O(2^(n/2)) time and memory, outperforming plain 2^n for small n when W is huge.',
+      'Split items in half and enumerate subsets: O(2^(n/2)). Useful when n is small and W is huge.',
   },
   {
     title: 'Approximation schemes',
     detail:
-      'FPTAS scales values to shrink the DP dimension, delivering a (1 - epsilon) solution in polynomial time in n and 1/epsilon.',
+      'FPTAS scales values to shrink DP size and yields a (1 - epsilon) solution in poly(n, 1/epsilon).',
   },
 ]
 
@@ -139,19 +266,36 @@ const examples = [
     code: `function knapsack01(weights, values, W):
     n = len(weights)
     dp = array of length W+1 filled with 0
-    parent = array of length W+1 filled with -1  // optional reconstruction
+    take = array of length W+1 filled with -1
 
     for i in range(n):
         w_i = weights[i]; v_i = values[i]
         for w from W down to w_i:
-            take = dp[w - w_i] + v_i
-            if take > dp[w]:
-                dp[w] = take
-                parent[w] = i
+            cand = dp[w - w_i] + v_i
+            if cand > dp[w]:
+                dp[w] = cand
+                take[w] = i
 
-    return dp[W], parent`,
+    return dp[W], take`,
     explanation:
-      'Backward iteration prevents reusing the same item twice in one pass. parent records the last item that improved each capacity for reconstruction.',
+      'Backward iteration prevents reusing the same item twice. take[w] records the last item that improved capacity w.',
+  },
+  {
+    title: 'Reconstruction from 2D DP',
+    code: `function reconstruct(dp, weights, values, W):
+    i = len(weights)
+    w = W
+    chosen = []
+    while i > 0 and w >= 0:
+        if dp[i][w] == dp[i-1][w]:
+            i -= 1
+        else:
+            chosen.append(i-1)
+            w -= weights[i-1]
+            i -= 1
+    return reverse(chosen)`,
+    explanation:
+      'Compare dp[i][w] with dp[i-1][w]. If they differ, the item was taken.',
   },
   {
     title: 'Unbounded knapsack',
@@ -166,34 +310,34 @@ const examples = [
 
     return dp[W]`,
     explanation:
-      'Forward iteration lets an item be chosen multiple times because updated dp[w - w_i] in the same pass can feed future states.',
+      'Forward iteration allows an item to be reused multiple times because updated states feed into later capacities.',
   },
   {
-    title: 'Meet-in-the-middle for large W',
+    title: 'Meet-in-the-middle sketch',
     code: `function knapsackMeetMiddle(items, W):
     split items into A and B
-    listA = all subsets of A with (weight, value), filter weight <= W
-    listB = all subsets of B with (weight, value), filter weight <= W
-    sort listB by weight, keep only entries with strictly increasing value
+    listA = all subsets of A with (weight, value) filtered by weight <= W
+    listB = all subsets of B with (weight, value) filtered by weight <= W
+    sort listB by weight; keep only pairs with best value for each weight
 
     best = 0
     for (wA, vA) in listA:
         remaining = W - wA
-        vB = bestValueInListBWithWeightAtMost(remaining) // binary search
+        vB = bestValueInListBWithWeightAtMost(remaining)
         best = max(best, vA + vB)
 
     return best`,
     explanation:
-      'Enumerating halves cuts the 2^n blowup to 2^(n/2) and leverages dominance pruning on one side to speed lookups.',
+      'Enumerating halves reduces 2^n to 2^(n/2). Dominance pruning keeps listB compact.',
   },
 ]
 
 const pitfalls = [
   'Iterating capacity forward in 0/1 knapsack reuses the same item multiple times and breaks correctness.',
-  'Ignoring that O(nW) is pseudo-polynomial leads to timeouts when W is large; scale values or use meet-in-the-middle/approximation.',
+  'Ignoring that O(nW) is pseudo-polynomial leads to timeouts when W is large; scale values or use meet-in-the-middle.',
   'Forgetting reconstruction data makes it impossible to list chosen items later without rerunning with extra bookkeeping.',
   'Mixing value and weight dimensions accidentally (e.g., using value as capacity index) silently corrupts DP states.',
-  'Assuming value-per-weight greedily solves 0/1 knapsack; that only works for fractional knapsack, not 0/1.',
+  'Assuming value-per-weight greedily solves 0/1 knapsack; that only works for fractional knapsack.',
 ]
 
 const decisionGuidance = [
@@ -202,42 +346,66 @@ const decisionGuidance = [
   'Weights are small integers and many items: consider bitset DP for speed.',
   'Unlimited item copies: unbounded knapsack recurrence with forward iteration.',
   'Can tolerate approximation for large instances: use an FPTAS by scaling values.',
-  'Multiple constraints (multi-dimensional): expect higher complexity; consider heuristics or integer programming.',
+  'Multiple constraints: expect higher complexity; consider heuristics or integer programming.',
 ]
 
 const advancedInsights = [
   {
-    title: 'Fully polynomial-time approximation (FPTAS)',
+    title: 'Value-based DP',
     detail:
-      'Scale values by K = epsilon * maxValue / n to shrink DP size; solving the scaled problem yields a (1 - epsilon) approximation in poly(n, 1/epsilon).',
+      'Flip the dimension: dp[v] = min weight to reach value v. Useful when values are small but weights are large.',
+  },
+  {
+    title: 'FPTAS intuition',
+    detail:
+      'Scale values down by a factor K so the total value sum is smaller, then solve value-based DP.',
   },
   {
     title: 'Branch and bound',
     detail:
-      'Depth-first search with upper bounds (fractional knapsack or relaxed LP) prunes large parts of the search tree, often cracking medium instances quickly.',
-  },
-  {
-    title: 'Bitset convolutions',
-    detail:
-      'Bitwise shifts and OR operations can update reachable weights in O(W/word_size) per item, accelerating dense weight ranges.',
+      'Depth-first search with a fractional knapsack upper bound prunes subtrees aggressively.',
   },
   {
     title: 'Group and multiple-choice knapsack',
     detail:
-      'Some formulations require choosing at most one item from each group; adapt the recurrence by iterating group options instead of binary take/skip.',
+      'When items are partitioned into groups, choose at most one per group by iterating group options.',
   },
   {
     title: 'Pareto pruning',
     detail:
-      'For multi-dimensional variants, maintain Pareto-efficient states to curb explosion, trading completeness for tractable search spaces.',
+      'For multi-dimensional variants, keep only non-dominated states to limit growth.',
+  },
+]
+
+const miniFaq = [
+  {
+    question: 'Why is knapsack NP-complete if DP is O(nW)?',
+    answer:
+      'Because W is a number, not the number of bits to store it. O(nW) is pseudo-polynomial and can still be exponential in input size.',
+  },
+  {
+    question: 'Why does iteration direction matter?',
+    answer:
+      'Backward iteration prevents reusing the same item; forward iteration allows reuse. This matches 0/1 vs unbounded.',
+  },
+  {
+    question: 'Can I use greedy by value density?',
+    answer:
+      'Only for fractional knapsack. For 0/1, greedy can be arbitrarily wrong.',
+  },
+  {
+    question: 'How do I get the actual items?',
+    answer:
+      'Store a parent pointer or compare dp[i][w] to dp[i-1][w] to backtrack the chosen items.',
   },
 ]
 
 const takeaways = [
-  '0/1 knapsack thrives on optimal substructure; DP replaces exponential branching with O(nW) pseudo-polynomial time.',
-  'Iteration order matters: backward for 0/1, forward for unbounded.',
-  'When W is large, switch tactics: meet-in-the-middle, bitsets, or approximation schemes.',
-  'Greedy by value density fails for 0/1; use DP or bounded variants of it to stay correct.',
+  '0/1 knapsack uses a simple include/exclude DP with O(nW) time.',
+  'Loop direction is the core correctness detail for 0/1 vs unbounded.',
+  'When W is huge, switch to meet-in-the-middle, bitsets, or approximation.',
+  'Value-based DP and FPTAS help when weights are large but values are small.',
+  'Store split or take decisions if you need the item list, not just the value.',
 ]
 
 export default function KnapsackPage(): JSX.Element {
@@ -256,9 +424,8 @@ export default function KnapsackPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Packing value under a hard weight budget</div>
               <p className="win95-text">
-                The knapsack problem asks which items to pack when weight is scarce and value is the goal. Dynamic programming exploits
-                optimal substructure to trade exponential search for pseudo-polynomial work, while meet-in-the-middle and approximation
-                schemes step in when capacities explode.
+                The knapsack problem asks which items to pack when weight is scarce and value is the goal. This page covers the
+                formal definition, classic recurrences, reconstruction, variant types, and practical performance trade-offs.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -270,10 +437,21 @@ export default function KnapsackPage(): JSX.Element {
             <legend>The big picture</legend>
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
-                Knapsack balances payoff against capacity. It underpins budgets, cargo loading, and resource allocation where every
-                item is a discrete yes or no. The 0/1 variant forbids repeats; unbounded allows them. Both hinge on comparing include
-                versus exclude choices while never crossing the weight line.
+                Knapsack balances payoff against capacity. The core DP compares include vs exclude for each item and capacity.
+                0/1 forbids repeats, unbounded allows them. When W is too large, use meet-in-the-middle or approximation.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Formal definition</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinition.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -305,7 +483,23 @@ export default function KnapsackPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works: mechanics in motion</legend>
+            <legend>Variants at a glance</legend>
+            <div className="win95-grid win95-grid-3">
+              {variants.map((block) => (
+                <div key={block.heading} className="win95-panel">
+                  <div className="win95-heading">{block.heading}</div>
+                  <ul className="win95-list">
+                    {block.bullets.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How it works: mechanics</legend>
             <div className="win95-grid win95-grid-3">
               {mechanics.map((block) => (
                 <div key={block.heading} className="win95-panel">
@@ -315,6 +509,44 @@ export default function KnapsackPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Algorithm steps</legend>
+            <div className="win95-grid win95-grid-3">
+              {algorithmSteps.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked example</legend>
+            <div className="win95-grid win95-grid-2">
+              {workedExample.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <pre className="win95-code">
+                    <code>{item.detail}</code>
+                  </pre>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Reconstruction checklist</legend>
+            <div className="win95-grid win95-grid-3">
+              {reconstructionSteps.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -332,8 +564,8 @@ export default function KnapsackPage(): JSX.Element {
             </div>
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
-                O(nW) is fast when W is moderate, but remember it scales with the numeric capacity. Switch to meet-in-the-middle,
-                bitsets, or approximations when W is huge, and mind memory as well as time.
+                O(nW) is fast when W is moderate, but it scales with the numeric capacity. If W is huge, consider value-based DP,
+                meet-in-the-middle, bitsets, or approximation schemes.
               </p>
             </div>
           </fieldset>
@@ -377,6 +609,18 @@ export default function KnapsackPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Quick FAQ</legend>
+            <div className="win95-stack">
+              {miniFaq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -414,4 +658,3 @@ export default function KnapsackPage(): JSX.Element {
     </div>
   )
 }
-
