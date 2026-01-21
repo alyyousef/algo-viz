@@ -268,6 +268,119 @@ function binarySearch(arr, target, left, right) {
   },
 ]
 
+
+const problemFraming = [
+  {
+    title: 'Recurrence matters',
+    detail:
+      'Divide and conquer is best described by a recurrence T(n) = aT(n/b) + f(n). The combine cost f(n) often determines the final complexity.',
+  },
+  {
+    title: 'Independent subproblems',
+    detail:
+      'Subproblems should be independent. If they overlap, dynamic programming or memoization is usually better.',
+  },
+  {
+    title: 'Balanced splits win',
+    detail:
+      'Splitting into equal halves yields log-depth recursion and good cache behavior. Unbalanced splits can degrade performance.',
+  },
+]
+
+const recursionAnatomy = [
+  {
+    title: 'Base case',
+    detail:
+      'Stop when the subproblem is trivial (size 0 or 1, or a known direct formula).',
+  },
+  {
+    title: 'Divide step',
+    detail:
+      'Split the input into smaller parts and define how to recurse on them.',
+  },
+  {
+    title: 'Conquer step',
+    detail:
+      'Solve each subproblem recursively and return a structured result.',
+  },
+  {
+    title: 'Combine step',
+    detail:
+      'Merge sub-results into the final answer. This is often the cost bottleneck.',
+  },
+]
+
+const masterTheoremCases = [
+  {
+    title: 'Case 1: f(n) smaller',
+    detail:
+      'If f(n) = O(n^{log_b a - epsilon}), then T(n) = Theta(n^{log_b a}).',
+  },
+  {
+    title: 'Case 2: f(n) equal',
+    detail:
+      'If f(n) = Theta(n^{log_b a} log^k n), then T(n) = Theta(n^{log_b a} log^{k+1} n).',
+  },
+  {
+    title: 'Case 3: f(n) larger',
+    detail:
+      'If f(n) = Omega(n^{log_b a + epsilon}) and a f(n/b) <= c f(n) for some c < 1, then T(n) = Theta(f(n)).',
+  },
+]
+
+const workedExample = {
+  title: 'Merge sort recursion tree',
+  steps: [
+    'Split array of size n into two halves of size n/2.',
+    'Recursively sort both halves.',
+    'Merge the two sorted halves in O(n).',
+    'Depth is log n, work per level is O(n), so total is O(n log n).',
+  ],
+}
+
+const decisionChecklist = [
+  'Can the problem be decomposed into self-similar subproblems?',
+  'Are the subproblems independent (no heavy overlap)?',
+  'Is the combine step efficient enough to justify recursion?',
+  'Is recursion depth safe for max input size?',
+  'Would a DP or iterative approach be simpler and faster?',
+]
+
+const optimizationLevers = [
+  {
+    title: 'Hybrid base cases',
+    detail:
+      'Switch to insertion sort or direct formulas when subproblem size is small to reduce overhead.',
+  },
+  {
+    title: 'Tail recursion elimination',
+    detail:
+      'Convert certain recursive calls into loops to reduce stack usage.',
+  },
+  {
+    title: 'Cache friendliness',
+    detail:
+      'Work in contiguous chunks to exploit locality, especially in divide steps.',
+  },
+  {
+    title: 'Parallelism',
+    detail:
+      'Run subproblems concurrently; the paradigm naturally exposes parallel work.',
+  },
+  {
+    title: 'Avoid repeated merges',
+    detail:
+      'Re-use buffers or do in-place merges where possible to cut memory traffic.',
+  },
+]
+
+const whenNotToUse = [
+  'When subproblems overlap heavily (e.g., naive Fibonacci).',
+  'When the combine step is too expensive compared to the work saved by splitting.',
+  'When recursion depth is too large for the call stack.',
+  'When a linear scan or iterative method is simpler and equally fast.',
+]
+
 const keyTakeaways = [
   {
     title: 'Think Recursively',
@@ -380,9 +493,45 @@ export default function DivideAndConquerPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Problem framing</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemFraming.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Recursion anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {recursionAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How It Works</legend>
             <div className="win95-grid win95-grid-2">
               {howItWorks.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Master Theorem quick cases</legend>
+            <div className="win95-grid win95-grid-3">
+              {masterTheoremCases.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -416,6 +565,18 @@ export default function DivideAndConquerPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Worked example</legend>
+            <div className="win95-panel">
+              <div className="win95-heading">{workedExample.title}</div>
+              <ol className="win95-list win95-list--numbered">
+                {workedExample.steps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-World Applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((app) => (
@@ -440,6 +601,28 @@ export default function DivideAndConquerPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Decision checklist</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {decisionChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When not to use it</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {whenNotToUse.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls & When To Use It</legend>
             <div className="win95-row">
               <div className="win95-panel">
@@ -458,6 +641,18 @@ export default function DivideAndConquerPage(): JSX.Element {
                   ))}
                 </ul>
               </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Optimization levers</legend>
+            <div className="win95-grid win95-grid-2">
+              {optimizationLevers.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
