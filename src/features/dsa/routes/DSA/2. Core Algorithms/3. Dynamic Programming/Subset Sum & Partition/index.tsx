@@ -13,20 +13,19 @@ const historicalMilestones = [
   {
     title: '1980s: Pseudopolynomial DP popularized',
     detail:
-      'The table-based DP shows that the problem is easy when the target sum is small, even if the input size is large.',
+      'Table-based DP shows the problem is easy when the target sum is small, even if the input size is large.',
   },
   {
-    title: '1990s: Meet-in-the-middle for n ≈ 40',
+    title: '1990s: Meet-in-the-middle for n ~ 40',
     detail:
       'Horowitz-Sahni style splitting halves the exponent from 2^n to 2^(n/2), making medium instances tractable.',
   },
   {
-    title: 'Modern: Bitset convolution tricks',
+    title: 'Modern: Bitset and SIMD tricks',
     detail:
-      'Bitset shifts and FFT-style subset convolutions speed up reachability checks for moderate sums on modern CPUs.',
+      'Bitset shifts pack many sums per word and can be accelerated with SIMD for moderate targets.',
   },
 ]
-
 const mentalModels = [
   {
     title: 'Reachable sums as a frontier',
@@ -48,8 +47,17 @@ const mentalModels = [
     detail:
       'Enumerate all sums of the left half and right half, then search for complementary pairs to hit the target.',
   },
+  {
+    title: 'Budget planning',
+    detail:
+      'Choose a subset of expenses that exactly hits a budget cap without exceeding it.',
+  },
+  {
+    title: 'Balancing loads',
+    detail:
+      'Split jobs so totals are as even as possible; partition is the exact balance special case.',
+  },
 ]
-
 const problemVariants = [
   {
     heading: 'Subset Sum (decision)',
@@ -91,8 +99,15 @@ const problemVariants = [
       'Same DP skeleton with adjusted transitions.',
     ],
   },
+  {
+    heading: 'Subset sum with negatives',
+    bullets: [
+      'Allowing negatives breaks the simple 0..target table.',
+      'Shift sums by an offset or use meet-in-the-middle/backtracking.',
+      'Careful pruning is required to avoid exponential blowups.',
+    ],
+  },
 ]
-
 const algorithmSteps = [
   {
     title: 'Define state',
@@ -110,6 +125,11 @@ const algorithmSteps = [
       'For weight w: iterate s from target down to w, set dp[s] ||= dp[s - w]. Backward scan prevents double-using an item.',
   },
   {
+    title: 'Early exit',
+    detail:
+      'If dp[target] becomes true, you can stop early for the decision problem.',
+  },
+  {
     title: 'Partition shortcut',
     detail:
       'If total sum is odd, return false. Otherwise target is total/2; run subset sum to that target.',
@@ -125,7 +145,6 @@ const algorithmSteps = [
       'Store parent pointers or retrace from dp table: if dp[s] && !dp_prev[s], then item that flipped s is included.',
   },
 ]
-
 const implementationNotes = [
   {
     title: 'Space-optimized DP',
@@ -138,9 +157,9 @@ const implementationNotes = [
       'Represent reachable sums as a bitset. Update with dp |= (dp << w). This packs 64 sums per machine word.',
   },
   {
-    title: 'Prune large weights early',
+    title: 'Sort for pruning',
     detail:
-      'Discard weights greater than target for decision problems. Sort descending to hit target faster and prune branches.',
+      'Sorting descending can help pruning in backtracking or meet-in-the-middle, though DP order does not require sorting.',
   },
   {
     title: 'Handling negatives',
@@ -158,7 +177,6 @@ const implementationNotes = [
       'Iterative DP avoids recursion depth issues and keeps memory predictable.',
   },
 ]
-
 const complexityNotes = [
   {
     title: 'Pseudopolynomial runtime',
@@ -173,7 +191,7 @@ const complexityNotes = [
   {
     title: 'Meet-in-the-middle',
     detail:
-      'O(2^(n/2)) time and memory; better for large target but moderate n (≈ 40).',
+      'O(2^(n/2)) time and memory; better for large target but moderate n (~40).',
   },
   {
     title: 'Bitset performance',
@@ -186,7 +204,6 @@ const complexityNotes = [
       'NP-complete in general. Exponential blowup is unavoidable for worst-case inputs.',
   },
 ]
-
 const realWorldUses = [
   {
     context: 'Load balancing',
@@ -273,9 +290,8 @@ const pitfalls = [
   'For partition, forgetting to check odd total sums wastes time on impossible cases.',
   'Negatives or non-integers break the simple DP; you need offsets or different algorithms.',
   'Overflow when counting subsets in languages with small integer ranges.',
-  'Assuming pseudopolynomial DP is fast for huge targets—it is only efficient when target is modest.',
+  'Assuming pseudopolynomial DP is fast for huge targets; it is only efficient when target is modest.',
 ]
-
 const decisionGuidance = [
   'Use 1D boolean DP when target (or total/2) is at most a few tens of thousands.',
   'Use bitset DP when target is moderate and you want constant-factor speedups on CPU.',
@@ -283,7 +299,6 @@ const decisionGuidance = [
   'Switch to approximation or heuristics for huge n and huge sums (e.g., greedy with sorting).',
   'If items repeat many times or are small, consider bounded/unbounded knapsack formulations.',
 ]
-
 const advancedInsights = [
   {
     title: 'Recovering the actual subset',
@@ -305,6 +320,85 @@ const advancedInsights = [
     detail:
       'For very large targets, randomized modular hashing can quickly rule out impossible sums with low false-positive rates.',
   },
+]
+
+const problemFraming = [
+  {
+    title: 'Inputs and constraints',
+    detail:
+      'Inputs are usually non-negative integers. Let target be S (or total/2 for partition). The DP complexity scales with S.',
+  },
+  {
+    title: 'Decision vs construction',
+    detail:
+      'Decision only asks if a subset exists. Construction also asks which items; you must store parents or keep a 2D table.',
+  },
+  {
+    title: 'What changes the answer',
+    detail:
+      'Strictly increasing S makes the DP slower. Duplicates are fine; negatives require offsetting or different methods.',
+  },
+]
+
+const dpRecurrence = [
+  {
+    title: 'State',
+    detail:
+      'dp[s] is true if some subset of processed items sums to s.',
+  },
+  {
+    title: 'Base',
+    detail:
+      'dp[0] = true. All other sums start false.',
+  },
+  {
+    title: 'Transition',
+    detail:
+      'For each item w, set dp[s] = dp[s] OR dp[s - w] for s from target down to w.',
+  },
+  {
+    title: 'Answer',
+    detail:
+      'Return dp[target] (or for partition, dp[total/2]).',
+  },
+]
+
+const workedExample = {
+  nums: '[3, 34, 4, 12, 5, 2]',
+  target: '9',
+  result: 'true',
+  oneSubset: '[4, 5]',
+  steps: [
+    'Start: reachable {0}.',
+    'After 3: reachable {0, 3}.',
+    'After 34: no new sums <= 9, still {0, 3}.',
+    'After 4: reachable {0, 3, 4, 7}.',
+    'After 12: no new sums <= 9.',
+    'After 5: reachable {0, 3, 4, 5, 7, 8, 9} - target hit.',
+  ],
+}
+
+const partitionExample = {
+  nums: '[1, 5, 11, 5]',
+  total: '22',
+  target: '11',
+  result: 'true',
+  onePartition: '{1, 5, 5} and {11}',
+}
+
+const reconstructionSteps = [
+  'Keep a 2D dp table or store parent pointers when dp[s] flips from false to true.',
+  'Backtrack from (i, target): if dp[i][s] is true and dp[i-1][s] is false, include item i.',
+  'If dp[i-1][s] is true, skip item i and move to i-1.',
+  'Stop when s == 0 or i == 0.',
+]
+
+const implementationChecklist = [
+  'Decide if you need just a boolean or the actual subset; that determines memory strategy.',
+  'Use descending sums for 0/1 subsets and ascending for unbounded variants.',
+  'Short-circuit when dp[target] becomes true to save time.',
+  'Handle empty inputs and zero-valued items explicitly.',
+  'Use 64-bit integers if you are counting subsets.',
 ]
 
 const takeaways = [
@@ -335,7 +429,7 @@ export default function SubsetSumPartitionPage(): JSX.Element {
               <p className="win95-text">
                 Subset Sum asks whether any subset hits a target total. Partition asks for a perfect split between two halves.
                 Both ride on the same pseudopolynomial DP that grows with the sum bound, not just the item count. This page walks
-                through the core recurrence, bitset accelerations, meet-in-the-middle for medium n, and the common traps to avoid.
+                through the DP recurrence, reconstruction, bitset accelerations, meet-in-the-middle for medium n, and the common traps to avoid.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -379,6 +473,18 @@ export default function SubsetSumPartitionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Problem framing</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemFraming.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works: problem variants</legend>
             <div className="win95-grid win95-grid-3">
               {problemVariants.map((block) => (
@@ -389,6 +495,18 @@ export default function SubsetSumPartitionPage(): JSX.Element {
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>DP recurrence</legend>
+            <div className="win95-grid win95-grid-2">
+              {dpRecurrence.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -422,6 +540,41 @@ export default function SubsetSumPartitionPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked example</legend>
+            <div className="win95-grid win95-grid-2">
+              <div className="win95-panel">
+                <div className="win95-heading">Subset Sum</div>
+                <p className="win95-text">nums = <code>{workedExample.nums}</code></p>
+                <p className="win95-text">target = {workedExample.target} - result: {workedExample.result}</p>
+                <p className="win95-text">One subset: {workedExample.oneSubset}</p>
+                <ul className="win95-list">
+                  {workedExample.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="win95-panel">
+                <div className="win95-heading">Partition</div>
+                <p className="win95-text">nums = <code>{partitionExample.nums}</code></p>
+                <p className="win95-text">total = {partitionExample.total}, target = {partitionExample.target}</p>
+                <p className="win95-text">result: {partitionExample.result}</p>
+                <p className="win95-text">One partition: {partitionExample.onePartition}</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Reconstruction notes</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {reconstructionSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
             </div>
           </fieldset>
 
@@ -501,6 +654,17 @@ export default function SubsetSumPartitionPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {implementationChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
