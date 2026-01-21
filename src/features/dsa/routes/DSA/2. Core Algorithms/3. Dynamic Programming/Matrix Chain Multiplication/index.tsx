@@ -8,20 +8,29 @@ const mentalModels = [
   {
     title: 'Parenthesizing a phone chain',
     detail:
-      'You must call several people who can conference the next caller in. The order you place parentheses changes the total “call handoff” cost.',
+      'You conference callers; the order of merging calls changes the total handoff cost.',
   },
   {
     title: 'Assembly line setup',
     detail:
-      'Matrices are machines that convert dimensions. Chaining them is configuring an assembly line; the order you compose them changes total work.',
+      'Matrices convert dimensions. Chaining them is arranging machines; the order you compose them changes total work.',
   },
   {
     title: 'Optimal bracketing',
     detail:
       'Matrix multiplication is associative. The problem is choosing where to put parentheses to minimize scalar multiplications, not changing the final product.',
   },
+  {
+    title: 'Merging book chapters',
+    detail:
+      'Combining chapters of different sizes is associative, but the merge order controls how much work you do.',
+  },
+  {
+    title: 'Tensor contraction planning',
+    detail:
+      'In ML and graphics, choosing contraction order can cut FLOPs and memory without changing the result.',
+  },
 ]
-
 const algorithmOptions = [
   {
     title: 'Interval DP (tabulation, O(n^3))',
@@ -54,22 +63,26 @@ const complexityNotes = [
     detail: 'Classic DP is O(n^3) time and O(n^2) space. n is the number of matrices (dims length minus 1).',
   },
   {
+    title: 'Search space size',
+    detail:
+      'The number of parenthesizations is the Catalan number C_{n-1}, which grows exponentially. DP avoids this brute-force explosion.',
+  },
+  {
     title: 'Numerical stability',
     detail:
-      'Parenthesization affects scalar cost but not mathematical result. However, floating point associativity is not exact—choosing cheaper orders often also reduces rounding error.',
+      'Parenthesization affects scalar cost but not mathematical result. Floating point associativity is not exact; cheaper orders often also reduce rounding error.',
   },
   {
     title: 'Bounds and overflow',
     detail:
-      'Scalar counts can grow large. Use 64-bit integers for dp. For dimensions up to 1e3 with n ~ 200, values still fit in 64-bit.',
+      'Scalar counts can grow large. Use 64-bit integers for dp. For dimensions up to 1e3 with n around 200, values still fit in 64-bit.',
   },
   {
     title: 'Special cases',
     detail:
-      'Single matrix or empty chain costs zero. If any dimension is zero, cost terms vanish—handle gracefully in code.',
+      'Single matrix or empty chain costs zero. If any dimension is zero, cost terms vanish and should be handled explicitly.',
   },
 ]
-
 const correctnessInsights = [
   {
     title: 'Optimal substructure',
@@ -92,7 +105,7 @@ const applications = [
   {
     context: 'Database query planning',
     detail:
-      'Join ordering and expression re-writing mirror matrix chain parenthesization—planner searches for cheapest associative grouping.',
+      'Join ordering and expression re-writing mirror matrix chain parenthesization - planner searches for cheapest associative grouping.',
   },
   {
     context: 'Graphics and transforms',
@@ -114,11 +127,11 @@ const applications = [
 const pitfalls = [
   'Misaligning dimensions: n matrices require dims length n+1. Using n dims gives wrong cost computation.',
   'Using int32 for costs; large products overflow. Prefer 64-bit integers.',
+  'Confusing matrix indices with dimension indices; dp uses matrix indices, dims uses boundary indices.',
   'Forgetting to store splits, making reconstruction impossible without recomputing choices.',
   'Iterating chain lengths incorrectly (e.g., missing inclusive bounds) leading to uninitialized dp entries.',
-  'Assuming commutativity—matrix multiplication is not commutative; only parentheses move.',
+  'Assuming commutativity - matrix multiplication is not commutative; only parentheses move.',
 ]
-
 const variations = [
   {
     title: 'Minimizing depth vs cost',
@@ -188,6 +201,68 @@ function solve(i, j):
   },
 ]
 
+
+const costModel = [
+  {
+    title: 'Matrix sizes',
+    detail:
+      'Matrix i has shape dims[i] x dims[i+1]. There are n = dims.length - 1 matrices.',
+  },
+  {
+    title: 'Scalar cost',
+    detail:
+      'Multiplying (p x q) by (q x r) costs p * q * r scalar multiplications.',
+  },
+  {
+    title: 'Split cost',
+    detail:
+      'If you split i..j at k, total cost is dp[i][k] + dp[k+1][j] + dims[i] * dims[k+1] * dims[j+1].',
+  },
+]
+
+const dpRecurrence = [
+  {
+    title: 'State',
+    detail:
+      'dp[i][j] is the minimum cost to multiply Ai..Aj (0-based indices).',
+  },
+  {
+    title: 'Base case',
+    detail:
+      'dp[i][i] = 0 because a single matrix needs no multiplication.',
+  },
+  {
+    title: 'Transition',
+    detail:
+      'dp[i][j] = min over k in [i, j-1] of dp[i][k] + dp[k+1][j] + dims[i] * dims[k+1] * dims[j+1].',
+  },
+  {
+    title: 'Reconstruction',
+    detail:
+      'split[i][j] stores the argmin k. Recursively print (i..k) and (k+1..j).',
+  },
+]
+
+const workedExample = {
+  dims: '[30, 35, 15, 5, 10, 20, 25]',
+  matrices: 'A1 30x35, A2 35x15, A3 15x5, A4 5x10, A5 10x20, A6 20x25',
+  bestCost: '15125',
+  bestOrder: '((A1 x (A2 x A3)) x ((A4 x A5) x A6))',
+  notes: [
+    'There are 6 matrices, so dp is 6 x 6 and split is 6 x 6.',
+    'The optimal top split is between A3 and A4 (k = 2 in 0-based indexing).',
+    'Both subchains are optimized recursively by the same recurrence.',
+  ],
+}
+
+const implementationChecklist = [
+  'Confirm dims length is n+1 and all adjacent matrices are compatible.',
+  'Use 64-bit integers for dp and INF large enough to avoid overflow.',
+  'Loop by chain length so subproblems are solved before they are used.',
+  'Store split indices if you need the parenthesization, not just cost.',
+  'Test with small n (1, 2, 3) where answers are easy to verify by hand.',
+]
+
 const takeaways = [
   'Matrix Chain Multiplication is an interval DP optimizing parentheses under associativity.',
   'The cost of multiplying i..j splits at k: left + right + dims[i]*dims[k+1]*dims[j+1].',
@@ -216,7 +291,7 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
               <p className="win95-text">
                 Given matrices A1..An with compatible dimensions, all multiplication orders yield the same matrix but not the same
                 work. Matrix Chain Multiplication finds the parenthesization with minimum scalar multiplications using interval DP
-                and split tracking.
+                and split tracking, and it cleanly illustrates interval DP structure and reconstruction.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -229,7 +304,8 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
             <div className="win95-panel">
               <p className="win95-text">
                 The problem is not to change matrix order, only to change grouping. The DP explores all split points, caching the
-                cheapest cost for every interval, and reconstructs one optimal parenthesization that achieves it.
+                cheapest cost for every interval, and reconstructs one optimal parenthesization that achieves it. The key is the
+                cost model: multiplying (p x q) by (q x r) costs p*q*r, so the split point controls the expensive middle dimension.
               </p>
             </div>
           </fieldset>
@@ -252,8 +328,8 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
               <div className="win95-panel">
                 <div className="win95-heading">Definition</div>
                 <p className="win95-text">
-                  Input: dimensions array dims of length n+1. Matrix i has shape dims[i] × dims[i+1]. Find the minimum scalar
-                  multiplications to compute A1 × A2 × ... × An by choosing parentheses (grouping).
+                  Input: dimensions array dims of length n+1. Matrix i has shape dims[i] x dims[i+1]. Find the minimum scalar
+                  multiplications to compute A1 x A2 x ... x An by choosing parentheses (grouping).
                 </p>
                 <p className="win95-text">Output: minimum cost and an example parenthesization achieving it.</p>
               </div>
@@ -265,6 +341,47 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
                   <li>Shows how associativity frees grouping choices that impact performance.</li>
                 </ul>
               </div>
+            </div>
+            <div className="win95-grid win95-grid-2" style={{ marginTop: '6px' }}>
+              <div className="win95-panel">
+                <div className="win95-heading">Dimensions and cost</div>
+                <p className="win95-text">
+                  Compatibility requires that adjacent matrices share inner dimensions. The only cost term for a split i..j at k is
+                  dims[i] * dims[k+1] * dims[j+1], so the middle dimension dims[k+1] dominates the choice.
+                </p>
+              </div>
+              <div className="win95-panel">
+                <div className="win95-heading">Indexing sanity</div>
+                <ul className="win95-list">
+                  <li>There are n matrices but n+1 dimensions.</li>
+                  <li>dp is indexed by matrices (0..n-1).</li>
+                  <li>dims is indexed by boundaries (0..n).</li>
+                </ul>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Cost model</legend>
+            <div className="win95-grid win95-grid-3">
+              {costModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>DP recurrence</legend>
+            <div className="win95-grid win95-grid-2">
+              {dpRecurrence.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -294,6 +411,22 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
                   <li key={step}>{step}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked example</legend>
+            <div className="win95-panel">
+              <div className="win95-heading">Classic input</div>
+              <p className="win95-text">dims = <code>{workedExample.dims}</code></p>
+              <p className="win95-text">Matrices: {workedExample.matrices}</p>
+              <p className="win95-text">Minimum cost: {workedExample.bestCost}</p>
+              <p className="win95-text">One optimal order: {workedExample.bestOrder}</p>
+              <ul className="win95-list">
+                {workedExample.notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -364,6 +497,17 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {implementationChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
