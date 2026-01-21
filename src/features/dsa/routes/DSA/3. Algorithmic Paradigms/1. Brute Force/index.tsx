@@ -240,6 +240,114 @@ function tsp(cities) {
   },
 ]
 
+
+const problemFraming = [
+  {
+    title: 'Input size and feasibility',
+    detail:
+      'Estimate the size of the search space first. If it is above ~10^7 candidates, brute force is usually too slow without pruning or parallelism.',
+  },
+  {
+    title: 'Decision vs optimization',
+    detail:
+      'Decision: stop at the first valid solution. Optimization: must scan all candidates to guarantee the best.',
+  },
+  {
+    title: 'Deterministic coverage',
+    detail:
+      'You must define the search space precisely and prove that every valid solution appears exactly once.',
+  },
+]
+
+const searchSpaceTypes = [
+  {
+    title: 'Subsets (2^n)',
+    detail:
+      'Include/exclude each item. Common in knapsack, subset sum, set cover, and feature selection.',
+  },
+  {
+    title: 'Permutations (n!)',
+    detail:
+      'Order all items. Appears in TSP, assignment, and scheduling problems.',
+  },
+  {
+    title: 'Cartesian products',
+    detail:
+      'Choose one option from each of k categories. Example: parameter grid search.',
+  },
+  {
+    title: 'Strings / sequences',
+    detail:
+      'All strings of length L over an alphabet of size C gives C^L possibilities.',
+  },
+  {
+    title: 'Graphs and paths',
+    detail:
+      'Enumerate paths, subgraphs, or cuts; search space often explodes combinatorially.',
+  },
+]
+
+const verificationChecklist = [
+  'Define the candidate generator and prove it is exhaustive.',
+  'Make the validity check correct and cheap; it runs on every candidate.',
+  'Track the best-so-far and update deterministically.',
+  'Short-circuit for decision problems when a valid candidate is found.',
+  'Compute worst-case bounds to confirm feasibility at max input sizes.',
+]
+
+const workedExample = {
+  title: 'Subset sum by brute force (n = 4)',
+  input: 'nums = [3, 5, 6, 7], target = 12',
+  candidates: [
+    '{ } -> 0',
+    '{3} -> 3',
+    '{5} -> 5',
+    '{6} -> 6',
+    '{7} -> 7',
+    '{3,5} -> 8',
+    '{3,6} -> 9',
+    '{3,7} -> 10',
+    '{5,6} -> 11',
+    '{5,7} -> 12 (hit)',
+  ],
+  note: 'Brute force checks all subsets until it finds one that sums to 12.',
+}
+
+const optimizationLevers = [
+  {
+    title: 'Pruning',
+    detail:
+      'Stop exploring a branch as soon as it violates constraints. This turns brute force into backtracking.',
+  },
+  {
+    title: 'Symmetry breaking',
+    detail:
+      'Avoid exploring symmetric candidates (e.g., permutations that are equivalent under rotation or reversal).',
+  },
+  {
+    title: 'Incremental evaluation',
+    detail:
+      'Update the validity check using changes from the previous candidate instead of recomputing from scratch.',
+  },
+  {
+    title: 'Parallelization',
+    detail:
+      'Split the search space across threads or machines; brute force is embarrassingly parallel.',
+  },
+  {
+    title: 'Memoization',
+    detail:
+      'Cache subproblem results to avoid recomputing repeated states when the brute-force tree overlaps.',
+  },
+]
+
+const whenNotToUse = [
+  'When the search space is exponential or factorial with n above ~15 without pruning.',
+  'When a polynomial-time algorithm exists and input sizes are large.',
+  'When the validation check is expensive and dominates runtime.',
+  'When approximate or heuristic solutions are acceptable and far cheaper.',
+]
+
 const keyTakeaways = [
   {
     title: 'Simple and Reliable',
@@ -341,6 +449,30 @@ export default function BruteForcePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Problem framing</legend>
+            <div className="win95-grid win95-grid-3">
+              {problemFraming.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Search space taxonomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {searchSpaceTypes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How It Works</legend>
             <div className="win95-grid win95-grid-3">
               {howItWorks.map((item) => (
@@ -349,6 +481,17 @@ export default function BruteForcePage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Verification checklist</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {verificationChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
             </div>
           </fieldset>
 
@@ -379,6 +522,20 @@ export default function BruteForcePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Worked example</legend>
+            <div className="win95-panel">
+              <div className="win95-heading">{workedExample.title}</div>
+              <p className="win95-text">Input: {workedExample.input}</p>
+              <ul className="win95-list">
+                {workedExample.candidates.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+              <p className="win95-text">{workedExample.note}</p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-World Applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((app) => (
@@ -401,6 +558,17 @@ export default function BruteForcePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>When not to use it</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {whenNotToUse.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls &amp; When To Use It</legend>
             <div className="win95-row">
               <div className="win95-panel">
@@ -419,6 +587,18 @@ export default function BruteForcePage(): JSX.Element {
                   ))}
                 </ul>
               </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Optimization levers</legend>
+            <div className="win95-grid win95-grid-2">
+              {optimizationLevers.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
