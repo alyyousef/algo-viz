@@ -22,6 +22,29 @@ const bigPicture = [
   },
 ]
 
+const foundations = [
+  {
+    title: 'Principle of optimality',
+    detail:
+      'An optimal solution is built from optimal subsolutions. If the remainder of an optimal solution is not optimal for its subproblem, DP will be wrong.',
+  },
+  {
+    title: 'State is the contract',
+    detail:
+      'Your state must contain every fact that influences future choices, and nothing else. Missing a detail breaks correctness; extra detail blows up complexity.',
+  },
+  {
+    title: 'Recurrence is the engine',
+    detail:
+      'The recurrence defines how a state depends on smaller states. It must be acyclic under a chosen order or resolved with memoization.',
+  },
+  {
+    title: 'Order guarantees validity',
+    detail:
+      'Bottom-up DP works only if every dependency is already computed. Topological order for DAGs and row-major order for grids make the dependencies safe.',
+  },
+]
+
 const history = [
   {
     title: '1950s: Bellman coins the term',
@@ -60,6 +83,41 @@ const pillars = [
     title: 'Well-defined state and transition',
     detail:
       'The state must capture everything the future depends on, nothing more. Transitions must be correct and acyclic once ordered.',
+  },
+]
+
+const dpTaxonomy = [
+  {
+    title: '1D prefix DP',
+    detail: 'State by index: dp[i] uses dp[i-1], dp[i-2]. Examples: Fibonacci, house robber.',
+  },
+  {
+    title: '2D grid DP',
+    detail: 'State by (i, j). Examples: edit distance, LCS, grid paths.',
+  },
+  {
+    title: 'Interval DP',
+    detail: 'State by [l, r] and split point. Examples: matrix chain, palindrome partitioning.',
+  },
+  {
+    title: 'Knapsack family',
+    detail: 'State by item index and capacity (or value). Examples: 0/1 knapsack, subset sum.',
+  },
+  {
+    title: 'Subset and bitmask DP',
+    detail: 'State by subset mask. Examples: TSP, Steiner tree, assignment.',
+  },
+  {
+    title: 'Tree and DAG DP',
+    detail: 'State by node and parent. Examples: tree diameter, independent set.',
+  },
+  {
+    title: 'Digit DP',
+    detail: 'State by position and tight/leading zeros. Examples: count numbers with constraints.',
+  },
+  {
+    title: 'Probabilistic DP',
+    detail: 'State stores expected values or probabilities. Examples: games, Markov chains.',
   },
 ]
 
@@ -109,6 +167,38 @@ const howItWorks = [
   },
 ]
 
+const stateDesignRules = [
+  'State must encode everything the future needs (position, capacity, last choice, mask, remaining segments).',
+  'Avoid redundant dimensions; if a variable can be derived from others, drop it.',
+  'Prefer small integer ranges; compress values or map coordinates when needed.',
+  'States should be comparable by a monotone measure (index or size) to allow ordering.',
+  'Use sentinels for impossible states and keep transitions consistent with them.',
+  'Document state meaning in plain language before coding the recurrence.',
+]
+
+const transitionTemplates = [
+  {
+    title: 'Take or skip',
+    detail: 'dp[i] = max(dp[i-1], value[i] + dp[i-1 - cost]). Common in knapsack and selection problems.',
+  },
+  {
+    title: 'Split and combine',
+    detail: 'dp[l][r] = min over k of dp[l][k] + dp[k+1][r] + cost(l, r). Interval DP.',
+  },
+  {
+    title: 'Extend from neighbors',
+    detail: 'dp[i][j] uses dp[i-1][j], dp[i][j-1], dp[i-1][j-1]. Grid alignment and paths.',
+  },
+  {
+    title: 'Add an element to a subset',
+    detail: 'dp[mask | (1<<i)] = min(dp[mask] + cost). Bitmask DP for permutations.',
+  },
+  {
+    title: 'Merge children',
+    detail: 'Combine child states with convolution-like loops. Used in tree DP and distribution problems.',
+  },
+]
+
 const complexityTable = [
   { approach: 'Naive recursion (Fibonacci)', time: 'O(2^n)', space: 'O(n) stack', note: 'Explodes past n=45' },
   {
@@ -128,6 +218,24 @@ const complexityTable = [
     time: 'O(n)',
     space: 'O(1) or O(width)',
     note: 'Keeps only rolling frontier when dependencies are limited',
+  },
+]
+
+const reconstruction = [
+  {
+    title: 'Parent pointers',
+    detail:
+      'Store the decision or predecessor that yielded the best value. Walk backward from the final state to rebuild the solution.',
+  },
+  {
+    title: 'Choice tables',
+    detail:
+      'Record argmin or argmax indices in a parallel table to avoid recomputing decisions during backtracking.',
+  },
+  {
+    title: 'Path recovery in DAG DP',
+    detail:
+      'Keep a prev pointer for each node or state. If multiple optimal paths exist, define a tie-breaker for deterministic output.',
   },
 ]
 
@@ -159,6 +267,29 @@ const applications = [
   },
 ]
 
+const dpVsOtherParadigms = [
+  {
+    title: 'DP vs greedy',
+    detail:
+      'Greedy makes one irreversible choice; DP evaluates all relevant choices. If greedy choice property is not provable, DP is safer.',
+  },
+  {
+    title: 'DP vs divide and conquer',
+    detail:
+      'Divide and conquer solves independent subproblems. DP solves overlapping subproblems and reuses their results.',
+  },
+  {
+    title: 'DP vs backtracking',
+    detail:
+      'Backtracking explores a search tree with pruning. DP collapses repeated states into a table.',
+  },
+  {
+    title: 'DP vs shortest path',
+    detail:
+      'Many shortest path algorithms are DP on a DAG. On graphs with cycles, DP must be coupled with ordering or relaxation rules.',
+  },
+]
+
 const pitfalls = [
   'State is too large: an extra dimension of size 10^3 can turn a solution from feasible to impossible.',
   'Bad base cases: missing empty string rows in edit distance often yields off-by-one scores.',
@@ -167,11 +298,26 @@ const pitfalls = [
   'Ignoring reconstruction: computing only the score forces a second pass or makes the answer unusable to product teams.',
 ]
 
+const debuggingChecklist = [
+  'Print small tables and verify base rows and columns by hand.',
+  'Test symmetry and monotonicity properties if they should hold.',
+  'Brute-force tiny inputs to validate the recurrence.',
+  'Add assertions for impossible states to catch bad transitions early.',
+  'Check order of loops against dependencies before optimizing.',
+]
+
 const whenToUse = [
   'You can articulate optimal substructure and overlapping subproblems clearly.',
   'The state space is at most around 10^6 to 10^7 states with simple transitions.',
   'Approximation or greedy fails to give guarantees and you need correctness.',
   'Branch and bound or search is exploding, but dependencies are structured.',
+]
+
+const whenToAvoid = [
+  'State space is huge (10^9 or more) with no compression.',
+  'Problem lacks optimal substructure or has global constraints that invalidate local states.',
+  'You need a streaming or online decision and cannot revisit past data.',
+  'A greedy or flow algorithm exists with the same guarantees and lower cost.',
 ]
 
 const advanced = [
@@ -199,6 +345,34 @@ const advanced = [
     title: 'Memory layout tuning',
     detail:
       'Cache-aware tiling and blocking matter for large tables. Production systems sometimes switch to banded DP to keep hot rows in cache.',
+  },
+]
+
+const optimizationIdeas = [
+  {
+    title: 'Rolling arrays',
+    detail:
+      'When dp[i] depends only on dp[i-1], reuse two rows or one row with careful iteration order.',
+  },
+  {
+    title: 'Monotone queue optimization',
+    detail:
+      'Use deque to optimize transitions with sliding window maxima or minima, reducing O(nk) to O(n).',
+  },
+  {
+    title: 'Divide and conquer optimization',
+    detail:
+      'If the argmin index is monotone, compute each row in O(n log n) or O(n).',
+  },
+  {
+    title: 'Knuth optimization',
+    detail:
+      'For quadrangle inequality and monotone optima, cut O(n^3) interval DP to O(n^2).',
+  },
+  {
+    title: 'Bitset acceleration',
+    detail:
+      'Use machine word operations to accelerate subset sum or reachability in O(n * W/word).',
   },
 ]
 
@@ -237,6 +411,21 @@ const codeExamples = [
     explanation:
       'Transitions only depend on the previous item row, so a single array suffices. Reversing the capacity loop prevents using an item multiple times.',
   },
+  {
+    title: 'Longest common subsequence (LCS)',
+    code: `def lcs(a: str, b: str) -> int:
+    # dp[i][j] = LCS length for a[:i] and b[:j]
+    dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    return dp[len(a)][len(b)]`,
+    explanation:
+      'Classic 2D DP. The recurrence preserves order while exploring matches and mismatches.',
+  },
 ]
 
 const keyTakeaways = [
@@ -271,9 +460,33 @@ export default function DynamicProgrammingParadigmPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
+            <legend>Foundations</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-grid win95-grid-3">
               {bigPicture.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>DP taxonomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {dpTaxonomy.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -333,6 +546,29 @@ export default function DynamicProgrammingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>State design rules</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {stateDesignRules.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common transition templates</legend>
+            <div className="win95-grid win95-grid-2">
+              {transitionTemplates.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity in practice</legend>
             <div className="win95-stack">
               <div className="win95-panel">
@@ -367,6 +603,18 @@ export default function DynamicProgrammingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Reconstruction strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {reconstruction.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications and failure stories</legend>
             <div className="win95-stack">
               <div className="win95-grid win95-grid-2">
@@ -385,6 +633,18 @@ export default function DynamicProgrammingParadigmPage(): JSX.Element {
                   double digits.
                 </p>
               </div>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>DP vs other paradigms</legend>
+            <div className="win95-grid win95-grid-2">
+              {dpVsOtherParadigms.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -415,6 +675,17 @@ export default function DynamicProgrammingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {debuggingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use dynamic programming</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -426,9 +697,32 @@ export default function DynamicProgrammingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>When to avoid DP</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {whenToAvoid.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights and optimizations</legend>
             <div className="win95-grid win95-grid-2">
               {advanced.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Optimization toolbox</legend>
+            <div className="win95-grid win95-grid-2">
+              {optimizationIdeas.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
