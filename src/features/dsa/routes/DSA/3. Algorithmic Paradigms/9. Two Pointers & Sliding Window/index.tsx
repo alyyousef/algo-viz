@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 import { win95Styles } from '@/styles/win95'
 
 export default function TwoPointersSlidingWindowPage(): JSX.Element {
-  
-
   const overviewPanels = [
     {
       title: 'What it is',
@@ -20,6 +18,56 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       title: 'Where it shines',
       detail:
         'Sorted arrays, subarray sums, substring constraints, and problems with monotonic or accumulative structure.',
+    },
+  ]
+
+  const foundations = [
+    {
+      title: 'Monotonic pointer movement',
+      detail:
+        'The key guarantee is that pointers only move forward. Each index advances at most n times, keeping total work linear.',
+    },
+    {
+      title: 'Invariant-driven design',
+      detail:
+        'You must define a condition that is always true for the current window or pointer configuration. Pointer moves exist only to restore or extend that invariant.',
+    },
+    {
+      title: 'Incremental updates',
+      detail:
+        'All updates to counts, sums, or frequency maps must be O(1). Recomputing window state destroys the linear advantage.',
+    },
+    {
+      title: 'Order or contiguity matters',
+      detail:
+        'Two pointers usually need sorted order or monotonic properties; sliding windows require contiguity. Without these, the technique is often invalid.',
+    },
+  ]
+
+  const taxonomy = [
+    {
+      title: 'Opposing pointers',
+      detail: 'Two pointers move toward each other in a sorted array to find pairs or ranges.',
+    },
+    {
+      title: 'Fast/slow pointers',
+      detail: 'A slow pointer anchors write position, a fast pointer scans ahead (dedup, partition).',
+    },
+    {
+      title: 'Fixed-size window',
+      detail: 'Maintain a window of size k with O(1) updates for rolling sums or averages.',
+    },
+    {
+      title: 'Variable-size window',
+      detail: 'Expand until a constraint breaks, then shrink to restore validity.',
+    },
+    {
+      title: 'Multi-constraint windows',
+      detail: 'Track multiple counts or conditions; window moves when any constraint fails.',
+    },
+    {
+      title: 'Monotonic queue windows',
+      detail: 'Use a deque to maintain max/min values for each window in O(1) amortized.',
     },
   ]
 
@@ -39,6 +87,15 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       detail:
         'Well designed pointer rules ensure each index advances monotonically, so total work is linear.',
     },
+  ]
+
+  const modelingChecklist = [
+    'Define the invariant (sum <= k, distinct count <= m, sorted condition holds).',
+    'Decide which pointer moves on violation vs on success.',
+    'Pick state to maintain: counts, sum, frequency, deque, or map.',
+    'Confirm monotonicity: each pointer should only move forward.',
+    'Plan how to update the answer when the invariant is satisfied.',
+    'Check edge cases: empty input, duplicates, or negative numbers.',
   ]
 
   const techniquePanels = [
@@ -71,6 +128,25 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       title: 'Prefix + pointers',
       detail:
         'Prefix sums and two pointers can locate target ranges without re-summing each subarray.',
+    },
+  ]
+
+  const pointerRules = [
+    {
+      title: 'Move the pointer that fixes the invariant',
+      detail: 'If the window is invalid, advance the left pointer until it is valid again.',
+    },
+    {
+      title: 'Move the pointer that explores new candidates',
+      detail: 'If valid, advance the right pointer to expand the search space.',
+    },
+    {
+      title: 'Advance in a single direction',
+      detail: 'Never move pointers backward; backtracking typically breaks linear complexity.',
+    },
+    {
+      title: 'Record answers consistently',
+      detail: 'Decide whether to update on every valid window or only on exact matches.',
     },
   ]
 
@@ -112,6 +188,34 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
     },
   ]
 
+  const comparisonParadigms = [
+    {
+      title: 'Two pointers vs binary search',
+      detail:
+        'Binary search repeatedly splits; two pointers sweep once. When order is monotone and you need all pairs or windows, two pointers are usually faster.',
+    },
+    {
+      title: 'Sliding window vs prefix sums',
+      detail:
+        'Prefix sums answer range queries quickly but still need a search strategy. Sliding window excels when constraints are monotone and windows move forward.',
+    },
+    {
+      title: 'Two pointers vs greedy',
+      detail:
+        'Greedy makes global choices; two pointers are local scans that exploit order. They can complement each other (e.g., greedy sort + two pointers).',
+    },
+    {
+      title: 'Sliding window vs DP',
+      detail:
+        'DP handles complex substructure; sliding window handles simple monotone constraints. DP is heavier but more general.',
+    },
+    {
+      title: 'Two pointers vs hashing',
+      detail:
+        'Hashing finds complements without order; two pointers need order but avoid extra memory.',
+    },
+  ]
+
   const complexityNotes = [
     {
       title: 'Time is linear',
@@ -135,6 +239,29 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
     },
   ]
 
+  const workedExamples = [
+    {
+      title: 'Longest substring without repeats',
+      steps: [
+        'Use a map of last seen indices.',
+        'Expand right pointer; if a duplicate appears, move left to just after last seen.',
+        'Update best length after each move.',
+      ],
+      note:
+        'Each character is added and removed at most once; the total work remains linear.',
+    },
+    {
+      title: 'Minimum window with sum >= target (positive numbers)',
+      steps: [
+        'Expand right pointer and accumulate sum.',
+        'When sum >= target, shrink from left to minimize window.',
+        'Track the smallest valid length.',
+      ],
+      note:
+        'Monotonicity holds only with non-negative numbers; with negatives, this fails.',
+    },
+  ]
+
   const comparisonTable = [
     {
       method: 'Brute force',
@@ -153,6 +280,29 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       time: 'O(n)',
       memory: 'O(1) to O(k)',
       note: 'Best for contiguous subarrays',
+    },
+  ]
+
+  const applicationsExtended = [
+    {
+      context: 'Remove duplicates in-place',
+      detail:
+        'Fast/slow pointers compress sorted arrays without extra memory.',
+    },
+    {
+      context: 'Max consecutive ones with flips',
+      detail:
+        'Variable window keeps at most k zeros; shrink left when constraint breaks.',
+    },
+    {
+      context: 'Smallest subarray with all chars',
+      detail:
+        'Frequency map tracks coverage, shrink when all constraints are met.',
+    },
+    {
+      context: 'Merge intervals by sweep',
+      detail:
+        'Two pointers over sorted endpoints to combine overlapping intervals efficiently.',
     },
   ]
 
@@ -178,6 +328,9 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
         'Advance pointers across both arrays to stream the merged order.',
     },
   ]
+
+  const failureStory =
+    'A substring solver allowed negative weights in its scoring and still used a sliding window. The window oscillated and missed valid answers. Switching to prefix sums with binary search fixed correctness.'
 
   const examples = [
     {
@@ -236,11 +389,26 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
     'Breaking monotonicity and accidentally reintroducing O(n^2).',
   ]
 
+  const debuggingChecklist = [
+    'Print pointer positions and window state on small inputs.',
+    'Assert invariants before and after pointer moves.',
+    'Verify pointer monotonicity (no backward moves).',
+    'Test edge cases: empty arrays, all duplicates, large k.',
+    'If negative numbers exist, reconsider sliding window assumptions.',
+  ]
+
   const decisionGuidance = [
     'The problem asks for a pair, triplet, or range with sorted or monotonic structure.',
     'You need subarray or substring constraints that can be updated incrementally.',
     'A brute force double loop is too slow for the input size.',
     'You can maintain a valid window with a simple counter or aggregate.',
+  ]
+
+  const whenToAvoid = [
+    'Constraints are not monotone (negative numbers or non-local conditions).',
+    'You need non-contiguous subsets (sliding window does not apply).',
+    'The array is unsorted and cannot be sorted without breaking requirements.',
+    'A hashing-based solution is simpler and acceptable in memory.',
   ]
 
   const advancedInsights = [
@@ -263,6 +431,21 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       title: 'Window with frequency constraints',
       detail:
         'Track counts and number of satisfied conditions to handle problems with multiple constraints.',
+    },
+  ]
+
+  const instrumentation = [
+    {
+      title: 'Pointer move counters',
+      detail: 'Track left/right moves to confirm linear behavior.',
+    },
+    {
+      title: 'Constraint hit rate',
+      detail: 'Measure how often the window is valid vs invalid to tune heuristics.',
+    },
+    {
+      title: 'State update cost',
+      detail: 'Ensure per-step updates are O(1); profile maps or deques if slow.',
     },
   ]
 
@@ -298,12 +481,36 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
+            <legend>Foundations</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((panel) => (
+                <div key={panel.title} className="win95-panel">
+                  <div className="win95-heading">{panel.title}</div>
+                  <p className="win95-text">{panel.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-grid win95-grid-3">
               {overviewPanels.map((panel) => (
                 <div key={panel.title} className="win95-panel">
                   <div className="win95-heading">{panel.title}</div>
                   <p className="win95-text">{panel.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Technique taxonomy</legend>
+            <div className="win95-grid win95-grid-3">
+              {taxonomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -322,9 +529,32 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Modeling checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {modelingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common patterns</legend>
             <div className="win95-grid win95-grid-3">
               {techniquePanels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Pointer movement rules</legend>
+            <div className="win95-grid win95-grid-2">
+              {pointerRules.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -350,6 +580,18 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Comparisons with other paradigms</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisonParadigms.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity and tradeoffs</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
@@ -363,6 +605,23 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
               <p className="win95-text">
                 The win comes from monotonic pointer movement. If each pointer only moves forward, the algorithm stays linear.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked examples</legend>
+            <div className="win95-stack">
+              {workedExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <ol className="win95-list win95-list--numbered">
+                    {example.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p className="win95-text">{example.note}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -394,13 +653,27 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
+            <div className="win95-stack">
+              <div className="win95-grid win95-grid-2">
+                {applications.map((item) => (
+                  <div key={item.context} className="win95-panel">
+                    <div className="win95-heading">{item.context}</div>
+                    <p className="win95-text">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="win95-grid win95-grid-2">
+                {applicationsExtended.map((item) => (
+                  <div key={item.context} className="win95-panel">
+                    <div className="win95-heading">{item.context}</div>
+                    <p className="win95-text">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="win95-panel win95-panel--raised">
+                <div className="win95-heading">Failure mode</div>
+                <p className="win95-text">{failureStory}</p>
+              </div>
             </div>
           </fieldset>
 
@@ -431,6 +704,17 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {debuggingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -442,9 +726,32 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>When to avoid it</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {whenToAvoid.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights</legend>
             <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Instrumentation that helps</legend>
+            <div className="win95-grid win95-grid-2">
+              {instrumentation.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
