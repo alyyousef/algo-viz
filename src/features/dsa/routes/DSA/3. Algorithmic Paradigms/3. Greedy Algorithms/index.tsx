@@ -4,6 +4,29 @@ import { win95Styles } from '@/styles/win95'
 import type { JSX } from 'react'
 
 
+const foundations = [
+  {
+    title: 'What a greedy algorithm is',
+    detail:
+      'A greedy algorithm builds a solution incrementally by repeatedly making a locally optimal choice. It never revisits earlier decisions, so correctness depends on proving each local choice can be part of some global optimum.',
+  },
+  {
+    title: 'Greedy-choice property',
+    detail:
+      'There exists an optimal solution whose first decision is the greedy decision. Once you show this, you can safely lock in the greedy step and solve the remaining subproblem.',
+  },
+  {
+    title: 'Optimal substructure (with monotonic choices)',
+    detail:
+      'After committing to the greedy choice, the rest of the problem has the same structure and constraints. The remaining subproblem does not require undoing the earlier decision.',
+  },
+  {
+    title: 'Local decisions with global invariants',
+    detail:
+      'Greedy works when a global invariant (like a cut, a prefix property, or feasibility closure) makes local choices safe. The invariant is what you prove, not the algorithm itself.',
+  },
+]
+
 const pillars = [
   {
     title: 'Greedy choice property',
@@ -58,6 +81,16 @@ const greedyLoop = [
     detail:
       'Stop when no candidates remain or the goal is satisfied. The accepted set is your solution.',
   },
+]
+
+const modelingChecklist = [
+  'State the objective clearly (maximize count, minimize cost, minimize rooms, etc.).',
+  'Define feasibility precisely (non-overlap, acyclic, capacity, deadlines).',
+  'Describe the candidate set at each step and how it changes.',
+  'Identify the ordering or priority metric that produces the greedy choice.',
+  'Write the invariant you must preserve after each choice.',
+  'Describe the subproblem left after a greedy choice (same form, smaller size).',
+  'Decide the data structure that makes the greedy choice efficient.',
 ]
 
 const patterns = [
@@ -121,6 +154,53 @@ const proofToolkit = [
     title: 'Optimal substructure with monotone choice',
     detail:
       'After a greedy pick, the remaining problem is the same type and does not require revisiting earlier choices.',
+  },
+]
+
+const workedExamples = [
+  {
+    title: 'Activity selection (maximize count)',
+    steps: [
+      'Sort activities by finishing time.',
+      'Pick the earliest finishing activity; it leaves the most room for the rest.',
+      'Skip any activity that overlaps the last chosen finish time.',
+      'Continue in sorted order; the greedy schedule stays ahead of any optimal schedule.',
+    ],
+    why:
+      'The exchange argument shows any optimal solution can be modified to include the earliest finish without reducing the total count.',
+  },
+  {
+    title: 'Kruskal MST (minimum total weight)',
+    steps: [
+      'Sort all edges by weight.',
+      'Add the smallest edge that does not form a cycle (use DSU).',
+      'Repeat until you have n - 1 edges.',
+      'Each added edge is the lightest crossing some cut, so it is safe.',
+    ],
+    why:
+      'The cut property guarantees each chosen edge belongs to some MST, preserving optimality at every step.',
+  },
+  {
+    title: 'Huffman coding (optimal prefix code)',
+    steps: [
+      'Create a min-heap of symbol frequencies.',
+      'Pop the two least frequent nodes and merge them.',
+      'Push the merged node back; repeat until one node remains.',
+      'Assign 0/1 along tree edges to create codes.',
+    ],
+    why:
+      'In an optimal prefix code, the two least frequent symbols can be placed at the deepest leaves and merged safely.',
+  },
+  {
+    title: 'Dijkstra (non-negative shortest paths)',
+    steps: [
+      'Initialize distances, push the source into a min-heap.',
+      'Extract the node with minimum tentative distance.',
+      'Relax its outgoing edges and update neighbors.',
+      'Finalized nodes never get a shorter path later.',
+    ],
+    why:
+      'Non-negative edges ensure that once a node is chosen, its distance is minimal among all remaining paths.',
   },
 ]
 
@@ -218,6 +298,47 @@ const failureCases = [
   },
 ]
 
+const implementationTemplate = [
+  {
+    title: 'Greedy template',
+    detail:
+      'Sort or prioritize candidates by your greedy key. Iterate, accept a candidate if it preserves feasibility, update state, and continue. No backtracking.',
+  },
+  {
+    title: 'State to track',
+    detail:
+      'Keep only what you need to test feasibility and update the objective (current end time, DSU parent set, remaining capacity, or a heap of active items).',
+  },
+  {
+    title: 'Tie-breaking matters',
+    detail:
+      'When multiple candidates tie on the greedy key, define a consistent tie-breaker to maintain determinism and simplify proofs.',
+  },
+  {
+    title: 'Verification on small inputs',
+    detail:
+      'Brute-force or DP on small cases helps detect hidden constraints that break greedy choice.',
+  },
+]
+
+const comparisons = [
+  {
+    title: 'Greedy vs dynamic programming',
+    detail:
+      'Greedy chooses one path; DP explores all subproblems. If greedy choice property is unclear or counterexamples appear, reach for DP.',
+  },
+  {
+    title: 'Greedy vs divide & conquer',
+    detail:
+      'Divide & conquer splits into independent subproblems, while greedy makes a single irreversible choice to reduce the problem.',
+  },
+  {
+    title: 'Greedy vs backtracking',
+    detail:
+      'Backtracking explores a search tree with pruning; greedy takes one branch based on a proven safe choice.',
+  },
+]
+
 const hygiene = [
   'Write the invariant that every accepted choice keeps the set feasible; assert it in code when possible.',
   'Define tie-breakers explicitly (stable sort, consistent ordering) so the greedy rule is deterministic.',
@@ -244,14 +365,27 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Local picks, global wins</div>
               <p className="win95-text">
-                Greedy algorithms commit to the best-looking option at each step and never revisit previous choices. When the greedy
-                choice property holds, that simple loop delivers optimal answers with minimal state.
+                Greedy algorithms build a solution piece by piece, always taking the best-looking option according to a fixed rule.
+                They never backtrack, so the correctness hinge is a proof that each local choice can be part of a global optimum.
+                When that proof exists, greedy solutions are fast, clean, and often O(n log n) with simple data structures.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
               BACK TO CATALOG
             </Link>
           </div>
+
+          <fieldset className="win95-fieldset">
+            <legend>Foundations: what makes greedy work</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Greedy loop anatomy</legend>
@@ -278,6 +412,17 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Problem modeling checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {modelingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Signals a greedy fit</legend>
             <div className="win95-panel win95-panel--raised">
               <ul className="win95-list">
@@ -295,6 +440,23 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked examples (step-by-step)</legend>
+            <div className="win95-stack">
+              {workedExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <ol className="win95-list win95-list--numbered">
+                    {example.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p className="win95-text">{example.why}</p>
                 </div>
               ))}
             </div>
@@ -325,6 +487,18 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Implementation template and pitfalls</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTemplate.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity and data structures</legend>
             <table className="win95-table">
               <thead>
@@ -346,6 +520,18 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
                 ))}
               </tbody>
             </table>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Greedy in context</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
