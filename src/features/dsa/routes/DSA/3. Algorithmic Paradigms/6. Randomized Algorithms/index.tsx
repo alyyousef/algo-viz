@@ -29,6 +29,52 @@ const bigPicture = [
   },
 ]
 
+const foundations = [
+  {
+    title: 'Las Vegas vs Monte Carlo',
+    detail:
+      'Las Vegas algorithms are always correct but have random runtime (e.g., randomized quicksort). Monte Carlo algorithms run fast but may be wrong with tiny probability (e.g., Miller-Rabin).',
+  },
+  {
+    title: 'Probability is part of the spec',
+    detail:
+      'A randomized algorithm is only well-defined if it states error probability or expected runtime bounds. These are not implementation details.',
+  },
+  {
+    title: 'Independence assumptions matter',
+    detail:
+      'Error bounds often assume independent trials. Correlated randomness can silently destroy guarantees.',
+  },
+  {
+    title: 'Verification tightens guarantees',
+    detail:
+      'When feasible, a cheap deterministic check turns Monte Carlo into Las Vegas (retry until verified).',
+  },
+]
+
+const taxonomy = [
+  {
+    title: 'Las Vegas algorithms',
+    detail: 'Always correct; randomness affects runtime. Examples: randomized quicksort, treaps.',
+  },
+  {
+    title: 'Monte Carlo algorithms',
+    detail: 'Fixed runtime; small chance of error. Examples: Miller-Rabin, Bloom filters.',
+  },
+  {
+    title: 'Randomized data structures',
+    detail: 'Randomness shapes balance or hashing. Examples: skip lists, cuckoo hashing.',
+  },
+  {
+    title: 'Sampling and sketching',
+    detail: 'Estimate from samples. Examples: reservoir sampling, count-min sketch.',
+  },
+  {
+    title: 'Randomized rounding',
+    detail: 'Convert fractional solutions to integer ones with bounded expectation.',
+  },
+]
+
 const history = [
   {
     title: '1975: Rabin primality',
@@ -68,6 +114,29 @@ const pillars = [
   {
     title: 'Adversary awareness',
     detail: 'Choose RNG and hashing resilient to chosen inputs; avoid predictable seeds.',
+  },
+]
+
+const randomnessSources = [
+  {
+    title: 'Pseudorandom generators (PRNG)',
+    detail:
+      'Fast and deterministic; good for performance and reproducible tests. Not safe against adversaries.',
+  },
+  {
+    title: 'Cryptographic RNG',
+    detail:
+      'Slower but unpredictable; required when inputs are adversarial or security-sensitive.',
+  },
+  {
+    title: 'Hash function families',
+    detail:
+      'Universal hashing gives collision probability bounds even for worst-case inputs.',
+  },
+  {
+    title: 'Seed management',
+    detail:
+      'Expose seeds for reproducibility; randomize seeds in production when adversaries may exist.',
   },
 ]
 
@@ -111,6 +180,34 @@ const howItWorks = [
   },
 ]
 
+const probabilityToolkit = [
+  {
+    title: 'Linearity of expectation',
+    detail: 'Expected totals can be computed without independence assumptions.',
+  },
+  {
+    title: 'Markov and Chebyshev',
+    detail: 'Basic tail bounds for non-negative or bounded-variance variables.',
+  },
+  {
+    title: 'Chernoff and Hoeffding',
+    detail: 'Strong concentration for sums of independent bounded variables.',
+  },
+  {
+    title: 'Union bound',
+    detail: 'Combine multiple failure events into a total error budget.',
+  },
+]
+
+const designChecklist = [
+  'Define the error or runtime guarantee explicitly.',
+  'State where randomness enters the algorithm.',
+  'Estimate failure probability per trial.',
+  'Decide how many trials you need to meet the SLA.',
+  'Add verification or fallback when possible.',
+  'Expose seed and randomness source for reproducible tests.',
+]
+
 const complexityTable = [
   {
     approach: 'Randomized quicksort (shuffled)',
@@ -135,6 +232,25 @@ const complexityTable = [
     time: 'O(n)',
     space: 'O(1)',
     note: 'Uniform sample from a stream with one pass.',
+  },
+]
+
+const verificationStrategies = [
+  {
+    title: 'Certificate checks',
+    detail: 'Verify output with a deterministic validator (e.g., primality witness).',
+  },
+  {
+    title: 'Independent reruns',
+    detail: 'Repeat with fresh randomness; combine by majority or minimum.',
+  },
+  {
+    title: 'Adaptive retries',
+    detail: 'Rerun only on suspicious outputs or when confidence is too low.',
+  },
+  {
+    title: 'Hybrid fallback',
+    detail: 'Use randomized fast path, then deterministic slow path if needed.',
   },
 ]
 
@@ -164,6 +280,24 @@ const applications = [
 const failureStory =
   'A logging pipeline used a Bloom filter with an overly small bit array; false positives hit 10 percent, silently dropping real alerts. Doubling the bits-per-entry and adding a verification pass cut errors below 0.1 percent within the same latency budget.'
 
+const comparisons = [
+  {
+    title: 'Randomized vs deterministic',
+    detail:
+      'Randomized algorithms aim for strong expected or high-probability bounds, while deterministic algorithms guarantee worst-case behavior.',
+  },
+  {
+    title: 'Randomized vs approximate',
+    detail:
+      'Randomized does not necessarily mean approximate; many randomized algorithms are exact with probability 1.',
+  },
+  {
+    title: 'Randomized vs parallel',
+    detail:
+      'Randomness can reduce variance, but parallelism reduces wall time. They often complement each other.',
+  },
+]
+
 const pitfalls = [
   {
     title: 'Unstated error budgets',
@@ -187,6 +321,14 @@ const pitfalls = [
   },
 ]
 
+const debuggingChecklist = [
+  'Log seeds and replay failures deterministically.',
+  'Track empirical error rates vs theoretical bounds.',
+  'Use statistical tests for RNG quality if results look biased.',
+  'Validate assumptions: independence, distribution, and input model.',
+  'Add invariants and post-checks to catch silent errors early.',
+]
+
 const whenToUse = [
   {
     title: 'You can tolerate bounded risk',
@@ -203,6 +345,25 @@ const whenToUse = [
   {
     title: 'Anytime or streaming requirements',
     detail: 'You need answers from partial data (sketches, samples) with tunable confidence.',
+  },
+]
+
+const whenToAvoid = [
+  {
+    title: 'Strict determinism required',
+    detail: 'Regulatory or safety-critical systems may forbid probabilistic failure.',
+  },
+  {
+    title: 'Adversary can predict RNG',
+    detail: 'If you cannot secure randomness, the algorithm can be attacked.',
+  },
+  {
+    title: 'Exact worst-case guarantees needed',
+    detail: 'Some SLAs require upper bounds on runtime, not just expectation.',
+  },
+  {
+    title: 'Verification is expensive',
+    detail: 'If checking outcomes costs as much as deterministic solving, randomization may not help.',
   },
 ]
 
@@ -226,6 +387,21 @@ const advanced = [
     title: 'Las Vegas with restarts',
     detail: 'Use randomized restarts to avoid pathological paths in exact algorithms (SAT, constraint search).',
     note: 'Converts heavy tails into tight high-probability bounds.',
+  },
+]
+
+const instrumentation = [
+  {
+    title: 'Error and collision counters',
+    detail: 'Measure false positive rates, collision frequencies, and variance in production.',
+  },
+  {
+    title: 'Tail event logging',
+    detail: 'Capture rare high-latency runs or large errors to analyze heavy tails.',
+  },
+  {
+    title: 'Seed rotation policies',
+    detail: 'Rotate or randomize seeds to prevent long-term bias and adversarial adaptation.',
   },
 ]
 
@@ -278,6 +454,31 @@ const codeExamples = [
 }`,
     explanation: 'Each round cuts composite escape probability by at least 4x; injecting rnd and math helpers keeps it testable.',
   },
+  {
+    title: 'Randomized quickselect',
+    code: `function quickselect(arr: number[], k: number, rnd = Math.random): number {
+  let left = 0
+  let right = arr.length - 1
+  while (true) {
+    const pivotIndex = left + Math.floor(rnd() * (right - left + 1))
+    const pivot = arr[pivotIndex]
+    ;[arr[pivotIndex], arr[right]] = [arr[right], arr[pivotIndex]]
+    let store = left
+    for (let i = left; i < right; i++) {
+      if (arr[i] < pivot) {
+        ;[arr[i], arr[store]] = [arr[store], arr[i]]
+        store++
+      }
+    }
+    ;[arr[store], arr[right]] = [arr[right], arr[store]]
+    if (store === k) return arr[store]
+    if (store < k) left = store + 1
+    else right = store - 1
+  }
+}`,
+    explanation:
+      'Random pivots yield O(n) expected time and avoid adversarial worst cases of deterministic selection.',
+  },
 ]
 
 const keyTakeaways = [
@@ -325,6 +526,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
+            <legend>Foundations</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Big picture</legend>
             <div className="win95-grid win95-grid-2">
               {bigPicture.map((item) => (
@@ -332,6 +545,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                   <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Randomized algorithm taxonomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {taxonomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -377,6 +602,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Randomness sources</legend>
+            <div className="win95-grid win95-grid-2">
+              {randomnessSources.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works, step by step</legend>
             <div className="win95-grid win95-grid-2">
               {howItWorks.map((step, idx) => (
@@ -387,6 +624,29 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
                   <p className="win95-text">{step.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Probability toolkit</legend>
+            <div className="win95-grid win95-grid-2">
+              {probabilityToolkit.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Design checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {designChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -417,6 +677,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Verification and amplification</legend>
+            <div className="win95-grid win95-grid-2">
+              {verificationStrategies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Where randomness wins</legend>
             <div className="win95-stack">
               <div className="win95-grid win95-grid-2">
@@ -436,6 +708,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Randomization in context</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Pitfalls to avoid</legend>
             <div className="win95-stack">
               {pitfalls.map((item) => (
@@ -444,6 +728,17 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {debuggingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -460,6 +755,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>When to avoid randomness</legend>
+            <div className="win95-stack">
+              {whenToAvoid.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Advanced moves</legend>
             <div className="win95-grid win95-grid-2">
               {advanced.map((item) => (
@@ -467,6 +774,18 @@ export default function RandomizedAlgorithmsPage(): JSX.Element {
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                   <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Instrumentation that matters</legend>
+            <div className="win95-grid win95-grid-2">
+              {instrumentation.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
