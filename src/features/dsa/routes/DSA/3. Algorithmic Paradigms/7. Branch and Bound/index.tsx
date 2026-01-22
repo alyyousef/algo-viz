@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 import { win95Styles } from '@/styles/win95'
 
 export default function BranchAndBoundPage(): JSX.Element {
-  
-
   const overviewPanels = [
     {
       title: 'What it is',
@@ -20,6 +18,52 @@ export default function BranchAndBoundPage(): JSX.Element {
       title: 'Where confirmable optimality helps',
       detail:
         'It delivers a proof of optimality, which is critical in scheduling, logistics, and resource allocation where near-optimal is not enough.',
+    },
+  ]
+
+  const foundations = [
+    {
+      title: 'Exact search with certificates',
+      detail:
+        'Branch and Bound explores the search tree exactly but prunes nodes using mathematically valid bounds. The final solution comes with a proof: every pruned subtree was impossible to beat the incumbent.',
+    },
+    {
+      title: 'Incumbent + bound = pruning',
+      detail:
+        'Two numbers drive everything: the current best feasible solution (incumbent) and a bound on what a partial solution could achieve. If the bound cannot beat the incumbent, prune.',
+    },
+    {
+      title: 'Relaxation is the engine',
+      detail:
+        'Bounds often come from relaxed problems (continuous, fractional, or simplified constraints). The tighter the relaxation, the more pruning you get.',
+    },
+    {
+      title: 'Search order shapes performance',
+      detail:
+        'Node selection (depth-first, best-first, or hybrid) trades memory for speed and determines how quickly you find strong incumbents.',
+    },
+  ]
+
+  const taxonomy = [
+    {
+      title: 'Pure Branch and Bound',
+      detail: 'Bounds + branching only. Good when relaxations are tight and feasible solutions are easy to find.',
+    },
+    {
+      title: 'Branch and Cut',
+      detail: 'Add cutting planes to tighten relaxations while searching. Backbone of modern MIP solvers.',
+    },
+    {
+      title: 'Branch and Price',
+      detail: 'Column generation provides bounds; branch on variables that appear dynamically.',
+    },
+    {
+      title: 'Branch and Bound with heuristics',
+      detail: 'Use greedy or local search to seed incumbents and boost pruning.',
+    },
+    {
+      title: 'Parallel Branch and Bound',
+      detail: 'Distribute subtrees across workers and share incumbents for stronger pruning.',
     },
   ]
 
@@ -39,6 +83,16 @@ export default function BranchAndBoundPage(): JSX.Element {
       detail:
         'Pruning is safe because bounds are mathematically guaranteed, not heuristic guesses. If the bound is valid, pruning never removes the optimal solution.',
     },
+  ]
+
+  const modelingChecklist = [
+    'Define variables and feasibility constraints clearly.',
+    'Choose an objective function and confirm whether it is min or max.',
+    'Identify a relaxation that can be solved quickly for bounds.',
+    'Decide branching variables and values (most fractional, most constrained).',
+    'Select a node ordering strategy (depth-first, best-first, hybrid).',
+    'Plan how to get a strong initial incumbent quickly.',
+    'Define dominance and symmetry rules for pruning equivalent nodes.',
   ]
 
   const algorithmSteps = [
@@ -80,6 +134,29 @@ export default function BranchAndBoundPage(): JSX.Element {
     },
   ]
 
+  const nodeSelection = [
+    {
+      title: 'Depth-first (DFS)',
+      detail:
+        'Low memory, finds a feasible solution early. Risk: may explore deep but poor branches before discovering tight bounds.',
+    },
+    {
+      title: 'Best-first (best bound)',
+      detail:
+        'Expands the node with the best bound, often reducing total nodes. Risk: frontier can explode in memory.',
+    },
+    {
+      title: 'Best-first with depth bias',
+      detail:
+        'Tie-break toward deeper nodes to find incumbents sooner while keeping bound-driven search.',
+    },
+    {
+      title: 'Iterative deepening',
+      detail:
+        'Set a bound threshold or depth limit and increase gradually; useful when memory is capped.',
+    },
+  ]
+
   const boundingTechniques = [
     {
       title: 'Relax the constraints',
@@ -100,6 +177,52 @@ export default function BranchAndBoundPage(): JSX.Element {
       title: 'Infeasibility pruning',
       detail:
         'Constraint checks can prove a node cannot lead to any feasible solution, allowing immediate pruning.',
+    },
+  ]
+
+  const boundingRules = [
+    {
+      title: 'Lower bound (minimization)',
+      detail:
+        'A lower bound is an optimistic estimate. If it is already >= incumbent, prune.',
+    },
+    {
+      title: 'Upper bound (maximization)',
+      detail:
+        'An upper bound is an optimistic estimate. If it is <= incumbent, prune.',
+    },
+    {
+      title: 'Dual bounds from relaxations',
+      detail:
+        'Solve a linear or convex relaxation to get strong bounds that are safe for pruning.',
+    },
+    {
+      title: 'Heuristic incumbents',
+      detail:
+        'Even a decent feasible solution can unlock massive pruning by tightening the incumbent early.',
+    },
+  ]
+
+  const branchingStrategies = [
+    {
+      title: 'Most fractional variable',
+      detail:
+        'In LP relaxations, branch on variables closest to 0.5 to split the search evenly.',
+    },
+    {
+      title: 'Most constrained decision',
+      detail:
+        'Branch on the variable with the smallest feasible domain to fail fast.',
+    },
+    {
+      title: 'Strong branching',
+      detail:
+        'Test multiple candidate branches to estimate which yields the best bound improvements.',
+    },
+    {
+      title: 'Problem-specific choices',
+      detail:
+        'In TSP, branch on edges; in scheduling, branch on job ordering or machine assignment.',
     },
   ]
 
@@ -126,6 +249,25 @@ export default function BranchAndBoundPage(): JSX.Element {
     },
   ]
 
+  const instrumentation = [
+    {
+      title: 'Node counters',
+      detail: 'Track nodes expanded, pruned, and feasible solutions found.',
+    },
+    {
+      title: 'Bound gap monitoring',
+      detail: 'Measure incumbent - best bound gap to see progress toward optimality.',
+    },
+    {
+      title: 'Search tree profiling',
+      detail: 'Log depth distribution and prune reasons to identify weak bounds or heuristics.',
+    },
+    {
+      title: 'Time limits and checkpoints',
+      detail: 'Save incumbent and best bound at intervals to support anytime use.',
+    },
+  ]
+
   const comparisonTable = [
     {
       method: 'Backtracking',
@@ -144,6 +286,31 @@ export default function BranchAndBoundPage(): JSX.Element {
       guarantee: 'No global optimum',
       pruning: 'Problem dependent',
       typicalUse: 'Very large instances',
+    },
+  ]
+
+  const workedExamples = [
+    {
+      title: '0/1 Knapsack: bound and prune',
+      steps: [
+        'Sort items by value density.',
+        'Branch on include/exclude of the next item.',
+        'Compute fractional knapsack bound for the remaining capacity.',
+        'Prune if bound <= incumbent best value.',
+      ],
+      note:
+        'Fractional fill gives a valid upper bound for maximization; it is the classic BnB success case.',
+    },
+    {
+      title: 'Scheduling with deadlines',
+      steps: [
+        'Branch on assigning the next job to a machine or a time slot.',
+        'Use earliest completion or relaxed machine capacity for lower bounds.',
+        'Prune branches that cannot beat the best schedule found.',
+        'Use a greedy schedule as the initial incumbent.',
+      ],
+      note:
+        'Even loose scheduling bounds can prune heavily when jobs are tight.',
     },
   ]
 
@@ -167,6 +334,27 @@ export default function BranchAndBoundPage(): JSX.Element {
       context: 'Scheduling and routing',
       detail:
         'Branch on task assignments or sequence decisions, bound using earliest completion or relaxed resource constraints.',
+    },
+  ]
+
+  const failureStory =
+    'A vehicle routing solver used a weak bound (simple distance sum) and explored millions of nodes. Replacing it with a 1-tree bound and seeding a greedy tour cut the search by 95% and reached optimality in minutes.'
+
+  const comparisons = [
+    {
+      title: 'Branch and Bound vs Backtracking',
+      detail:
+        'Backtracking prunes only infeasible states; Branch and Bound also prunes by optimality bounds.',
+    },
+    {
+      title: 'Branch and Bound vs Dynamic Programming',
+      detail:
+        'DP exploits overlapping subproblems; BnB explores a search tree when states are unique or too large for a table.',
+    },
+    {
+      title: 'Branch and Bound vs Heuristics',
+      detail:
+        'Heuristics give fast, possibly suboptimal answers; BnB gives proof of optimality but can be slower.',
     },
   ]
 
@@ -219,11 +407,26 @@ export default function BranchAndBoundPage(): JSX.Element {
     'Ignoring dominance and symmetry reductions that could remove redundant nodes.',
   ]
 
+  const debuggingChecklist = [
+    'Validate bound correctness on small instances (never prune optimal).',
+    'Confirm incumbent updates with feasible solution checks.',
+    'Log prune reasons to ensure bounds are actually cutting.',
+    'Check branching rules for symmetry; add dominance rules if duplicates appear.',
+    'Use a depth or node limit to prevent runaway exploration during tuning.',
+  ]
+
   const decisionGuidance = [
     'You need exact optimality, not just a good solution.',
     'The problem has a strong relaxation that gives tight bounds.',
     'Feasible solutions can be found early to tighten the incumbent.',
     'Instance sizes are moderate, or structure allows heavy pruning.',
+  ]
+
+  const whenToAvoid = [
+    'The relaxation is too weak to prune (bound nearly equals trivial).',
+    'Instances are huge with little structure and no good heuristics.',
+    'You only need a fast approximate answer.',
+    'Strict real-time guarantees prohibit worst-case exponential search.',
   ]
 
   const advancedInsights = [
@@ -281,12 +484,36 @@ export default function BranchAndBoundPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
+            <legend>Foundations</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((panel) => (
+                <div key={panel.title} className="win95-panel">
+                  <div className="win95-heading">{panel.title}</div>
+                  <p className="win95-text">{panel.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-grid win95-grid-3">
               {overviewPanels.map((panel) => (
                 <div key={panel.title} className="win95-panel">
                   <div className="win95-heading">{panel.title}</div>
                   <p className="win95-text">{panel.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Branch and Bound taxonomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {taxonomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -301,6 +528,17 @@ export default function BranchAndBoundPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Modeling checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {modelingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -321,9 +559,45 @@ export default function BranchAndBoundPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Node selection strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {nodeSelection.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Bounding techniques</legend>
             <div className="win95-grid win95-grid-2">
               {boundingTechniques.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Bounding rules and incumbents</legend>
+            <div className="win95-grid win95-grid-2">
+              {boundingRules.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Branching strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {branchingStrategies.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -347,6 +621,18 @@ export default function BranchAndBoundPage(): JSX.Element {
                 Branch and Bound is a time space trade. Better bounds and incumbents reduce time, while best-first trades more memory
                 for faster convergence.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Instrumentation that helps</legend>
+            <div className="win95-grid win95-grid-2">
+              {instrumentation.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -377,11 +663,47 @@ export default function BranchAndBoundPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Worked examples</legend>
+            <div className="win95-stack">
+              {workedExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <ol className="win95-list win95-list--numbered">
+                    {example.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p className="win95-text">{example.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
                 <div key={item.context} className="win95-panel">
                   <div className="win95-heading">{item.context}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Failure mode</legend>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">{failureStory}</p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Branch and Bound in context</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -415,6 +737,17 @@ export default function BranchAndBoundPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {debuggingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -422,6 +755,17 @@ export default function BranchAndBoundPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to avoid it</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {whenToAvoid.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
