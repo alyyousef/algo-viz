@@ -31,6 +31,29 @@ const bigPicture = [
   },
 ]
 
+const foundations = [
+  {
+    title: 'Constraint satisfaction core',
+    detail:
+      'Backtracking explores assignments that satisfy constraints. It does not need a numeric objective, only a fast way to reject partial assignments.',
+  },
+  {
+    title: 'Depth-first enumeration',
+    detail:
+      'DFS gives minimal memory use and enables clean undo. Each recursive call is a single decision added to the prefix.',
+  },
+  {
+    title: 'Pruning defines speed',
+    detail:
+      'The algorithm is only as good as its pruning. Every early contradiction saves an exponential subtree.',
+  },
+  {
+    title: 'Reversibility is non-negotiable',
+    detail:
+      'Each mutation must be undone precisely. If undo is expensive or buggy, correctness and performance collapse.',
+  },
+]
+
 const history = [
   {
     title: '1956: Davis-Putnam SAT search',
@@ -70,6 +93,29 @@ const pillars = [
   {
     title: 'Clear termination',
     detail: 'Know when to accept (full assignment) and when to abandon (dead constraint) to avoid phantom loops.',
+  },
+]
+
+const taxonomy = [
+  {
+    title: 'Pure enumeration',
+    detail: 'Explore all assignments; prune only when constraints are violated. Baseline for puzzles.',
+  },
+  {
+    title: 'Branch and bound',
+    detail: 'Maintain best-so-far objective and prune branches with optimistic bound <= incumbent.',
+  },
+  {
+    title: 'Constraint programming style',
+    detail: 'Use strong propagation (arc consistency, forward checking) to shrink domains early.',
+  },
+  {
+    title: 'Exact cover search',
+    detail: 'Model as exact cover and use DLX for O(1) remove/restore operations.',
+  },
+  {
+    title: 'Anytime search',
+    detail: 'Iterative deepening or time-bounded DFS that returns best-so-far solution.',
   },
 ]
 
@@ -115,6 +161,80 @@ const howItWorks = [
   },
 ]
 
+const modelingChecklist = [
+  'Define variables, their domains, and constraints in plain language.',
+  'Identify the smallest state that allows constraint checks and undo.',
+  'Pick a branching order (variable and value ordering heuristics).',
+  'Choose pruning rules and bounds that are safe (never cut a valid solution).',
+  'Decide whether you need one solution, all solutions, or the best solution.',
+  'Plan how to reconstruct or record solutions as you backtrack.',
+]
+
+const heuristics = [
+  {
+    title: 'MRV (minimum remaining values)',
+    detail: 'Pick the variable with the smallest domain to fail fast.',
+  },
+  {
+    title: 'Degree heuristic',
+    detail: 'Break ties by choosing the variable that constrains the most others.',
+  },
+  {
+    title: 'Least constraining value',
+    detail: 'Try values that eliminate the fewest options for neighbors.',
+  },
+  {
+    title: 'Conflict-first ordering',
+    detail: 'Choose positions with the highest constraints or most conflicts first.',
+  },
+]
+
+const pruningToolkit = [
+  {
+    title: 'Constraint violation checks',
+    detail: 'Reject partial assignments that already break constraints (row/col/diag conflicts).',
+  },
+  {
+    title: 'Forward checking',
+    detail: 'After assigning a variable, remove inconsistent values from neighbors.',
+  },
+  {
+    title: 'Arc consistency (AC-3)',
+    detail: 'Propagate implications across constraints to reduce domains aggressively.',
+  },
+  {
+    title: 'Bounding functions',
+    detail: 'Use optimistic bounds to stop branches that cannot beat the incumbent.',
+  },
+  {
+    title: 'Symmetry breaking',
+    detail: 'Fix one variable or canonical ordering to avoid equivalent solutions.',
+  },
+]
+
+const stateManagement = [
+  {
+    title: 'Immutable vs mutable state',
+    detail:
+      'Immutable state is safer but slower; mutable state with explicit undo is faster and standard for high-performance solvers.',
+  },
+  {
+    title: 'Undo stacks',
+    detail:
+      'Record each change (cell, value, domain) on a stack so you can roll back in LIFO order.',
+  },
+  {
+    title: 'Bitmasks for constraints',
+    detail:
+      'Use integer masks to test conflicts in O(1), e.g., rows/cols/diagonals in Sudoku or N-Queens.',
+  },
+  {
+    title: 'Early exit flags',
+    detail:
+      'If you only need the first solution, propagate a found flag to cut remaining recursion.',
+  },
+]
+
 const complexityTable = [
   {
     approach: 'Plain DFS enumeration',
@@ -139,6 +259,32 @@ const complexityTable = [
     time: 'O(b^d) worst-case, but anytime',
     space: 'O(d)',
     note: 'Returns progressively better answers; useful under latency caps.',
+  },
+]
+
+const stepByStepExample = [
+  {
+    title: 'Sudoku backtracking flow',
+    steps: [
+      'Represent each cell as a variable with domain 1..9.',
+      'Pick the cell with the smallest domain (MRV).',
+      'Try a value, update row/col/box masks, and remove conflicts.',
+      'If any domain becomes empty, undo and try the next value.',
+      'When all cells are filled, record the solution.',
+    ],
+    note:
+      'The core speedups come from MRV and O(1) constraint checks with bitmasks.',
+  },
+  {
+    title: 'Permutation with constraints',
+    steps: [
+      'Build a partial permutation and mark used items.',
+      'Check the constraint as soon as enough prefix is formed.',
+      'Prune on violation to avoid deeper permutations.',
+      'Undo the last choice and continue.',
+    ],
+    note:
+      'Early constraint checks can cut factorial exploration by orders of magnitude.',
   },
 ]
 
@@ -168,6 +314,24 @@ const applications = [
 const failureStory =
   'A tour-planning prototype backtracked over 25 cities without pruning and blew past a 30s SLA; adding nearest-neighbor ordering and a cost bound cut nodes by 99% and met a 500ms budget.'
 
+const comparisons = [
+  {
+    title: 'Backtracking vs DP',
+    detail:
+      'DP reuses overlapping subproblems; backtracking explores a tree. If states repeat, memoize or switch to DP.',
+  },
+  {
+    title: 'Backtracking vs greedy',
+    detail:
+      'Greedy takes one path based on a proof; backtracking explores many paths and prunes unsafe ones.',
+  },
+  {
+    title: 'Backtracking vs BFS/DFS on graphs',
+    detail:
+      'Graph search typically revisits nodes with visited sets; backtracking explores assignments with undo of constraints.',
+  },
+]
+
 const pitfalls = [
   {
     title: 'Forgetting to undo shared state',
@@ -191,6 +355,14 @@ const pitfalls = [
   },
 ]
 
+const debuggingChecklist = [
+  'Count visited nodes and pruned nodes to confirm heuristics are working.',
+  'Log depth and branching factor for a few runs to find hotspots.',
+  'Verify undo symmetry: every mutation must have a reverse operation.',
+  'Use small cases with known solutions to validate correctness.',
+  'Add timeouts and early exit flags to avoid runaway recursion.',
+]
+
 const whenToUse = [
   {
     title: 'Constraints define feasibility better than formulas define optima',
@@ -207,6 +379,25 @@ const whenToUse = [
   {
     title: 'Latency budget allows guided search',
     detail: 'When you can spend milliseconds exploring and pruning instead of precomputing everything.',
+  },
+]
+
+const whenToAvoid = [
+  {
+    title: 'Massive, repetitive state space',
+    detail: 'If the same substate repeats often, memoization or DP will dominate.',
+  },
+  {
+    title: 'Weak or expensive pruning',
+    detail: 'If constraint checks are heavy, the overhead can outweigh pruning gains.',
+  },
+  {
+    title: 'Real-time strict deadlines',
+    detail: 'Worst-case exponential behavior makes hard guarantees difficult.',
+  },
+  {
+    title: 'Streaming/online decisions',
+    detail: 'Backtracking assumes you can undo and revisit; online settings forbid that.',
   },
 ]
 
@@ -230,6 +421,21 @@ const advanced = [
     title: 'Iterative deepening with time slicing',
     detail: 'Grow depth limits gradually to yield anytime answers under strict SLAs.',
     note: 'Stops gracefully and returns the best incumbent when time expires.',
+  },
+]
+
+const instrumentation = [
+  {
+    title: 'Node counters',
+    detail: 'Track visited nodes, pruned nodes, and max depth to quantify efficiency.',
+  },
+  {
+    title: 'Heatmaps and histograms',
+    detail: 'Record prune depths or branching to spot where heuristics are weak.',
+  },
+  {
+    title: 'Replayable seeds',
+    detail: 'If randomized ordering is used, store seeds for reproducibility.',
   },
 ]
 
@@ -300,6 +506,53 @@ function knapsack(items: Item[], capacity: number): number {
 }`,
     explanation: 'Upper-bound estimate cuts branches that cannot beat the incumbent; sorting by density tightens the bound early.',
   },
+  {
+    title: 'Sudoku skeleton with bitmasks',
+    code: `function solveSudoku(board: number[][]): boolean {
+  const row = Array(9).fill(0)
+  const col = Array(9).fill(0)
+  const box = Array(9).fill(0)
+  const empties: Array<[number, number]> = []
+
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const val = board[r][c]
+      if (val === 0) {
+        empties.push([r, c])
+        continue
+      }
+      const bit = 1 << val
+      row[r] |= bit
+      col[c] |= bit
+      box[((r / 3) | 0) * 3 + ((c / 3) | 0)] |= bit
+    }
+  }
+
+  function dfs(i: number): boolean {
+    if (i === empties.length) return true
+    const [r, c] = empties[i]
+    const b = ((r / 3) | 0) * 3 + ((c / 3) | 0)
+    const used = row[r] | col[c] | box[b]
+    for (let v = 1; v <= 9; v++) {
+      const bit = 1 << v
+      if (used & bit) continue
+      row[r] |= bit
+      col[c] |= bit
+      box[b] |= bit
+      board[r][c] = v
+      if (dfs(i + 1)) return true
+      board[r][c] = 0
+      row[r] ^= bit
+      col[c] ^= bit
+      box[b] ^= bit
+    }
+    return false
+  }
+
+  return dfs(0)
+}`,
+    explanation: 'Bitmasks make checks O(1). Each assignment updates row/col/box masks and is undone on backtrack.',
+  },
 ]
 
 const keyTakeaways = [
@@ -347,6 +600,18 @@ export default function BacktrackingParadigmPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
+            <legend>Foundations</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Big picture</legend>
             <div className="win95-grid win95-grid-2">
               {bigPicture.map((item) => (
@@ -354,6 +619,18 @@ export default function BacktrackingParadigmPage(): JSX.Element {
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                   <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Backtracking taxonomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {taxonomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -413,6 +690,53 @@ export default function BacktrackingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Modeling checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {modelingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Heuristics that save time</legend>
+            <div className="win95-grid win95-grid-2">
+              {heuristics.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Pruning toolkit</legend>
+            <div className="win95-grid win95-grid-2">
+              {pruningToolkit.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>State and undo management</legend>
+            <div className="win95-grid win95-grid-2">
+              {stateManagement.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity at a glance</legend>
             <div className="win95-panel">
               <table className="win95-table">
@@ -439,6 +763,23 @@ export default function BacktrackingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Worked examples</legend>
+            <div className="win95-stack">
+              {stepByStepExample.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <ol className="win95-list win95-list--numbered">
+                    {item.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Where it powers real systems</legend>
             <div className="win95-stack">
               <div className="win95-grid win95-grid-2">
@@ -458,6 +799,18 @@ export default function BacktrackingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Backtracking vs other paradigms</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Pitfalls to avoid</legend>
             <div className="win95-stack">
               {pitfalls.map((item) => (
@@ -466,6 +819,17 @@ export default function BacktrackingParadigmPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {debuggingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -482,6 +846,18 @@ export default function BacktrackingParadigmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>When to avoid backtracking</legend>
+            <div className="win95-stack">
+              {whenToAvoid.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Advanced moves</legend>
             <div className="win95-grid win95-grid-2">
               {advanced.map((item) => (
@@ -489,6 +865,18 @@ export default function BacktrackingParadigmPage(): JSX.Element {
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                   <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Instrumentation that pays off</legend>
+            <div className="win95-grid win95-grid-2">
+              {instrumentation.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
