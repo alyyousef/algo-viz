@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 import { win95Styles } from '@/styles/win95'
 
 export default function MeetInTheMiddlePage(): JSX.Element {
-  
-
   const overviewPanels = [
     {
       title: 'What it is',
@@ -20,6 +18,52 @@ export default function MeetInTheMiddlePage(): JSX.Element {
       title: 'Where it shines',
       detail:
         'Subset sum, knapsack variants, and combinational problems where two partial computations can be merged by sorting or hashing.',
+    },
+  ]
+
+  const foundations = [
+    {
+      title: 'Split the exponential',
+      detail:
+        'Meet-in-the-Middle reduces a 2^n search by dividing it into two 2^(n/2) searches and then combining their results. The speedup is dramatic when n is 35–50.',
+    },
+    {
+      title: 'Time-memory trade',
+      detail:
+        'MITM is fast because it stores partial results. Memory is the main cost, so compression and pruning are often essential.',
+    },
+    {
+      title: 'Combine with structure',
+      detail:
+        'The paradigm only works when the objective can be decomposed into two parts that can be recombined (sum, XOR, concatenation, distance).',
+    },
+    {
+      title: 'Exact results, not heuristics',
+      detail:
+        'Unlike randomized or greedy methods, MITM delivers exact answers if you enumerate all partials and combine correctly.',
+    },
+  ]
+
+  const taxonomy = [
+    {
+      title: 'Exact sum matching',
+      detail: 'Find pairs that hit a target exactly (subset sum, XOR sum).',
+    },
+    {
+      title: 'Closest pair or balancing',
+      detail: 'Minimize |left + right - target| with sorted lists and two pointers.',
+    },
+    {
+      title: 'Optimization with Pareto sets',
+      detail: 'Compress dominated (weight, value) pairs before combining (knapsack).',
+    },
+    {
+      title: 'Cryptographic MITM',
+      detail: 'Match intermediate states between two stages of encryption or hashing.',
+    },
+    {
+      title: 'Multi-stage MITM',
+      detail: 'Split into 3–4 parts to reduce memory, then combine hierarchically.',
     },
   ]
 
@@ -39,6 +83,15 @@ export default function MeetInTheMiddlePage(): JSX.Element {
       detail:
         'Generate all possibilities on the left, all on the right, then combine with search, sort, or hashing.',
     },
+  ]
+
+  const modelingChecklist = [
+    'Define the objective and identify a split where each half can be evaluated independently.',
+    'Decide the key to combine on (sum, XOR, hash, path length).',
+    'Select what metadata is required to reconstruct the full solution.',
+    'Estimate memory for storing partials; plan compression if needed.',
+    'Choose a combination method (hashing, sorting, two-pointer, binary search).',
+    'Consider duplicate handling and dominance reduction rules.',
   ]
 
   const algorithmSteps = [
@@ -79,6 +132,25 @@ export default function MeetInTheMiddlePage(): JSX.Element {
     },
   ]
 
+  const combinationPatterns = [
+    {
+      title: 'Exact complement',
+      detail: 'Use a hash set to test whether target - sum exists in the other half.',
+    },
+    {
+      title: 'Closest match',
+      detail: 'Sort and sweep with two pointers to approach the target.',
+    },
+    {
+      title: 'Best under constraint',
+      detail: 'Binary search on sorted Pareto sets to maximize value under a capacity.',
+    },
+    {
+      title: 'Bitset merge',
+      detail: 'When keys are small, use bitsets to represent sums and intersect quickly.',
+    },
+  ]
+
   const combinationTechniques = [
     {
       title: 'Hash lookup for exact matches',
@@ -99,6 +171,29 @@ export default function MeetInTheMiddlePage(): JSX.Element {
       title: 'Binary search for best fit',
       detail:
         'When optimizing, binary search on the sorted list to find the best partner for each partial.',
+    },
+  ]
+
+  const dataManagement = [
+    {
+      title: 'Pareto compression',
+      detail:
+        'Remove dominated entries (higher weight, lower value) to cut memory without losing optimality.',
+    },
+    {
+      title: 'Coordinate compression',
+      detail:
+        'Map large keys to compact indices to reduce storage and enable faster search.',
+    },
+    {
+      title: 'Deduplicate aggressively',
+      detail:
+        'If multiple subsets yield the same key, keep only the best (or store counts if needed).',
+    },
+    {
+      title: 'Store masks only when required',
+      detail:
+        'Keep reconstruction data minimal: store subset masks only if you need explicit solutions.',
     },
   ]
 
@@ -125,6 +220,31 @@ export default function MeetInTheMiddlePage(): JSX.Element {
     },
   ]
 
+  const workedExamples = [
+    {
+      title: 'Subset sum (exact target)',
+      steps: [
+        'Split array into left and right halves.',
+        'Enumerate all sums of the left half; store in a hash set.',
+        'Enumerate sums of the right half; check if target - sum exists.',
+        'If found, reconstruct using stored masks or indices.',
+      ],
+      note:
+        'This is the canonical MITM example: O(2^(n/2)) time and memory with O(1) expected combine.',
+    },
+    {
+      title: 'Partition into two balanced subsets',
+      steps: [
+        'Compute all subset sums for each half.',
+        'Sort both lists.',
+        'Use two pointers to minimize |left + right - total/2|.',
+        'Recover the combination that yields the balance.',
+      ],
+      note:
+        'Two-pointer merge avoids O(m^2) pairing and finds the closest balance efficiently.',
+    },
+  ]
+
   const comparisonTable = [
     {
       method: 'Brute force',
@@ -143,6 +263,24 @@ export default function MeetInTheMiddlePage(): JSX.Element {
       time: 'O(n * target)',
       memory: 'O(target)',
       tradeoff: 'Good for small target values',
+    },
+  ]
+
+  const comparisons = [
+    {
+      title: 'MITM vs dynamic programming',
+      detail:
+        'DP is great when target values are small. MITM is better when values are huge but n is moderate.',
+    },
+    {
+      title: 'MITM vs branch and bound',
+      detail:
+        'BnB prunes a search tree with bounds; MITM enumerates all partials and combines. MITM is simpler but memory-heavy.',
+    },
+    {
+      title: 'MITM vs greedy',
+      detail:
+        'Greedy is fast but may be incorrect; MITM is exact when feasible.',
     },
   ]
 
@@ -168,6 +306,9 @@ export default function MeetInTheMiddlePage(): JSX.Element {
         'Breaking double encryption by matching intermediate states generated from both ends.',
     },
   ]
+
+  const failureStory =
+    'A subset-sum solver for n=46 ran out of memory because it stored all partials with full masks. Storing only sums and reconstructing via a second pass cut memory by 4x and completed in seconds.'
 
   const examples = [
     {
@@ -212,11 +353,26 @@ export default function MeetInTheMiddlePage(): JSX.Element {
     'Ignoring reconstruction metadata when the actual solution is required, not just feasibility.',
   ]
 
+  const debuggingChecklist = [
+    'Validate combining logic on tiny instances where brute force is possible.',
+    'Check for duplicate sums and ensure your compression keeps the best candidate.',
+    'Verify reconstruction metadata (subset masks or indices) matches the sums.',
+    'Measure memory and ensure lists fit in RAM before sorting.',
+    'Use stable sorting and explicit tie-breakers when you need deterministic outputs.',
+  ]
+
   const decisionGuidance = [
     'n is too large for 2^n brute force, but still moderate (often <= 45).',
     'The objective combines two halves cleanly (sum, XOR, concatenation, path length).',
     'Memory is available for storing about 2^(n/2) partial results.',
     'You need exact answers, not heuristic approximations.',
+  ]
+
+  const whenToAvoid = [
+    'n is so large that 2^(n/2) is still infeasible.',
+    'Memory is constrained and you cannot compress partial results.',
+    'The problem does not decompose cleanly into two independent halves.',
+    'A polynomial-time DP or greedy algorithm exists with guarantees.',
   ]
 
   const advancedInsights = [
@@ -239,6 +395,21 @@ export default function MeetInTheMiddlePage(): JSX.Element {
       title: 'Hybrid with branch and bound',
       detail:
         'Use MITM to generate strong bounds or initial incumbents for branch and bound solvers.',
+    },
+  ]
+
+  const instrumentation = [
+    {
+      title: 'List sizes and compression rates',
+      detail: 'Track how many partials are generated and how much compression saves.',
+    },
+    {
+      title: 'Combine cost metrics',
+      detail: 'Measure time spent in sort, hash insert, and merge operations.',
+    },
+    {
+      title: 'Memory peak tracking',
+      detail: 'Monitor peak memory to choose split sizes and compression strategies.',
     },
   ]
 
@@ -274,12 +445,36 @@ export default function MeetInTheMiddlePage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
+            <legend>Foundations</legend>
+            <div className="win95-grid win95-grid-2">
+              {foundations.map((panel) => (
+                <div key={panel.title} className="win95-panel">
+                  <div className="win95-heading">{panel.title}</div>
+                  <p className="win95-text">{panel.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>The big picture</legend>
             <div className="win95-grid win95-grid-3">
               {overviewPanels.map((panel) => (
                 <div key={panel.title} className="win95-panel">
                   <div className="win95-heading">{panel.title}</div>
                   <p className="win95-text">{panel.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>MITM taxonomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {taxonomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -294,6 +489,17 @@ export default function MeetInTheMiddlePage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Modeling checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {modelingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -314,9 +520,33 @@ export default function MeetInTheMiddlePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Combination patterns</legend>
+            <div className="win95-grid win95-grid-2">
+              {combinationPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Combination techniques</legend>
             <div className="win95-grid win95-grid-2">
               {combinationTechniques.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Data management and compression</legend>
+            <div className="win95-grid win95-grid-2">
+              {dataManagement.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -340,6 +570,23 @@ export default function MeetInTheMiddlePage(): JSX.Element {
                 MITM is the classic time-memory trade: it is much faster than brute force, but only if you can afford to store the
                 partial results.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked examples</legend>
+            <div className="win95-stack">
+              {workedExamples.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <ol className="win95-list win95-list--numbered">
+                    {example.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p className="win95-text">{example.note}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -370,6 +617,18 @@ export default function MeetInTheMiddlePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>MITM in context</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-world applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
@@ -378,6 +637,13 @@ export default function MeetInTheMiddlePage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Failure mode</legend>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">{failureStory}</p>
             </div>
           </fieldset>
 
@@ -408,6 +674,17 @@ export default function MeetInTheMiddlePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging checklist</legend>
+            <div className="win95-panel win95-panel--raised">
+              <ul className="win95-list">
+                {debuggingChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use it</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -419,9 +696,32 @@ export default function MeetInTheMiddlePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>When to avoid it</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {whenToAvoid.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Advanced insights</legend>
             <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Instrumentation that helps</legend>
+            <div className="win95-grid win95-grid-2">
+              {instrumentation.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
