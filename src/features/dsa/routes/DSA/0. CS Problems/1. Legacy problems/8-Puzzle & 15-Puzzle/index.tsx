@@ -73,6 +73,16 @@ const coreConcepts = [
     detail:
       'Each move usually costs 1, so shortest path equals fewest moves.',
   },
+  {
+    title: 'State graph',
+    detail:
+      'Each state is a node. Edges connect states that differ by one legal blank move. The graph is unweighted and undirected.',
+  },
+  {
+    title: 'Branching factor',
+    detail:
+      'The blank has 2, 3, or 4 legal moves depending on its position, so average branching is ~2.13 (8-puzzle) and ~2.67 (15-puzzle).',
+  },
 ]
 
 const solvabilityRules = [
@@ -95,6 +105,34 @@ const solvabilityRules = [
     title: 'Why this works',
     detail:
       'Sliding moves preserve permutation parity. The board splits into two disjoint sets: solvable and unsolvable.',
+  },
+]
+
+const howToThink = [
+  {
+    title: 'Think in states, not moves',
+    detail:
+      'Each board configuration is a state. Your job is to find a shortest path in the state graph, not to “solve by hand.”',
+  },
+  {
+    title: 'Search is the baseline',
+    detail:
+      'Blind search is too big for 15-puzzle. You need heuristics to guide the search to promising states.',
+  },
+  {
+    title: 'Heuristics must be safe',
+    detail:
+      'If you want optimal solutions, the heuristic must never overestimate. This is why Manhattan distance is the default.',
+  },
+  {
+    title: 'Prune with memory and math',
+    detail:
+      'Use solvability tests, closed sets, and good encodings to avoid exploring unreachable or duplicate states.',
+  },
+  {
+    title: 'Know your constraint',
+    detail:
+      'If memory is limited, choose IDA*. If time is limited, invest in stronger heuristics or bidirectional search.',
   },
 ]
 
@@ -164,6 +202,29 @@ const heuristics = [
   },
 ]
 
+const admissibilityNotes = [
+  {
+    title: 'Admissible heuristic',
+    detail:
+      'Never overestimates true distance. Guarantees optimality for A* and IDA*.',
+  },
+  {
+    title: 'Consistent heuristic',
+    detail:
+      'Also called monotonic. Ensures that f = g + h never decreases along a path, enabling efficient A* behavior.',
+  },
+  {
+    title: 'Manhattan is both',
+    detail:
+      'Manhattan distance is admissible and consistent because each move changes total distance by at most 1.',
+  },
+  {
+    title: 'Pattern databases',
+    detail:
+      'If disjoint and combined by sum, they stay admissible. If overlapping, use max instead of sum.',
+  },
+]
+
 const complexityTable = [
   {
     approach: 'BFS (8-puzzle)',
@@ -191,6 +252,34 @@ const complexityTable = [
   },
 ]
 
+const comparisons = [
+  {
+    title: '8/15-puzzle vs 8-queens',
+    detail:
+      'Both are classic state-space searches, but the 8-queens is a constraint satisfaction problem with no path costs. The puzzle is shortest-path.',
+  },
+  {
+    title: '8/15-puzzle vs TSP',
+    detail:
+      'TSP is an optimization over permutations with weighted edges. The puzzle is unweighted shortest-path on a fixed graph.',
+  },
+  {
+    title: '8/15-puzzle vs Sudoku',
+    detail:
+      'Sudoku is a constraint satisfaction and deduction problem. The puzzle is pure search with a simple transition model.',
+  },
+  {
+    title: '8/15-puzzle vs Rubik’s Cube',
+    detail:
+      'Rubik’s has a far larger state space and higher branching. The puzzle is smaller but still hard without heuristics.',
+  },
+  {
+    title: '8/15-puzzle vs Graph shortest path',
+    detail:
+      'Conceptually identical: find the shortest path in a graph. The puzzle just defines the graph implicitly.',
+  },
+]
+
 const pitfalls = [
   {
     mistake: 'Ignoring solvability',
@@ -214,6 +303,29 @@ const pitfalls = [
   },
 ]
 
+const variants = [
+  {
+    title: 'General N-puzzle',
+    detail:
+      'The same rules on an NxN board. Solvability rules generalize by board parity and blank row.',
+  },
+  {
+    title: 'Weighted puzzle',
+    detail:
+      'Different tiles have different move costs, turning the problem into a weighted shortest path.',
+  },
+  {
+    title: 'Toroidal puzzle',
+    detail:
+      'The board wraps around edges, changing the state graph and solvability structure.',
+  },
+  {
+    title: 'Multiple blanks',
+    detail:
+      'More than one empty space increases branching and changes solvability constraints.',
+  },
+]
+
 const optimizationTips = [
   {
     title: 'Bit-packing',
@@ -234,6 +346,29 @@ const optimizationTips = [
     title: 'Transposition table',
     detail:
       'Cache visited states with best g-cost to prune worse paths.',
+  },
+]
+
+const whatsItFor = [
+  {
+    title: 'Teaching search',
+    detail:
+      'Used to teach BFS, DFS, A*, IDA*, and the impact of heuristics on node expansions.',
+  },
+  {
+    title: 'Benchmarking heuristics',
+    detail:
+      'Small enough to test quickly, large enough to show huge differences in heuristic quality.',
+  },
+  {
+    title: 'Explaining admissibility',
+    detail:
+      'A clean example for why “never overestimate” matters and how it guarantees optimality.',
+  },
+  {
+    title: 'Algorithm design patterns',
+    detail:
+      'Demonstrates how to combine precomputation (PDBs) with runtime search.',
   },
 ]
 
@@ -303,6 +438,29 @@ State:
 Manhattan = dist(7) + dist(8) = 1 + 1 = 2`,
     explanation:
       'Each tile contributes its row and column distance from the goal position.',
+  },
+]
+
+const evaluationChecklist = [
+  {
+    title: 'Correctness',
+    detail:
+      'Does the solver always return a valid sequence of moves that reaches the goal?',
+  },
+  {
+    title: 'Optimality',
+    detail:
+      'Does it return the shortest solution length? (Requires admissible heuristic.)',
+  },
+  {
+    title: 'Performance',
+    detail:
+      'Track nodes expanded, max frontier size, and runtime.',
+  },
+  {
+    title: 'Memory',
+    detail:
+      'A* can blow up memory. IDA* keeps memory low but can re-expand nodes.',
   },
 ]
 
@@ -380,6 +538,18 @@ export default function EightPuzzlePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>How to Think About It</legend>
+            <div className="win95-grid win95-grid-2">
+              {howToThink.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Solvability Rules</legend>
             <div className="win95-grid win95-grid-2">
               {solvabilityRules.map((item) => (
@@ -419,6 +589,14 @@ export default function EightPuzzlePage(): JSX.Element {
                 </div>
               ))}
             </div>
+            <div className="win95-grid win95-grid-2">
+              {admissibilityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -448,9 +626,33 @@ export default function EightPuzzlePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>What It Is Used For</legend>
+            <div className="win95-grid win95-grid-2">
+              {whatsItFor.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Optimization Tips</legend>
             <div className="win95-grid win95-grid-2">
               {optimizationTips.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and Contrast</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -469,6 +671,18 @@ export default function EightPuzzlePage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and Extensions</legend>
+            <div className="win95-grid win95-grid-2">
+              {variants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -494,6 +708,18 @@ export default function EightPuzzlePage(): JSX.Element {
                     <code>{example.code.trim()}</code>
                   </pre>
                   <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How to Evaluate a Solver</legend>
+            <div className="win95-grid win95-grid-2">
+              {evaluationChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
