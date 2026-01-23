@@ -28,6 +28,29 @@ const bigPicture = [
   },
 ]
 
+const quickGlossary = [
+  {
+    term: 'Wait-for edge',
+    definition:
+      'A directed edge P1 -> P2 meaning P1 is blocked waiting for a resource held by P2.',
+  },
+  {
+    term: 'Deadlock set',
+    definition:
+      'The set of processes involved in a deadlock cycle.',
+  },
+  {
+    term: 'Victim',
+    definition:
+      'A process chosen to terminate or roll back to break the deadlock.',
+  },
+  {
+    term: 'Detection interval',
+    definition:
+      'How often the system runs the detection algorithm (periodic or on-demand).',
+  },
+]
+
 const history = [
   {
     title: '1970s: Formal models',
@@ -66,6 +89,29 @@ const coreConcepts = [
     detail:
       'Cycles are not sufficient; you need a detection algorithm similar to Banker’s safety test.',
   },
+  {
+    title: 'Single vs multiple instances',
+    detail:
+      'For single-instance resources, cycle detection is exact. For multiple instances, it is only a hint.',
+  },
+]
+
+const resourceGraphs = [
+  {
+    title: 'Resource allocation graph (RAG)',
+    detail:
+      'Processes (circles) and resources (squares). P -> R is a request, R -> P is an assignment.',
+  },
+  {
+    title: 'Wait-for graph (WFG)',
+    detail:
+      'Only processes as nodes. Edge P1 -> P2 if P1 is waiting for a resource held by P2.',
+  },
+  {
+    title: 'Graph construction',
+    detail:
+      'Collapse resource nodes with single instances. For multiple instances, use matrix methods instead.',
+  },
 ]
 
 const howToThink = [
@@ -83,6 +129,11 @@ const howToThink = [
     title: 'Trade-off with avoidance',
     detail:
       'Detection allows more concurrency but accepts that some work may be rolled back.',
+  },
+  {
+    title: 'Detect late, recover fast',
+    detail:
+      'Detection is only valuable if recovery can restore progress quickly.',
   },
 ]
 
@@ -104,11 +155,52 @@ const algorithms = [
   },
 ]
 
+const detectionWorkflow = [
+  {
+    title: 'Build the model',
+    detail:
+      'Gather Allocation and Request data (or build a wait-for graph).',
+  },
+  {
+    title: 'Run detection',
+    detail:
+      'Apply cycle detection for single-instance or the matrix algorithm for multiple-instance resources.',
+  },
+  {
+    title: 'Identify victims',
+    detail:
+      'Select processes to terminate or roll back based on cost, priority, or age.',
+  },
+  {
+    title: 'Recover and resume',
+    detail:
+      'Preempt resources or abort processes, then resume the remaining processes.',
+  },
+]
+
 const detectionSteps = [
   'Let Work = Available, Finish[i] = false for each process.',
   'Find an i where Request[i] <= Work.',
   'If none exists, processes with Finish[i] = false are deadlocked.',
   'If found, Work += Allocation[i], Finish[i] = true, repeat.',
+]
+
+const correctnessNotes = [
+  {
+    title: 'Soundness (single-instance)',
+    detail:
+      'A cycle in a wait-for graph is both necessary and sufficient for deadlock.',
+  },
+  {
+    title: 'Soundness (multiple-instance)',
+    detail:
+      'Matrix detection finds a subset of processes that cannot finish given current resources.',
+  },
+  {
+    title: 'False positives',
+    detail:
+      'Cycle detection can over-report deadlock when resources have multiple instances.',
+  },
 ]
 
 const recoveryStrategies = [
@@ -134,6 +226,42 @@ const recoveryStrategies = [
   },
 ]
 
+const victimSelection = [
+  {
+    title: 'Minimize rollback cost',
+    detail:
+      'Choose the process with least work done or cheapest recovery.',
+  },
+  {
+    title: 'Priority-aware',
+    detail:
+      'Prefer to kill low-priority or batch jobs rather than interactive tasks.',
+  },
+  {
+    title: 'Age and fairness',
+    detail:
+      'Avoid always killing the same process; rotate victims or use aging.',
+  },
+]
+
+const detectionPolicy = [
+  {
+    title: 'Periodic detection',
+    detail:
+      'Run every N seconds or on a schedule to control overhead.',
+  },
+  {
+    title: 'On-demand detection',
+    detail:
+      'Trigger when a request blocks too long or a timeout fires.',
+  },
+  {
+    title: 'Hybrid strategy',
+    detail:
+      'Run a lightweight check on demand and a full detection periodically.',
+  },
+]
+
 const comparisons = [
   {
     title: 'Detection vs avoidance',
@@ -149,6 +277,24 @@ const comparisons = [
     title: 'Detection vs timeouts',
     detail:
       'Timeouts are heuristic detection. They are simpler but can kill slow yet correct processes.',
+  },
+]
+
+const tradeoffs = [
+  {
+    title: 'Concurrency vs overhead',
+    detail:
+      'Detection allows more concurrency but costs CPU to analyze graphs or matrices.',
+  },
+  {
+    title: 'False positives vs delays',
+    detail:
+      'Conservative detection may kill processes unnecessarily; lax detection may delay recovery.',
+  },
+  {
+    title: 'Recovery cost',
+    detail:
+      'Terminating or rolling back processes can be expensive and disruptive.',
   },
 ]
 
@@ -170,6 +316,24 @@ const pitfalls = [
   },
 ]
 
+const realWorldPatterns = [
+  {
+    title: 'Two-phase locking (DBs)',
+    detail:
+      'Deadlocks are expected; detectors identify cycles in lock waits and abort a transaction.',
+  },
+  {
+    title: 'Kernel lock debugging',
+    detail:
+      'Some kernels build lock graphs to detect cycles for diagnostics.',
+  },
+  {
+    title: 'Distributed detection',
+    detail:
+      'Edge-chasing (probe) algorithms detect global cycles across nodes.',
+  },
+]
+
 const realWorld = [
   {
     title: 'Databases',
@@ -185,6 +349,58 @@ const realWorld = [
     title: 'Distributed systems',
     detail:
       'Global deadlock detection is harder due to message delays and partial visibility.',
+  },
+]
+
+const workedExample = [
+  {
+    title: 'Single-instance cycle',
+    code: `Resources: A, B, C (single instance each)
+P1 holds A, requests B
+P2 holds B, requests C
+P3 holds C, requests A
+
+Wait-for graph:
+P1 -> P2 -> P3 -> P1 (cycle)`,
+    explanation:
+      'This is a deadlock: each process waits for a resource held by the next.',
+  },
+  {
+    title: 'Multiple-instance detection',
+    code: `Available = [1, 0]
+Allocation:
+P0: [1, 0]
+P1: [0, 1]
+Request:
+P0: [0, 1]
+P1: [1, 0]
+
+No process can proceed => deadlock set {P0, P1}`,
+    explanation:
+      'Matrix detection shows both processes are stuck given available resources.',
+  },
+]
+
+const evaluationChecklist = [
+  {
+    title: 'Detection accuracy',
+    detail:
+      'Does the algorithm correctly identify deadlocked sets for the resource model?',
+  },
+  {
+    title: 'Recovery effectiveness',
+    detail:
+      'Does the chosen recovery strategy actually break the cycle quickly?',
+  },
+  {
+    title: 'Operational overhead',
+    detail:
+      'Is detection frequency tuned to avoid excessive CPU use?',
+  },
+  {
+    title: 'Fairness and stability',
+    detail:
+      'Are the same processes repeatedly killed? Do you prevent starvation?',
   },
 ]
 
@@ -255,6 +471,18 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Quick Glossary</legend>
+            <div className="win95-grid win95-grid-2">
+              {quickGlossary.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.definition}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Historical Context</legend>
             <div className="win95-grid win95-grid-2">
               {history.map((item) => (
@@ -280,9 +508,33 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Graph Models</legend>
+            <div className="win95-grid win95-grid-2">
+              {resourceGraphs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How to Think About It</legend>
             <div className="win95-grid win95-grid-2">
               {howToThink.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Detection Workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {detectionWorkflow.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -315,6 +567,18 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Correctness Notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Recovery Strategies</legend>
             <div className="win95-grid win95-grid-2">
               {recoveryStrategies.map((item) => (
@@ -327,9 +591,45 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Victim Selection Criteria</legend>
+            <div className="win95-grid win95-grid-2">
+              {victimSelection.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Detection Policy</legend>
+            <div className="win95-grid win95-grid-2">
+              {detectionPolicy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Compare and Contrast</legend>
             <div className="win95-grid win95-grid-2">
               {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Trade-offs</legend>
+            <div className="win95-grid win95-grid-2">
+              {tradeoffs.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -352,12 +652,39 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Real-World Patterns</legend>
+            <div className="win95-grid win95-grid-3">
+              {realWorldPatterns.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-World Connections</legend>
             <div className="win95-grid win95-grid-3">
               {realWorld.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Worked Examples</legend>
+            <div className="win95-stack">
+              {workedExample.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code.trim()}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
@@ -373,6 +700,18 @@ export default function DeadlockDetectionPage(): JSX.Element {
                     <code>{example.code.trim()}</code>
                   </pre>
                   <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How to Evaluate a Detector</legend>
+            <div className="win95-grid win95-grid-2">
+              {evaluationChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
