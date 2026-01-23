@@ -25,7 +25,7 @@ export default function MeetInTheMiddlePage(): JSX.Element {
     {
       title: 'Split the exponential',
       detail:
-        'Meet-in-the-Middle reduces a 2^n search by dividing it into two 2^(n/2) searches and then combining their results. The speedup is dramatic when n is 35–50.',
+        'Meet-in-the-Middle reduces a 2^n search by dividing it into two 2^(n/2) searches and then combining their results. The speedup is dramatic when n is 35â€“50.',
     },
     {
       title: 'Time-memory trade',
@@ -63,7 +63,7 @@ export default function MeetInTheMiddlePage(): JSX.Element {
     },
     {
       title: 'Multi-stage MITM',
-      detail: 'Split into 3–4 parts to reduce memory, then combine hierarchically.',
+      detail: 'Split into 3â€“4 parts to reduce memory, then combine hierarchically.',
     },
   ]
 
@@ -745,4 +745,5 @@ export default function MeetInTheMiddlePage(): JSX.Element {
     </div>
   )
 }
+
 

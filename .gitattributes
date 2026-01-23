@@ -1,6 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# Keep TypeScript sources in LF to avoid CRLF warnings on Windows
+*.ts text eol=lf
+*.tsx text eol=lf
+
 # Ensure Husky hooks and shell scripts keep LF endings
 .husky/* text eol=lf
 *.sh text eol=lf
