@@ -28,6 +28,34 @@ const bigPicture = [
   },
 ]
 
+const quickGlossary = [
+  {
+    term: 'Safe sequence',
+    definition:
+      'An ordering of processes where each can finish with the resources available at its turn.',
+  },
+  {
+    term: 'Safe state',
+    definition:
+      'A state that has at least one safe sequence.',
+  },
+  {
+    term: 'Unsafe state',
+    definition:
+      'A state with no safe sequence; it is not necessarily deadlocked but can lead to deadlock.',
+  },
+  {
+    term: 'Deadlock avoidance',
+    definition:
+      'A strategy that checks requests and only grants them if the system stays safe.',
+  },
+  {
+    term: 'Max claim',
+    definition:
+      'The maximum number of instances of each resource a process may request during its lifetime.',
+  },
+]
+
 const history = [
   {
     title: '1965: Proposed by Edsger Dijkstra',
@@ -71,6 +99,11 @@ const coreConcepts = [
     detail:
       'A state is unsafe if no such order exists. Unsafe does not mean deadlocked, but it could lead to deadlock.',
   },
+  {
+    title: 'Safety vs progress',
+    detail:
+      'Banker’s can delay requests even when the system is not deadlocked, prioritizing safety over immediate progress.',
+  },
 ]
 
 const dataModel = [
@@ -96,6 +129,24 @@ const dataModel = [
   },
 ]
 
+const invariants = [
+  {
+    title: 'Need is never negative',
+    detail:
+      'Need = Max - Allocation must remain non-negative for every process and resource.',
+  },
+  {
+    title: 'Resources conserved',
+    detail:
+      'Sum of Allocation across processes plus Available equals total resources for each type.',
+  },
+  {
+    title: 'Requests never exceed Need',
+    detail:
+      'If a process requests more than its Need, it has violated its declared Max claim.',
+  },
+]
+
 const howToThink = [
   {
     title: 'Safety is a promise',
@@ -117,6 +168,34 @@ const howToThink = [
     detail:
       'The algorithm may delay requests that would actually be fine in practice, favoring safety over utilization.',
   },
+  {
+    title: 'Think in constraints',
+    detail:
+      'The safe sequence is a proof that constraints are satisfiable; no proof, no allocation.',
+  },
+]
+
+const decisionWorkflow = [
+  {
+    title: 'Validate the request',
+    detail:
+      'Check Request <= Need and Request <= Available. If either fails, deny or defer immediately.',
+  },
+  {
+    title: 'Simulate allocation',
+    detail:
+      'Pretend the request is granted and compute new Available, Allocation, and Need.',
+  },
+  {
+    title: 'Run safety test',
+    detail:
+      'Find a safe sequence. If it exists, commit the allocation; otherwise roll back.',
+  },
+  {
+    title: 'Communicate outcome',
+    detail:
+      'Grant, deny, or wait depending on safety; keep the system in a safe state.',
+  },
 ]
 
 const safetyAlgorithm = [
@@ -131,6 +210,24 @@ const requestAlgorithm = [
   'If Request[i] > Available, delay (not enough resources).',
   'Temporarily allocate: Available -= Request, Allocation += Request, Need -= Request.',
   'Run the safety algorithm. If safe, keep allocation; otherwise roll back.',
+]
+
+const correctnessNotes = [
+  {
+    title: 'Soundness',
+    detail:
+      'If the algorithm approves a request, the system remains safe because a safe sequence is constructed.',
+  },
+  {
+    title: 'Conservativeness',
+    detail:
+      'The algorithm may reject some requests even if they might not lead to deadlock in practice.',
+  },
+  {
+    title: 'Safety vs liveness',
+    detail:
+      'Safety is guaranteed if used correctly, but it does not guarantee fairness or prevent starvation.',
+  },
 ]
 
 const complexityNotes = [
@@ -148,6 +245,29 @@ const complexityNotes = [
     title: 'Memory',
     detail:
       'Requires matrices of size P x R and several vectors; memory is modest but not trivial.',
+  },
+]
+
+const implementationTips = [
+  {
+    title: 'Use integer vectors',
+    detail:
+      'Allocation, Max, Need, and Available should be small integer arrays for fast comparisons.',
+  },
+  {
+    title: 'Fast Need <= Work checks',
+    detail:
+      'Compare arrays element-wise; short-circuit early when a resource is insufficient.',
+  },
+  {
+    title: 'Track Finish efficiently',
+    detail:
+      'A boolean array per process plus a loop over processes is sufficient for the safety check.',
+  },
+  {
+    title: 'Avoid expensive copies',
+    detail:
+      'Simulate allocation by copying only the vectors you need or by rolling back changes in place.',
   },
 ]
 
@@ -174,6 +294,24 @@ const pitfalls = [
   },
 ]
 
+const variants = [
+  {
+    title: 'Single-resource Banker’s',
+    detail:
+      'Simplified version used for teaching. It reduces the matrix to vectors and makes safety checks easy to visualize.',
+  },
+  {
+    title: 'Priority-aware Banker’s',
+    detail:
+      'Adds priorities; can still be safe but may bias allocations toward critical processes.',
+  },
+  {
+    title: 'Deadline-aware scheduling',
+    detail:
+      'In real-time systems, safety checks may incorporate deadlines or timing constraints.',
+  },
+]
+
 const comparisons = [
   {
     title: "Banker's vs deadlock detection",
@@ -194,6 +332,28 @@ const comparisons = [
     title: 'Banker’s vs lock ordering',
     detail:
       'Lock ordering is a simple prevention strategy for specific resources; Banker’s is general but heavier.',
+  },
+]
+
+const workedThrough = [
+  {
+    title: 'Safe sequence example',
+    code: `Available = [3, 3, 2]
+Need:
+P0: [7, 4, 3]
+P1: [1, 2, 2]
+P2: [6, 0, 0]
+
+Step 1: Work=[3,3,2], P1 fits => finish P1
+Work = Work + Allocation[P1] = [3,3,2] + [2,0,0] = [5,3,2]
+
+Step 2: P2 fits => finish P2
+Work = [5,3,2] + [3,0,2] = [8,3,4]
+
+Step 3: P0 fits => finish P0
+Safe sequence: P1 -> P2 -> P0`,
+    explanation:
+      'Because a full completion order exists, the state is safe.',
   },
 ]
 
@@ -247,6 +407,65 @@ Request <= Available? yes
 Temporarily grant and run safety test`,
     explanation:
       'If the safety test passes, the request is approved. If not, it is rolled back.',
+  },
+]
+
+const whenToUse = [
+  {
+    title: 'When max claims are known',
+    detail:
+      'Banker’s requires processes to declare Max upfront. If claims are unknown, the model breaks.',
+  },
+  {
+    title: 'When safety is critical',
+    detail:
+      'Systems that cannot tolerate deadlock can adopt avoidance at the cost of throughput.',
+  },
+  {
+    title: 'When request rate is low',
+    detail:
+      'Safety checks are expensive; they are more practical when allocation changes are infrequent.',
+  },
+]
+
+const tradeoffs = [
+  {
+    title: 'Safety vs utilization',
+    detail:
+      'Avoiding unsafe states can leave resources idle even when they could be used safely.',
+  },
+  {
+    title: 'CPU overhead',
+    detail:
+      'Every request can trigger a multi-pass safety check.',
+  },
+  {
+    title: 'Complexity vs simplicity',
+    detail:
+      'Banker’s is more complex than lock ordering or timeouts but offers stronger guarantees.',
+  },
+]
+
+const evaluationChecklist = [
+  {
+    title: 'Safety preserved',
+    detail:
+      'Does every grant keep the system in a safe state?',
+  },
+  {
+    title: 'Max claims enforced',
+    detail:
+      'Are requests strictly bounded by declared Max?',
+  },
+  {
+    title: 'Performance budget',
+    detail:
+      'Are safety checks fast enough for the system’s request rate?',
+  },
+  {
+    title: 'Starvation risk',
+    detail:
+      'Are some processes repeatedly delayed? Consider fairness strategies.',
   },
 ]
 
@@ -311,6 +530,18 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Quick Glossary</legend>
+            <div className="win95-grid win95-grid-2">
+              {quickGlossary.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.definition}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Core Concepts</legend>
             <div className="win95-grid win95-grid-2">
               {coreConcepts.map((item) => (
@@ -335,9 +566,33 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Invariants to Keep True</legend>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How to Think About It</legend>
             <div className="win95-grid win95-grid-2">
               {howToThink.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Decision Workflow</legend>
+            <div className="win95-grid win95-grid-2">
+              {decisionWorkflow.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -369,9 +624,33 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Correctness Notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity and Cost</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation Tips</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationTips.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -406,12 +685,63 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Variants and Extensions</legend>
+            <div className="win95-grid win95-grid-2">
+              {variants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to Use It</legend>
+            <div className="win95-grid win95-grid-2">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Trade-offs</legend>
+            <div className="win95-grid win95-grid-2">
+              {tradeoffs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-World Connections</legend>
             <div className="win95-grid win95-grid-3">
               {realWorld.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Walkthrough: Safe Sequence</legend>
+            <div className="win95-stack">
+              {workedThrough.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code.trim()}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
@@ -427,6 +757,18 @@ export default function BankersAlgorithmPage(): JSX.Element {
                     <code>{example.code.trim()}</code>
                   </pre>
                   <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>How to Evaluate an Implementation</legend>
+            <div className="win95-grid win95-grid-2">
+              {evaluationChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
