@@ -46,6 +46,23 @@ const setup = [
   },
 ]
 
+const history = [
+  {
+    title: '1971: Introduced by Patil',
+    details:
+      'The problem was introduced by Suhas Patil as a synchronization puzzle.',
+    notes:
+      'It became a standard OS/parallel programming example for signaling correctness.',
+  },
+  {
+    title: '1970s+: Semaphore and monitor showcase',
+    details:
+      'Textbooks used it to teach semaphores and monitors because naive approaches fail subtly.',
+    notes:
+      'It highlights lost wakeups, incorrect signaling, and the difference between mutual exclusion and condition sync.',
+  },
+]
+
 const howToThink = [
   {
     title: 'Think in events, not threads',
@@ -66,6 +83,34 @@ const howToThink = [
     title: 'Avoid busy waiting',
     detail:
       'Use semaphores or condition variables so smokers sleep until they are unblocked.',
+  },
+  {
+    title: 'Matchmaker mindset',
+    detail:
+      'The agent provides a pair. Your job is to route that pair to the one smoker who can use it.',
+  },
+]
+
+const stateModel = [
+  {
+    title: 'Table state',
+    detail:
+      'A shared state describing which ingredients are currently on the table.',
+  },
+  {
+    title: 'Ingredient signals',
+    detail:
+      'Semaphores or condition variables for ingredient availability.',
+  },
+  {
+    title: 'Smoker signals',
+    detail:
+      'A per-smoker semaphore that is released only when they can proceed.',
+  },
+  {
+    title: 'Mutex',
+    detail:
+      'Protects shared state so pushers and agent do not race.',
   },
 ]
 
@@ -110,6 +155,29 @@ const pusherIdea = [
   },
 ]
 
+const stepByStep = [
+  {
+    title: 'Agent places ingredients',
+    detail:
+      'The agent puts two items on the table and signals the corresponding ingredient semaphores.',
+  },
+  {
+    title: 'Pushers react',
+    detail:
+      'Each pusher checks if another ingredient flag is set; if so, it signals the correct smoker.',
+  },
+  {
+    title: 'Smoker proceeds',
+    detail:
+      'Only the smoker with the missing ingredient wakes, makes a cigarette, and signals the agent.',
+  },
+  {
+    title: 'Agent repeats',
+    detail:
+      'The agent waits for the smoker to finish before placing the next pair.',
+  },
+]
+
 const correctnessNotes = [
   {
     title: 'Safety',
@@ -125,6 +193,24 @@ const correctnessNotes = [
     title: 'No lost wakeups',
     detail:
       'Signals are tied to actual availability; smokers do not miss their turn.',
+  },
+]
+
+const failureModes = [
+  {
+    title: 'Lost wakeup',
+    detail:
+      'If a smoker checks the table before the agent signals, they can miss the event and sleep forever.',
+  },
+  {
+    title: 'Double signaling',
+    detail:
+      'If two smokers are awakened for the same pair, both may try to consume, breaking correctness.',
+  },
+  {
+    title: 'Table corruption',
+    detail:
+      'If pushers update flags without a mutex, both can assume the same ingredient and signal incorrectly.',
   },
 ]
 
@@ -167,6 +253,47 @@ const comparisons = [
     detail:
       'Readers-writers is about access policy and priority. Smokers is about matching complementary resources.',
   },
+  {
+    title: 'Smokers vs Sleeping Barber',
+    detail:
+      'Barber is about queueing and service availability; smokers is about selecting the correct consumer.',
+  },
+  {
+    title: 'Smokers vs Condition Variables',
+    detail:
+      'Smokers is a concrete example of why condition variables need a predicate and a loop.',
+  },
+]
+
+const variants = [
+  {
+    title: 'More ingredients',
+    detail:
+      'Extending to k ingredients and k smokers increases the matching logic and the number of pushers.',
+  },
+  {
+    title: 'Biased agent',
+    detail:
+      'If the agent chooses pairs non-uniformly, some smokers can starve without fairness controls.',
+  },
+  {
+    title: 'Multiple tables',
+    detail:
+      'Parallel tables increase throughput but add coordination complexity and possible starvation.',
+  },
+]
+
+const fairnessNotes = [
+  {
+    title: 'Random agent is not enough',
+    detail:
+      'Random choice does not guarantee fairness over finite time. Add rotation or quotas if needed.',
+  },
+  {
+    title: 'Starvation prevention',
+    detail:
+      'Track which smoker has waited longest and bias the agent to serve them next.',
+  },
 ]
 
 const realWorldConnections = [
@@ -184,6 +311,46 @@ const realWorldConnections = [
     title: 'Message brokers',
     detail:
       'Routing messages to the correct consumer avoids noisy broadcasts and wasted work.',
+  },
+]
+
+const semaphoreSketch = [
+  {
+    title: 'Semaphore-based structure',
+    code: `semaphore tobacco = 0, paper = 0, match = 0
+semaphore smokerT = 0, smokerP = 0, smokerM = 0
+semaphore agent = 1
+mutex table = 1
+bool hasT = false, hasP = false, hasM = false`,
+    explanation:
+      'Separate semaphores for ingredients and smokers; pushers gate the correct smoker.',
+  },
+  {
+    title: 'Agent (pseudo)',
+    code: `agent:
+  while true:
+    wait(agent)
+    choose two ingredients
+    signal(ingredient1)
+    signal(ingredient2)`,
+    explanation:
+      'Agent waits until a smoker finishes, then places the next pair.',
+  },
+  {
+    title: 'Pusher for Tobacco (pseudo)',
+    code: `pusherT:
+  while true:
+    wait(tobacco)
+    lock(table)
+    if hasP:
+      hasP = false; signal(smokerM)
+    else if hasM:
+      hasM = false; signal(smokerP)
+    else:
+      hasT = true
+    unlock(table)`,
+    explanation:
+      'Pushers coordinate using flags to detect pairs and signal the correct smoker.',
   },
 ]
 
@@ -262,6 +429,19 @@ export default function CigaretteSmokersPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Historical Context</legend>
+            <div className="win95-grid win95-grid-2">
+              {history.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.details}</p>
+                  <p className="win95-text">{item.notes}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Problem Setup</legend>
             <div className="win95-grid win95-grid-2">
               {setup.map((item) => (
@@ -274,9 +454,33 @@ export default function CigaretteSmokersPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>State Model</legend>
+            <div className="win95-grid win95-grid-2">
+              {stateModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How to Think About It</legend>
             <div className="win95-grid win95-grid-2">
               {howToThink.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Step-by-Step Flow</legend>
+            <div className="win95-grid win95-grid-2">
+              {stepByStep.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -328,6 +532,18 @@ export default function CigaretteSmokersPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Failure Modes</legend>
+            <div className="win95-grid win95-grid-2">
+              {failureModes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -353,12 +569,51 @@ export default function CigaretteSmokersPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Variants and Extensions</legend>
+            <div className="win95-grid win95-grid-2">
+              {variants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Fairness and Starvation</legend>
+            <div className="win95-grid win95-grid-2">
+              {fairnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Real-World Connections</legend>
             <div className="win95-grid win95-grid-3">
               {realWorldConnections.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Semaphore Sketch</legend>
+            <div className="win95-stack">
+              {semaphoreSketch.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code.trim()}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
             </div>
