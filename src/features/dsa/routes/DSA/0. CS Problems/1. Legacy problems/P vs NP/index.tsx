@@ -110,6 +110,29 @@ const problemSetup = [
   },
 ]
 
+const formalDefinitions = [
+  {
+    title: 'Deterministic polynomial time',
+    detail:
+      'A problem is in P if there exists a deterministic Turing machine that solves it in O(n^k) time.',
+  },
+  {
+    title: 'Nondeterministic polynomial time',
+    detail:
+      'A problem is in NP if a nondeterministic machine can solve it in polynomial time.',
+  },
+  {
+    title: 'Verifier definition',
+    detail:
+      'NP is the class of languages L for which there is a polynomial-time verifier V(x, y).',
+  },
+  {
+    title: 'Certificate size',
+    detail:
+      'The certificate y must be polynomially bounded in |x| for verification to be efficient.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Proof checking vs proof finding',
@@ -149,6 +172,34 @@ const relationships = [
     detail:
       'Problems whose no answers have efficiently verifiable certificates.',
   },
+  {
+    title: 'NP-intermediate',
+    detail:
+      'If P != NP, there exist problems in NP that are neither in P nor NP-complete.',
+  },
+]
+
+const classLandscape = [
+  {
+    title: 'PSPACE',
+    detail:
+      'Problems solvable with polynomial space. It contains NP and is believed to be larger.',
+  },
+  {
+    title: 'PH (Polynomial Hierarchy)',
+    detail:
+      'A stack of classes extending NP and co-NP. Many believe P != NP implies PH does not collapse.',
+  },
+  {
+    title: 'EXP',
+    detail:
+      'Problems solvable in exponential time. It contains NP and PSPACE.',
+  },
+  {
+    title: 'BPP and randomized classes',
+    detail:
+      'Probabilistic polynomial time. Its relationship with NP is unknown.',
+  },
 ]
 
 const commonNPComplete = [
@@ -179,6 +230,52 @@ const commonNPComplete = [
   },
 ]
 
+const reductionPrimer = [
+  {
+    title: 'Direction matters',
+    detail:
+      'To show B is hard, reduce a known hard problem A to B (A <=_p B).',
+  },
+  {
+    title: 'Preserving answers',
+    detail:
+      'The reduction must map yes instances to yes and no instances to no.',
+  },
+  {
+    title: 'Polynomial time',
+    detail:
+      'The reduction itself must run in polynomial time.',
+  },
+  {
+    title: 'Consequence',
+    detail:
+      'If B has a polynomial algorithm, then A does too.',
+  },
+]
+
+const cookLevinSketch = [
+  {
+    title: 'Start with any NP verifier',
+    detail:
+      'Take a polynomial-time verifier for an NP language.',
+  },
+  {
+    title: 'Encode computation',
+    detail:
+      'Express the computation tableau as a Boolean formula.',
+  },
+  {
+    title: 'Satisfiability matches acceptance',
+    detail:
+      'The formula is satisfiable iff the verifier accepts some certificate.',
+  },
+  {
+    title: 'Therefore SAT is NP-complete',
+    detail:
+      'SAT is in NP and every NP problem reduces to it.',
+  },
+]
+
 const proofTechniques = [
   {
     title: 'Reductions',
@@ -199,6 +296,34 @@ const proofTechniques = [
     title: 'Natural proofs barrier',
     detail:
       'Many proof techniques fail because they would break cryptographic assumptions.',
+  },
+  {
+    title: 'Algebrization barrier',
+    detail:
+      'Some techniques that go beyond relativization still fail for P vs NP.',
+  },
+]
+
+const evidenceAndBeliefs = [
+  {
+    title: 'Most experts believe P != NP',
+    detail:
+      'The prevailing view is that no polynomial algorithms exist for NP-complete problems.',
+  },
+  {
+    title: 'No progress on strong lower bounds',
+    detail:
+      'Even proving superlinear lower bounds for general problems is extremely hard.',
+  },
+  {
+    title: 'Successful reductions',
+    detail:
+      'Decades of reductions suggest a robust hardness web that is hard to collapse.',
+  },
+  {
+    title: 'Cryptographic evidence',
+    detail:
+      'Modern cryptography assumes certain problems are hard, aligning with P != NP.',
   },
 ]
 
@@ -225,6 +350,47 @@ const consequences = [
   },
 ]
 
+const ifPNP = [
+  {
+    title: 'Polynomial-time algorithms for NP-complete problems',
+    detail:
+      'SAT, TSP, and many others would become efficiently solvable.',
+  },
+  {
+    title: 'Cryptographic collapse',
+    detail:
+      'Many public-key systems would be insecure unless stronger assumptions are found.',
+  },
+  {
+    title: 'Optimization revolution',
+    detail:
+      'Exact solutions would replace many approximations and heuristics.',
+  },
+  {
+    title: 'Open problem: small exponents',
+    detail:
+      'Even if P = NP, algorithms might have huge exponents and be impractical.',
+  },
+]
+
+const ifPNotNP = [
+  {
+    title: 'Hardness is permanent',
+    detail:
+      'Some problems provably resist any polynomial-time solution.',
+  },
+  {
+    title: 'Approximation and heuristics stay central',
+    detail:
+      'We will continue to rely on approximation schemes and special cases.',
+  },
+  {
+    title: 'Cryptography foundations strengthened',
+    detail:
+      'The existence of hard problems aligns with the security of many cryptosystems.',
+  },
+]
+
 const misconceptions = [
   {
     mistake: 'NP means not polynomial',
@@ -246,6 +412,11 @@ const misconceptions = [
     description:
       'Approximation, heuristics, and special cases are still useful and often practical.',
   },
+  {
+    mistake: 'A faster computer solves NP-hardness',
+    description:
+      'Polynomial vs exponential growth means bigger machines still hit a wall quickly.',
+  },
 ]
 
 const workedExamples = [
@@ -266,6 +437,50 @@ P = NP would follow.`,
     explanation:
       'Reductions allow one hard problem to transfer difficulty to another.',
   },
+  {
+    title: 'Clique to vertex cover',
+    code: `Graph G has a k-clique
+iff G has a vertex cover of size n-k in the complement graph.
+This gives a polynomial-time reduction.`,
+    explanation:
+      'Many NP-complete problems are linked by simple structural reductions.',
+  },
+]
+
+const approximationNotes = [
+  {
+    title: 'Approximation ratios',
+    detail:
+      'Some NP-hard problems admit guaranteed approximations; others are hard to approximate.',
+  },
+  {
+    title: 'PTAS and FPTAS',
+    detail:
+      'A PTAS gives (1+eps) solutions in poly time for fixed eps; FPTAS is poly in 1/eps too.',
+  },
+  {
+    title: 'Hardness of approximation',
+    detail:
+      'For some problems, even approximate solutions are NP-hard to compute.',
+  },
+]
+
+const complexityComparisons = [
+  {
+    title: 'Exponential vs polynomial',
+    detail:
+      'Polynomial time scales much better as input grows. Exponential time explodes quickly.',
+  },
+  {
+    title: 'Worst-case vs average-case',
+    detail:
+      'P vs NP is about worst-case complexity. Many hard problems are easy on typical inputs.',
+  },
+  {
+    title: 'Heuristics',
+    detail:
+      'Good heuristics can solve large instances without changing worst-case complexity.',
+  },
 ]
 
 const pseudocode = [
@@ -285,6 +500,14 @@ const pseudocode = [
 // A_instance is yes iff B_instance is yes`,
     explanation:
       'Polynomial-time reductions preserve yes/no answers.',
+  },
+  {
+    title: 'Nondeterministic viewpoint',
+    code: `guess certificate y
+if verify(x, y): accept
+else reject`,
+    explanation:
+      'A nondeterministic machine "guesses" a certificate and verifies it in polynomial time.',
   },
 ]
 
@@ -315,7 +538,7 @@ const keyTakeaways = [
   'P vs NP asks whether every efficiently verifiable problem is efficiently solvable.',
   'NP-complete problems are the hardest in NP; if any one is in P, then P = NP.',
   'The problem remains unsolved and is central to complexity theory.',
-  'Barriers like relativization and natural proofs limit many proof techniques.',
+  'Barriers like relativization, algebrization, and natural proofs limit techniques.',
   'Regardless of the answer, approximations and special cases remain critical.',
 ]
 
@@ -396,6 +619,23 @@ export default function PvsNPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Formal Definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                The verifier view is the most practical: NP is the set of problems where a short certificate can be checked quickly.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Mental Models</legend>
             <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
@@ -425,9 +665,45 @@ export default function PvsNPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Wider Complexity Landscape</legend>
+            <div className="win95-grid win95-grid-2">
+              {classLandscape.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Canonical NP-Complete Problems</legend>
             <div className="win95-grid win95-grid-2">
               {commonNPComplete.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Reduction Primer</legend>
+            <div className="win95-grid win95-grid-2">
+              {reductionPrimer.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Cook-Levin Proof Sketch</legend>
+            <div className="win95-grid win95-grid-2">
+              {cookLevinSketch.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -449,9 +725,74 @@ export default function PvsNPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Consequences if P = NP (or not)</legend>
+            <legend>Evidence and Beliefs</legend>
+            <div className="win95-grid win95-grid-2">
+              {evidenceAndBeliefs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Consequences if P = NP</legend>
+            <div className="win95-grid win95-grid-2">
+              {ifPNP.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Consequences if P != NP</legend>
+            <div className="win95-grid win95-grid-2">
+              {ifPNotNP.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Consequences in Practice</legend>
             <div className="win95-grid win95-grid-2">
               {consequences.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Approximations and Heuristics</legend>
+            <div className="win95-grid win95-grid-2">
+              {approximationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+            <div className="win95-panel win95-panel--raised">
+              <p className="win95-text">
+                Even if P != NP, many NP-hard problems are solvable in practice via heuristics or approximation.
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity Comparisons</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityComparisons.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
