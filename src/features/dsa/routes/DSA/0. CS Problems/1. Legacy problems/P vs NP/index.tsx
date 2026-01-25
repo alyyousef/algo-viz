@@ -133,6 +133,154 @@ const formalDefinitions = [
   },
 ]
 
+const whatMakesP = [
+  {
+    title: 'Deterministic algorithm',
+    detail:
+      'There is a clear, step-by-step procedure that always produces the correct answer.',
+  },
+  {
+    title: 'Polynomial time bound',
+    detail:
+      'The runtime is bounded by n^k for some constant k, where n is input size.',
+  },
+  {
+    title: 'Uniform for all inputs',
+    detail:
+      'The same algorithm works for every instance, not just special cases.',
+  },
+  {
+    title: 'Decision form',
+    detail:
+      'P is formally defined over decision problems (yes/no). Optimization often reduces to decision.',
+  },
+]
+
+const whatMakesNP = [
+  {
+    title: 'Short certificate exists',
+    detail:
+      'For every yes instance, there is a proof/witness whose size is polynomial in input size.',
+  },
+  {
+    title: 'Fast verification',
+    detail:
+      'Given the certificate, a verifier can check correctness in polynomial time.',
+  },
+  {
+    title: 'Nondeterministic view',
+    detail:
+      'A nondeterministic machine can guess the certificate and verify it in polynomial time.',
+  },
+  {
+    title: 'Decision form',
+    detail:
+      'Like P, NP is defined for decision problems; optimization versions are related but distinct.',
+  },
+]
+
+const pExamples = [
+  {
+    title: 'Sorting',
+    detail:
+      'Sort n numbers in O(n log n). Decision variant: is the k-th smallest <= x?',
+  },
+  {
+    title: 'Shortest path (nonnegative edges)',
+    detail:
+      'Dijkstra runs in polynomial time. Decision: is there a path with length <= L?',
+  },
+  {
+    title: 'Minimum spanning tree',
+    detail:
+      'Kruskal/Prim are polynomial. Decision: is there an MST with cost <= C?',
+  },
+  {
+    title: 'Bipartite matching',
+    detail:
+      'Maximum matching in bipartite graphs is in P via flow.',
+  },
+  {
+    title: '2-SAT',
+    detail:
+      'Satisfiability of 2-CNF formulas is in P via implication graphs.',
+  },
+  {
+    title: 'Primality testing',
+    detail:
+      'AKS shows primality is in P (polynomial-time deterministic test).',
+  },
+]
+
+const npExamples = [
+  {
+    title: 'SAT / 3-SAT',
+    detail:
+      'Given a Boolean formula, does a satisfying assignment exist? Certificate: the assignment.',
+  },
+  {
+    title: 'Hamiltonian cycle',
+    detail:
+      'Does a graph contain a cycle visiting every vertex once? Certificate: the cycle order.',
+  },
+  {
+    title: 'Clique',
+    detail:
+      'Is there a k-clique? Certificate: the set of k vertices.',
+  },
+  {
+    title: 'Vertex cover',
+    detail:
+      'Is there a cover of size k? Certificate: the chosen vertices.',
+  },
+  {
+    title: 'Subset sum',
+    detail:
+      'Is there a subset summing to T? Certificate: the subset.',
+  },
+  {
+    title: 'Graph coloring (k-coloring)',
+    detail:
+      'Can the graph be colored with k colors? Certificate: the color assignment.',
+  },
+]
+
+const decisionVsSearch = [
+  {
+    title: 'Decision vs optimization',
+    detail:
+      'Decision asks yes/no (exists a solution?). Optimization asks best value (min/max).',
+  },
+  {
+    title: 'Decision vs search',
+    detail:
+      'Search asks for an explicit solution. Decision can often be used to find one via queries.',
+  },
+  {
+    title: 'Why this matters',
+    detail:
+      'P and NP are defined for decision problems, but most real tasks are optimization or search.',
+  },
+]
+
+const closureFacts = [
+  {
+    title: 'P is closed under',
+    detail:
+      'Union, intersection, complement, and polynomial-time reductions.',
+  },
+  {
+    title: 'NP is closed under',
+    detail:
+      'Union and intersection; closure under complement is unknown (relates to NP vs co-NP).',
+  },
+  {
+    title: 'Reductions preserve hardness',
+    detail:
+      'If A <=_p B and A is hard, B is at least as hard.',
+  },
+]
+
 const mentalModels = [
   {
     title: 'Proof checking vs proof finding',
@@ -636,9 +784,69 @@ export default function PvsNPPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>What Makes a Problem P?</legend>
+            <div className="win95-grid win95-grid-2">
+              {whatMakesP.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>What Makes a Problem NP?</legend>
+            <div className="win95-grid win95-grid-2">
+              {whatMakesNP.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Mental Models</legend>
             <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Examples of P Problems</legend>
+            <div className="win95-grid win95-grid-2">
+              {pExamples.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Examples of NP Problems</legend>
+            <div className="win95-grid win95-grid-2">
+              {npExamples.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Decision vs Search vs Optimization</legend>
+            <div className="win95-grid win95-grid-2">
+              {decisionVsSearch.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -661,6 +869,18 @@ export default function PvsNPPage(): JSX.Element {
               <p className="win95-text">
                 The single most important fact: if any NP-complete problem has a polynomial-time algorithm, then P = NP.
               </p>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Closure and Reduction Facts</legend>
+            <div className="win95-grid win95-grid-2">
+              {closureFacts.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
