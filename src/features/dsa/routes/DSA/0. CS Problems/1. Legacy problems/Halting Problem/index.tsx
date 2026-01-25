@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+
 import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
@@ -175,6 +177,39 @@ const formalNotes = [
   },
 ]
 
+const ricesTheoremDetails = [
+  {
+    title: "Rice's theorem statement",
+    detail:
+      'Any nontrivial semantic property of programs (properties about what they compute, not how they are written) is undecidable.',
+  },
+  {
+    title: 'Nontrivial means both yes and no',
+    detail:
+      'If a property holds for some programs but not all, then it is nontrivial and falls under the theorem.',
+  },
+  {
+    title: 'Two witness programs',
+    detail:
+      'Pick a program A that has the property and a program B that does not. They serve as targets for a reduction.',
+  },
+  {
+    title: 'Reduction from halting',
+    detail:
+      'Given (P, x), construct a new program that runs P(x) and then behaves like A if P halts, or like B if it does not.',
+  },
+  {
+    title: 'Contradiction',
+    detail:
+      'If you could decide the property for the new program, you would decide halting. Therefore no such decider exists.',
+  },
+  {
+    title: 'Key takeaway',
+    detail:
+      "Rice's theorem generalizes the halting problem: most interesting semantic questions about programs are undecidable.",
+  },
+]
+
 const algorithmLandscape = [
   {
     title: 'Semi-decision by simulation',
@@ -231,6 +266,62 @@ const relatedProblems = [
     title: 'Hilbert tenth problem',
     detail:
       'No algorithm can determine whether an arbitrary Diophantine equation has an integer solution.',
+  },
+]
+
+const reductionsGallery = [
+  {
+    id: 'totality',
+    title: 'Totality (halts on all inputs)',
+    detail:
+      'Decide whether a program halts for every possible input.',
+    reduction:
+      'Given (P, x), build Q(y) that ignores y and simulates P(x). Q halts on all inputs iff P halts on x.',
+  },
+  {
+    id: 'equivalence',
+    title: 'Program equivalence',
+    detail:
+      'Given programs P and Q, decide whether they compute the same partial function.',
+    reduction:
+      'Let R(y)=0 for all y. Build Q(y) that runs P(x) then returns 0. Q equals R iff P halts on x.',
+  },
+  {
+    id: 'reachability',
+    title: 'Reachability of a line',
+    detail:
+      'Determine whether execution can reach a designated line L.',
+    reduction:
+      'Insert L after simulating P(x). L is reachable iff P halts on x.',
+  },
+  {
+    id: 'output-property',
+    title: 'Nontrivial output property',
+    detail:
+      'Does the program ever print 1?',
+    reduction:
+      'Create Q that simulates P(x) and prints 1 if P halts. Q prints 1 iff P halts on x.',
+  },
+]
+
+const haltingDemoPrograms = [
+  {
+    id: 'halts-fast',
+    name: 'Return immediately',
+    description: 'P(x) = x + 1; halts in one step.',
+    haltsAfter: 1,
+  },
+  {
+    id: 'countdown',
+    name: 'Countdown loop',
+    description: 'Repeat 5 steps, then halt (toy example).',
+    haltsAfter: 5,
+  },
+  {
+    id: 'infinite-loop',
+    name: 'While true',
+    description: 'An infinite loop that never halts.',
+    haltsAfter: null,
   },
 ]
 
@@ -362,6 +453,30 @@ const keyTakeaways = [
 ]
 
 export default function HaltingProblemPage(): JSX.Element {
+  const defaultProgram = haltingDemoPrograms[0] ?? {
+    id: 'fallback',
+    name: 'Unavailable program',
+    description: 'No demo programs are configured.',
+    haltsAfter: null,
+  }
+  const defaultReduction = reductionsGallery[0] ?? {
+    id: 'fallback',
+    title: 'Unavailable reduction',
+    detail: 'No reductions are configured.',
+    reduction: 'Add reductions to display examples here.',
+  }
+
+  const [selectedProgramId, setSelectedProgramId] = useState(defaultProgram.id)
+  const [steps, setSteps] = useState(0)
+  const [selectedReductionId, setSelectedReductionId] = useState(defaultReduction.id)
+
+  const selectedProgram = haltingDemoPrograms.find((program) => program.id === selectedProgramId) ?? defaultProgram
+  const selectedReduction = reductionsGallery.find((item) => item.id === selectedReductionId) ?? defaultReduction
+  const hasHalted = selectedProgram.haltsAfter !== null && steps >= selectedProgram.haltsAfter
+  const statusText = hasHalted
+    ? `Halted at step ${selectedProgram.haltsAfter}.`
+    : `Running after ${steps} step(s). No conclusion about non-halting.`
+
   return (
     <div className="win95-page">
       <style>{win95Styles}</style>
@@ -492,6 +607,18 @@ export default function HaltingProblemPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Rice's Theorem Proof Sketch (Details)</legend>
+            <div className="win95-grid win95-grid-2">
+              {ricesTheoremDetails.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Algorithm Landscape</legend>
             <div className="win95-grid win95-grid-2">
               {algorithmLandscape.map((item) => (
@@ -522,6 +649,19 @@ export default function HaltingProblemPage(): JSX.Element {
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Reductions Gallery</legend>
+            <div className="win95-grid win95-grid-2">
+              {reductionsGallery.map((item) => (
+                <div key={item.id} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.reduction}</p>
                 </div>
               ))}
             </div>
@@ -566,6 +706,74 @@ export default function HaltingProblemPage(): JSX.Element {
                   <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Interactive Demos</legend>
+            <div className="win95-stack">
+              <div className="win95-panel">
+                <div className="win95-heading">Halting Explorer</div>
+                <p className="win95-text">
+                  Pick a toy program and step the simulator. If it halts, you will see it; if it keeps running, you cannot conclude
+                  non-halting. This mirrors why the general halting problem is undecidable.
+                </p>
+                <div className="win95-grid win95-grid-3">
+                  {haltingDemoPrograms.map((program) => (
+                    <button
+                      key={program.id}
+                      type="button"
+                      className="win95-button"
+                      onClick={() => {
+                        setSelectedProgramId(program.id)
+                        setSteps(0)
+                      }}
+                    >
+                      {program.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="win95-panel win95-panel--raised">
+                  <p className="win95-text">
+                    <strong>Selected:</strong> {selectedProgram.name}
+                  </p>
+                  <p className="win95-text">{selectedProgram.description}</p>
+                  <p className="win95-text"><strong>Status:</strong> {statusText}</p>
+                </div>
+                <div className="win95-grid win95-grid-2">
+                  <button type="button" className="win95-button" onClick={() => setSteps((prev) => prev + 1)}>
+                    STEP
+                  </button>
+                  <button type="button" className="win95-button" onClick={() => setSteps(0)}>
+                    RESET
+                  </button>
+                </div>
+              </div>
+
+              <div className="win95-panel">
+                <div className="win95-heading">Reduction Explorer</div>
+                <p className="win95-text">
+                  Choose a target problem and see the reduction idea from halting. Reductions show that if the target were decidable,
+                  halting would be decidable too.
+                </p>
+                <div className="win95-grid win95-grid-2">
+                  {reductionsGallery.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="win95-button"
+                      onClick={() => setSelectedReductionId(item.id)}
+                    >
+                      {item.title}
+                    </button>
+                  ))}
+                </div>
+                <div className="win95-panel win95-panel--raised">
+                  <p className="win95-text"><strong>{selectedReduction.title}</strong></p>
+                  <p className="win95-text">{selectedReduction.detail}</p>
+                  <p className="win95-text">{selectedReduction.reduction}</p>
+                </div>
+              </div>
             </div>
           </fieldset>
 
