@@ -64,11 +64,11 @@ const historicalContext = [
 const quickGlossary = [
   {
     term: 'Literal',
-    definition: 'A variable (x) or its negation (¬x).',
+    definition: 'A variable (x) or its negation (~x).',
   },
   {
     term: 'Clause',
-    definition: 'A disjunction (OR) of literals, e.g., (x ? ¬y ? z).',
+    definition: 'A disjunction (OR) of literals, e.g., (x ? ~y ? z).',
   },
   {
     term: 'CNF',
@@ -182,14 +182,14 @@ const proofIdeas = [
 const workedExamples = [
   {
     title: 'Simple satisfiable formula',
-    code: `F = (x ? y) ? (¬x ? z)
+    code: `F = (x ? y) ? (~x ? z)
 Assignment: x = true, y = false, z = true`,
     explanation:
       'Both clauses are true under this assignment, so F is satisfiable.',
   },
   {
     title: 'Unsatisfiable example',
-    code: `F = (x) ? (¬x)
+    code: `F = (x) ? (~x)
 No assignment can satisfy both clauses.`,
     explanation:
       'A variable and its negation cannot both be true.',
@@ -227,7 +227,7 @@ const pseudocode = [
     title: 'SAT to 3-SAT conversion (long clause)',
     code: `Clause: (a ? b ? c ? d ? e)
 Introduce y1, y2:
-(a ? b ? y1) ? (¬y1 ? c ? y2) ? (¬y2 ? d ? e)`,
+(a ? b ? y1) ? (~y1 ? c ? y2) ? (~y2 ? d ? e)`,
     explanation:
       'The chain preserves satisfiability while making every clause size 3.',
   },
@@ -282,15 +282,15 @@ const keyTakeaways = [
 const clauseExamples: Clause[] = [
   {
     id: 'c1',
-    literals: ['x', 'y', '¬z'],
+    literals: ['x', 'y', '~z'],
   },
   {
     id: 'c2',
-    literals: ['¬x', 'z', 'w'],
+    literals: ['~x', 'z', 'w'],
   },
   {
     id: 'c3',
-    literals: ['y', '¬w', '¬z'],
+    literals: ['y', '~w', '~z'],
   },
 ]
 
@@ -313,7 +313,7 @@ export default function SatAndThreeSatPage(): JSX.Element {
       return false
     }
     return selectedClause.literals.some((literal) => {
-      const isNegated = literal.startsWith('¬')
+      const isNegated = literal.startsWith('~')
       const variable = isNegated ? literal.slice(1) : literal
       const value = assignment[variable]
       return isNegated ? !value : value
@@ -323,7 +323,7 @@ export default function SatAndThreeSatPage(): JSX.Element {
   const formulaValue = useMemo(() => {
     return clauseExamples.every((clause) => {
       return clause.literals.some((literal) => {
-        const isNegated = literal.startsWith('¬')
+        const isNegated = literal.startsWith('~')
         const variable = isNegated ? literal.slice(1) : literal
         const value = assignment[variable]
         return isNegated ? !value : value
@@ -598,3 +598,4 @@ export default function SatAndThreeSatPage(): JSX.Element {
     </div>
   )
 }
+
