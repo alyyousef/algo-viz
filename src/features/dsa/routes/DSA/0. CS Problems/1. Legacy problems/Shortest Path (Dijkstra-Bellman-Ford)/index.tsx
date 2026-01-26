@@ -1,45 +1,30 @@
-import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
 
-type Edge = {
-  from: string
-  to: string
-  weight: number
-}
-
-type AlgorithmChoice = 'dijkstra' | 'bellman-ford'
-
-type DistanceResult = {
-  distances: Record<string, number>
-  hasNegativeCycle: boolean
-  isValid: boolean
-}
-
 const bigPicture = [
   {
     title: 'What it is',
     details:
-      'Shortest path problems ask for the minimum-cost path between nodes in a weighted graph.',
+      'Shortest path problems ask for minimum-cost paths in weighted graphs, typically from a single source to all nodes.',
     notes:
-      'Dijkstra solves graphs with non-negative weights; Bellman-Ford handles negative weights and detects negative cycles.',
+      'Dijkstra handles non-negative weights; Bellman-Ford handles negative weights and detects negative cycles.',
   },
   {
     title: 'Why it matters',
     details:
-      'Routing, navigation, scheduling, and optimization all reduce to shortest paths.',
+      'Routing, navigation, scheduling, and optimization rely on shortest paths as a core primitive.',
     notes:
-      'Choosing the right algorithm depends on edge weights, graph size, and whether negative cycles are possible.',
+      'The choice of algorithm depends on graph structure, weight constraints, and required guarantees.',
   },
   {
     title: 'What it teaches',
     details:
-      'Greedy choice works when all edges are non-negative; relaxation works even with negative weights.',
+      'Greedy correctness conditions (Dijkstra) versus relaxation-based convergence (Bellman-Ford).',
     notes:
-      'It highlights correctness conditions, complexity tradeoffs, and graph modeling decisions.',
+      'It formalizes when shortest paths are well-defined and when they are not (negative cycles).',
   },
 ]
 
@@ -47,122 +32,148 @@ const historicalContext = [
   {
     title: '1956: Dijkstra',
     details:
-      'Edsger Dijkstra introduced his algorithm for shortest paths with non-negative weights.',
+      'Introduced a greedy algorithm for single-source shortest paths with non-negative weights.',
     notes:
-      'It is a textbook greedy algorithm with strong optimality guarantees.',
+      'It is optimal due to a monotonicity property of non-negative edge weights.',
   },
   {
     title: '1958: Bellman-Ford',
     details:
-      'Bellman-Ford uses repeated relaxations and can detect negative cycles.',
+      'Introduced a relaxation-based algorithm that tolerates negative edges and detects negative cycles.',
     notes:
-      'It is slower but more general, and crucial when negative weights occur.',
+      'It became a standard tool in network routing and theoretical proofs.',
   },
   {
-    title: 'Modern systems',
+    title: 'Modern era',
     details:
-      'Shortest paths power routing protocols, map services, and optimization toolchains.',
+      'Shortest-path algorithms power web-scale routing, logistics optimization, and graph analytics.',
     notes:
-      'Implementations often combine heuristics, preprocessing, and specialized data structures.',
+      'Research focuses on heuristics, preprocessing, and specialized graph families.',
   },
 ]
 
 const quickGlossary = [
   {
     term: 'Weighted graph',
-    definition: 'A graph where each edge has a numeric cost or weight.',
+    definition: 'A graph where each edge has an associated numeric cost.',
+  },
+  {
+    term: 'Path length',
+    definition: 'The sum of edge weights along a path.',
   },
   {
     term: 'Relaxation',
-    definition: 'Updating a distance estimate when a shorter path is found.',
-  },
-  {
-    term: 'Negative edge',
-    definition: 'An edge with weight < 0, which can reduce path cost.',
+    definition: 'Updating a distance estimate when a shorter path is discovered.',
   },
   {
     term: 'Negative cycle',
     definition: 'A cycle whose total weight is negative; shortest paths are undefined.',
   },
   {
-    term: 'Priority queue',
-    definition: 'A data structure used by Dijkstra to extract the smallest distance next.',
+    term: 'Single-source shortest path',
+    definition: 'Compute distances from one source to all vertices.',
   },
   {
-    term: 'Single-source shortest path',
-    definition: 'Compute shortest distances from one source to all nodes.',
+    term: 'Shortest path tree',
+    definition: 'A predecessor structure that encodes shortest paths from the source.',
   },
 ]
 
 const problemSetup = [
   {
     title: 'Input',
-    detail: 'A graph G = (V, E) with edge weights and a chosen source vertex s.',
+    detail: 'Graph G=(V,E), weight function w:E->R, and a source vertex s.',
   },
   {
-    title: 'Question',
-    detail: 'Find the minimum path cost from s to every vertex (or a specific target).',
+    title: 'Task',
+    detail: 'Compute dist[v] = shortest path length from s to v for all v in V.',
   },
   {
-    title: 'Constraints',
-    detail: 'Dijkstra requires all weights >= 0; Bellman-Ford allows negative weights.',
+    title: 'Well-definedness',
+    detail: 'If a reachable negative cycle exists, shortest path lengths are undefined.',
   },
   {
     title: 'Output',
-    detail: 'Distances and (optionally) predecessor pointers to reconstruct paths.',
+    detail: 'Distances and (optionally) predecessors to reconstruct paths.',
+  },
+]
+
+const formalDefinitions = [
+  {
+    title: 'Distance function',
+    detail:
+      'dist[v] = min over all s->v paths of sum of edge weights (or INF if unreachable).',
+  },
+  {
+    title: 'Triangle inequality under relaxation',
+    detail:
+      'For any edge (u,v), a valid solution must satisfy dist[v] <= dist[u] + w(u,v).',
+  },
+  {
+    title: 'Shortest path optimality condition',
+    detail:
+      'A distance labeling is correct iff all reachable nodes satisfy all relaxations and dist[s]=0.',
+  },
+  {
+    title: 'Negative cycle criterion',
+    detail:
+      'If any edge can still relax after |V|-1 iterations, a negative cycle is reachable.',
   },
 ]
 
 const keyClaims = [
   {
-    title: 'Dijkstra is fast but limited',
-    detail: 'It is correct only when all edge weights are non-negative.',
+    title: 'Dijkstra is correct iff all weights are non-negative',
+    detail: 'The greedy choice assumes distances only increase along unexplored edges.',
   },
   {
-    title: 'Bellman-Ford is slower but robust',
-    detail: 'It handles negative edges and detects negative cycles.',
+    title: 'Bellman-Ford is correct with negative edges',
+    detail: 'Repeated relaxation converges in |V|-1 rounds if no negative cycles exist.',
   },
   {
-    title: 'Relaxation is the core idea',
-    detail: 'Both algorithms repeatedly improve distance estimates using edge relaxations.',
+    title: 'Negative cycles break the model',
+    detail: 'You can reduce total cost without bound by looping, so no shortest path exists.',
   },
   {
-    title: 'Negative cycles break shortest paths',
-    detail: 'If a reachable negative cycle exists, no shortest path is well-defined.',
+    title: 'Relaxation is the shared core idea',
+    detail: 'Both algorithms repeatedly enforce dist[v] <= dist[u] + w(u,v).',
   },
 ]
 
 const algorithmLandscape = [
   {
     title: 'Dijkstra (greedy)',
-    detail: 'Expands the closest unvisited node using a priority queue.',
+    detail: 'Uses a priority queue to repeatedly finalize the next closest vertex.',
   },
   {
     title: 'Bellman-Ford (relaxation)',
-    detail: 'Relaxes all edges |V|-1 times and checks for negative cycles.',
+    detail: 'Relaxes all edges for |V|-1 iterations and checks for negative cycles.',
   },
   {
     title: 'BFS (unweighted)',
-    detail: 'If all weights are equal, BFS gives shortest paths in O(V+E).',
+    detail: 'If all edges have equal weight, BFS yields shortest paths in O(V+E).',
   },
   {
     title: 'A* (heuristic)',
-    detail: 'Uses a heuristic to guide search; optimal if the heuristic is admissible.',
+    detail: 'Guided by a heuristic; optimal if the heuristic is admissible.',
   },
 ]
 
-const compareContrast = [
+const correctnessSketches = [
   {
-    title: 'Dijkstra vs Bellman-Ford',
-    detail: 'Dijkstra is faster but fails with negative weights; Bellman-Ford is slower but general.',
+    title: 'Dijkstra correctness sketch',
+    detail:
+      'When a vertex u is extracted with minimum tentative distance, any alternative path to u must be at least as long because all edge weights are non-negative. Thus dist[u] is final.',
   },
   {
-    title: 'Non-negative vs negative weights',
-    detail: 'Negative weights invalidate Dijkstra because the greedy choice can be wrong.',
+    title: 'Bellman-Ford convergence sketch',
+    detail:
+      'Any shortest path has at most |V|-1 edges. After k iterations, all shortest paths with at most k edges are found. Therefore after |V|-1 iterations all shortest paths are found, unless a negative cycle exists.',
   },
   {
-    title: 'Single-source vs all-pairs',
-    detail: 'For all-pairs shortest paths, consider Floyd-Warshall or Johnson.',
+    title: 'Negative cycle detection',
+    detail:
+      'If a relaxation is still possible after |V|-1 passes, then some path can be improved indefinitely, implying a reachable negative cycle.',
   },
 ]
 
@@ -173,15 +184,34 @@ const complexityNotes = [
   },
   {
     title: 'Bellman-Ford',
-    detail: 'O(VE); slower but supports negative edges and cycle detection.',
+    detail: 'O(VE) time; O(V) space for distances and predecessors.',
   },
   {
-    title: 'Space',
-    detail: 'Both store distance arrays and predecessor pointers: O(V).',
+    title: 'Dense vs sparse graphs',
+    detail: 'Dijkstra with a heap is best on sparse graphs; array-based Dijkstra may be OK on dense graphs.',
   },
   {
     title: 'Practical note',
-    detail: 'Dijkstra is usually preferred if you can guarantee non-negative weights.',
+    detail: 'If negative edges are impossible by model, Dijkstra is almost always preferable.',
+  },
+]
+
+const variants = [
+  {
+    title: 'All-pairs shortest paths',
+    detail: 'Floyd-Warshall (O(V^3)) or Johnson (reweight + Dijkstra).',
+  },
+  {
+    title: 'DAG shortest paths',
+    detail: 'Topological order + relaxation solves in O(V+E), even with negative edges.',
+  },
+  {
+    title: '0-1 BFS',
+    detail: 'If edge weights are 0 or 1, a deque-based BFS runs in O(V+E).',
+  },
+  {
+    title: 'Multi-source',
+    detail: 'Add a super-source connected to all sources with zero-weight edges.',
   },
 ]
 
@@ -191,21 +221,21 @@ const workedExamples = [
     code: `Edges: A->B(4), A->C(2), C->B(1), B->D(5)
 Shortest A->D: A->C->B->D cost 8`,
     explanation:
-      'Dijkstra finds the correct path because all weights are non-negative.',
+      'Dijkstra is correct here because all weights are non-negative.',
   },
   {
     title: 'Graph with negative edge',
     code: `Edges: A->B(2), B->C(-4), A->C(5)
 Shortest A->C: A->B->C cost -2`,
     explanation:
-      'Dijkstra can fail here; Bellman-Ford handles it correctly.',
+      'Bellman-Ford handles this correctly; Dijkstra may fail.',
   },
   {
     title: 'Negative cycle',
     code: `Cycle: X->Y(1), Y->Z(-3), Z->X(1)
 Total cycle weight: -1`,
     explanation:
-      'No shortest path exists because you can keep reducing total cost by looping.',
+      'Shortest paths are undefined since the cycle can reduce cost indefinitely.',
   },
 ]
 
@@ -220,7 +250,7 @@ repeat V times:
     if dist[u] + w(u,v) < dist[v]:
       dist[v] = dist[u] + w(u,v)`,
     explanation:
-      'The greedy choice is correct only when all weights are non-negative.',
+      'The greedy choice is correct only with non-negative weights.',
   },
   {
     title: 'Bellman-Ford',
@@ -231,180 +261,57 @@ repeat V-1 times:
 one more pass:
   if any edge relaxes -> negative cycle`,
     explanation:
-      'Relaxing all edges V-1 times guarantees shortest paths if no negative cycle exists.',
+      'Repeated relaxation guarantees optimal distances if no negative cycle exists.',
   },
 ]
 
 const pitfalls = [
   {
-    mistake: 'Running Dijkstra with negative edges',
-    description: 'The greedy choice can be invalid, producing wrong distances.',
+    mistake: 'Using Dijkstra with negative edges',
+    description: 'The greedy choice fails because shorter paths can appear later.',
   },
   {
-    mistake: 'Forgetting negative cycle checks',
+    mistake: 'Skipping the negative cycle check',
     description: 'Bellman-Ford must perform a final pass to detect negative cycles.',
   },
   {
-    mistake: 'Mixing directed and undirected edges',
-    description: 'Direction matters; modeling errors can change the shortest path.',
+    mistake: 'Incorrect modeling of direction',
+    description: 'Treating directed edges as undirected changes the problem.',
   },
   {
-    mistake: 'Assuming shortest path always exists',
-    description: 'Disconnected nodes have distance INF; negative cycles make distances undefined.',
+    mistake: 'Assuming connectivity',
+    description: 'Unreachable nodes should remain INF; they are not errors.',
   },
 ]
 
 const applications = [
   {
     title: 'Navigation and routing',
-    detail: 'Road networks and internet routing use shortest path algorithms at scale.',
+    detail: 'Road networks, logistics, and packet routing use shortest paths at scale.',
   },
   {
-    title: 'Scheduling',
-    detail: 'Project planning can be framed as shortest/longest path in DAGs.',
+    title: 'Project scheduling',
+    detail: 'Critical path methods are shortest/longest path problems on DAGs.',
   },
   {
     title: 'Network analysis',
-    detail: 'Centrality measures and influence often rely on shortest paths.',
+    detail: 'Centrality and influence metrics rely on shortest paths.',
   },
   {
     title: 'Game development',
-    detail: 'Pathfinding uses shortest paths with heuristics such as A*.',
+    detail: 'Pathfinding frequently uses Dijkstra or A* on weighted grids.',
   },
 ]
 
 const keyTakeaways = [
-  'Dijkstra is fast and correct for non-negative edge weights.',
-  'Bellman-Ford handles negative edges and detects negative cycles.',
-  'Relaxation is the shared core concept for shortest path algorithms.',
-  'Negative cycles mean no finite shortest path exists.',
-  'Modeling choices (directed/undirected, weights) directly affect results.',
+  'Dijkstra is fast and correct for non-negative weights; Bellman-Ford is slower but more general.',
+  'Relaxation is the fundamental operation shared by both algorithms.',
+  'Negative cycles make shortest paths undefined and must be detected.',
+  'Algorithm choice is a modeling decision based on weight constraints.',
+  'Special graph families admit faster specialized solutions.',
 ]
-
-const nodes = ['A', 'B', 'C', 'D', 'E']
-
-const baseEdges: Edge[] = [
-  { from: 'A', to: 'B', weight: 4 },
-  { from: 'A', to: 'C', weight: 2 },
-  { from: 'C', to: 'B', weight: 1 },
-  { from: 'B', to: 'D', weight: 5 },
-  { from: 'C', to: 'D', weight: 8 },
-  { from: 'C', to: 'E', weight: 10 },
-  { from: 'D', to: 'E', weight: 2 },
-]
-
-const negativeEdge: Edge = { from: 'B', to: 'C', weight: -6 }
-
-const computeDijkstra = (source: string, edges: Edge[], vertexList: string[]): DistanceResult => {
-  if (edges.some((edge) => edge.weight < 0)) {
-    return {
-      distances: Object.fromEntries(vertexList.map((v) => [v, Number.POSITIVE_INFINITY])) as Record<string, number>,
-      hasNegativeCycle: false,
-      isValid: false,
-    }
-  }
-
-  const distances: Record<string, number> = Object.fromEntries(
-    vertexList.map((v) => [v, v === source ? 0 : Number.POSITIVE_INFINITY]),
-  ) as Record<string, number>
-
-  const visited = new Set<string>()
-
-  for (let i = 0; i < vertexList.length; i += 1) {
-    let candidate: string | null = null
-    let bestDistance = Number.POSITIVE_INFINITY
-
-    for (const node of vertexList) {
-      if (!visited.has(node) && distances[node] < bestDistance) {
-        bestDistance = distances[node]
-        candidate = node
-      }
-    }
-
-    if (!candidate) {
-      break
-    }
-
-    visited.add(candidate)
-
-    for (const edge of edges) {
-      if (edge.from === candidate) {
-        const alt = distances[candidate] + edge.weight
-        if (alt < distances[edge.to]) {
-          distances[edge.to] = alt
-        }
-      }
-    }
-  }
-
-  return {
-    distances,
-    hasNegativeCycle: false,
-    isValid: true,
-  }
-}
-
-const computeBellmanFord = (source: string, edges: Edge[], vertexList: string[]): DistanceResult => {
-  const distances: Record<string, number> = Object.fromEntries(
-    vertexList.map((v) => [v, v === source ? 0 : Number.POSITIVE_INFINITY]),
-  ) as Record<string, number>
-
-  for (let i = 0; i < vertexList.length - 1; i += 1) {
-    let changed = false
-    for (const edge of edges) {
-      const current = distances[edge.from]
-      if (current !== Number.POSITIVE_INFINITY && current + edge.weight < distances[edge.to]) {
-        distances[edge.to] = current + edge.weight
-        changed = true
-      }
-    }
-    if (!changed) {
-      break
-    }
-  }
-
-  let hasNegativeCycle = false
-  for (const edge of edges) {
-    const current = distances[edge.from]
-    if (current !== Number.POSITIVE_INFINITY && current + edge.weight < distances[edge.to]) {
-      hasNegativeCycle = true
-      break
-    }
-  }
-
-  return {
-    distances,
-    hasNegativeCycle,
-    isValid: true,
-  }
-}
 
 export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
-  const [algorithm, setAlgorithm] = useState<AlgorithmChoice>('dijkstra')
-  const [source, setSource] = useState('A')
-  const [includeNegative, setIncludeNegative] = useState(false)
-
-  const edges = includeNegative ? [...baseEdges, negativeEdge] : baseEdges
-
-  const result = useMemo(() => {
-    if (algorithm === 'dijkstra') {
-      return computeDijkstra(source, edges, nodes)
-    }
-    return computeBellmanFord(source, edges, nodes)
-  }, [algorithm, edges, source])
-
-  const statusText = useMemo(() => {
-    if (algorithm === 'dijkstra' && !result.isValid) {
-      return 'Dijkstra cannot run: graph has a negative edge.'
-    }
-    if (result.hasNegativeCycle) {
-      return 'Negative cycle detected: shortest paths are undefined.'
-    }
-    return 'Distances computed successfully.'
-  }, [algorithm, result.hasNegativeCycle, result.isValid])
-
-  const formattedDistance = (value: number) => (value === Number.POSITIVE_INFINITY ? 'INF' : value.toString())
-
   return (
     <div className="win95-page">
       <style>{win95Styles}</style>
@@ -418,11 +325,11 @@ export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
         <div className="win95-content">
           <div className="win95-header-row">
             <div>
-              <div className="win95-subheading">Fast greedy shortest paths vs robust relaxation</div>
+              <div className="win95-subheading">Formal shortest path theory with Dijkstra and Bellman-Ford</div>
               <p className="win95-text">
-                Dijkstra and Bellman-Ford solve the same problem under different constraints. Dijkstra is fast but requires non-negative
-                weights. Bellman-Ford is slower but supports negative weights and detects negative cycles. This page compares their
-                assumptions, complexity, and behavior.
+                This page presents the shortest path problem in a more academic style: precise definitions, correctness conditions,
+                proof sketches, and complexity analysis. The focus is on Dijkstra and Bellman-Ford as canonical algorithms with
+                contrasting assumptions and guarantees.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -481,6 +388,18 @@ export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Formal Definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Key Claims</legend>
             <div className="win95-grid win95-grid-2">
               {keyClaims.map((item) => (
@@ -505,9 +424,9 @@ export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
+            <legend>Correctness Sketches</legend>
             <div className="win95-grid win95-grid-2">
-              {compareContrast.map((item) => (
+              {correctnessSketches.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -520,6 +439,18 @@ export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
             <legend>Complexity Notes</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Variants and Extensions</legend>
+            <div className="win95-grid win95-grid-2">
+              {variants.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -555,81 +486,6 @@ export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
                   <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Shortest Path Explorer</legend>
-            <div className="win95-stack">
-              <div className="win95-panel">
-                <div className="win95-heading">Graph Controls</div>
-                <p className="win95-text">
-                  Toggle a negative edge and pick an algorithm. Dijkstra will refuse to run when negative edges are present.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  <button
-                    type="button"
-                    className="win95-button"
-                    onClick={() => setAlgorithm('dijkstra')}
-                  >
-                    DIJKSTRA
-                  </button>
-                  <button
-                    type="button"
-                    className="win95-button"
-                    onClick={() => setAlgorithm('bellman-ford')}
-                  >
-                    BELLMAN-FORD
-                  </button>
-                </div>
-                <div className="win95-grid win95-grid-2">
-                  {nodes.map((node) => (
-                    <button
-                      key={node}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setSource(node)}
-                    >
-                      SOURCE: {node}
-                    </button>
-                  ))}
-                </div>
-                <div className="win95-grid win95-grid-2">
-                  <button
-                    type="button"
-                    className="win95-button"
-                    onClick={() => setIncludeNegative((prev) => !prev)}
-                  >
-                    {includeNegative ? 'REMOVE NEG EDGE' : 'ADD NEG EDGE'}
-                  </button>
-                  <div className="win95-panel win95-panel--raised">
-                    <p className="win95-text"><strong>Algorithm:</strong> {algorithm === 'dijkstra' ? 'Dijkstra' : 'Bellman-Ford'}</p>
-                    <p className="win95-text"><strong>Source:</strong> {source}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="win95-panel">
-                <div className="win95-heading">Graph Summary</div>
-                <p className="win95-text">Edges in the current graph:</p>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text">
-                    {edges.map((edge) => `${edge.from}->${edge.to}(${edge.weight})`).join(', ')}
-                  </p>
-                </div>
-              </div>
-
-              <div className="win95-panel">
-                <div className="win95-heading">Distance Table</div>
-                <p className="win95-text">{statusText}</p>
-                <div className="win95-grid win95-grid-2">
-                  {nodes.map((node) => (
-                    <div key={node} className="win95-panel win95-panel--raised">
-                      <p className="win95-text"><strong>{node}:</strong> {formattedDistance(result.distances[node])}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </fieldset>
 
