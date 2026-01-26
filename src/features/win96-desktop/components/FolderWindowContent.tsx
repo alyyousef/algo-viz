@@ -34,11 +34,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
   const currentNodeId = window.path[window.path.length - 1] ?? 'root'
   const children = useMemo(() => getChildren(currentNodeId), [currentNodeId, getChildren])
   const currentEntry = entries[entries.length - 1]?.node ?? null
-  const folderChildren = useMemo(
-    () => children.filter((child) => child.kind === 'folder'),
-    [children],
-  )
-  const visibleChildren = folderChildren.length > 0 ? folderChildren : children
+  const visibleChildren = children
 
   const canGoBack = window.history.length > 0
   const canGoUp = window.path.length > 1
