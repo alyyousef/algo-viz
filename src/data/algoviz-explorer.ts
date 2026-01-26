@@ -64,8 +64,13 @@ const SEGMENT_DELIMITER = '\u0000'
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
 const joinPrefix = (segments: string[]) => segments.join(SEGMENT_DELIMITER)
-const formatSegmentName = (segment: string): string =>
-  segment.replace(/^\d+\.\s*/, '').trim() || segment
+const formatSegmentName = (segment: string): string => {
+  const normalized = segment.replace(/^\d+\.\s*/, '').trim() || segment
+  if (normalized === 'Concurrency & Synchronization') {
+    return 'Concurrency & Sync'
+  }
+  return normalized
+}
 const slugPath = (segments: string[]): string => segments.map((segment) => slugifySegment(segment)).join('/')
 
 const routeFiles = Object.keys(
