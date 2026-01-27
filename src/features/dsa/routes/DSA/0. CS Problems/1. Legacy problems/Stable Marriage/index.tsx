@@ -91,6 +91,34 @@ const algorithmOverview = [
   },
 ]
 
+const formalDefinitions = [
+  {
+    title: 'Preferences',
+    detail:
+      'Each participant has a strict total order over all members of the other set.',
+  },
+  {
+    title: 'Matching',
+    detail:
+      'A bijection between the two sets: every participant is paired with exactly one partner.',
+  },
+  {
+    title: 'Blocking pair',
+    detail:
+      'A pair (a, b) that is not matched together but both prefer each other over their assigned partners.',
+  },
+  {
+    title: 'Stability',
+    detail:
+      'A matching with no blocking pair is stable.',
+  },
+  {
+    title: 'Optimality',
+    detail:
+      'A matching is proposer-optimal if no proposer can improve without breaking stability.',
+  },
+]
+
 const correctnessInsights = [
   {
     title: 'Termination',
@@ -114,6 +142,47 @@ const correctnessInsights = [
   },
 ]
 
+const invariants = [
+  {
+    title: 'Invariant 1: Tentative matches',
+    detail:
+      'Every receiver holds at most one proposal at any time.',
+  },
+  {
+    title: 'Invariant 2: Best-so-far',
+    detail:
+      'A receiver’s tentative match is always the best proposer seen so far.',
+  },
+  {
+    title: 'Invariant 3: Monotone proposals',
+    detail:
+      'Proposers never propose to the same receiver twice and only move down their list.',
+  },
+  {
+    title: 'Invariant 4: Safety of rejection',
+    detail:
+      'Once a receiver rejects a proposer, they will never be matched in a stable outcome.',
+  },
+]
+
+const proofSketches = [
+  {
+    title: 'Why it terminates',
+    detail:
+      'Each proposer makes at most n proposals, so the total number of proposals is at most n^2.',
+  },
+  {
+    title: 'Why it is stable',
+    detail:
+      'A blocking pair would imply a proposer was rejected by a receiver who preferred them more, which contradicts best-so-far.',
+  },
+  {
+    title: 'Why it is proposer-optimal',
+    detail:
+      'Any proposer rejected by a receiver can never be matched to that receiver in any stable matching.',
+  },
+]
+
 const complexity = [
   {
     title: 'Time',
@@ -124,6 +193,75 @@ const complexity = [
     title: 'Space',
     detail:
       'O(n^2) to store preference lists, plus O(n) for matches and pointers.',
+  },
+]
+
+const dataStructures = [
+  {
+    title: 'Preference arrays',
+    detail:
+      'Store each proposer’s ordered list and a pointer to the next receiver to propose to.',
+  },
+  {
+    title: 'Rank lookup',
+    detail:
+      'For each receiver, store a rank map so comparisons are O(1).',
+  },
+  {
+    title: 'Match arrays',
+    detail:
+      'Two arrays map proposer->receiver and receiver->proposer.',
+  },
+  {
+    title: 'Free queue',
+    detail:
+      'A queue or stack holds currently free proposers ready to propose.',
+  },
+]
+
+const latticeFacts = [
+  {
+    title: 'Lattice of stable matchings',
+    detail:
+      'All stable matchings form a lattice ordered by proposer preference.',
+  },
+  {
+    title: 'Extreme matchings',
+    detail:
+      'Gale-Shapley yields the proposer-optimal and receiver-pessimal extremes.',
+  },
+  {
+    title: 'Rotation concept',
+    detail:
+      'Transitions between stable matchings can be described by eliminating rotations.',
+  },
+  {
+    title: 'Rural Hospitals theorem',
+    detail:
+      'In many-to-one variants, the set of matched residents is the same across all stable matchings.',
+  },
+]
+
+const strategyInsights = [
+  {
+    title: 'Strategy-proof for proposers',
+    detail:
+      'Truthful reporting is a dominant strategy for the proposing side.',
+  },
+  {
+    title: 'Not strategy-proof for receivers',
+    detail:
+      'Receivers can benefit by misreporting in some instances.',
+  },
+  {
+    title: 'Incentive tradeoff',
+    detail:
+      'Choosing which side proposes affects incentives and perceived fairness.',
+  },
+  {
+    title: 'Market design',
+    detail:
+      'Real systems choose the proposing side to optimize policy goals.',
   },
 ]
 
@@ -148,6 +286,16 @@ const variants = [
     detail:
       'One-to-many matching where hospitals have capacity constraints.',
   },
+  {
+    title: 'Stable roommates',
+    detail:
+      'Matching within a single set; a stable solution may not exist.',
+  },
+  {
+    title: 'Many-to-many matching',
+    detail:
+      'Each participant can match with multiple partners; stability becomes more complex.',
+  },
 ]
 
 const applications = [
@@ -170,6 +318,39 @@ const applications = [
     title: 'Organ exchange',
     detail:
       'Matching donors and recipients often uses stability-inspired mechanisms.',
+  },
+  {
+    title: 'Mentor-mentee matching',
+    detail:
+      'Programs pair mentors and mentees based on ranked preferences.',
+  },
+  {
+    title: 'Project assignment',
+    detail:
+      'Teams and projects can be matched to reduce renegotiations.',
+  },
+]
+
+const edgeCases = [
+  {
+    title: 'Non-unique matchings',
+    detail:
+      'Multiple stable matchings may exist; the output depends on the proposing side.',
+  },
+  {
+    title: 'Ties',
+    detail:
+      'If preferences include ties, stability must be defined as weak or strong stability.',
+  },
+  {
+    title: 'Incomplete lists',
+    detail:
+      'If some partners are unacceptable, the result may be a partial matching.',
+  },
+  {
+    title: 'Unequal set sizes',
+    detail:
+      'Some participants remain unmatched; stability is defined relative to acceptable partners.',
   },
 ]
 
@@ -227,6 +408,17 @@ while freeA not empty:
     explanation:
       'A matching is stable if no blocking pair exists.',
   },
+  {
+    title: 'Efficient receiver comparison',
+    code: `// Precompute ranks for each receiver b
+rank[b][a] = position of a in b's list
+
+// Compare two proposers a1, a2
+if rank[b][a1] < rank[b][a2]:
+  b prefers a1`,
+    explanation:
+      'Rank lookup makes comparisons O(1) during proposals.',
+  },
 ]
 
 const workedExamples = [
@@ -250,6 +442,16 @@ If B proposes:
   B gets best possible stable partners`,
     explanation:
       'The proposing side always benefits in terms of stable outcomes.',
+  },
+  {
+    title: 'Blocking pair illustration',
+    code: `Matching: (A1,B2), (A2,B1)
+Preferences:
+A1: B1 > B2
+B1: A1 > A2
+Pair (A1,B1) blocks.`,
+    explanation:
+      'A1 and B1 prefer each other, so the matching is unstable.',
   },
 ]
 
@@ -283,6 +485,79 @@ const timelineScenarios = [
     ],
     summary:
       'B side achieves its proposer-optimal stable matching.',
+  },
+  {
+    id: 'rejection-chain',
+    title: 'Rejection chain',
+    steps: [
+      'A1 proposes to B2 and is accepted.',
+      'A2 proposes to B2; B2 prefers A2, so A1 is rejected.',
+      'A1 proposes to B1 and is accepted.',
+      'B1 later receives A3, but prefers A1, so A3 is rejected.',
+    ],
+    summary:
+      'Rejected proposers continue down their lists until matched.',
+  },
+]
+
+const debuggingChecklist = [
+  {
+    title: 'Are preference lists complete?',
+    detail:
+      'Missing entries can create undefined behavior unless explicitly supported.',
+  },
+  {
+    title: 'Are rank maps built correctly?',
+    detail:
+      'Incorrect ranks cause wrong accept/reject decisions.',
+  },
+  {
+    title: 'Is each proposer advancing?',
+    detail:
+      'Ensure each proposer moves to the next receiver after rejection.',
+  },
+  {
+    title: 'Is the free queue maintained?',
+    detail:
+      'Proposers rejected must re-enter the free queue.',
+  },
+  {
+    title: 'Are matches consistent?',
+    detail:
+      'If A is matched to B, then B must be matched to A.',
+  },
+  {
+    title: 'Does the algorithm stop?',
+    detail:
+      'A proposer should stop once matched, unless later rejected.',
+  },
+]
+
+const faq = [
+  {
+    question: 'Does a stable matching always exist?',
+    answer:
+      'Yes for two equally sized sets with strict, complete preferences.',
+  },
+  {
+    question: 'Is the stable matching unique?',
+    answer:
+      'Not necessarily. There can be many stable matchings.',
+  },
+  {
+    question: 'Which side should propose?',
+    answer:
+      'The proposing side gets the best stable outcomes; the choice depends on policy goals.',
+  },
+  {
+    question: 'What if preferences have ties?',
+    answer:
+      'You need a variant of the algorithm and a precise stability definition.',
+  },
+  {
+    question: 'Can participants lie?',
+    answer:
+      'The algorithm is strategy-proof for proposers but not for receivers.',
   },
 ]
 
@@ -377,6 +652,18 @@ export default function StableMarriagePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Formal Definitions</legend>
+            <div className="win95-grid win95-grid-2">
+              {formalDefinitions.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Correctness Insights</legend>
             <div className="win95-grid win95-grid-2">
               {correctnessInsights.map((item) => (
@@ -389,9 +676,45 @@ export default function StableMarriagePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Key Invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {invariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Proof Sketches</legend>
+            <div className="win95-grid win95-grid-2">
+              {proofSketches.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Complexity</legend>
             <div className="win95-grid win95-grid-2">
               {complexity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Data Structures</legend>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -423,6 +746,30 @@ export default function StableMarriagePage(): JSX.Element {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Stable Matching Lattice</legend>
+            <div className="win95-grid win95-grid-2">
+              {latticeFacts.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Strategy & Incentives</legend>
+            <div className="win95-grid win95-grid-2">
+              {strategyInsights.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -526,9 +873,33 @@ export default function StableMarriagePage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Edge Cases</legend>
+            <div className="win95-grid win95-grid-2">
+              {edgeCases.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Applications</legend>
             <div className="win95-grid win95-grid-2">
               {applications.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingChecklist.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -547,6 +918,18 @@ export default function StableMarriagePage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>FAQ</legend>
+            <div className="win95-stack">
+              {faq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
