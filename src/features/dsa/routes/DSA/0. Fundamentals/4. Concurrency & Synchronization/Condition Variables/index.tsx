@@ -373,6 +373,126 @@ const advancedPatterns = [
   },
 ]
 
+const signalChoiceGuide = [
+  {
+    title: 'Signal when exactly one waiter can proceed',
+    detail:
+      'Example: a bounded buffer with capacity > 0 where a single enqueue frees one slot.',
+  },
+  {
+    title: 'Broadcast when many waiters may proceed',
+    detail:
+      'Example: a latch flips from false to true; all waiters should wake.',
+  },
+  {
+    title: 'Broadcast when predicate changed broadly',
+    detail:
+      'If a single state change could enable multiple distinct predicates, broadcast can be simplest.',
+  },
+  {
+    title: 'Beware thundering herd',
+    detail:
+      'Broadcast can cause many wakeups that immediately go back to sleep; use sparingly.',
+  },
+]
+
+const lifecycleSteps = [
+  {
+    title: '1) Define predicate',
+    detail:
+      'Decide the exact condition a waiter needs, e.g., count > 0 or shutdown == true.',
+  },
+  {
+    title: '2) Protect state',
+    detail:
+      'Guard all predicate-related state with a mutex.',
+  },
+  {
+    title: '3) Wait in loop',
+    detail:
+      'While predicate is false, wait. The wait releases and later re-acquires the mutex.',
+  },
+  {
+    title: '4) Update + signal',
+    detail:
+      'When a thread changes state so the predicate may become true, signal or broadcast.',
+  },
+  {
+    title: '5) Re-check and proceed',
+    detail:
+      'A woken thread re-tests the predicate and proceeds only if it is true.',
+  },
+]
+
+const debuggingChecklist = [
+  {
+    title: 'Who owns the predicate?',
+    detail:
+      'Ensure every read/write of predicate state is under the same mutex.',
+  },
+  {
+    title: 'Are waits in a loop?',
+    detail:
+      'Check for if(condition) wait(...) which can break under spurious wakeups.',
+  },
+  {
+    title: 'Are signals after updates?',
+    detail:
+      'Signals before state changes can wake threads too early.',
+  },
+  {
+    title: 'Are the right condition variables used?',
+    detail:
+      'One condition variable per predicate keeps signaling precise.',
+  },
+  {
+    title: 'Is shutdown handled?',
+    detail:
+      'Add a termination predicate and broadcast so threads can exit.',
+  },
+  {
+    title: 'Are timeouts handled like spurious wakes?',
+    detail:
+      'Timed waits must still re-check the predicate.',
+  },
+]
+
+const faq = [
+  {
+    question: 'Why can a wait wake up if nobody signaled?',
+    answer:
+      'Because most APIs allow spurious wakeups for efficiency. Correct code treats wakeup as a hint.',
+  },
+  {
+    question: 'Can I signal without holding the mutex?',
+    answer:
+      'Some APIs allow it, but correct designs typically signal while holding the mutex after state change.',
+  },
+  {
+    question: 'Can I replace condition variables with sleep loops?',
+    answer:
+      'Polling wastes CPU and can miss updates; condition variables avoid both issues.',
+  },
+  {
+    question: 'Do I need two condition variables?',
+    answer:
+      'If you have two distinct predicates (notEmpty vs notFull), separate condition variables are clearer and more efficient.',
+  },
+  {
+    question: 'Is broadcast always safe?',
+    answer:
+      'It is safe but may be inefficient. It can cause a thundering herd if many threads wake unnecessarily.',
+  },
+]
+
+const exampleTable = [
+  { pattern: 'Bounded buffer', predicate: 'count > 0 / count < capacity', signal: 'signal opposite side' },
+  { pattern: 'Barrier', predicate: 'arrived == N', signal: 'broadcast on release' },
+  { pattern: 'Latch', predicate: 'ready == true', signal: 'broadcast once' },
+  { pattern: 'Thread pool', predicate: 'queue not empty', signal: 'signal on enqueue' },
+  { pattern: 'Shutdown', predicate: 'shutdown == true', signal: 'broadcast to exit' },
+]
+
 const workedExamples = [
   {
     title: 'A simple latch',
@@ -734,6 +854,30 @@ export default function ConditionVariablesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Signal vs Broadcast Guide</legend>
+            <div className="win95-grid win95-grid-2">
+              {signalChoiceGuide.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Lifecycle Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {lifecycleSteps.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -743,6 +887,54 @@ export default function ConditionVariablesPage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Patterns at a Glance</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Pattern</th>
+                    <th>Predicate</th>
+                    <th>Typical signal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {exampleTable.map((row) => (
+                    <tr key={row.pattern}>
+                      <td>{row.pattern}</td>
+                      <td>{row.predicate}</td>
+                      <td>{row.signal}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>FAQ</legend>
+            <div className="win95-stack">
+              {faq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 

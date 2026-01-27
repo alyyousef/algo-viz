@@ -114,6 +114,119 @@ const policyComparison = [
   },
 ]
 
+const upgradeDowngradeRules = [
+  {
+    title: 'Avoid upgrades by default',
+    detail:
+      'Many RW locks do not support upgrade and can deadlock if multiple readers attempt it.',
+  },
+  {
+    title: 'Use downgrade when available',
+    detail:
+      'Downgrading allows a writer to become a reader without releasing the lock fully.',
+  },
+  {
+    title: 'Two-phase protocol',
+    detail:
+      'Release read lock, then acquire write lock. Re-check condition after acquiring.',
+  },
+  {
+    title: 'Be explicit in APIs',
+    detail:
+      'If upgrades are supported, use dedicated upgrade locks to avoid ambiguity.',
+  },
+]
+
+const workloadGuide = [
+  {
+    title: 'Read-mostly workloads',
+    detail:
+      'RW locks often help when reads are long enough to overlap and writes are rare.',
+  },
+  {
+    title: 'Write-heavy workloads',
+    detail:
+      'A plain mutex is often simpler and faster than RW locks.',
+  },
+  {
+    title: 'Short reads',
+    detail:
+      'If reads are tiny, RW lock overhead can dominate.',
+  },
+  {
+    title: 'Latency-sensitive writes',
+    detail:
+      'Prefer writer-preference or fair policies to avoid write stalls.',
+  },
+]
+
+const policyTable = [
+  { policy: 'Reader-preference', upside: 'High read throughput', risk: 'Writer starvation' },
+  { policy: 'Writer-preference', upside: 'Writer progress', risk: 'Readers blocked more often' },
+  { policy: 'Fair', upside: 'Balanced', risk: 'Higher overhead' },
+]
+
+const debuggingChecklist = [
+  {
+    title: 'Are all writes exclusive?',
+    detail:
+      'Any write without a write lock can corrupt shared state.',
+  },
+  {
+    title: 'Are reads truly read-only?',
+    detail:
+      'Hidden mutations while holding a read lock violate invariants.',
+  },
+  {
+    title: 'Is upgrade used?',
+    detail:
+      'Check for read-to-write upgrades; this can deadlock on many APIs.',
+  },
+  {
+    title: 'Are writers starving?',
+    detail:
+      'Continuous readers can starve writers under reader-preference policies.',
+  },
+  {
+    title: 'Are read holds long?',
+    detail:
+      'Long read locks can block urgent writes and reduce freshness.',
+  },
+  {
+    title: 'Is the policy documented?',
+    detail:
+      'The chosen policy should be explicit in code and documentation.',
+  },
+]
+
+const faq = [
+  {
+    question: 'Are RW locks always faster than mutexes?',
+    answer:
+      'No. They help only when reads dominate and are long enough to overlap.',
+  },
+  {
+    question: 'Can a reader see partial writes?',
+    answer:
+      'No, if writers always use the exclusive lock correctly.',
+  },
+  {
+    question: 'Is upgrade safe?',
+    answer:
+      'Only if your lock explicitly supports it. Otherwise, release and re-acquire.',
+  },
+  {
+    question: 'What policy should I choose?',
+    answer:
+      'Fair is safest; writer-preference if writer latency matters; reader-preference for read-heavy analytics.',
+  },
+  {
+    question: 'When should I use RCU instead?',
+    answer:
+      'When you need extremely fast reads and can tolerate complex update logic.',
+  },
+]
+
 const compareTools = [
   {
     title: 'Read-write lock vs mutex',
@@ -471,9 +584,33 @@ export default function ReadWriteLocksPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Upgrade/Downgrade Rules</legend>
+            <div className="win95-grid win95-grid-2">
+              {upgradeDowngradeRules.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Compare and Contrast</legend>
             <div className="win95-grid win95-grid-2">
               {compareTools.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Workload Fit Guide</legend>
+            <div className="win95-grid win95-grid-2">
+              {workloadGuide.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -606,6 +743,42 @@ export default function ReadWriteLocksPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Policy Summary</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Policy</th>
+                    <th>Upside</th>
+                    <th>Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {policyTable.map((row) => (
+                    <tr key={row.policy}>
+                      <td>{row.policy}</td>
+                      <td>{row.upside}</td>
+                      <td>{row.risk}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -615,6 +788,18 @@ export default function ReadWriteLocksPage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>FAQ</legend>
+            <div className="win95-stack">
+              {faq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 

@@ -148,6 +148,154 @@ const monitorPatterns = [
   },
 ]
 
+const monitorInvariants = [
+  {
+    title: 'Invariant definition',
+    detail:
+      'A statement that is true whenever no thread is executing inside the monitor.',
+  },
+  {
+    title: 'Entry obligation',
+    detail:
+      'Every method must assume the invariant holds at entry.',
+  },
+  {
+    title: 'Exit obligation',
+    detail:
+      'Every method must restore the invariant before it returns.',
+  },
+  {
+    title: 'Wait obligation',
+    detail:
+      'wait() releases the lock; the invariant must hold before waiting.',
+  },
+  {
+    title: 'Signal obligation',
+    detail:
+      'signal() should only happen after making a predicate possibly true.',
+  },
+]
+
+const entryExitLifecycle = [
+  {
+    title: 'Enter',
+    detail:
+      'Acquire the monitor lock before accessing any state.',
+  },
+  {
+    title: 'Check predicates',
+    detail:
+      'If the needed condition is false, wait in a loop.',
+  },
+  {
+    title: 'Update state',
+    detail:
+      'Mutate shared state while holding the lock.',
+  },
+  {
+    title: 'Signal or broadcast',
+    detail:
+      'Notify waiters if their predicates might now be true.',
+  },
+  {
+    title: 'Exit',
+    detail:
+      'Restore invariants and release the lock.',
+  },
+]
+
+const signalStrategy = [
+  {
+    title: 'Signal one waiter when one can proceed',
+    detail:
+      'If a single state change enables only one thread, signal is enough.',
+  },
+  {
+    title: 'Broadcast for global changes',
+    detail:
+      'When a predicate affects many waiters (like a latch), broadcast is clearer.',
+  },
+  {
+    title: 'Avoid thundering herd',
+    detail:
+      'Broadcast wakes many threads that may immediately sleep again.',
+  },
+  {
+    title: 'Separate condition variables',
+    detail:
+      'Use multiple condition variables when multiple predicates exist.',
+  },
+]
+
+const languageMapping = [
+  { language: 'Java', mapping: 'synchronized + wait/notify/notifyAll' },
+  { language: 'C#', mapping: 'lock + Monitor.Wait/Pulse/PulseAll' },
+  { language: 'C++', mapping: 'std::mutex + std::condition_variable (manual monitor pattern)' },
+  { language: 'Python', mapping: 'threading.Condition + Lock' },
+  { language: 'Go', mapping: 'sync.Cond (monitor-like pattern)' },
+]
+
+const debuggingChecklist = [
+  {
+    title: 'Is state encapsulated?',
+    detail:
+      'If callers can access shared state directly, the monitor invariant is broken.',
+  },
+  {
+    title: 'Are waits in loops?',
+    detail:
+      'Mesa semantics require while-loops around wait to handle spurious wakeups.',
+  },
+  {
+    title: 'Are predicates precise?',
+    detail:
+      'Loose predicates cause unnecessary wakeups or incorrect progress.',
+  },
+  {
+    title: 'Is shutdown defined?',
+    detail:
+      'Add a termination predicate and broadcast so waiters can exit.',
+  },
+  {
+    title: 'Are signals after state updates?',
+    detail:
+      'Signals before updates can wake threads too early.',
+  },
+  {
+    title: 'Are methods short?',
+    detail:
+      'Long monitor holds can look like deadlocks under load.',
+  },
+]
+
+const faq = [
+  {
+    question: 'Is a monitor just a mutex?',
+    answer:
+      'No. A monitor is a structured module: mutex + state + condition variables + invariants.',
+  },
+  {
+    question: 'Do monitors guarantee fairness?',
+    answer:
+      'Not by default. Fairness requires explicit queueing or scheduling policies.',
+  },
+  {
+    question: 'Can I signal outside the monitor?',
+    answer:
+      'Technically possible in some APIs, but correct usage typically signals while holding the lock.',
+  },
+  {
+    question: 'Are condition variables required?',
+    answer:
+      'They are the standard way to block inside a monitor when a predicate is false.',
+  },
+  {
+    question: 'Can I reuse one condition variable for everything?',
+    answer:
+      'You can, but multiple predicates on one condition variable cause spurious wakeups and confusion.',
+  },
+]
+
 const compareTools = [
   {
     title: 'Monitor vs mutex + condition variable',
@@ -542,6 +690,42 @@ export default function MonitorsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Monitor Invariants</legend>
+            <div className="win95-grid win95-grid-2">
+              {monitorInvariants.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Entry/Exit Lifecycle</legend>
+            <div className="win95-grid win95-grid-2">
+              {entryExitLifecycle.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Signal Strategy</legend>
+            <div className="win95-grid win95-grid-2">
+              {signalStrategy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Compare and Contrast</legend>
             <div className="win95-grid win95-grid-2">
               {compareTools.map((item) => (
@@ -550,6 +734,28 @@ export default function MonitorsPage(): JSX.Element {
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Language Mapping</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Language</th>
+                    <th>Monitor-like API</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {languageMapping.map((row) => (
+                    <tr key={row.language}>
+                      <td>{row.language}</td>
+                      <td>{row.mapping}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -678,6 +884,18 @@ export default function MonitorsPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -687,6 +905,18 @@ export default function MonitorsPage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>FAQ</legend>
+            <div className="win95-stack">
+              {faq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 

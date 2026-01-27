@@ -119,6 +119,125 @@ const semaphoreTypes = [
   },
 ]
 
+const permitAccounting = [
+  {
+    title: 'Resource invariant',
+    detail:
+      'Counter equals number of available permits for a shared resource.',
+  },
+  {
+    title: 'Acquire protocol',
+    detail:
+      'wait() consumes a permit before entering the resource region.',
+  },
+  {
+    title: 'Release protocol',
+    detail:
+      'signal() returns a permit after exiting the resource region.',
+  },
+  {
+    title: 'Bounded capacity',
+    detail:
+      'The counter must never exceed the number of real resources.',
+  },
+  {
+    title: 'Zero means block',
+    detail:
+      'When the counter is zero, no permits exist and threads must wait.',
+  },
+]
+
+const usagePatterns = [
+  {
+    title: 'Resource pool',
+    detail:
+      'Permits represent a fixed pool (connections, buffers, GPU slots).',
+  },
+  {
+    title: 'Producer-consumer',
+    detail:
+      'Two semaphores track capacity (empty) and occupancy (full).',
+  },
+  {
+    title: 'Rate limiter',
+    detail:
+      'Permits are replenished periodically to cap throughput.',
+  },
+  {
+    title: 'Barrier-like coordination',
+    detail:
+      'Semaphores can approximate barriers but condition variables are usually clearer.',
+  },
+]
+
+const debuggingChecklist = [
+  {
+    title: 'Balanced P/V?',
+    detail:
+      'Every successful wait() must eventually signal() or the system leaks permits.',
+  },
+  {
+    title: 'Counter bounds?',
+    detail:
+      'Never allow the counter to go negative or exceed resource capacity.',
+  },
+  {
+    title: 'Correct semaphore for each rule?',
+    detail:
+      'Separate distinct constraints into separate semaphores.',
+  },
+  {
+    title: 'Shutdown protocol?',
+    detail:
+      'Define how blocked threads should exit if the system is stopping.',
+  },
+  {
+    title: 'Spurious wakeups handled?',
+    detail:
+      'Some implementations can still wake spuriously; check invariants.',
+  },
+  {
+    title: 'No hidden ownership?',
+    detail:
+      'Semaphores do not enforce owners; mistakes can be silent.',
+  },
+]
+
+const faq = [
+  {
+    question: 'Why not use a semaphore as a mutex?',
+    answer:
+      'Semaphores do not enforce ownership; the wrong thread can signal and corrupt the protocol.',
+  },
+  {
+    question: 'Can the counter exceed its initial value?',
+    answer:
+      'It should not. Over-release breaks the invariant and allows too many threads in.',
+  },
+  {
+    question: 'Are semaphores obsolete?',
+    answer:
+      'No. They are still ideal for resource pools and rate limiting, but require careful design.',
+  },
+  {
+    question: 'Can I avoid a mutex with semaphores?',
+    answer:
+      'Semaphores only control counts; a mutex is still needed to protect shared data structures.',
+  },
+  {
+    question: 'What is the difference between wait and try-wait?',
+    answer:
+      'wait blocks until a permit is available; try-wait fails immediately if none are available.',
+  },
+]
+
+const exampleTable = [
+  { pattern: 'Pool', permits: 'N connections', wait: 'acquire before use', signal: 'release after close' },
+  { pattern: 'Buffer', permits: 'empty/full slots', wait: 'producer waits empty', signal: 'consumer signals empty' },
+  { pattern: 'Rate limit', permits: 'tokens per interval', wait: 'request waits token', signal: 'refill loop' },
+  { pattern: 'Parking', permits: 'free spots', wait: 'enter waits spot', signal: 'exit signals spot' },
+]
+
 const compareTools = [
   {
     title: 'Semaphore vs mutex',
@@ -495,9 +614,33 @@ export default function SemaphoresPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Permit Accounting</legend>
+            <div className="win95-grid win95-grid-2">
+              {permitAccounting.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Compare and Contrast</legend>
             <div className="win95-grid win95-grid-2">
               {compareTools.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Usage Patterns</legend>
+            <div className="win95-grid win95-grid-2">
+              {usagePatterns.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -630,6 +773,44 @@ export default function SemaphoresPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Patterns at a Glance</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Pattern</th>
+                    <th>Permits represent</th>
+                    <th>Wait</th>
+                    <th>Signal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {exampleTable.map((row) => (
+                    <tr key={row.pattern}>
+                      <td>{row.pattern}</td>
+                      <td>{row.permits}</td>
+                      <td>{row.wait}</td>
+                      <td>{row.signal}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Debugging Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -639,6 +820,18 @@ export default function SemaphoresPage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>FAQ</legend>
+            <div className="win95-stack">
+              {faq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 

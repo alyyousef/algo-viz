@@ -120,6 +120,141 @@ const mutexTypes = [
   },
 ]
 
+const deadlockPrevention = [
+  {
+    title: 'Lock ordering',
+    detail:
+      'Acquire multiple locks in a global, consistent order across the codebase.',
+  },
+  {
+    title: 'Lock leveling',
+    detail:
+      'Assign levels to locks and only acquire higher-level locks while holding lower-level ones.',
+  },
+  {
+    title: 'Try-lock with backoff',
+    detail:
+      'Use try-lock to avoid deadlock and retry after releasing other locks.',
+  },
+  {
+    title: 'Timeouts',
+    detail:
+      'Timed locks detect stalls and allow recovery paths.',
+  },
+  {
+    title: 'Avoid nested locks',
+    detail:
+      'When possible, redesign to minimize locking multiple resources at once.',
+  },
+]
+
+const lockGranularity = [
+  {
+    title: 'Coarse-grained',
+    detail:
+      'One mutex protects a large structure. Simpler but can limit concurrency.',
+  },
+  {
+    title: 'Fine-grained',
+    detail:
+      'Multiple mutexes protect sub-structures. Higher concurrency but harder to reason about.',
+  },
+  {
+    title: 'Sharded',
+    detail:
+      'Partition state by hash or key to reduce contention hot spots.',
+  },
+  {
+    title: 'Striped',
+    detail:
+      'Use a fixed set of locks mapped to data shards for scalable access.',
+  },
+]
+
+const debuggingChecklist = [
+  {
+    title: 'Are all shared accesses locked?',
+    detail:
+      'If any path reads or writes without the lock, invariants can break.',
+  },
+  {
+    title: 'Is lock ordering consistent?',
+    detail:
+      'Check for lock acquisition cycles across threads.',
+  },
+  {
+    title: 'Are locks released on all paths?',
+    detail:
+      'Use scoped guards to prevent leaks on errors or early returns.',
+  },
+  {
+    title: 'Is a lock held during I/O?',
+    detail:
+      'I/O can block indefinitely and amplify contention.',
+  },
+  {
+    title: 'Are critical sections minimal?',
+    detail:
+      'Large critical sections can look like deadlocks under load.',
+  },
+  {
+    title: 'Is lock contention measured?',
+    detail:
+      'Use profiling tools to identify hot locks and bottlenecks.',
+  },
+]
+
+const usagePatterns = [
+  {
+    title: 'Guarded object',
+    detail:
+      'All operations on an object are wrapped in a single mutex to preserve invariants.',
+  },
+  {
+    title: 'Split read/write paths',
+    detail:
+      'Use a separate lock for read-mostly data to reduce contention.',
+  },
+  {
+    title: 'Two-phase work',
+    detail:
+      'Copy shared state under lock, then compute outside the lock.',
+  },
+  {
+    title: 'Lock striping',
+    detail:
+      'Map keys to one of many locks for scalable concurrent access.',
+  },
+]
+
+const faq = [
+  {
+    question: 'Why lock reads? I only write in one place.',
+    answer:
+      'Reads participate in invariants and need the same happens-before guarantees as writes.',
+  },
+  {
+    question: 'Can I unlock in a different thread?',
+    answer:
+      'Most mutexes require the owner to unlock. Violating this can crash or corrupt state.',
+  },
+  {
+    question: 'Is a recursive mutex safe?',
+    answer:
+      'It can hide design problems and cause unexpected lock hold times. Use only when required.',
+  },
+  {
+    question: 'Is a mutex always slower than atomics?',
+    answer:
+      'Mutexes are slower for tiny operations but simpler and safer for complex invariants.',
+  },
+  {
+    question: 'Why not use one global lock?',
+    answer:
+      'It may be correct but can destroy scalability. Use smaller locks when contention is high.',
+  },
+]
+
 const compareTools = [
   {
     title: 'Mutex vs spinlock',
@@ -467,9 +602,45 @@ export default function MutexesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Deadlock Prevention</legend>
+            <div className="win95-grid win95-grid-2">
+              {deadlockPrevention.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Lock Granularity</legend>
+            <div className="win95-grid win95-grid-2">
+              {lockGranularity.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Compare and Contrast</legend>
             <div className="win95-grid win95-grid-2">
               {compareTools.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Usage Patterns</legend>
+            <div className="win95-grid win95-grid-2">
+              {usagePatterns.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -602,6 +773,18 @@ export default function MutexesPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {debuggingChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
@@ -611,6 +794,18 @@ export default function MutexesPage(): JSX.Element {
                   </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>FAQ</legend>
+            <div className="win95-stack">
+              {faq.map((item) => (
+                <div key={item.question} className="win95-panel">
+                  <div className="win95-heading">{item.question}</div>
+                  <p className="win95-text">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
