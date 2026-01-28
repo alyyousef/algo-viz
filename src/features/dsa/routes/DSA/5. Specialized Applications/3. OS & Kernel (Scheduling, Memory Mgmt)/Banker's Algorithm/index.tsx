@@ -3,166 +3,205 @@ import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
 
+const overviewTiles = [
+  {
+    title: 'What it is',
+    detail:
+      'A deadlock-avoidance algorithm that grants a resource request only if the system can still finish all processes in some order.',
+  },
+  {
+    title: 'Why it exists',
+    detail:
+      'To prevent deadlocks before they occur by ensuring the system never enters an unsafe state.',
+  },
+  {
+    title: 'What it requires',
+    detail:
+      'Each process must declare its maximum claim for every resource type in advance.',
+  },
+  {
+    title: 'What it guarantees',
+    detail:
+      'If the algorithm approves a request, the system remains in a safe state with a valid completion order.',
+  },
+]
+
+const quickGlossary = [
+  {
+    term: 'Safe sequence',
+    definition:
+      'An ordering of processes where each can finish using the resources available at its turn.',
+  },
+  {
+    term: 'Safe state',
+    definition:
+      'A state with at least one safe sequence.',
+  },
+  {
+    term: 'Unsafe state',
+    definition:
+      'A state with no safe sequence. Unsafe does not necessarily mean deadlocked, but it is risky.',
+  },
+  {
+    term: 'Maximum claim (Max)',
+    definition:
+      'The most of each resource a process may request over its lifetime.',
+  },
+  {
+    term: 'Need',
+    definition:
+      'The remaining resources required for a process to finish: Need = Max - Allocation.',
+  },
+]
 
 const historicalMilestones = [
   {
-    title: 'Dijkstra formalizes deadlock (1965)',
+    title: '1965: Deadlock formalized',
     detail:
-      'The dining philosophers problem highlights how competing processes can deadlock, motivating safer resource allocation policies.',
+      'Dijkstra and others formalize deadlock and illustrate it with the dining philosophers problem.',
   },
   {
-    title: "Banker's Algorithm is introduced (1968)",
+    title: '1968: Bankers Algorithm introduced',
     detail:
-      'Edsger Dijkstra presents a safety-based resource allocation algorithm that simulates future requests to avoid unsafe states.',
+      'Dijkstra proposes the safety-based resource allocation algorithm and the banker analogy.',
   },
   {
-    title: 'Operating systems adopt safety checks (1970s)',
+    title: '1970s: Teaching and early OS research',
     detail:
-      'Academic OSes integrate deadlock avoidance and detection, refining the use of maximum claims and safe sequences.',
+      'Bankers becomes a canonical model in operating systems curricula and research prototypes.',
   },
   {
-    title: 'Modern kernels prefer avoidance-free designs (1990s+)',
+    title: '1990s+: Production systems shift',
     detail:
-      'Practical systems often avoid strict Bankers usage due to overhead, but the algorithm remains foundational in OS curricula.',
+      'Modern kernels prefer simpler prevention or detection due to Bankers runtime cost.',
   },
 ]
 
 const mentalModels = [
   {
-    title: 'The banker analogy',
+    title: 'The cautious banker',
     detail:
-      'Like a cautious bank, the system only grants a loan if it can still satisfy all customers in some order without going bankrupt.',
+      'The system is a bank that only approves loans if it can still satisfy all customers in some order.',
   },
   {
-    title: 'Safe state as future-proofing',
+    title: 'Safety is a proof',
     detail:
-      'A state is safe if the system can find an order to finish every process given the remaining resources.',
+      'A safe sequence is a constructive proof that the system can finish all processes.',
   },
   {
-    title: 'Pretend the request already happened',
+    title: 'Every request is a what-if',
     detail:
-      'The algorithm simulates allocation, then checks if the system remains safe before making the change real.',
+      'Requests are simulated first, then committed only if safety still holds.',
+  },
+  {
+    title: 'Conservativeness is a feature',
+    detail:
+      'The algorithm may delay requests that would succeed in practice to preserve safety guarantees.',
   },
 ]
 
-const coreStructures = [
+const systemModel = [
+  {
+    title: 'Processes',
+    detail:
+      'There are n processes, each with a declared maximum claim for every resource type.',
+  },
+  {
+    title: 'Resource types',
+    detail:
+      'There are m resource types, each with multiple instances (e.g., CPU cores, memory frames, I/O channels).',
+  },
+  {
+    title: 'State components',
+    detail:
+      'System state is captured by Allocation, Max, Need, and Available matrices/vectors.',
+  },
+  {
+    title: 'Goal',
+    detail:
+      'Grant requests only if the resulting state remains safe.',
+  },
+]
+
+const dataStructures = [
   {
     heading: 'Available vector',
     bullets: [
       'Length m (resource types).',
-      'Available[j] is the number of free instances of resource type j.',
-      'Represents the pool the OS can still hand out.',
+      'Available[j] is the number of free instances of resource j.',
+      'Represents the pool the OS can still allocate immediately.',
     ],
   },
   {
     heading: 'Max matrix',
     bullets: [
-      'Size n x m (processes x resources).',
+      'Size n x m (processes x resource types).',
       'Max[i][j] is the maximum demand of process i for resource j.',
-      'Declared ahead of time for the algorithm to work.',
+      'Must be declared before requests are evaluated.',
     ],
   },
   {
     heading: 'Allocation matrix',
     bullets: [
       'Allocation[i][j] is what process i currently holds.',
-      'Sum of Allocation over i plus Available equals total resources.',
-      'Tracks current commitments the OS must honor.',
+      'Sum of Allocation over all i plus Available equals total resources.',
+      'Tracks current commitments the system must honor.',
     ],
   },
   {
     heading: 'Need matrix',
     bullets: [
       'Need = Max - Allocation.',
-      'Need[i][j] is what process i still needs to finish.',
-      'Used to test if a process can complete with current Available.',
+      'Need[i][j] is what process i still requires to finish.',
+      'Primary input to the safety check.',
     ],
   },
   {
-    heading: 'Safe sequence',
-    bullets: [
-      'An ordering of processes that can finish one by one.',
-      'If such an order exists, the state is safe.',
-      'Used as a certificate that the allocation is allowed.',
-    ],
-  },
-  {
-    heading: 'Work and Finish vectors',
+    heading: 'Work and Finish',
     bullets: [
       'Work is a copy of Available used in the safety check.',
-      'Finish flags track which processes can complete.',
+      'Finish[i] tracks whether a process can complete.',
       'Safety check ends when all Finish are true or no progress is possible.',
     ],
   },
 ]
 
-const algorithmSteps = [
+const invariants = [
   {
-    title: 'Safety check',
+    title: 'Need never negative',
     detail:
-      'Initialize Work = Available and Finish = false. Find a process whose Need <= Work, pretend it finishes, then add Allocation to Work. Repeat until all finish or no progress.',
+      'Need = Max - Allocation must be non-negative for all processes and resources.',
   },
   {
-    title: 'Request handling',
+    title: 'Resources conserved',
     detail:
-      'When a process requests resources, ensure Request <= Need and Request <= Available. Then provisionally allocate and run the safety check.',
+      'For each resource type: sum(Allocation) + Available = Total instances.',
   },
   {
-    title: 'Decision',
+    title: 'Requests are bounded',
     detail:
-      'If a safe sequence exists, grant the request. If not, roll back and make the process wait.',
-  },
-]
-
-const complexityNotes = [
-  {
-    title: 'Time cost',
-    detail:
-      'Safety check is O(n^2 * m) in the worst case due to repeated scanning of processes and resource comparisons.',
-  },
-  {
-    title: 'Space cost',
-    detail:
-      'Requires O(n * m) for Max, Allocation, Need, plus O(m) for Available and Work.',
-  },
-  {
-    title: 'Runtime overhead',
-    detail:
-      'Frequent requests can make checks expensive, which is why production kernels often prefer other strategies.',
-  },
-  {
-    title: 'Predictability tradeoff',
-    detail:
-      'Avoidance reduces deadlock risk but requires up-front maximum claims and conservative admission control.',
+      'A request must satisfy Request <= Need and Request <= Available to proceed.',
   },
 ]
 
-const realWorldUses = [
-  {
-    context: 'Teaching OS fundamentals',
-    detail:
-      'Banker’s Algorithm is a classic vehicle for understanding deadlocks, safe states, and resource allocation policy.',
-  },
-  {
-    context: 'Database transaction schedulers',
-    detail:
-      'Conceptual parallels appear in lock managers that prevent unsafe allocation of lock resources.',
-  },
-  {
-    context: 'Embedded or safety-critical systems',
-    detail:
-      'Systems with strict resource contracts may use similar safety checks to avoid starvation and deadlock.',
-  },
-  {
-    context: 'Simulation and verification',
-    detail:
-      'Safety checking is useful in modeling frameworks to validate that planned allocations do not create deadlock-prone states.',
-  },
+const safetyAlgorithmSteps = [
+  'Initialize Work = Available and Finish[i] = false for all processes.',
+  'Find an i such that Finish[i] == false and Need[i] <= Work.',
+  'If no such i exists, stop. If all Finish[i] are true, the state is safe.',
+  'If found, simulate completion: Work = Work + Allocation[i], Finish[i] = true.',
+  'Repeat until all processes finish or no progress is possible.',
 ]
 
-const examples = [
+const requestAlgorithmSteps = [
+  'If Request[i] > Need[i], reject (process exceeded its declared Max).',
+  'If Request[i] > Available, delay (not enough free resources).',
+  'Temporarily allocate: Available -= Request, Allocation += Request, Need -= Request.',
+  'Run the safety check. If safe, commit; otherwise roll back and wait.',
+]
+
+const exampleMatrices = [
   {
-    title: 'Safety check walkthrough',
+    title: 'Canonical example state',
     code: `Available = [3, 3, 2]
 
 Allocation = [
@@ -183,81 +222,193 @@ Max = [
 
 Need = Max - Allocation`,
     explanation:
-      'Compute Need and test for a safe sequence. One valid order is P1, P3, P4, P0, P2, meaning the state is safe.',
+      'Compute Need first, then attempt to construct a safe sequence using the safety algorithm.',
   },
+]
+
+const safeSequenceWalkthrough = [
+  {
+    title: 'Safety check walkthrough',
+    code: `Work = [3, 3, 2]
+Finish = [F, F, F, F, F]
+
+Step 1: P1 Need=[1,2,2] fits Work -> finish P1
+Work = Work + Allocation[P1] = [5, 3, 2]
+
+Step 2: P3 Need=[0,1,1] fits Work -> finish P3
+Work = [7, 4, 3]
+
+Step 3: P4 Need=[4,3,1] fits Work -> finish P4
+Work = [7, 4, 5]
+
+Step 4: P0 Need=[7,4,3] fits Work -> finish P0
+Work = [7, 5, 5]
+
+Step 5: P2 Need=[6,0,0] fits Work -> finish P2
+All finish -> SAFE`,
+    explanation:
+      'One safe sequence is P1 -> P3 -> P4 -> P0 -> P2, so the system is safe.',
+  },
+]
+
+const requestWalkthrough = [
   {
     title: 'Handling a request',
     code: `Request(P1) = [1, 0, 2]
 
-Check:
-Request <= Need? yes
-Request <= Available? yes
+Check 1: Request <= Need? yes
+Check 2: Request <= Available? yes
 
-Pretend allocate, then run safety check.
-If safe -> grant; otherwise rollback.`,
+Temporarily grant and run safety check.
+If safe -> grant; else rollback and wait.`,
     explanation:
-      'The algorithm only grants requests that keep the system in a safe state, even if resources are currently available.',
+      'Bankers may delay a request even if resources are available if it would make the state unsafe.',
+  },
+]
+
+const correctnessNotes = [
+  {
+    title: 'Soundness',
+    detail:
+      'If the algorithm approves a request, there exists a safe sequence, so the system remains safe.',
   },
   {
-    title: 'Safety check pseudocode',
-    code: `Work = Available
-Finish[i] = false for all i
+    title: 'Conservativeness',
+    detail:
+      'The algorithm can reject requests that would have worked, trading throughput for safety.',
+  },
+  {
+    title: 'Safety vs liveness',
+    detail:
+      'Safety is preserved, but fairness is not guaranteed; starvation can still occur.',
+  },
+]
 
-while exists i with Finish[i] == false and Need[i] <= Work:
-  Work = Work + Allocation[i]
-  Finish[i] = true
+const complexityNotes = [
+  {
+    title: 'Time',
+    detail:
+      'Safety check is O(n^2 * m) in the worst case due to repeated scanning of processes.',
+  },
+  {
+    title: 'Space',
+    detail:
+      'Requires O(n * m) for Allocation, Max, Need plus O(m) for Available and Work.',
+  },
+  {
+    title: 'Operational overhead',
+    detail:
+      'Every request triggers a safety check, which can be expensive in high-throughput systems.',
+  },
+]
 
-if all Finish == true -> SAFE
-else -> UNSAFE`,
-    explanation:
-      'This loop searches for a process that can finish with the current Work vector, then releases its allocation into Work.',
+const practicalConsiderations = [
+  {
+    title: 'Max claims must be trusted',
+    detail:
+      'If processes lie about Max, safety guarantees collapse.',
+  },
+  {
+    title: 'Works best with stable workloads',
+    detail:
+      'Frequent arrivals, departures, or dynamic resource types reduce practicality.',
+  },
+  {
+    title: 'Admission control helps',
+    detail:
+      'Constraining new processes keeps the system in a safe region from the start.',
+  },
+  {
+    title: 'Combine with fairness policies',
+    detail:
+      'Use aging or priority adjustments to reduce starvation.',
+  },
+]
+
+const comparisons = [
+  {
+    title: 'Bankers vs deadlock detection',
+    detail:
+      'Bankers avoids unsafe states proactively; detection allows deadlock and recovers later.',
+  },
+  {
+    title: 'Bankers vs prevention',
+    detail:
+      'Prevention forbids a deadlock condition outright; Bankers allows it when safe.',
+  },
+  {
+    title: 'Bankers vs lock ordering',
+    detail:
+      'Lock ordering is simpler and lower overhead but less general than Bankers.',
+  },
+  {
+    title: 'Bankers vs optimistic allocation',
+    detail:
+      'Optimistic allocation grants requests immediately and resolves failures later; Bankers is conservative.',
   },
 ]
 
 const pitfalls = [
-  'Skipping validation that Request <= Need. This breaks the model and can create impossible allocations.',
-  'Using the algorithm without accurate Max claims. If processes lie, safety checks become meaningless.',
-  'Treating safe as optimal. Safe sequences may still yield poor throughput or fairness.',
-  'Running safety checks too frequently, causing performance overhead in high-throughput systems.',
-  'Ignoring starvation. A process may wait indefinitely even if the system remains safe.',
-]
-
-const decisionGuidance = [
-  'Use Banker’s Algorithm when maximum resource needs are known in advance and avoiding deadlock is critical.',
-  'Prefer simpler avoidance or detection methods when processes are dynamic or uncooperative about maximum claims.',
-  'Adopt admission control policies to keep systems in safe states from the start.',
-  'Use the safety check as a verification tool for simulations or educational tooling.',
-  'Pair with fairness policies to prevent starvation and long-term delays.',
-]
-
-const advancedInsights = [
   {
-    title: 'Safe vs unsafe vs deadlocked',
-    detail:
-      'Unsafe does not mean deadlocked; it means there is no guaranteed safe sequence. Deadlock is a specific unsafe state where no process can proceed.',
+    mistake: 'Skipping Request <= Need validation',
+    description: 'Requests that exceed Need violate the model and invalidate safety checks.',
   },
   {
-    title: 'Resource ordering and avoidance',
-    detail:
-      'Many systems use resource ordering instead of Bankers to avoid deadlocks with lower runtime overhead.',
+    mistake: 'Confusing unsafe with deadlocked',
+    description: 'Unsafe means no guaranteed safe sequence; deadlock is a specific unsafe state.',
   },
   {
-    title: 'Banker’s for multi-instance resources',
-    detail:
-      'The algorithm is designed for multiple instances per resource type, unlike simpler single-instance deadlock prevention.',
+    mistake: 'Assuming safe implies optimal',
+    description: 'Safe sequences can still be inefficient or unfair.',
   },
   {
-    title: 'Safety as a certificate',
-    detail:
-      'A safe sequence is a constructive proof that a scheduling order exists. Some systems log or trace it for auditing.',
+    mistake: 'Ignoring overhead',
+    description: 'Frequent safety checks can become a bottleneck under heavy request rates.',
   },
 ]
 
-const takeaways = [
-  'Banker’s Algorithm avoids deadlock by refusing allocations that lead to unsafe states.',
-  'It requires accurate maximum claims and a safety check that simulates future completions.',
-  'The method is conceptually powerful but often too heavy for modern kernels in production.',
-  'Understanding safety vs deadlock clarifies why avoidance policies can still block requests.',
+const whenToUse = [
+  {
+    title: 'Max demands are known',
+    detail:
+      'Processes can declare accurate maximum claims ahead of time.',
+  },
+  {
+    title: 'Deadlock is unacceptable',
+    detail:
+      'Systems with strict availability requirements benefit from conservative safety checks.',
+  },
+  {
+    title: 'Request rate is moderate',
+    detail:
+      'Safety checks are feasible when requests are not extremely frequent.',
+  },
+]
+
+const evaluationChecklist = [
+  {
+    title: 'Safety preserved',
+    detail: 'Does every approved request leave at least one safe sequence?',
+  },
+  {
+    title: 'Max claims enforced',
+    detail: 'Are requests strictly bounded by declared Max values?',
+  },
+  {
+    title: 'Performance acceptable',
+    detail: 'Can the system tolerate the O(n^2 * m) safety checks?',
+  },
+  {
+    title: 'Starvation mitigated',
+    detail: 'Do policies exist to prevent indefinite waiting?',
+  },
+]
+
+const keyTakeaways = [
+  'Bankers Algorithm prevents deadlock by avoiding unsafe states.',
+  'Safety is proven by constructing a safe sequence using the safety check.',
+  'The method requires accurate Max claims and conservative request handling.',
+  'It is powerful for teaching and verification, but often heavy for production kernels.',
 ]
 
 export default function BankersAlgorithmPage(): JSX.Element {
@@ -276,11 +427,11 @@ export default function BankersAlgorithmPage(): JSX.Element {
         <div className="win95-content">
           <div className="win95-header-row">
             <div>
-              <div className="win95-subheading">Deadlock avoidance by simulating safe futures before granting resources</div>
+              <div className="win95-subheading">Deadlock avoidance by proving the system stays safe before granting resources</div>
               <p className="win95-text">
-                Banker&apos;s Algorithm decides whether the operating system should grant a resource request by checking if the
-                resulting state is safe. It keeps track of maximum claims, current allocations, and remaining needs, then tests
-                whether all processes can still complete in some order. If not, the request waits.
+                Banker&apos;s Algorithm models resource allocation like a cautious bank. It grants a request only if the system can
+                still finish every process in some order after the allocation. The algorithm uses maximum claims, current
+                allocations, and remaining needs to ensure the system never enters an unsafe state.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -289,18 +440,31 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Banker&apos;s Algorithm is a deadlock avoidance strategy. It prevents the system from entering unsafe states by
-                simulating resource allocations and verifying that a safe sequence still exists. This makes it conservative,
-                prioritizing safety over maximum utilization.
-              </p>
+            <legend>The Big Picture</legend>
+            <div className="win95-grid win95-grid-2">
+              {overviewTiles.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
+            <legend>Quick Glossary</legend>
+            <div className="win95-grid win95-grid-2">
+              {quickGlossary.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.definition}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Historical Context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -312,7 +476,7 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
+            <legend>Mental Models</legend>
             <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -324,9 +488,21 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works: core data structures</legend>
+            <legend>System Model</legend>
+            <div className="win95-grid win95-grid-2">
+              {systemModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Core Data Structures</legend>
             <div className="win95-grid win95-grid-3">
-              {coreStructures.map((block) => (
+              {dataStructures.map((block) => (
                 <div key={block.heading} className="win95-panel">
                   <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
@@ -340,51 +516,43 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Algorithm flow</legend>
+            <legend>Invariants to Maintain</legend>
             <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
+              {invariants.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The safety check is the core of the algorithm. It treats current allocations as a promise and tries to prove that
-                every process can still finish in some order.
-              </p>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Safety Algorithm (Safe State Test)</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {safetyAlgorithmSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
+            <legend>Resource Request Algorithm</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {requestAlgorithmSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
+            <legend>Example State</legend>
             <div className="win95-stack">
-              {examples.map((example) => (
+              {exampleMatrices.map((example) => (
                 <div key={example.title} className="win95-panel">
                   <div className="win95-heading">{example.title}</div>
                   <pre className="win95-code">
@@ -397,31 +565,39 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <legend>Walkthrough: Safe Sequence</legend>
+            <div className="win95-stack">
+              {safeSequenceWalkthrough.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
+            <legend>Walkthrough: Handling a Request</legend>
+            <div className="win95-stack">
+              {requestWalkthrough.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
+            <legend>Correctness Notes</legend>
             <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
+              {correctnessNotes.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -431,13 +607,86 @@ export default function BankersAlgorithmPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
+            <legend>Complexity and Cost</legend>
+            <div className="win95-grid win95-grid-2">
+              {complexityNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practical Considerations</legend>
+            <div className="win95-grid win95-grid-2">
+              {practicalConsiderations.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and Contrast</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
+                {pitfalls.map((pitfall) => (
+                  <li key={pitfall.mistake}>
+                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                  </li>
                 ))}
               </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>When to Use It</legend>
+            <div className="win95-grid win95-grid-2">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Evaluation Checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {evaluationChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key Takeaways</legend>
+            <div className="win95-grid win95-grid-2">
+              {keyTakeaways.map((takeaway) => (
+                <div key={takeaway} className="win95-panel">
+                  <p className="win95-text">{takeaway}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
         </div>
@@ -445,4 +694,3 @@ export default function BankersAlgorithmPage(): JSX.Element {
     </div>
   )
 }
-
