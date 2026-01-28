@@ -3,27 +3,72 @@ import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
 
+const overviewTiles = [
+  {
+    title: 'What it is',
+    detail:
+      'A detection-and-recovery strategy: allow allocations, then periodically check for circular waits and recover if needed.',
+  },
+  {
+    title: 'Why it exists',
+    detail:
+      'It enables higher concurrency than avoidance by not blocking requests up front.',
+  },
+  {
+    title: 'What it requires',
+    detail:
+      'Accurate tracking of who holds what and who is waiting for what, plus a recovery policy.',
+  },
+  {
+    title: 'What it guarantees',
+    detail:
+      'If the detector is sound and recovery succeeds, the system eventually restores progress.',
+  },
+]
+
+const quickGlossary = [
+  {
+    term: 'Wait-for edge',
+    definition: 'A directed edge P1 -> P2 meaning P1 is blocked waiting for a resource held by P2.',
+  },
+  {
+    term: 'Deadlock set',
+    definition: 'The processes that are mutually waiting in a cycle.',
+  },
+  {
+    term: 'Victim',
+    definition: 'A process chosen to abort or roll back to break the deadlock.',
+  },
+  {
+    term: 'Detection interval',
+    definition: 'How often detection runs (periodic, on-demand, or hybrid).',
+  },
+  {
+    term: 'Recovery cost',
+    definition: 'The work lost by aborting or rolling back a process.',
+  },
+]
 
 const historicalMilestones = [
   {
-    title: 'Deadlock conditions formalized (1971)',
+    title: '1971: Deadlock conditions formalized',
     detail:
-      'Coffman et al. describe the necessary conditions for deadlock: mutual exclusion, hold-and-wait, no preemption, and circular wait.',
+      'Coffman et al. describe the necessary conditions for deadlock: mutual exclusion, hold-and-wait, no preemption, circular wait.',
   },
   {
-    title: 'Wait-for graphs enter OS tooling (1970s)',
+    title: '1970s: Graph models enter OS tooling',
     detail:
-      'Graph-based detection helps visualize and detect cycles in lock allocation, influencing database and kernel designs.',
+      'Resource allocation graphs and wait-for graphs become standard representations for detection.',
   },
   {
-    title: 'Database deadlock detectors mature (1980s-1990s)',
+    title: '1980s-1990s: Database detectors mature',
     detail:
-      'DBMS implementations automate detection and victim selection to keep transactional systems responsive.',
+      'DBMS engines automate detection and victim selection to keep transactions responsive.',
   },
   {
-    title: 'Modern systems combine detection with timeouts (2000s+)',
+    title: '2000s+: Hybrid strategies',
     detail:
-      'Practical systems mix detection, timeouts, and heuristic recovery to keep overhead manageable.',
+      'Modern systems combine detection, timeouts, and heuristics to keep overhead manageable.',
   },
 ]
 
@@ -31,145 +76,294 @@ const mentalModels = [
   {
     title: 'Traffic circle with no exits',
     detail:
-      'Every car holds a lane segment and waits for the next. A cycle means nobody moves without intervention.',
+      'Each car holds a lane and waits for the next. A cycle means nobody moves without intervention.',
   },
   {
-    title: 'Resource dependency graph',
+    title: 'Dependency graph',
     detail:
-      'Processes and resources are nodes; edges show who holds and who waits. Cycles signal deadlocks.',
+      'Edges represent who is blocking whom. A cycle is a deadlock (for single-instance resources).',
   },
   {
     title: 'Detect, then recover',
     detail:
-      'Unlike avoidance, detection accepts deadlocks may happen and focuses on finding and resolving them quickly.',
+      'Detection only finds the problem. Recovery is what actually restores progress.',
+  },
+  {
+    title: 'Accept risk for throughput',
+    detail:
+      'Allowing allocations boosts concurrency but risks occasional rollbacks.',
   },
 ]
 
-const coreStructures = [
+const systemModel = [
   {
-    heading: 'Wait-for graph (single instance)',
+    title: 'Processes and resources',
+    detail: 'There are n processes and m resource types with finite instances.',
+  },
+  {
+    title: 'Requests and allocations',
+    detail: 'Each process may hold some instances and request more.',
+  },
+  {
+    title: 'State tracking',
+    detail: 'Detection relies on accurate live data from the lock/resource manager.',
+  },
+  {
+    title: 'Goal',
+    detail: 'Identify deadlocked sets and free resources with minimal disruption.',
+  },
+]
+
+const graphModels = [
+  {
+    title: 'Resource Allocation Graph (RAG)',
+    detail: 'Bipartite graph: processes and resources. P -> R is a request; R -> P is an assignment.',
+  },
+  {
+    title: 'Wait-For Graph (WFG)',
+    detail: 'Only process nodes. Edge P1 -> P2 means P1 waits for a resource held by P2.',
+  },
+  {
+    title: 'Single-instance case',
+    detail: 'A cycle in the WFG is both necessary and sufficient for deadlock.',
+  },
+  {
+    title: 'Multi-instance case',
+    detail: 'Cycles are not sufficient; use matrix-based detection to confirm.',
+  },
+]
+
+const dataStructures = [
+  {
+    heading: 'Available vector',
     bullets: [
-      'Nodes are processes only.',
-      'Edge Pi -> Pj means Pi waits for a resource held by Pj.',
-      'Cycle implies deadlock.',
+      'Available[j] is the number of free instances of resource type j.',
+      'Represents immediately allocatable capacity.',
     ],
   },
   {
-    heading: 'Allocation graph (multi-instance)',
+    heading: 'Allocation matrix',
     bullets: [
-      'Nodes are processes and resources.',
-      'Edges P -> R request; R -> P allocation.',
-      'Cycle detection is necessary but not sufficient for deadlock with multiple instances.',
+      'Allocation[i][j] is how many instances of resource j process i holds.',
+      'Sum of Allocation across processes plus Available equals total resources.',
     ],
   },
   {
-    heading: 'Available / Allocation / Request matrices',
+    heading: 'Request matrix',
     bullets: [
-      'Similar to Banker’s, but for detection.',
-      'Request[i][j] captures outstanding needs.',
-      'Detection checks if processes can finish with Available.',
+      'Request[i][j] is how many instances of resource j process i still wants.',
+      'Captures outstanding waits at detection time.',
     ],
   },
   {
-    heading: 'Victim selection metadata',
+    heading: 'Work and Finish',
     bullets: [
-      'Process priority, age, or cost to restart.',
-      'Resources held and how long they have been held.',
-      'Rollback or kill decision support.',
-    ],
-  },
-  {
-    heading: 'Recovery actions',
-    bullets: [
-      'Abort one or more processes.',
-      'Preempt resources (if safe) and roll back.',
-      'Checkpointing to reduce lost work.',
-    ],
-  },
-  {
-    heading: 'Detection frequency',
-    bullets: [
-      'Periodic scans balance overhead and responsiveness.',
-      'On-demand scans run when progress stalls or timeouts fire.',
-      'Adaptive strategies reduce wasted work.',
+      'Work is a copy of Available used in detection.',
+      'Finish[i] marks whether process i can complete.',
+      'Unfinished processes after the loop are considered deadlocked.',
     ],
   },
 ]
 
-const algorithmSteps = [
+const detectionWorkflow = [
   {
-    title: 'Single-instance detection',
-    detail:
-      'Build a wait-for graph and run cycle detection (DFS/Tarjan). Any cycle indicates deadlock among the involved processes.',
+    title: 'Build the model',
+    detail: 'Collect lock tables or matrices that show allocations and outstanding requests.',
   },
   {
-    title: 'Multi-instance detection',
-    detail:
-      'Use Available, Allocation, and Request. Mark processes whose Request <= Available, simulate completion, and repeat. Unmarked processes are deadlocked.',
+    title: 'Run detection',
+    detail: 'Use cycle detection for single-instance resources or matrix detection for multi-instance resources.',
   },
   {
-    title: 'Recovery',
-    detail:
-      'Choose a victim process to abort or roll back, release its resources, and rerun detection until the cycle clears.',
+    title: 'Select victims',
+    detail: 'Choose one or more processes to terminate or roll back based on cost and policy.',
+  },
+  {
+    title: 'Recover and resume',
+    detail: 'Release resources and re-run detection until no deadlock remains.',
   },
 ]
 
-const complexityNotes = [
+const algorithms = [
   {
-    title: 'Graph cycle detection',
-    detail:
-      'DFS-based detection runs in O(V + E). With many locks, edges can be large but still efficient.',
+    title: 'Wait-for graph cycle detection',
+    detail: 'Build the WFG and run DFS/Tarjan to find cycles.',
   },
   {
     title: 'Matrix-based detection',
-    detail:
-      'Worst case is O(n^2 * m) as the system repeatedly checks processes against Available.',
+    detail: 'Use Available, Allocation, Request and simulate completion to find stuck processes.',
   },
   {
-    title: 'Operational cost',
-    detail:
-      'Frequent detection adds overhead; infrequent detection prolongs deadlocks and throughput loss.',
+    title: 'Distributed detection',
+    detail: 'Use probe/edge-chasing algorithms or centralized coordinators to detect global cycles.',
+  },
+]
+
+const matrixDetectionSteps = [
+  'Work = Available; Finish[i] = false for all processes.',
+  'Find a process i with Request[i] <= Work.',
+  'If none exists, all processes with Finish[i] == false are deadlocked.',
+  'If found, simulate completion: Work += Allocation[i], Finish[i] = true.',
+  'Repeat until no progress is possible.',
+]
+
+const correctnessNotes = [
+  {
+    title: 'Single-instance soundness',
+    detail: 'A cycle in the wait-for graph is both necessary and sufficient for deadlock.',
   },
   {
-    title: 'Recovery overhead',
-    detail:
-      'Killing or rolling back processes wastes work, so victim selection matters.',
+    title: 'Multi-instance soundness',
+    detail: 'Matrix detection identifies processes that cannot finish with current Available.',
+  },
+  {
+    title: 'False positives',
+    detail: 'Cycle detection alone can over-report deadlock with multiple instances.',
+  },
+  {
+    title: 'Timing sensitivity',
+    detail: 'Detection is a snapshot; state can change during the scan.',
+  },
+]
+
+const recoveryStrategies = [
+  {
+    title: 'Process termination',
+    detail: 'Abort one or more processes to release their resources immediately.',
+  },
+  {
+    title: 'Rollback and retry',
+    detail: 'Common in databases: roll back a transaction and let it restart.',
+  },
+  {
+    title: 'Resource preemption',
+    detail: 'Temporarily take resources from a process if preemption is safe.',
+  },
+  {
+    title: 'Checkpointing',
+    detail: 'Use checkpoints to reduce the work lost during recovery.',
+  },
+]
+
+const victimSelection = [
+  {
+    title: 'Minimize lost work',
+    detail: 'Choose the process with least progress or cheapest restart.',
+  },
+  {
+    title: 'Priority-aware',
+    detail: 'Prefer killing low-priority or batch tasks over interactive work.',
+  },
+  {
+    title: 'Age and fairness',
+    detail: 'Avoid repeatedly killing the same process by rotating or aging victims.',
+  },
+  {
+    title: 'Resource footprint',
+    detail: 'Killing a process holding many resources may resolve deadlock faster.',
+  },
+]
+
+const detectionPolicy = [
+  {
+    title: 'Periodic detection',
+    detail: 'Run on a schedule to control overhead.',
+  },
+  {
+    title: 'On-demand detection',
+    detail: 'Trigger when a request blocks too long or a timeout fires.',
+  },
+  {
+    title: 'Hybrid strategy',
+    detail: 'Use lightweight triggers plus full scans at intervals.',
+  },
+  {
+    title: 'Adaptive tuning',
+    detail: 'Increase scan frequency when contention is high.',
+  },
+]
+
+const implementationNotes = [
+  {
+    title: 'Accurate instrumentation',
+    detail: 'Lock tables must capture both held resources and outstanding waits.',
+  },
+  {
+    title: 'Snapshot consistency',
+    detail: 'Use a stable snapshot or lock-free snapshotting to avoid corrupted graphs.',
+  },
+  {
+    title: 'Avoid excessive scans',
+    detail: 'Do not scan on every request; batch checks or trigger on stalls.',
+  },
+  {
+    title: 'Log for diagnostics',
+    detail: 'Record detected cycles and victims to improve policy over time.',
+  },
+]
+
+const tradeoffs = [
+  {
+    title: 'Concurrency vs overhead',
+    detail: 'Detection allows more parallelism but consumes CPU for analysis.',
+  },
+  {
+    title: 'Recovery cost',
+    detail: 'Abort/rollback wastes work; policy determines how expensive recovery is.',
+  },
+  {
+    title: 'Timeliness vs accuracy',
+    detail: 'Frequent scans find deadlocks faster but can be noisy and expensive.',
+  },
+  {
+    title: 'Complexity vs simplicity',
+    detail: 'Graph models are simpler; matrix detection is more general but heavier.',
+  },
+]
+
+const comparisons = [
+  {
+    title: 'Detection vs avoidance',
+    detail: 'Avoidance blocks unsafe requests; detection allows them and recovers later.',
+  },
+  {
+    title: 'Detection vs prevention',
+    detail: 'Prevention forbids a deadlock condition outright; detection accepts risk.',
+  },
+  {
+    title: 'Detection vs timeouts',
+    detail: 'Timeouts are heuristic detection; they may kill slow but correct processes.',
   },
 ]
 
 const realWorldUses = [
   {
     context: 'Database systems',
-    detail:
-      'DB engines detect transaction deadlocks and abort a victim to keep throughput and avoid global stalls.',
+    detail: 'Deadlock detectors abort a victim transaction to keep throughput high.',
   },
   {
     context: 'Operating system kernels',
-    detail:
-      'Lock ordering and detection help debug and prevent kernel-level deadlocks during development.',
+    detail: 'Lock dependency graphs help detect deadlocks for debugging and recovery.',
   },
   {
     context: 'Distributed systems',
-    detail:
-      'Leases and timeouts serve as detection signals where global graphs are expensive to maintain.',
+    detail: 'Global detection is hard; systems often rely on timeouts or partial graphs.',
   },
   {
     context: 'Concurrency testing tools',
-    detail:
-      'Detectors instrument locks to find cycles, aiding in debugging complex multithreaded code.',
+    detail: 'Instrumentation detects cycles to surface hard-to-reproduce deadlocks.',
   },
 ]
 
 const examples = [
   {
-    title: 'Wait-for graph cycle',
-    code: `P1 waits for lock held by P2
-P2 waits for lock held by P3
-P3 waits for lock held by P1
+    title: 'Single-instance wait-for cycle',
+    code: `P1 holds A, waits for B
+P2 holds B, waits for C
+P3 holds C, waits for A
 
-Cycle: P1 -> P2 -> P3 -> P1`,
-    explanation:
-      'A cycle in the wait-for graph directly implies deadlock when each resource has a single instance.',
+Wait-for cycle: P1 -> P2 -> P3 -> P1`,
+    explanation: 'A cycle in the wait-for graph means deadlock when resources are single-instance.',
   },
   {
     title: 'Matrix detection sketch',
@@ -184,63 +378,61 @@ Request = [
 ]
 
 No process can satisfy Request <= Available
-=> both processes are deadlocked`,
-    explanation:
-      'Neither process can complete with current Available, so both are considered deadlocked.',
+=> deadlocked set = {P0, P1}`,
+    explanation: 'Neither process can finish with current Available, so both are considered deadlocked.',
   },
   {
-    title: 'Victim selection policy',
+    title: 'Victim selection heuristic',
     code: `score = (work_done / estimated_total) - priority_penalty
-kill the process with lowest score`,
-    explanation:
-      'Victim selection can minimize wasted work by preferring processes with less progress or lower priority.',
+kill process with lowest score`,
+    explanation: 'Heuristics aim to minimize lost work while respecting priority.',
   },
 ]
 
 const pitfalls = [
-  'Assuming cycles always mean deadlock in multi-instance systems. They do not.',
-  'Ignoring the cost of recovery; aborting the wrong process can be more expensive than waiting.',
-  'Running detection too rarely, allowing deadlocks to stall throughput for long periods.',
-  'Poor instrumentation that misses dependencies (e.g., user-level locks).',
-  'Skipping recheck after recovery, leaving residual deadlocks unresolved.',
-]
-
-const decisionGuidance = [
-  'Use detection when maximum resource needs are unknown or too dynamic for avoidance.',
-  'Prefer wait-for graphs for single-instance resources and locks.',
-  'Use matrix-based detection for multi-instance resources and generalized resource types.',
-  'Pair detection with clear recovery policies to prevent repeated stalls.',
-  'Use timeouts as a lightweight signal when full detection is too costly.',
-]
-
-const advancedInsights = [
   {
-    title: 'Deadlock vs starvation',
-    detail:
-      'Deadlock is a cycle with no progress; starvation is a process that waits indefinitely while others proceed. Detection does not prevent starvation.',
+    mistake: 'Assuming cycles always mean deadlock',
+    description: 'In multi-instance systems, cycles can exist without deadlock.',
   },
   {
-    title: 'Partial detection',
-    detail:
-      'Some systems detect only among high-risk locks or hot paths, reducing overhead while still catching common deadlocks.',
+    mistake: 'Ignoring recovery policy',
+    description: 'Detection without a clear recovery plan does not restore progress.',
   },
   {
-    title: 'Distributed deadlock detection',
-    detail:
-      'Global detection requires cross-node graphs or probes, which can be expensive and inconsistent. Many systems rely on timeouts.',
+    mistake: 'Over-scanning',
+    description: 'Running detection too frequently can cost more than it saves.',
   },
   {
-    title: 'Victim fairness',
-    detail:
-      'Always killing the same process type causes unfairness. Rotate victims or include age to avoid repeated losses.',
+    mistake: 'Under-instrumenting',
+    description: 'Missing dependencies leads to false negatives and hidden deadlocks.',
   },
 ]
 
-const takeaways = [
-  'Deadlock detection accepts that deadlocks happen and focuses on finding and resolving them fast.',
-  'Wait-for graphs work well for single-instance resources; matrix checks handle multi-instance cases.',
-  'Recovery policy is as important as detection because it determines how much work is lost.',
-  'Frequency and scope of detection shape system overhead and responsiveness.',
+const evaluationChecklist = [
+  {
+    title: 'Detection accuracy',
+    detail: 'Does the algorithm identify deadlocked sets for the resource model?',
+  },
+  {
+    title: 'Recovery effectiveness',
+    detail: 'Does the recovery policy reliably break deadlocks quickly?',
+  },
+  {
+    title: 'Overhead budget',
+    detail: 'Is detection frequency tuned to avoid excessive CPU usage?',
+  },
+  {
+    title: 'Fairness',
+    detail: 'Are the same processes repeatedly killed? Is starvation avoided?',
+  },
+]
+
+const keyTakeaways = [
+  'Deadlock detection allows more concurrency than avoidance but requires recovery.',
+  'Wait-for cycles are definitive only for single-instance resources.',
+  'Matrix-based detection generalizes to multiple-instance resources.',
+  'Recovery policy is as important as detection accuracy.',
+  'Detection frequency controls the tradeoff between overhead and responsiveness.',
 ]
 
 export default function DeadlockDetectionPage(): JSX.Element {
@@ -261,9 +453,9 @@ export default function DeadlockDetectionPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Detect deadlocks after they occur and recover with minimal disruption</div>
               <p className="win95-text">
-                Deadlock detection allows systems to allocate resources freely, then periodically check if processes are stuck in
-                circular waits. If a deadlock is found, the system recovers by aborting or rolling back one or more processes to
-                release resources. This approach trades prevention for flexibility and throughput.
+                Deadlock detection lets the system allocate resources freely, then periodically checks for circular waits. When a
+                deadlock is found, the system chooses a recovery action (abort, rollback, or preempt) to release resources and
+                restore progress. This approach trades prevention for higher utilization and flexibility.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -272,18 +464,31 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Deadlock detection differs from avoidance: the system lets requests proceed without full safety checks, then uses
-                graph or matrix analysis to find deadlocks. This keeps resource utilization high, but requires a reliable recovery
-                strategy to break cycles when they appear.
-              </p>
+            <legend>The Big Picture</legend>
+            <div className="win95-grid win95-grid-2">
+              {overviewTiles.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
+            <legend>Quick Glossary</legend>
+            <div className="win95-grid win95-grid-2">
+              {quickGlossary.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.definition}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Historical Context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -295,7 +500,7 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
+            <legend>Mental Models</legend>
             <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -307,9 +512,33 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works: core data structures</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreStructures.map((block) => (
+            <legend>System Model</legend>
+            <div className="win95-grid win95-grid-2">
+              {systemModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Graph Models</legend>
+            <div className="win95-grid win95-grid-2">
+              {graphModels.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Core Data Structures</legend>
+            <div className="win95-grid win95-grid-2">
+              {dataStructures.map((block) => (
                 <div key={block.heading} className="win95-panel">
                   <div className="win95-heading">{block.heading}</div>
                   <ul className="win95-list">
@@ -323,36 +552,126 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Algorithm flow</legend>
+            <legend>Detection Workflow</legend>
             <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
+              {detectionWorkflow.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Detection finds who is stuck; recovery decides who to sacrifice. The two must work together to keep the system healthy.
-              </p>
-            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
+            <legend>Detection Algorithms</legend>
             <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
+              {algorithms.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
+            <legend>Matrix-Based Detection Steps</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {matrixDetectionSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Correctness Notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {correctnessNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Recovery Strategies</legend>
+            <div className="win95-grid win95-grid-2">
+              {recoveryStrategies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Victim Selection Criteria</legend>
+            <div className="win95-grid win95-grid-2">
+              {victimSelection.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Detection Policy</legend>
+            <div className="win95-grid win95-grid-2">
+              {detectionPolicy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation Notes</legend>
+            <div className="win95-grid win95-grid-2">
+              {implementationNotes.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Trade-offs</legend>
+            <div className="win95-grid win95-grid-2">
+              {tradeoffs.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Compare and Contrast</legend>
+            <div className="win95-grid win95-grid-2">
+              {comparisons.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Real-World Applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
@@ -364,7 +683,7 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
+            <legend>Practical Examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
                 <div key={example.title} className="win95-panel">
@@ -379,31 +698,22 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
+            <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+                {pitfalls.map((pitfall) => (
+                  <li key={pitfall.mistake}>
+                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                  </li>
                 ))}
               </ul>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
+            <legend>How to Evaluate a Detector</legend>
             <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
+              {evaluationChecklist.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -413,13 +723,13 @@ export default function DeadlockDetectionPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <legend>Key Takeaways</legend>
+            <div className="win95-grid win95-grid-2">
+              {keyTakeaways.map((takeaway) => (
+                <div key={takeaway} className="win95-panel">
+                  <p className="win95-text">{takeaway}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
         </div>
@@ -427,4 +737,3 @@ export default function DeadlockDetectionPage(): JSX.Element {
     </div>
   )
 }
-
