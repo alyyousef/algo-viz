@@ -3,27 +3,72 @@ import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
 
+const overviewTiles = [
+  {
+    title: 'What it is',
+    detail:
+      'A scheduling policy that assigns each process a priority and always runs the most important ready process.',
+  },
+  {
+    title: 'Why it matters',
+    detail:
+      'It encodes system policy: critical tasks get CPU first, improving responsiveness and deadline adherence.',
+  },
+  {
+    title: 'What it requires',
+    detail:
+      'Priority values, a tie-breaking rule, and fairness guards (aging, boosts, inheritance).',
+  },
+  {
+    title: 'What it risks',
+    detail:
+      'Starvation for low-priority tasks and priority inversion if resource locks are not handled carefully.',
+  },
+]
+
+const quickGlossary = [
+  {
+    term: 'Priority',
+    definition: 'A ranking that determines which process should run first.',
+  },
+  {
+    term: 'Preemption',
+    definition: 'Interrupting a running process when a higher-priority process becomes ready.',
+  },
+  {
+    term: 'Priority inversion',
+    definition: 'A low-priority task blocks a high-priority task by holding a needed resource.',
+  },
+  {
+    term: 'Priority inheritance',
+    definition: 'Temporarily boosting a low-priority task so it can release a resource faster.',
+  },
+  {
+    term: 'Aging',
+    definition: 'Gradually increasing a waiting process’s priority to prevent starvation.',
+  },
+]
 
 const historicalMilestones = [
   {
-    title: 'Early OSes use fixed priorities (1960s)',
+    title: '1960s: Fixed priorities in early OSes',
     detail:
-      'Batch systems separated system tasks from user jobs, giving OS services higher priority for reliability.',
+      'System and I/O services were given higher priority to ensure reliability in batch processing.',
   },
   {
-    title: 'Interactive systems adopt dynamic priorities (1970s)',
+    title: '1970s: Dynamic priorities for interactivity',
     detail:
-      'Schedulers begin adjusting priority based on CPU usage to keep interactive tasks responsive.',
+      'Schedulers began adjusting priority based on CPU usage to keep interactive workloads responsive.',
   },
   {
-    title: 'Real-time systems formalize priority policies (1980s)',
+    title: '1980s: Real-time fixed-priority theory',
     detail:
-      'Rate Monotonic and Deadline Monotonic scheduling provide provable guarantees for fixed-priority tasks.',
+      'Rate Monotonic and Deadline Monotonic scheduling formalized guarantees for periodic tasks.',
   },
   {
-    title: 'Modern kernels blend priority and fairness (1990s+)',
+    title: '1990s+: Hybrid schedulers',
     detail:
-      'Production schedulers use dynamic priorities, aging, and fairness models to reduce starvation.',
+      'Modern kernels combine priorities with fairness and load balancing to reduce starvation.',
   },
 ]
 
@@ -31,17 +76,22 @@ const mentalModels = [
   {
     title: 'VIP lane at the CPU',
     detail:
-      'High-priority processes are allowed to cut the line, improving responsiveness for critical tasks.',
+      'High-priority tasks get immediate service, even if others have been waiting longer.',
   },
   {
     title: 'Budgeted attention',
     detail:
-      'The CPU is a shared resource. Priorities define who gets more guaranteed attention and who waits.',
+      'Priorities define how much CPU attention each task deserves relative to others.',
   },
   {
     title: 'Starvation risk',
     detail:
-      'Without aging, low-priority jobs can be postponed indefinitely if high-priority work keeps arriving.',
+      'If high-priority work keeps arriving, low-priority tasks may wait indefinitely without aging.',
+  },
+  {
+    title: 'Locks can flip the order',
+    detail:
+      'Priority inversion occurs when resource ownership overrides priority ordering.',
   },
 ]
 
@@ -49,25 +99,25 @@ const policyCards = [
   {
     heading: 'Non-preemptive priority',
     bullets: [
-      'Pick highest priority job and run it to completion.',
-      'Simple but can delay urgent tasks if a long job is running.',
-      'Lower context-switch overhead.',
+      'Run the highest priority job to completion.',
+      'Lower overhead and simpler implementation.',
+      'Urgent jobs may wait if a low-priority job is running.',
     ],
   },
   {
     heading: 'Preemptive priority',
     bullets: [
-      'Interrupt running tasks if a higher priority job arrives.',
-      'Improves response time for critical work.',
-      'Adds context-switch overhead and can starve low priority jobs.',
+      'Interrupt running tasks when a higher priority arrives.',
+      'Best response time for critical work.',
+      'Higher context-switch overhead and starvation risk.',
     ],
   },
   {
     heading: 'Dynamic priority',
     bullets: [
-      'Priority changes based on behavior or CPU usage.',
-      'Aging boosts waiting processes.',
-      'Balances responsiveness with fairness.',
+      'Priority changes with behavior or waiting time.',
+      'Aging boosts long-waiting processes.',
+      'Balances responsiveness and fairness.',
     ],
   },
 ]
@@ -75,13 +125,13 @@ const policyCards = [
 const schedulerMetrics = [
   {
     metric: 'Response time',
-    meaning: 'Time to first execution after arrival.',
-    goal: 'Critical for interactive or real-time tasks.',
+    meaning: 'Arrival to first execution.',
+    goal: 'Critical for interactive and real-time tasks.',
   },
   {
     metric: 'Fairness',
-    meaning: 'Guarantee that low-priority jobs still run.',
-    goal: 'Prevent starvation and missed deadlines.',
+    meaning: 'Progress across priority levels.',
+    goal: 'Prevent starvation and extreme delays.',
   },
   {
     metric: 'Predictability',
@@ -90,7 +140,7 @@ const schedulerMetrics = [
   },
   {
     metric: 'Overhead',
-    meaning: 'Cost of preemption and bookkeeping.',
+    meaning: 'Cost of context switching and bookkeeping.',
     goal: 'Keep CPU time for actual work.',
   },
 ]
@@ -98,64 +148,94 @@ const schedulerMetrics = [
 const algorithmSteps = [
   {
     title: 'Priority selection',
-    detail:
-      'Choose the ready process with the highest priority. Ties are often resolved with FCFS or round-robin.',
+    detail: 'Choose the ready process with the highest priority. Resolve ties with FCFS or RR.',
   },
   {
-    title: 'Preemption decision',
-    detail:
-      'If preemptive, interrupt the current process when a higher priority one arrives.',
+    title: 'Preemption check',
+    detail: 'If preemptive, interrupt the current process when a higher-priority process arrives.',
   },
   {
-    title: 'Aging / boosting',
-    detail:
-      'Gradually increase priority of waiting processes to ensure progress and avoid starvation.',
+    title: 'Aging and boosts',
+    detail: 'Increase priority of waiting processes to ensure progress and reduce starvation.',
+  },
+]
+
+const pseudocode = [
+  {
+    title: 'Priority selection loop',
+    code: `readyQueue = priority queue
+on arrival(p): insert(p)
+if CPU idle: run(extractMax())
+if preemptive and new.priority > running.priority:
+  preempt(running)
+  run(extractMax())`,
+    explanation: 'Highest priority always wins; preemption is optional.',
+  },
+  {
+    title: 'Aging policy',
+    code: `every T:
+  for each waiting process:
+    priority += agingBoost`,
+    explanation: 'Aging raises long-waiting tasks to prevent starvation.',
+  },
+  {
+    title: 'Priority inheritance (lock)',
+    code: `if high waits on lock held by low:
+  low.priority = max(low.priority, high.priority)`,
+    explanation: 'Inheritance prevents unbounded inversion.',
   },
 ]
 
 const complexityNotes = [
   {
     title: 'Implementation cost',
-    detail:
-      'Priority queues or multiple run queues are needed. Dynamic priorities add accounting overhead.',
+    detail: 'Priority queues or multiple run queues are required; dynamic priorities add accounting.',
   },
   {
     title: 'Preemption overhead',
-    detail:
-      'Frequent preemption increases context switches and cache misses.',
+    detail: 'Frequent preemption increases context switches and cache misses.',
   },
   {
-    title: 'Priority inversion',
-    detail:
-      'Low-priority tasks holding a lock can block high-priority ones. Priority inheritance can mitigate this.',
+    title: 'Priority inversion risk',
+    detail: 'Locks can block high-priority tasks unless inheritance/ceiling is used.',
   },
   {
     title: 'Policy tuning',
-    detail:
-      'Poorly tuned priorities can cause either starvation or sluggish response.',
+    detail: 'Poor priority scales can cause either starvation or sluggish response.',
+  },
+]
+
+const inversionMitigation = [
+  {
+    title: 'Priority inheritance',
+    detail: 'Boosts the lock holder to the highest waiting priority until the lock is released.',
+  },
+  {
+    title: 'Priority ceiling',
+    detail: 'A lock has a ceiling priority; acquiring it raises the holder immediately.',
+  },
+  {
+    title: 'Avoid long critical sections',
+    detail: 'Shorter lock holds reduce inversion impact.',
   },
 ]
 
 const realWorldUses = [
   {
     context: 'Real-time systems',
-    detail:
-      'Critical tasks must meet deadlines, so fixed-priority scheduling is used with strict guarantees.',
+    detail: 'Fixed-priority scheduling ensures high-criticality tasks meet deadlines.',
   },
   {
     context: 'Desktop OSes',
-    detail:
-      'Dynamic priorities keep interactive apps responsive while allowing background jobs to progress.',
+    detail: 'Dynamic priority keeps interactive apps responsive while background jobs still progress.',
   },
   {
     context: 'Server workloads',
-    detail:
-      'Priority tiers differentiate latency-sensitive requests from batch processing.',
+    detail: 'Priority tiers separate latency-sensitive requests from batch processing.',
   },
   {
     context: 'Embedded devices',
-    detail:
-      'Priority scheduling is common because tasks and priorities are usually known ahead of time.',
+    detail: 'Priorities are usually known ahead of time, making static scheduling practical.',
   },
 ]
 
@@ -167,8 +247,7 @@ P1       0        6      2
 P2       1        3      1
 P3       2        8      3
 P4       3        4      1`,
-    explanation:
-      'Lower numeric value means higher priority in this example.',
+    explanation: 'Lower numeric value means higher priority in this example.',
   },
   {
     title: 'Preemptive schedule sketch',
@@ -176,62 +255,98 @@ P4       3        4      1`,
 t=1: P2 arrives (higher priority) -> preempt P1
 t=3: P2 finishes, P4 arrives (priority 1)
 t=3-7: P4 runs, then P1 resumes`,
-    explanation:
-      'High-priority arrivals interrupt lower priority tasks, reducing response time for critical work.',
+    explanation: 'Higher-priority arrivals interrupt lower priority tasks.',
   },
   {
-    title: 'Priority inheritance',
-    code: `Low-priority task holds lock
-High-priority task blocks on lock
-Low-priority task temporarily inherits higher priority`,
-    explanation:
-      'Inheritance prevents unbounded priority inversion and keeps critical tasks moving.',
+    title: 'Priority inversion scenario',
+    code: `Low-priority holds lock L
+High-priority waits on L
+Medium-priority keeps running
+=> High-priority starves until low runs`,
+    explanation: 'Inheritance or ceiling protocols prevent this.',
   },
 ]
 
 const pitfalls = [
-  'Starvation of low-priority jobs without aging or boosting.',
-  'Priority inversion when low priority tasks hold needed resources.',
-  'Misconfigured priority scales that do not reflect real task urgency.',
-  'Too many priority levels, making tuning and debugging harder.',
-  'Preempting too often, causing overhead and jitter.',
+  {
+    mistake: 'Starvation of low-priority jobs',
+    description: 'Without aging or boosts, low priority tasks can wait forever.',
+  },
+  {
+    mistake: 'Priority inversion',
+    description: 'Low priority tasks holding locks can block high priority tasks.',
+  },
+  {
+    mistake: 'Overtuning priorities',
+    description: 'Too many levels make tuning and debugging difficult.',
+  },
+  {
+    mistake: 'Ignoring preemption cost',
+    description: 'Preempting too often adds overhead and jitter.',
+  },
 ]
 
 const decisionGuidance = [
-  'Use priority scheduling when tasks have clear urgency or deadlines.',
-  'Choose preemptive priority for responsiveness; non-preemptive for simplicity.',
-  'Add aging to guarantee progress for low-priority tasks.',
-  'Use priority inheritance in lock-heavy systems.',
-  'Monitor starvation and jitter in production workloads.',
+  {
+    title: 'Use priorities for urgency',
+    detail: 'Ideal when tasks have clear criticality or deadlines.',
+  },
+  {
+    title: 'Choose preemption for latency',
+    detail: 'Preemptive priority improves responsiveness but increases overhead.',
+  },
+  {
+    title: 'Add aging for fairness',
+    detail: 'Guarantee progress for low-priority jobs.',
+  },
+  {
+    title: 'Use inheritance for locks',
+    detail: 'Protect high-priority tasks from inversion.',
+  },
 ]
 
 const advancedInsights = [
   {
     title: 'Priority inversion in practice',
-    detail:
-      'Mars Pathfinder experienced a priority inversion bug, later fixed with priority inheritance.',
+    detail: 'The Mars Pathfinder mission experienced inversion, fixed with priority inheritance.',
   },
   {
-    title: 'Deadline vs priority',
-    detail:
-      'Priority scheduling is different from EDF. Priorities are static; deadlines are dynamic.',
+    title: 'Priority vs deadline',
+    detail: 'Priority scheduling uses static ranks; EDF uses dynamic deadlines.',
   },
   {
-    title: 'Scheduling as policy',
-    detail:
-      'Priorities express system policy, not just performance optimization. They encode business or safety priorities.',
+    title: 'Priority as policy',
+    detail: 'Priorities encode business and safety priorities, not just performance metrics.',
   },
   {
     title: 'Hybrid schedulers',
-    detail:
-      'Modern schedulers blend priorities with fairness or proportional-share systems.',
+    detail: 'Modern kernels combine priority with fairness and CPU usage accounting.',
+  },
+]
+
+const evaluationChecklist = [
+  {
+    title: 'Responsiveness',
+    detail: 'Do high-priority tasks meet response or deadline goals?',
+  },
+  {
+    title: 'Fairness',
+    detail: 'Do low-priority tasks make steady progress?',
+  },
+  {
+    title: 'Inversion control',
+    detail: 'Are inheritance/ceiling policies implemented for lock-heavy workloads?',
+  },
+  {
+    title: 'Overhead',
+    detail: 'Is preemption cost acceptable for the workload?',
   },
 ]
 
 const takeaways = [
-  'Priority scheduling favors urgent work but risks starving low-priority tasks.',
+  'Priority scheduling favors urgent work but risks starvation without aging.',
   'Preemptive priority improves response time at the cost of overhead.',
-  'Aging and inheritance are key techniques for fairness and correctness.',
+  'Priority inversion must be mitigated with inheritance or ceiling protocols.',
   'Tuning priorities is a policy decision as much as a technical one.',
 ]
 
@@ -264,18 +379,31 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </div>
 
           <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Priority scheduling assigns a relative importance to tasks and always favors higher priority work. It is easy to
-                reason about, yet it can produce unfairness unless mitigated by aging or priority inheritance. Many systems adopt
-                dynamic priority adjustments to balance responsiveness and throughput.
-              </p>
+            <legend>The Big Picture</legend>
+            <div className="win95-grid win95-grid-2">
+              {overviewTiles.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
+            <legend>Quick Glossary</legend>
+            <div className="win95-grid win95-grid-2">
+              {quickGlossary.map((item) => (
+                <div key={item.term} className="win95-panel">
+                  <div className="win95-heading">{item.term}</div>
+                  <p className="win95-text">{item.definition}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Historical Context</legend>
             <div className="win95-grid win95-grid-2">
               {historicalMilestones.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -287,7 +415,7 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
+            <legend>Mental Models</legend>
             <div className="win95-grid win95-grid-2">
               {mentalModels.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -299,7 +427,7 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works: policy overview</legend>
+            <legend>Policy Overview</legend>
             <div className="win95-grid win95-grid-3">
               {policyCards.map((block) => (
                 <div key={block.heading} className="win95-panel">
@@ -315,7 +443,7 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Scheduling metrics</legend>
+            <legend>Scheduling Metrics</legend>
             <div className="win95-panel">
               <table className="win95-table">
                 <thead>
@@ -339,7 +467,7 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Algorithm flow</legend>
+            <legend>Algorithm Flow</legend>
             <div className="win95-grid win95-grid-2">
               {algorithmSteps.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -350,13 +478,40 @@ export default function PrioritySchedulingPage(): JSX.Element {
             </div>
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
-                Priority scheduling is as much a policy decision as a technical one: priorities encode what the system values most.
+                Priority scheduling is both a technical mechanism and a policy choice: it decides what the system values most.
               </p>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
+            <legend>Pseudocode</legend>
+            <div className="win95-stack">
+              {pseudocode.map((example) => (
+                <div key={example.title} className="win95-panel">
+                  <div className="win95-heading">{example.title}</div>
+                  <pre className="win95-code">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p className="win95-text">{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Priority Inversion Mitigation</legend>
+            <div className="win95-grid win95-grid-2">
+              {inversionMitigation.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity and Tradeoffs</legend>
             <div className="win95-grid win95-grid-2">
               {complexityNotes.map((note) => (
                 <div key={note.title} className="win95-panel">
@@ -368,7 +523,7 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
+            <legend>Real-World Applications</legend>
             <div className="win95-grid win95-grid-2">
               {realWorldUses.map((item) => (
                 <div key={item.context} className="win95-panel">
@@ -380,7 +535,7 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
+            <legend>Practical Examples</legend>
             <div className="win95-stack">
               {examples.map((example) => (
                 <div key={example.title} className="win95-panel">
@@ -395,29 +550,32 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
+            <legend>Common Pitfalls</legend>
             <div className="win95-panel">
               <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+                {pitfalls.map((pitfall) => (
+                  <li key={pitfall.mistake}>
+                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                  </li>
                 ))}
               </ul>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
+            <legend>When to Use It</legend>
+            <div className="win95-grid win95-grid-2">
+              {decisionGuidance.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
+            <legend>Advanced Insights</legend>
             <div className="win95-grid win95-grid-2">
               {advancedInsights.map((item) => (
                 <div key={item.title} className="win95-panel">
@@ -429,13 +587,25 @@ export default function PrioritySchedulingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <legend>How to Evaluate a Scheduler</legend>
+            <div className="win95-grid win95-grid-2">
+              {evaluationChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Key Takeaways</legend>
+            <div className="win95-grid win95-grid-2">
+              {takeaways.map((takeaway) => (
+                <div key={takeaway} className="win95-panel">
+                  <p className="win95-text">{takeaway}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
         </div>
@@ -443,4 +613,3 @@ export default function PrioritySchedulingPage(): JSX.Element {
     </div>
   )
 }
-
