@@ -5,130 +5,239 @@ import type { JSX } from 'react'
 
 const bigPicture = [
   {
-    title: 'Scaling genomes to computation',
-    detail:
-      'Genomes are gigabases long; we need succinct indexes to search and align without loading everything into RAM.',
-    note: 'Prevents quadratic scans when studying populations or metagenomes.',
+    title: 'Scale genomes to computation',
+    detail: 'Genomes are gigabases long; succinct indexes keep search feasible in memory.',
+    note: 'Prevents quadratic scans across populations and metagenomes.',
   },
   {
     title: 'Noise-tolerant matching',
-    detail:
-      'Sequencing errors and real variants blur signals; algorithms must separate true biology from platform noise.',
-    note: 'Stops false discoveries from error-heavy reads.',
+    detail: 'Sequencing errors and real variants blur signals; scoring separates biology from noise.',
+    note: 'Avoids false discoveries from error-heavy reads.',
   },
   {
-    title: 'Pipelines as experiments',
-    detail:
-      'Every tool and parameter is part of the scientific claim. Reproducibility is a first-class requirement.',
-    note: 'Protects against silent drift between runs and collaborators.',
+    title: 'Pipelines are experiments',
+    detail: 'Every tool, parameter, and reference build becomes part of the claim.',
+    note: 'Reproducibility and metadata are first-class requirements.',
   },
   {
-    title: 'Trade-off between sensitivity and cost',
-    detail:
-      'Higher sensitivity expands search and DP, but burns CPU and memory. Good defaults balance detection with turnaround time.',
-    note: 'Keeps cloud bills and lab timelines sane.',
+    title: 'Sensitivity vs cost',
+    detail: 'Higher sensitivity expands search and DP but burns CPU and memory.',
+    note: 'Defaults must balance detection with turnaround time.',
   },
 ]
 
 const history = [
   {
     title: '1970s: Dynamic programming aligners',
-    detail: 'Needleman-Wunsch and Smith-Waterman introduced optimal global and local alignment.',
+    detail: 'Needleman-Wunsch and Smith-Waterman formalized optimal global and local alignment.',
+    note: 'The baseline for alignment scoring today.',
   },
   {
-    title: '1990s: Suffix trees/arrays',
-    detail: 'Linear-time construction enabled fast substring queries; LCP arrays sped binary search.',
+    title: '1990s: Suffix arrays and LCP',
+    detail: 'Linear-time construction enabled fast substring queries and binary search.',
+    note: 'The foundation for modern exact matching.',
   },
   {
     title: '1994: Burrows-Wheeler transform',
-    detail: 'Compression trick that later powered FM-indexes for succinct search over genomes.',
+    detail: 'Compression trick that powered FM-indexes for compact search.',
+    note: 'Made whole-genome indexing practical.',
   },
   {
-    title: '2009: BWA and Bowtie',
-    detail: 'Practical FM-index aligners made short-read mapping fast on commodity hardware.',
+    title: '2009: BWA/Bowtie',
+    detail: 'FM-index aligners mapped short reads quickly on commodity hardware.',
+    note: 'Enabled early large-scale resequencing.',
   },
   {
     title: '2015+: Long-read era',
-    detail: 'Minimap2, adaptive banding, and graph aligners tackled noisy long reads and structural variation.',
+    detail: 'Minimap2 and graph aligners handle noisy long reads and structural variants.',
+    note: 'Shifted focus toward chaining and banded DP.',
   },
 ]
 
 const pillars = [
   {
-    title: 'Canonical encoding and builds',
-    detail: 'Pin reference builds (GRCh38, T2T) and versions; mismatched builds corrupt coordinates and variants.',
+    title: 'Reference fidelity',
+    detail: 'Pin builds (GRCh38, T2T) and decoys; mismatches corrupt coordinates.',
   },
   {
     title: 'Succinct indexing',
-    detail: 'FM-index and compressed suffix arrays keep whole genomes searchable in memory.',
+    detail: 'FM-index and compressed suffix arrays keep large references in memory.',
   },
   {
-    title: 'Gap and error modeling',
-    detail: 'Affine gaps and platform-aware mismatch penalties separate true variation from sequencing noise.',
+    title: 'Error and gap modeling',
+    detail: 'Affine gaps and platform-aware mismatch penalties reflect real noise.',
   },
   {
     title: 'Graph-aware representation',
-    detail: 'Variation graphs capture multiple haplotypes; avoids reference bias in diverse populations.',
+    detail: 'Variation graphs reduce reference bias for diverse cohorts.',
   },
   {
-    title: 'Reproducibility discipline',
-    detail: 'Versioned tools, seeds, parameters, and QC artifacts make analyses auditable.',
+    title: 'Reproducibility',
+    detail: 'Versioned tools, parameters, and QC artifacts make analyses auditable.',
   },
 ]
 
 const mentalModels = [
   {
     title: 'Genome as text corpus',
-    detail:
-      'Indexes let you do substring queries like a search engine. BWT/FM-index is the inverted index for DNA.',
+    detail: 'Indexes let you search DNA like a search engine; FM-index is the DNA inverted index.',
   },
   {
-    title: 'Alignment as noisy edit distance',
-    detail:
-      'Reads are strings with typos; DP computes cheapest edits. Banding shrinks the search to plausible diagonals.',
+    title: 'Alignment as edit distance',
+    detail: 'Reads are strings with typos; DP finds the cheapest edits.',
   },
   {
-    title: 'De Bruijn graphs as road maps',
-    detail:
-      'k-mers are road segments; overlaps build a map. Bubbles are detours from errors or variants; pruning cleans the map.',
+    title: 'Graphs as road maps',
+    detail: 'k-mers form roads; bubbles are detours caused by errors or variants.',
   },
   {
-    title: 'Pipelines as assembly lines',
-    detail:
-      'Each station (QC, mapping, calling) can introduce bias; inspections (QC metrics) catch defects early.',
+    title: 'Assembly lines',
+    detail: 'QC, mapping, and calling are stations; defects must be caught early.',
   },
 ]
 
 const howItWorks = [
   {
-    step: '1. Choose reference and encoding',
-    detail:
-      'Select the correct genome build; handle alt contigs and decoys; store sequences in consistent case/mask conventions.',
+    title: 'Choose reference and encoding',
+    detail: 'Select build, decoys, and masking conventions; keep IDs consistent.',
   },
   {
-    step: '2. Build succinct indexes',
-    detail:
-      'Construct FM-index (BWT + rank/select) or minimizer tables; validate memory footprint and serialization format.',
+    title: 'Build succinct indexes',
+    detail: 'Construct FM-index or minimizer tables; validate memory and serialization.',
   },
   {
-    step: '3. Seed and filter',
-    detail:
-      'Extract k-mers/minimizers from reads; filter repetitive seeds; chain colinear seeds to propose candidate loci.',
+    title: 'Seed and filter',
+    detail: 'Extract k-mers/minimizers; filter repeats; chain colinear seeds.',
   },
   {
-    step: '4. Extend with DP',
-    detail:
-      'Run banded Smith-Waterman/Needleman-Wunsch with affine gaps; use X-drop/Z-drop to stop hopeless extensions early.',
+    title: 'Extend with DP',
+    detail: 'Run banded Smith-Waterman with affine gaps; stop with X-drop/Z-drop.',
   },
   {
-    step: '5. Score and report',
-    detail:
-      'Compute MAPQ/Phred-like confidence; tag alignments with CIGAR and auxiliary fields; emit multiple hits when ambiguous.',
+    title: 'Score and report',
+    detail: 'Compute MAPQ; emit CIGAR and tags; report secondary alignments.',
   },
   {
-    step: '6. Post-process',
-    detail:
-      'Sort, mark duplicates, recalibrate scores if needed; feed into variant callers or assembly graph builders; log QC.',
+    title: 'Post-process',
+    detail: 'Sort, mark duplicates, recalibrate scores, and collect QC.',
+  },
+  {
+    title: 'Feed downstream tools',
+    detail: 'Variant calling, assembly, or expression pipelines consume alignments.',
+  },
+]
+
+const indexAnatomy = [
+  {
+    title: 'Suffix array + LCP',
+    detail: 'Sorted suffixes enable binary search; LCP accelerates comparisons.',
+  },
+  {
+    title: 'BWT + FM-index',
+    detail: 'Backward search uses rank/select to narrow the suffix interval.',
+  },
+  {
+    title: 'Minimizers',
+    detail: 'Sampled k-mers reduce memory at slight sensitivity cost.',
+  },
+  {
+    title: 'Sparse suffix arrays',
+    detail: 'Store sampled SA positions; reconstruct via LF-mapping.',
+  },
+  {
+    title: 'Hash tables and sketches',
+    detail: 'Bloom filters and MinHash accelerate classification and containment.',
+  },
+  {
+    title: 'Graph indexes',
+    detail: 'Index paths through variation graphs to reduce reference bias.',
+  },
+]
+
+const alignmentAnatomy = [
+  {
+    title: 'Seeding',
+    detail: 'k-mers, minimizers, or syncmers propose candidate loci quickly.',
+  },
+  {
+    title: 'Chaining',
+    detail: 'Colinear seeds are chained to form candidate alignments.',
+  },
+  {
+    title: 'Banded DP',
+    detail: 'Restricts DP to a diagonal band to control complexity.',
+  },
+  {
+    title: 'Gap penalties',
+    detail: 'Affine gaps model indels more realistically than linear gaps.',
+  },
+  {
+    title: 'Scoring and MAPQ',
+    detail: 'Report confidence based on alignment uniqueness and score separation.',
+  },
+  {
+    title: 'CIGAR encoding',
+    detail: 'Compact representation of matches, insertions, deletions, and clipping.',
+  },
+]
+
+const assemblyAnatomy = [
+  {
+    title: 'De Bruijn graphs',
+    detail: 'Nodes are k-mers; edges represent overlaps.',
+  },
+  {
+    title: 'Tip/bubble pruning',
+    detail: 'Remove errors and low-support detours.',
+  },
+  {
+    title: 'Unitigs',
+    detail: 'Compress non-branching paths into contigs.',
+  },
+  {
+    title: 'OLC hybrid',
+    detail: 'Overlap-layout-consensus complements long-read assemblies.',
+  },
+  {
+    title: 'Polishing',
+    detail: 'Use reads to correct residual errors in assembled contigs.',
+  },
+  {
+    title: 'Scaffolding',
+    detail: 'Long-range links order contigs into larger structures.',
+  },
+]
+
+const tradeoffMatrix = [
+  {
+    dimension: 'Sensitivity',
+    index: 'FM-index exact search; high sensitivity with full DP.',
+    sketch: 'Minimizers/sketches reduce sensitivity for speed.',
+  },
+  {
+    dimension: 'Memory',
+    index: 'Compressed indexes still large for pan-genomes.',
+    sketch: 'Sampling dramatically lowers memory footprint.',
+  },
+  {
+    dimension: 'Runtime',
+    index: 'Exact search + DP is slower but precise.',
+    sketch: 'Fast filters and chaining reduce compute.',
+  },
+  {
+    dimension: 'Reference bias',
+    index: 'Linear reference biases toward reference alleles.',
+    sketch: 'Graph indexes reduce bias at higher complexity.',
+  },
+  {
+    dimension: 'Error tolerance',
+    index: 'DP handles indels; needs tuning for long reads.',
+    sketch: 'Sketching is robust to noise but less precise.',
+  },
+  {
+    dimension: 'Interpretability',
+    index: 'Alignment scores and CIGAR are explicit.',
+    sketch: 'Sketch matches are less detailed.',
   },
 ]
 
@@ -137,110 +246,215 @@ const complexityTable = [
     approach: 'FM-index exact search',
     time: 'O(m)',
     space: 'O(n)',
-    note: 'm pattern length; n text size; constant factors small after preprocessing.',
+    note: 'm pattern length; n reference size.',
   },
   {
-    approach: 'Suffix array + LCP binary search',
+    approach: 'Suffix array + LCP search',
     time: 'O(m log n)',
     space: 'O(n)',
-    note: 'Log factor from binary search; LCP prunes comparisons.',
+    note: 'Binary search with LCP pruning.',
   },
   {
     approach: 'Banded Smith-Waterman (band w)',
     time: 'O(w * m)',
     space: 'O(w)',
-    note: 'Restricts DP to diagonal band to cut quadratic blowup.',
+    note: 'Restricts DP to a diagonal band.',
   },
   {
-    approach: 'De Bruijn graph traversal',
+    approach: 'De Bruijn traversal',
     time: 'O(V + E)',
     space: 'O(V + E)',
-    note: 'High coverage inflates E; pruning tips/bubbles reduces size.',
+    note: 'Coverage inflates edges; pruning reduces size.',
   },
   {
     approach: 'Minimizer seeding',
     time: 'O(m)',
     space: 'O(k)',
-    note: 'Stores sampled k-mers; lowers memory at slight sensitivity cost.',
+    note: 'Sampled k-mers reduce memory.',
+  },
+  {
+    approach: 'Chaining (n anchors)',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    note: 'Dynamic programming over anchors.',
   },
 ]
 
 const applications = [
   {
-    title: 'Short-read mapping (RNA/DNA)',
-    detail:
-      'FM-index aligners (BWA/Bowtie/STAR) map massive read sets for expression and variant calling with low memory.',
+    title: 'Short-read mapping',
+    detail: 'FM-index aligners map massive read sets for variant calling.',
+    note: 'Low memory with high sensitivity.',
   },
   {
-    title: 'Long-read assembly and polishing',
-    detail:
-      'Minimap2 and banded DP align noisy long reads; graphs resolve repeats and structural variants; polishing fixes residual errors.',
+    title: 'Long-read alignment',
+    detail: 'Minimizer chaining + banded DP handles noisy reads.',
+    note: 'Supports structural variant detection.',
   },
   {
-    title: 'Variant calling and genotyping',
-    detail:
-      'Accurate alignment and base-quality modeling feed SNP/indel/structural variant callers for clinical and research pipelines.',
+    title: 'Variant calling',
+    detail: 'Accurate alignment and base quality modeling feed SNP/indel callers.',
+    note: 'Confidence scores drive clinical interpretations.',
   },
   {
-    title: 'Pan-genome and graph alignment',
-    detail:
-      'Graph indexes reduce reference bias, enabling accurate calls across diverse haplotypes and structural variation.',
+    title: 'Pan-genome alignment',
+    detail: 'Graph indexes reduce reference bias in diverse cohorts.',
+    note: 'Improves structural variant resolution.',
   },
   {
-    title: 'Metagenomic classification',
-    detail:
-      'Minimizer and k-mer sketches classify reads to taxa quickly, even across millions of contigs and large references.',
+    title: 'Metagenomics',
+    detail: 'Sketching and k-mer indexes classify reads at scale.',
+    note: 'Optimized for many contigs and taxa.',
   },
 ]
 
-const failureCallout = {
-  title: 'Failure story: wrong reference build',
-  detail:
-    'A lab mapped reads to GRCh37 while annotation was GRCh38. Variants were shifted, leading to incorrect clinical interpretations. Fix: enforce build IDs in metadata, block mixed references, and add QC that cross-checks contig names and lengths.',
-}
+const failureStory =
+  'A lab mapped reads to GRCh37 while annotation was GRCh38. Variants were shifted, leading to incorrect interpretations. Fixes: enforce build IDs in metadata, block mixed references, and cross-check contig names and lengths.'
 
 const pitfalls = [
-  'Mixing reference builds or annotations silently shifts coordinates and gene models.',
-  'Ignoring soft-masked or ambiguous bases yields spurious seeds and false alignments.',
-  'Overly narrow bands or aggressive seed filtering drop real indels and splice junctions.',
-  'Memory blowups from unpruned de Bruijn graphs on high-coverage or repetitive data.',
-  'Noisy platforms without adjusted scoring produce biased variant likelihoods.',
+  {
+    title: 'Mixed reference builds',
+    detail: 'Coordinate mismatches silently corrupt variant calls.',
+  },
+  {
+    title: 'Ignoring masked bases',
+    detail: 'Soft-masked regions can create spurious seeds.',
+  },
+  {
+    title: 'Overly narrow bands',
+    detail: 'Aggressive banding drops real indels and splice junctions.',
+  },
+  {
+    title: 'Graph blowups',
+    detail: 'De Bruijn graphs explode in repeats without pruning.',
+  },
+  {
+    title: 'Unmodeled error profiles',
+    detail: 'Long-read errors need adjusted mismatch and gap penalties.',
+  },
+  {
+    title: 'Missing QC',
+    detail: 'Without QC metrics, biases and drift go unnoticed.',
+  },
 ]
 
 const whenToUse = [
-  'Use FM-index aligners for short, low-error reads and large references.',
-  'Use minimizer-based mappers for long reads where exact seeds are sparse but overlaps are long.',
-  'Use banded DP when you know expected error/indel windows to cut cost.',
-  'Use de Bruijn graphs for short-read assembly; switch to OLC/graph hybrids for long reads.',
-  'Use variation graphs when reference bias matters (diverse cohorts, structural variants).',
+  {
+    title: 'FM-index aligners',
+    detail: 'Best for short, low-error reads on large references.',
+  },
+  {
+    title: 'Minimizer mappers',
+    detail: 'Best for long reads where exact seeds are sparse.',
+  },
+  {
+    title: 'Banded DP',
+    detail: 'Use when you know expected error windows to cap cost.',
+  },
+  {
+    title: 'De Bruijn graphs',
+    detail: 'Use for short-read assembly; add pruning for repeats.',
+  },
+  {
+    title: 'OLC/graph hybrids',
+    detail: 'Use for long-read assembly and complex genomes.',
+  },
+  {
+    title: 'Variation graphs',
+    detail: 'Use when reference bias matters (diverse cohorts).',
+  },
 ]
 
 const advanced = [
   {
-    title: 'Succinct dynamic indexes',
-    detail: 'Dynamic FM-indexes allow updates without full rebuilds; useful for streaming or incremental references.',
+    title: 'Dynamic FM-index',
+    detail: 'Support incremental updates without full rebuilds.',
+    note: 'Useful for streaming and iterative references.',
   },
   {
-    title: 'Splice-aware graph alignment',
-    detail: 'Augment graphs with intron edges; improves RNA-seq mapping across novel junctions.',
+    title: 'Syncmers and sparse seeds',
+    detail: 'Stabilize seeding across mutations and errors.',
+    note: 'Improves sensitivity on noisy reads.',
   },
   {
-    title: 'Adaptive banding and SIMD',
-    detail: 'Adjust band width based on score gradients; vectorized DP (SIMD) speeds hot loops.',
+    title: 'Adaptive banding',
+    detail: 'Adjust band width based on score gradients.',
+    note: 'Prevents waste on hopeless extensions.',
   },
   {
-    title: 'Minimizer sampling strategies',
-    detail: 'Syncmers/min-sparse schemes stabilize seeds across mutations and sequencing errors.',
+    title: 'SIMD-accelerated DP',
+    detail: 'Vectorize scoring for significant speedups.',
+    note: 'Critical for high-throughput pipelines.',
   },
   {
-    title: 'Quality-aware k-mer weighting',
-    detail: 'Down-weight low-quality bases in seeding to reduce false chains in noisy reads.',
+    title: 'Graph-aware splicing',
+    detail: 'Add intron edges for RNA-seq junction discovery.',
+    note: 'Improves mapping for novel transcripts.',
+  },
+  {
+    title: 'Quality-weighted seeding',
+    detail: 'Down-weight low-quality bases in seed selection.',
+    note: 'Reduces false chains in noisy reads.',
+  },
+]
+
+const tuningChecklist = [
+  {
+    title: 'Reference build ID',
+    detail: 'Enforce build checks and contig validation.',
+  },
+  {
+    title: 'Seed size and density',
+    detail: 'Tune k and window size for sensitivity vs speed.',
+  },
+  {
+    title: 'Band width',
+    detail: 'Set based on expected indel length and error rate.',
+  },
+  {
+    title: 'Gap penalties',
+    detail: 'Adjust for platform-specific error profiles.',
+  },
+  {
+    title: 'Duplicate handling',
+    detail: 'Mark or remove PCR duplicates consistently.',
+  },
+  {
+    title: 'QC thresholds',
+    detail: 'Set minimum depth, MAPQ, and base-quality cutoffs.',
+  },
+]
+
+const observability = [
+  {
+    title: 'Mapping rate',
+    detail: 'Track aligned vs unaligned reads across samples.',
+  },
+  {
+    title: 'Insert size and coverage',
+    detail: 'Detect library prep issues and contamination.',
+  },
+  {
+    title: 'Error profiles',
+    detail: 'Monitor mismatch and indel distributions.',
+  },
+  {
+    title: 'Graph size',
+    detail: 'Watch de Bruijn node/edge growth and pruning stats.',
+  },
+  {
+    title: 'Reference integrity',
+    detail: 'Alert on contig mismatches and unexpected chromosomes.',
+  },
+  {
+    title: 'Compute budgets',
+    detail: 'Track CPU-hours per sample and DP hotspot time.',
   },
 ]
 
 const codeExamples = [
   {
-    title: 'Backward search over FM-index',
+    title: 'FM-index backward search',
     code: `type FM = { bwt: string; C: Record<string, number>; rank: (c: string, i: number) => number }
 
 function backwardSearch(fm: FM, pattern: string) {
@@ -250,12 +464,11 @@ function backwardSearch(fm: FM, pattern: string) {
     const c = pattern[i]
     l = fm.C[c] + fm.rank(c, l)
     r = fm.C[c] + fm.rank(c, r)
-    if (l >= r) return [] // pattern not found
+    if (l >= r) return []
   }
-  return [l, r) // interval of suffix array rows matching pattern
+  return [l, r)
 }`,
-    explanation:
-      'Classic FM-index backward search: shrinks the suffix array interval by extending the pattern leftwards using rank and C tables.',
+    explanation: 'Backward search shrinks the suffix interval using rank and C tables.',
   },
   {
     title: 'Banded Smith-Waterman step',
@@ -277,17 +490,48 @@ function backwardSearch(fm: FM, pattern: string) {
   }
   return best
 }`,
-    explanation:
-      'Limits computation to a diagonal band of width 2*band; useful when alignments are expected to stay near the main diagonal.',
+    explanation: 'Restricts computation to a diagonal band for faster local alignment.',
+  },
+  {
+    title: 'Minimizer extraction (sketch)',
+    code: `function minimizers(seq: string, k: number, w: number) {
+  const out: Array<{ pos: number; kmer: string }> = []
+  for (let i = 0; i <= seq.length - k; i++) {
+    const window = seq.slice(i, i + w)
+    let best = ''
+    let bestPos = i
+    for (let j = 0; j <= window.length - k; j++) {
+      const kmer = window.slice(j, j + k)
+      if (best === '' || kmer < best) {
+        best = kmer
+        bestPos = i + j
+      }
+    }
+    out.push({ pos: bestPos, kmer: best })
+  }
+  return out
+}`,
+    explanation: 'Minimizers sample representative k-mers for faster seeding.',
   },
 ]
 
 const keyTakeaways = [
-  'Pick the right reference build and encode it consistently.',
-  'Use succinct indexes to keep searches in memory; band DP to stay within time budgets.',
-  'Model sequencing error realistically; tune gaps and seeds accordingly.',
-  'Graph representations reduce reference bias for diverse genomes.',
-  'Log parameters, versions, and QC to make biological claims reproducible.',
+  {
+    title: 'Reference correctness first',
+    detail: 'Mismatched builds silently corrupt downstream results.',
+  },
+  {
+    title: 'Indexes control feasibility',
+    detail: 'Succinct structures keep searches in memory and on budget.',
+  },
+  {
+    title: 'Model the error profile',
+    detail: 'Gap penalties and seeds must match platform noise.',
+  },
+  {
+    title: 'Reproducibility is mandatory',
+    detail: 'Versioned tools and QC are part of the scientific claim.',
+  },
 ]
 
 export default function BioinformaticsPage(): JSX.Element {
@@ -306,8 +550,8 @@ export default function BioinformaticsPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Sequence analysis with verifiable pipelines</div>
               <p className="win95-text">
-                Index genomes compactly, align noisy reads carefully, and keep analyses reproducible. Data structures and scoring choices
-                decide whether biology is signal or noise.
+                Index genomes compactly, align noisy reads carefully, and keep analyses reproducible. Data structures and scoring
+                choices decide whether biology is signal or noise.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -335,6 +579,7 @@ export default function BioinformaticsPage(): JSX.Element {
                 <div key={event.title} className="win95-panel">
                   <div className="win95-heading">{event.title}</div>
                   <p className="win95-text">{event.detail}</p>
+                  <p className="win95-text">{event.note}</p>
                 </div>
               ))}
             </div>
@@ -343,34 +588,102 @@ export default function BioinformaticsPage(): JSX.Element {
           <fieldset className="win95-fieldset">
             <legend>Core pillars and mental hooks</legend>
             <div className="win95-row">
-              <div className="win95-stack">
-                {pillars.map((pillar) => (
-                  <div key={pillar.title} className="win95-panel">
-                    <div className="win95-heading">{pillar.title}</div>
-                    <p className="win95-text">{pillar.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Pillars</div>
+                <div className="win95-stack">
+                  {pillars.map((pillar) => (
+                    <div key={pillar.title} className="win95-panel">
+                      <div className="win95-heading">{pillar.title}</div>
+                      <p className="win95-text">{pillar.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="win95-stack">
-                {mentalModels.map((model) => (
-                  <div key={model.title} className="win95-panel">
-                    <div className="win95-heading">{model.title}</div>
-                    <p className="win95-text">{model.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Mental models</div>
+                <div className="win95-stack">
+                  {mentalModels.map((model) => (
+                    <div key={model.title} className="win95-panel">
+                      <div className="win95-heading">{model.title}</div>
+                      <p className="win95-text">{model.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
+            <legend>How it works, step by step</legend>
+            <div className="win95-grid win95-grid-3">
+              {howItWorks.map((step, index) => (
+                <div key={step.title} className="win95-panel">
+                  <div className="win95-heading">
+                    Step {index + 1}: {step.title}
+                  </div>
+                  <p className="win95-text">{step.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Index anatomy</legend>
             <div className="win95-grid win95-grid-2">
-              {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
+              {indexAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Alignment anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {alignmentAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Assembly anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {assemblyAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tradeoff matrix</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Exact/index-heavy</th>
+                    <th>Sketch/approx</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tradeoffMatrix.map((row) => (
+                    <tr key={row.dimension}>
+                      <td>{row.dimension}</td>
+                      <td>{row.index}</td>
+                      <td>{row.sketch}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </fieldset>
 
@@ -407,34 +720,37 @@ export default function BioinformaticsPage(): JSX.Element {
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
                 </div>
               ))}
             </div>
             <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">{failureCallout.title}</div>
-              <p className="win95-text">{failureCallout.detail}</p>
+              <div className="win95-heading">Failure mode</div>
+              <p className="win95-text">{failureStory}</p>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {pitfalls.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>When to use what</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
+            <div className="win95-grid win95-grid-2">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -442,6 +758,31 @@ export default function BioinformaticsPage(): JSX.Element {
             <legend>Advanced moves</legend>
             <div className="win95-grid win95-grid-2">
               {advanced.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tuning checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {tuningChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Observability and signals</legend>
+            <div className="win95-grid win95-grid-2">
+              {observability.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -467,12 +808,13 @@ export default function BioinformaticsPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {keyTakeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {keyTakeaways.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
         </div>
@@ -480,4 +822,3 @@ export default function BioinformaticsPage(): JSX.Element {
     </div>
   )
 }
-
