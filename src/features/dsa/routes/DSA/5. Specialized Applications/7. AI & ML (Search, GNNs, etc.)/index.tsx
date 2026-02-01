@@ -5,211 +5,425 @@ import type { JSX } from 'react'
 
 const bigPicture = [
   {
-    title: 'Search as structured reasoning',
-    detail:
-      'Graph and tree search expose the combinatorial space of moves, proofs, or plans. Heuristics trim the frontier so solutions land under compute budgets.',
-    note: 'Avoids brute force explosions when branching factors spike.',
+    title: 'Search is structured reasoning',
+    detail: 'Graph and tree search make combinatorial spaces navigable with heuristics and pruning.',
+    note: 'The heuristic decides whether the problem is solvable under budget.',
   },
   {
-    title: 'Learning as compressed signal',
-    detail:
-      'Models turn data into heuristics, policies, and embeddings that steer search. Representation quality is the lever that shrinks search depth.',
-    note: 'Saves repeated hand-tuning of heuristics as domains evolve.',
+    title: 'Learning is a heuristic engine',
+    detail: 'Models compress patterns into value functions, policies, and embeddings.',
+    note: 'Good representations shrink search depth and candidate set size.',
   },
   {
-    title: 'Feedback loops to production',
-    detail: 'Offline metrics rarely match real users; guardrails, eval gates, and rollback stories are part of the algorithm.',
-    note: 'Prevents silent regressions when distributions drift.',
+    title: 'Evaluation is part of the algorithm',
+    detail: 'Offline metrics rarely match real users; guardrails and rollback are required.',
+    note: 'Production safety is a core algorithmic requirement.',
   },
   {
-    title: 'Scale-aware design',
-    detail:
-      'Choices that work on thousands of states or samples can fail at millions; batching, quantization, and streaming matter as much as model choice.',
-    note: 'Keeps throughput and latency predictable in serving.',
+    title: 'Scale changes everything',
+    detail: 'Methods that work on thousands of states can fail at millions.',
+    note: 'Batching, caching, and quantization are first-class design choices.',
   },
 ]
 
 const history = [
   {
-    title: '1968: A* (Hart, Nilsson, Raphael)',
-    detail: 'Admissible heuristics formalized optimal search that later powered pathfinding and planning.',
+    title: '1968: A* formalized',
+    detail: 'Admissible heuristics enable optimal shortest-path search.',
+    note: 'Became the workhorse for planning and pathfinding.',
   },
   {
     title: '1986: Backpropagation revival',
-    detail: 'Rumelhart, Hinton, Williams made gradient training practical, enabling deep supervised models.',
+    detail: 'Gradient training became practical for deep networks.',
+    note: 'Opened the door for modern supervised learning.',
   },
   {
     title: '1997-2006: Alpha-Beta to MCTS',
-    detail: 'Game AIs moved from Alpha-Beta pruning to Monte Carlo Tree Search for stochastic, vast spaces.',
+    detail: 'Game AI shifted to Monte Carlo Tree Search for large spaces.',
+    note: 'Balanced exploration and exploitation.',
   },
   {
     title: '2012: AlexNet',
-    detail: 'GPU-trained CNNs reset the ImageNet benchmark, igniting large-scale deep learning.',
+    detail: 'GPU training reset ImageNet and ignited deep learning at scale.',
+    note: 'Sparked a focus on data and compute scaling.',
   },
   {
     title: '2017: Transformers',
-    detail: 'Attention-first sequence models displaced RNNs for language, vision, and multimodal tasks.',
+    detail: 'Attention-first models replaced RNNs for language and vision.',
+    note: 'Enabled long-range dependency modeling.',
   },
   {
     title: '2018-2022: GNN scaling',
-    detail: 'Neighbor sampling, mini-batching, and hardware kernels made billion-edge training feasible.',
+    detail: 'Sampling and mini-batching enabled billion-edge training.',
+    note: 'Graph learning moved into production workloads.',
   },
 ]
 
 const pillars = [
   {
     title: 'Reproducibility',
-    detail: 'Seeded runs, versioned data, and determinism in kernels make comparisons meaningful.',
+    detail: 'Seeded runs, versioned data, and deterministic kernels make comparisons valid.',
   },
   {
     title: 'Data hygiene',
-    detail: 'Time and entity-based splits stop leakage; feature logging with schema checks prevents drift.',
+    detail: 'Time/entity splits and schema checks prevent leakage and drift.',
   },
   {
     title: 'Search correctness',
-    detail: 'Admissible and consistent heuristics for optimal search; constraints enforced, not hoped for.',
+    detail: 'Admissible heuristics and constraints are enforced, not hoped for.',
   },
   {
     title: 'Resource-aware loops',
-    detail: 'Training and decoding must respect memory and latency ceilings with profiling and quotas.',
+    detail: 'Training and inference obey memory and latency ceilings.',
   },
   {
     title: 'Evaluation fidelity',
-    detail: 'Offline metrics aligned to business or safety goals; online gates with rollback paths.',
+    detail: 'Offline metrics are aligned to user outcomes with online gates.',
   },
 ]
 
 const mentalModels = [
   {
-    title: 'Search as flashlight',
-    detail:
-      'Heuristics tilt the beam toward promising regions. If the beam is dim (weak heuristic), you wander; if biased, you miss solutions.',
+    title: 'Search as a flashlight',
+    detail: 'Heuristics aim the beam; weak heuristics cause wandering, biased ones miss solutions.',
   },
   {
     title: 'Learning as compression',
-    detail:
-      'Models store regularities that cut search. Over-compress and you overfit; under-compress and search stays expensive.',
+    detail: 'Models store regularities that reduce search or retrieval cost.',
   },
   {
-    title: 'Pipelines as assembly lines',
-    detail:
-      'Data ingest, training, eval, and serving are stations. If any station lacks inspection, defects slip downstream.',
+    title: 'Assembly line',
+    detail: 'Data, training, eval, and serving are stations; missing checks leak defects.',
   },
   {
     title: 'Latency as currency',
-    detail: 'Every beam step, attention head, or GNN hop spends milliseconds. Budget them like cash across components.',
+    detail: 'Every beam step, attention head, or GNN hop spends milliseconds.',
   },
 ]
 
 const howItWorks = [
   {
-    step: '1. Frame the task and constraints',
-    detail: 'Define states, actions, and rewards or labels. Set latency/throughput budgets for both training and serving.',
+    title: 'Frame the task',
+    detail: 'Define states, actions, and objectives; set latency and throughput budgets.',
   },
   {
-    step: '2. Build and validate data',
-    detail:
-      'Collect and clean; split by time or entity; add schema checks; synthesize negatives where needed; log coverage of edge cases.',
+    title: 'Build and validate data',
+    detail: 'Collect, clean, split by time/entity, and log coverage of edge cases.',
   },
   {
-    step: '3. Choose search or model family',
-    detail:
-      'Select heuristic search (A*/MCTS) for explicit combinatorics; transformers or GNNs when structure and pattern learning dominate.',
+    title: 'Choose search or model family',
+    detail: 'A*/MCTS for explicit combinatorics; transformers/GNNs for representation-heavy tasks.',
   },
   {
-    step: '4. Train with stability tools',
-    detail: 'Use sane optimizers, clipping, and normalization; checkpoint weights and RNG; monitor loss spikes and gradient norms.',
+    title: 'Train with stability',
+    detail: 'Use normalization, clipping, and checkpoints; monitor gradients and loss spikes.',
   },
   {
-    step: '5. Evaluate with realistic metrics',
-    detail: 'Calibrate scores; run adversarial or long-tail tests; for planners, measure plan cost and wall-clock under budget.',
+    title: 'Evaluate realistically',
+    detail: 'Stress with long-tail tests and compute budget limits.',
   },
   {
-    step: '6. Serve with guardrails',
-    detail:
-      'Add canaries, rate limits, and fallback paths; log inputs/outputs; retrain or adapt on drift with eval gates.',
+    title: 'Serve with guardrails',
+    detail: 'Use canaries, rate limits, and fallbacks; log for retraining.',
+  },
+  {
+    title: 'Monitor drift',
+    detail: 'Detect distribution changes and retrain with gated rollouts.',
+  },
+]
+
+const searchAnatomy = [
+  {
+    title: 'State space',
+    detail: 'Nodes represent states; edges represent actions with costs.',
+  },
+  {
+    title: 'Frontier management',
+    detail: 'Priority queues or beam lists decide which states to expand next.',
+  },
+  {
+    title: 'Heuristics',
+    detail: 'Admissible and consistent heuristics preserve optimality for A*.',
+  },
+  {
+    title: 'Pruning rules',
+    detail: 'Alpha-beta, dominance checks, and bounds reduce expansions.',
+  },
+  {
+    title: 'Rollouts',
+    detail: 'MCTS uses simulations to estimate value in large spaces.',
+  },
+  {
+    title: 'Budgeting',
+    detail: 'Cap expansions, depth, or time to prevent runaway search.',
+  },
+]
+
+const modelAnatomy = [
+  {
+    title: 'Representation',
+    detail: 'Embeddings encode inputs; quality controls downstream performance.',
+  },
+  {
+    title: 'Objective',
+    detail: 'Loss functions encode the behavior you want (ranking, classification, generation).',
+  },
+  {
+    title: 'Regularization',
+    detail: 'Dropout, weight decay, and early stopping reduce overfitting.',
+  },
+  {
+    title: 'Calibration',
+    detail: 'Platt scaling or temperature fixes probability overconfidence.',
+  },
+  {
+    title: 'Distillation',
+    detail: 'Teacher-student training shrinks models without losing accuracy.',
+  },
+  {
+    title: 'Serving',
+    detail: 'Batching, caching, and quantization keep latency predictable.',
+  },
+]
+
+const gnnAnatomy = [
+  {
+    title: 'Message passing',
+    detail: 'Nodes aggregate neighbor messages across L layers.',
+  },
+  {
+    title: 'Sampling',
+    detail: 'Neighbor sampling reduces memory and compute on large graphs.',
+  },
+  {
+    title: 'Over-smoothing',
+    detail: 'Too many layers blur node differences; residuals help.',
+  },
+  {
+    title: 'Heterogeneous graphs',
+    detail: 'Typed nodes and edges require specialized aggregators.',
+  },
+  {
+    title: 'Temporal graphs',
+    detail: 'Edges change over time; models must respect ordering.',
+  },
+  {
+    title: 'Edge features',
+    detail: 'Relation attributes improve prediction beyond pure topology.',
+  },
+]
+
+const tradeoffMatrix = [
+  {
+    dimension: 'Optimality',
+    search: 'A* guarantees optimal with admissible heuristics.',
+    learned: 'Models approximate; must validate on edge cases.',
+  },
+  {
+    dimension: 'Latency',
+    search: 'Can be high for large branching factors.',
+    learned: 'Low once trained; expensive to train.',
+  },
+  {
+    dimension: 'Data dependence',
+    search: 'Needs heuristics, not large datasets.',
+    learned: 'Requires data, labels, and feature pipelines.',
+  },
+  {
+    dimension: 'Adaptability',
+    search: 'Rule changes are immediate.',
+    learned: 'Requires retraining or fine-tuning.',
+  },
+  {
+    dimension: 'Interpretability',
+    search: 'Paths and costs are explicit.',
+    learned: 'Model behavior is less transparent.',
+  },
+  {
+    dimension: 'Failure modes',
+    search: 'Explosion in state space.',
+    learned: 'Distribution shift and leakage.',
   },
 ]
 
 const complexityTable = [
   { approach: 'BFS/DFS', time: 'O(V + E)', space: 'O(V)', note: 'Deterministic exploration; baseline for small graphs.' },
-  { approach: 'A* with binary heap', time: 'O(E log V)', space: 'O(V)', note: 'Optimal if heuristic is admissible and consistent.' },
-  { approach: 'Beam search (beam b, depth d)', time: 'O(b * d)', space: 'O(b * d)', note: 'Non-optimal but controllable latency.' },
-  { approach: 'MCTS (iterations n)', time: 'O(n)', space: 'O(n)', note: 'Quality rises with rollouts; parallelizable with care.' },
-  { approach: 'GNN message passing (L layers)', time: 'O(L * E)', space: 'O(L * (V + E))', note: 'Neighbor sampling reduces effective E.' },
-  { approach: 'Transformer attention (seq L)', time: 'O(L^2 * d)', space: 'O(L^2)', note: 'Linear/flash variants cut constants or asymptotics.' },
+  { approach: 'A* (binary heap)', time: 'O(E log V)', space: 'O(V)', note: 'Optimal if heuristic is admissible.' },
+  { approach: 'Beam search (b, d)', time: 'O(b * d)', space: 'O(b * d)', note: 'Controlled latency; non-optimal.' },
+  { approach: 'MCTS (iterations n)', time: 'O(n)', space: 'O(n)', note: 'Quality scales with rollouts.' },
+  { approach: 'GNN message passing (L)', time: 'O(L * E)', space: 'O(L * (V + E))', note: 'Sampling reduces E.' },
+  { approach: 'Transformer attention (seq L)', time: 'O(L^2 * d)', space: 'O(L^2)', note: 'Sparse/flash variants reduce cost.' },
 ]
 
 const applications = [
   {
-    title: 'Game-playing agents (AlphaGo, MuZero)',
-    detail:
-      'Learned value/policy networks guide MCTS, shrinking search trees while keeping strong play under fixed time per move.',
+    title: 'Game-playing agents',
+    detail: 'Value/policy networks guide MCTS to shrink search trees.',
+    note: 'Strong play under fixed time per move.',
   },
   {
     title: 'Recommendation and ranking',
-    detail:
-      'Two-stage retrieval + rankers blend embeddings with calibrated scores; search prunes candidates, models personalize ordering.',
+    detail: 'Two-stage retrieval + rankers combine search and learned scoring.',
+    note: 'Embeddings prune candidates before expensive models.',
   },
   {
-    title: 'Route planning and logistics',
-    detail:
-      'A* with learned heuristics or oracles accelerates multi-stop routing; constraints handled via penalties or SAT hybrids.',
+    title: 'Route planning',
+    detail: 'A* with learned heuristics accelerates multi-stop routing.',
+    note: 'Constraints handled via penalties or SAT hybrids.',
   },
   {
-    title: 'Code and text generation',
-    detail:
-      'Beam or nucleus decoding with constrained tokens enforces syntax; retrieval-augmented prompts ground outputs.',
+    title: 'Code/text generation',
+    detail: 'Beam or constrained decoding enforces syntax and policy.',
+    note: 'Retrieval grounds generation in known facts.',
   },
   {
-    title: 'Graph anomaly and fraud detection',
-    detail:
-      'GNNs propagate risk across relations; neighbor sampling keeps inference feasible on millions of edges with low latency.',
+    title: 'Graph fraud detection',
+    detail: 'GNNs propagate risk across relations with sampled neighbors.',
+    note: 'Scales to millions of edges.',
   },
 ]
 
-const failureCallout = {
-  title: 'Failure story: silent leakage',
-  detail:
-    'A ranking model trained with random splits leaked user future clicks into train. Offline AUC soared, but launch tanked conversions. Fix: time-based splits, feature-level lineage checks, and pre-launch replay tests.',
-}
+const failureStory =
+  'A ranking model used random splits and leaked future user clicks into training. Offline AUC soared, but the launch tanked conversions. Fixes: time-based splits, feature lineage checks, and pre-launch replay tests.'
 
 const pitfalls = [
-  'Admissibility violated by over-optimistic heuristics makes A* non-optimal; align heuristic with true cost.',
-  'Beam search without coverage penalties collapses to short outputs; add length/coverage controls.',
-  'Feature leakage via random splits inflates offline metrics; prefer time or entity disjoint splits.',
-  'GNN over-smoothing after many layers erases signal; use residuals, normalization, and neighbor sampling.',
-  'Unbounded decoding or search ignores latency budgets; cap iterations and add early-stopping criteria.',
+  {
+    title: 'Heuristic optimism',
+    detail: 'Over-optimistic heuristics break admissibility and produce non-optimal paths.',
+  },
+  {
+    title: 'Leakage via splits',
+    detail: 'Random splits leak future signals; use time or entity disjoint splits.',
+  },
+  {
+    title: 'Over-smoothing',
+    detail: 'Deep GNNs blur signal; add residuals and normalization.',
+  },
+  {
+    title: 'Unbounded decoding',
+    detail: 'Beam or sampling without caps violates latency budgets.',
+  },
+  {
+    title: 'Silent drift',
+    detail: 'Models decay in production without monitoring and retraining gates.',
+  },
+  {
+    title: 'Weak calibration',
+    detail: 'Uncalibrated scores break ranking and decision thresholds.',
+  },
 ]
 
 const whenToUse = [
-  'Use A* or IDA* when optimality matters and heuristics exist (navigation, puzzle solvers).',
-  'Use MCTS when the model is uncertain and stochastic rollouts capture value (games, planners).',
-  'Use beam or constrained decoding when structure or syntax must be respected (code, SQL, configs).',
-  'Use GNNs when relationships carry the signal (fraud graphs, molecular property prediction).',
-  'Use transformers when long-range sequence dependencies dominate (language, logs, audio).',
+  {
+    title: 'A*/IDA*',
+    detail: 'Use when optimality matters and heuristics exist (planning, puzzles).',
+  },
+  {
+    title: 'MCTS',
+    detail: 'Use for stochastic spaces where rollouts estimate value (games).',
+  },
+  {
+    title: 'Beam/constrained decoding',
+    detail: 'Use when syntax or policy constraints must be respected.',
+  },
+  {
+    title: 'GNNs',
+    detail: 'Use when relationships are the signal (fraud, chemistry, knowledge graphs).',
+  },
+  {
+    title: 'Transformers',
+    detail: 'Use for long-range sequence dependencies (language, logs, audio).',
+  },
+  {
+    title: 'Hybrid search+learn',
+    detail: 'Use when both structure and statistical patterns matter.',
+  },
 ]
 
 const advanced = [
   {
     title: 'Learned heuristics',
-    detail: 'Train value networks or cost models to guide A* or MCTS; watch for optimism that breaks admissibility.',
+    detail: 'Train value networks to guide A* or MCTS; validate admissibility limits.',
+    note: 'Great for speed, risky for optimality.',
   },
   {
-    title: 'Retrieval-augmented models',
-    detail: 'Ground generations with nearest neighbors; improves factuality without re-training huge models.',
+    title: 'Retrieval-augmented generation',
+    detail: 'Nearest-neighbor retrieval grounds outputs without retraining.',
+    note: 'Improves factuality and reduces hallucination.',
   },
   {
     title: 'Mixture-of-experts',
-    detail: 'Route tokens or nodes to specialized experts to scale parameters while capping latency via sparse activation.',
+    detail: 'Route tokens to specialized experts for scale with sparse compute.',
+    note: 'Latency stays bounded via top-k routing.',
   },
   {
     title: 'Constraint-aware decoding',
-    detail: 'Finite-state machines or token masks enforce hard rules during generation; reduces invalid outputs.',
+    detail: 'FSMs or token masks enforce hard rules at generation time.',
+    note: 'Reduces invalid outputs dramatically.',
   },
   {
     title: 'Hardware-aware distillation',
-    detail: 'Quantize and distill models to fit edge or real-time serving budgets; calibrate to maintain accuracy.',
+    detail: 'Quantize and distill to fit edge/real-time budgets.',
+    note: 'Maintain accuracy with calibration.',
+  },
+  {
+    title: 'Graph contrastive learning',
+    detail: 'Self-supervised signals reduce label dependence.',
+    note: 'Useful for sparse or noisy labels.',
+  },
+]
+
+const tuningChecklist = [
+  {
+    title: 'Search budgets',
+    detail: 'Cap expansions, depth, or wall-clock per query.',
+  },
+  {
+    title: 'Evaluation splits',
+    detail: 'Use time or entity splits; prevent leakage with lineage checks.',
+  },
+  {
+    title: 'Calibration',
+    detail: 'Tune thresholds and temperature to align scores with outcomes.',
+  },
+  {
+    title: 'Batching and caching',
+    detail: 'Group inference and cache embeddings to cut latency.',
+  },
+  {
+    title: 'Quantization',
+    detail: 'Use 8-bit or 4-bit where accuracy allows.',
+  },
+  {
+    title: 'Monitoring',
+    detail: 'Track drift, error rates, and input coverage.',
+  },
+]
+
+const observability = [
+  {
+    title: 'Search metrics',
+    detail: 'Expansions per query, open-set size, and timeouts.',
+  },
+  {
+    title: 'Model health',
+    detail: 'Prediction latency, calibration drift, and outlier rates.',
+  },
+  {
+    title: 'Data drift',
+    detail: 'Feature distribution shifts and missing-value spikes.',
+  },
+  {
+    title: 'GNN stability',
+    detail: 'Neighbor sampling variance and oversmoothing diagnostics.',
+  },
+  {
+    title: 'Serving reliability',
+    detail: 'Fallback rate, cache hit rate, and queue depth.',
+  },
+  {
+    title: 'Experiment safety',
+    detail: 'A/B guardrails, rollback triggers, and shadow traffic tests.',
   },
 ]
 
@@ -224,16 +438,15 @@ function beamSearch(start: BeamState, step: (s: BeamState) => BeamState[], beamS
     const candidates = beams.flatMap((b) => step(b))
     for (const c of candidates) {
       const len = c.tokens.length
-      const lengthPenalty = Math.pow((5 + len) / 6, alpha) // encourages longer, complete outputs
-      c.score = c.score / lengthPenalty
+      const penalty = Math.pow((5 + len) / 6, alpha)
+      c.score = c.score / penalty
     }
     candidates.sort((a, b) => b.score - a.score)
     beams = candidates.slice(0, beamSize)
   }
   return beams
 }`,
-    explanation:
-      'Applies a length penalty to avoid short, high-probability outputs. In practice, add masking for invalid tokens and batched scoring.',
+    explanation: 'Length penalty avoids short outputs; add token masks for constraints.',
   },
   {
     title: 'GNN message passing (one layer)',
@@ -244,28 +457,61 @@ function messagePass(graph: Graph, weight: number[][], aggregate: (msgs: number[
 
   for (const [u, v] of graph.edges) {
     const h = graph.features[u]
-    const m = matVec(weight, h) // linear transform
+    const m = matVec(weight, h)
     msgs[v].push(m)
   }
 
   const updated = msgs.map((neighborMsgs, i) => {
     const agg = aggregate(neighborMsgs.length ? neighborMsgs : [[0]])
-    return add(agg, graph.features[i]) // residual connection to fight over-smoothing
+    return add(agg, graph.features[i])
   })
 
   return { ...graph, features: updated }
 }`,
-    explanation:
-      'Aggregates neighbor messages then adds a residual for stability. Real systems normalize by degree and batch edges to fit accelerator memory.',
+    explanation: 'Neighbor aggregation with residuals helps avoid over-smoothing.',
+  },
+  {
+    title: 'A* with learned heuristic (sketch)',
+    code: `type State = { id: string; g: number; h: number; f: number }
+
+function aStarLearned(start: State, goal: State, expand: (s: State) => State[], hNet: (s: State) => number) {
+  const open: State[] = [start]
+  start.h = hNet(start)
+  start.f = start.g + start.h
+
+  while (open.length) {
+    open.sort((a, b) => a.f - b.f)
+    const current = open.shift()!
+    if (current.id === goal.id) return current
+    for (const next of expand(current)) {
+      next.h = hNet(next)
+      next.f = next.g + next.h
+      open.push(next)
+    }
+  }
+  return undefined
+}`,
+    explanation: 'Learned heuristics accelerate search but must be validated for admissibility.',
   },
 ]
 
 const keyTakeaways = [
-  'Heuristics and representations decide whether search is feasible under real budgets.',
-  'Splits, logging, and checkpoints are as critical as the model choice.',
-  'Latency must be budgeted across search steps, model calls, and safety checks.',
-  'Guardrails and rollback plans keep launches safe despite drift.',
-  'Profile and cap work: beams, rollouts, neighbor hops, and attention lengths.',
+  {
+    title: 'Heuristics decide feasibility',
+    detail: 'Good heuristics and embeddings shrink search and compute costs.',
+  },
+  {
+    title: 'Data hygiene matters',
+    detail: 'Splits, logging, and lineage checks prevent silent leakage.',
+  },
+  {
+    title: 'Budget latency end-to-end',
+    detail: 'Beam size, rollout count, attention length, and hops must be capped.',
+  },
+  {
+    title: 'Guardrails keep launches safe',
+    detail: 'Canaries, rollback, and shadow traffic are part of the system.',
+  },
 ]
 
 export default function AIMLPage(): JSX.Element {
@@ -284,8 +530,8 @@ export default function AIMLPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Search meets learning</div>
               <p className="win95-text">
-                Blend combinatorial search with learned guidance. Reliable systems hinge on data hygiene, resource-aware loops, and
-                guardrails from training through serving.
+                Search and ML work best together: search provides structure, models provide heuristics and representations. Production
+                systems succeed when data hygiene, latency budgets, and guardrails are treated as algorithmic requirements.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -313,6 +559,7 @@ export default function AIMLPage(): JSX.Element {
                 <div key={event.title} className="win95-panel">
                   <div className="win95-heading">{event.title}</div>
                   <p className="win95-text">{event.detail}</p>
+                  <p className="win95-text">{event.note}</p>
                 </div>
               ))}
             </div>
@@ -321,31 +568,51 @@ export default function AIMLPage(): JSX.Element {
           <fieldset className="win95-fieldset">
             <legend>Core pillars and mental hooks</legend>
             <div className="win95-row">
-              <div className="win95-stack">
-                {pillars.map((pillar) => (
-                  <div key={pillar.title} className="win95-panel">
-                    <div className="win95-heading">{pillar.title}</div>
-                    <p className="win95-text">{pillar.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Pillars</div>
+                <div className="win95-stack">
+                  {pillars.map((pillar) => (
+                    <div key={pillar.title} className="win95-panel">
+                      <div className="win95-heading">{pillar.title}</div>
+                      <p className="win95-text">{pillar.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="win95-stack">
-                {mentalModels.map((model) => (
-                  <div key={model.title} className="win95-panel">
-                    <div className="win95-heading">{model.title}</div>
-                    <p className="win95-text">{model.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Mental models</div>
+                <div className="win95-stack">
+                  {mentalModels.map((model) => (
+                    <div key={model.title} className="win95-panel">
+                      <div className="win95-heading">{model.title}</div>
+                      <p className="win95-text">{model.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
+            <legend>How it works, step by step</legend>
+            <div className="win95-grid win95-grid-3">
+              {howItWorks.map((step, index) => (
+                <div key={step.title} className="win95-panel">
+                  <div className="win95-heading">
+                    Step {index + 1}: {step.title}
+                  </div>
+                  <p className="win95-text">{step.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Search anatomy</legend>
             <div className="win95-grid win95-grid-2">
-              {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
+              {searchAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -353,27 +620,77 @@ export default function AIMLPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity reference</legend>
-            <table className="win95-table">
-              <thead>
-                <tr>
-                  <th>Approach</th>
-                  <th>Time</th>
-                  <th>Space</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {complexityTable.map((row) => (
-                  <tr key={row.approach}>
-                    <td>{row.approach}</td>
-                    <td>{row.time}</td>
-                    <td>{row.space}</td>
-                    <td>{row.note}</td>
+            <legend>Model anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {modelAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>GNN anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {gnnAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tradeoff matrix</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Search-heavy</th>
+                    <th>Learning-heavy</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {tradeoffMatrix.map((row) => (
+                    <tr key={row.dimension}>
+                      <td>{row.dimension}</td>
+                      <td>{row.search}</td>
+                      <td>{row.learned}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity reference</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Approach</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complexityTable.map((row) => (
+                    <tr key={row.approach}>
+                      <td>{row.approach}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -383,34 +700,37 @@ export default function AIMLPage(): JSX.Element {
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
                 </div>
               ))}
             </div>
             <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">{failureCallout.title}</div>
-              <p className="win95-text">{failureCallout.detail}</p>
+              <div className="win95-heading">Failure mode</div>
+              <p className="win95-text">{failureStory}</p>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {pitfalls.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>When to use what</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -418,6 +738,31 @@ export default function AIMLPage(): JSX.Element {
             <legend>Advanced moves</legend>
             <div className="win95-grid win95-grid-2">
               {advanced.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tuning checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {tuningChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Observability and signals</legend>
+            <div className="win95-grid win95-grid-2">
+              {observability.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -443,12 +788,13 @@ export default function AIMLPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {keyTakeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {keyTakeaways.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
         </div>
@@ -456,4 +802,3 @@ export default function AIMLPage(): JSX.Element {
     </div>
   )
 }
-
