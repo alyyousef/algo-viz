@@ -5,232 +5,445 @@ import type { JSX } from 'react'
 
 const bigPicture = [
   {
-    title: 'Navigation as player freedom',
-    detail:
-      'Pathfinding turns authored spaces into explorable worlds, ensuring NPCs and players can traverse without designers hand-placing routes.',
-    note: 'Saves teams from brittle waypoint scripts that collapse when levels change.',
+    title: 'Navigation is player freedom',
+    detail: 'Pathfinding turns authored geometry into explorable space for players and NPCs.',
+    note: 'Reliable traversal saves designers from fragile waypoint scripts.',
   },
   {
-    title: 'Global search meets local feel',
-    detail:
-      'Blend long-range planning with short-range steering so motion looks purposeful yet reactive to bumps, doors, and crowds.',
-    note: 'Prevents robotic movement and rubber-banding in tight quarters.',
+    title: 'Global plan, local feel',
+    detail: 'Long-range planning guides intent; steering handles crowds, doors, and micro-collisions.',
+    note: 'The split keeps motion responsive under tight frame budgets.',
   },
   {
-    title: 'Latency as a design budget',
-    detail: 'Frame budgets force trade-offs: pathfinding in a few milliseconds, steering every frame, baking heavy data offline.',
-    note: 'Keeps large worlds responsive on mid-tier hardware.',
+    title: 'Latency is a budget',
+    detail: 'Search and steering must fit within a few milliseconds per frame.',
+    note: 'Expensive work moves to offline baking or async jobs.',
   },
   {
-    title: 'Scales from puzzles to MMOs',
-    detail: 'Algorithms shift from single-agent optimality to batched, approximate flows when thousands of units share a map.',
-    note: 'Chooses the right abstraction so costs stay predictable as populations grow.',
+    title: 'Scale changes everything',
+    detail: 'Single-agent optimality gives way to batched or approximate flows for large crowds.',
+    note: 'The right abstraction keeps cost predictable as populations grow.',
   },
 ]
 
 const history = [
   {
-    title: '1968: A* formalized (Hart, Nilsson, Raphael)',
-    detail: 'Admissible heuristics brought optimal paths to robotics and later to games once memory and CPU caught up.',
+    title: '1968: A* formalized',
+    detail: 'Admissible heuristics enable optimal shortest-path search with pruning.',
+    note: 'The workhorse of game navigation for decades.',
   },
   {
-    title: '1987: Boids flocking (Reynolds)',
-    detail: 'Showed local steering could yield lifelike crowds, influencing squad AI and ambient NPCs.',
+    title: '1987: Boids flocking',
+    detail: 'Local steering rules produce lifelike motion without global planning.',
+    note: 'Influenced modern crowd systems.',
   },
   {
-    title: '2004: HPA* (Botea et al.)',
-    detail: 'Hierarchical abstraction cut path latency on huge maps, enabling RTS and open-world traversal without pausing the game.',
+    title: '2004: HPA*',
+    detail: 'Hierarchical abstractions cut search latency on large maps.',
+    note: 'Made open-world and RTS pathfinding feasible.',
   },
   {
-    title: '2008: ORCA for crowd avoidance',
-    detail: 'Reciprocal velocity obstacles made dense crowds stable by sharing responsibility across agents.',
+    title: '2008: ORCA',
+    detail: 'Reciprocal velocity obstacles improve dense crowd stability.',
+    note: 'Distributed responsibility prevents deadlocks.',
   },
   {
-    title: '2012-2016: Navmesh standardization',
-    detail: 'Engines like Unreal and Unity embedded tiled navmeshes and off-mesh links, making smooth navigation a default feature.',
+    title: '2012+: Navmesh standardization',
+    detail: 'Engine toolchains embed tiled navmeshes and off-mesh links.',
+    note: 'Navigation becomes a default pipeline step.',
   },
 ]
 
 const pillars = [
   {
     title: 'Deterministic simulation',
-    detail: 'Fixed timesteps and consistent floating point paths keep server-authoritative games in sync with clients and replays.',
+    detail: 'Fixed timesteps and consistent math keep multiplayer and replays in sync.',
   },
   {
-    title: 'Heuristic sanity',
-    detail: 'Admissible, consistent heuristics prevent A* from skipping true optima; keep cost metrics aligned with movement physics.',
+    title: 'Heuristic alignment',
+    detail: 'Heuristics must match movement metrics to avoid wobble or wasted expansions.',
   },
   {
     title: 'Spatial acceleration',
-    detail: 'Uniform grids, quadtrees, or BVH speed up neighbor queries for A*, steering, and collision tests.',
+    detail: 'Grids, quadtrees, BVH, or navmesh tiles make queries fast and predictable.',
   },
   {
     title: 'Dynamic updates',
-    detail: 'Incremental planners and tiled navmesh rebuilds let levels change (doors, debris) without full recompute.',
+    detail: 'Incremental planners and tiled rebuilds handle doors, debris, and moving platforms.',
   },
   {
-    title: 'Animation alignment',
-    detail: 'Navigation nodes must respect collider sizes, step heights, and turn radii so animation and physics stay in lockstep.',
+    title: 'Animation constraints',
+    detail: 'Navigation respects collider size, step height, and turn radius.',
   },
 ]
 
 const mentalModels = [
   {
-    title: 'Road atlas vs lane keeping',
-    detail:
-      'A* is your atlas: the coarse route. Steering is lane keeping: micro-adjustments for traffic and potholes. Breaks when atlas and lanes disagree (stale navmesh).',
+    title: 'Atlas vs lane keeping',
+    detail: 'Global path is the atlas; steering is lane keeping for local obstacles and crowds.',
   },
   {
-    title: 'Water through culverts',
-    detail:
-      'Crowd flow follows low-res fields then funnels through portals; chokepoints become culverts that must be sized and instrumented.',
+    title: 'Water and culverts',
+    detail: 'Crowds flow along fields; chokepoints are culverts that must be sized and monitored.',
   },
   {
-    title: 'Cache as muscle memory',
-    detail:
-      'Hierarchical and cached subpaths mimic muscle memory: reuse known corridors to react fast, relearn only when the space changes.',
+    title: 'Muscle memory',
+    detail: 'Cached corridors speed repeated routes; relearn only when geometry changes.',
   },
   {
-    title: 'Budgeted attention',
-    detail:
-      'Agents spend CPU like attention: global planning rarely, local checks often. Overspend and you drop frames; underspend and motion looks clueless.',
+    title: 'Attention budget',
+    detail: 'Agents spend CPU like attention: rare global planning, constant local checks.',
   },
 ]
 
 const howItWorks = [
   {
-    step: '1. Build navigation data',
-    detail:
-      'Extract navmesh polygons or grid walkables from level geometry; add off-mesh links for jumps, ladders, doors with custom costs.',
+    title: 'Build navigation data',
+    detail: 'Extract navmesh or grid walkables; add off-mesh links for jumps, ladders, doors.',
   },
   {
-    step: '2. Choose search resolution',
-    detail: 'Small grids for puzzles, coarse regions for open worlds; keep cell size aligned with smallest agent radius.',
+    title: 'Choose resolution',
+    detail: 'Pick cell size or polygon granularity based on agent radius and map scale.',
   },
   {
-    step: '3. Plan globally',
-    detail:
-      'Run A* (or HPA*/JPS) on the nav graph with a heuristic consistent with movement metrics; enforce time-sliced expansions under frame budgets.',
+    title: 'Plan globally',
+    detail: 'Run A* (or HPA*/JPS) with a consistent heuristic; time-slice to fit frame budget.',
   },
   {
-    step: '4. Smooth and post-process',
-    detail:
-      'Apply funnel or string-pulling on navmesh corridors; snap turns to acceleration limits; insert look-ahead points to avoid jitter.',
+    title: 'Smooth paths',
+    detail: 'Apply funnel/string-pulling; add look-ahead points to reduce jitter.',
   },
   {
-    step: '5. Layer local avoidance',
-    detail:
-      'Blend steering or ORCA with the global path; cap neighbor checks and prediction horizon; prefer partial progress over freezing.',
+    title: 'Layer local avoidance',
+    detail: 'Blend steering or ORCA with the global path; cap neighbor checks.',
   },
   {
-    step: '6. Handle change',
-    detail:
-      'Use incremental search (D* Lite/LPA*) or partial navmesh rebuilds when obstacles move; fall back to conservative paths when data is stale.',
+    title: 'Handle changes',
+    detail: 'Use incremental search or tile rebuilds; fall back to conservative paths on stale data.',
+  },
+  {
+    title: 'Observe and tune',
+    detail: 'Profile expansions, avoidance cost, and p95 navigation time per frame.',
+  },
+]
+
+const navmeshAnatomy = [
+  {
+    title: 'Walkable polygons',
+    detail: 'Surface decomposition with height and slope rules for agents.',
+  },
+  {
+    title: 'Portals and edges',
+    detail: 'Adjacency graph for A*; portals define corridor boundaries.',
+  },
+  {
+    title: 'Off-mesh links',
+    detail: 'Explicit jumps, ladders, doors, and scripted transitions.',
+  },
+  {
+    title: 'Tiled streaming',
+    detail: 'Chunks load and unload as players move to bound memory.',
+  },
+  {
+    title: 'Area costs',
+    detail: 'Weighted regions bias toward roads, away from hazards or stealth zones.',
+  },
+  {
+    title: 'Obstacle carving',
+    detail: 'Dynamic agents or blockers carve local holes in the mesh.',
+  },
+]
+
+const gridAnatomy = [
+  {
+    title: 'Cell occupancy',
+    detail: 'Binary or weighted cells define walkable and cost surfaces.',
+  },
+  {
+    title: 'Neighborhood model',
+    detail: '4-way or 8-way movement changes heuristic choice.',
+  },
+  {
+    title: 'Jump point pruning',
+    detail: 'Uniform grids can skip symmetric expansions for speed.',
+  },
+  {
+    title: 'Cost layers',
+    detail: 'Terrain costs, threat fields, or visibility penalties per cell.',
+  },
+  {
+    title: 'Flow fields',
+    detail: 'Precompute gradients for many agents sharing a goal.',
+  },
+  {
+    title: 'Dynamic grids',
+    detail: 'Incremental updates keep grids viable for destructible maps.',
+  },
+]
+
+const steeringAnatomy = [
+  {
+    title: 'Velocity obstacles',
+    detail: 'Predict collisions in velocity space and choose safe velocities.',
+  },
+  {
+    title: 'Separation/alignment/cohesion',
+    detail: 'Boids-style forces create lifelike crowds with minimal global data.',
+  },
+  {
+    title: 'Look-ahead',
+    detail: 'Short-horizon predictions reduce jitter near corners.',
+  },
+  {
+    title: 'Priority and yield',
+    detail: 'Rules prevent deadlocks at narrow doors or bridges.',
+  },
+  {
+    title: 'Animation blending',
+    detail: 'Steering outputs match animation speed and turn limits.',
+  },
+  {
+    title: 'Caps and budgets',
+    detail: 'Neighbor count and horizon length are capped for performance.',
+  },
+]
+
+const tradeoffMatrix = [
+  {
+    dimension: 'Search optimality',
+    exact: 'A* with admissible heuristics gives optimal paths.',
+    approximate: 'HPA*, flow fields, and smoothing trade optimality for speed.',
+  },
+  {
+    dimension: 'Authoring cost',
+    exact: 'Grid or simple navmesh is quick to generate.',
+    approximate: 'Hand-authored links and weights improve believability.',
+  },
+  {
+    dimension: 'Runtime budget',
+    exact: 'Higher CPU for many agents or large maps.',
+    approximate: 'Lower CPU with caching and hierarchical planning.',
+  },
+  {
+    dimension: 'Dynamic obstacles',
+    exact: 'Incremental planners handle changes but are costly.',
+    approximate: 'Local avoidance is cheaper but not globally optimal.',
+  },
+  {
+    dimension: 'Multiplayer determinism',
+    exact: 'Deterministic math and fixed steps required.',
+    approximate: 'Floating-point drift causes desync.',
+  },
+  {
+    dimension: 'Crowd realism',
+    exact: 'Precise collision avoidance can look robotic.',
+    approximate: 'Steering adds natural motion but can jitter without smoothing.',
   },
 ]
 
 const complexityTable = [
   {
-    approach: 'Grid A* with binary heap',
+    approach: 'Grid A* (binary heap)',
     time: 'O(E log V)',
     space: 'O(V)',
-    note: 'Stable baseline; tie-breaking and neighbor order affect path wobble.',
+    note: 'Baseline for tile maps; tie-breaking affects path quality.',
   },
   {
-    approach: 'Jump Point Search (uniform grid)',
+    approach: 'Jump Point Search',
     time: '~O(k log V)',
     space: 'O(V)',
-    note: 'Prunes symmetry; best on large empty grids.',
+    note: 'Prunes symmetric expansions on uniform grids.',
   },
   {
     approach: 'Navmesh A* + funnel',
     time: 'O(F log F)',
     space: 'O(F)',
-    note: 'F = nav faces; fewer nodes than grids, smoother corridors.',
+    note: 'F = faces; fewer nodes and smoother paths.',
   },
   {
-    approach: 'HPA* (k-level abstraction)',
+    approach: 'HPA*',
     time: 'O(E log V) at top + locals',
     space: 'O(V) + portals',
-    note: 'Trades optimality for latency; great for repeated queries.',
+    note: 'Great for repeated long routes.',
   },
   {
-    approach: 'D* Lite / LPA* incremental',
+    approach: 'D* Lite / LPA*',
     time: 'O(E log V) worst-case',
     space: 'O(V)',
-    note: 'Reuses prior search when graph mutates; ideal for dynamic levels.',
+    note: 'Reuses prior search when graph changes.',
+  },
+  {
+    approach: 'ORCA (per agent)',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    note: 'n = neighbors; cap for frame budgets.',
   },
 ]
 
 const applications = [
   {
-    title: 'Open-world NPCs (Skyrim, GTA V)',
-    detail:
-      'Tiled navmeshes with off-mesh links allow climbing, ladders, and trains; streaming keeps memory bounded as the player roams.',
+    title: 'Open-world NPCs',
+    detail: 'Tiled navmeshes and streamed regions keep memory bounded as players roam.',
+    note: 'Off-mesh links handle ladders, jumps, and scripted traversal.',
   },
   {
-    title: 'RTS squad movement (StarCraft II)',
-    detail: 'Hierarchical search gives fast long paths; local steering and flow fields keep armies cohesive without collisions.',
+    title: 'RTS squads',
+    detail: 'Hierarchical planning plus flow fields keeps armies cohesive.',
+    note: 'Local steering prevents clumping at choke points.',
   },
   {
-    title: 'Server bots (Valorant, CS:GO)',
-    detail:
-      'Deterministic A* with baked cover nodes ensures fair, replayable routes under server authority and anti-cheat constraints.',
+    title: 'Competitive shooters',
+    detail: 'Deterministic A* and cover nodes preserve fairness and replay fidelity.',
+    note: 'Server authority avoids client-side exploits.',
   },
   {
-    title: 'Racing lines and ghosts',
-    detail:
-      'Weighted nav graphs with curvature costs produce smooth racing lines; precomputed splines feed both AI cars and ghost playback.',
-  },
-  {
-    title: 'Indie puzzlers and roguelikes',
-    detail:
-      'Simple grids with heuristic tuning enable quick rebuilds when rooms randomize; cheap enough for procedural generation loops.',
+    title: 'Racing lines',
+    detail: 'Spline-based paths with curvature costs produce smooth driving.',
+    note: 'Precomputed lines feed AI and ghost replays.',
   },
 ]
 
-const failureCallout = {
-  title: 'Failure story: live event jammed',
-  detail:
-    'A holiday event added destructible bridges, but navmesh tiles were not marked dirty. NPC caravans piled up, blocking players for an hour. Fix: instrument off-mesh links, rebuild tiles on structural changes, and keep a conservative fallback path.',
-}
+const failureStory =
+  'A live event added destructible bridges but navmesh tiles were not marked dirty. NPC caravans piled up and blocked players for an hour. Fixes: instrument off-mesh links, rebuild tiles on structural changes, and keep a conservative fallback path.'
 
 const pitfalls = [
-  'Stale nav data after moving platforms or doors causes agents to walk into voids; mark tiles dirty and rebuild incrementally.',
-  'Heuristic that underestimates diagonals on grids makes A* explore too much; match heuristic to movement metric (octile for 8-way).',
-  'Unbounded neighbor checks in ORCA tank frame rate in dense crowds; cap neighbors and bucket space.',
-  'Path smoothing that ignores collider radius clips corners; inflate obstacles or offset portals by agent radius.',
-  'Replanning every frame thrashes caches; debounce global searches and reuse partial paths unless blocked.',
+  {
+    title: 'Stale nav data',
+    detail: 'Moving platforms and doors must mark tiles dirty for rebuilds.',
+  },
+  {
+    title: 'Heuristic mismatch',
+    detail: 'Using Manhattan on 8-way grids increases expansions and path wobble.',
+  },
+  {
+    title: 'Unbounded neighbors',
+    detail: 'Local avoidance can tank frame rate in dense crowds.',
+  },
+  {
+    title: 'Corner clipping',
+    detail: 'Smoothing that ignores collider radius cuts into walls.',
+  },
+  {
+    title: 'Replan thrashing',
+    detail: 'Replanning every frame destroys cache benefits and spikes CPU.',
+  },
+  {
+    title: 'Off-mesh deadlocks',
+    detail: 'Two-way links without priority rules can jam narrow passages.',
+  },
 ]
 
 const whenToUse = [
-  'Use navmesh A* when worlds are 3D with ramps, stairs, and irregular obstacles.',
-  'Use grid A* or JPS when levels are tile-based and clarity beats smoothness.',
-  'Use HPA* or cached corridors when many agents query long routes on the same map.',
-  'Use D* Lite or partial rebuilds when obstacles move mid-session but geometry is mostly stable.',
-  'Use flow fields for large homogeneous crowds that share objectives (RTS bases, tower defense).',
+  {
+    title: 'Navmesh A*',
+    detail: 'Best for 3D spaces with ramps, stairs, and irregular obstacles.',
+  },
+  {
+    title: 'Grid A* / JPS',
+    detail: 'Best for tile maps or puzzle games where clarity beats smoothness.',
+  },
+  {
+    title: 'HPA* / cached corridors',
+    detail: 'Use for many agents on large maps with repeated queries.',
+  },
+  {
+    title: 'D* Lite / incremental',
+    detail: 'Use when obstacles move mid-session but geometry is mostly stable.',
+  },
+  {
+    title: 'Flow fields',
+    detail: 'Use for large crowds sharing a common goal.',
+  },
+  {
+    title: 'Pure steering',
+    detail: 'Use for ambient crowds where local motion matters more than exact paths.',
+  },
 ]
 
 const advanced = [
   {
-    title: 'Bidirectional and meet-in-the-middle',
-    detail: 'Reduces search depth on long corridors; watch for asymmetric costs and dynamic starts.',
+    title: 'Bidirectional A*',
+    detail: 'Cuts search depth on long routes; watch asymmetric costs.',
+    note: 'Needs careful meeting criteria on weighted graphs.',
   },
   {
-    title: 'Any-angle planners (Theta*, Field D*)',
-    detail: 'Cuts grid corners for smoother motion without full navmesh authoring.',
+    title: 'Any-angle planners',
+    detail: 'Theta* and Field D* reduce grid cornering without full navmesh authoring.',
+    note: 'Improves smoothness on tile maps.',
   },
   {
     title: 'GPU pathfinding',
-    detail: 'Batched A* or jump flooding on GPU keeps thousands of agents responsive in crowds.',
+    detail: 'Batch searches or jump flooding on GPU for massive crowds.',
+    note: 'Great for RTS or simulation-heavy scenes.',
   },
   {
-    title: 'Flow fields with hierarchical seeding',
-    detail: 'Precompute coarse directions, refine locally; great for swarms sharing a target.',
+    title: 'Hierarchical flow fields',
+    detail: 'Coarse global flow with local refinement for swarms.',
+    note: 'Balances speed and responsiveness.',
   },
   {
     title: 'Async navmesh tiling',
-    detail: 'Rebuild tiles off the game thread; stream updates to agents with versioned data.',
+    detail: 'Rebuild tiles off the game thread and stream updates to agents.',
+    note: 'Avoids frame spikes during level edits.',
+  },
+  {
+    title: 'Dynamic cost layers',
+    detail: 'Threat, visibility, and sound cost layers drive stealth or cover behavior.',
+    note: 'Lets AI express intent beyond shortest distance.',
+  },
+]
+
+const tuningChecklist = [
+  {
+    title: 'Cell/triangle size',
+    detail: 'Align with smallest agent radius and animation step height.',
+  },
+  {
+    title: 'Heuristic scale',
+    detail: 'Match movement metric (octile for 8-way, Euclidean for navmesh).',
+  },
+  {
+    title: 'Node expansion budget',
+    detail: 'Cap expansions per frame and time-slice searches.',
+  },
+  {
+    title: 'Neighbor caps',
+    detail: 'Limit ORCA or steering neighbors to keep frame rate stable.',
+  },
+  {
+    title: 'Cache lifetimes',
+    detail: 'Reuse paths until blocked; invalidate on tile updates.',
+  },
+  {
+    title: 'Off-mesh priorities',
+    detail: 'Set rules for ladders, doors, and bridges to avoid jams.',
+  },
+]
+
+const observability = [
+  {
+    title: 'Search time',
+    detail: 'Track p95/p99 path query time and expansions per request.',
+  },
+  {
+    title: 'Navmesh health',
+    detail: 'Monitor dirty tile rebuild rates and missing link errors.',
+  },
+  {
+    title: 'Crowd stability',
+    detail: 'Log deadlocks, oscillations, and avoidance failures.',
+  },
+  {
+    title: 'Cache effectiveness',
+    detail: 'Measure reuse rate of cached corridors or portals.',
+  },
+  {
+    title: 'Frame spikes',
+    detail: 'Track time spent in navigation vs render/physics.',
+  },
+  {
+    title: 'Stuck agent rate',
+    detail: 'Detect agents with zero progress over a window.',
   },
 ]
 
@@ -243,20 +456,19 @@ const octile = (a: Node, b: Node) => {
   const dx = Math.abs(a.x - b.x)
   const dy = Math.abs(a.y - b.y)
   const D = 1
-  const D2 = Math.SQRT2 // diagonal move cost
+  const D2 = Math.SQRT2
   return D * (dx + dy) + (D2 - 2 * D) * Math.min(dx, dy)
 }
 
 function aStar(start: Node, goal: Node, walkable: (x: number, y: number) => boolean) {
   const open: Node[] = [start]
   const closed = new Set<string>()
-
   const key = (n: Node) => \`\${n.x},\${n.y}\`
   start.g = 0
   start.f = octile(start, goal)
 
   while (open.length) {
-    open.sort((a, b) => a.f - b.f) // binary heap recommended in production
+    open.sort((a, b) => a.f - b.f)
     const current = open.shift()!
     if (current.x === goal.x && current.y === goal.y) return current
 
@@ -272,42 +484,71 @@ function aStar(start: Node, goal: Node, walkable: (x: number, y: number) => bool
   }
   return undefined
 }`,
-    explanation:
-      'Uses octile distance for 8-way movement; replace the sort with a heap for performance and ensure cost() matches the heuristic metric.',
+    explanation: 'Octile distance matches 8-way movement; replace the sort with a heap in production.',
   },
   {
-    title: 'Hierarchical path with cached portals',
-    code: `type PortalPath = { portal: string; subpath: number[][] }
-const cache = new Map<string, PortalPath[]>()
+    title: 'Navmesh funnel (sketch)',
+    code: `type Portal = { left: [number, number]; right: [number, number] }
 
-function plan(startRegion: string, goalRegion: string) {
-  const key = \`\${startRegion}->\${goalRegion}\`
-  const cached = cache.get(key)
-  if (cached) return cached
+function funnel(portals: Portal[]) {
+  const path: [number, number][] = []
+  let apex = portals[0].left
+  let left = portals[0].left
+  let right = portals[0].right
+  path.push(apex)
 
-  const coarsePath = aStarRegions(startRegion, goalRegion) // graph of regions
-  const portalPaths: PortalPath[] = []
-
-  for (const [from, to, portalId] of coarsePath) {
-    const nav = loadRegionNav(from)
-    const portal = nav.portals[portalId]
-    const local = aStar(nav.entry, portal.center, nav.walkable)
-    portalPaths.push({ portal: portalId, subpath: reconstruct(local) })
+  for (let i = 1; i < portals.length; i++) {
+    const p = portals[i]
+    if (triarea2(apex, right, p.right) <= 0) right = p.right
+    if (triarea2(apex, left, p.left) >= 0) left = p.left
+    if (triarea2(apex, right, left) < 0) {
+      apex = right
+      path.push(apex)
+      left = apex
+      right = apex
+    }
   }
-  cache.set(key, portalPaths)
-  return portalPaths
+  path.push(portals[portals.length - 1].left)
+  return path
 }`,
-    explanation:
-      'Separates coarse region planning from local subpaths and caches portal legs so repeated long-range queries stay under budget.',
+    explanation: 'Funnel/string-pulling converts corridor portals into smooth paths.',
+  },
+  {
+    title: 'Steering with capped neighbors',
+    code: `type Agent = { pos: [number, number]; vel: [number, number] }
+
+function steer(agent: Agent, neighbors: Agent[], maxNeighbors = 12) {
+  const nearby = neighbors.slice(0, maxNeighbors)
+  let sep: [number, number] = [0, 0]
+  for (const n of nearby) {
+    const dx = agent.pos[0] - n.pos[0]
+    const dy = agent.pos[1] - n.pos[1]
+    const d2 = dx * dx + dy * dy + 1e-5
+    sep = [sep[0] + dx / d2, sep[1] + dy / d2]
+  }
+  return normalize(sep)
+}`,
+    explanation: 'Capping neighbors keeps CPU predictable; combine with alignment/cohesion for crowd motion.',
   },
 ]
 
 const keyTakeaways = [
-  'Keep navigation data fresh and aligned with physics.',
-  'Spend CPU on global plans sparingly; spend it on local responsiveness every frame.',
-  'Pick heuristics and costs that match how agents really move.',
-  'Cache and reuse paths; rebuild only the tiles that changed.',
-  'Profile expansions, neighbor counts, and avoidance to stay within frame budgets.',
+  {
+    title: 'Keep nav data fresh',
+    detail: 'Dirty tiles and incremental rebuilds prevent agents walking into voids.',
+  },
+  {
+    title: 'Match heuristic to physics',
+    detail: 'Movement costs and heuristics must align to avoid wobble and wasted work.',
+  },
+  {
+    title: 'Budget per frame',
+    detail: 'Time-slice searches and cap neighbors to avoid spikes.',
+  },
+  {
+    title: 'Cache aggressively',
+    detail: 'Reuse corridors and portal legs; rebuild only when needed.',
+  },
 ]
 
 export default function GameDevelopmentPathfindingPage(): JSX.Element {
@@ -326,8 +567,8 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Interactivity powered by navigation and motion</div>
               <p className="win95-text">
-                From puzzle grids to open-world cities, robust pathfinding blends global planning with local steering under tight
-                frame budgets.
+                From tile puzzles to open worlds, navigation blends global planning with local steering under tight frame budgets.
+                The best systems keep paths stable, motion natural, and performance predictable.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -355,6 +596,7 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
                 <div key={event.title} className="win95-panel">
                   <div className="win95-heading">{event.title}</div>
                   <p className="win95-text">{event.detail}</p>
+                  <p className="win95-text">{event.note}</p>
                 </div>
               ))}
             </div>
@@ -363,31 +605,51 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
           <fieldset className="win95-fieldset">
             <legend>Core pillars and mental hooks</legend>
             <div className="win95-row">
-              <div className="win95-stack">
-                {pillars.map((pillar) => (
-                  <div key={pillar.title} className="win95-panel">
-                    <div className="win95-heading">{pillar.title}</div>
-                    <p className="win95-text">{pillar.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Pillars</div>
+                <div className="win95-stack">
+                  {pillars.map((pillar) => (
+                    <div key={pillar.title} className="win95-panel">
+                      <div className="win95-heading">{pillar.title}</div>
+                      <p className="win95-text">{pillar.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="win95-stack">
-                {mentalModels.map((model) => (
-                  <div key={model.title} className="win95-panel">
-                    <div className="win95-heading">{model.title}</div>
-                    <p className="win95-text">{model.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Mental models</div>
+                <div className="win95-stack">
+                  {mentalModels.map((model) => (
+                    <div key={model.title} className="win95-panel">
+                      <div className="win95-heading">{model.title}</div>
+                      <p className="win95-text">{model.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
+            <legend>How it works, step by step</legend>
+            <div className="win95-grid win95-grid-3">
+              {howItWorks.map((step, index) => (
+                <div key={step.title} className="win95-panel">
+                  <div className="win95-heading">
+                    Step {index + 1}: {step.title}
+                  </div>
+                  <p className="win95-text">{step.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Navmesh anatomy</legend>
             <div className="win95-grid win95-grid-2">
-              {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
+              {navmeshAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -395,27 +657,77 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity reference</legend>
-            <table className="win95-table">
-              <thead>
-                <tr>
-                  <th>Approach</th>
-                  <th>Time</th>
-                  <th>Space</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {complexityTable.map((row) => (
-                  <tr key={row.approach}>
-                    <td>{row.approach}</td>
-                    <td>{row.time}</td>
-                    <td>{row.space}</td>
-                    <td>{row.note}</td>
+            <legend>Grid anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {gridAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Steering anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {steeringAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tradeoff matrix</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Exact/optimal</th>
+                    <th>Approximate/fast</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {tradeoffMatrix.map((row) => (
+                    <tr key={row.dimension}>
+                      <td>{row.dimension}</td>
+                      <td>{row.exact}</td>
+                      <td>{row.approximate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity reference</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Approach</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complexityTable.map((row) => (
+                    <tr key={row.approach}>
+                      <td>{row.approach}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -425,34 +737,37 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
                 </div>
               ))}
             </div>
             <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">{failureCallout.title}</div>
-              <p className="win95-text">{failureCallout.detail}</p>
+              <div className="win95-heading">Failure mode</div>
+              <p className="win95-text">{failureStory}</p>
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {pitfalls.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
             <legend>When to use what</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
 
@@ -460,6 +775,31 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
             <legend>Advanced moves</legend>
             <div className="win95-grid win95-grid-2">
               {advanced.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                  <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tuning checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {tuningChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Observability and signals</legend>
+            <div className="win95-grid win95-grid-2">
+              {observability.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
@@ -485,12 +825,13 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {keyTakeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="win95-grid win95-grid-2">
+              {keyTakeaways.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
             </div>
           </fieldset>
         </div>
@@ -498,4 +839,3 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
     </div>
   )
 }
-
