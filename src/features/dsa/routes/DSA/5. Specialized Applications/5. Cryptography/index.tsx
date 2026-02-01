@@ -6,23 +6,23 @@ import type { JSX } from 'react'
 
 const bigPicture = [
   {
-    title: 'Control who learns and who alters',
-    detail: 'Encryption hides content; authentication and MACs prove integrity and origin.',
-    note: 'Both are needed to resist active attackers.',
+    title: 'Secrecy + integrity',
+    detail: 'Encryption hides data; integrity detects tampering and forgery.',
+    note: 'Always pair confidentiality with authentication (AEAD or MAC).',
   },
   {
-    title: 'Keys are the real asset',
-    detail: 'Primitive strength means little if keys leak, repeat, or lack rotation.',
-    note: 'Key lifecycle and storage dominate real incidents.',
+    title: 'Keys are the asset',
+    detail: 'Strong primitives fail if keys are leaked, reused, or never rotated.',
+    note: 'Key lifecycle dominates real-world security incidents.',
   },
   {
-    title: 'Protocols are glue',
-    detail: 'Safe primitives still fail when combined without labels, nonces, and identities.',
-    note: 'Context binding prevents replay and misrouting.',
+    title: 'Protocols glue primitives',
+    detail: 'Safe primitives can still be misused without nonces, context binding, and identity.',
+    note: 'Most failures are protocol and integration mistakes.',
   },
   {
     title: 'Performance is layered',
-    detail: 'Public-key work is rare and latency bound; symmetric work is frequent and throughput bound.',
+    detail: 'Public-key operations are rare and latency-bound; symmetric crypto is frequent and throughput-bound.',
     note: 'Optimize handshakes for correctness, bulk crypto for speed.',
   },
 ]
@@ -35,84 +35,211 @@ const history = [
   },
   {
     title: '1977: RSA',
-    detail: 'Asymmetric encryption and signatures from factoring hardness.',
+    detail: 'Asymmetric encryption and signatures based on factoring.',
     note: 'Made digital signatures mainstream.',
   },
   {
-    title: '1990s: Modern security definitions',
-    detail: 'IND-CPA, IND-CCA, and provable security frameworks formalize goals.',
-    note: 'Clarified what "secure" means for developers.',
+    title: '1990s: Security definitions',
+    detail: 'IND-CPA, IND-CCA, and provable security formalize what "secure" means.',
+    note: 'Shifted crypto from intuition to proof-driven design.',
   },
   {
     title: '2006: Curve25519',
-    detail: 'Safe, fast elliptic-curve operations with side-channel hardening.',
+    detail: 'Safe, fast elliptic-curve operations with strong side-channel resistance.',
     note: 'Adopted in TLS 1.3, Signal, and SSH.',
+  },
+  {
+    title: '2018: TLS 1.3',
+    detail: 'Removed legacy ciphers; mandatory forward secrecy.',
+    note: 'Simplified handshakes and reduced downgrade risk.',
   },
   {
     title: '2022+: Post-quantum finalists',
     detail: 'Kyber (KEM) and Dilithium (signatures) selected for standardization.',
-    note: 'Hybrid use begins in production to hedge quantum risk.',
+    note: 'Hybrid deployments begin to hedge future risk.',
   },
 ]
 
 const pillars = [
   {
-    title: 'Confidentiality + integrity together',
-    detail: 'Use AEAD so ciphertext cannot be altered without detection.',
+    title: 'AEAD first',
+    detail: 'Authenticated encryption (AES-GCM, ChaCha20-Poly1305) provides confidentiality + integrity.',
   },
   {
     title: 'Nonce discipline',
-    detail: 'Nonces must never repeat under a key; counters or random 96-bit values with tracking.',
+    detail: 'Nonces must never repeat under a key; track or use counters.',
   },
   {
-    title: 'Identity and context binding',
-    detail: 'Bind messages to identities and metadata (AAD) so attackers cannot replay across contexts.',
+    title: 'Identity binding',
+    detail: 'Bind messages to identities and metadata using signatures or AAD.',
   },
   {
     title: 'Key lifecycle',
-    detail: 'Generate with entropy, store in hardware when possible, rotate with versioning, retire on compromise.',
+    detail: 'Generate with entropy, store securely, rotate regularly, and revoke on compromise.',
   },
 ]
 
 const mentalModels = [
   {
-    title: 'Sealed envelope with a receipt',
-    detail: 'AEAD seals the letter and signs the envelope label. If the seal or label check fails, drop it unopened.',
+    title: 'Sealed envelope with receipt',
+    detail: 'AEAD seals the letter and signs the label; reject if seal or label is wrong.',
   },
   {
-    title: 'One-time pad caution',
-    detail: 'Reusing a nonce with stream ciphers is like reusing a one-time pad; differences of plaintexts leak.',
+    title: 'One-time pad warning',
+    detail: 'Nonce reuse with a stream cipher is like reusing a one-time pad.',
+  },
+  {
+    title: 'Tamper-evident bag',
+    detail: 'Integrity checks show if something changed even if you cannot read it.',
   },
   {
     title: 'Budgeted hardness',
-    detail: 'Parameters translate to attacker work. Pick sizes so attacks cost more time/energy than your asset is worth.',
+    detail: 'Parameter sizes translate to attacker cost; pick based on asset value.',
   },
 ]
 
 const howItWorks = [
   {
-    title: 'Pick primitives with safe defaults',
+    title: 'Choose modern primitives',
     detail: 'AES-GCM or ChaCha20-Poly1305 for AEAD; X25519/P-256 for key exchange; Ed25519 for signatures.',
   },
   {
     title: 'Bind identities and context',
-    detail: 'Use certificates or pre-shared identities; include headers as associated data in AEAD.',
+    detail: 'Use certificates or PSK identities; include headers as AAD to prevent replay or misrouting.',
   },
   {
     title: 'Manage nonces and keys',
-    detail: 'Use counters or random nonces with tracking; derive subkeys with HKDF to avoid reuse.',
+    detail: 'Use counters or unique random nonces; derive subkeys with HKDF.',
   },
   {
-    title: 'Harden passwords and secrets',
-    detail: 'Use Argon2id/scrypt with salts for passwords; avoid storing secrets in code repos.',
+    title: 'Protect passwords and secrets',
+    detail: 'Use Argon2id or scrypt with salts; never store secrets in repos or logs.',
   },
   {
-    title: 'Plan rotation and revocation',
-    detail: 'Version keys, support dual-read/write during rotation, and verify revocation paths work.',
+    title: 'Rotate and revoke',
+    detail: 'Version keys; support dual read/write during rotation; verify revocation paths.',
   },
   {
-    title: 'Test for timing and replay',
-    detail: 'Check constant-time comparisons and explicit replay protection where needed.',
+    title: 'Test for side channels',
+    detail: 'Use constant-time comparisons and audit for timing or error leaks.',
+  },
+  {
+    title: 'Monitor security posture',
+    detail: 'Track key usage, failure rates, and signature verification errors.',
+  },
+]
+
+const primitiveAnatomy = [
+  {
+    title: 'Symmetric ciphers',
+    detail: 'AES and ChaCha20 provide fast confidentiality for bulk data.',
+  },
+  {
+    title: 'AEAD modes',
+    detail: 'GCM and Poly1305 authenticate ciphertext plus metadata (AAD).',
+  },
+  {
+    title: 'Hash functions',
+    detail: 'SHA-256/SHA-3 produce fixed-size digests; used for integrity and KDFs.',
+  },
+  {
+    title: 'Key derivation',
+    detail: 'HKDF extracts and expands secrets into multiple subkeys safely.',
+  },
+  {
+    title: 'Public-key crypto',
+    detail: 'ECC and RSA enable key exchange and signatures.',
+  },
+  {
+    title: 'Password hashing',
+    detail: 'Argon2id and scrypt are memory-hard by design.',
+  },
+]
+
+const protocolAnatomy = [
+  {
+    title: 'Handshake',
+    detail: 'Agree on keys, cipher suites, and identities.',
+  },
+  {
+    title: 'Key schedule',
+    detail: 'Derive traffic keys from shared secrets with HKDF.',
+  },
+  {
+    title: 'Transcript binding',
+    detail: 'Sign or MAC the handshake to prevent downgrade attacks.',
+  },
+  {
+    title: 'Forward secrecy',
+    detail: 'Ephemeral keys ensure past traffic stays safe after key compromise.',
+  },
+  {
+    title: 'Session resumption',
+    detail: 'PSK tickets reduce latency; must be bound to context to avoid replay.',
+  },
+  {
+    title: 'Rekeying',
+    detail: 'Rotate traffic keys after a byte or time limit.',
+  },
+]
+
+const trustModel = [
+  {
+    title: 'PKI and certificates',
+    detail: 'CAs bind public keys to identities for TLS and code signing.',
+  },
+  {
+    title: 'Web of trust',
+    detail: 'PGP-style signatures allow decentralized trust paths.',
+  },
+  {
+    title: 'Pre-shared keys',
+    detail: 'Simpler but requires secure distribution and rotation.',
+  },
+  {
+    title: 'Transparency logs',
+    detail: 'Public logs make certificate issuance auditable.',
+  },
+  {
+    title: 'Hardware trust',
+    detail: 'TPMs/HSMs protect private keys and attest software state.',
+  },
+  {
+    title: 'Least privilege',
+    detail: 'Limit where and when keys can be used.',
+  },
+]
+
+const tradeoffMatrix = [
+  {
+    dimension: 'Speed',
+    symmetric: 'Very fast (AES/ChaCha).',
+    asymmetric: 'Slower; used sparingly (handshakes/signatures).',
+  },
+  {
+    dimension: 'Key distribution',
+    symmetric: 'Harder; requires secure pre-sharing.',
+    asymmetric: 'Easier; public keys can be shared openly.',
+  },
+  {
+    dimension: 'Forward secrecy',
+    symmetric: 'Requires extra protocol design.',
+    asymmetric: 'ECDHE makes it natural.',
+  },
+  {
+    dimension: 'Operational complexity',
+    symmetric: 'Simpler primitives; harder key distribution.',
+    asymmetric: 'Certificate management and validation overhead.',
+  },
+  {
+    dimension: 'Typical usage',
+    symmetric: 'Bulk data encryption.',
+    asymmetric: 'Key exchange and signatures.',
+  },
+  {
+    dimension: 'Failure mode',
+    symmetric: 'Nonce/key reuse catastrophic.',
+    asymmetric: 'Signature misuse or CA compromise.',
   },
 ]
 
@@ -121,53 +248,65 @@ const complexityTable = [
     approach: 'AES-GCM encrypt',
     time: 'O(n)',
     space: 'O(1)',
-    note: 'n = bytes; hardware AES-NI makes it near memory-speed.',
+    note: 'n = bytes; AES-NI makes it near memory-speed.',
   },
   {
     approach: 'ChaCha20-Poly1305',
     time: 'O(n)',
     space: 'O(1)',
-    note: 'Great on CPUs without AES acceleration.',
+    note: 'Fast on CPUs without AES acceleration.',
   },
   {
     approach: 'ECDH (X25519/P-256)',
     time: 'O(k^2)',
     space: 'O(1)',
-    note: 'k = key size; latency dominates, done per session.',
+    note: 'k = key size; latency-bound per session.',
+  },
+  {
+    approach: 'Ed25519 signature verify',
+    time: 'O(k^2)',
+    space: 'O(1)',
+    note: 'Fast verification; ideal for code signing.',
   },
   {
     approach: 'Argon2id',
     time: 'O(t * m)',
     space: 'O(m)',
-    note: 't = iterations, m = memory; intentionally expensive for attackers.',
+    note: 't = iterations, m = memory cost.',
+  },
+  {
+    approach: 'HKDF derive',
+    time: 'O(n)',
+    space: 'O(1)',
+    note: 'Linear in output size.',
   },
 ]
 
 const applications = [
   {
     title: 'TLS 1.3',
-    detail: 'ECDHE (X25519/P-256) plus HKDF for keys; AEAD for records; forward secrecy by default.',
+    detail: 'ECDHE + HKDF for keys; AEAD for records; forward secrecy by default.',
     note: 'Short handshakes and no legacy RSA key transport.',
   },
   {
     title: 'Messaging protocols',
-    detail: 'Signal uses X25519 handshakes and a double ratchet with AEAD for per-message keys.',
-    note: 'Rapid key churn limits damage from compromise.',
+    detail: 'Signal uses X25519 handshakes and a double ratchet for per-message keys.',
+    note: 'Rapid key churn limits compromise damage.',
   },
   {
     title: 'Software supply chain',
-    detail: 'Sign releases with Ed25519/RSA, publish transparency logs, and verify on install.',
-    note: 'Prevents tampered artifacts from entering builds.',
+    detail: 'Sign releases; verify signatures and transparency logs on install.',
+    note: 'Stops tampered artifacts from entering builds.',
   },
   {
     title: 'Storage at rest',
-    detail: 'XTS-AES for disks; envelope encryption with key IDs for backups and objects.',
+    detail: 'XTS-AES for disks; envelope encryption with KMS for backups.',
     note: 'Keys rotate without rewriting data.',
   },
 ]
 
 const failureStory =
-  'A payments service reused AES-GCM nonces after a deployment bug; attackers could xor ciphertexts to recover card details. Adding monotonic counters per key and strict nonce validation stopped reuse and forced key rotation.'
+  'A payment service reused AES-GCM nonces after a deployment bug. Attackers XORed ciphertexts to recover card data. A monotonic per-key nonce counter and strict nonce validation eliminated reuse and forced immediate key rotation.'
 
 const pitfalls = [
   {
@@ -176,26 +315,30 @@ const pitfalls = [
   },
   {
     title: 'DIY crypto',
-    detail: 'Custom padding, RNGs, or protocols often break under scrutiny; use vetted libraries.',
+    detail: 'Custom padding, RNGs, or protocols often break under scrutiny.',
   },
   {
     title: 'Skipping identity checks',
-    detail: 'Ignoring hostname or certificate validation enables trivial man-in-the-middle attacks.',
+    detail: 'Ignoring certificate/hostname validation enables trivial MITM attacks.',
   },
   {
     title: 'Missing context binding',
-    detail: 'Failing to MAC headers or metadata lets attackers replay or misroute ciphertexts.',
+    detail: 'Failing to MAC headers or metadata allows replay or misrouting.',
   },
   {
     title: 'Stale or exposed keys',
-    detail: 'Long-lived keys in repos or logs expand blast radius; rotate and isolate storage.',
+    detail: 'Long-lived keys in repos or logs expand blast radius.',
+  },
+  {
+    title: 'Weak randomness',
+    detail: 'Bad RNGs ruin key security; use OS-provided CSPRNGs.',
   },
 ]
 
 const whenToUse = [
   {
-    title: 'Need confidentiality and integrity',
-    detail: 'Use AEAD; pick AES-GCM where AES-NI exists, ChaCha20-Poly1305 where it does not.',
+    title: 'Need secrecy + integrity',
+    detail: 'Use AEAD; AES-GCM where AES-NI exists, ChaCha20-Poly1305 where it does not.',
   },
   {
     title: 'Need fresh shared keys',
@@ -203,34 +346,106 @@ const whenToUse = [
   },
   {
     title: 'Need tamper evidence',
-    detail: 'Sign with Ed25519 when possible; use RSA/ECDSA where compatibility demands.',
+    detail: 'Sign with Ed25519 when possible; use RSA/ECDSA for compatibility.',
   },
   {
     title: 'Need password storage',
-    detail: 'Use Argon2id or scrypt with salts and tuned memory/time limits.',
+    detail: 'Use Argon2id or scrypt with tuned memory/time costs.',
+  },
+  {
+    title: 'Need data at rest',
+    detail: 'Use envelope encryption with versioned keys and KMS/HSM support.',
+  },
+  {
+    title: 'Need quantum hedge',
+    detail: 'Adopt hybrid handshakes or PQC algorithms where available.',
   },
 ]
 
 const advanced = [
   {
     title: 'Hybrid post-quantum handshakes',
-    detail: 'Combine ECDHE with Kyber KEM to maintain security if quantum breaks ECC later.',
-    note: 'Hedges future risk while keeping today secure.',
+    detail: 'Combine ECDHE with Kyber KEM to hedge future quantum risk.',
+    note: 'Maintains current security while preparing for PQC.',
   },
   {
     title: 'Replay and duplicate defense',
-    detail: 'Track seen nonces or sequence numbers; discard duplicates before decryption.',
-    note: 'Prevents padding-oracle style gadgets.',
+    detail: 'Track seen nonces or sequence numbers; reject duplicates before decryption.',
+    note: 'Prevents replay and some oracle gadgets.',
   },
   {
     title: 'Side-channel hygiene',
-    detail: 'Use constant-time comparisons and implementations; avoid branching on secrets.',
-    note: 'Needed on shared hardware or hostile environments.',
+    detail: 'Avoid branching on secrets; use constant-time primitives.',
+    note: 'Critical on shared or untrusted hardware.',
   },
   {
-    title: 'Key management services',
-    detail: 'Store keys in HSMs or KMS with audit logs and per-use limits.',
+    title: 'Key isolation',
+    detail: 'Store private keys in HSM/KMS and restrict usage by policy.',
     note: 'Reduces blast radius of application bugs.',
+  },
+  {
+    title: 'Deterministic signatures',
+    detail: 'Ed25519 avoids RNG failures that break ECDSA.',
+    note: 'Prevents catastrophic key leakage from bad randomness.',
+  },
+  {
+    title: 'Threshold crypto',
+    detail: 'Split signing or decryption across multiple parties.',
+    note: 'No single node holds the full secret.',
+  },
+]
+
+const tuningChecklist = [
+  {
+    title: 'Nonce management',
+    detail: 'Track counters per key and enforce unique nonces.',
+  },
+  {
+    title: 'Key rotation cadence',
+    detail: 'Rotate on schedule and after incident indicators.',
+  },
+  {
+    title: 'Cipher suite policy',
+    detail: 'Disable legacy ciphers and enforce modern AEAD suites.',
+  },
+  {
+    title: 'Password hashing cost',
+    detail: 'Set Argon2id/scrypt memory and time to match threat model.',
+  },
+  {
+    title: 'Certificate validation',
+    detail: 'Enforce hostname checks and revocation/CT policies.',
+  },
+  {
+    title: 'Audit logging',
+    detail: 'Log key usage, signature failures, and policy violations.',
+  },
+]
+
+const observability = [
+  {
+    title: 'Key usage patterns',
+    detail: 'Monitor key age, use counts, and rotations.',
+  },
+  {
+    title: 'Handshake failures',
+    detail: 'Track TLS errors, certificate issues, and downgrade attempts.',
+  },
+  {
+    title: 'Integrity failures',
+    detail: 'Alert on AEAD tag or signature verification failures.',
+  },
+  {
+    title: 'Nonce violations',
+    detail: 'Detect nonce reuse and counter regressions.',
+  },
+  {
+    title: 'Password hash load',
+    detail: 'Track hashing latency to avoid login bottlenecks.',
+  },
+  {
+    title: 'HSM/KMS health',
+    detail: 'Monitor latency and error rates for key services.',
   },
 ]
 
@@ -238,7 +453,6 @@ const codeExamples = [
   {
     title: 'AEAD encrypt/decrypt',
     code: `function seal(key: Uint8Array, nonce: Uint8Array, plaintext: Uint8Array, aad: Uint8Array) {
-  // Use a vetted AEAD; here we sketch ChaCha20-Poly1305 style inputs
   const { ciphertext, tag } = aeadEncrypt(key, nonce, plaintext, aad)
   return { nonce, ciphertext, tag }
 }
@@ -248,7 +462,37 @@ function open(key: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array, tag: U
   if (!plaintext) throw new Error('integrity check failed')
   return plaintext
 }`,
-    explanation: 'AEAD seals both data and associated context; decryption must reject on any tag failure without revealing data.',
+    explanation: 'AEAD seals data and metadata; decryption must reject on any tag failure.',
+  },
+  {
+    title: 'HKDF key schedule',
+    code: `function hkdfExtract(salt: Uint8Array, ikm: Uint8Array) {
+  return hmac(salt, ikm)
+}
+
+function hkdfExpand(prk: Uint8Array, info: Uint8Array, len: number) {
+  let t = new Uint8Array([])
+  const out: number[] = []
+  let i = 1
+  while (out.length < len) {
+    t = hmac(prk, concat(t, info, Uint8Array.of(i)))
+    out.push(...t)
+    i++
+  }
+  return new Uint8Array(out.slice(0, len))
+}`,
+    explanation: 'HKDF safely derives multiple subkeys from a shared secret.',
+  },
+  {
+    title: 'Ed25519 sign/verify (sketch)',
+    code: `function sign(message: Uint8Array, secretKey: Uint8Array) {
+  return ed25519Sign(message, secretKey)
+}
+
+function verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array) {
+  return ed25519Verify(message, signature, publicKey)
+}`,
+    explanation: 'Signatures bind identity and integrity to messages and artifacts.',
   },
   {
     title: 'Argon2id password hashing',
@@ -256,7 +500,7 @@ function open(key: Uint8Array, nonce: Uint8Array, ciphertext: Uint8Array, tag: U
 
 function hashPassword(password: Uint8Array): HashRecord {
   const salt = randomBytes(16)
-  const params = { m: 64 * 1024, t: 3, p: 2 } // memory KB, iterations, lanes
+  const params = { m: 64 * 1024, t: 3, p: 2 }
   const digest = argon2id(password, salt, params)
   return { salt, params, digest }
 }
@@ -275,7 +519,7 @@ const keyTakeaways = [
     detail: 'Confidentiality alone is not enough; always use AEAD or a MAC.',
   },
   {
-    title: 'Nonces and keys are fragile',
+    title: 'Keys and nonces are fragile',
     detail: 'Prevent reuse, rotate regularly, and isolate storage.',
   },
   {
@@ -283,8 +527,8 @@ const keyTakeaways = [
     detail: 'Certificate validation, AAD, and signatures bind data to the right parties.',
   },
   {
-    title: 'Plan the future now',
-    detail: 'Design for rotation, revocation, and post-quantum upgrades before incidents force change.',
+    title: 'Plan for change',
+    detail: 'Design for rotation, revocation, and post-quantum upgrades now.',
   },
 ]
 
@@ -342,21 +586,27 @@ export default function CryptographyPage(): JSX.Element {
           <fieldset className="win95-fieldset">
             <legend>Pillars and mental hooks</legend>
             <div className="win95-row">
-              <div className="win95-stack">
-                {pillars.map((pillar) => (
-                  <div key={pillar.title} className="win95-panel">
-                    <div className="win95-heading">{pillar.title}</div>
-                    <p className="win95-text">{pillar.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Pillars</div>
+                <div className="win95-stack">
+                  {pillars.map((pillar) => (
+                    <div key={pillar.title} className="win95-panel">
+                      <div className="win95-heading">{pillar.title}</div>
+                      <p className="win95-text">{pillar.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="win95-stack">
-                {mentalModels.map((model) => (
-                  <div key={model.title} className="win95-panel">
-                    <div className="win95-heading">{model.title}</div>
-                    <p className="win95-text">{model.detail}</p>
-                  </div>
-                ))}
+              <div className="win95-panel">
+                <div className="win95-subheading">Mental models</div>
+                <div className="win95-stack">
+                  {mentalModels.map((model) => (
+                    <div key={model.title} className="win95-panel">
+                      <div className="win95-heading">{model.title}</div>
+                      <p className="win95-text">{model.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </fieldset>
@@ -364,10 +614,11 @@ export default function CryptographyPage(): JSX.Element {
           <fieldset className="win95-fieldset">
             <legend>How it works, step by step</legend>
             <div className="win95-grid win95-grid-3">
-              {howItWorks.map((step, idx) => (
+              {howItWorks.map((step, index) => (
                 <div key={step.title} className="win95-panel">
-                  <p className="win95-text">Step {idx + 1}</p>
-                  <div className="win95-heading">{step.title}</div>
+                  <div className="win95-heading">
+                    Step {index + 1}: {step.title}
+                  </div>
                   <p className="win95-text">{step.detail}</p>
                 </div>
               ))}
@@ -375,27 +626,89 @@ export default function CryptographyPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
-            <legend>Complexity at a glance</legend>
-            <table className="win95-table">
-              <thead>
-                <tr>
-                  <th>Approach</th>
-                  <th>Time</th>
-                  <th>Space</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {complexityTable.map((row) => (
-                  <tr key={row.approach}>
-                    <td>{row.approach}</td>
-                    <td>{row.time}</td>
-                    <td>{row.space}</td>
-                    <td>{row.note}</td>
+            <legend>Primitive anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {primitiveAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Protocol anatomy</legend>
+            <div className="win95-grid win95-grid-2">
+              {protocolAnatomy.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Trust models</legend>
+            <div className="win95-grid win95-grid-2">
+              {trustModel.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tradeoff matrix</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th>Symmetric</th>
+                    <th>Asymmetric</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {tradeoffMatrix.map((row) => (
+                    <tr key={row.dimension}>
+                      <td>{row.dimension}</td>
+                      <td>{row.symmetric}</td>
+                      <td>{row.asymmetric}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Complexity at a glance</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Approach</th>
+                    <th>Time</th>
+                    <th>Space</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complexityTable.map((row) => (
+                    <tr key={row.approach}>
+                      <td>{row.approach}</td>
+                      <td>{row.time}</td>
+                      <td>{row.space}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </fieldset>
 
           <fieldset className="win95-fieldset">
@@ -417,7 +730,7 @@ export default function CryptographyPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>Pitfalls to avoid</legend>
-            <div className="win95-stack">
+            <div className="win95-grid win95-grid-2">
               {pitfalls.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
@@ -429,7 +742,7 @@ export default function CryptographyPage(): JSX.Element {
 
           <fieldset className="win95-fieldset">
             <legend>When to reach for each tool</legend>
-            <div className="win95-stack">
+            <div className="win95-grid win95-grid-2">
               {whenToUse.map((item) => (
                 <div key={item.title} className="win95-panel">
                   <div className="win95-heading">{item.title}</div>
@@ -447,6 +760,30 @@ export default function CryptographyPage(): JSX.Element {
                   <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                   <p className="win95-text">{item.note}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Tuning checklist</legend>
+            <div className="win95-grid win95-grid-2">
+              {tuningChecklist.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Observability and signals</legend>
+            <div className="win95-grid win95-grid-2">
+              {observability.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
             </div>
@@ -483,4 +820,3 @@ export default function CryptographyPage(): JSX.Element {
     </div>
   )
 }
-
