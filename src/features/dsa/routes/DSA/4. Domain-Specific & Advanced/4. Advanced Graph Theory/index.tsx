@@ -53,6 +53,33 @@ const pillars = [
   },
 ]
 
+const graphFamilies = [
+  {
+    title: 'Directed vs undirected',
+    detail: 'Directionality changes reachability, cuts, and cycles; treat SCCs and dominators as first-class in directed graphs.',
+  },
+  {
+    title: 'Weighted, capacitated, multi-edges',
+    detail: 'Weights affect shortest paths and Laplacians; multi-edges change bridge logic and capacity aggregation.',
+  },
+  {
+    title: 'Special families',
+    detail: 'Planar graphs, bipartite graphs, and low-treewidth graphs unlock faster or exact algorithms.',
+  },
+  {
+    title: 'Dynamic graphs',
+    detail: 'Edges are added/removed continuously; maintain summaries incrementally instead of recomputing from scratch.',
+  },
+]
+
+const representationChecklist = [
+  'Normalize edge direction and ensure each edge has a stable id for updates and certificates.',
+  'Store reverse edge indices for flow residuals and for quick undo of augmentations.',
+  'Track discovery time, low-link, and parent for DFS-based connectivity proofs.',
+  'Separate node weights, edge weights, and capacities to avoid accidental mixing.',
+  'Keep adjacency as arrays for iteration and hash maps only for fast deletes.',
+]
+
 const mentalModels = [
   {
     title: 'Electrical networks',
@@ -87,11 +114,119 @@ const howItWorks = [
   },
 ]
 
+const algorithmMap = [
+  {
+    goal: 'Reachability, cycles, condensation',
+    primary: 'Tarjan/Kosaraju SCC',
+    output: 'Condensation DAG, topological order',
+    note: 'Compress strongly connected components before any global optimization.',
+  },
+  {
+    goal: 'Resilience and failure analysis',
+    primary: 'Bridges, articulation points, dominators',
+    output: 'Bridge tree or dominator tree',
+    note: 'Find single points of failure and minimal cut vertices/edges.',
+  },
+  {
+    goal: 'Throughput and capacity',
+    primary: 'Dinic / Push-relabel / Edmonds-Karp',
+    output: 'Max flow + min cut',
+    note: 'Cuts certify optimality; choose algorithm by density and capacity scale.',
+  },
+  {
+    goal: 'Pairing and assignment',
+    primary: 'Hopcroft-Karp / Hungarian',
+    output: 'Maximum matching + min vertex cover',
+    note: 'Bipartite structure gives strong duals and integrality.',
+  },
+  {
+    goal: 'Shortest paths with constraints',
+    primary: 'Dijkstra / Bellman-Ford / Johnson',
+    output: 'Distance potentials',
+    note: 'Potentials reweight edges to keep non-negative reduced costs.',
+  },
+  {
+    goal: 'Clustering and cuts',
+    primary: 'Spectral partition, Stoer-Wagner',
+    output: 'Balanced cut or min cut',
+    note: 'Spectral methods need numerical care for large sparse graphs.',
+  },
+  {
+    goal: 'Structure-driven NP-hardness',
+    primary: 'Treewidth DP / Branch and bound',
+    output: 'Exact solutions on sparse graphs',
+    note: 'Exploit bounded treewidth to keep exponential factor small.',
+  },
+]
+
 const complexityTable = [
   { approach: 'Hopcroft-Karp (bipartite matching)', time: 'O(E sqrt V)', space: 'O(V + E)', note: 'Layered BFS/DFS shrinks augmentations; strong for large sparse graphs.' },
   { approach: 'Dinic with scaling (max flow)', time: 'O(E V^2)', space: 'O(V + E)', note: 'Blocking flows per level; scaling trims iterations on big capacities.' },
   { approach: 'Tarjan SCC + bridges', time: 'O(V + E)', space: 'O(V + E)', note: 'Single DFS yields SCCs, articulation points, and bridges for resilience analysis.' },
   { approach: 'Spectral partition (Laplacian Fiedler vector)', time: 'O(V^3) naive / O(E log V) iterative', space: 'O(V + E)', note: 'Eigen-solvers dominate; iterative methods suit million-node sparse graphs.' },
+  { approach: 'Stoer-Wagner min cut', time: 'O(V E + V^2 log V)', space: 'O(V + E)', note: 'Exact global min cut for undirected graphs; practical on medium-sized dense graphs.' },
+  { approach: 'Push-relabel with gap heuristics', time: 'O(V^3) worst-case', space: 'O(V + E)', note: 'Excellent in practice on dense networks; relabeling accelerates convergence.' },
+  { approach: 'Treewidth DP (k-width)', time: 'O(f(k) * V)', space: 'O(f(k) * V)', note: 'Exact for NP-hard tasks when treewidth is small; exponential only in k.' },
+]
+
+const flowToolkit = [
+  {
+    title: 'Residual graph discipline',
+    detail: 'Every augmentation updates forward and reverse edges; use edge indices for O(1) backtracking.',
+  },
+  {
+    title: 'Cut extraction',
+    detail: 'After max flow, BFS in residual graph from s gives the min-cut partition as a certificate.',
+  },
+  {
+    title: 'Scaling and heuristics',
+    detail: 'Capacity scaling or global relabel dramatically reduce iterations on large integer capacities.',
+  },
+]
+
+const matchingToolkit = [
+  {
+    title: 'Layered BFS',
+    detail: 'Build levels from free U-vertices; only traverse forward layers in DFS to bound augmentations.',
+  },
+  {
+    title: 'Vertex cover dual',
+    detail: 'From BFS layers, derive min vertex cover in bipartite graphs with no extra cost.',
+  },
+  {
+    title: 'General matching',
+    detail: 'Blossom shrink handles odd cycles; use for non-bipartite graphs but expect heavier constants.',
+  },
+]
+
+const spectralToolkit = [
+  {
+    title: 'Laplacian basics',
+    detail: 'L = D - A; eigenvalues encode connectivity and expansion, Fiedler vector yields a relaxed cut.',
+  },
+  {
+    title: 'Numerical stability',
+    detail: 'Center data, scale weights, and use iterative solvers with preconditioning for sparse graphs.',
+  },
+  {
+    title: 'Approximate clustering',
+    detail: 'Spectral methods trade exact optimality for speed; validate with modularity or conductance.',
+  },
+]
+
+const decompositionToolkit = [
+  {
+    title: 'SCC condensation',
+    detail: 'Collapse cycles into DAG nodes to simplify all downstream computations.',
+  },
+  {
+    title: 'Bridge tree',
+    detail: 'Contract 2-edge-connected components to reveal critical edges and cut structure.',
+  },
+  {
+    title: 'Heavy-light and LCA',
+    detail: 'Decompose trees for path queries and use Euler tours for subtree aggregation.',
+  },
 ]
 
 const applications = [
@@ -120,11 +255,26 @@ const pitfalls = [
   'Large weights in Laplacians lead to numeric instability; scale or use iterative solvers with tolerances.',
 ]
 
+const debuggingSignals = [
+  'Flow values increase but cut size decreases: residual graph update is likely incorrect.',
+  'Low-link values climb above discovery time: parent/back-edge handling is wrong.',
+  'Matching alternates but size stagnates: BFS layering or DFS pruning is flawed.',
+  'Spectral clustering yields tiny singleton cuts: normalization or weight scaling is off.',
+]
+
 const whenToUse = [
   'Need provable throughput or resilience: pick flow/cut duals and output the cut as a certificate.',
   'Pairing problems on bipartite data: Hopcroft-Karp for sparse, Hungarian for dense with costs.',
   'Heavy repeated queries on mostly static graphs: decompose once (SCCs, bridges, LCA) and reuse the summary.',
   'Cluster discovery on sparse graphs: spectral methods with iterative eigensolvers to stay memory-light.',
+]
+
+const implementationChecklist = [
+  'Define invariants: residual capacity >= 0, low-link <= discovery time, parent pointers set once.',
+  'Cache edge ids and reverse indices before running any flow or matching routine.',
+  'Guard against integer overflow when summing capacities or distances.',
+  'Expose certificates in output: min-cut partition, vertex cover, condensation DAG.',
+  'Add assertions for every augmentation or relabel step in debug builds.',
 ]
 
 const advanced = [
@@ -188,6 +338,58 @@ function bfsLayers():
     return dist[NIL] != INF  // path to free vertex exists`,
     explanation: 'Layered BFS finds the shortest augmenting paths, and DFS only explores forward along layers, giving O(E sqrt V) total augmentations.',
   },
+  {
+    title: 'Dinic blocking flow (sketch)',
+    code: `while bfsLevelGraph():
+    it = [0..V-1]
+    pushed = dfs(s, INF)
+    while pushed > 0:
+        flow += pushed
+        pushed = dfs(s, INF)
+
+function dfs(u, f):
+    if u == t or f == 0: return f
+    for i from it[u] to adj[u].size:
+        e = adj[u][i]
+        if level[e.v] == level[u] + 1 and e.cap > 0:
+            pushed = dfs(e.v, min(f, e.cap))
+            if pushed > 0:
+                e.cap -= pushed; rev(e).cap += pushed
+                return pushed
+    return 0`,
+    explanation: 'Level graphs restrict augmentations to shortest paths, while blocking flows saturate them efficiently.',
+  },
+  {
+    title: 'Bridge tree construction (sketch)',
+    code: `findBridges()
+comp = [-1..V-1]
+id = 0
+for v in V:
+    if comp[v] == -1:
+        dfsComponent(v, id) // skip bridge edges
+        id += 1
+bridgeTree = adjacency of components for each bridge`,
+    explanation: 'Contract non-bridge edges to components; each bridge becomes an edge in the bridge tree.',
+  },
+]
+
+const glossary = [
+  'Cut: partition of vertices into S and T; capacity is total weight of edges crossing.',
+  'Flow: assignment that respects capacity and conservation; value is outgoing from source.',
+  'Residual graph: edges with remaining capacity that allow more flow or cancellations.',
+  'Matching: set of disjoint edges; in bipartite graphs, max matching equals min vertex cover.',
+  'Treewidth: measure of how tree-like a graph is; small values enable DP on bags.',
+  'Laplacian: L = D - A; spectrum encodes connectivity and expansion.',
+  'Dominators: in a directed graph, node u dominates v if every path to v goes through u.',
+  'Minor: graph obtained by deletions and edge contractions; excludes characterize families.',
+]
+
+const practicePrompts = [
+  'Design a min-cut based certificate for a capacity planning tool and explain how you would verify it.',
+  'Compare Hopcroft-Karp vs Hungarian for a 50k x 50k bipartite graph with sparse edges.',
+  'Given a dynamic graph with edge deletions, outline how to maintain bridge information.',
+  'Sketch a treewidth-based DP for vertex cover on a tree decomposition.',
+  'Explain why SCC condensation allows topological DP even when the original graph has cycles.',
 ]
 
 const keyTakeaways = [
@@ -275,11 +477,108 @@ export default function AdvancedGraphTheoryPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Graph families and structure</legend>
+            <div className="win95-grid win95-grid-2">
+              {graphFamilies.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Representation checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {representationChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Algorithm map</legend>
+            <div className="win95-panel">
+              <table className="win95-table">
+                <thead>
+                  <tr>
+                    <th>Goal</th>
+                    <th>Primary</th>
+                    <th>Output</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {algorithmMap.map((row) => (
+                    <tr key={row.goal}>
+                      <td>{row.goal}</td>
+                      <td>{row.primary}</td>
+                      <td>{row.output}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>How it works</legend>
             <div className="win95-grid win95-grid-3">
               {howItWorks.map((item) => (
                 <div key={item.step} className="win95-panel">
                   <div className="win95-heading">{item.step}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Flow toolkit</legend>
+            <div className="win95-grid win95-grid-3">
+              {flowToolkit.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Matching toolkit</legend>
+            <div className="win95-grid win95-grid-3">
+              {matchingToolkit.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Spectral toolkit</legend>
+            <div className="win95-grid win95-grid-3">
+              {spectralToolkit.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
+                  <p className="win95-text">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Decomposition toolkit</legend>
+            <div className="win95-grid win95-grid-3">
+              {decompositionToolkit.map((item) => (
+                <div key={item.title} className="win95-panel">
+                  <div className="win95-heading">{item.title}</div>
                   <p className="win95-text">{item.detail}</p>
                 </div>
               ))}
@@ -344,6 +643,17 @@ export default function AdvancedGraphTheoryPage(): JSX.Element {
           </fieldset>
 
           <fieldset className="win95-fieldset">
+            <legend>Debugging signals</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {debuggingSignals.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
             <legend>When to use</legend>
             <div className="win95-panel">
               <ol className="win95-list win95-list--numbered">
@@ -351,6 +661,17 @@ export default function AdvancedGraphTheoryPage(): JSX.Element {
                   <li key={item}>{item}</li>
                 ))}
               </ol>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Implementation checklist</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {implementationChecklist.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           </fieldset>
 
@@ -378,6 +699,28 @@ export default function AdvancedGraphTheoryPage(): JSX.Element {
                   <p className="win95-text">{example.explanation}</p>
                 </div>
               ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Glossary</legend>
+            <div className="win95-panel">
+              <ul className="win95-list">
+                {glossary.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </fieldset>
+
+          <fieldset className="win95-fieldset">
+            <legend>Practice prompts</legend>
+            <div className="win95-panel">
+              <ol className="win95-list win95-list--numbered">
+                {practicePrompts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
             </div>
           </fieldset>
 
