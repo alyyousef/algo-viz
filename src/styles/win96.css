@@ -258,6 +258,52 @@
   overflow: hidden;
 }
 
+.win96-desktop--scaled {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding-bottom: 0;
+  background: transparent;
+}
+
+.win96-desktop--scaled .taskbar-97 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.win96-desktop-scale-root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: linear-gradient(135deg, #008080 0%, #000080 100%);
+}
+
+.win96-desktop-scale-outer {
+  display: block;
+}
+
+.win96-desktop-scale {
+  transform-origin: top left;
+  display: block;
+}
+
+.win96-desktop-chrome {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.win96-desktop-chrome .taskbar-97,
+.win96-desktop-chrome .win96-start-menu {
+  pointer-events: auto;
+}
+
 .win96-desktop-icons {
   display: grid;
   grid-auto-flow: column;

@@ -16,6 +16,8 @@ import VisualizationWindowContent from './components/VisualizationWindowContent'
 
 const FOLDER_GLYPH = '\uD83D\uDCC1'
 const VISUALIZATION_GLYPH = '\uD83D\uDCCA'
+const BASE_DESKTOP_WIDTH = 1440
+const BASE_DESKTOP_HEIGHT = 900
 
 const WindowLayer = (): JSX.Element => {
   const { windows, activeWindowId, focusWindow, minimizeWindow, closeWindow } =
@@ -61,6 +63,46 @@ const WindowLayer = (): JSX.Element => {
 }
 
 function DesktopContainer(): JSX.Element {
+  const { rootFolders, openFolderWindow } = useWin96WindowManager()
+
+  const orderedRootFolders = useMemo(() => {
+    const desiredOrder = [
+      'folder:0-fundamentals',
+      'folder:0-programming-languages',
+      'folder:1-core-data-structures',
+      'folder:2-core-algorithms',
+      'folder:3-algorithmic-paradigms',
+      'folder:0-cs-problems',
+      'folder:4-domain-specific-advanced',
+      'folder:5-specialized-applications',
+    ]
+    const lookup = new Map(rootFolders.map((node) => [node.id, node]))
+    const ordered = desiredOrder
+      .map((id) => lookup.get(id))
+      .filter((node): node is NonNullable<typeof node> => Boolean(node))
+    const rest = rootFolders.filter((node) => !desiredOrder.includes(node.id))
+    return [...ordered, ...rest]
+  }, [rootFolders])
+
+  return (
+    <div className="win96-desktop win96-desktop--scaled theme-win97">
+      <div className="win96-desktop-icons">
+        {orderedRootFolders.map((node) => (
+          <DesktopIcon96
+            key={node.id}
+            label={node.name}
+            icon={<span aria-hidden="true">{node.icon ?? FOLDER_GLYPH}</span>}
+            onDoubleClick={() => openFolderWindow(node.id)}
+            title={node.description ?? node.name}
+          />
+        ))}
+      </div>
+      <WindowLayer />
+    </div>
+  )
+}
+
+function DesktopChrome(): JSX.Element {
   const {
     windows,
     activeWindowId,
@@ -137,6 +179,11 @@ function DesktopContainer(): JSX.Element {
     }
   }, [isStartMenuOpen])
 
+  const startMenuEntries = useMemo(
+    () => orderedRootFolders.filter((node) => node.kind === 'folder'),
+    [orderedRootFolders],
+  )
+
   const handleStartButtonClick = () => {
     setIsStartMenuOpen((open) => {
       const next = !open
@@ -183,11 +230,6 @@ function DesktopContainer(): JSX.Element {
     )
   })
 
-  const startMenuEntries = useMemo(
-    () => orderedRootFolders.filter((node) => node.kind === 'folder'),
-    [orderedRootFolders],
-  )
-
   const activeStartFolder = useMemo(
     () => startMenuEntries.find((node) => node.id === activeStartFolderId) ?? startMenuEntries[0],
     [activeStartFolderId, startMenuEntries],
@@ -214,19 +256,7 @@ function DesktopContainer(): JSX.Element {
   }
 
   return (
-    <div className="win96-desktop theme-win97">
-      <div className="win96-desktop-icons">
-        {orderedRootFolders.map((node) => (
-          <DesktopIcon96
-            key={node.id}
-            label={node.name}
-            icon={<span aria-hidden="true">{node.icon ?? FOLDER_GLYPH}</span>}
-            onDoubleClick={() => openFolderWindow(node.id)}
-            title={node.description ?? node.name}
-          />
-        ))}
-      </div>
-      <WindowLayer />
+    <div className="win96-desktop-chrome">
       {isStartMenuOpen ? (
         <div
           ref={startMenuRef}
@@ -325,6 +355,31 @@ function DesktopContainer(): JSX.Element {
 
 export default function Win96AlgoVizDesktop(): JSX.Element {
   const { enable } = useWin97Theme()
+  const [scaleState, setScaleState] = useState(() => ({
+    scale: 1,
+    scaledWidth: BASE_DESKTOP_WIDTH,
+    scaledHeight: BASE_DESKTOP_HEIGHT,
+  }))
+
+  useEffect(() => {
+    const updateScale = () => {
+      const widthScale = window.innerWidth / BASE_DESKTOP_WIDTH
+      const heightScale = window.innerHeight / BASE_DESKTOP_HEIGHT
+      const nextScale = Math.min(widthScale, heightScale, 1)
+      const safeScale = Number.isFinite(nextScale) ? nextScale : 1
+      setScaleState({
+        scale: safeScale,
+        scaledWidth: Math.round(BASE_DESKTOP_WIDTH * safeScale),
+        scaledHeight: Math.round(BASE_DESKTOP_HEIGHT * safeScale),
+      })
+    }
+
+    updateScale()
+    window.addEventListener('resize', updateScale)
+    return () => {
+      window.removeEventListener('resize', updateScale)
+    }
+  }, [])
 
   useEffect(() => {
     enable()
@@ -332,7 +387,27 @@ export default function Win96AlgoVizDesktop(): JSX.Element {
 
   return (
     <Win96WindowManagerProvider>
-      <DesktopContainer />
+      <div className="win96-desktop-scale-root">
+        <div
+          className="win96-desktop-scale-outer"
+          style={{
+            width: `${scaleState.scaledWidth}px`,
+            height: `${scaleState.scaledHeight}px`,
+          }}
+        >
+          <div
+            className="win96-desktop-scale"
+            style={{
+              width: `${BASE_DESKTOP_WIDTH}px`,
+              height: `${BASE_DESKTOP_HEIGHT}px`,
+              transform: `scale(${scaleState.scale})`,
+            }}
+          >
+            <DesktopContainer />
+          </div>
+        </div>
+        <DesktopChrome />
+      </div>
     </Win96WindowManagerProvider>
   )
 }
