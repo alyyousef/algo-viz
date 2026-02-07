@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -456,6 +456,7 @@ state.store(false, release)`,
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const win98HelpStyles = `
 .win98-help-page {
@@ -715,6 +716,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
+  const location = useLocation()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const defaultPlay = orderingPlaybook[0] ?? {
@@ -743,6 +745,17 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Atomics & Memory Ordering',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
     const historyState = window.history.state as { idx?: number } | null
     if (historyState?.idx && historyState.idx > 0) {
       void navigate(-1)

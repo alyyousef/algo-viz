@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type JSX } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import Window96 from '@/systems/win96/components/Window96'
@@ -18,6 +19,14 @@ const FOLDER_GLYPH = '\uD83D\uDCC1'
 const VISUALIZATION_GLYPH = '\uD83D\uDCCA'
 const BASE_DESKTOP_WIDTH = 1440
 const BASE_DESKTOP_HEIGHT = 900
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+interface MinimizedHelpTask {
+  id: string
+  title: string
+  url: string
+  kind: 'help'
+}
 
 const WindowLayer = (): JSX.Element => {
   const { windows, activeWindowId, focusWindow, minimizeWindow, closeWindow } =
@@ -103,6 +112,7 @@ function DesktopContainer(): JSX.Element {
 }
 
 function DesktopChrome(): JSX.Element {
+  const navigate = useNavigate()
   const {
     windows,
     activeWindowId,
@@ -115,7 +125,36 @@ function DesktopChrome(): JSX.Element {
   const [now, setNow] = useState(() => new Date())
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [activeStartFolderId, setActiveStartFolderId] = useState<string | null>(null)
+  const [minimizedHelpTasks, setMinimizedHelpTasks] = useState<MinimizedHelpTask[]>([])
   const startMenuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const loadTasks = () => {
+      const raw = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+      if (!raw) {
+        setMinimizedHelpTasks([])
+        return
+      }
+      try {
+        const parsed = JSON.parse(raw) as MinimizedHelpTask[]
+        setMinimizedHelpTasks(Array.isArray(parsed) ? parsed : [])
+      } catch {
+        setMinimizedHelpTasks([])
+      }
+    }
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === MINIMIZED_HELP_TASKS_KEY) {
+        loadTasks()
+      }
+    }
+
+    loadTasks()
+    window.addEventListener('storage', handleStorage)
+    return () => {
+      window.removeEventListener('storage', handleStorage)
+    }
+  }, [])
 
   const orderedRootFolders = useMemo(() => {
     const desiredOrder = [
@@ -229,6 +268,24 @@ function DesktopChrome(): JSX.Element {
       </Button97>
     )
   })
+
+  const minimizedHelpButtons = minimizedHelpTasks.map((task) => (
+    <Button97
+      key={task.id}
+      size="sm"
+      className="win96-taskbar__button win96-taskbar__button--minimized"
+      data-state="minimized"
+      onClick={() => {
+        const nextTasks = minimizedHelpTasks.filter((item) => item.id !== task.id)
+        window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+        setMinimizedHelpTasks(nextTasks)
+        void navigate(task.url)
+      }}
+      iconLeft={<span aria-hidden="true">{VISUALIZATION_GLYPH}</span>}
+    >
+      {task.title}
+    </Button97>
+  ))
 
   const activeStartFolder = useMemo(
     () => startMenuEntries.find((node) => node.id === activeStartFolderId) ?? startMenuEntries[0],
@@ -346,7 +403,12 @@ function DesktopChrome(): JSX.Element {
           'aria-expanded': isStartMenuOpen,
           'aria-haspopup': 'menu',
         }}
-        runningItems={<div className="win96-taskbar__items">{runningItemsContent}</div>}
+        runningItems={
+          <div className="win96-taskbar__items">
+            {runningItemsContent}
+            {minimizedHelpButtons}
+          </div>
+        }
         tray={<div className="win96-taskbar__clock">{timeLabel}</div>}
       />
     </div>
