@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -684,6 +684,10 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'glossary', label: 'Glossary' },
 ]
 
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
     { id: 'bp-overview', label: 'Overview' },
@@ -711,6 +715,8 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const defaultPlay = orderingPlaybook[0] ?? {
     id: 'fallback',
     title: 'No scenarios configured',
@@ -719,9 +725,31 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
     takeaway: 'No takeaway available.',
   }
   const [selectedOrderId, setSelectedOrderId] = useState(defaultPlay.id)
-  const [activeTab, setActiveTab] = useState<TabId>('big-picture')
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
   const selectedOrder = orderingPlaybook.find((item) => item.id === selectedOrderId) ?? defaultPlay
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Atomics & Memory Ordering - Help (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
 
   return (
     <div className="win98-help-page">
@@ -730,8 +758,7 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
         <header className="win98-titlebar">
           <span className="win98-title-text">Atomics &amp; Memory Ordering - Help</span>
           <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize">_</button>
-            <button className="win98-control" type="button" aria-label="Maximize">[]</button>
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
             <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
