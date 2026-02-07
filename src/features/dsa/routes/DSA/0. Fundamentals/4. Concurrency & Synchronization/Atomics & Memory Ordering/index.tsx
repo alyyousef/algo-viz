@@ -459,9 +459,9 @@ type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const win98HelpStyles = `
 .win98-help-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: #c0c0c0;
-  padding: 16px;
+  padding: 0;
   color: #000;
   font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
 }
@@ -472,14 +472,18 @@ const win98HelpStyles = `
   border-right: 2px solid #404040;
   border-bottom: 2px solid #404040;
   background: #c0c0c0;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .win98-titlebar {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 2px 4px;
   background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
   color: #fff;
@@ -490,6 +494,14 @@ const win98HelpStyles = `
 .win98-title-controls {
   display: flex;
   gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
 }
 
 .win98-control {
@@ -507,14 +519,6 @@ const win98HelpStyles = `
   justify-content: center;
   font-size: 11px;
   line-height: 1;
-}
-
-.win98-menubar {
-  display: flex;
-  gap: 20px;
-  padding: 5px 8px 4px;
-  font-size: 12px;
-  border-bottom: 1px solid #808080;
 }
 
 .win98-tabs {
@@ -543,7 +547,8 @@ const win98HelpStyles = `
 .win98-main {
   border-top: 1px solid #404040;
   background: #fff;
-  min-height: 650px;
+  flex: 1;
+  min-height: 0;
   display: grid;
   grid-template-columns: 240px 1fr;
 }
@@ -660,15 +665,6 @@ const win98HelpStyles = `
   cursor: pointer;
 }
 
-.win98-footerbar {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid #808080;
-  background: #c0c0c0;
-  padding: 4px 8px;
-  font-size: 11px;
-}
-
 @media (max-width: 900px) {
   .win98-main {
     grid-template-columns: 1fr;
@@ -732,19 +728,13 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
       <style>{win98HelpStyles}</style>
       <div className="win98-window" role="presentation">
         <header className="win98-titlebar">
-          <span>Atomics &amp; Memory Ordering - Help</span>
+          <span className="win98-title-text">Atomics &amp; Memory Ordering - Help</span>
           <div className="win98-title-controls">
             <button className="win98-control" type="button" aria-label="Minimize">_</button>
             <button className="win98-control" type="button" aria-label="Maximize">[]</button>
             <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <nav className="win98-menubar" aria-label="Menu">
-          <span>File</span>
-          <span>Edit</span>
-          <span>Bookmark</span>
-          <span>Help</span>
-        </nav>
         <div className="win98-tabs" role="tablist" aria-label="Sections">
           {tabs.map((tab) => (
             <button
@@ -962,10 +952,6 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
               </section>
             )}
           </main>
-        </div>
-        <div className="win98-footerbar">
-          <span>Topic: Atomics and Memory Ordering</span>
-          <Link to="/algoViz">Back to Catalog</Link>
         </div>
       </div>
     </div>
