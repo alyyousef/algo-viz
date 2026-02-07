@@ -603,7 +603,7 @@ export default function BarriersPage(): JSX.Element {
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = `Barriers - Help (${activeTabLabel})`
+    document.title = `Barriers (${activeTabLabel})`
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleMinimize = () => {
@@ -648,7 +648,7 @@ export default function BarriersPage(): JSX.Element {
       <style>{win98HelpStyles}</style>
       <div className="win98-window" role="presentation">
         <header className="win98-titlebar">
-          <span className="win98-title-text">Barriers - Help</span>
+          <span className="win98-title-text">Barriers</span>
           <div className="win98-title-controls">
             <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
             <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>

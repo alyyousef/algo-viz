@@ -741,7 +741,7 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = `Atomics & Memory Ordering - Help (${activeTabLabel})`
+    document.title = `Atomics & Memory Ordering (${activeTabLabel})`
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleMinimize = () => {
@@ -769,7 +769,7 @@ export default function AtomicsAndMemoryOrderingPage(): JSX.Element {
       <style>{win98HelpStyles}</style>
       <div className="win98-window" role="presentation">
         <header className="win98-titlebar">
-          <span className="win98-title-text">Atomics &amp; Memory Ordering - Help</span>
+          <span className="win98-title-text">Atomics &amp; Memory Ordering</span>
           <div className="win98-title-controls">
             <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
             <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
