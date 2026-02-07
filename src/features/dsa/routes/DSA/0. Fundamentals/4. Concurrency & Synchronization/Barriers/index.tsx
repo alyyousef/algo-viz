@@ -1,7 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -287,7 +285,7 @@ const compareContrast = [
   {
     title: 'Barrier vs condition variable',
     detail:
-      'Condition variables require explicit predicate logic; barriers encode the predicate as “all arrived.”',
+      'Condition variables require explicit predicate logic; barriers encode the predicate as "all arrived."',
   },
 ]
 
@@ -318,7 +316,268 @@ const interactiveScenarios = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-content p,
+.win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-content ul,
+.win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.win98-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.win98-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-why', label: 'Why This Matters' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-model', label: 'Core Mental Model' },
+    { id: 'core-types', label: 'Barrier Types' },
+    { id: 'core-happens-before', label: 'Happens-Before Guarantees' },
+    { id: 'core-use-cases', label: 'Common Use Cases' },
+    { id: 'core-performance', label: 'Performance Reality Check' },
+    { id: 'core-compare', label: 'Compare and Contrast' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-checklist', label: 'Barrier Checklist' },
+  ],
+  examples: [
+    { id: 'ex-pseudocode', label: 'Barrier Algorithms' },
+    { id: 'ex-playbook', label: 'Barrier Playbook' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function BarriersPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const defaultScenario = interactiveScenarios[0] ?? {
     id: 'fallback',
     title: 'No scenario configured',
@@ -326,23 +585,53 @@ export default function BarriersPage(): JSX.Element {
     steps: ['No steps available'],
     takeaway: 'No takeaway available.',
   }
-
   const [selectedScenarioId, setSelectedScenarioId] = useState(defaultScenario.id)
   const [arrived, setArrived] = useState(0)
   const [generation, setGeneration] = useState(0)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
   const selectedScenario = interactiveScenarios.find((item) => item.id === selectedScenarioId) ?? defaultScenario
   const participantCount = 4
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
 
-  const barrierStatus = useMemo(() => {
-    if (arrived === 0) {
-      return 'No threads have arrived yet.'
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
     }
-    if (arrived < participantCount) {
-      return `${arrived} of ${participantCount} threads arrived. Waiting for the rest.`
+    document.title = `Barriers - Help (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Barriers',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
     }
-    return `All ${participantCount} threads arrived. Barrier released (generation ${generation}).`
-  }, [arrived, generation, participantCount])
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
+  const barrierStatus =
+    arrived === 0
+      ? 'No threads have arrived yet.'
+      : arrived < participantCount
+        ? `${arrived} of ${participantCount} threads arrived. Waiting for the rest.`
+        : `All ${participantCount} threads arrived. Barrier released (generation ${generation}).`
 
   const handleArrive = (): void => {
     setArrived((prev) => {
@@ -355,235 +644,233 @@ export default function BarriersPage(): JSX.Element {
   }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Barriers</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">Barriers - Help</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Synchronize phases across parallel workers</div>
-              <p className="win95-text">
-                A barrier forces a set of threads to reach the same point before any can proceed. It is the most common tool for
-                coordinating iterative or phase-based parallel algorithms. This page breaks down barrier types, correctness rules,
-                and practical pitfalls, plus a small interactive demo.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">Barriers</h1>
+            <p>
+              A barrier forces a set of threads to reach the same point before any can proceed. It is a core synchronization tool
+              for phase-based parallel work where correctness depends on all participants finishing one round before the next starts.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core Mental Model</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModel.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Barrier Types</legend>
-            <div className="win95-grid win95-grid-3">
-              {barrierTypes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Happens-Before Guarantees</legend>
-            <div className="win95-grid win95-grid-2">
-              {happensBeforeRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                A correct barrier is a memory barrier: it enforces that all writes in phase k are visible to all participants in phase
-                k+1. Without this, phase-based algorithms can observe partially updated state.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Use Cases</legend>
-            <div className="win95-grid win95-grid-2">
-              {commonUseCases.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Barrier Algorithms (Pseudocode)</legend>
-            <div className="win95-stack">
-              {pseudocode.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Barrier Playbook (Interactive)</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Choose a workload pattern and observe how barriers enforce phase ordering. Then press ARRIVE to simulate threads
-                reaching the barrier.
-              </p>
-              <div className="win95-grid win95-grid-3">
-                {interactiveScenarios.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className="win95-button"
-                    onClick={() => {
-                      setSelectedScenarioId(item.id)
-                      setArrived(0)
-                    }}
-                  >
-                    {item.title}
-                  </button>
-                ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text"><strong>{selectedScenario.title}</strong></p>
-                <p className="win95-text">{selectedScenario.description}</p>
-                <ol className="win95-list">
-                  {selectedScenario.steps.map((step) => (
-                    <li key={step}>{step}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </ol>
-                <p className="win95-text"><strong>Takeaway:</strong> {selectedScenario.takeaway}</p>
-              </div>
-              <div className="win95-grid win95-grid-3">
-                <button type="button" className="win95-button" onClick={handleArrive}>
-                  ARRIVE
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => {
-                    setArrived(0)
-                    setGeneration(0)
-                  }}
-                >
-                  RESET
-                </button>
-                <div className="win95-panel">
-                  <p className="win95-text"><strong>Status:</strong> {barrierStatus}</p>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-why" className="win98-section">
+                  <h2 className="win98-heading">Why This Matters</h2>
+                  <p>
+                    Barriers prevent partial progress from leaking into later phases. Without that phase boundary, threads can
+                    observe inconsistent snapshots and compute on mixed-generation state.
+                  </p>
+                  <p>
+                    In real systems, barrier overhead is often less costly than debugging correctness failures caused by ad hoc
+                    timing assumptions.
+                  </p>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Performance Reality Check</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-model" className="win98-section">
+                  <h2 className="win98-heading">Core Mental Model</h2>
+                  {mentalModel.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-types" className="win98-section">
+                  <h2 className="win98-heading">Barrier Types</h2>
+                  {barrierTypes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-happens-before" className="win98-section">
+                  <h2 className="win98-heading">Happens-Before Guarantees</h2>
+                  {happensBeforeRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    A correct barrier is also a memory barrier: writes in phase k must be visible to all participants in phase k+1.
+                  </p>
+                </section>
+                <section id="core-use-cases" className="win98-section">
+                  <h2 className="win98-heading">Common Use Cases</h2>
+                  {commonUseCases.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="win98-section">
+                  <h2 className="win98-heading">Performance Reality Check</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-compare" className="win98-section">
+                  <h2 className="win98-heading">Compare and Contrast</h2>
+                  {compareContrast.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-checklist" className="win98-section">
+                  <h2 className="win98-heading">Barrier Checklist</h2>
+                  <ul>
+                    {barrierChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {compareContrast.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-pseudocode" className="win98-section">
+                  <h2 className="win98-heading">Barrier Algorithms (Pseudocode)</h2>
+                  {pseudocode.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <div className="win98-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-playbook" className="win98-section">
+                  <h2 className="win98-heading">Barrier Playbook</h2>
+                  <p>
+                    Choose a workload pattern and observe how barriers enforce phase ordering. Press ARRIVE to simulate threads
+                    reaching the barrier.
+                  </p>
+                  <div className="win98-inline-buttons">
+                    {interactiveScenarios.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="win98-push"
+                        onClick={() => {
+                          setSelectedScenarioId(item.id)
+                          setArrived(0)
+                        }}
+                      >
+                        {item.title}
+                      </button>
+                    ))}
+                  </div>
+                  <h3 className="win98-subheading">{selectedScenario.title}</h3>
+                  <p>{selectedScenario.description}</p>
+                  <ol>
+                    {selectedScenario.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p><strong>Takeaway:</strong> {selectedScenario.takeaway}</p>
+                  <div className="win98-inline-buttons">
+                    <button type="button" className="win98-push" onClick={handleArrive}>
+                      ARRIVE
+                    </button>
+                    <button
+                      type="button"
+                      className="win98-push"
+                      onClick={() => {
+                        setArrived(0)
+                        setGeneration(0)
+                      }}
+                    >
+                      RESET
+                    </button>
+                  </div>
+                  <p><strong>Status:</strong> {barrierStatus}</p>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="win98-section">
+                <h2 className="win98-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Barrier Checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {barrierChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
