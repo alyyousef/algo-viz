@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -581,373 +579,613 @@ const keyTakeaways = [
   'Separate predicates into separate condition variables when possible.',
 ]
 
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const conditionVariablesHelpStyles = `
+.cv-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.cv-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cv-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.cv-title-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.cv-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+
+.cv-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.cv-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cv-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.cv-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.cv-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.cv-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.cv-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cv-toc-list li {
+  margin: 0 0 8px;
+}
+
+.cv-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.cv-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.cv-doc-title {
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+
+.cv-section {
+  margin: 0 0 20px;
+}
+
+.cv-heading {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.cv-subheading {
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
+.cv-content p,
+.cv-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cv-content p {
+  margin: 0 0 10px;
+}
+
+.cv-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.cv-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.cv-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.cv-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.cv-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.cv-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .cv-main {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-why', label: 'Why This Matters' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-model', label: 'Mental Model' },
+    { id: 'core-rules', label: 'Core Rules' },
+    { id: 'core-api', label: 'API Surface' },
+    { id: 'core-semantics', label: 'Mesa vs Hoare' },
+    { id: 'core-patterns', label: 'Reusable Patterns' },
+    { id: 'core-compare', label: 'Compare Tools' },
+    { id: 'core-correctness', label: 'Correctness Checklist' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-performance', label: 'Performance Tips' },
+    { id: 'core-advanced', label: 'Advanced Patterns' },
+    { id: 'core-signal', label: 'Signal vs Broadcast' },
+    { id: 'core-lifecycle', label: 'Lifecycle Checklist' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-debugging', label: 'Debugging Checklist' },
+    { id: 'core-faq', label: 'FAQ' },
+  ],
+  examples: [
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-timeline', label: 'Interactive Timeline' },
+    { id: 'ex-patterns', label: 'Patterns at a Glance' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function ConditionVariablesPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedScenarioId, setSelectedScenarioId] = useState(timelineScenarios[0]?.id ?? 'correct')
   const [stepIndex, setStepIndex] = useState(0)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
   const selectedScenario = timelineScenarios.find((scenario) => scenario.id === selectedScenarioId) ?? timelineScenarios[0]
   const stepText = selectedScenario?.steps[stepIndex] ?? 'No steps available.'
   const canStepForward = selectedScenario ? stepIndex < selectedScenario.steps.length - 1 : false
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Condition Variables (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Condition Variables',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Condition Variables</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="cv-help-page">
+      <style>{conditionVariablesHelpStyles}</style>
+      <div className="cv-window" role="presentation">
+        <header className="cv-titlebar">
+          <span className="cv-title-text">Condition Variables</span>
+          <div className="cv-title-controls">
+            <button className="cv-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="cv-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Sleeping safely until shared state allows progress</div>
-              <p className="win95-text">
-                Condition variables are the standard tool for blocking threads until a shared predicate becomes true. They always work
-                with a mutex: the mutex protects the predicate, and the condition variable handles sleeping and waking. This page
-                explains the mental model, formal rules, correct usage patterns, and the subtle bugs that appear without them.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="cv-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`cv-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="cv-main">
+          <aside className="cv-toc" aria-label="Table of contents">
+            <h2 className="cv-toc-title">Contents</h2>
+            <ul className="cv-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="cv-content">
+            <h1 className="cv-doc-title">Condition Variables</h1>
+            <p>
+              Condition variables are the standard tool for blocking threads until a shared predicate becomes true. They always work
+              with a mutex: the mutex protects the predicate, and the condition variable handles sleeping and waking.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Mental Model</legend>
-            <div className="win95-grid win95-grid-4">
-              {mentalModel.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {glossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core Rules of Use</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The condition variable does not store the condition. The predicate lives in shared state. The condition variable only
-                manages sleep and wake coordination.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>API Surface</legend>
-            <div className="win95-grid win95-grid-2">
-              {apiSurface.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mesa vs Hoare Semantics</legend>
-            <div className="win95-grid win95-grid-2">
-              {semanticsComparison.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Patterns You Will Reuse</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {compareTools.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Timeline</legend>
-            <div className="win95-panel">
-              <div className="win95-heading">Wait/Signal Stepper</div>
-              <p className="win95-text">
-                Pick a scenario, then step through the timeline. This highlights why correct usage always pairs a predicate with a
-                mutex and a while-loop around wait.
-              </p>
-              <div className="win95-grid win95-grid-3">
-                {timelineScenarios.map((scenario) => (
-                  <button
-                    key={scenario.id}
-                    type="button"
-                    className="win95-button"
-                    onClick={() => {
-                      setSelectedScenarioId(scenario.id)
-                      setStepIndex(0)
-                    }}
-                  >
-                    {scenario.title}
-                  </button>
-                ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text"><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
-                <p className="win95-text">{stepText}</p>
-                <p className="win95-text win95-note">{selectedScenario?.summary ?? ''}</p>
-              </div>
-              <div className="win95-grid win95-grid-3">
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex(0)}
-                >
-                  RESET
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
-                >
-                  BACK
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => {
-                    if (canStepForward) {
-                      setStepIndex((prev) => prev + 1)
-                    }
-                  }}
-                >
-                  STEP
-                </button>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation Notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance Tips</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceTips.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced Patterns</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Signal vs Broadcast Guide</legend>
-            <div className="win95-grid win95-grid-2">
-              {signalChoiceGuide.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Lifecycle Checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {lifecycleSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {commonPitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Patterns at a Glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Pattern</th>
-                    <th>Predicate</th>
-                    <th>Typical signal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {exampleTable.map((row) => (
-                    <tr key={row.pattern}>
-                      <td>{row.pattern}</td>
-                      <td>{row.predicate}</td>
-                      <td>{row.signal}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="cv-section">
+                  <h2 className="cv-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="cv-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="cv-divider" />
+                <section id="bp-why" className="cv-section">
+                  <h2 className="cv-heading">Why This Matters</h2>
+                  <p>
+                    Correctness with condition variables requires a predicate, a mutex, and a loop. Notifications are hints, not
+                    guarantees.
+                  </p>
+                  <p>
+                    Most practical patterns, including bounded buffers, barriers, and readers-writers coordination, rely on this
+                    precise contract.
+                  </p>
+                </section>
+                <hr className="cv-divider" />
+                <section id="bp-takeaways" className="cv-section">
+                  <h2 className="cv-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Debugging Checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {debuggingChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-model" className="cv-section">
+                  <h2 className="cv-heading">Mental Model</h2>
+                  {mentalModel.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-rules" className="cv-section">
+                  <h2 className="cv-heading">Core Rules</h2>
+                  {coreRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The condition variable does not store the condition. The predicate lives in shared state. The condition variable
+                    only manages sleep and wake coordination.
+                  </p>
+                </section>
+                <section id="core-api" className="cv-section">
+                  <h2 className="cv-heading">API Surface</h2>
+                  {apiSurface.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-semantics" className="cv-section">
+                  <h2 className="cv-heading">Mesa vs Hoare Semantics</h2>
+                  {semanticsComparison.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-patterns" className="cv-section">
+                  <h2 className="cv-heading">Patterns You Will Reuse</h2>
+                  {keyPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-compare" className="cv-section">
+                  <h2 className="cv-heading">Compare and Contrast</h2>
+                  {compareTools.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-correctness" className="cv-section">
+                  <h2 className="cv-heading">Correctness Checklist</h2>
+                  {correctnessChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-implementation" className="cv-section">
+                  <h2 className="cv-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="cv-section">
+                  <h2 className="cv-heading">Performance Tips</h2>
+                  {performanceTips.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="cv-section">
+                  <h2 className="cv-heading">Advanced Patterns</h2>
+                  {advancedPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-signal" className="cv-section">
+                  <h2 className="cv-heading">Signal vs Broadcast Guide</h2>
+                  {signalChoiceGuide.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-lifecycle" className="cv-section">
+                  <h2 className="cv-heading">Lifecycle Checklist</h2>
+                  {lifecycleSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="cv-section">
+                  <h2 className="cv-heading">Common Pitfalls</h2>
+                  <ul>
+                    {commonPitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-debugging" className="cv-section">
+                  <h2 className="cv-heading">Debugging Checklist</h2>
+                  {debuggingChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-faq" className="cv-section">
+                  <h2 className="cv-heading">FAQ</h2>
+                  {faq.map((item) => (
+                    <p key={item.question}>
+                      <strong>{item.question}</strong> {item.answer}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>FAQ</legend>
-            <div className="win95-stack">
-              {faq.map((item) => (
-                <div key={item.question} className="win95-panel">
-                  <div className="win95-heading">{item.question}</div>
-                  <p className="win95-text">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-pseudocode" className="cv-section">
+                  <h2 className="cv-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="cv-subheading">{item.title}</h3>
+                      <div className="cv-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-worked" className="cv-section">
+                  <h2 className="cv-heading">Worked Examples</h2>
+                  {workedExamples.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="cv-subheading">{item.title}</h3>
+                      <div className="cv-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-timeline" className="cv-section">
+                  <h2 className="cv-heading">Interactive Timeline</h2>
+                  <p>
+                    Pick a scenario, then step through the timeline. This highlights why correct usage always pairs a predicate with
+                    a mutex and a while-loop around wait.
+                  </p>
+                  <div className="cv-inline-buttons">
+                    {timelineScenarios.map((scenario) => (
+                      <button
+                        key={scenario.id}
+                        type="button"
+                        className="cv-push"
+                        onClick={() => {
+                          setSelectedScenarioId(scenario.id)
+                          setStepIndex(0)
+                        }}
+                      >
+                        {scenario.title}
+                      </button>
+                    ))}
+                  </div>
+                  <p><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
+                  <p>{stepText}</p>
+                  <p><strong>Summary:</strong> {selectedScenario?.summary ?? ''}</p>
+                  <div className="cv-inline-buttons">
+                    <button type="button" className="cv-push" onClick={() => setStepIndex(0)}>
+                      Reset
+                    </button>
+                    <button type="button" className="cv-push" onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}>
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      className="cv-push"
+                      onClick={() => {
+                        if (canStepForward) {
+                          setStepIndex((prev) => prev + 1)
+                        }
+                      }}
+                    >
+                      Step
+                    </button>
+                  </div>
+                </section>
+                <section id="ex-patterns" className="cv-section">
+                  <h2 className="cv-heading">Patterns at a Glance</h2>
+                  {exampleTable.map((row) => (
+                    <p key={row.pattern}>
+                      <strong>{row.pattern}:</strong> Predicate `{row.predicate}`; typical signal `{row.signal}`.
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="cv-section">
+                <h2 className="cv-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
