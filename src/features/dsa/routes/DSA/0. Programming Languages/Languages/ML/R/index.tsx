@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -552,285 +552,579 @@ const learningPath = [
   },
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Dataframes',
+    definition:
+      'Tables are central. Most workflows start with dataframes and end with plots or model outputs.',
+  },
+  {
+    term: 'Formula interface',
+    definition:
+      'Model definitions use formulas like y ~ x1 + x2, enabling expressive statistical specs.',
+  },
+  {
+    term: 'Tidyverse',
+    definition:
+      'dplyr, ggplot2, tidyr, and friends made data transformation and visualization consistent and expressive.',
+  },
+  {
+    term: 'Factors',
+    definition:
+      'Factor levels control modeling behavior and plotting order.',
+  },
+  {
+    term: 'Vectorization',
+    definition:
+      'Vectorized operations use optimized C loops behind the scenes and avoid per-row overhead.',
+  },
+  {
+    term: 'Reproducible research',
+    definition:
+      'R Markdown and Quarto enable reports that combine code, results, and narrative.',
+  },
+  {
+    term: 'renv',
+    definition:
+      'renv snapshots package versions for reproducibility.',
+  },
+  {
+    term: 'Interoperability',
+    definition:
+      'reticulate to call Python from R. Rcpp for C++ integration. Database connectors via DBI.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-content p,
+.win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-content ul,
+.win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-realworld', label: 'Real-World Applications' },
+    { id: 'bp-decision', label: 'When to Use It' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Core Mental Models' },
+    { id: 'core-fundamentals', label: 'Language Fundamentals' },
+    { id: 'core-runtime', label: 'Runtime Pipeline' },
+    { id: 'core-types', label: 'Type System and Data Design' },
+    { id: 'core-ecosystem', label: 'Ecosystem Pillars' },
+    { id: 'core-tooling', label: 'Tooling and Workflow' },
+    { id: 'core-performance', label: 'Performance Checklist' },
+    { id: 'core-concurrency', label: 'Concurrency and Parallelism' },
+    { id: 'core-interop', label: 'Interoperability' },
+    { id: 'core-deploy', label: 'Deployment Paths' },
+    { id: 'core-comparisons', label: 'Comparisons and Tradeoffs' },
+    { id: 'core-learning', label: 'Learning Path' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function RPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `R (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'R',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">R</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">R</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Statistical computing with expressive data workflows</div>
-              <p className="win95-text">
-                R is purpose-built for statistics, data analysis, and visualization. It combines an interactive environment,
-                an enormous ecosystem of statistical packages, and a culture of reproducible research, making it a mainstay
-                in analytics and data science.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                R focuses on data exploration, statistical inference, and visualization. It excels when the goal is insight,
-                model interpretability, and report-ready charts rather than raw system throughput.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">R</h1>
+            <p>
+              Statistical computing with expressive data workflows. R is purpose-built for statistics, data analysis, and
+              visualization. It combines an interactive environment, an enormous ecosystem of statistical packages, and a culture
+              of reproducible research, making it a mainstay in analytics and data science.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Language fundamentals</legend>
-            <div className="win95-grid win95-grid-2">
-              {languageFundamentals.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Runtime pipeline</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Stage</th>
-                    <th>What happens</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {runtimePipeline.map((item) => (
-                    <tr key={item.stage}>
-                      <td>{item.stage}</td>
-                      <td>{item.description}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">Overview</h2>
+                  <p>
+                    R focuses on data exploration, statistical inference, and visualization. It excels when the goal is insight,
+                    model interpretability, and report-ready charts rather than raw system throughput.
+                  </p>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-history" className="win98-section">
+                  <h2 className="win98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Type system and data design</legend>
-            <div className="win95-grid win95-grid-2">
-              {typeSystemDetails.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: ecosystem pillars</legend>
-            <div className="win95-grid win95-grid-3">
-              {ecosystemPillars.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-realworld" className="win98-section">
+                  <h2 className="win98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-decision" className="win98-section">
+                  <h2 className="win98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Tooling and workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {toolingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="win98-section">
+                  <h2 className="win98-heading">Core Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-fundamentals" className="win98-section">
+                  <h2 className="win98-heading">Language Fundamentals</h2>
+                  {languageFundamentals.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-runtime" className="win98-section">
+                  <h2 className="win98-heading">Runtime Pipeline</h2>
+                  {runtimePipeline.map((item) => (
+                    <p key={item.stage}>
+                      <strong>{item.stage}:</strong> {item.description}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-types" className="win98-section">
+                  <h2 className="win98-heading">Type System and Data Design</h2>
+                  {typeSystemDetails.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-ecosystem" className="win98-section">
+                  <h2 className="win98-heading">Ecosystem Pillars</h2>
+                  {ecosystemPillars.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="win98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-tooling" className="win98-section">
+                  <h2 className="win98-heading">Tooling and Workflow</h2>
+                  {toolingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="win98-section">
+                  <h2 className="win98-heading">Performance Checklist</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    R performance comes from vectorization and memory awareness. The fastest workflows keep data operations in
+                    optimized libraries rather than per-row loops.
+                  </p>
+                </section>
+                <section id="core-concurrency" className="win98-section">
+                  <h2 className="win98-heading">Concurrency and Parallelism</h2>
+                  {concurrencyOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-interop" className="win98-section">
+                  <h2 className="win98-heading">Interoperability</h2>
+                  {interopOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-deploy" className="win98-section">
+                  <h2 className="win98-heading">Deployment Paths</h2>
+                  {deploymentOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-comparisons" className="win98-section">
+                  <h2 className="win98-heading">Comparisons and Tradeoffs</h2>
+                  {comparisonNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-learning" className="win98-section">
+                  <h2 className="win98-heading">Learning Path</h2>
+                  {learningPath.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="win98-section">
+                  <h2 className="win98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Performance checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                R performance comes from vectorization and memory awareness. The fastest workflows keep data operations in
-                optimized libraries rather than per-row loops.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Concurrency and parallelism</legend>
-            <div className="win95-grid win95-grid-2">
-              {concurrencyOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interoperability and deployment</legend>
-            <div className="win95-grid win95-grid-2">
-              {interopOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {deploymentOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="win98-section">
+                <h2 className="win98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="win98-subheading">{example.title}</h3>
+                    <div className="win98-codebox">
+                      <code>{example.code}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Comparisons and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisonNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="win98-section">
+                <h2 className="win98-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Learning path</legend>
-            <div className="win95-grid win95-grid-2">
-              {learningPath.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
