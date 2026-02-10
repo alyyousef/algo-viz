@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -204,7 +203,6 @@ const algorithmCheatSheet = {
     { name: 'Kruskal\'s Algorithm', time: 'O(E log V)', space: 'O(V)', notes: 'Sort edges then union-find.' },
   ],
 }
-
 const inputConstraints = [
   {
     title: 'n <= 10^3',
@@ -344,7 +342,7 @@ const amortizedAnalysis = [
   {
     title: 'Potential method',
     detail:
-      'Track stored “potential energy” in a data structure to pay for future expensive steps.',
+      'Track stored "potential energy" in a data structure to pay for future expensive steps.',
   },
   {
     title: 'Aggregate method',
@@ -542,285 +540,650 @@ const keyTakeaways = [
   },
 ]
 
+const bigO = asymptoticNotations[0] ?? {
+  title: 'Big O (O): Upper bound',
+  detail:
+    'Describes the worst-case growth. If an algorithm is O(n^2), it will not grow faster than a quadratic function.',
+  math: 'f(n) = O(g(n)) if there exist c > 0 and n0 such that 0 <= f(n) <= c * g(n) for all n >= n0.',
+}
+const bigOmega = asymptoticNotations[1] ?? {
+  title: 'Big Omega (Omega): Lower bound',
+  detail:
+    'Describes the best-case growth. If an algorithm is Omega(n), it will not grow slower than linear.',
+  math: 'f(n) = Omega(g(n)) if there exist c > 0 and n0 such that 0 <= c * g(n) <= f(n) for all n >= n0.',
+}
+const bigTheta = asymptoticNotations[2] ?? {
+  title: 'Big Theta (Theta): Tight bound',
+  detail:
+    'Used when upper and lower bounds match. If an algorithm is Theta(n log n), it grows at that rate tightly.',
+  math: 'f(n) = Theta(g(n)) if f(n) is both O(g(n)) and Omega(g(n)).',
+}
+const bestCase = caseAnalysis[0] ?? {
+  title: 'Best case',
+  detail: 'The most favorable input arrangement. Often Omega(1) or Omega(n).',
+}
+const averageCase = caseAnalysis[1] ?? {
+  title: 'Average case',
+  detail: 'Expected cost under an input distribution. Useful but can be misleading.',
+}
+const worstCase = caseAnalysis[2] ?? {
+  title: 'Worst case',
+  detail: 'The most expensive input. Used for guarantees and safety.',
+}
+const amortizedCase = caseAnalysis[3] ?? {
+  title: 'Amortized case',
+  detail: 'Average over a sequence of operations; gives guaranteed per-op cost.',
+}
+const inputSizeTerm = growthIntuition[5] ?? {
+  title: 'Input size definition matters',
+  detail: 'n might be elements, digits, vertices, edges, or bytes. Always define it explicitly.',
+}
+
+const glossaryTerms = [
+  {
+    term: bigO.title,
+    definition: bigO.detail,
+    note: bigO.math,
+  },
+  {
+    term: bigOmega.title,
+    definition: bigOmega.detail,
+    note: bigOmega.math,
+  },
+  {
+    term: bigTheta.title,
+    definition: bigTheta.detail,
+    note: bigTheta.math,
+  },
+  {
+    term: bestCase.title,
+    definition: bestCase.detail,
+  },
+  {
+    term: averageCase.title,
+    definition: averageCase.detail,
+  },
+  {
+    term: worstCase.title,
+    definition: worstCase.detail,
+  },
+  {
+    term: amortizedCase.title,
+    definition: amortizedCase.detail,
+  },
+  {
+    term: inputSizeTerm.title,
+    definition: inputSizeTerm.detail,
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-content p,
+.win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.win98-mono {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.win98-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 6px 0 12px;
+}
+
+.win98-table th,
+.win98-table td {
+  border: 1px solid #c0c0c0;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.win98-table th {
+  background: #e6e6e6;
+}
+
+@media (max-width: 900px) {
+  .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-big-picture', label: 'The Big Picture' },
+    { id: 'bp-growth', label: 'Growth Intuition' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-notations', label: 'Asymptotic Notations' },
+    { id: 'core-cases', label: 'Best/Average/Worst/Amortized' },
+    { id: 'core-input-size', label: 'What Counts as n?' },
+    { id: 'core-input-rules', label: 'Input Size Rules' },
+    { id: 'core-patterns', label: 'Complexity Patterns' },
+    { id: 'core-amortized', label: 'Amortized Analysis' },
+    { id: 'core-master', label: 'Master Theorem' },
+    { id: 'core-tradeoffs', label: 'Time vs Space' },
+    { id: 'core-profiling', label: 'Profiling Notes' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-classes', label: 'Complexity Classes' },
+    { id: 'ex-recurrence', label: 'Recurrence Examples' },
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-cheatsheet', label: 'Algorithm Cheat Sheet' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
 export default function ComplexityAnalysisPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Complexity Analysis (Big O) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Complexity Analysis (Big O)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Complexity Analysis (Big O)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">Complexity Analysis (Big O)</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">The language of algorithmic growth and scalability</div>
-              <p className="win95-text">
-                Complexity analysis explains how time and memory demands scale with input size. It ignores constant factors and
-                hardware details so you can compare algorithms by growth rate and avoid choices that collapse at scale.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>Overview</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Complexity analysis provides the essential vocabulary to discuss how an algorithm&apos;s performance scales with the
-                size of the input. It abstracts away machine-specific details to give us a mathematical lens to compare approaches
-                and build systems that last.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  {item.note && <p className="win95-note">{item.note}</p>}
-                </div>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">Complexity Analysis (Big O)</h1>
+            <p>
+              Complexity analysis explains how time and memory demands scale with input size. It ignores constant factors and
+              hardware details so you can compare algorithms by growth rate and avoid choices that collapse at scale.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Growth intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {growthIntuition.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">Overview</h2>
+                  <h3 className="win98-subheading">The language of algorithmic growth and scalability</h3>
+                  <p>
+                    Complexity analysis provides the essential vocabulary to discuss how an algorithm&apos;s performance scales with the
+                    size of the input. It abstracts away machine-specific details to give us a mathematical lens to compare approaches
+                    and build systems that last.
+                  </p>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-big-picture" className="win98-section">
+                  <h2 className="win98-heading">The Big Picture</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-growth" className="win98-section">
+                  <h2 className="win98-heading">Growth Intuition</h2>
+                  {growthIntuition.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  {keyTakeaways.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Asymptotic notations: O, Omega, Theta</legend>
-            <div className="win95-grid win95-grid-2">
-              {asymptoticNotations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-math">{item.math}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Big O is the speed limit (upper bound), Big Omega is the minimum speed (lower bound), and Big Theta means both limits
-                match, so the growth rate is tightly pinned down.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-notations" className="win98-section">
+                  <h2 className="win98-heading">Asymptotic Notations</h2>
+                  {asymptoticNotations.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p className="win98-mono">{item.math}</p>
+                    </div>
+                  ))}
+                  <p>
+                    Big O is the speed limit (upper bound), Big Omega is the minimum speed (lower bound), and Big Theta means both
+                    limits match, so the growth rate is tightly pinned down.
+                  </p>
+                </section>
+                <section id="core-cases" className="win98-section">
+                  <h2 className="win98-heading">Best, Average, Worst, Amortized</h2>
+                  {caseAnalysis.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-input-size" className="win98-section">
+                  <h2 className="win98-heading">What Counts as n?</h2>
+                  {inputSizeExamples.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-input-rules" className="win98-section">
+                  <h2 className="win98-heading">Rules of Thumb by Input Size</h2>
+                  {inputConstraints.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-patterns" className="win98-section">
+                  <h2 className="win98-heading">Common Complexity Patterns</h2>
+                  {complexityPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-amortized" className="win98-section">
+                  <h2 className="win98-heading">Amortized Analysis</h2>
+                  {amortizedAnalysis.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-master" className="win98-section">
+                  <h2 className="win98-heading">Master Theorem Quick Guide</h2>
+                  {masterTheoremNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-tradeoffs" className="win98-section">
+                  <h2 className="win98-heading">Time vs Space Tradeoffs</h2>
+                  {memoryTradeoffs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-profiling" className="win98-section">
+                  <h2 className="win98-heading">Profiling and Reality Checks</h2>
+                  {profilingNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls &amp; Mistakes</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Best, average, worst, amortized</legend>
-            <div className="win95-grid win95-grid-2">
-              {caseAnalysis.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-classes" className="win98-section">
+                  <h2 className="win98-heading">A Tour of Common Complexity Classes</h2>
+                  {complexityClasses.map((item) => (
+                    <div key={item.class}>
+                      <h3 className="win98-subheading win98-mono">{item.class}</h3>
+                      <p>{item.explanation}</p>
+                      <div className="win98-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-recurrence" className="win98-section">
+                  <h2 className="win98-heading">Recurrence Examples</h2>
+                  {recurrenceExamples.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p className="win98-mono">{item.code}</p>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-worked" className="win98-section">
+                  <h2 className="win98-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="win98-subheading">{example.title}</h3>
+                      <div className="win98-codebox">
+                        <code>{example.code}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-cheatsheet" className="win98-section">
+                  <h2 className="win98-heading">Algorithm Complexity Cheat Sheet</h2>
+                  {Object.entries(algorithmCheatSheet).map(([category, algorithms]) => (
+                    <div key={category}>
+                      <h3 className="win98-subheading" style={{ textTransform: 'capitalize' }}>
+                        {category}
+                      </h3>
+                      <table className="win98-table">
+                        <thead>
+                          <tr>
+                            <th>Algorithm</th>
+                            <th>Time Complexity</th>
+                            <th>Space Complexity</th>
+                            <th>Notes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {algorithms.map((algo) => (
+                            <tr key={algo.name}>
+                              <td className="win98-mono">{algo.name}</td>
+                              <td className="win98-mono">{algo.time}</td>
+                              <td className="win98-mono">{algo.space}</td>
+                              <td>{algo.notes}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>What counts as n?</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputSizeExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Rules of thumb by input size</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputConstraints.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common complexity patterns</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>A tour of common complexity classes</legend>
-            <div className="win95-stack">
-              {complexityClasses.map((item) => (
-                <div key={item.class} className="win95-panel">
-                  <div className="win95-heading win95-mono">{item.class}</div>
-                  <p className="win95-text">{item.explanation}</p>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Amortized analysis</legend>
-            <div className="win95-grid win95-grid-2">
-              {amortizedAnalysis.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Recurrence examples</legend>
-            <div className="win95-stack">
-              {recurrenceExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text win95-mono">{item.code}</p>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Master theorem quick guide</legend>
-            <div className="win95-grid win95-grid-2">
-              {masterTheoremNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm complexity cheat sheet</legend>
-            <div className="win95-stack">
-              {Object.entries(algorithmCheatSheet).map(([category, algorithms]) => (
-                <div key={category} className="win95-panel">
-                  <div className="win95-subheading" style={{ textTransform: 'capitalize' }}>
-                    {category}
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="win98-section">
+                <h2 className="win98-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <div key={item.term}>
+                    <h3 className="win98-subheading">{item.term}</h3>
+                    <p>{item.definition}</p>
+                    {item.note && <p className="win98-mono">{item.note}</p>}
                   </div>
-                  <table className="win95-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Time Complexity</th>
-                        <th>Space Complexity</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {algorithms.map((algo) => (
-                        <tr key={algo.name}>
-                          <td className="win95-mono">{algo.name}</td>
-                          <td className="win95-mono">{algo.time}</td>
-                          <td className="win95-mono">{algo.space}</td>
-                          <td>{algo.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Time vs space tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {memoryTradeoffs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Profiling and reality checks</legend>
-            <div className="win95-grid win95-grid-2">
-              {profilingNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls &amp; mistakes</legend>
-            <div className="win95-panel">
-              <div className="win95-subheading">Pitfalls to avoid</div>
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
