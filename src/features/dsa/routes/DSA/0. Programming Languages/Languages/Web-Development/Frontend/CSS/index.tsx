@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -590,295 +590,574 @@ const learningPath = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const glossary = [
+  { term: 'Cascade', definition: 'Rule conflict resolution based on origin, importance, specificity, and order.' },
+  { term: 'Specificity', definition: 'Selector weighting system that decides which rule wins among matching selectors.' },
+  { term: 'Box Model', definition: 'Content, padding, border, and margin layers defining element dimensions.' },
+  { term: 'Flexbox', definition: 'One-dimensional layout model for distributing and aligning items in rows or columns.' },
+  { term: 'Grid', definition: 'Two-dimensional layout system with explicit row and column tracks.' },
+  { term: 'Container Query', definition: 'Conditional styling based on a component container size, not viewport size.' },
+  { term: 'Custom Property', definition: 'CSS variable that can cascade and be overridden for theming and tokens.' },
+  { term: 'Rendering Pipeline', definition: 'Browser stages: style, layout, paint, and composite.' },
+  { term: 'Reflow', definition: 'Layout recalculation triggered by geometry-affecting style or DOM changes.' },
+  { term: 'Compositing', definition: 'GPU layer composition stage where transform/opacity animations are efficient.' },
+]
+
+const cssHelpStyles = `
+.css98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  margin: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.css98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.css98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+  color: #fff;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+}
+
+.css98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.css98-title-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.css98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.css98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.css98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.css98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.css98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.css98-toc {
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  overflow: auto;
+}
+
+.css98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.css98-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.css98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.css98-toc-list a {
+  font-size: 12px;
+  color: #000;
+  text-decoration: none;
+}
+
+.css98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.css98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.css98-section {
+  margin: 0 0 22px;
+}
+
+.css98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.css98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.css98-content p,
+.css98-content li,
+.css98-content th,
+.css98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.css98-content p {
+  margin: 0 0 10px;
+}
+
+.css98-content ul,
+.css98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.css98-content table {
+  border-collapse: collapse;
+  margin: 0 0 10px;
+}
+
+.css98-content th,
+.css98-content td {
+  padding: 2px 8px 2px 0;
+  vertical-align: top;
+}
+
+.css98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.css98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.css98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .css98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .css98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Core Pillars' },
+    { id: 'core-cascade', label: 'Cascade Rules' },
+    { id: 'core-layout', label: 'Layout Systems' },
+    { id: 'core-sizing', label: 'Units and Sizing' },
+    { id: 'core-responsive', label: 'Responsive Patterns' },
+    { id: 'core-accessibility', label: 'Accessibility' },
+    { id: 'core-performance', label: 'Performance and Rendering' },
+    { id: 'core-pipeline', label: 'Rendering Pipeline' },
+    { id: 'core-tooling', label: 'Tooling and Workflows' },
+    { id: 'core-design-system', label: 'Design System Practices' },
+    { id: 'core-debugging', label: 'Debugging Workflow' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-production', label: 'Production Checklist' },
+    { id: 'core-when', label: 'When to Use What' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-learning', label: 'Learning Path' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function CssPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `CSS (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'CSS',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">CSS</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="css98-help-page">
+      <style>{cssHelpStyles}</style>
+      <div className="css98-window" role="presentation">
+        <header className="css98-titlebar">
+          <span className="css98-title-text">CSS</span>
+          <div className="css98-title-controls">
+            <button className="css98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="css98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">A styling language that turns structure into layout, typography, and motion</div>
-              <p className="win95-text">
-                CSS (Cascading Style Sheets) defines how web documents look and behave. It controls typography, spacing, color,
-                layout, responsiveness, and even animation. The core challenge is not memorizing properties; it is mastering
-                the cascade, choosing the right layout system, and keeping styles predictable as projects grow.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                CSS is a declarative rule engine. You describe what elements should look like, and the browser resolves
-                conflicts using the cascade. A good CSS system is consistent, layered, and intentional, so changes are easy
-                and side effects are rare.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="css98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`css98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="css98-main">
+          <aside className="css98-toc" aria-label="Table of contents">
+            <h2 className="css98-toc-title">Contents</h2>
+            <ul className="css98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="css98-content">
+            <h1 className="css98-doc-title">CSS</h1>
+            <p>
+              CSS (Cascading Style Sheets) defines how web documents look and behave. It controls typography, spacing, color,
+              layout, responsiveness, and animation. The core challenge is mastering the cascade, choosing the right layout
+              system, and keeping styles predictable as projects grow.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core pillars of CSS</legend>
-            <div className="win95-grid win95-grid-3">
-              {cssPillars.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="css98-section">
+                  <h2 className="css98-heading">Overview</h2>
+                  <p>
+                    CSS is a declarative rule engine. You describe what elements should look like, and the browser resolves
+                    conflicts using the cascade. A good CSS system is layered and intentional, so changes are easy and side
+                    effects are rare.
+                  </p>
+                </section>
+                <hr className="css98-divider" />
+                <section id="bp-history" className="css98-section">
+                  <h2 className="css98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-models" className="css98-section">
+                  <h2 className="css98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="css98-section">
+                  <h2 className="css98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How the cascade decides</legend>
-            <div className="win95-grid win95-grid-2">
-              {cascadeRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The cascade is predictable once you internalize the priority ladder. If you need an override, consider whether
-                it is best solved by layering, lowering specificity, or changing source order rather than reaching for !important.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="css98-section">
+                  <h2 className="css98-heading">Core Pillars of CSS</h2>
+                  {cssPillars.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="css98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-cascade" className="css98-section">
+                  <h2 className="css98-heading">How the Cascade Decides</h2>
+                  {cascadeRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The cascade is predictable once you internalize the priority ladder. Prefer layering and specificity control
+                    over `!important` whenever possible.
+                  </p>
+                </section>
+                <section id="core-layout" className="css98-section">
+                  <h2 className="css98-heading">Layout Systems</h2>
+                  {layoutSystems.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-sizing" className="css98-section">
+                  <h2 className="css98-heading">Units and Sizing</h2>
+                  {unitsAndSizing.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-responsive" className="css98-section">
+                  <h2 className="css98-heading">Responsive Design Patterns</h2>
+                  {responsivePatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-accessibility" className="css98-section">
+                  <h2 className="css98-heading">Accessibility Considerations</h2>
+                  {accessibilityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="css98-section">
+                  <h2 className="css98-heading">Performance and Rendering</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pipeline" className="css98-section">
+                  <h2 className="css98-heading">Rendering Pipeline</h2>
+                  {renderingPipeline.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-tooling" className="css98-section">
+                  <h2 className="css98-heading">Tooling and Workflows</h2>
+                  {toolingStack.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-design-system" className="css98-section">
+                  <h2 className="css98-heading">Design System Practices</h2>
+                  {designSystemNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debugging" className="css98-section">
+                  <h2 className="css98-heading">Debugging Workflow</h2>
+                  {debuggingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="css98-section">
+                  <h2 className="css98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-production" className="css98-section">
+                  <h2 className="css98-heading">Production Checklist</h2>
+                  {productionChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-when" className="css98-section">
+                  <h2 className="css98-heading">When to Use What</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="css98-section">
+                  <h2 className="css98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-learning" className="css98-section">
+                  <h2 className="css98-heading">Learning Path</h2>
+                  {learningPath.map((item) => (
+                    <p key={item.step}>
+                      <strong>{item.step}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Layout systems</legend>
-            <div className="win95-grid win95-grid-2">
-              {layoutSystems.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Units and sizing</legend>
-            <div className="win95-grid win95-grid-2">
-              {unitsAndSizing.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Responsive design patterns</legend>
-            <div className="win95-grid win95-grid-2">
-              {responsivePatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Accessibility considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {accessibilityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance and rendering</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Rendering pipeline</legend>
-            <div className="win95-grid win95-grid-2">
-              {renderingPipeline.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Tooling and workflows</legend>
-            <div className="win95-grid win95-grid-2">
-              {toolingStack.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Design system practices</legend>
-            <div className="win95-grid win95-grid-2">
-              {designSystemNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {debuggingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="css98-section">
+                <h2 className="css98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="css98-subheading">{example.title}</h3>
+                    <div className="css98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Production checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {productionChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use what</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="css98-section">
+                <h2 className="css98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Learning path</legend>
-            <div className="win95-grid win95-grid-2">
-              {learningPath.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
