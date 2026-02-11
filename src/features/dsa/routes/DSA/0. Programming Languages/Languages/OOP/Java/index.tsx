@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -538,301 +538,585 @@ const learningPath = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const glossary = [
+  { term: 'JVM', definition: 'A portable runtime that executes Java bytecode and optimizes hot paths at runtime.' },
+  { term: 'Bytecode', definition: 'Platform-neutral instructions produced by javac and executed by the JVM.' },
+  { term: 'JIT', definition: 'Runtime compilation of frequently used methods into native machine code.' },
+  { term: 'Garbage Collection', definition: 'Automatic memory reclamation that removes unreachable objects.' },
+  { term: 'Generics', definition: 'Parameterized types that provide reuse while preserving type safety.' },
+  { term: 'Records', definition: 'Compact immutable data carriers for modeling data-oriented types.' },
+  { term: 'Sealed Classes', definition: 'A way to constrain inheritance to a known set of subclasses.' },
+  { term: 'CompletableFuture', definition: 'An API for asynchronous pipelines and non-blocking composition.' },
+  { term: 'Virtual Threads', definition: 'Lightweight threads introduced by Project Loom for high concurrency.' },
+  { term: 'JFR', definition: 'Java Flight Recorder, built-in production profiling and observability.' },
+  { term: 'JNI / Panama', definition: 'Interoperability layers for calling native C or system libraries.' },
+  { term: 'GraalVM Native Image', definition: 'Ahead-of-time compilation to reduce startup time and memory.' },
+]
+
+const javaHelpStyles = `
+.java98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  margin: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.java98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.java98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+  color: #fff;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+}
+
+.java98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.java98-title-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.java98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.java98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.java98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.java98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.java98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.java98-toc {
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  overflow: auto;
+}
+
+.java98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.java98-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.java98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.java98-toc-list a {
+  font-size: 12px;
+  color: #000;
+  text-decoration: none;
+}
+
+.java98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.java98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.java98-section {
+  margin: 0 0 22px;
+}
+
+.java98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.java98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.java98-content p,
+.java98-content li,
+.java98-content th,
+.java98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.java98-content p {
+  margin: 0 0 10px;
+}
+
+.java98-content ul,
+.java98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.java98-content table {
+  border-collapse: collapse;
+  margin: 0 0 10px;
+}
+
+.java98-content th,
+.java98-content td {
+  padding: 2px 8px 2px 0;
+  vertical-align: top;
+}
+
+.java98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.java98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.java98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .java98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .java98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-fundamentals', label: 'Language Fundamentals' },
+    { id: 'core-runtime', label: 'Runtime Pipeline' },
+    { id: 'core-types', label: 'Type System and Design' },
+    { id: 'core-library', label: 'Standard Library' },
+    { id: 'core-oop', label: 'OOP Features' },
+    { id: 'core-workflow', label: 'Tooling and Workflow' },
+    { id: 'core-performance', label: 'Performance Checklist' },
+    { id: 'core-concurrency', label: 'Concurrency and Parallelism' },
+    { id: 'core-uses', label: 'Real-World Applications' },
+    { id: 'core-interop', label: 'Interoperability and Deployment' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-compare', label: 'Comparisons and Tradeoffs' },
+    { id: 'core-when', label: 'When to Use It' },
+    { id: 'core-learning', label: 'Learning Path' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function JavaPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Java (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Java',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Java</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="java98-help-page">
+      <style>{javaHelpStyles}</style>
+      <div className="java98-window" role="presentation">
+        <header className="java98-titlebar">
+          <span className="java98-title-text">Java</span>
+          <div className="java98-title-controls">
+            <button className="java98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="java98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Portable OOP with a battle-tested runtime and ecosystem</div>
-              <p className="win95-text">
-                Java is the classic object-oriented language for large-scale systems. It runs on the JVM, offers automatic
-                memory management, and powers everything from enterprise applications to Android. This page focuses on its
-                design choices, performance characteristics, and best-fit use cases.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Java balances portability, performance, and safety. The JVM abstracts the OS and hardware, while the language
-                enforces strong typing and object-oriented patterns. It shines in long-running services and large teams that
-                benefit from tooling and predictability.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="java98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`java98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="java98-main">
+          <aside className="java98-toc" aria-label="Table of contents">
+            <h2 className="java98-toc-title">Contents</h2>
+            <ul className="java98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="java98-content">
+            <h1 className="java98-doc-title">Java</h1>
+            <p>
+              Java is the classic object-oriented language for large-scale systems. It runs on the JVM, offers automatic memory
+              management, and powers everything from enterprise applications to Android. This document focuses on Java design
+              choices, runtime behavior, and practical tradeoffs.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Language fundamentals</legend>
-            <div className="win95-grid win95-grid-2">
-              {languageFundamentals.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Runtime pipeline</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Stage</th>
-                    <th>What happens</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {runtimePipeline.map((item) => (
-                    <tr key={item.stage}>
-                      <td>{item.stage}</td>
-                      <td>{item.description}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="java98-section">
+                  <h2 className="java98-heading">Overview</h2>
+                  <p>
+                    Java balances portability, performance, and safety. The JVM abstracts the OS and hardware, while the
+                    language enforces strong typing and object-oriented patterns. It shines in long-running services and large
+                    teams that benefit from tooling and predictability.
+                  </p>
+                </section>
+                <hr className="java98-divider" />
+                <section id="bp-history" className="java98-section">
+                  <h2 className="java98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Type system and design</legend>
-            <div className="win95-grid win95-grid-2">
-              {typeSystemDetails.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Standard library highlights</legend>
-            <div className="win95-grid win95-grid-2">
-              {standardLibraryHighlights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: OOP and core features</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreOopFeatures.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                </section>
+                <section id="bp-models" className="java98-section">
+                  <h2 className="java98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="java98-section">
+                  <h2 className="java98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Tooling and workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {toolingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-fundamentals" className="java98-section">
+                  <h2 className="java98-heading">Language Fundamentals</h2>
+                  {languageFundamentals.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-runtime" className="java98-section">
+                  <h2 className="java98-heading">Runtime Pipeline</h2>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Stage</th>
+                        <th>What happens</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {runtimePipeline.map((item) => (
+                        <tr key={item.stage}>
+                          <td>{item.stage}</td>
+                          <td>{item.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+                <section id="core-types" className="java98-section">
+                  <h2 className="java98-heading">Type System and Design</h2>
+                  {typeSystemDetails.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-library" className="java98-section">
+                  <h2 className="java98-heading">Standard Library Highlights</h2>
+                  {standardLibraryHighlights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-oop" className="java98-section">
+                  <h2 className="java98-heading">How It Works: OOP and Core Features</h2>
+                  {coreOopFeatures.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="java98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-workflow" className="java98-section">
+                  <h2 className="java98-heading">Tooling and Workflow</h2>
+                  {toolingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="java98-section">
+                  <h2 className="java98-heading">Performance Checklist</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Java performance comes from JIT optimization and careful memory usage. Profiling and GC tuning are
+                    essential when targeting low-latency workloads.
+                  </p>
+                </section>
+                <section id="core-concurrency" className="java98-section">
+                  <h2 className="java98-heading">Concurrency and Parallelism</h2>
+                  {concurrencyOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-uses" className="java98-section">
+                  <h2 className="java98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-interop" className="java98-section">
+                  <h2 className="java98-heading">Interoperability and Deployment</h2>
+                  <h3 className="java98-subheading">Interoperability</h3>
+                  {interopOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="java98-subheading">Deployment</h3>
+                  {deploymentOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="java98-section">
+                  <h2 className="java98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-compare" className="java98-section">
+                  <h2 className="java98-heading">Comparisons and Tradeoffs</h2>
+                  {comparisonNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-when" className="java98-section">
+                  <h2 className="java98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-learning" className="java98-section">
+                  <h2 className="java98-heading">Learning Path</h2>
+                  {learningPath.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="java98-section">
+                  <h2 className="java98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Performance checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Java performance comes from JIT optimization and careful memory usage. Profiling and GC tuning are essential
-                when targeting low-latency workloads.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Concurrency and parallelism</legend>
-            <div className="win95-grid win95-grid-2">
-              {concurrencyOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interoperability and deployment</legend>
-            <div className="win95-grid win95-grid-2">
-              {interopOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {deploymentOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="java98-section">
+                <h2 className="java98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="java98-subheading">{example.title}</h3>
+                    <div className="java98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Comparisons and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisonNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="java98-section">
+                <h2 className="java98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Learning path</legend>
-            <div className="win95-grid win95-grid-2">
-              {learningPath.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
