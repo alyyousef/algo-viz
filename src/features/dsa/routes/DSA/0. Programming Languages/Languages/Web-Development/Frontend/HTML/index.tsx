@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -589,309 +589,582 @@ const learningPath = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const glossary = [
+  { term: 'DOM', definition: 'Document Object Model tree produced by parsing HTML.' },
+  { term: 'Semantic HTML', definition: 'Markup that uses elements for meaning, not appearance.' },
+  { term: 'Landmarks', definition: 'Structural regions like main/nav/header used for navigation and accessibility.' },
+  { term: 'Progressive Enhancement', definition: 'Start with robust HTML, then layer CSS and JS features.' },
+  { term: 'ARIA', definition: 'Accessibility attributes used when native semantics are insufficient.' },
+  { term: 'Hydration', definition: 'Client-side binding of behavior onto server-rendered HTML.' },
+  { term: 'CSP', definition: 'Content Security Policy controlling allowed resource sources.' },
+  { term: 'Structured Data', definition: 'Machine-readable metadata (often JSON-LD) for search engines.' },
+  { term: 'Viewport Meta', definition: 'Head tag controlling mobile layout viewport behavior.' },
+  { term: 'Doctype', definition: 'Declaration that triggers standards mode parsing.' },
+]
+
+const htmlHelpStyles = `
+.html98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  margin: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.html98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.html98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+  color: #fff;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+}
+
+.html98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.html98-title-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.html98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.html98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.html98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.html98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.html98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.html98-toc {
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  overflow: auto;
+}
+
+.html98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.html98-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.html98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.html98-toc-list a {
+  font-size: 12px;
+  color: #000;
+  text-decoration: none;
+}
+
+.html98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.html98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.html98-section {
+  margin: 0 0 22px;
+}
+
+.html98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.html98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.html98-content p,
+.html98-content li,
+.html98-content th,
+.html98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.html98-content p {
+  margin: 0 0 10px;
+}
+
+.html98-content ul,
+.html98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.html98-content table {
+  border-collapse: collapse;
+  margin: 0 0 10px;
+}
+
+.html98-content th,
+.html98-content td {
+  padding: 2px 8px 2px 0;
+  vertical-align: top;
+}
+
+.html98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.html98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.html98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .html98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .html98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-building', label: 'Building Blocks' },
+    { id: 'core-anatomy', label: 'Document Anatomy' },
+    { id: 'core-semantics', label: 'Semantics and Landmarks' },
+    { id: 'core-forms', label: 'Forms and Input' },
+    { id: 'core-media', label: 'Media and Graphics' },
+    { id: 'core-apis', label: 'HTML Platform APIs' },
+    { id: 'core-seo', label: 'SEO and Metadata' },
+    { id: 'core-parsing', label: 'Parsing and Rendering' },
+    { id: 'core-performance', label: 'Performance and Delivery' },
+    { id: 'core-security', label: 'Security Considerations' },
+    { id: 'core-tooling', label: 'Tooling and Workflow' },
+    { id: 'core-debugging', label: 'Debugging Workflow' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-production', label: 'Production Checklist' },
+    { id: 'core-when', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-learning', label: 'Learning Path' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function HtmlPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `HTML (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'HTML',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">HTML</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
+    <div className="html98-help-page">
+      <style>{htmlHelpStyles}</style>
+      <div className="html98-window" role="presentation">
+        <header className="html98-titlebar">
+          <span className="html98-title-text">HTML</span>
+          <div className="html98-title-controls">
+            <button className="html98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="html98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">The structured language that makes documents navigable, accessible, and resilient</div>
-              <p className="win95-text">
-                HTML defines the structure and meaning of web content. It is the contract between authors, browsers, and assistive
-                technologies. Everything else on the front end builds on this foundation, so mastering HTML means mastering how a page
-                is read, parsed, and experienced. Modern HTML also includes interactive primitives, media support, and metadata that
-                shape SEO, accessibility, and performance.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                HTML turns raw text into a structured document tree. That structure powers layout, accessibility, search indexing, and
-                how scripts locate and update content. When the HTML is correct, everything else becomes easier and more reliable.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="html98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`html98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="html98-main">
+          <aside className="html98-toc" aria-label="Table of contents">
+            <h2 className="html98-toc-title">Contents</h2>
+            <ul className="html98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="html98-content">
+            <h1 className="html98-doc-title">HTML</h1>
+            <p>
+              HTML defines the structure and meaning of web content. It is the contract between authors, browsers, and assistive
+              technologies. Everything else on the front end builds on this foundation, so mastering HTML means mastering how a page
+              is read, parsed, and experienced.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: building blocks</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreBuildingBlocks.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="html98-section">
+                  <h2 className="html98-heading">Overview</h2>
+                  <p>
+                    HTML turns raw text into a structured document tree. That structure powers layout, accessibility, search indexing,
+                    and how scripts locate and update content. When the HTML is correct, everything else becomes easier and more reliable.
+                  </p>
+                </section>
+                <hr className="html98-divider" />
+                <section id="bp-history" className="html98-section">
+                  <h2 className="html98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-models" className="html98-section">
+                  <h2 className="html98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="html98-section">
+                  <h2 className="html98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Document anatomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {documentAnatomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-building" className="html98-section">
+                  <h2 className="html98-heading">How It Works: Building Blocks</h2>
+                  {coreBuildingBlocks.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="html98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-anatomy" className="html98-section">
+                  <h2 className="html98-heading">Document Anatomy</h2>
+                  {documentAnatomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-semantics" className="html98-section">
+                  <h2 className="html98-heading">Semantics and Landmarks</h2>
+                  {semanticsAndLandmarks.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-forms" className="html98-section">
+                  <h2 className="html98-heading">Forms and Input</h2>
+                  {formsAndInput.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-media" className="html98-section">
+                  <h2 className="html98-heading">Media and Graphics</h2>
+                  {mediaAndGraphics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-apis" className="html98-section">
+                  <h2 className="html98-heading">HTML Platform APIs</h2>
+                  {htmlApis.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-seo" className="html98-section">
+                  <h2 className="html98-heading">SEO and Metadata</h2>
+                  {seoAndMetadata.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-parsing" className="html98-section">
+                  <h2 className="html98-heading">Parsing and Rendering Pipeline</h2>
+                  {parsingAndRendering.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="html98-section">
+                  <h2 className="html98-heading">Performance and Delivery</h2>
+                  {performanceAndDelivery.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    HTML is the first byte the browser sees. Keeping it semantic, compact, and well-ordered improves time-to-render and
+                    reduces the work required to hydrate rich interfaces.
+                  </p>
+                </section>
+                <section id="core-security" className="html98-section">
+                  <h2 className="html98-heading">Security Considerations</h2>
+                  {securityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-tooling" className="html98-section">
+                  <h2 className="html98-heading">Tooling and Workflow</h2>
+                  {toolingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debugging" className="html98-section">
+                  <h2 className="html98-heading">Debugging Workflow</h2>
+                  {debuggingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="html98-section">
+                  <h2 className="html98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-production" className="html98-section">
+                  <h2 className="html98-heading">Production Checklist</h2>
+                  {productionChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-when" className="html98-section">
+                  <h2 className="html98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="html98-section">
+                  <h2 className="html98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-learning" className="html98-section">
+                  <h2 className="html98-heading">Learning Path</h2>
+                  {learningPath.map((item) => (
+                    <p key={item.step}>
+                      <strong>{item.step}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Semantics and landmarks</legend>
-            <div className="win95-grid win95-grid-2">
-              {semanticsAndLandmarks.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Forms and input</legend>
-            <div className="win95-grid win95-grid-2">
-              {formsAndInput.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Media and graphics</legend>
-            <div className="win95-grid win95-grid-2">
-              {mediaAndGraphics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>HTML platform APIs</legend>
-            <div className="win95-grid win95-grid-2">
-              {htmlApis.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>SEO and metadata</legend>
-            <div className="win95-grid win95-grid-2">
-              {seoAndMetadata.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Parsing and rendering pipeline</legend>
-            <div className="win95-grid win95-grid-2">
-              {parsingAndRendering.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance and delivery</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceAndDelivery.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                HTML is the first byte the browser sees. Keeping it semantic, compact, and well-ordered improves time-to-render and
-                reduces the work required to hydrate rich interfaces.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Security considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {securityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Tooling and workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {toolingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {debuggingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="html98-section">
+                <h2 className="html98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="html98-subheading">{example.title}</h3>
+                    <div className="html98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Production checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {productionChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="html98-section">
+                <h2 className="html98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Learning path</legend>
-            <div className="win95-grid win95-grid-2">
-              {learningPath.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
