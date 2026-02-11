@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -537,261 +537,546 @@ const learningPath = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const glossary = [
+  { term: 'Event Loop', definition: 'Scheduler that processes tasks and callbacks in JavaScript runtimes.' },
+  { term: 'Microtask', definition: 'High-priority queue for Promise callbacks and async continuations.' },
+  { term: 'Macrotask', definition: 'Queue for timers, events, and I/O callbacks.' },
+  { term: 'Closure', definition: 'Function retaining access to lexical scope after outer function returns.' },
+  { term: 'Prototype Chain', definition: 'Delegation path used for property lookup on objects.' },
+  { term: 'Hoisting', definition: 'Compile-time binding behavior where declarations are processed before execution.' },
+  { term: 'Tree-shaking', definition: 'Build optimization removing unused module exports.' },
+  { term: 'JIT', definition: 'Just-in-time compilation strategy used by engines like V8.' },
+  { term: 'Structured Clone', definition: 'Built-in deep copy algorithm for transferable/serializable data.' },
+  { term: 'CSP', definition: 'Content Security Policy restricting script and resource execution origins.' },
+]
+
+const jsHelpStyles = `
+.js98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  margin: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.js98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.js98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+  color: #fff;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+}
+
+.js98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.1;
+  pointer-events: none;
+}
+
+.js98-title-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.js98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.js98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.js98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.js98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.js98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.js98-toc {
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  overflow: auto;
+}
+
+.js98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.js98-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.js98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.js98-toc-list a {
+  font-size: 12px;
+  color: #000;
+  text-decoration: none;
+}
+
+.js98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.js98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.js98-section {
+  margin: 0 0 22px;
+}
+
+.js98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.js98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.js98-content p,
+.js98-content li,
+.js98-content th,
+.js98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.js98-content p {
+  margin: 0 0 10px;
+}
+
+.js98-content ul,
+.js98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.js98-content table {
+  border-collapse: collapse;
+  margin: 0 0 10px;
+}
+
+.js98-content th,
+.js98-content td {
+  padding: 2px 8px 2px 0;
+  vertical-align: top;
+}
+
+.js98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.js98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.js98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .js98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .js98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Core Pillars' },
+    { id: 'core-mechanics', label: 'Language Mechanics' },
+    { id: 'core-platform', label: 'Browser Platform APIs' },
+    { id: 'core-runtime', label: 'Runtime and Scheduling' },
+    { id: 'core-performance', label: 'Performance and Scaling' },
+    { id: 'core-security', label: 'Security and Safety' },
+    { id: 'core-uses', label: 'Real-World Applications' },
+    { id: 'core-debugging', label: 'Debugging Workflow' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-production', label: 'Production Checklist' },
+    { id: 'core-when', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-learning', label: 'Learning Path' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function JavaScriptPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `JavaScript (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'JavaScript',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">JavaScript</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
+    <div className="js98-help-page">
+      <style>{jsHelpStyles}</style>
+      <div className="js98-window" role="presentation">
+        <header className="js98-titlebar">
+          <span className="js98-title-text">JavaScript</span>
+          <div className="js98-title-controls">
+            <button className="js98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="js98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">The language that powers interactive web experiences and modern full-stack apps</div>
-              <p className="win95-text">
-                JavaScript is the only language that runs natively in every browser, and it now powers servers, tooling, and
-                cross-platform apps. It blends a flexible syntax with a single-threaded event loop, giving it a unique programming
-                model. This page covers how JavaScript works, what makes it powerful, and how to avoid its sharp edges.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                JavaScript is defined by the ECMAScript specification, but its real-world behavior depends on the runtime that hosts it.
-                In browsers, JavaScript manipulates the DOM and handles user events. In Node.js, it manages servers, files, and networks.
-                The language is dynamic and flexible, so structure and reliability come from patterns, tooling, and discipline.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="js98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`js98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="js98-main">
+          <aside className="js98-toc" aria-label="Table of contents">
+            <h2 className="js98-toc-title">Contents</h2>
+            <ul className="js98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="js98-content">
+            <h1 className="js98-doc-title">JavaScript</h1>
+            <p>
+              JavaScript is the only language that runs natively in every browser, and it now powers servers, tooling, and
+              cross-platform apps. It blends a flexible syntax with a single-threaded event loop, giving it a unique programming
+              model. This page covers how JavaScript works and how to avoid its sharp edges.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: core pillars</legend>
-            <div className="win95-grid win95-grid-3">
-              {corePillars.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="js98-section">
+                  <h2 className="js98-heading">Overview</h2>
+                  <p>
+                    JavaScript is defined by ECMAScript, but real behavior depends on the host runtime. In browsers, JavaScript
+                    manipulates the DOM and handles user events. In Node.js, it manages servers, files, and networks.
+                  </p>
+                </section>
+                <hr className="js98-divider" />
+                <section id="bp-history" className="js98-section">
+                  <h2 className="js98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-models" className="js98-section">
+                  <h2 className="js98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="js98-section">
+                  <h2 className="js98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Language mechanics</legend>
-            <div className="win95-grid win95-grid-2">
-              {languageMechanics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="js98-section">
+                  <h2 className="js98-heading">How It Works: Core Pillars</h2>
+                  {corePillars.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="js98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-mechanics" className="js98-section">
+                  <h2 className="js98-heading">Language Mechanics</h2>
+                  {languageMechanics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-platform" className="js98-section">
+                  <h2 className="js98-heading">Browser Platform APIs</h2>
+                  {browserPlatform.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-runtime" className="js98-section">
+                  <h2 className="js98-heading">Runtime Model: Event Loop and Scheduling</h2>
+                  {runtimeDetails.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="js98-section">
+                  <h2 className="js98-heading">Performance and Scaling Considerations</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    JavaScript is fast when you lean into asynchronous I/O, predictable object shapes, and minimal DOM work.
+                    It slows down when you block the main thread or ship oversized bundles.
+                  </p>
+                </section>
+                <section id="core-security" className="js98-section">
+                  <h2 className="js98-heading">Security and Safety</h2>
+                  {securityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-uses" className="js98-section">
+                  <h2 className="js98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debugging" className="js98-section">
+                  <h2 className="js98-heading">Debugging Workflow</h2>
+                  {debuggingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="js98-section">
+                  <h2 className="js98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-production" className="js98-section">
+                  <h2 className="js98-heading">Production Checklist</h2>
+                  {productionChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-when" className="js98-section">
+                  <h2 className="js98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="js98-section">
+                  <h2 className="js98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-learning" className="js98-section">
+                  <h2 className="js98-heading">Learning Path</h2>
+                  {learningPath.map((item) => (
+                    <p key={item.step}>
+                      <strong>{item.step}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Browser platform APIs</legend>
-            <div className="win95-grid win95-grid-2">
-              {browserPlatform.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Runtime model: event loop and scheduling</legend>
-            <div className="win95-grid win95-grid-2">
-              {runtimeDetails.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance and scaling considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                JavaScript is fast when you lean into its strengths: asynchronous I/O, predictable object shapes, and minimal DOM work.
-                It slows down when you block the main thread or build overly large bundles.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Security and safety</legend>
-            <div className="win95-grid win95-grid-2">
-              {securityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {debuggingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="js98-section">
+                <h2 className="js98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="js98-subheading">{example.title}</h3>
+                    <div className="js98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Production checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {productionChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="js98-section">
+                <h2 className="js98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Learning path</legend>
-            <div className="win95-grid win95-grid-2">
-              {learningPath.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
