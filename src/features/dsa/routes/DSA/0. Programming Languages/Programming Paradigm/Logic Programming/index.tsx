@@ -1,7 +1,7 @@
-import type { JSX } from 'react'
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
+import type { JSX } from 'react'
 
 const milestones = [
   {
@@ -386,233 +386,514 @@ const learningPath = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.lp-win98-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.lp-win98-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.lp-win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.lp-win98-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lp-win98-titlecontrols {
+  display: flex;
+  gap: 2px;
+}
+
+.lp-win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.lp-win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.lp-win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.lp-win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.lp-win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.lp-win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.lp-win98-toc h2 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.lp-win98-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lp-win98-toc li {
+  margin: 0 0 8px;
+}
+
+.lp-win98-toc a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.lp-win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.lp-win98-content h1 {
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+
+.lp-win98-content h2 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.lp-win98-content h3 {
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
+.lp-win98-content section {
+  margin: 0 0 20px;
+}
+
+.lp-win98-content p,
+.lp-win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.lp-win98-content p {
+  margin: 0 0 10px;
+}
+
+.lp-win98-content ul,
+.lp-win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.lp-win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.lp-win98-code {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  margin: 6px 0 10px;
+  padding: 8px;
+}
+
+.lp-win98-code code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .lp-win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .lp-win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .lp-win98-titletext {
+    font-size: 13px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-applications', label: 'Real-world Applications' },
+    { id: 'bp-complexity', label: 'Complexity and Performance' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-mechanics', label: 'How It Works' },
+    { id: 'core-when-to-use', label: 'When to Use It' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-tooling', label: 'Tooling and Ecosystem' },
+    { id: 'core-debugging', label: 'Debugging Workflow' },
+    { id: 'core-production', label: 'Production Checklist' },
+    { id: 'core-learning', label: 'Learning Path' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [
+    { id: 'glossary-terms', label: 'Terms and Concepts' },
+    { id: 'glossary-sources', label: 'Further Reading and Sources' },
+  ],
+}
+
 export default function LogicProgrammingPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Logic Programming (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Logic Programming',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Logic Programming</span>
-          <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="lp-win98-page">
+      <style>{win98HelpStyles}</style>
+      <div className="lp-win98-window" role="presentation">
+        <header className="lp-win98-titlebar">
+          <span className="lp-win98-titletext">Logic Programming</span>
+          <div className="lp-win98-titlecontrols">
+            <button className="lp-win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="lp-win98-control" aria-label="Close">X</Link>
+          </div>
         </header>
 
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Facts, rules, and automated inference</div>
-              <p className="win95-text">
-                Logic programming expresses computation as inference over facts and rules. Instead of prescribing control flow, you
-                ask whether a goal can be proven. The runtime searches, unifies terms, and backtracks through possibilities, making
-                declarative knowledge executable.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
+        <div className="lp-win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`lp-win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Logic programs declare relationships; the engine performs proof search. This yields concise, explainable code for
-                rule based systems, at the cost of careful attention to search order, indexing, and constraint pruning to keep
-                execution tractable.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {milestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="lp-win98-main">
+          <aside className="lp-win98-toc" aria-label="Table of contents">
+            <h2>Contents</h2>
+            <ul>
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-3">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="lp-win98-content">
+            <h1>Logic Programming</h1>
+            <p>
+              Logic programming expresses computation as inference over facts and rules. Instead of prescribing control flow, you
+              ask whether a goal can be proven. The runtime searches, unifies terms, and backtracks through possibilities, making
+              declarative knowledge executable.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-3">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview">
+                  <h2>Overview</h2>
+                  <p>
+                    Logic programs declare relationships; the engine performs proof search. This yields concise, explainable code for
+                    rule based systems, at the cost of careful attention to search order, indexing, and constraint pruning to keep
+                    execution tractable.
+                  </p>
+                </section>
+                <hr className="lp-win98-divider" />
+                <section id="bp-history">
+                  <h2>Historical Context</h2>
+                  {milestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-applications">
+                  <h2>Real-world Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-complexity">
+                  <h2>Complexity and Performance Intuition</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Performance tuning is about shaping the search tree: reorder goals to ground variables early, add constraints to
+                    prune, and use indexing to avoid scanning irrelevant clauses. Measure backtracking counts, not just wall clock time.
+                  </p>
+                </section>
+                <section id="bp-takeaways">
+                  <h2>Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Performance tuning is about shaping the search tree: reorder goals to ground variables early, add constraints to
-                prune, and use indexing to avoid scanning irrelevant clauses. Measure backtracking counts, not just wall clock time.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models">
+                  <h2>Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-mechanics">
+                  <h2>How It Works</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3>{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-when-to-use">
+                  <h2>When to Use It</h2>
+                  <ol>
+                    {decisionPoints.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-pitfalls">
+                  <h2>Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-advanced">
+                  <h2>Advanced Insights and Frontiers</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-tooling">
+                  <h2>Tooling and Ecosystem</h2>
+                  {logicTooling.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debugging">
+                  <h2>Debugging Workflow</h2>
+                  {debuggingWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-production">
+                  <h2>Production Checklist</h2>
+                  {productionChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-learning">
+                  <h2>Learning Path</h2>
+                  {learningPath.map((item) => (
+                    <p key={item.step}>
+                      <strong>{item.step}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Tooling and ecosystem</legend>
-            <div className="win95-grid win95-grid-2">
-              {logicTooling.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {debuggingWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical">
+                <h2>Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3>{example.title}</h3>
+                    <div className="lp-win98-code">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Production checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {productionChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionPoints.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and frontiers</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Learning path</legend>
-            <div className="win95-grid win95-grid-2">
-              {learningPath.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Further reading and sources</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {sources.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {takeaways.map((item) => (
-                <div key={item} className="win95-panel win95-panel--raised">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <>
+                <section id="glossary-terms">
+                  <h2>Terms and Concepts</h2>
+                  <p><strong>Fact:</strong> A base assertion in the knowledge base that is taken as true.</p>
+                  <p><strong>Rule:</strong> A Horn-clause implication that derives new truths from existing facts and goals.</p>
+                  <p><strong>Query:</strong> A goal posed to the engine to test provability and discover variable bindings.</p>
+                  <p><strong>Unification:</strong> Matching terms by finding substitutions that make structures identical.</p>
+                  <p><strong>Backtracking:</strong> Systematic exploration of alternatives after a failed proof path.</p>
+                  <p><strong>Choice point:</strong> A stored branch in execution where the engine can resume search.</p>
+                  <p><strong>Cut (!):</strong> A control operator that commits to choices and prunes alternatives.</p>
+                  <p><strong>Occurs check:</strong> A unification guard that prevents cyclic self-referential terms.</p>
+                  <p><strong>Tabling:</strong> Memoization of subgoals to avoid repeated work and improve termination behavior.</p>
+                  <p><strong>Constraint Logic Programming (CLP):</strong> Logic programming extended with domain solvers to prune search.</p>
+                  <p><strong>Datalog:</strong> A restricted logic language with fixed-point semantics, common in analysis and query engines.</p>
+                  <p><strong>WAM:</strong> Warren Abstract Machine, a classic execution model for efficient Prolog runtimes.</p>
+                </section>
+                <section id="glossary-sources">
+                  <h2>Further Reading and Sources</h2>
+                  <ul>
+                    {sources.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
