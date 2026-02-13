@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -508,277 +508,602 @@ const checkpoints = [
   'Show how sentinel nodes reduce edge cases in insert/delete.',
 ]
 
+const references = [
+  'CLRS (Introduction to Algorithms) for linked list fundamentals and complexity analysis.',
+  'Sedgewick and Wayne (Algorithms) for implementation trade-offs and practical patterns.',
+  'GeeksforGeeks linked list tutorials for operation contrasts and edge-case handling.',
+  "William Pugh's skip list paper for probabilistic ordered-list design.",
+]
+
+const glossaryTerms = [
+  {
+    term: 'Node handle',
+    definition: 'A direct pointer/reference/iterator to a node that enables local O(1) splice operations.',
+  },
+  {
+    term: 'Intrusive list',
+    definition: 'A list where link fields are embedded inside payload objects, avoiding separate node allocations.',
+  },
+  {
+    term: 'Sentinel node',
+    definition: 'A dummy boundary node used to simplify insert/delete logic and reduce null edge cases.',
+  },
+  {
+    term: 'Pointer chasing',
+    definition: 'Traversal pattern of repeatedly following next/prev pointers, often causing cache misses.',
+  },
+  {
+    term: 'Tail pointer',
+    definition: 'A pointer to the final node that makes append O(1) in singly or doubly linked lists.',
+  },
+  {
+    term: 'Circular list',
+    definition: 'A linked list where the tail links back to the head or sentinel for wraparound traversal.',
+  },
+  {
+    term: 'Skip list',
+    definition: 'Layered linked lists with probabilistic forward pointers for expected O(log n) search and update.',
+  },
+  {
+    term: 'Stable handle',
+    definition: 'A pointer/reference that stays valid while the node remains in the list.',
+  },
+  {
+    term: 'Free list',
+    definition: 'A linked chain of reusable nodes/blocks used by allocators and object pools.',
+  },
+  {
+    term: 'ABA problem',
+    definition: 'Concurrent hazard where a pointer appears unchanged (A->B->A) and misleads CAS-based logic.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-help-page .win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-help-page .win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-help-page .win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-help-page .win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-help-page .win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.win98-help-page .win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-help-page .win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-help-page .win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-help-page .win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-help-page .win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-help-page .win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-help-page .win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-help-page .win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-help-page .win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-help-page .win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-help-page .win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-help-page .win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-help-page .win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-help-page .win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-help-page .win98-content p,
+.win98-help-page .win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-help-page .win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-help-page .win98-content ul,
+.win98-help-page .win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-help-page .win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-help-page .win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-help-page .win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .win98-help-page .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-help-page .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-complexity', label: 'Complexity and Performance' },
+    { id: 'bp-applications', label: 'Real-World Applications' },
+    { id: 'bp-decisions', label: 'When to Use It' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-mechanics', label: 'How It Works' },
+    { id: 'core-anatomy', label: 'Structural Anatomy' },
+    { id: 'core-operations', label: 'Operations Matrix' },
+    { id: 'core-memory', label: 'Memory Layout and Overhead' },
+    { id: 'core-patterns', label: 'Patterns and Techniques' },
+    { id: 'core-variants', label: 'Variants and Cousins' },
+    { id: 'core-invariants', label: 'Invariants to Keep Safe' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [
+    { id: 'ex-practical', label: 'Practical Examples' },
+    { id: 'ex-checkpoints', label: 'Quick Self-Checks' },
+  ],
+  glossary: [
+    { id: 'glossary-terms', label: 'Terms' },
+    { id: 'glossary-references', label: 'References' },
+  ],
+}
+
 export default function LinkedListsPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Linked Lists (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Linked Lists',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Linked Lists</span>
-          <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div className="win95-stack">
-              <div className="win95-subheading">Pointer-driven sequences for O(1) structural edits</div>
-              <p className="win95-text">
-                Linked lists store nodes connected by pointers instead of contiguous memory. They excel when you already hold a handle
-                to the insertion or removal point, making structural changes O(1), while accepting O(n) searches and less
-                cache-friendly traversal.
-              </p>
-              <p className="win95-text">
-                Linked lists trade arithmetic indexing for handle-driven updates. When you own a pointer to a node, insertion and
-                deletion touch only a couple of links, independent of list length. The cost is linear search and weaker cache
-                locality because nodes may be scattered across memory.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">Linked Lists</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        </header>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">Linked Lists</h1>
+            <p>
+              Linked lists store nodes connected by pointers instead of contiguous memory. They excel when you already hold a handle to
+              the insertion or removal point, making structural changes O(1), while accepting O(n) searches and less cache-friendly
+              traversal.
+            </p>
+            <p>
+              Linked lists trade arithmetic indexing for handle-driven updates. When you own a pointer to a node, insertion and deletion
+              touch only a couple of links, independent of list length. The cost is linear search and weaker cache locality because
+              nodes may be scattered across memory.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((model) => (
-                <div key={model.title} className="win95-panel">
-                  <div className="win95-heading">{model.title}</div>
-                  <p className="win95-text">{model.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-4">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((item) => (
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">Overview</h2>
+                  <p>
+                    Linked lists prioritize structural flexibility: local insertions, deletions, and splices can be constant time when
+                    neighboring handles are known. They are less suitable for indexed access and dense scans, where contiguous storage
+                    is generally faster.
+                  </p>
+                  <p>
+                    The key trade-off is stable node handles versus locality. This makes lists strong in LRU-style update patterns,
+                    queue internals, and allocator free lists, but weaker in random-access or SIMD-heavy workloads.
+                  </p>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-history" className="win98-section">
+                  <h2 className="win98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-complexity" className="win98-section">
+                  <h2 className="win98-heading">Complexity and Performance Intuition</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Real-world effect: a cache miss can cost around 100 cycles, dwarfing the O(1) pointer updates. Pooling nodes or
+                    using unrolled lists often yields bigger speedups than micro-optimizing pointer assignments.
+                  </p>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-applications" className="win98-section">
+                  <h2 className="win98-heading">Real-World Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-decisions" className="win98-section">
+                  <h2 className="win98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised" style={{ marginTop: 6 }}>
-              <p className="win95-text">
-                Sentinel nodes and tail pointers simplify edge cases. Most bugs arise at the boundaries: empty lists, single-element
-                lists, and updates at head or tail.
-              </p>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Structural anatomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {anatomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and performance intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Real-world effect: a cache miss can cost 100 cycles, dwarfing the O(1) pointer updates. Pooling nodes or using unrolled
-                lists often yields bigger speedups than micro-optimizing pointer assignments.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Operations matrix</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Operation</th>
-                    <th>Singly</th>
-                    <th>Doubly</th>
-                    <th>Circular</th>
-                    <th>Skip</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {operationsTable.map((row) => (
-                    <tr key={row.op}>
-                      <td>{row.op}</td>
-                      <td>{row.singly}</td>
-                      <td>{row.doubly}</td>
-                      <td>{row.circular}</td>
-                      <td>{row.skip}</td>
-                      <td>{row.note}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="win98-section">
+                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
+                  {mentalModels.map((model) => (
+                    <div key={model.title}>
+                      <h3 className="win98-subheading">{model.title}</h3>
+                      <p>{model.detail}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-mechanics" className="win98-section">
+                  <h2 className="win98-heading">How It Works</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="win98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  <p>
+                    Sentinel nodes and tail pointers simplify edge cases. Most bugs arise at the boundaries: empty lists, single-element
+                    lists, and updates at head or tail.
+                  </p>
+                </section>
+                <section id="core-anatomy" className="win98-section">
+                  <h2 className="win98-heading">Structural Anatomy</h2>
+                  {anatomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-operations" className="win98-section">
+                  <h2 className="win98-heading">Operations Matrix</h2>
+                  {operationsTable.map((row) => (
+                    <p key={row.op}>
+                      <strong>{row.op}:</strong> Singly {row.singly}; Doubly {row.doubly}; Circular {row.circular}; Skip {row.skip}.{' '}
+                      {row.note}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-memory" className="win98-section">
+                  <h2 className="win98-heading">Memory Layout and Overhead</h2>
+                  {memoryNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-patterns" className="win98-section">
+                  <h2 className="win98-heading">Patterns and Techniques</h2>
+                  {patterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-variants" className="win98-section">
+                  <h2 className="win98-heading">Variants and Close Cousins</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-invariants" className="win98-section">
+                  <h2 className="win98-heading">Invariants to Keep Safe</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-advanced" className="win98-section">
+                  <h2 className="win98-heading">Advanced Insights and Variations</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Memory layout and overhead</legend>
-            <div className="win95-grid win95-grid-2">
-              {memoryNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-practical" className="win98-section">
+                  <h2 className="win98-heading">Practical Examples</h2>
+                  {practicalExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="win98-subheading">{example.title}</h3>
+                      <div className="win98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-checkpoints" className="win98-section">
+                  <h2 className="win98-heading">Quick Self-Checks</h2>
+                  <ul>
+                    {checkpoints.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-3">
-              {applications.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {practicalExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Patterns and techniques</legend>
-            <div className="win95-grid win95-grid-2">
-              {patterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and close cousins</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Invariants to keep safe</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick self-checks</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {checkpoints.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and variations</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Sources: CLRS, Sedgewick and Wayne, GeeksforGeeks linked list tutorials, and Pugh's skip list paper validate the patterns
-                above and detail corner cases worth testing.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <>
+                <section id="glossary-terms" className="win98-section">
+                  <h2 className="win98-heading">Glossary</h2>
+                  {glossaryTerms.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.definition}
+                    </p>
+                  ))}
+                </section>
+                <section id="glossary-references" className="win98-section">
+                  <h2 className="win98-heading">References</h2>
+                  <ul>
+                    {references.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
