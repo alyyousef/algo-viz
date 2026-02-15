@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -507,273 +507,588 @@ const checkpoints = [
   'Pick a backpressure policy and explain its trade-offs.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const queue98HelpStyles = `
+.queue98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.queue98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.queue98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.queue98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.queue98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.queue98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.queue98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.queue98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.queue98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.queue98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.queue98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.queue98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.queue98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.queue98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.queue98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.queue98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.queue98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.queue98-section {
+  margin: 0 0 20px;
+}
+
+.queue98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.queue98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.queue98-content p,
+.queue98-content li,
+.queue98-content th,
+.queue98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.queue98-content p {
+  margin: 0 0 10px;
+}
+
+.queue98-content ul,
+.queue98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.queue98-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 10px;
+}
+
+.queue98-table th,
+.queue98-table td {
+  border: 1px solid #b8b8b8;
+  text-align: left;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+.queue98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.queue98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.queue98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .queue98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .queue98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-applications', label: 'Real-World Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mechanics', label: 'How Queues Work' },
+    { id: 'core-anatomy', label: 'Structural Anatomy' },
+    { id: 'core-operations', label: 'Operations Matrix' },
+    { id: 'core-complexity', label: 'Complexity & Performance' },
+    { id: 'core-memory', label: 'Memory & Safety' },
+    { id: 'core-patterns', label: 'Patterns and Techniques' },
+    { id: 'core-variants', label: 'Variants and Extensions' },
+    { id: 'core-invariants', label: 'Invariants to Keep Safe' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-decision', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [
+    { id: 'ex-practical', label: 'Practical Examples' },
+    { id: 'ex-checkpoints', label: 'Quick Self-Checks' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const glossaryTerms = [
+  { term: 'Queue', definition: 'A FIFO data structure where enqueue happens at the tail and dequeue happens at the head.' },
+  { term: 'FIFO', definition: 'First In, First Out ordering; the earliest enqueued item is removed first.' },
+  { term: 'Enqueue', definition: 'Insert an element at the tail of the queue, usually in O(1).' },
+  { term: 'Dequeue', definition: 'Remove and return the element at the head of the queue, usually in O(1).' },
+  { term: 'Peek', definition: 'Read the head element without removing it.' },
+  {
+    term: 'Circular Buffer',
+    definition: 'An array-backed queue where head and tail wrap with modulo arithmetic to avoid shifting elements.',
+  },
+  {
+    term: 'Backpressure',
+    definition: 'A control mechanism where full queues force producers to wait, drop items, or slow down upstream systems.',
+  },
+  { term: 'Deque', definition: 'A double-ended queue that supports push and pop from both ends.' },
+  { term: 'Priority Queue', definition: 'A queue-like structure that removes items by priority, not strict arrival order.' },
+  { term: 'Work-Stealing Deque', definition: 'A deque where local workers pop one end while other workers steal from the opposite end.' },
+  { term: 'Little\'s Law', definition: 'L = lambda * W, relating average queue length, arrival rate, and wait time.' },
+  {
+    term: 'Head-of-Line Blocking',
+    definition: 'When FIFO order forces later tasks to wait behind a slow task at the front, hurting latency and fairness.',
+  },
+]
+
 export default function QueuesPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Queues (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Queues',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Queues</span>
-          <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div className="win95-stack">
-              <div className="win95-subheading">FIFO buffers that smooth bursts and preserve order</div>
-              <p className="win95-text">
-                Queues buffer work so that the first item in is the first item out. They keep pipelines fair, let producers and consumers
-                run at different rates, and underpin BFS, networking, schedulers, and message systems.
-              </p>
-              <p className="win95-text">
-                Queues absorb bursty arrivals and release items in order. This keeps latency predictable, lets producers keep working while
-                consumers catch up, and guarantees fairness when order matters. Enqueue at tail, dequeue at head, both in O(1).
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
+    <div className="queue98-help-page">
+      <style>{queue98HelpStyles}</style>
+      <div className="queue98-window" role="presentation">
+        <header className="queue98-titlebar">
+          <span className="queue98-title-text">Queues</span>
+          <div className="queue98-title-controls">
+            <button className="queue98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="queue98-control" aria-label="Close">X</Link>
           </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        </header>
+        <div className="queue98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`queue98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="queue98-main">
+          <aside className="queue98-toc" aria-label="Table of contents">
+            <h2 className="queue98-toc-title">Contents</h2>
+            <ul className="queue98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="queue98-content">
+            <h1 className="queue98-doc-title">Queues</h1>
+            <p>
+              Queues buffer work so that the first item in is the first item out. They keep pipelines fair, let producers and consumers run
+              at different rates, and underpin BFS, networking, schedulers, and message systems.
+            </p>
+            <p>
+              Queues absorb bursty arrivals and release items in order. This keeps latency predictable, lets producers keep working while
+              consumers catch up, and guarantees fairness when order matters. Enqueue at tail, dequeue at head, both in O(1).
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((model) => (
-                <div key={model.title} className="win95-panel">
-                  <div className="win95-heading">{model.title}</div>
-                  <p className="win95-text">{model.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-4">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((item) => (
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="queue98-section">
+                  <h2 className="queue98-heading">Overview</h2>
+                  <p>
+                    A queue is the baseline structure for ordered buffering. It smooths bursts, decouples producer and consumer rates, and
+                    preserves fairness by enforcing FIFO semantics across many domains.
+                  </p>
+                  <p>
+                    Circular buffers excel when capacity is known and predictability matters; linked or two-stack queues shine when size is
+                    unbounded. Overflow policy (block, drop, resize) shapes real-world behavior as much as big-O.
+                  </p>
+                </section>
+                <hr className="queue98-divider" />
+                <section id="bp-history" className="queue98-section">
+                  <h2 className="queue98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="queue98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-models" className="queue98-section">
+                  <h2 className="queue98-heading">Mental Models</h2>
+                  {mentalModels.map((model) => (
+                    <p key={model.title}>
+                      <strong>{model.title}:</strong> {model.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-applications" className="queue98-section">
+                  <h2 className="queue98-heading">Real-World Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="queue98-section">
+                  <h2 className="queue98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised" style={{ marginTop: 6 }}>
-              <p className="win95-text">
-                Circular buffers excel when capacity is known and predictability matters; linked or two-stack queues shine when size is
-                unbounded. Overflow policy (block, drop, resize) shapes real-world behavior as much as big-O.
-              </p>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Structural anatomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {anatomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and performance intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                A cache miss can cost 100 cycles; a lock can add microseconds. Queue choice and synchronization strategy dominate
-                performance more than the O(1) algorithm itself when concurrency and high throughput are involved.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Operations matrix</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Operation</th>
-                    <th>Circular</th>
-                    <th>Linked</th>
-                    <th>Two-Stack</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {operationsTable.map((row) => (
-                    <tr key={row.op}>
-                      <td>{row.op}</td>
-                      <td>{row.circular}</td>
-                      <td>{row.linked}</td>
-                      <td>{row.twoStack}</td>
-                      <td>{row.note}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mechanics" className="queue98-section">
+                  <h2 className="queue98-heading">How Queues Work</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="queue98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-anatomy" className="queue98-section">
+                  <h2 className="queue98-heading">Structural Anatomy</h2>
+                  {anatomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-operations" className="queue98-section">
+                  <h2 className="queue98-heading">Operations Matrix</h2>
+                  <table className="queue98-table">
+                    <thead>
+                      <tr>
+                        <th>Operation</th>
+                        <th>Circular</th>
+                        <th>Linked</th>
+                        <th>Two-Stack</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {operationsTable.map((row) => (
+                        <tr key={row.op}>
+                          <td>{row.op}</td>
+                          <td>{row.circular}</td>
+                          <td>{row.linked}</td>
+                          <td>{row.twoStack}</td>
+                          <td>{row.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+                <section id="core-complexity" className="queue98-section">
+                  <h2 className="queue98-heading">Complexity and Performance Intuition</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    A cache miss can cost 100 cycles; a lock can add microseconds. Queue choice and synchronization strategy dominate
+                    performance more than the O(1) algorithm itself when concurrency and high throughput are involved.
+                  </p>
+                </section>
+                <section id="core-memory" className="queue98-section">
+                  <h2 className="queue98-heading">Memory Layout and Safety</h2>
+                  {memoryNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-patterns" className="queue98-section">
+                  <h2 className="queue98-heading">Patterns and Techniques</h2>
+                  {patterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-variants" className="queue98-section">
+                  <h2 className="queue98-heading">Variants and Extensions</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-invariants" className="queue98-section">
+                  <h2 className="queue98-heading">Invariants to Keep Safe</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="queue98-section">
+                  <h2 className="queue98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-decision" className="queue98-section">
+                  <h2 className="queue98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="queue98-section">
+                  <h2 className="queue98-heading">Advanced Insights and Variations</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Sources: CLRS, Sedgewick and Wayne, GeeksforGeeks queue implementations, and research on lock-free MPMC queues and
+                    router queueing disciplines cover proofs, contention behavior, and congestion trade-offs.
+                  </p>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Memory layout and safety</legend>
-            <div className="win95-grid win95-grid-2">
-              {memoryNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-practical" className="queue98-section">
+                  <h2 className="queue98-heading">Practical Examples</h2>
+                  {practicalExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="queue98-subheading">{example.title}</h3>
+                      <div className="queue98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-checkpoints" className="queue98-section">
+                  <h2 className="queue98-heading">Quick Self-Checks</h2>
+                  <ul>
+                    {checkpoints.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-3">
-              {applications.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {practicalExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Patterns and techniques</legend>
-            <div className="win95-grid win95-grid-2">
-              {patterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Invariants to keep safe</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="queue98-section">
+                <h2 className="queue98-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick self-checks</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {checkpoints.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and variations</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Sources: CLRS, Sedgewick and Wayne, GeeksforGeeks queue implementations, and research on lock-free MPMC queues and router
-                queueing disciplines cover proofs, contention behavior, and congestion trade-offs.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
