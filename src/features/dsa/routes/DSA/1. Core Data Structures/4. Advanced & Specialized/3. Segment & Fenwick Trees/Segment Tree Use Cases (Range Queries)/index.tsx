@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -495,329 +495,595 @@ const takeaways = [
   'When you can express a query as a merged summary, a segment tree is a reliable tool.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const segment98HelpStyles = `
+.segment98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.segment98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.segment98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.segment98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.segment98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.segment98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.segment98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.segment98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.segment98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.segment98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.segment98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.segment98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.segment98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.segment98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.segment98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.segment98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.segment98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.segment98-section {
+  margin: 0 0 20px;
+}
+
+.segment98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.segment98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.segment98-content p,
+.segment98-content li,
+.segment98-content th,
+.segment98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.segment98-content p {
+  margin: 0 0 10px;
+}
+
+.segment98-content ul,
+.segment98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.segment98-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 10px;
+}
+
+.segment98-table th,
+.segment98-table td {
+  border: 1px solid #b8b8b8;
+  text-align: left;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+.segment98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.segment98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.segment98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .segment98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .segment98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-patterns', label: 'Range Query Patterns' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-uses', label: 'Use Cases' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-terms', label: 'Terminology' },
+    { id: 'core-invariants', label: 'Invariants' },
+    { id: 'core-query-types', label: 'Query Types' },
+    { id: 'core-update-types', label: 'Update Types' },
+    { id: 'core-lazy', label: 'Lazy Propagation' },
+    { id: 'core-build', label: 'Build Options' },
+    { id: 'core-mechanics', label: 'Build/Query Notes' },
+    { id: 'core-complexity', label: 'Complexity Notes' },
+    { id: 'core-performance', label: 'Performance Notes' },
+    { id: 'core-decision', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-practical', label: 'Practical Examples' },
+    { id: 'ex-expanded', label: 'Expanded Examples' },
+    { id: 'ex-compare', label: 'Segment vs Fenwick' },
+    { id: 'ex-tests', label: 'Testing Checklist' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Segment Tree Use Cases (Range Queries) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Segment Tree Use Cases (Range Queries)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Segment Tree Use Cases (Range Queries)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="segment98-help-page">
+      <style>{segment98HelpStyles}</style>
+      <div className="segment98-window" role="presentation">
+        <header className="segment98-titlebar">
+          <span className="segment98-title-text">Segment Tree Use Cases (Range Queries)</span>
+          <div className="segment98-title-controls">
+            <button className="segment98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="segment98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Fast, flexible range queries on dynamic data</div>
-              <p className="win95-text">
-                Segment trees shine when you need to answer range queries quickly while the underlying data keeps changing. They
-                organize an array into a hierarchy of intervals, letting you aggregate results for any [l, r] range in logarithmic
-                time. This page highlights the practical use cases, how the structure answers queries, and the design decisions
-                that make a segment tree accurate and fast.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Range queries ask for an aggregate over a contiguous interval, like the sum, min, max, xor, or count between two indices.
-                Segment trees store summaries for every interval so queries and updates stay fast even as values change. They are the
-                go-to choice for dynamic arrays where prefix sums and static preprocessing fall short.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common range query patterns</legend>
-            <div className="win95-grid win95-grid-3">
-              {rangeQueryPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="segment98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`segment98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="segment98-main">
+          <aside className="segment98-toc" aria-label="Table of contents">
+            <h2 className="segment98-toc-title">Contents</h2>
+            <ul className="segment98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="segment98-content">
+            <h1 className="segment98-doc-title">Segment Tree Use Cases (Range Queries)</h1>
+            <p>
+              Segment trees answer range queries quickly while data changes. They organize an array into interval summaries, so any [l, r]
+              query and most updates stay logarithmic.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Terminology and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {terminology.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Query types segment trees excel at</legend>
-            <div className="win95-grid win95-grid-3">
-              {queryTypes.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="segment98-section">
+                  <h2 className="segment98-heading">Overview</h2>
+                  <p>
+                    Range queries ask for aggregates over contiguous intervals: sums, mins, maxes, xor, counts, and more. Segment trees keep
+                    these summaries dynamic when prefix tables are no longer sufficient.
+                  </p>
+                </section>
+                <section id="bp-patterns" className="segment98-section">
+                  <h2 className="segment98-heading">Common Range Query Patterns</h2>
+                  {rangeQueryPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-models" className="segment98-section">
+                  <h2 className="segment98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-uses" className="segment98-section">
+                  <h2 className="segment98-heading">Use Cases in Practice</h2>
+                  {realWorldPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {useCaseGallery.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="segment98-section">
+                  <h2 className="segment98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Update types and lazy propagation</legend>
-            <div className="win95-grid win95-grid-2">
-              {updateTypes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {lazyPropagationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-terms" className="segment98-section">
+                  <h2 className="segment98-heading">Terminology</h2>
+                  {terminology.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-invariants" className="segment98-section">
+                  <h2 className="segment98-heading">Invariants</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-query-types" className="segment98-section">
+                  <h2 className="segment98-heading">Query Types Segment Trees Excel At</h2>
+                  {queryTypes.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="segment98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-update-types" className="segment98-section">
+                  <h2 className="segment98-heading">Update Types</h2>
+                  {updateTypes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-lazy" className="segment98-section">
+                  <h2 className="segment98-heading">Lazy Propagation Notes</h2>
+                  {lazyPropagationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-build" className="segment98-section">
+                  <h2 className="segment98-heading">Build Options</h2>
+                  {buildOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-mechanics" className="segment98-section">
+                  <h2 className="segment98-heading">How It Works: Build, Query, Update</h2>
+                  {buildAndQueryNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="segment98-section">
+                  <h2 className="segment98-heading">Complexity Analysis and Tradeoffs</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="segment98-section">
+                  <h2 className="segment98-heading">Performance Notes</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-decision" className="segment98-section">
+                  <h2 className="segment98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="segment98-section">
+                  <h2 className="segment98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="segment98-section">
+                  <h2 className="segment98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Build options</legend>
-            <div className="win95-grid win95-grid-2">
-              {buildOptions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-practical" className="segment98-section">
+                  <h2 className="segment98-heading">Practical Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="segment98-subheading">{example.title}</h3>
+                      <div className="segment98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-expanded" className="segment98-section">
+                  <h2 className="segment98-heading">Expanded Examples</h2>
+                  {examplesExpanded.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="segment98-subheading">{example.title}</h3>
+                      <div className="segment98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-compare" className="segment98-section">
+                  <h2 className="segment98-heading">Segment Tree vs Fenwick Tree</h2>
+                  <table className="segment98-table">
+                    <thead>
+                      <tr>
+                        <th>Dimension</th>
+                        <th>Segment tree</th>
+                        <th>Fenwick tree</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Operations</td>
+                        <td>Any associative merge, range updates with lazy</td>
+                        <td>Primarily sums (or invertible operations)</td>
+                      </tr>
+                      <tr>
+                        <td>Query range</td>
+                        <td>Direct range query in O(log n)</td>
+                        <td>Range sum via prefix differences</td>
+                      </tr>
+                      <tr>
+                        <td>Code complexity</td>
+                        <td>Higher, more moving parts</td>
+                        <td>Simpler and compact</td>
+                      </tr>
+                      <tr>
+                        <td>Memory</td>
+                        <td>~4n (recursive) or 2n (iterative)</td>
+                        <td>n</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+                <section id="ex-tests" className="segment98-section">
+                  <h2 className="segment98-heading">Testing Checklist</h2>
+                  <ul>
+                    <li>Compare segment tree queries with brute-force arrays for random tests.</li>
+                    <li>Test boundary ranges: [1,1], [n,n], and full range.</li>
+                    <li>Validate lazy propagation by mixing range updates with queries.</li>
+                    <li>Ensure identity values are correct for empty and partial overlaps.</li>
+                    <li>Verify iterative and recursive builds match for the same input.</li>
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: build, query, update</legend>
-            <div className="win95-grid win95-grid-2">
-              {buildAndQueryNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The key invariant: every node stores a correct summary of its interval. Queries only touch nodes that fully cover
-                the requested range, and updates only repair the path or mark intervals lazily.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Segment trees trade extra memory and code complexity for speed and flexibility. If your data changes and queries
-                are frequent, that trade is often worth it.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Use cases in practice</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {useCaseGallery.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-              {examplesExpanded.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="segment98-section">
+                <h2 className="segment98-heading">Glossary</h2>
+                {terminology.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.detail}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Testing checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                <li>Compare segment tree queries with brute-force arrays for random tests.</li>
-                <li>Test boundary ranges: [1,1], [n,n], and full range.</li>
-                <li>Validate lazy propagation by mixing range updates with queries.</li>
-                <li>Ensure identity values are correct for empty and partial overlaps.</li>
-                <li>Verify iterative and recursive builds match for the same input.</li>
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Segment tree vs Fenwick tree</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Dimension</th>
-                    <th>Segment tree</th>
-                    <th>Fenwick tree</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Operations</td>
-                    <td>Any associative merge, range updates with lazy</td>
-                    <td>Primarily sums (or invertible operations)</td>
-                  </tr>
-                  <tr>
-                    <td>Query range</td>
-                    <td>Direct range query in O(log n)</td>
-                    <td>Range sum via prefix differences</td>
-                  </tr>
-                  <tr>
-                    <td>Code complexity</td>
-                    <td>Higher, more moving parts</td>
-                    <td>Simpler and compact</td>
-                  </tr>
-                  <tr>
-                    <td>Memory</td>
-                    <td>~4n (recursive) or 2n (iterative)</td>
-                    <td>n</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
