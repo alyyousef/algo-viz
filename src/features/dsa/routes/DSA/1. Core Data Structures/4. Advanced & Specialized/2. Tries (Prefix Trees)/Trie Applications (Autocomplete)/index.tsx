@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -535,360 +535,581 @@ const takeaways = [
   'Plan for updates and cold starts with batch rebuilds plus online deltas.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const trie98HelpStyles = `
+.trie98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.trie98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.trie98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.trie98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.trie98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.trie98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.trie98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.trie98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.trie98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.trie98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.trie98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.trie98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.trie98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.trie98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.trie98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.trie98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.trie98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.trie98-section {
+  margin: 0 0 20px;
+}
+
+.trie98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.trie98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.trie98-content p,
+.trie98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.trie98-content p {
+  margin: 0 0 10px;
+}
+
+.trie98-content ul,
+.trie98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.trie98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.trie98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.trie98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .trie98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .trie98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-requirements', label: 'What To Deliver' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pipeline', label: 'Data Pipeline' },
+    { id: 'core-node', label: 'Node Metadata' },
+    { id: 'core-normalization', label: 'Normalization' },
+    { id: 'core-indexing', label: 'Indexing Strategies' },
+    { id: 'core-query-flow', label: 'Query Flow' },
+    { id: 'core-ranking-signals', label: 'Ranking Signals' },
+    { id: 'core-blending', label: 'Blending Sources' },
+    { id: 'core-ranking-models', label: 'Ranking Models' },
+    { id: 'core-retrieval', label: 'Retrieval Strategies' },
+    { id: 'core-caching', label: 'Caching Layers' },
+    { id: 'core-typos', label: 'Typo Handling' },
+    { id: 'core-memory', label: 'Memory Choices' },
+    { id: 'core-scaling', label: 'Scaling Patterns' },
+    { id: 'core-updates', label: 'Update Strategies' },
+    { id: 'core-ui', label: 'UI Considerations' },
+    { id: 'core-safety', label: 'Privacy and Safety' },
+    { id: 'core-failure', label: 'Failure Modes' },
+    { id: 'core-observability', label: 'Observability' },
+  ],
+  examples: [
+    { id: 'ex-latency', label: 'Latency Budget' },
+    { id: 'ex-metrics', label: 'Evaluation Metrics' },
+    { id: 'ex-code', label: 'Code Examples' },
+    { id: 'ex-tests', label: 'Testing Checklist' },
+    { id: 'ex-practice', label: 'Practice Ideas' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const glossaryTerms = [
+  { term: 'Trie', definition: 'A prefix tree where each edge represents a character step and lookups scale with input length.' },
+  { term: 'Top-k cache', definition: 'A precomputed best-suggestion list stored at a node for fast retrieval.' },
+  { term: 'Prefix walk', definition: 'Traversal from root following characters of the current user input.' },
+  { term: 'Terminal node', definition: 'A node that marks the end of a full word or phrase.' },
+  { term: 'Levenshtein distance', definition: 'Edit distance based on insertions, deletions, and substitutions between strings.' },
+  { term: 'Damerau edit', definition: 'Edit-distance variant that also counts transpositions as one operation.' },
+  { term: 'Radix compression', definition: 'Path compression that merges single-child chains into longer edge labels.' },
+  { term: 'DAWG', definition: 'Directed acyclic word graph that merges shared suffixes to reduce memory.' },
+  { term: 'p95/p99 latency', definition: 'Tail latency percentiles capturing slower request behavior.' },
+  { term: 'NDCG/MRR', definition: 'Ranking metrics measuring quality and ordering of returned suggestions.' },
+]
+
 export default function TrieApplicationsAutocompletePage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Trie Applications (Autocomplete) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Trie Applications (Autocomplete)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Trie Applications (Autocomplete)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="trie98-help-page">
+      <style>{trie98HelpStyles}</style>
+      <div className="trie98-window" role="presentation">
+        <header className="trie98-titlebar">
+          <span className="trie98-title-text">Trie Applications (Autocomplete)</span>
+          <div className="trie98-title-controls">
+            <button className="trie98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="trie98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-hero">
-            <div className="win95-subheading">
-              Production-grade typeahead built on prefix trees, ranking, and careful systems design
-            </div>
-            <p className="win95-text">
-              Autocomplete turns partial input into ranked suggestions in milliseconds. Tries provide the core prefix lookup,
-              but the real system also needs ranking, personalization, typo handling, caching, and update pipelines. This page
-              walks through the full stack of decisions that make trie-based autocomplete fast, relevant, and robust.
+        <div className="trie98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`trie98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="trie98-main">
+          <aside className="trie98-toc" aria-label="Table of contents">
+            <h2 className="trie98-toc-title">Contents</h2>
+            <ul className="trie98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+          <main className="trie98-content">
+            <h1 className="trie98-doc-title">Trie Applications (Autocomplete)</h1>
+            <p>
+              Autocomplete turns partial input into ranked suggestions in milliseconds. Tries provide the core prefix lookup, but production
+              quality needs ranking, personalization, typo handling, caching, and update pipelines.
             </p>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>What autocomplete needs to deliver</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                A usable typeahead system is more than fast lookup. It has to return relevant, diverse suggestions while the
-                user is still typing. That requires predictable latency, strong ranking, and operational hygiene around data
-                updates.
-              </p>
-              <ul className="win95-list">
-                {requirements.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="trie98-section">
+                  <h2 className="trie98-heading">Overview</h2>
+                  <p>
+                    Tries are a natural fit because lookup cost scales with prefix length, not corpus size. The trade-off is memory, so
+                    practical systems rely on compression and selective top-k caching.
+                  </p>
+                </section>
+                <section id="bp-requirements" className="trie98-section">
+                  <h2 className="trie98-heading">What Autocomplete Needs to Deliver</h2>
+                  <ul>
+                    {requirements.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <hr className="trie98-divider" />
+                <section id="bp-history" className="trie98-section">
+                  <h2 className="trie98-heading">Historical Context</h2>
+                  {historicalMoments.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="trie98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-models" className="trie98-section">
+                  <h2 className="trie98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="trie98-section">
+                  <h2 className="trie98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMoments.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pipeline" className="trie98-section">
+                  <h2 className="trie98-heading">Data Pipeline and Index Build</h2>
+                  {dataPipeline.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-node" className="trie98-section">
+                  <h2 className="trie98-heading">Node Data Model and Metadata</h2>
+                  <ul>
+                    {nodeMetadata.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-normalization" className="trie98-section">
+                  <h2 className="trie98-heading">Normalization and Text Hygiene</h2>
+                  {normalizationRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-indexing" className="trie98-section">
+                  <h2 className="trie98-heading">Indexing Strategies</h2>
+                  {indexingStrategies.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-query-flow" className="trie98-section">
+                  <h2 className="trie98-heading">End-to-End Query Flow</h2>
+                  <ol>
+                    {queryFlow.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                  {multiTermHandling.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-ranking-signals" className="trie98-section">
+                  <h2 className="trie98-heading">Ranking and Scoring Signals</h2>
+                  <ul>
+                    {rankingSignals.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-blending" className="trie98-section">
+                  <h2 className="trie98-heading">Blending Multiple Sources</h2>
+                  {blendingSources.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-ranking-models" className="trie98-section">
+                  <h2 className="trie98-heading">Ranking Approaches</h2>
+                  {rankingModeling.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-retrieval" className="trie98-section">
+                  <h2 className="trie98-heading">Retrieval Strategies for Top-k</h2>
+                  <ul>
+                    {retrievalStrategies.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-caching" className="trie98-section">
+                  <h2 className="trie98-heading">Caching Layers</h2>
+                  {cachingLayers.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-typos" className="trie98-section">
+                  <h2 className="trie98-heading">Handling Typos and Fuzzy Matches</h2>
+                  <ul>
+                    {typoHandling.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-memory" className="trie98-section">
+                  <h2 className="trie98-heading">Memory and Layout Choices</h2>
+                  {memoryChoices.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-scaling" className="trie98-section">
+                  <h2 className="trie98-heading">Scaling to Large Corpora</h2>
+                  {scalingPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-updates" className="trie98-section">
+                  <h2 className="trie98-heading">Update Strategies</h2>
+                  {updateStrategies.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-ui" className="trie98-section">
+                  <h2 className="trie98-heading">UI and UX Considerations</h2>
+                  {uiConsiderations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-safety" className="trie98-section">
+                  <h2 className="trie98-heading">Privacy and Safety</h2>
+                  {privacySafety.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-failure" className="trie98-section">
+                  <h2 className="trie98-heading">Failure Modes and Mitigation</h2>
+                  {failureModes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-observability" className="trie98-section">
+                  <h2 className="trie98-heading">Observability and Experimentation</h2>
+                  {observability.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Why tries are a natural fit</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Tries index strings by prefix. A lookup cost scales with input length rather than corpus size, which makes
-                them ideal for incremental typing. The same structure supports lexicographic enumeration and longest-prefix
-                matches, both common in search UIs and routing.
-              </p>
-              <p className="win95-text">
-                The trade-off is memory: each node can hold many outgoing edges. Practical systems mitigate this with
-                compression, compact child representations, and selective caching of top suggestions.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data pipeline and index build</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataPipeline.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Node data model and metadata</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                A trie node is not just a character. For autocomplete, you need metadata that enables ranking and fast
-                retrieval without walking entire subtrees.
-              </p>
-              <ul className="win95-list">
-                {nodeMetadata.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Normalization and text hygiene</legend>
-            <div className="win95-grid win95-grid-2">
-              {normalizationRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Indexing strategies</legend>
-            <div className="win95-grid win95-grid-2">
-              {indexingStrategies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>End-to-end query flow</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                The query pipeline is a mix of string processing, traversal, ranking, and policy filtering. A consistent
-                pipeline prevents inconsistent suggestions between clients and keeps metrics stable.
-              </p>
-              <ol className="win95-list win95-list--numbered">
-                {queryFlow.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Multi-term query handling</legend>
-            <div className="win95-grid win95-grid-2">
-              {multiTermHandling.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Ranking and scoring signals</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                A trie answers which completions exist. Ranking decides which to show. Most systems combine multiple
-                features with tunable weights or a learned model.
-              </p>
-              <ul className="win95-list">
-                {rankingSignals.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Blending multiple sources</legend>
-            <div className="win95-grid win95-grid-2">
-              {blendingSources.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Ranking approaches</legend>
-            <div className="win95-grid win95-grid-2">
-              {rankingModeling.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Retrieval strategies for top-k</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                The naive approach is to traverse the whole subtree and sort results, which is too slow. Production systems
-                trade memory for speed by caching top suggestions or using bounded priority queues.
-              </p>
-              <ul className="win95-list">
-                {retrievalStrategies.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Caching layers</legend>
-            <div className="win95-grid win95-grid-2">
-              {cachingLayers.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Handling typos and fuzzy matches</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Users type quickly and make mistakes. A strong autocomplete system tolerates small errors without returning
-                unrelated results. Trie-based fuzzy matching keeps the search space controlled.
-              </p>
-              <ul className="win95-list">
-                {typoHandling.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Memory and layout choices</legend>
-            <div className="win95-grid win95-grid-2">
-              {memoryChoices.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Update strategies</legend>
-            <div className="win95-grid win95-grid-2">
-              {updateStrategies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Scaling to large corpora</legend>
-            <div className="win95-grid win95-grid-2">
-              {scalingPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Evaluation metrics</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationMetrics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Latency budget (typical)</legend>
-            <div className="win95-grid win95-grid-2">
-              {latencyBudget.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>UI and UX considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {uiConsiderations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Privacy and safety</legend>
-            <div className="win95-grid win95-grid-2">
-              {privacySafety.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Failure modes and mitigation</legend>
-            <div className="win95-grid win95-grid-2">
-              {failureModes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Observability and experimentation</legend>
-            <div className="win95-grid win95-grid-2">
-              {observability.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Example: top-k autocomplete with cached suggestions</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                A common approach stores top suggestions at each node so retrieval is fast and deterministic. You update the
-                cached list during insert or in batch rebuilds.
-              </p>
-              <pre className="win95-code">
-                <code>{`function insert(word, score):
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-latency" className="trie98-section">
+                  <h2 className="trie98-heading">Latency Budget (Typical)</h2>
+                  {latencyBudget.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="ex-metrics" className="trie98-section">
+                  <h2 className="trie98-heading">Evaluation Metrics</h2>
+                  {evaluationMetrics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="ex-code" className="trie98-section">
+                  <h2 className="trie98-heading">Code Examples</h2>
+                  <h3 className="trie98-subheading">Top-k Autocomplete with Cached Suggestions</h3>
+                  <div className="trie98-codebox">
+                    <code>{`function insert(word, score):
     node = root
     for ch in normalize(word):
         node = node.children.getOrCreate(ch)
@@ -901,23 +1122,11 @@ function autocomplete(prefix, k):
         if ch not in node.children: return []
         node = node.children[ch]
     return node.topK.first(k)`}</code>
-              </pre>
-              <p className="win95-text">
-                This model avoids scanning the subtree on every query. If you need dynamic scores (for recency or
-                personalization), store compact IDs in topK and resolve scores at query time.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Example: bounded edit-distance search</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Use dynamic programming as you traverse the trie. Keep a row of edit distances per node and prune branches
-                that exceed the maximum allowed distance.
-              </p>
-              <pre className="win95-code">
-                <code>{`function fuzzySearch(node, prevRow, char, maxDist):
+                  </div>
+                  <p>Store compact IDs in topK when dynamic scoring and personalization are applied at query time.</p>
+                  <h3 className="trie98-subheading">Bounded Edit-Distance Search</h3>
+                  <div className="trie98-codebox">
+                    <code>{`function fuzzySearch(node, prevRow, char, maxDist):
     currRow[0] = prevRow[0] + 1
     for i in 1..len(query):
         insertCost = currRow[i-1] + 1
@@ -929,67 +1138,50 @@ function autocomplete(prefix, k):
     if min(currRow) <= maxDist:
         for (ch, child) in node.children:
             fuzzySearch(child, currRow, ch, maxDist)`}</code>
-              </pre>
-              <p className="win95-text">
-                This keeps the search bounded by edit distance rather than scanning the entire trie.
-              </p>
-            </div>
-          </fieldset>
+                  </div>
+                </section>
+                <section id="ex-tests" className="trie98-section">
+                  <h2 className="trie98-heading">Testing Checklist</h2>
+                  <ul>
+                    {testingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="ex-practice" className="trie98-section">
+                  <h2 className="trie98-heading">Practice and Build Ideas</h2>
+                  <ul>
+                    {practiceIdeas.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h3 className="trie98-subheading">When to Use Tries (and When Not To)</h3>
+                  <ul>
+                    {whenToUse.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h3 className="trie98-subheading">Common Pitfalls and Edge Cases</h3>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls and edge cases</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="trie98-section">
+                <h2 className="trie98-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Testing checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {testingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use tries (and when not to)</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practice and build ideas</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {practiceIdeas.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
