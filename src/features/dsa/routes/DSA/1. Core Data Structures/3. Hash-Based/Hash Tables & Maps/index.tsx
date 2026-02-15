@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -473,262 +473,522 @@ const practicePrompts = [
   'Compare SipHash vs xxHash for speed and collision behavior.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const hash98HelpStyles = `
+.hash98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.hash98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.hash98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hash98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.hash98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.hash98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.hash98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.hash98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hash98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.hash98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.hash98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.hash98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.hash98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hash98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.hash98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.hash98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.hash98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.hash98-section {
+  margin: 0 0 20px;
+}
+
+.hash98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.hash98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.hash98-content p,
+.hash98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.hash98-content p {
+  margin: 0 0 10px;
+}
+
+.hash98-content ul,
+.hash98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.hash98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.hash98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.hash98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .hash98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .hash98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-designs', label: 'Table Designs' },
+    { id: 'bp-real-world', label: 'Real-World Applications' },
+  ],
+  'core-concepts': [
+    { id: 'core-terms', label: 'Terminology' },
+    { id: 'core-hash-check', label: 'Hash Function Checklist' },
+    { id: 'core-delete', label: 'Deletion Strategies' },
+    { id: 'core-mechanics', label: 'Mechanics' },
+    { id: 'core-invariants', label: 'Correctness Invariants' },
+    { id: 'core-complexity', label: 'Complexity Notes' },
+    { id: 'core-performance', label: 'Performance Notes' },
+    { id: 'core-decision', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-practical', label: 'Practical Examples' },
+    { id: 'ex-testing', label: 'Testing Checklist' },
+    { id: 'ex-practice', label: 'Practice Prompts' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function HashTablesPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Hash Tables & Maps (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Hash Tables & Maps',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Hash Tables & Maps</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="hash98-help-page">
+      <style>{hash98HelpStyles}</style>
+      <div className="hash98-window" role="presentation">
+        <header className="hash98-titlebar">
+          <span className="hash98-title-text">Hash Tables &amp; Maps</span>
+          <div className="hash98-title-controls">
+            <button className="hash98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="hash98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-hero">
-            <div className="win95-subheading">
-              Average-case O(1) lookups powered by mixing, probes, and careful load control
-            </div>
-            <p className="win95-text">
-              Hash tables convert arbitrary keys into bucket indices so most lookups, inserts, and deletes finish in expected
-              constant time. The promise depends on good mixing, controlled load factor, and collision strategies that keep
-              probes short. This page lays out the history, mental models, mechanics, complexity, real deployments, and the
-              engineering judgment needed to choose and tune hash maps.
+        <div className="hash98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`hash98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="hash98-main">
+          <aside className="hash98-toc" aria-label="Table of contents">
+            <h2 className="hash98-toc-title">Contents</h2>
+            <ul className="hash98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+          <main className="hash98-content">
+            <h1 className="hash98-doc-title">Hash Tables &amp; Maps</h1>
+            <p>
+              Hash tables convert arbitrary keys into bucket indices so most lookups, inserts, and deletes finish in expected constant
+              time. The promise depends on good mixing, controlled load factor, and collision strategies that keep probes short.
             </p>
-          </div>
+            <p>
+              Hash tables trade ordering for speed. By hashing keys into bucket positions, they avoid tree rotations or array shifts and
+              instead depend on uniform randomness and resizing to keep operations near O(1).
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Hash tables trade ordering for speed. By hashing keys into bucket positions, they avoid tree rotations or
-                array shifts and instead depend on uniform randomness and resizing to keep operations near O(1). Their weakness
-                is adversarial or unlucky collisions that stretch probe lengths, which modern hash functions, randomized
-                seeding, and resize policies are designed to blunt.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="hash98-section">
+                  <h2 className="hash98-heading">Overview</h2>
+                  <p>
+                    Their weakness is adversarial or unlucky collisions that stretch probe lengths, which modern hash functions, randomized
+                    seeding, and resize policies are designed to blunt.
+                  </p>
+                </section>
+                <hr className="hash98-divider" />
+                <section id="bp-history" className="hash98-section">
+                  <h2 className="hash98-heading">Historical Context</h2>
+                  {historicalMoments.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="hash98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-models" className="hash98-section">
+                  <h2 className="hash98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-designs" className="hash98-section">
+                  <h2 className="hash98-heading">Table Designs and Collision Policies</h2>
+                  {tableDesigns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-real-world" className="hash98-section">
+                  <h2 className="hash98-heading">Real-World Applications</h2>
+                  {realWorld.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMoments.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Terminology that unlocks the rest</legend>
-            <div className="win95-grid win95-grid-2">
-              {terminology.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Table designs and collision policies</legend>
-            <div className="win95-grid win95-grid-2">
-              {tableDesigns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Hash function checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {hashFunctionChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Deletion strategies</legend>
-            <div className="win95-grid win95-grid-2">
-              {deletionStrategies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: hashing, collisions, resizing</legend>
-            <div className="win95-grid win95-grid-3">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-terms" className="hash98-section">
+                  <h2 className="hash98-heading">Terminology</h2>
+                  {terminology.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-hash-check" className="hash98-section">
+                  <h2 className="hash98-heading">Hash Function Checklist</h2>
+                  {hashFunctionChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-delete" className="hash98-section">
+                  <h2 className="hash98-heading">Deletion Strategies</h2>
+                  {deletionStrategies.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-mechanics" className="hash98-section">
+                  <h2 className="hash98-heading">How It Works: Hashing, Collisions, Resizing</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="hash98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  <p>
+                    Design choices in hash function, collision policy, and resize thresholds decide whether probes stay short under load.
+                  </p>
+                </section>
+                <section id="core-invariants" className="hash98-section">
+                  <h2 className="hash98-heading">Correctness Invariants</h2>
+                  {correctnessInvariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="hash98-section">
+                  <h2 className="hash98-heading">Complexity Analysis and Performance Intuition</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="hash98-section">
+                  <h2 className="hash98-heading">Performance Considerations in Practice</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-decision" className="hash98-section">
+                  <h2 className="hash98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="hash98-section">
+                  <h2 className="hash98-heading">Advanced Insights and Current Frontiers</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="hash98-section">
+                  <h2 className="hash98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Hash tables succeed when hashes are uniform and probes stay short. They fail when clustering or high load
-                factor forces long scans. Design choices in hash function, collision policy, and resize thresholds decide which
-                outcome you get.
-              </p>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Correctness invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessInvariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-practical" className="hash98-section">
+                  <h2 className="hash98-heading">Practical Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="hash98-subheading">{example.title}</h3>
+                      <div className="hash98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-testing" className="hash98-section">
+                  <h2 className="hash98-heading">Testing Checklist</h2>
+                  <ul>
+                    {testingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="ex-practice" className="hash98-section">
+                  <h2 className="hash98-heading">Practice and Build Challenges</h2>
+                  <ul>
+                    {practicePrompts.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Average O(1) hides constants: memory traffic, cache misses, and rehash pauses. Production tables care as much
-                about variance and latency spikes as about big-O. Modern designs cap probe lengths, batch rehashing, and use
-                cache-friendly layouts to stabilize tail latency.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance considerations in practice</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorld.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="hash98-section">
+                <h2 className="hash98-heading">Glossary</h2>
+                {terminology.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.detail}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Testing checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {testingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practice and build challenges</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {practicePrompts.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and current frontiers</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
