@@ -9,7 +9,8 @@ export interface FolderNavigationBarProps {
 }
 
 const BACK_ARROW = '\u2190'
-const FORWARD_ARROW = '\u2192'
+const UP_ARROW = '\u2191'
+const ADDRESS_GLYPH = '\uD83D\uDCC1'
 
 export default function FolderNavigationBar({
   canGoBack,
@@ -37,11 +38,17 @@ export default function FolderNavigationBar({
           disabled={!canGoUp}
           aria-label="Go up one level"
         >
-          <span aria-hidden="true">{FORWARD_ARROW}</span>
+          <span aria-hidden="true">{UP_ARROW}</span>
         </button>
       </div>
-      <div className="folder-window__address-bar" title={address}>
-        <span className="folder-window__address-text">{address}</span>
+      <div className="folder-window__address-group">
+        <span className="folder-window__address-label">Address</span>
+        <div className="folder-window__address-bar" title={address}>
+          <span className="folder-window__address-glyph" aria-hidden="true">
+            {ADDRESS_GLYPH}
+          </span>
+          <span className="folder-window__address-text">{address}</span>
+        </div>
       </div>
     </header>
   )

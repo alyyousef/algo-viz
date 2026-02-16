@@ -304,6 +304,17 @@
   pointer-events: auto;
 }
 
+.win96-desktop-logo {
+  position: absolute;
+  right: 24px;
+  bottom: calc(28px + 24px);
+  width: clamp(84px, 9vw, 150px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+
 .win96-desktop-icons {
   display: grid;
   grid-auto-flow: column;
@@ -472,22 +483,28 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
+  color: #1f2a36;
 }
 
 .folder-window__header {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  align-items: stretch;
+  gap: 10px;
+  padding: 8px;
   margin-bottom: 10px;
-  border: 1px solid #9fa4aa;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #f5f6f8 0%, #e3e7eb 100%);
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  background: #d4d0c8;
+  box-shadow: inset 0 0 0 1px #b8b4ab;
 }
 
 .folder-window__nav-buttons {
   display: flex;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .folder-window__nav-button {
@@ -496,12 +513,13 @@
   justify-content: center;
   width: 28px;
   height: 24px;
-  font-size: 14px;
-  border: 1px solid #5f6367;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #ffffff 0%, #dfe3e7 100%);
+  font-size: 13px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  background: #d4d0c8;
   color: #1f2a36;
-  box-shadow: 1px 1px 0 #ffffff inset, -1px -1px 0 #c4c8cc inset;
   cursor: pointer;
 }
 
@@ -511,28 +529,63 @@
 }
 
 .folder-window__nav-button:active:not(:disabled) {
-  background: linear-gradient(180deg, #dfe3e7 0%, #ffffff 100%);
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #c7c3b9;
   transform: translateY(1px);
 }
 
 .folder-window__nav-button:disabled {
-  opacity: 0.45;
+  color: #8a8d92;
+  border-top: 1px solid #e7e4dc;
+  border-left: 1px solid #e7e4dc;
+  border-right: 1px solid #9d9a92;
+  border-bottom: 1px solid #9d9a92;
   cursor: not-allowed;
+}
+
+.folder-window__address-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.folder-window__address-label {
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 700;
+  color: #2e3640;
+  text-transform: uppercase;
 }
 
 .folder-window__address-bar {
   flex: 1;
   display: flex;
   align-items: center;
+  min-width: 0;
   min-height: 24px;
-  padding: 2px 8px;
-  border: 1px solid #aeb3b8;
-  border-radius: 3px;
+  padding: 0 8px;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
   background: #ffffff;
   font-size: 12px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #1f2a36;
   overflow: hidden;
+}
+
+.folder-window__address-glyph {
+  flex-shrink: 0;
+  margin-right: 6px;
+  font-size: 13px;
+  opacity: 0.9;
 }
 
 .folder-window__address-text {
@@ -544,41 +597,101 @@
 .folder-window__summary {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   margin-bottom: 8px;
-  font-size: 13px;
+  padding: 0 2px;
+  font-size: 12px;
   color: #1f2a36;
 }
 
 .folder-window__summary-title {
   margin: 0;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: 700;
   color: #0a246a;
 }
 
 .folder-window__summary-meta {
-  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.folder-window__summary-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 8px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  background: #d4d0c8;
+  font-size: 11px;
   color: #3d4550;
 }
 
 .folder-window__content {
   flex: 1;
+  min-height: 0;
+  padding: 10px 8px;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  background: #fff;
   overflow: auto;
 }
 
 .folder-window__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 12px 10px;
-  padding-block: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  gap: 14px 10px;
+  align-content: start;
+}
+
+.folder-window__icon {
+  width: 100%;
+  min-inline-size: 0;
+  max-width: none;
+  padding: 10px 4px 8px;
+}
+
+.folder-window__icon .desktop-icon-96__image {
+  width: 40px;
+  height: 40px;
+}
+
+.folder-window__icon .desktop-icon-96__label {
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .folder-window__empty {
+  display: grid;
+  place-items: center;
+  min-height: 140px;
   padding: 24px;
   font-size: 12px;
-  color: #333;
+  color: #4b5563;
+}
+
+@media (max-width: 680px) {
+  .folder-window__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .folder-window__summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .folder-window__summary-title {
+    font-size: 22px;
+  }
 }
 
 .visualization-window {

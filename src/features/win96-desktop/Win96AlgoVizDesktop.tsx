@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { getExplorerNode } from '@/data/algoviz-explorer'
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import Window96 from '@/systems/win96/components/Window96'
 import {
@@ -118,7 +119,6 @@ function DesktopChrome(): JSX.Element {
     activeWindowId,
     rootFolders,
     openFolderWindow,
-    openVisualizationWindow,
     toggleMinimize,
     getChildren,
   } = useWin96WindowManager()
@@ -308,7 +308,10 @@ function DesktopChrome(): JSX.Element {
     if (kind === 'folder') {
       openFolderWindow(nodeId)
     } else {
-      openVisualizationWindow(nodeId)
+      const target = getExplorerNode(nodeId)
+      if (target?.node.kind === 'visualization' && target.node.route) {
+        void navigate(target.node.route)
+      }
     }
   }
 
@@ -395,6 +398,12 @@ function DesktopChrome(): JSX.Element {
           </div>
         </div>
       ) : null}
+      <img
+        src="/transparentText.png"
+        alt="AlgoViz logo"
+        className="win96-desktop-logo"
+        draggable={false}
+      />
       <Taskbar97
         startButtonProps={{
           onClick: handleStartButtonClick,

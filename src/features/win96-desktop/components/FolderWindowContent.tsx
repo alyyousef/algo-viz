@@ -1,4 +1,5 @@
-﻿import { memo, useMemo, type JSX } from 'react'
+import { memo, useMemo, type JSX } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import { useWin96WindowManager } from '@/systems/win96/context/Win96WindowManager'
@@ -25,10 +26,10 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
     navigateToChild,
     navigateBack,
     navigateUp,
-    openVisualizationWindow,
     getChildren,
     getPathEntries,
   } = useWin96WindowManager()
+  const navigate = useNavigate()
 
   const entries = useMemo(() => getPathEntries(window.path), [getPathEntries, window.path])
   const currentNodeId = window.path[window.path.length - 1] ?? 'root'
@@ -55,7 +56,12 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
 
       <div className="folder-window__summary">
         <h2 className="folder-window__summary-title">{currentEntry?.name ?? 'Folder'}</h2>
-        <span className="folder-window__summary-meta">{subtitle}</span>
+        <div className="folder-window__summary-meta">
+          <span className="folder-window__summary-badge">{subtitle}</span>
+          {window.path.length > 1 ? (
+            <span className="folder-window__summary-badge">Depth {window.path.length - 1}</span>
+          ) : null}
+        </div>
       </div>
 
       <div className="folder-window__content">
@@ -70,6 +76,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
                 return (
                   <DesktopIcon96
                     key={child.id}
+                    className="folder-window__icon"
                     label={child.name}
                     icon={icon ?? <span aria-hidden="true">{FOLDER_GLYPH}</span>}
                     onDoubleClick={() => navigateToChild(window.id, child.id)}
@@ -81,10 +88,15 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
               return (
                 <DesktopIcon96
                   key={child.id}
+                  className="folder-window__icon"
                   label={child.name}
                   icon={icon ?? <span aria-hidden="true">{VISUALIZATION_GLYPH}</span>}
                   contextUrl={child.route}
-                  onDoubleClick={() => openVisualizationWindow(child.id)}
+                  onDoubleClick={() => {
+                    if (child.route) {
+                      void navigate(child.route)
+                    }
+                  }}
                   title={child.description ?? child.name}
                 />
               )
