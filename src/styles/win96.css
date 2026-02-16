@@ -248,6 +248,67 @@
   text-align: center;
   max-width: 100%;
 }
+
+.win96-computer-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win96-folder-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win96-folder-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+}
+
+.win96-folder-icon--sm {
+  width: 12px;
+  height: 12px;
+}
+
+.win96-folder-icon--md {
+  width: 14px;
+  height: 14px;
+}
+
+.win96-folder-icon--lg {
+  width: 20px;
+  height: 20px;
+}
+
+.win96-computer-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+}
+
+.win96-computer-icon--sm {
+  width: 12px;
+  height: 12px;
+}
+
+.win96-computer-icon--md {
+  width: 14px;
+  height: 14px;
+}
+
+.win96-computer-icon--lg {
+  width: 20px;
+  height: 20px;
+}
+
 .win96-desktop {
   position: relative;
   display: flex;
@@ -408,7 +469,9 @@
 .win96-start-menu__item-icon {
   font-size: 18px;
   width: 20px;
+  height: 20px;
   display: inline-flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -623,9 +686,11 @@
 }
 
 .folder-window__address-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   margin-right: 4px;
-  font-size: 12px;
   opacity: 1;
 }
 
@@ -687,8 +752,14 @@
 }
 
 .folder-window__icon .desktop-icon-96__image {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
+}
+
+.folder-window__icon .win96-folder-icon,
+.folder-window__icon .win96-computer-icon {
+  width: 16px;
+  height: 16px;
 }
 
 .folder-window__icon .desktop-icon-96__label {

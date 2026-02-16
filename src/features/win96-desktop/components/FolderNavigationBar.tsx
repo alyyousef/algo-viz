@@ -10,7 +10,6 @@ export interface FolderNavigationBarProps {
 
 const BACK_ARROW = '\u2190'
 const UP_ARROW = '\u2191'
-const ADDRESS_GLYPH = '\uD83D\uDCC1'
 
 export default function FolderNavigationBar({
   canGoBack,
@@ -45,7 +44,7 @@ export default function FolderNavigationBar({
         <span className="folder-window__address-label">Address</span>
         <div className="folder-window__address-bar" title={address}>
           <span className="folder-window__address-glyph" aria-hidden="true">
-            {ADDRESS_GLYPH}
+            <img src="/folder.png" alt="" className="win96-folder-icon win96-folder-icon--sm" />
           </span>
           <span className="folder-window__address-text">{address}</span>
         </div>

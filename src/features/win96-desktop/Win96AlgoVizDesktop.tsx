@@ -16,11 +16,25 @@ import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 import FolderWindowContent from './components/FolderWindowContent'
 import VisualizationWindowContent from './components/VisualizationWindowContent'
 
-const FOLDER_GLYPH = '\uD83D\uDCC1'
-const VISUALIZATION_GLYPH = '\uD83D\uDCCA'
 const BASE_DESKTOP_WIDTH = 1440
 const BASE_DESKTOP_HEIGHT = 900
 const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+function FolderIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
+  return (
+    <span aria-hidden="true" className="win96-folder-icon-wrap">
+      <img src="/folder.png" alt="" className={`win96-folder-icon win96-folder-icon--${size}`} />
+    </span>
+  )
+}
+
+function VisualizationIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
+  return (
+    <span aria-hidden="true" className="win96-computer-icon-wrap">
+      <img src="/computer.png" alt="" className={`win96-computer-icon win96-computer-icon--${size}`} />
+    </span>
+  )
+}
 
 interface MinimizedHelpTask {
   id: string
@@ -52,7 +66,7 @@ const WindowLayer = (): JSX.Element => {
         <Window96
           key={win.id}
           title={win.title}
-          icon={win.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH}
+          icon={win.kind === 'folder' ? <FolderIcon size="md" /> : <VisualizationIcon size="md" />}
           initialPosition={win.initialPosition}
           onPointerDown={() => focusWindow(win.id)}
           onMinimize={() => minimizeWindow(win.id)}
@@ -101,7 +115,7 @@ function DesktopContainer(): JSX.Element {
           <DesktopIcon96
             key={node.id}
             label={node.name}
-            icon={<span aria-hidden="true">{node.icon ?? FOLDER_GLYPH}</span>}
+            icon={<FolderIcon size="lg" />}
             onDoubleClick={() => openFolderWindow(node.id)}
             title={node.description ?? node.name}
           />
@@ -257,9 +271,7 @@ function DesktopChrome(): JSX.Element {
         size="sm"
         className={classes}
         iconLeft={
-          <span aria-hidden="true">
-            {win.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH}
-          </span>
+          win.kind === 'folder' ? <FolderIcon size="sm" /> : <VisualizationIcon size="sm" />
         }
         data-state={isActive ? 'active' : win.isMinimized ? 'minimized' : 'inactive'}
         onClick={() => toggleMinimize(win.id)}
@@ -281,7 +293,7 @@ function DesktopChrome(): JSX.Element {
         setMinimizedHelpTasks(nextTasks)
         void navigate(task.url)
       }}
-      iconLeft={<span aria-hidden="true">{VISUALIZATION_GLYPH}</span>}
+      iconLeft={<VisualizationIcon size="sm" />}
     >
       {task.title}
     </Button97>
@@ -336,9 +348,7 @@ function DesktopChrome(): JSX.Element {
                     role="menuitem"
                     onClick={() => handleSelectStartFolder(node.id)}
                   >
-                    <span className="win96-start-menu__item-icon" aria-hidden="true">
-                      {node.icon ?? FOLDER_GLYPH}
-                    </span>
+                    <span className="win96-start-menu__item-icon" aria-hidden="true"><FolderIcon size="sm" /></span>
                     <span className="win96-start-menu__item-content">
                       <span className="win96-start-menu__item-label">{node.name}</span>
                       {node.description ? (
@@ -380,7 +390,7 @@ function DesktopChrome(): JSX.Element {
                       onClick={() => handleLaunchNode(child.id, child.kind)}
                     >
                       <span className="win96-start-menu__item-icon" aria-hidden="true">
-                        {child.icon ?? (child.kind === 'folder' ? FOLDER_GLYPH : VISUALIZATION_GLYPH)}
+                        {child.kind === 'folder' ? <FolderIcon size="sm" /> : <VisualizationIcon size="sm" />}
                       </span>
                       <span className="win96-start-menu__item-content">
                         <span className="win96-start-menu__item-label">{child.name}</span>

@@ -9,8 +9,17 @@ import FolderNavigationBar from './FolderNavigationBar'
 import type { ExplorerNode } from '@/data/algoviz-explorer'
 import type { FolderWindowState } from '@/systems/win96/context/Win96WindowManager'
 
-const FOLDER_GLYPH = '\uD83D\uDCC1'
-const VISUALIZATION_GLYPH = '\uD83D\uDCCA'
+const FolderIcon = (): JSX.Element => (
+  <span aria-hidden="true" className="win96-folder-icon-wrap">
+    <img src="/folder.png" alt="" className="win96-folder-icon" />
+  </span>
+)
+
+const VisualizationIcon = (): JSX.Element => (
+  <span aria-hidden="true" className="win96-computer-icon-wrap">
+    <img src="/computer.png" alt="" className="win96-computer-icon" />
+  </span>
+)
 
 const buildAddress = (entries: ExplorerNode[]): string => {
   const segments = entries.slice(1).map((entry) => entry.name)
@@ -72,15 +81,13 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
         ) : (
           <div className="folder-window__grid">
             {visibleChildren.map((child) => {
-              const icon = child.icon ? <span aria-hidden="true">{child.icon}</span> : undefined
-
               if (child.kind === 'folder') {
                 return (
                   <DesktopIcon96
                     key={child.id}
                     className="folder-window__icon"
                     label={child.name}
-                    icon={icon ?? <span aria-hidden="true">{FOLDER_GLYPH}</span>}
+                    icon={<FolderIcon />}
                     onDoubleClick={() => navigateToChild(window.id, child.id)}
                     title={child.description ?? child.name}
                   />
@@ -92,7 +99,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
                   key={child.id}
                   className="folder-window__icon"
                   label={child.name}
-                  icon={icon ?? <span aria-hidden="true">{VISUALIZATION_GLYPH}</span>}
+                  icon={<VisualizationIcon />}
                   contextUrl={child.route}
                   onDoubleClick={() => {
                     if (child.route) {
