@@ -46,6 +46,13 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
 
   return (
     <div className="folder-window">
+      <nav className="folder-window__menubar" aria-label="Folder menu">
+        <button type="button" className="folder-window__menuitem">File</button>
+        <button type="button" className="folder-window__menuitem">Edit</button>
+        <button type="button" className="folder-window__menuitem">View</button>
+        <button type="button" className="folder-window__menuitem">Help</button>
+      </nav>
+
       <FolderNavigationBar
         canGoBack={canGoBack}
         canGoUp={canGoUp}
@@ -56,12 +63,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
 
       <div className="folder-window__summary">
         <h2 className="folder-window__summary-title">{currentEntry?.name ?? 'Folder'}</h2>
-        <div className="folder-window__summary-meta">
-          <span className="folder-window__summary-badge">{subtitle}</span>
-          {window.path.length > 1 ? (
-            <span className="folder-window__summary-badge">Depth {window.path.length - 1}</span>
-          ) : null}
-        </div>
+        <span className="folder-window__summary-meta">{subtitle}</span>
       </div>
 
       <div className="folder-window__content">

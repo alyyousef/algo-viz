@@ -1,4 +1,4 @@
-import {
+﻿import {
   forwardRef,
   useCallback,
   useEffect,
@@ -317,10 +317,16 @@ const Window96 = forwardRef(function Window96(
       }
     }
 
-    const viewportWidth = Math.max(minWidth, window.innerWidth - DESKTOP_MARGIN * 2)
+    // Maximize within the desktop layer bounds (not raw browser viewport).
+    // The desktop can be scaled/cropped, so viewport math can overflow and hide controls.
+    const host = containerRef.current?.parentElement
+    const hostWidth = host?.clientWidth ?? window.innerWidth
+    const hostHeight = host?.clientHeight ?? window.innerHeight
+
+    const viewportWidth = Math.max(minWidth, hostWidth - DESKTOP_MARGIN * 2)
     const viewportHeight = Math.max(
       minHeight,
-      window.innerHeight - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2,
+      hostHeight - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2,
     )
 
     return {
@@ -393,6 +399,10 @@ const Window96 = forwardRef(function Window96(
     handleMaximize()
   }, [handleMaximize, resizable])
 
+  const handleControlPointerDown = useCallback((event: ReactPointerEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+  }, [])
+
   return (
     <div
       ref={containerRef}
@@ -416,6 +426,7 @@ const Window96 = forwardRef(function Window96(
             type="button"
             className="win96-window__button"
             aria-label="Minimize window"
+            onPointerDown={handleControlPointerDown}
             onClick={onMinimize}
           >
             _
@@ -424,17 +435,19 @@ const Window96 = forwardRef(function Window96(
             type="button"
             className="win96-window__button"
             aria-label={isMaximized ? 'Restore window' : 'Maximize window'}
+            onPointerDown={handleControlPointerDown}
             onClick={handleMaximize}
           >
-            {isMaximized ? '▭' : '▢'}
+            {isMaximized ? '[ ]' : '[]'}
           </button>
           <button
             type="button"
             className="win96-window__button"
             aria-label="Close window"
+            onPointerDown={handleControlPointerDown}
             onClick={onClose}
           >
-            ✕
+            X
           </button>
         </div>
       </div>
@@ -492,3 +505,4 @@ const Window96 = forwardRef(function Window96(
 })
 
 export default Window96
+

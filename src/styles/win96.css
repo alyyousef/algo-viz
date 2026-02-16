@@ -484,26 +484,69 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  color: #1f2a36;
+  color: #000;
+  font-family: Tahoma, 'MS Sans Serif', 'Segoe UI', sans-serif;
 }
 
-.folder-window__header {
+.folder-window__menubar {
   display: flex;
-  align-items: stretch;
-  gap: 10px;
-  padding: 8px;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 3px;
+  margin: 0 0 4px;
   border-top: 1px solid #fff;
   border-left: 1px solid #fff;
   border-right: 1px solid #808080;
   border-bottom: 1px solid #808080;
   background: #d4d0c8;
-  box-shadow: inset 0 0 0 1px #b8b4ab;
+}
+
+.folder-window__menuitem {
+  min-width: 34px;
+  height: 20px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #000;
+  font: inherit;
+  font-size: 12px;
+  text-align: center;
+  cursor: default;
+}
+
+.folder-window__menuitem:hover,
+.folder-window__menuitem:focus-visible {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  background: #d4d0c8;
+  outline: none;
+}
+
+.folder-window__menuitem:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.folder-window__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  margin-bottom: 6px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  background: #d4d0c8;
 }
 
 .folder-window__nav-buttons {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
 }
 
@@ -511,15 +554,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 24px;
-  font-size: 13px;
+  width: 24px;
+  height: 22px;
+  font-size: 12px;
   border-top: 1px solid #fff;
   border-left: 1px solid #fff;
   border-right: 1px solid #808080;
   border-bottom: 1px solid #808080;
   background: #d4d0c8;
-  color: #1f2a36;
+  color: #000;
   cursor: pointer;
 }
 
@@ -549,18 +592,17 @@
 .folder-window__address-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
   min-width: 0;
 }
 
 .folder-window__address-label {
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
-  font-weight: 700;
-  color: #2e3640;
-  text-transform: uppercase;
+  font-weight: 400;
+  color: #000;
 }
 
 .folder-window__address-bar {
@@ -568,24 +610,23 @@
   display: flex;
   align-items: center;
   min-width: 0;
-  min-height: 24px;
-  padding: 0 8px;
+  min-height: 22px;
+  padding: 0 6px;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
   border-right: 1px solid #fff;
   border-bottom: 1px solid #fff;
   background: #ffffff;
   font-size: 12px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #1f2a36;
+  color: #000;
   overflow: hidden;
 }
 
 .folder-window__address-glyph {
   flex-shrink: 0;
-  margin-right: 6px;
-  font-size: 13px;
-  opacity: 0.9;
+  margin-right: 4px;
+  font-size: 12px;
+  opacity: 1;
 }
 
 .folder-window__address-text {
@@ -597,46 +638,30 @@
 .folder-window__summary {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-  padding: 0 2px;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 0 1px;
   font-size: 12px;
-  color: #1f2a36;
+  color: #000;
 }
 
 .folder-window__summary-title {
   margin: 0;
-  font-size: 30px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   color: #0a246a;
 }
 
 .folder-window__summary-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.folder-window__summary-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 20px;
-  padding: 0 8px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #808080;
-  border-bottom: 1px solid #808080;
-  background: #d4d0c8;
-  font-size: 11px;
-  color: #3d4550;
+  font-size: 12px;
+  color: #444;
 }
 
 .folder-window__content {
   flex: 1;
   min-height: 0;
-  padding: 10px 8px;
+  padding: 8px;
   border-top: 2px solid #808080;
   border-left: 2px solid #808080;
   border-right: 2px solid #fff;
@@ -647,38 +672,44 @@
 
 .folder-window__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
-  gap: 14px 10px;
+  grid-template-columns: repeat(auto-fill, 112px);
+  gap: 16px 8px;
+  justify-content: flex-start;
   align-content: start;
 }
 
 .folder-window__icon {
-  width: 100%;
+  width: 112px;
   min-inline-size: 0;
   max-width: none;
-  padding: 10px 4px 8px;
+  padding: 8px 4px 6px;
+  margin: 0;
 }
 
 .folder-window__icon .desktop-icon-96__image {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
 }
 
 .folder-window__icon .desktop-icon-96__label {
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 
 .folder-window__empty {
   display: grid;
   place-items: center;
   min-height: 140px;
-  padding: 24px;
+  padding: 18px;
   font-size: 12px;
-  color: #4b5563;
+  color: #444;
 }
 
 @media (max-width: 680px) {
+  .folder-window__menubar {
+    flex-wrap: wrap;
+  }
+
   .folder-window__header {
     flex-direction: column;
     align-items: stretch;
@@ -690,7 +721,7 @@
   }
 
   .folder-window__summary-title {
-    font-size: 22px;
+    font-size: 15px;
   }
 }
 
