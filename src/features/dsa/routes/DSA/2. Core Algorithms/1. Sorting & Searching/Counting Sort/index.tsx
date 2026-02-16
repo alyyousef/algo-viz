@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -446,294 +445,528 @@ const takeaways = [
   'Cache-friendly counting and prefix phases make it fast in practice when k is tuned to fit cache.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-terms', label: 'Terminology and Invariants' },
+    { id: 'core-process', label: 'Process and Mechanics' },
+    { id: 'core-performance', label: 'Complexity and Performance' },
+    { id: 'core-compare', label: 'Comparison and Tuning' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-pitfalls', label: 'Pitfalls and Testing' },
+    { id: 'core-usage', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const count98HelpStyles = `
+.count98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.count98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.count98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.count98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.count98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.count98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.count98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.count98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.count98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.count98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.count98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.count98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.count98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.count98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.count98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.count98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.count98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.count98-section {
+  margin: 0 0 20px;
+}
+
+.count98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.count98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.count98-content p,
+.count98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.count98-content p {
+  margin: 0 0 10px;
+}
+
+.count98-content ul,
+.count98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.count98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.count98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+  overflow-x: auto;
+}
+
+.count98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .count98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .count98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
 export default function CountingSortPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Counting Sort (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Counting Sort',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Counting Sort</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="count98-help-page">
+      <style>{count98HelpStyles}</style>
+      <div className="count98-window" role="presentation">
+        <header className="count98-titlebar">
+          <span className="count98-title-text">Counting Sort</span>
+          <div className="count98-title-controls">
+            <button className="count98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="count98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Histogram the keys, prefix the counts, place with stability</div>
-              <p className="win95-text">
-                Counting sort replaces comparisons with a histogram and a prefix sum. When keys fit a modest integer range, it
-                delivers stable O(n + k) performance and powers radix sorts and histogram-heavy pipelines.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Counting sort asks you to trade comparisons for arithmetic. One pass tallies how many times each key appears, a
-                prefix sum converts tallies into positions, and a stable placement phase rebuilds the array in order. The approach
-                shines when the key universe is small, and it underpins radix sort, histogram equalization, and bucketing stages in
-                databases.
-              </p>
-            </div>
-          </fieldset>
+        <div className="count98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`count98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="count98-main">
+          <aside className="count98-toc" aria-label="Table of contents">
+            <h2 className="count98-toc-title">Contents</h2>
+            <ul className="count98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="count98-content">
+            <h1 className="count98-doc-title">Counting Sort</h1>
+            <p>
+              Counting sort replaces comparisons with a histogram and a prefix sum. When keys fit a modest integer range, it
+              delivers stable O(n + k) performance and powers radix sorts and histogram-heavy pipelines.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Terminology and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {terminology.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="count98-section">
+                  <h2 className="count98-heading">Overview</h2>
+                  <p>
+                    Counting sort trades comparisons for arithmetic. One pass tallies key frequencies, a prefix pass converts
+                    frequencies into placement ranges, and a stable write-back pass produces sorted output.
+                  </p>
+                  <p>
+                    The method shines when the key universe is small. It underpins radix sort digit passes and appears in practical
+                    histogram and bucketing workloads.
+                  </p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Step-by-step technique</legend>
-            <div className="win95-grid win95-grid-2">
-              {stepByStep.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="count98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: histogram to layout</legend>
-            <div className="win95-grid win95-grid-3">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                <section id="bp-history" className="count98-section">
+                  <h2 className="count98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="count98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <hr className="count98-divider" />
+
+                <section id="bp-takeaways" className="count98-section">
+                  <h2 className="count98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Range and key tuning</legend>
-            <div className="win95-grid win95-grid-2">
-              {rangeTuning.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and practical intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Rule of thumb: if k is within a few thousand and you care about stability, counting sort will beat comparison
-                sorts. If k approaches n or exceeds cache, switch to radix with smaller digits or fall back to O(n log n)
-                algorithms.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Performance notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Counting sort vs alternatives</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Dimension</th>
-                    <th>Counting</th>
-                    <th>Quick</th>
-                    <th>Merge</th>
-                    <th>Radix</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparisonGrid.map((row) => (
-                    <tr key={row.feature}>
-                      <td>{row.feature}</td>
-                      <td>{row.counting}</td>
-                      <td>{row.quick}</td>
-                      <td>{row.merge}</td>
-                      <td>{row.radix}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-models" className="count98-section">
+                  <h2 className="count98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-terms" className="count98-section">
+                  <h2 className="count98-heading">Terminology and Invariants</h2>
+                  {terminology.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Use cases in practice</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-process" className="count98-section">
+                  <h2 className="count98-heading">Process and Mechanics</h2>
+                  {stepByStep.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {mechanics.map((item) => (
+                    <div key={item.heading}>
+                      <h3 className="count98-subheading">{item.heading}</h3>
+                      <ul>
+                        {item.bullets.map((bullet) => (
+                          <li key={bullet}>{bullet}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-performance" className="count98-section">
+                  <h2 className="count98-heading">Complexity and Performance</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+                <section id="core-compare" className="count98-section">
+                  <h2 className="count98-heading">Comparison and Range Tuning</h2>
+                  {comparisonGrid.map((row) => (
+                    <p key={row.feature}>
+                      <strong>{row.feature}:</strong> Counting {row.counting}; Quick {row.quick}; Merge {row.merge}; Radix{' '}
+                      {row.radix}.
+                    </p>
+                  ))}
+                  {rangeTuning.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-applications" className="count98-section">
+                  <h2 className="count98-heading">Applications and Patterns</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {realWorldPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="count98-section">
+                  <h2 className="count98-heading">Pitfalls, Testing, and Practice</h2>
+                  <h3 className="count98-subheading">Common Pitfalls</h3>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h3 className="count98-subheading">Testing Checklist</h3>
+                  <ul>
+                    {testingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h3 className="count98-subheading">Practice Ideas</h3>
+                  <ul>
+                    {practiceIdeas.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-usage" className="count98-section">
+                  <h2 className="count98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="core-advanced" className="count98-section">
+                  <h2 className="count98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="count98-section">
+                <h2 className="count98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="count98-subheading">{example.title}</h3>
+                    <div className="count98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Testing checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {testingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="count98-section">
+                <h2 className="count98-heading">Glossary</h2>
+                {terminology.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.detail}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practice and build ideas</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {practiceIdeas.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
