@@ -26,6 +26,7 @@ export interface FolderWindowState extends BaseWindowState {
   kind: 'folder'
   path: string[] // node ids from root to current node inclusive
   history: string[][]
+  forwardHistory: string[][]
 }
 
 export interface VisualizationWindowState extends BaseWindowState {
@@ -56,6 +57,7 @@ type ManagerAction =
   | { type: 'RESTORE_WINDOW'; windowId: string }
   | { type: 'NAVIGATE_TO_CHILD'; windowId: string; nodeId: string }
   | { type: 'NAVIGATE_BACK'; windowId: string }
+  | { type: 'NAVIGATE_FORWARD'; windowId: string }
   | { type: 'NAVIGATE_UP'; windowId: string }
 
 const createWindowId = () => {
@@ -126,6 +128,7 @@ const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState
       const offset = (state.nextOffset + 24) % 72
       const [nextState, zIndex] = bumpZIndex({ ...state, nextOffset: offset })
       const pathIds = entry.pathEntries.map((node) => node.id)
+      const initialHistory = pathIds.length > 1 ? [pathIds.slice(0, -1)] : []
 
       const newWindow: FolderWindowState = {
         id: windowId,
@@ -135,7 +138,8 @@ const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState
         isMinimized: false,
         zIndex,
         path: pathIds,
-        history: [],
+        history: initialHistory,
+        forwardHistory: [],
         initialPosition: makePosition(offset),
       }
 
@@ -233,6 +237,7 @@ const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState
             title: entry.node.name,
             path: entry.pathEntries.map((node) => node.id),
             history: [...win.history, currentPath],
+            forwardHistory: [],
           }
         }),
       }
@@ -267,6 +272,41 @@ const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState
             title: entry.node.name,
             path: [...previous],
             history,
+            forwardHistory: [...win.forwardHistory, [...win.path]],
+          }
+        }),
+      }
+
+    case 'NAVIGATE_FORWARD':
+      return {
+        ...state,
+        windows: state.windows.map((win) => {
+          if (win.id !== action.windowId || win.kind !== 'folder') {
+            return win
+          }
+
+          const forwardHistory = [...win.forwardHistory]
+          const next = forwardHistory.pop()
+          if (!next) {
+            return win
+          }
+
+          const targetId = next[next.length - 1]
+          if (!targetId) {
+            return win
+          }
+          const entry = getExplorerNode(targetId)
+          if (!entry) {
+            return win
+          }
+
+          return {
+            ...win,
+            nodeId: targetId,
+            title: entry.node.name,
+            path: [...next],
+            history: [...win.history, [...win.path]],
+            forwardHistory,
           }
         }),
       }
@@ -299,6 +339,7 @@ const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState
             title: entry.node.name,
             path: parentPath,
             history: [...win.history, [...win.path]],
+            forwardHistory: [],
           }
         }),
       }
@@ -321,6 +362,7 @@ interface WindowManagerValue {
   openVisualizationWindow: (nodeId: string) => void
   navigateToChild: (windowId: string, nodeId: string) => void
   navigateBack: (windowId: string) => void
+  navigateForward: (windowId: string) => void
   navigateUp: (windowId: string) => void
   getPathEntries: (path: string[]) => ExplorerIndexEntry[]
   getChildren: (nodeId: string) => ExplorerNode[]
@@ -384,6 +426,10 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
     dispatch({ type: 'NAVIGATE_BACK', windowId })
   }, [])
 
+  const navigateForward = useCallback((windowId: string) => {
+    dispatch({ type: 'NAVIGATE_FORWARD', windowId })
+  }, [])
+
   const navigateUp = useCallback((windowId: string) => {
     dispatch({ type: 'NAVIGATE_UP', windowId })
   }, [])
@@ -410,6 +456,7 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       openVisualizationWindow,
       navigateToChild,
       navigateBack,
+      navigateForward,
       navigateUp,
       getChildren,
       getPathEntries,
@@ -427,6 +474,7 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       openVisualizationWindow,
       navigateToChild,
       navigateBack,
+      navigateForward,
       navigateUp,
       getChildren,
       getPathEntries,

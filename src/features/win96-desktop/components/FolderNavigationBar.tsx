@@ -2,21 +2,21 @@ import type { JSX } from 'react'
 
 export interface FolderNavigationBarProps {
   canGoBack: boolean
-  canGoUp: boolean
+  canGoForward: boolean
   address: string
   onBack: () => void
-  onUp: () => void
+  onForward: () => void
 }
 
 const BACK_ARROW = '\u2190'
-const UP_ARROW = '\u2191'
+const FORWARD_ARROW = '\u2192'
 
 export default function FolderNavigationBar({
   canGoBack,
-  canGoUp,
+  canGoForward,
   address,
   onBack,
-  onUp,
+  onForward,
 }: FolderNavigationBarProps): JSX.Element {
   return (
     <header className="folder-window__header" role="navigation" aria-label="Folder navigation">
@@ -33,11 +33,11 @@ export default function FolderNavigationBar({
         <button
           type="button"
           className="folder-window__nav-button"
-          onClick={onUp}
-          disabled={!canGoUp}
-          aria-label="Go up one level"
+          onClick={onForward}
+          disabled={!canGoForward}
+          aria-label="Go forward"
         >
-          <span aria-hidden="true">{UP_ARROW}</span>
+          <span aria-hidden="true">{FORWARD_ARROW}</span>
         </button>
       </div>
       <div className="folder-window__address-group">

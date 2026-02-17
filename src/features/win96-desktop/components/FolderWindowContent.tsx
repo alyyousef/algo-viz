@@ -34,7 +34,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
   const {
     navigateToChild,
     navigateBack,
-    navigateUp,
+    navigateForward,
     getChildren,
     getPathEntries,
   } = useWin96WindowManager()
@@ -47,7 +47,7 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
   const visibleChildren = children
 
   const canGoBack = window.history.length > 0
-  const canGoUp = window.path.length > 1
+  const canGoForward = window.forwardHistory.length > 0
   const address = useMemo(() => buildAddress(entries.map((entry) => entry.node)), [entries])
   const itemCount = visibleChildren.length
   const subtitle =
@@ -55,19 +55,12 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
 
   return (
     <div className="folder-window">
-      <nav className="folder-window__menubar" aria-label="Folder menu">
-        <button type="button" className="folder-window__menuitem">File</button>
-        <button type="button" className="folder-window__menuitem">Edit</button>
-        <button type="button" className="folder-window__menuitem">View</button>
-        <button type="button" className="folder-window__menuitem">Help</button>
-      </nav>
-
       <FolderNavigationBar
         canGoBack={canGoBack}
-        canGoUp={canGoUp}
+        canGoForward={canGoForward}
         address={address}
         onBack={() => navigateBack(window.id)}
-        onUp={() => navigateUp(window.id)}
+        onForward={() => navigateForward(window.id)}
       />
 
       <div className="folder-window__summary">
@@ -118,3 +111,4 @@ const FolderWindowContent = ({ window }: FolderWindowContentProps): JSX.Element 
 }
 
 export default memo(FolderWindowContent)
+
