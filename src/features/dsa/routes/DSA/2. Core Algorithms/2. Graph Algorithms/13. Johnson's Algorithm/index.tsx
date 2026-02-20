@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -465,339 +465,354 @@ const takeaways = [
   'Performance depends on priority queues and graph sparsity more than on the reweighting math.',
 ]
 
+const glossaryTerms = [
+  { term: 'APSP', definition: 'All-pairs shortest paths over every source-target pair.' },
+  { term: 'Potential h(v)', definition: 'Bellman-Ford distance from super-source to v used for reweighting.' },
+  { term: 'Reweighted edge', definition: "w'(u,v)=w(u,v)+h(u)-h(v), guaranteed nonnegative." },
+  { term: 'Super-source', definition: 'Added vertex with zero-weight edges to all vertices.' },
+  { term: 'Distance recovery', definition: "d(u,v)=d'(u,v)-h(u)+h(v) after Dijkstra on reweighted graph." },
+  { term: 'Negative cycle', definition: 'Cycle with negative total weight; shortest paths become undefined.' },
+  { term: 'Bellman-Ford pass', definition: 'Edge-relaxation rounds used to compute potentials and cycle detection.' },
+  { term: 'Dijkstra phase', definition: 'Per-source shortest path run on nonnegative reweighted edges.' },
+  { term: 'Sparse graph regime', definition: 'When E is much smaller than V^2, where Johnson tends to win.' },
+  { term: 'Lazy row materialization', definition: 'Store only queried source rows to avoid full V^2 allocation.' },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98JohnsonHelpStyles = `
+.john-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
+.john-help-window{border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;background:#c0c0c0;width:100%;min-height:100dvh;margin:0;display:flex;flex-direction:column;box-sizing:border-box;}
+.john-help-titlebar{position:relative;display:flex;align-items:center;min-height:22px;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
+.john-help-title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;white-space:nowrap;}
+.john-help-controls{display:flex;gap:2px;margin-left:auto;}
+.john-help-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:1;}
+.john-help-tabs{display:flex;gap:1px;padding:6px 8px 0;}
+.john-help-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer;}
+.john-help-tab.active{background:#fff;position:relative;top:1px;}
+.john-help-main{border-top:1px solid #404040;background:#fff;flex:1;min-height:0;display:grid;grid-template-columns:240px 1fr;}
+.john-help-toc{border-right:1px solid #808080;background:#f2f2f2;padding:12px;overflow:auto;}
+.john-help-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
+.john-help-toc-list{list-style:none;margin:0;padding:0;}
+.john-help-toc-list li{margin:0 0 8px;}
+.john-help-toc-list a{color:#000;text-decoration:none;font-size:12px;}
+.john-help-content{padding:14px 20px 20px;overflow:auto;}
+.john-help-doc-title{margin:0 0 10px;font-size:20px;font-weight:700;}
+.john-help-content p,.john-help-content li{font-size:12px;line-height:1.5;}
+.john-help-content p{margin:0 0 10px;}
+.john-help-content ul,.john-help-content ol{margin:0 0 10px 20px;padding:0;}
+.john-help-section{margin:0 0 20px;}
+.john-help-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
+.john-help-subheading{margin:0 0 6px;font-size:13px;font-weight:700;}
+.john-help-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0;}
+.john-help-codebox{margin:6px 0 10px;padding:8px;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;background:#f4f4f4;}
+.john-help-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;}
+.john-help-link{color:#000080;}
+@media (max-width:900px){.john-help-main{grid-template-columns:1fr;}.john-help-toc{border-right:none;border-bottom:1px solid #808080;}}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-prerequisites', label: 'Prerequisites and Definitions' },
+    { id: 'bp-io', label: 'Inputs and Outputs' },
+    { id: 'bp-formal', label: 'Formal Concepts' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-concepts-overview', label: 'Core Concepts' },
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-pipeline', label: 'Johnson Pipeline' },
+    { id: 'core-flow', label: 'Step-by-Step Flow' },
+    { id: 'core-reweighting', label: 'Reweighting Details' },
+    { id: 'core-data', label: 'Data Structures' },
+    { id: 'core-correctness', label: 'Correctness Sketch' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-edge-cases', label: 'Edge Cases' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-decision', label: 'When to Use It' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-variants', label: 'Variants and Tradeoffs' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function JohnsonSAlgorithmPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Johnson's Algorithm (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tab: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tab)
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: "Johnson's Algorithm",
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Johnson's Algorithm</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="john-help-page">
+      <style>{win98JohnsonHelpStyles}</style>
+      <div className="john-help-window" role="presentation">
+        <header className="john-help-titlebar">
+          <span className="john-help-title">Johnson&apos;s Algorithm - Help</span>
+          <div className="john-help-controls">
+            <button className="john-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="john-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">
-                All-pairs shortest paths on sparse graphs, even with negative edges
-              </div>
-              <p className="win95-text">
-                Johnson's Algorithm blends Bellman-Ford and Dijkstra to solve all-pairs shortest paths efficiently on sparse graphs.
-                It uses a potential function to reweight edges so every Dijkstra run is safe, then shifts distances back to the original
-                weights. The result is a practical APSP method that stays fast without giving up correctness on negative edges.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="john-help-tabs" role="tablist" aria-label="Major sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`john-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="john-help-main">
+          <aside className="john-help-toc" aria-label="Table of contents">
+            <h2 className="john-help-toc-title">Contents</h2>
+            <ul className="john-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="john-help-content">
+            <h1 className="john-help-doc-title">Johnson&apos;s Algorithm</h1>
+            <p>
+              Johnson&apos;s Algorithm blends Bellman-Ford and Dijkstra to solve all-pairs shortest paths efficiently on sparse graphs.
+              It uses a potential function to reweight edges so every Dijkstra run is safe, then shifts distances back to the original
+              weights. The result is a practical APSP method that stays fast without giving up correctness on negative edges.
+            </p>
+            <p>
+              <Link to="/algoViz" className="john-help-link">
+                Back to Catalog
+              </Link>
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Prerequisites and definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {prerequisites.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="john-help-section">
+                  <h2 className="john-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="john-help-divider" />
+                <section id="bp-prerequisites" className="john-help-section">
+                  <h2 className="john-help-heading">Prerequisites and Definitions</h2>
+                  {prerequisites.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="john-help-divider" />
+                <section id="bp-io" className="john-help-section">
+                  <h2 className="john-help-heading">Inputs and Outputs</h2>
+                  {inputsOutputs.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="john-help-divider" />
+                <section id="bp-formal" className="john-help-section">
+                  <h2 className="john-help-heading">Formal Concepts</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="john-help-divider" />
+                <section id="bp-history" className="john-help-section">
+                  <h2 className="john-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="john-help-divider" />
+                <section id="bp-takeaways" className="john-help-section">
+                  <h2 className="john-help-heading">Key Takeaways</h2>
+                  <ul>{takeaways.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Inputs and outputs</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputsOutputs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinitions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-row">
-              <div className="win95-panel">
-                <div className="win95-subheading">Core concepts</div>
-                <div className="win95-stack">
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-concepts-overview" className="john-help-section">
+                  <h2 className="john-help-heading">Core Concepts</h2>
                   {coreConcepts.map((item) => (
-                    <div key={item.title} className="win95-panel">
-                      <div className="win95-heading">{item.title}</div>
-                      <p className="win95-text">{item.detail}</p>
-                    </div>
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
                   ))}
-                </div>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-subheading">Mental models</div>
-                <div className="win95-stack">
+                </section>
+                <section id="core-models" className="john-help-section">
+                  <h2 className="john-help-heading">Mental Models</h2>
                   {mentalModels.map((item) => (
-                    <div key={item.title} className="win95-panel">
-                      <div className="win95-heading">{item.title}</div>
-                      <p className="win95-text">{item.detail}</p>
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-pipeline" className="john-help-section">
+                  <h2 className="john-help-heading">How It Works: Johnson Pipeline</h2>
+                  {pipelineSteps.map((item) => (
+                    <p key={item.step}><strong>{item.step}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-flow" className="john-help-section">
+                  <h2 className="john-help-heading">How It Works: Step-by-Step Flow</h2>
+                  <ol>{stepByStepFlow.map((item) => <li key={item}>{item}</li>)}</ol>
+                </section>
+                <section id="core-reweighting" className="john-help-section">
+                  <h2 className="john-help-heading">How It Works: Reweighting Details</h2>
+                  {reweightingDetails.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-data" className="john-help-section">
+                  <h2 className="john-help-heading">Data Structures and Invariants</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-correctness" className="john-help-section">
+                  <h2 className="john-help-heading">Correctness Sketch</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="john-help-section">
+                  <h2 className="john-help-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                  <p>
+                    Johnson&apos;s advantage grows as the graph gets sparser. If E is close to V^2, the overhead of running Dijkstra V times
+                    can outweigh Floyd-Warshall&apos;s simplicity.
+                  </p>
+                  <ul>
+                    {complexityTable.map((row) => (
+                      <li key={row.approach}>
+                        <strong>{row.approach}:</strong> Time {row.time}, Space {row.space}. {row.note}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-applications" className="john-help-section">
+                  <h2 className="john-help-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}><strong>{item.context}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-edge-cases" className="john-help-section">
+                  <h2 className="john-help-heading">Edge Cases Checklist</h2>
+                  <ul>{edgeCases.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section id="core-pitfalls" className="john-help-section">
+                  <h2 className="john-help-heading">Common Pitfalls</h2>
+                  <ul>{pitfalls.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section id="core-decision" className="john-help-section">
+                  <h2 className="john-help-heading">When to Use It</h2>
+                  <ol>{decisionGuidance.map((item) => <li key={item}>{item}</li>)}</ol>
+                </section>
+                <section id="core-implementation" className="john-help-section">
+                  <h2 className="john-help-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-variants" className="john-help-section">
+                  <h2 className="john-help-heading">Variants and Tradeoffs</h2>
+                  <ul>
+                    {variantTable.map((row) => (
+                      <li key={row.variant}><strong>{row.variant}:</strong> {row.guarantee}. Tradeoff: {row.tradeoff}.</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-advanced" className="john-help-section">
+                  <h2 className="john-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="john-help-section">
+                <h2 className="john-help-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="john-help-subheading">{example.title}</h3>
+                    <div className="john-help-codebox">
+                      <code>{example.code.trim()}</code>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: Johnson pipeline</legend>
-            <div className="win95-grid win95-grid-3">
-              {pipelineSteps.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step flow</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {stepByStepFlow.map((item) => (
-                  <li key={item}>{item}</li>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: reweighting details</legend>
-            <div className="win95-grid win95-grid-2">
-              {reweightingDetails.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data structures and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness sketch</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Johnson's advantage grows as the graph gets sparser. If E is close to V^2, the overhead of running Dijkstra V times
-                can outweigh Floyd-Warshall's simplicity.
-              </p>
-            </div>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {edgeCases.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="john-help-section">
+                <h2 className="john-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and tradeoffs</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Guarantee</th>
-                    <th>Tradeoff</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {variantTable.map((row) => (
-                    <tr key={row.variant}>
-                      <td>{row.variant}</td>
-                      <td>{row.guarantee}</td>
-                      <td>{row.tradeoff}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
