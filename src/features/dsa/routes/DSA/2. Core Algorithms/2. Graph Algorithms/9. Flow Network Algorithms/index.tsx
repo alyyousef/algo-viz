@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -389,346 +389,609 @@ const keyTakeaways = [
   'Polynomial algorithms scale to thousands; heuristics handle millions.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Flow network',
+    definition: 'A directed graph with capacities and designated source and sink for transporting flow.',
+  },
+  {
+    term: 'Capacity constraint',
+    definition: 'Every edge flow stays between zero and edge capacity.',
+  },
+  {
+    term: 'Flow conservation',
+    definition: 'At intermediate nodes, total incoming flow equals total outgoing flow.',
+  },
+  {
+    term: 'Residual graph',
+    definition: 'Graph of remaining forward capacity plus reverse cancellation capacity for current flow.',
+  },
+  {
+    term: 'Augmenting path',
+    definition: 'A source-to-sink residual path whose every edge has positive residual capacity.',
+  },
+  {
+    term: 'Bottleneck',
+    definition: 'Minimum residual capacity along an augmenting path; this limits the push amount.',
+  },
+  {
+    term: 'Min-cut',
+    definition: 'A source-sink partition with minimum outgoing cut capacity, equal to max-flow value.',
+  },
+  {
+    term: 'Blocking flow',
+    definition: 'In Dinic, a flow that saturates all source-sink paths in the current level graph.',
+  },
+  {
+    term: 'Preflow',
+    definition: 'Push-relabel state where nodes can temporarily hold excess inflow.',
+  },
+  {
+    term: 'Super source/sink',
+    definition: 'Reduction gadget that combines many sources/sinks into one source and one sink.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98FlowHelpStyles = `
+.flow-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.flow-help-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.flow-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.flow-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.flow-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.flow-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.flow-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.flow-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.flow-help-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.flow-help-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.flow-help-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.flow-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.flow-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flow-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.flow-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.flow-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.flow-help-doc-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.flow-help-content p,
+.flow-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.flow-help-content p {
+  margin: 0 0 10px;
+}
+
+.flow-help-content ul,
+.flow-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.flow-help-section {
+  margin: 0 0 20px;
+}
+
+.flow-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.flow-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.flow-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.flow-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  background: #f4f4f4;
+}
+
+.flow-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.flow-help-link {
+  color: #000080;
+}
+
+@media (max-width: 900px) {
+  .flow-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-prerequisites', label: 'Prerequisites and Definitions' },
+    { id: 'bp-io', label: 'Inputs and Outputs' },
+    { id: 'bp-formal', label: 'Formal Concepts' },
+    { id: 'bp-history', label: 'History' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Core Pillars' },
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-mechanics', label: 'How It Works' },
+    { id: 'core-flow', label: 'Step-by-Step Flow' },
+    { id: 'core-families', label: 'Algorithm Families' },
+    { id: 'core-complexity', label: 'Complexity Notes' },
+    { id: 'core-data', label: 'Data Structures and Invariants' },
+    { id: 'core-correctness', label: 'Correctness Sketch' },
+    { id: 'core-apps', label: 'Applications' },
+    { id: 'core-risk', label: 'Pitfalls and Edge Cases' },
+    { id: 'core-when', label: 'When to Use' },
+    { id: 'core-impl', label: 'Implementation Notes' },
+    { id: 'core-advanced', label: 'Advanced Topics' },
+    { id: 'core-variants', label: 'Variants and Extensions' },
+  ],
+  examples: [{ id: 'ex-code', label: 'Code Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function FlowNetworkAlgorithms(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Flow Network Algorithms (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tab: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tab)
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Flow Network Algorithms',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Flow Network Algorithms</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="flow-help-page">
+      <style>{win98FlowHelpStyles}</style>
+      <div className="flow-help-window" role="presentation">
+        <header className="flow-help-titlebar">
+          <span className="flow-help-title">Flow Network Algorithms - Help</span>
+          <div className="flow-help-controls">
+            <button className="flow-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="flow-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Maximizing throughput in constrained systems</div>
-              <p className="win95-text">
-                Flow networks model real-world constraints like bandwidth or traffic. Max-flow algorithms push limits while
-                min-cut certifies optimality, with residuals allowing reversals and cancellations.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="flow-help-tabs" role="tablist" aria-label="Major sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`flow-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="flow-help-main">
+          <aside className="flow-help-toc" aria-label="Table of contents">
+            <h2 className="flow-help-toc-title">Contents</h2>
+            <ul className="flow-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="flow-help-content">
+            <h1 className="flow-help-doc-title">Flow Network Algorithms</h1>
+            <p>
+              Flow networks model real-world constraints like bandwidth or traffic. Max-flow algorithms push limits while min-cut
+              certifies optimality, with residuals allowing reversals and cancellations.
+            </p>
+            <p>
+              <Link to="/algoViz" className="flow-help-link">
+                Back to Catalog
+              </Link>
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Prerequisites and definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {prerequisites.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="flow-help-section">
+                  <h2 className="flow-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow-help-divider" />
+                <section id="bp-prerequisites" className="flow-help-section">
+                  <h2 className="flow-help-heading">Prerequisites and Definitions</h2>
+                  {prerequisites.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow-help-divider" />
+                <section id="bp-io" className="flow-help-section">
+                  <h2 className="flow-help-heading">Inputs and Outputs</h2>
+                  {inputsOutputs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow-help-divider" />
+                <section id="bp-formal" className="flow-help-section">
+                  <h2 className="flow-help-heading">Formal Concepts</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow-help-divider" />
+                <section id="bp-history" className="flow-help-section">
+                  <h2 className="flow-help-heading">History</h2>
+                  {history.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow-help-divider" />
+                <section id="bp-takeaways" className="flow-help-section">
+                  <h2 className="flow-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Inputs and outputs</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputsOutputs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinitions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>History</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental hooks</legend>
-            <div className="win95-row">
-              <div className="win95-panel">
-                <div className="win95-subheading">Pillars</div>
-                <div className="win95-stack">
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="flow-help-section">
+                  <h2 className="flow-help-heading">Core Pillars</h2>
                   {pillars.map((item) => (
-                    <div key={item.title} className="win95-panel">
-                      <div className="win95-heading">{item.title}</div>
-                      <p className="win95-text">{item.detail}</p>
-                    </div>
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </div>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-subheading">Mental models</div>
-                <div className="win95-stack">
+                </section>
+                <section id="core-models" className="flow-help-section">
+                  <h2 className="flow-help-heading">Mental Models</h2>
                   {mentalModels.map((item) => (
-                    <div key={item.title} className="win95-panel">
-                      <div className="win95-heading">{item.title}</div>
-                      <p className="win95-text">{item.detail}</p>
-                    </div>
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-3">
-              {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step flow</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {stepByStepFlow.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm families</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Algorithm</th>
-                    <th>Core idea</th>
-                    <th>Best for</th>
-                  </tr>
-                </thead>
-                <tbody>
+                </section>
+                <section id="core-mechanics" className="flow-help-section">
+                  <h2 className="flow-help-heading">How It Works</h2>
+                  {howItWorks.map((item) => (
+                    <p key={item.step}>
+                      <strong>{item.step}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-flow" className="flow-help-section">
+                  <h2 className="flow-help-heading">Step-by-Step Flow</h2>
+                  <ol>
+                    {stepByStepFlow.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-families" className="flow-help-section">
+                  <h2 className="flow-help-heading">Algorithm Families</h2>
                   {algorithmFamilies.map((row) => (
-                    <tr key={row.name}>
-                      <td>{row.name}</td>
-                      <td>{row.idea}</td>
-                      <td>{row.bestFor}</td>
-                    </tr>
+                    <p key={row.name}>
+                      <strong>{row.name}:</strong> {row.idea} Best for: {row.bestFor}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity table</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                </section>
+                <section id="core-complexity" className="flow-help-section">
+                  <h2 className="flow-help-heading">Complexity Notes</h2>
+                  <ul>
+                    {complexityTable.map((row) => (
+                      <li key={row.approach}>
+                        <strong>{row.approach}:</strong> Time {row.time}, Space {row.space}. {row.note}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-data" className="flow-help-section">
+                  <h2 className="flow-help-heading">Data Structures and Invariants</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data structures and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness sketch</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {edgeCases.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced</legend>
-            <div className="win95-grid win95-grid-3">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and extensions</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Guarantee</th>
-                    <th>Typical use case</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {variantTable.map((row) => (
-                    <tr key={row.variant}>
-                      <td>{row.variant}</td>
-                      <td>{row.guarantee}</td>
-                      <td>{row.useCase}</td>
-                    </tr>
+                </section>
+                <section id="core-correctness" className="flow-help-section">
+                  <h2 className="flow-help-heading">Correctness Sketch</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-apps" className="flow-help-section">
+                  <h2 className="flow-help-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-risk" className="flow-help-section">
+                  <h2 className="flow-help-heading">Pitfalls and Edge Cases</h2>
+                  <h3 className="flow-help-subheading">Common Pitfalls</h3>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h3 className="flow-help-subheading">Edge Cases Checklist</h3>
+                  <ul>
+                    {edgeCases.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-when" className="flow-help-section">
+                  <h2 className="flow-help-heading">When to Use</h2>
+                  <ol>
+                    {whenToUse.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-impl" className="flow-help-section">
+                  <h2 className="flow-help-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="flow-help-section">
+                  <h2 className="flow-help-heading">Advanced Topics</h2>
+                  {advanced.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-variants" className="flow-help-section">
+                  <h2 className="flow-help-heading">Variants and Extensions</h2>
+                  <ul>
+                    {variantTable.map((row) => (
+                      <li key={row.variant}>
+                        <strong>{row.variant}:</strong> {row.guarantee}. Typical use case: {row.useCase}.
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <section id="ex-code" className="flow-help-section">
+                <h2 className="flow-help-heading">Code Examples</h2>
+                {codeExamples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="flow-help-subheading">{example.title}</h3>
+                    <div className="flow-help-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
+                ))}
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="flow-help-section">
+                <h2 className="flow-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
