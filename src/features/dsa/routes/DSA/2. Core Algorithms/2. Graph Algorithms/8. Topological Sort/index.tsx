@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const mentalModels = [
   {
@@ -369,271 +368,588 @@ const takeaways = [
   'Cycle detection is integral: leftover indegree or back edges signal failure to order.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Topological sort',
+    definition:
+      'An ordering of directed graph vertices where every edge u -> v places u before v; valid only for DAGs.',
+  },
+  {
+    term: 'Directed acyclic graph (DAG)',
+    definition:
+      'A directed graph with no directed cycle; this is the prerequisite for any topological ordering.',
+  },
+  {
+    term: 'Partial order',
+    definition:
+      'A set of precedence constraints where each edge imposes u before v but does not force a unique global order.',
+  },
+  {
+    term: 'Indegree',
+    definition:
+      "The number of incoming edges (prerequisites) for a node; Kahn's algorithm starts from indegree-zero nodes.",
+  },
+  {
+    term: 'DFS finish time',
+    definition:
+      'The completion moment of a DFS call. Reversing finish order yields a topological order in DAGs.',
+  },
+  {
+    term: "Kahn's algorithm",
+    definition:
+      'A queue-based method that repeatedly outputs indegree-zero nodes and removes their outgoing constraints.',
+  },
+  {
+    term: 'Back edge',
+    definition:
+      'A DFS edge to an in-progress node, which signals a directed cycle and invalidates topological ordering.',
+  },
+  {
+    term: 'Layered schedule',
+    definition:
+      "Grouping nodes by Kahn rounds to show stages of readiness where all nodes in a stage can run together.",
+  },
+  {
+    term: 'Lexicographically smallest order',
+    definition:
+      'A deterministic valid topological order produced by using a min-heap for ready nodes.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98TopologicalHelpStyles = `
+.topo-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.topo-help-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.topo-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.topo-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.topo-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.topo-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.topo-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.topo-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.topo-help-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.topo-help-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.topo-help-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.topo-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.topo-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.topo-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.topo-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.topo-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.topo-help-doc-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.topo-help-content p,
+.topo-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.topo-help-content p {
+  margin: 0 0 10px;
+}
+
+.topo-help-content ul,
+.topo-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.topo-help-section {
+  margin: 0 0 20px;
+}
+
+.topo-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.topo-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.topo-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.topo-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  background: #f4f4f4;
+}
+
+.topo-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.topo-help-link {
+  color: #000080;
+}
+
+@media (max-width: 900px) {
+  .topo-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .topo-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-prerequisites', label: 'Prerequisites and Definitions' },
+    { id: 'bp-io', label: 'Inputs and Outputs' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-mechanics', label: 'Mechanics in Motion' },
+    { id: 'core-flow', label: 'Step-by-Step Flow' },
+    { id: 'core-data-structures', label: 'Data Structures and Invariants' },
+    { id: 'core-correctness', label: 'Correctness Sketch' },
+    { id: 'core-complexity', label: 'Complexity Analysis' },
+    { id: 'core-real-world', label: 'Real-World Applications' },
+    { id: 'core-decision', label: 'When to Use It' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-variants', label: 'Variants and Tradeoffs' },
+    { id: 'core-risks', label: 'Pitfalls and Edge Cases' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function TopologicalSortPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Topological Sort (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tab: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tab)
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Topological Sort',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Topological Sort</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="topo-help-page">
+      <style>{win98TopologicalHelpStyles}</style>
+      <div className="topo-help-window" role="presentation">
+        <header className="topo-help-titlebar">
+          <span className="topo-help-title">Topological Sort - Help</span>
+          <div className="topo-help-controls">
+            <button className="topo-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="topo-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Scheduling a DAG without breaking dependencies</div>
-              <p className="win95-text">
-                Topological sorting produces an ordering of directed acyclic graph nodes where every prerequisite precedes its
-                dependents. Kahn's queue-based peeling and DFS finishing-order reversal both deliver linear-time solutions with
-                built-in cycle detection.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Many workflows are DAGs: builds, courses, pipelines. A topo order is any valid schedule. If no order exists, you have a
-                cycle to break before progress can continue.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Prerequisites and definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {prerequisites.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="topo-help-tabs" role="tablist" aria-label="Major sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`topo-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="topo-help-main">
+          <aside className="topo-help-toc" aria-label="Table of contents">
+            <h2 className="topo-help-toc-title">Contents</h2>
+            <ul className="topo-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="topo-help-content">
+            <h1 className="topo-help-doc-title">Topological Sort</h1>
+            <p>
+              Topological sorting produces an ordering of directed acyclic graph nodes where every prerequisite precedes its
+              dependents. Kahn&apos;s queue-based peeling and DFS finishing-order reversal both deliver linear-time solutions with
+              built-in cycle detection.
+            </p>
+            <p>
+              <Link to="/algoViz" className="topo-help-link">
+                Back to Catalog
+              </Link>
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Inputs and outputs</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputsOutputs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: mechanics in motion</legend>
-            <div className="win95-grid win95-grid-3">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="topo-help-section">
+                  <h2 className="topo-help-heading">Overview</h2>
+                  <p>
+                    Many workflows are DAGs: builds, courses, pipelines. A topological order is any valid schedule. If no order exists,
+                    you have a cycle to break before progress can continue.
+                  </p>
+                  <p>
+                    This algorithm is about respecting prerequisites at scale. The graph can be disconnected, and multiple valid orders
+                    often exist.
+                  </p>
+                </section>
+                <hr className="topo-help-divider" />
+                <section id="bp-prerequisites" className="topo-help-section">
+                  <h2 className="topo-help-heading">Prerequisites and Definitions</h2>
+                  {prerequisites.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="topo-help-divider" />
+                <section id="bp-io" className="topo-help-section">
+                  <h2 className="topo-help-heading">Inputs and Outputs</h2>
+                  {inputsOutputs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="topo-help-divider" />
+                <section id="bp-history" className="topo-help-section">
+                  <h2 className="topo-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="topo-help-divider" />
+                <section id="bp-takeaways" className="topo-help-section">
+                  <h2 className="topo-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step flow</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {stepByStepFlow.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data structures and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness sketch</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {edgeCases.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and tradeoffs</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Strengths</th>
-                    <th>Ordering effect</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {variantTable.map((row) => (
-                    <tr key={row.variant}>
-                      <td>{row.variant}</td>
-                      <td>{row.strengths}</td>
-                      <td>{row.ordering}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="topo-help-section">
+                  <h2 className="topo-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-mechanics" className="topo-help-section">
+                  <h2 className="topo-help-heading">Mechanics in Motion</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="topo-help-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-flow" className="topo-help-section">
+                  <h2 className="topo-help-heading">Step-by-Step Flow</h2>
+                  <ol>
+                    {stepByStepFlow.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-data-structures" className="topo-help-section">
+                  <h2 className="topo-help-heading">Data Structures and Invariants</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-correctness" className="topo-help-section">
+                  <h2 className="topo-help-heading">Correctness Sketch</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="topo-help-section">
+                  <h2 className="topo-help-heading">Complexity Analysis</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-real-world" className="topo-help-section">
+                  <h2 className="topo-help-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-decision" className="topo-help-section">
+                  <h2 className="topo-help-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-implementation" className="topo-help-section">
+                  <h2 className="topo-help-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="topo-help-section">
+                  <h2 className="topo-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-variants" className="topo-help-section">
+                  <h2 className="topo-help-heading">Variants and Tradeoffs</h2>
+                  <ul>
+                    {variantTable.map((row) => (
+                      <li key={row.variant}>
+                        <strong>{row.variant}:</strong> Strengths: {row.strengths}. Ordering effect: {row.ordering}.
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-risks" className="topo-help-section">
+                  <h2 className="topo-help-heading">Pitfalls and Edge Cases</h2>
+                  <h3 className="topo-help-subheading">Common Pitfalls</h3>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                  <h3 className="topo-help-subheading">Edge Cases Checklist</h3>
+                  <ul>
+                    {edgeCases.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="topo-help-section">
+                <h2 className="topo-help-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="topo-help-subheading">{example.title}</h3>
+                    <div className="topo-help-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="topo-help-section">
+                <h2 className="topo-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
