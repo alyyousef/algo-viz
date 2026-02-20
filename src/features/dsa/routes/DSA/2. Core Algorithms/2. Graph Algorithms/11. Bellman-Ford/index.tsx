@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -414,316 +414,353 @@ const variantTable = [
   },
 ]
 
+const glossaryTerms = [
+  { term: 'Relaxation', definition: 'Updating a node distance when a shorter path is found through an edge.' },
+  { term: 'Distance array', definition: 'Best-known shortest distances from the source to each node.' },
+  { term: 'Parent array', definition: 'Predecessor pointers used to reconstruct shortest paths.' },
+  { term: 'Infinity guard', definition: 'Skip relaxations from unreachable nodes to avoid invalid arithmetic.' },
+  { term: 'Negative cycle', definition: 'A cycle with total weight less than zero, making shortest paths undefined.' },
+  { term: 'Early stop', definition: 'Optimization that exits when a full pass produces no relaxations.' },
+  { term: 'V-1 passes', definition: 'Maximum needed to settle all simple shortest paths in a graph of V nodes.' },
+  { term: 'V-th pass check', definition: 'Extra pass used to detect reachable negative cycles.' },
+  { term: 'SPFA', definition: 'Queue-based variant that is often faster in practice but same worst-case class.' },
+  { term: 'Difference constraints', definition: 'Inequality systems reducible to shortest-path feasibility checks.' },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98BellmanHelpStyles = `
+.bell-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
+.bell-help-window{border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;background:#c0c0c0;width:100%;min-height:100dvh;margin:0;display:flex;flex-direction:column;box-sizing:border-box;}
+.bell-help-titlebar{position:relative;display:flex;align-items:center;min-height:22px;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
+.bell-help-title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;white-space:nowrap;}
+.bell-help-controls{display:flex;gap:2px;margin-left:auto;}
+.bell-help-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:1;}
+.bell-help-tabs{display:flex;gap:1px;padding:6px 8px 0;}
+.bell-help-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer;}
+.bell-help-tab.active{background:#fff;position:relative;top:1px;}
+.bell-help-main{border-top:1px solid #404040;background:#fff;flex:1;min-height:0;display:grid;grid-template-columns:240px 1fr;}
+.bell-help-toc{border-right:1px solid #808080;background:#f2f2f2;padding:12px;overflow:auto;}
+.bell-help-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
+.bell-help-toc-list{list-style:none;margin:0;padding:0;}
+.bell-help-toc-list li{margin:0 0 8px;}
+.bell-help-toc-list a{color:#000;text-decoration:none;font-size:12px;}
+.bell-help-content{padding:14px 20px 20px;overflow:auto;}
+.bell-help-doc-title{margin:0 0 10px;font-size:20px;font-weight:700;}
+.bell-help-content p,.bell-help-content li{font-size:12px;line-height:1.5;}
+.bell-help-content p{margin:0 0 10px;}
+.bell-help-content ul,.bell-help-content ol{margin:0 0 10px 20px;padding:0;}
+.bell-help-section{margin:0 0 20px;}
+.bell-help-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
+.bell-help-subheading{margin:0 0 6px;font-size:13px;font-weight:700;}
+.bell-help-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0;}
+.bell-help-codebox{margin:6px 0 10px;padding:8px;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;background:#f4f4f4;}
+.bell-help-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;}
+.bell-help-link{color:#000080;}
+@media (max-width:900px){.bell-help-main{grid-template-columns:1fr;}.bell-help-toc{border-right:none;border-bottom:1px solid #808080;}}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-prerequisites', label: 'Prerequisites and Definitions' },
+    { id: 'bp-io', label: 'Inputs and Outputs' },
+    { id: 'bp-formal', label: 'Formal Concepts' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-mechanics', label: 'Core Mechanics' },
+    { id: 'core-flow', label: 'Step-by-Step Flow' },
+    { id: 'core-structures', label: 'Data Structures and Invariants' },
+    { id: 'core-termination', label: 'Termination Rules' },
+    { id: 'core-correctness', label: 'Correctness Sketch' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-variants', label: 'Variants and Guarantees' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-edge-cases', label: 'Edge Cases' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-decision', label: 'When to Use It' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function BellmanFordPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Bellman-Ford (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tab: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tab)
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Bellman-Ford',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Bellman-Ford</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
+    <div className="bell-help-page">
+      <style>{win98BellmanHelpStyles}</style>
+      <div className="bell-help-window" role="presentation">
+        <header className="bell-help-titlebar">
+          <span className="bell-help-title">Bellman-Ford - Help</span>
+          <div className="bell-help-controls">
+            <button className="bell-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="bell-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Reliable shortest paths when negative edges appear</div>
-              <p className="win95-text">
-                Bellman-Ford computes shortest paths from a single source by repeatedly relaxing all edges. It is slower than
-                Dijkstra, but it handles negative weights and detects negative cycles, making it a trusted baseline for
-                constraint systems, routing, and graph analytics.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Bellman-Ford is a dynamic programming shortest path algorithm that works on graphs with negative edges. It
-                iteratively improves distance estimates by checking every edge. After V-1 passes, the shortest path to each
-                reachable node is guaranteed to be correct, and an extra pass reveals any negative cycle.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Prerequisites and definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {prerequisites.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="bell-help-tabs" role="tablist" aria-label="Major sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`bell-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="bell-help-main">
+          <aside className="bell-help-toc" aria-label="Table of contents">
+            <h2 className="bell-help-toc-title">Contents</h2>
+            <ul className="bell-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="bell-help-content">
+            <h1 className="bell-help-doc-title">Bellman-Ford</h1>
+            <p>
+              Bellman-Ford computes shortest paths from a single source by repeatedly relaxing all edges. It is slower than
+              Dijkstra, but it handles negative weights and detects negative cycles, making it a trusted baseline for
+              constraint systems, routing, and graph analytics.
+            </p>
+            <p>
+              <Link to="/algoViz" className="bell-help-link">
+                Back to Catalog
+              </Link>
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Inputs and outputs</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputsOutputs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinitions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: core mechanics</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreMechanics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step flow</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {stepByStepFlow.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data structures and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Termination rules and correctness</legend>
-            <div className="win95-grid win95-grid-2">
-              {terminationRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The correctness guarantee comes from the fact that any shortest path without cycles has at most V-1 edges. Each
-                pass guarantees correctness for paths with one more edge, so V-1 passes suffice unless a negative cycle exists.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness sketch</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Bellman-Ford is not the fastest for large graphs, but it is reliable in the presence of negative weights and
-                can provide critical cycle detection that faster algorithms cannot.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and guarantees</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Graph type</th>
-                    <th>Guarantee</th>
-                    <th>Typical use case</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {variantTable.map((row) => (
-                    <tr key={row.variant}>
-                      <td>{row.variant}</td>
-                      <td>{row.graphType}</td>
-                      <td>{row.guarantee}</td>
-                      <td>{row.useCase}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="bell-help-section">
+                  <h2 className="bell-help-heading">Overview</h2>
+                  <p>
+                    Bellman-Ford is a dynamic programming shortest path algorithm that works on graphs with negative edges. It
+                    iteratively improves distance estimates by checking every edge. After V-1 passes, the shortest path to each
+                    reachable node is guaranteed to be correct, and an extra pass reveals any negative cycle.
+                  </p>
+                </section>
+                <hr className="bell-help-divider" />
+                <section id="bp-prerequisites" className="bell-help-section">
+                  <h2 className="bell-help-heading">Prerequisites and Definitions</h2>
+                  {prerequisites.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="bell-help-divider" />
+                <section id="bp-io" className="bell-help-section">
+                  <h2 className="bell-help-heading">Inputs and Outputs</h2>
+                  {inputsOutputs.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="bell-help-divider" />
+                <section id="bp-formal" className="bell-help-section">
+                  <h2 className="bell-help-heading">Formal Concepts</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="bell-help-divider" />
+                <section id="bp-history" className="bell-help-section">
+                  <h2 className="bell-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <hr className="bell-help-divider" />
+                <section id="bp-takeaways" className="bell-help-section">
+                  <h2 className="bell-help-heading">Key Takeaways</h2>
+                  <ul>{takeaways.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="bell-help-section">
+                  <h2 className="bell-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-mechanics" className="bell-help-section">
+                  <h2 className="bell-help-heading">Core Mechanics</h2>
+                  {coreMechanics.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-flow" className="bell-help-section">
+                  <h2 className="bell-help-heading">Step-by-Step Flow</h2>
+                  <ol>{stepByStepFlow.map((item) => <li key={item}>{item}</li>)}</ol>
+                </section>
+                <section id="core-structures" className="bell-help-section">
+                  <h2 className="bell-help-heading">Data Structures and Invariants</h2>
+                  <h3 className="bell-help-subheading">Key Structures</h3>
+                  {keyStructures.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                  <h3 className="bell-help-subheading">Implementation Structures</h3>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-termination" className="bell-help-section">
+                  <h2 className="bell-help-heading">Termination Rules</h2>
+                  {terminationRules.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                  <p>
+                    The correctness guarantee comes from the fact that any shortest path without cycles has at most V-1 edges. Each
+                    pass guarantees correctness for paths with one more edge, so V-1 passes suffice unless a negative cycle exists.
+                  </p>
+                </section>
+                <section id="core-correctness" className="bell-help-section">
+                  <h2 className="bell-help-heading">Correctness Sketch</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="bell-help-section">
+                  <h2 className="bell-help-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                  <p>
+                    Bellman-Ford is not the fastest for large graphs, but it is reliable in the presence of negative weights and
+                    can provide critical cycle detection that faster algorithms cannot.
+                  </p>
+                </section>
+                <section id="core-variants" className="bell-help-section">
+                  <h2 className="bell-help-heading">Variants and Guarantees</h2>
+                  <ul>
+                    {variantTable.map((row) => (
+                      <li key={row.variant}>
+                        <strong>{row.variant}:</strong> Graph type: {row.graphType}. Guarantee: {row.guarantee}. Typical use case: {row.useCase}.
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-applications" className="bell-help-section">
+                  <h2 className="bell-help-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}><strong>{item.context}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-edge-cases" className="bell-help-section">
+                  <h2 className="bell-help-heading">Edge Cases Checklist</h2>
+                  <ul>{edgeCases.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section id="core-pitfalls" className="bell-help-section">
+                  <h2 className="bell-help-heading">Common Pitfalls</h2>
+                  <ul>{pitfalls.map((item) => <li key={item}>{item}</li>)}</ul>
+                </section>
+                <section id="core-decision" className="bell-help-section">
+                  <h2 className="bell-help-heading">When to Use It</h2>
+                  <ol>{decisionGuidance.map((item) => <li key={item}>{item}</li>)}</ol>
+                </section>
+                <section id="core-implementation" className="bell-help-section">
+                  <h2 className="bell-help-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="bell-help-section">
+                  <h2 className="bell-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {edgeCases.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="bell-help-section">
+                <h2 className="bell-help-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="bell-help-subheading">{example.title}</h3>
+                    <div className="bell-help-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="bell-help-section">
+                <h2 className="bell-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
