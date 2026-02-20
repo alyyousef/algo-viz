@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -419,321 +419,576 @@ const variantTable = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.bi98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  padding: 0;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.bi98-window {
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.bi98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bi98-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bi98-title-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.bi98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bi98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  background: #c0c0c0;
+}
+
+.bi98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  color: #000;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bi98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.bi98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px 1fr;
+}
+
+.bi98-toc {
+  background: #efefef;
+  border-right: 1px solid #808080;
+  padding: 12px;
+  overflow: auto;
+}
+
+.bi98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bi98-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bi98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.bi98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.bi98-toc-list a:hover {
+  text-decoration: underline;
+}
+
+.bi98-content {
+  padding: 14px 20px 22px;
+  overflow: auto;
+}
+
+.bi98-doc-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.bi98-content a {
+  color: #000080;
+}
+
+.bi98-section {
+  margin: 0 0 18px;
+}
+
+.bi98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bi98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bi98-content p,
+.bi98-content li {
+  margin: 0 0 9px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.bi98-content ul,
+.bi98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.bi98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 13px 0;
+}
+
+.bi98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.bi98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .bi98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .bi98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-prerequisites', label: 'Prerequisites' },
+    { id: 'bp-io', label: 'Inputs and Outputs' },
+    { id: 'bp-formal', label: 'Formal Concepts' },
+    { id: 'bp-mental', label: 'Mental Models' },
+    { id: 'bp-when', label: 'When to Use It' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mechanics', label: 'Core Mechanics' },
+    { id: 'core-flow', label: 'Step-by-Step Flow' },
+    { id: 'core-key-structures', label: 'Key Structures' },
+    { id: 'core-data-structures', label: 'Data Structures' },
+    { id: 'core-termination', label: 'Termination Rules' },
+    { id: 'core-correctness', label: 'Correctness' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-code', label: 'Code Examples' },
+    { id: 'ex-applications', label: 'Real-World Applications' },
+    { id: 'ex-edge-cases', label: 'Edge Cases' },
+  ],
+  glossary: [
+    { id: 'glossary-terms', label: 'Core Terms' },
+    { id: 'glossary-variants', label: 'Variants and Guarantees' },
+  ],
+}
+
 export default function BidirectionalSearchPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Bidirectional Search (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Bidirectional Search',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Bidirectional Search</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
+    <div className="bi98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="bi98-window" role="presentation">
+        <header className="bi98-titlebar">
+          <span className="bi98-title">Bidirectional Search</span>
+          <div className="bi98-title-controls">
+            <button className="bi98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="bi98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Meet in the middle to cut search depth and deliver faster paths</div>
-              <p className="win95-text">
-                Bidirectional search runs two coordinated searches: one from the start and one from the goal. By letting the
-                frontiers meet in the middle, it reduces the exponential blowup that makes one-sided BFS or Dijkstra expensive
-                on large graphs. This page explains the intuition, mechanics, variants, and the practical details that make the
-                technique fast and correct.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Bidirectional search is a meet-in-the-middle strategy for shortest path and reachability. Instead of exploring
-                all nodes out to depth d from the start, it explores depth d/2 from both ends. When the two searches touch, the
-                path is reconstructed by stitching together the two halves. This is especially powerful when branching factor is
-                large and you have a single known target.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Prerequisites and definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {prerequisites.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="bi98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`bi98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="bi98-main">
+          <aside className="bi98-toc" aria-label="Table of contents">
+            <h2 className="bi98-toc-title">Contents</h2>
+            <ul className="bi98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="bi98-content">
+            <h1 className="bi98-doc-title">Bidirectional Search</h1>
+            <p>
+              Bidirectional search runs two coordinated searches: one from the start and one from the goal. By letting frontiers
+              meet in the middle, it reduces the exponential blowup that makes one-sided BFS or Dijkstra expensive on large graphs.
+            </p>
+            <p>
+              <Link to="/algoViz">Back to catalog</Link>
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Inputs and outputs</legend>
-            <div className="win95-grid win95-grid-2">
-              {inputsOutputs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinitions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: core mechanics</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreMechanics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step flow</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {stepByStepFlow.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data structures and invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Termination rules and correctness</legend>
-            <div className="win95-grid win95-grid-2">
-              {terminationRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The key correctness idea is that each side explores paths in nondecreasing order of length (BFS) or cost
-                (Dijkstra). When the stop condition is satisfied, no shorter path can exist than the best meeting found so far.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness sketch</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Bidirectional search trades a bit of overhead and memory for massive reductions in explored nodes. It is most
-                valuable when the graph is large, the target is specific, and the branching factor is high.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and guarantees</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Graph type</th>
-                    <th>Guarantee</th>
-                    <th>Typical use case</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {variantTable.map((row) => (
-                    <tr key={row.variant}>
-                      <td>{row.variant}</td>
-                      <td>{row.graphType}</td>
-                      <td>{row.guarantee}</td>
-                      <td>{row.useCase}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="bi98-section">
+                  <h2 className="bi98-heading">Overview</h2>
+                  <p>
+                    Bidirectional search is a meet-in-the-middle strategy for shortest path and reachability. Instead of exploring
+                    all nodes out to depth <strong>d</strong> from the start, it explores about <strong>d/2</strong> levels from
+                    both ends, then stitches a path through an intersection.
+                  </p>
+                </section>
+                <hr className="bi98-divider" />
+                <section id="bp-history" className="bi98-section">
+                  <h2 className="bi98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="bi98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="bp-prerequisites" className="bi98-section">
+                  <h2 className="bi98-heading">Prerequisites</h2>
+                  {prerequisites.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-io" className="bi98-section">
+                  <h2 className="bi98-heading">Inputs and Outputs</h2>
+                  {inputsOutputs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-formal" className="bi98-section">
+                  <h2 className="bi98-heading">Formal Concepts</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-mental" className="bi98-section">
+                  <h2 className="bi98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-when" className="bi98-section">
+                  <h2 className="bi98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="bp-takeaways" className="bi98-section">
+                  <h2 className="bi98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mechanics" className="bi98-section">
+                  <h2 className="bi98-heading">Core Mechanics</h2>
+                  {coreMechanics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-flow" className="bi98-section">
+                  <h2 className="bi98-heading">Step-by-Step Flow</h2>
+                  <ol>
+                    {stepByStepFlow.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-key-structures" className="bi98-section">
+                  <h2 className="bi98-heading">Key Structures and Invariants</h2>
+                  {keyStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-data-structures" className="bi98-section">
+                  <h2 className="bi98-heading">Data Structures</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-termination" className="bi98-section">
+                  <h2 className="bi98-heading">Termination Rules</h2>
+                  {terminationRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-correctness" className="bi98-section">
+                  <h2 className="bi98-heading">Correctness Notes</h2>
+                  <p>
+                    The key idea is that each side explores paths in nondecreasing order of length (BFS) or cost (Dijkstra).
+                    Once the stop rule is met, no shorter path can beat the best meeting already found.
+                  </p>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="bi98-section">
+                  <h2 className="bi98-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-implementation" className="bi98-section">
+                  <h2 className="bi98-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="bi98-section">
+                  <h2 className="bi98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="bi98-section">
+                  <h2 className="bi98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-code" className="bi98-section">
+                  <h2 className="bi98-heading">Code Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="bi98-subheading">{example.title}</h3>
+                      <div className="bi98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-applications" className="bi98-section">
+                  <h2 className="bi98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="ex-edge-cases" className="bi98-section">
+                  <h2 className="bi98-heading">Edge Cases Checklist</h2>
+                  <ul>
+                    {edgeCases.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {edgeCases.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <>
+                <section id="glossary-terms" className="bi98-section">
+                  <h2 className="bi98-heading">Core Terms</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p><strong>Frontier selection:</strong> Expand the smaller frontier or lower-cost side to balance work.</p>
+                  <p><strong>Path stitching:</strong> Combine parent traces from both sides through the chosen meeting node.</p>
+                  <p><strong>Reverse graph search:</strong> On directed graphs, the goal-side traversal follows incoming edges.</p>
+                </section>
+                <section id="glossary-variants" className="bi98-section">
+                  <h2 className="bi98-heading">Variants and Guarantees</h2>
+                  {variantTable.map((item) => (
+                    <p key={item.variant}>
+                      <strong>{item.variant}:</strong> {item.graphType}. <strong>Guarantee:</strong> {item.guarantee}.{' '}
+                      <strong>Typical use case:</strong> {item.useCase}.
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
