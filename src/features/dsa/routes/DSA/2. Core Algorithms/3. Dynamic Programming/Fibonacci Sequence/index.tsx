@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const history = [
   '600-200 BCE, Indian prosody texts by Pingala and Virahanka describe similar recurrences for counting syllable patterns.',
@@ -294,246 +293,598 @@ const takeaways = [
   'Know the numeric limits: overflow and floating error are the real traps.',
 ]
 
+const glossary = [
+  {
+    term: 'Linear recurrence (order 2)',
+    definition:
+      'A recurrence where each term is computed from the two previous terms: F(n) = F(n-1) + F(n-2).',
+  },
+  {
+    term: 'Overlapping subproblems',
+    definition:
+      'The same smaller Fibonacci values are recomputed many times in naive recursion.',
+  },
+  {
+    term: 'Memoization',
+    definition:
+      'Top-down caching that stores computed F(k) values and reuses them later.',
+  },
+  {
+    term: 'Tabulation',
+    definition:
+      'Bottom-up dynamic programming that fills Fibonacci values iteratively from base cases.',
+  },
+  {
+    term: 'Fast doubling',
+    definition:
+      'A divide-and-conquer method that computes F(n) in O(log n) using identities for F(2k) and F(2k+1).',
+  },
+  {
+    term: 'Companion matrix',
+    definition:
+      'The 2x2 matrix [[1,1],[1,0]] whose powers encode Fibonacci values.',
+  },
+  {
+    term: 'Binet formula',
+    definition:
+      'Closed-form expression for Fibonacci numbers using the roots phi and psi.',
+  },
+  {
+    term: 'Pisano period',
+    definition:
+      'The repeating cycle length of Fibonacci numbers under modulo arithmetic.',
+  },
+  {
+    term: 'Zeckendorf representation',
+    definition:
+      'Unique decomposition of a positive integer into nonconsecutive Fibonacci numbers.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const fib98HelpStyles = `
+.fib98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.fib98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.fib98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.fib98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.fib98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.fib98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fib98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.fib98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.fib98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.fib98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.fib98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.fib98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.fib98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fib98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.fib98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.fib98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.fib98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.fib98-section {
+  margin: 0 0 20px;
+}
+
+.fib98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.fib98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 12px 0 6px;
+}
+
+.fib98-content p,
+.fib98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.fib98-content p {
+  margin: 0 0 10px;
+}
+
+.fib98-content ul,
+.fib98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.fib98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.fib98-preline {
+  white-space: pre-line;
+}
+
+.fib98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.fib98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .fib98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .fib98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-definition', label: 'Formal Definition' },
+    { id: 'bp-why', label: 'Why This Matters' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mechanics', label: 'How It Works' },
+    { id: 'core-breakdown', label: 'Recurrence Breakdown' },
+    { id: 'core-algorithms', label: 'Algorithm Comparison' },
+    { id: 'core-doubling', label: 'Fast Doubling' },
+    { id: 'core-matrix', label: 'Matrix View' },
+    { id: 'core-complexity', label: 'Complexity & Trade-offs' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-decisions', label: 'When To Use What' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Example (n = 7)' },
+    { id: 'ex-code', label: 'Practical Code Examples' },
+  ],
+  glossary: [
+    { id: 'glossary-terms', label: 'Terms' },
+    { id: 'glossary-faq', label: 'Quick FAQ' },
+  ],
+}
+
 export default function FibonacciSequencePage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Fibonacci Sequence (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Fibonacci Sequence',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Fibonacci Sequence</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="fib98-help-page">
+      <style>{fib98HelpStyles}</style>
+      <div className="fib98-window" role="presentation">
+        <header className="fib98-titlebar">
+          <span className="fib98-title-text">Fibonacci Sequence</span>
+          <div className="fib98-title-controls">
+            <button className="fib98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="fib98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">
-                Dynamic programming starts here: the smallest overlapping-subproblem recurrence that still teaches every core trick.
-              </div>
-              <p className="win95-text">
-                Fibonacci numbers expose how recursion explodes, how caching tames it, and how algebra unlocks logarithmic speed. This
-                page moves from formal definition to algorithmic choices, with worked examples, identities, and real trade-offs.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Fibonacci is a compact demo of dynamic programming: a tiny recurrence that still produces overlapping subproblems.
-                Start with naive recursion (exponential), add memoization (linear), then switch to tabulation (linear but faster).
-                Finally, use algebraic identities for fast doubling or matrices (logarithmic).
-              </p>
-              <p className="win95-text">
-                The same reasoning underlies heap analyses, tree balance proofs, hashing spreads, and probabilistic models. Misusing
-                it also has stakes: naive recursion in a production API can blow up latency, while a thoughtful DP or doubling
-                solution finishes instantly even for very large n.
-              </p>
-            </div>
-          </fieldset>
+        <div className="fib98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`fib98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Formal definition</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinition.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="fib98-main">
+          <aside className="fib98-toc" aria-label="Table of contents">
+            <h2 className="fib98-toc-title">Contents</h2>
+            <ul className="fib98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {history.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+          <main className="fib98-content">
+            <h1 className="fib98-doc-title">Fibonacci Sequence</h1>
+            <p>
+              Dynamic programming starts here: the smallest overlapping-subproblem recurrence that still teaches every core trick.
+              Fibonacci numbers expose how recursion explodes, how caching tames it, and how algebra unlocks logarithmic speed.
+            </p>
+            <p>
+              This page keeps the full concept map: formal recurrence, historical context, algorithmic choices, worked examples,
+              fast-doubling identities, matrix interpretation, and practical trade-offs for real systems.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-3">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="fib98-section">
+                  <h2 className="fib98-heading">Overview</h2>
+                  <p>
+                    Fibonacci is a compact demonstration of dynamic programming. Start with naive recursion (exponential), add
+                    memoization (linear), then switch to tabulation (linear with lower overhead). For very large n, use fast
+                    doubling or matrix exponentiation (logarithmic time).
+                  </p>
+                  <p>
+                    The same reasoning pattern appears in tree balance proofs, heap analysis, hashing heuristics, and recurrence-based
+                    system models.
+                  </p>
+                </section>
+                <hr className="fib98-divider" />
+
+                <section id="bp-history" className="fib98-section">
+                  <h2 className="fib98-heading">Historical Context</h2>
+                  <ul>
+                    {history.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+                <hr className="fib98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Recurrence breakdown</legend>
-            <div className="win95-grid win95-grid-3">
-              {recurrenceBreakdown.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-definition" className="fib98-section">
+                  <h2 className="fib98-heading">Formal Definition</h2>
+                  {formalDefinition.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="fib98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Worked example (n = 7)</legend>
-            <div className="win95-grid win95-grid-2">
-              {workedExample.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.detail}</code>
-                  </pre>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm comparison</legend>
-            <div className="win95-grid win95-grid-4">
-              {algorithmComparison.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                <section id="bp-why" className="fib98-section">
+                  <h2 className="fib98-heading">Why This Matters</h2>
+                  <ul>
+                    {applications.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+                <hr className="fib98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Fast doubling identities</legend>
-            <div className="win95-grid win95-grid-3">
-              {fastDoublingIdentities.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-takeaways" className="fib98-section">
+                  <h2 className="fib98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Matrix view</legend>
-            <div className="win95-grid win95-grid-3">
-              {matrixView.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mechanics" className="fib98-section">
+                  <h2 className="fib98-heading">How It Works</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="fib98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and trade-offs</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {complexityTradeoffs.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-breakdown" className="fib98-section">
+                  <h2 className="fib98-heading">Recurrence Breakdown</h2>
+                  {recurrenceBreakdown.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Applications and real-world stakes</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {applications.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-algorithms" className="fib98-section">
+                  <h2 className="fib98-heading">Algorithm Comparison</h2>
+                  {algorithmComparison.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="fib98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-doubling" className="fib98-section">
+                  <h2 className="fib98-heading">Fast Doubling Identities</h2>
+                  {fastDoublingIdentities.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-matrix" className="fib98-section">
+                  <h2 className="fib98-heading">Matrix View</h2>
+                  {matrixView.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick FAQ</legend>
-            <div className="win95-stack">
-              {miniFaq.map((item) => (
-                <div key={item.question} className="win95-panel">
-                  <div className="win95-heading">{item.question}</div>
-                  <p className="win95-text">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="fib98-section">
+                  <h2 className="fib98-heading">Complexity and Trade-offs</h2>
+                  <ul>
+                    {complexityTradeoffs.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
+                <section id="core-pitfalls" className="fib98-section">
+                  <h2 className="fib98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {advancedInsights.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-decisions" className="fib98-section">
+                  <h2 className="fib98-heading">When To Use What</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-advanced" className="fib98-section">
+                  <h2 className="fib98-heading">Advanced Insights</h2>
+                  <ul>
+                    {advancedInsights.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="fib98-section">
+                  <h2 className="fib98-heading">Worked Example (n = 7)</h2>
+                  {workedExample.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="fib98-subheading">{item.title}</h3>
+                      <p className="fib98-preline">{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-code" className="fib98-section">
+                  <h2 className="fib98-heading">Practical Code Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="fib98-subheading">{example.title}</h3>
+                      <div className="fib98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <>
+                <section id="glossary-terms" className="fib98-section">
+                  <h2 className="fib98-heading">Glossary</h2>
+                  {glossary.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.definition}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="glossary-faq" className="fib98-section">
+                  <h2 className="fib98-heading">Quick FAQ</h2>
+                  {miniFaq.map((item) => (
+                    <div key={item.question}>
+                      <h3 className="fib98-subheading">{item.question}</h3>
+                      <p>{item.answer}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
