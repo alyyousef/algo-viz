@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   'Interval DP optimizes over contiguous subarrays or substrings by splitting an interval into smaller intervals.',
@@ -316,234 +315,568 @@ const takeaways = [
   'Careful indexing and base cases are the difference between correct and broken DP.',
 ]
 
+const glossary = [
+  {
+    term: 'Interval DP',
+    definition:
+      'Dynamic programming on contiguous ranges, usually represented by a two-dimensional state dp[l][r].',
+  },
+  {
+    term: 'State dp[l][r]',
+    definition:
+      'The optimal value for subarray or substring from index l to r under the problem objective.',
+  },
+  {
+    term: 'Split point k',
+    definition:
+      'An index where interval [l, r] is divided into left and right subintervals for combination.',
+  },
+  {
+    term: 'Length-order traversal',
+    definition:
+      'Computing intervals in increasing length so dependencies on shorter segments are already solved.',
+  },
+  {
+    term: 'Boundary cost',
+    definition:
+      'Extra transition term that depends on endpoints and possibly the split point, e.g. cost(l, k, r).',
+  },
+  {
+    term: 'Knuth optimization',
+    definition:
+      'An optimization that narrows the split search range when monotonicity and quadrangle conditions hold.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const interval98HelpStyles = `
+.interval98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.interval98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.interval98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.interval98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.interval98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.interval98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.interval98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.interval98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.interval98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.interval98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.interval98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.interval98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.interval98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.interval98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.interval98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.interval98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.interval98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.interval98-section {
+  margin: 0 0 20px;
+}
+
+.interval98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.interval98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 12px 0 6px;
+}
+
+.interval98-content p,
+.interval98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.interval98-content p {
+  margin: 0 0 10px;
+}
+
+.interval98-content ul,
+.interval98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.interval98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.interval98-preline {
+  white-space: pre-line;
+}
+
+.interval98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.interval98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .interval98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .interval98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-definition', label: 'Formal Definition' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-patterns', label: 'Recurrence Patterns' },
+    { id: 'core-steps', label: 'Algorithm Steps' },
+    { id: 'core-gallery', label: 'Problem Gallery' },
+    { id: 'core-impl', label: 'Implementation Notes' },
+    { id: 'core-complexity', label: 'Complexity Notes' },
+    { id: 'core-optimization', label: 'Optimization Playbook' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-decisions', label: 'When To Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Example' },
+    { id: 'ex-code', label: 'Practical Examples' },
+  ],
+  glossary: [
+    { id: 'glossary-terms', label: 'Terms' },
+    { id: 'glossary-faq', label: 'Quick FAQ' },
+  ],
+}
+
 export default function IntervalDPPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Interval DP (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Interval DP',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Interval DP</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="interval98-help-page">
+      <style>{interval98HelpStyles}</style>
+      <div className="interval98-window" role="presentation">
+        <header className="interval98-titlebar">
+          <span className="interval98-title-text">Interval DP</span>
+          <div className="interval98-title-controls">
+            <button className="interval98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="interval98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Optimize over subarrays by splitting intervals</div>
-              <p className="win95-text">
-                Interval DP is the template for problems where the optimal solution for a segment is built by choosing a split inside
-                that segment. This page walks through the formal state definition, loop ordering, common patterns, worked examples,
-                and performance trade-offs with the same Win95 layout as other DP pages.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {bigPicture.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+        <div className="interval98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`interval98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Formal definition</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinition.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="interval98-main">
+          <aside className="interval98-toc" aria-label="Table of contents">
+            <h2 className="interval98-toc-title">Contents</h2>
+            <ul className="interval98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core mental models</legend>
-            <div className="win95-grid win95-grid-3">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="interval98-content">
+            <h1 className="interval98-doc-title">Interval DP</h1>
+            <p>
+              Interval DP is the template for problems where the optimal solution for a segment is built by choosing a split inside
+              that segment. It appears in matrix chain multiplication, merge-style costs, string cuts, and game intervals.
+            </p>
+            <p>
+              This page keeps the full concept set: formal state and transitions, recurrence patterns, algorithm order, worked
+              examples, implementation details, and optimization guidance.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Recurrence patterns</legend>
-            <div className="win95-grid win95-grid-3">
-              {recurrencePatterns.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="interval98-section">
+                  <h2 className="interval98-heading">Overview</h2>
+                  <ul>
+                    {bigPicture.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+                <hr className="interval98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm steps</legend>
-            <div className="win95-grid win95-grid-3">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-definition" className="interval98-section">
+                  <h2 className="interval98-heading">Formal Definition</h2>
+                  {formalDefinition.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="interval98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Worked example (matrix chain)</legend>
-            <div className="win95-grid win95-grid-2">
-              {workedExample.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.detail}</code>
-                  </pre>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-models" className="interval98-section">
+                  <h2 className="interval98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="interval98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem gallery</legend>
-            <div className="win95-grid win95-grid-3">
-              {problemGallery.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                <section id="bp-takeaways" className="interval98-section">
+                  <h2 className="interval98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-patterns" className="interval98-section">
+                  <h2 className="interval98-heading">Recurrence Patterns</h2>
+                  {recurrencePatterns.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="interval98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and trade-offs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note, index) => (
-                <div
-                  key={note.title}
-                  className={index === 0 ? 'win95-panel win95-panel--raised' : 'win95-panel'}
-                >
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-steps" className="interval98-section">
+                  <h2 className="interval98-heading">Algorithm Steps</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Optimization playbook</legend>
-            <div className="win95-grid win95-grid-3">
-              {optimizationPlaybook.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-gallery" className="interval98-section">
+                  <h2 className="interval98-heading">Problem Gallery</h2>
+                  {problemGallery.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="interval98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-impl" className="interval98-section">
+                  <h2 className="interval98-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="interval98-section">
+                  <h2 className="interval98-heading">Complexity and Trade-offs</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick FAQ</legend>
-            <div className="win95-stack">
-              {miniFaq.map((item) => (
-                <div key={item.question} className="win95-panel">
-                  <div className="win95-heading">{item.question}</div>
-                  <p className="win95-text">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-optimization" className="interval98-section">
+                  <h2 className="interval98-heading">Optimization Playbook</h2>
+                  {optimizationPlaybook.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
+                <section id="core-pitfalls" className="interval98-section">
+                  <h2 className="interval98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {advancedInsights.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-decisions" className="interval98-section">
+                  <h2 className="interval98-heading">When To Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-advanced" className="interval98-section">
+                  <h2 className="interval98-heading">Advanced Insights</h2>
+                  <ul>
+                    {advancedInsights.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="interval98-section">
+                  <h2 className="interval98-heading">Worked Example (Matrix Chain)</h2>
+                  {workedExample.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="interval98-subheading">{item.title}</h3>
+                      <p className="interval98-preline">{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-code" className="interval98-section">
+                  <h2 className="interval98-heading">Practical Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="interval98-subheading">{example.title}</h3>
+                      <div className="interval98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <>
+                <section id="glossary-terms" className="interval98-section">
+                  <h2 className="interval98-heading">Glossary</h2>
+                  {glossary.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.definition}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="glossary-faq" className="interval98-section">
+                  <h2 className="interval98-heading">Quick FAQ</h2>
+                  {miniFaq.map((item) => (
+                    <div key={item.question}>
+                      <h3 className="interval98-subheading">{item.question}</h3>
+                      <p>{item.answer}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
