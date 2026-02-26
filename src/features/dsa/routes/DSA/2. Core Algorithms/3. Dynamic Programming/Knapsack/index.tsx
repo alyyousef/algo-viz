@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -408,251 +408,529 @@ const takeaways = [
   'Store split or take decisions if you need the item list, not just the value.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.knap98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.knap98-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.knap98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.knap98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.knap98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.knap98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  padding: 0;
+}
+
+.knap98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.knap98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.knap98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.knap98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.knap98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.knap98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.knap98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.knap98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.knap98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.knap98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.knap98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.knap98-section {
+  margin: 0 0 20px;
+}
+
+.knap98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.knap98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.knap98-content p,
+.knap98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.knap98-content p {
+  margin: 0 0 10px;
+}
+
+.knap98-content ul,
+.knap98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.knap98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.knap98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.knap98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .knap98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .knap98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const glossary = [
+  { term: '0/1 knapsack', definition: 'Each item can be chosen at most once.' },
+  { term: 'Unbounded knapsack', definition: 'Items can be reused unlimited times.' },
+  { term: 'Bounded knapsack', definition: 'Each item has a finite count limit.' },
+  { term: 'Capacity (W)', definition: 'Maximum total weight allowed in the solution.' },
+  { term: 'Pseudo-polynomial', definition: 'Runtime polynomial in numeric W, not in input bit-length.' },
+  { term: 'FPTAS', definition: 'Approximation scheme with controllable error and polynomial runtime.' },
+  { term: 'Meet-in-the-middle', definition: 'Split items into halves and combine subset summaries in O(2^(n/2)).' },
+  { term: 'Reconstruction', definition: 'Backtracking decisions to recover chosen items, not only final value.' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-definition', label: 'Formal Definition' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-variants', label: 'Variants' },
+    { id: 'core-mechanics', label: 'Mechanics' },
+    { id: 'core-steps', label: 'Algorithm Steps' },
+    { id: 'core-reconstruction', label: 'Reconstruction' },
+    { id: 'core-complexity', label: 'Complexity Notes' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-guidance', label: 'Decision Guidance' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-faq', label: 'Quick FAQ' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Example' },
+    { id: 'ex-code', label: 'Practical Examples' },
+    { id: 'ex-applications', label: 'Real-World Uses' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function KnapsackPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab: TabId = isTabId(searchParams.get('tab')) ? (searchParams.get('tab') as TabId) : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Knapsack Problem (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Knapsack Problem',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Knapsack Problem</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="knap98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="knap98-window" role="presentation">
+        <header className="knap98-titlebar">
+          <span className="knap98-title-text">Knapsack Problem</span>
+          <div className="knap98-title-controls">
+            <button className="knap98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="knap98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Packing value under a hard weight budget</div>
-              <p className="win95-text">
-                The knapsack problem asks which items to pack when weight is scarce and value is the goal. This page covers the
-                formal definition, classic recurrences, reconstruction, variant types, and practical performance trade-offs.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Knapsack balances payoff against capacity. The core DP compares include vs exclude for each item and capacity.
-                0/1 forbids repeats, unbounded allows them. When W is too large, use meet-in-the-middle or approximation.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal definition</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinition.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="knap98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`knap98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setSearchParams((prev) => {
+                const next = new URLSearchParams(prev)
+                next.set('tab', tab.id)
+                return next
+              }, { replace: true })}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="knap98-main">
+          <aside className="knap98-toc" aria-label="Table of contents">
+            <h2 className="knap98-toc-title">Contents</h2>
+            <ul className="knap98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item, index) => (
-                <div
-                  key={item.title}
-                  className={index === 0 ? 'win95-panel win95-panel--raised' : 'win95-panel'}
-                >
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants at a glance</legend>
-            <div className="win95-grid win95-grid-3">
-              {variants.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            </ul>
+          </aside>
+          <main className="knap98-content">
+            <h1 className="knap98-doc-title">Knapsack Problem</h1>
+            <p>
+              The knapsack problem asks which items to pack when weight is scarce and value is the goal. This page covers the
+              formal definition, classic recurrences, reconstruction, variant types, and practical performance trade-offs.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="knap98-section">
+                  <h2 className="knap98-heading">Overview</h2>
+                  <p>
+                    Knapsack balances payoff against capacity. The core DP compares include vs exclude for each item and capacity.
+                    0/1 forbids repeats, unbounded allows them. When W is too large, use meet-in-the-middle or approximation.
+                  </p>
+                </section>
+                <hr className="knap98-divider" />
+                <section id="bp-definition" className="knap98-section">
+                  <h2 className="knap98-heading">Formal Definition</h2>
+                  {formalDefinition.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-history" className="knap98-section">
+                  <h2 className="knap98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="knap98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-models" className="knap98-section">
+                  <h2 className="knap98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="knap98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="knap98-section">
+                  <h2 className="knap98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: mechanics</legend>
-            <div className="win95-grid win95-grid-3">
-              {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-variants" className="knap98-section">
+                  <h2 className="knap98-heading">Variants at a Glance</h2>
+                  {variants.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="knap98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-mechanics" className="knap98-section">
+                  <h2 className="knap98-heading">How It Works: Mechanics</h2>
+                  {mechanics.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="knap98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-steps" className="knap98-section">
+                  <h2 className="knap98-heading">Algorithm Steps</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-reconstruction" className="knap98-section">
+                  <h2 className="knap98-heading">Reconstruction Checklist</h2>
+                  {reconstructionSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="knap98-section">
+                  <h2 className="knap98-heading">Complexity and Performance</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                  <p>
+                    O(nW) is fast when W is moderate, but it scales with the numeric capacity. If W is huge, consider value-based DP,
+                    meet-in-the-middle, bitsets, or approximation schemes.
+                  </p>
+                </section>
+                <section id="core-pitfalls" className="knap98-section">
+                  <h2 className="knap98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-guidance" className="knap98-section">
+                  <h2 className="knap98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="knap98-section">
+                  <h2 className="knap98-heading">Advanced Insights and Frontiers</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-faq" className="knap98-section">
+                  <h2 className="knap98-heading">Quick FAQ</h2>
+                  {miniFaq.map((item) => (
+                    <p key={item.question}>
+                      <strong>{item.question}</strong> {item.answer}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm steps</legend>
-            <div className="win95-grid win95-grid-3">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="knap98-section">
+                  <h2 className="knap98-heading">Worked Example</h2>
+                  {workedExample.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="ex-code" className="knap98-section">
+                  <h2 className="knap98-heading">Practical Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="knap98-subheading">{example.title}</h3>
+                      <div className="knap98-codebox">
+                        <code>{example.code}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-applications" className="knap98-section">
+                  <h2 className="knap98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Worked example</legend>
-            <div className="win95-grid win95-grid-2">
-              {workedExample.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.detail}</code>
-                  </pre>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Reconstruction checklist</legend>
-            <div className="win95-grid win95-grid-3">
-              {reconstructionSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                O(nW) is fast when W is moderate, but it scales with the numeric capacity. If W is huge, consider value-based DP,
-                meet-in-the-middle, bitsets, or approximation schemes.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="knap98-section">
+                <h2 className="knap98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick FAQ</legend>
-            <div className="win95-stack">
-              {miniFaq.map((item) => (
-                <div key={item.question} className="win95-panel">
-                  <div className="win95-heading">{item.question}</div>
-                  <p className="win95-text">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and current frontiers</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
