@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -244,7 +243,7 @@ return dp[n]`,
 const pitfalls = [
   'Sorting by start time instead of finish breaks optimality for unweighted scheduling.',
   'Treating touching intervals as overlapping when the model allows equality discards valid activities.',
-  'Assuming greedy works for weighted intervals—it does not without additional structure.',
+  'Assuming greedy works for weighted intervals; it does not without additional structure.',
   'Missing input normalization (start > end) can silently drop activities or create negative durations.',
   'For k machines, forgetting to pop finished intervals from the heap causes over-allocation.',
 ]
@@ -288,209 +287,544 @@ const takeaways = [
   'Exchange arguments explain why swapping in earlier-finishing intervals preserves optimality.',
 ]
 
+const quickGlossary = [
+  {
+    term: 'Interval scheduling',
+    definition: 'Selecting a maximum set of mutually compatible time intervals on a constrained resource.',
+  },
+  {
+    term: 'Activity',
+    definition: 'A job with a start and end time that occupies the resource while active.',
+  },
+  {
+    term: 'Compatible intervals',
+    definition: 'Intervals that do not overlap under the chosen endpoint convention.',
+  },
+  {
+    term: 'Earliest-finish-first',
+    definition: 'Greedy rule that selects the compatible activity with the smallest finishing time.',
+  },
+  {
+    term: 'Exchange argument',
+    definition: 'Proof method showing greedy choices can replace optimal choices without reducing solution quality.',
+  },
+  {
+    term: 'Weighted interval scheduling',
+    definition: 'Variant where each interval has value and objective is maximum total value, solved with DP.',
+  },
+  {
+    term: 'p[i]',
+    definition: 'Index of the last interval finishing before interval i starts, used in weighted DP transitions.',
+  },
+  {
+    term: 'Interval partitioning',
+    definition: 'Assigning intervals to the minimum number of rooms/resources with no overlap per room.',
+  },
+  {
+    term: 'Competitive ratio',
+    definition: 'Quality measure for online algorithms relative to the offline optimal solution.',
+  },
+  {
+    term: 'Interval graph',
+    definition: 'Graph where each interval is a vertex and overlaps create edges.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const activity98HelpStyles = `
+.activity98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.activity98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.activity98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.activity98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.activity98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  z-index: 1;
+}
+
+.activity98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.activity98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.activity98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.activity98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.activity98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.activity98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.activity98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.activity98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.activity98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.activity98-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.activity98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.activity98-section {
+  margin: 0 0 22px;
+}
+
+.activity98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.activity98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.activity98-content p,
+.activity98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.activity98-content p {
+  margin: 0 0 10px;
+}
+
+.activity98-content ul,
+.activity98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.activity98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.activity98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.activity98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .activity98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .activity98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-real-world', label: 'Real-World Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-variants', label: 'Problem Variants' },
+    { id: 'core-workflow', label: 'Greedy Workflow' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-guidance', label: 'When to Use It' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function ActivitySelectionIntervalSchedulingPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Activity Selection (Interval Scheduling) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Activity Selection (Interval Scheduling)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Activity Selection (Interval Scheduling)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+    <div className="activity98-help-page">
+      <style>{activity98HelpStyles}</style>
+      <div className="activity98-window" role="presentation">
+        <header className="activity98-titlebar">
+          <span className="activity98-title-text">Activity Selection (Interval Scheduling)</span>
+          <div className="activity98-title-controls">
+            <button className="activity98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="activity98-control" aria-label="Close">
               X
             </Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Earliest-finish-first scheduling with provable optimality</div>
-              <p className="win95-text">
-                Interval scheduling picks the largest set of non-overlapping activities on a single resource. The greedy rule
-                that always chooses the interval that finishes first leaves the most runway for future picks and is provably optimal.
-                This page explains the exchange argument, practical implementation details, and extensions to weighted and multi-machine cases.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Interval scheduling is the canonical example showing how a local greedy rule can be globally optimal. By selecting
-                the activity that frees the resource soonest, you maximize flexibility for the remaining timeline. The same idea
-                underlies room allocation, CPU task admission, and bandwidth reservation. Weighted and multi-resource variants keep
-                the structure but need extra machinery like DP or heaps.
-              </p>
-            </div>
-          </fieldset>
+        <div className="activity98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`activity98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="activity98-main">
+          <aside className="activity98-toc" aria-label="Table of contents">
+            <h2 className="activity98-toc-title">Contents</h2>
+            <ul className="activity98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="activity98-content">
+            <h1 className="activity98-doc-title">Activity Selection (Interval Scheduling)</h1>
+            <p>
+              Interval scheduling picks the largest set of non-overlapping activities on a single resource. The greedy rule that
+              always chooses the interval that finishes first leaves the most runway for future picks and is provably optimal.
+            </p>
+            <p>
+              This document explains the exchange argument, practical implementation details, and extensions to weighted and
+              multi-machine cases.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: problem variants</legend>
-            <div className="win95-grid win95-grid-3">
-              {problemVariants.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="activity98-section">
+                  <h2 className="activity98-heading">Overview</h2>
+                  <p>
+                    Interval scheduling is the canonical example showing how a local greedy rule can be globally optimal. By
+                    selecting the activity that frees the resource soonest, you maximize flexibility for the remaining timeline.
+                  </p>
+                  <p>
+                    The same idea underlies room allocation, CPU task admission, and bandwidth reservation. Weighted and
+                    multi-resource variants keep the structure but need extra machinery like DP or heaps.
+                  </p>
+                </section>
+                <hr className="activity98-divider" />
+                <section id="bp-history" className="activity98-section">
+                  <h2 className="activity98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="activity98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="activity98-divider" />
+                <section id="bp-real-world" className="activity98-section">
+                  <h2 className="activity98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="activity98-divider" />
+                <section id="bp-takeaways" className="activity98-section">
+                  <h2 className="activity98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: greedy workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Correctness hinges on the exchange argument: if an optimal schedule chooses a later-finishing activity instead of
-                the earliest-finishing one, swapping in the earlier finish never reduces the number of remaining compatible
-                intervals. Repeating this swap transforms any optimal schedule into the greedy one without shrinking it.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="activity98-section">
+                  <h2 className="activity98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="activity98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-variants" className="activity98-section">
+                  <h2 className="activity98-heading">Problem Variants</h2>
+                  {problemVariants.map((item) => (
+                    <div key={item.heading}>
+                      <h3 className="activity98-subheading">{item.heading}</h3>
+                      <ul>
+                        {item.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-workflow" className="activity98-section">
+                  <h2 className="activity98-heading">Greedy Workflow</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Correctness hinges on the exchange argument: if an optimal schedule chooses a later-finishing activity instead
+                    of the earliest-finishing one, swapping in the earlier finish never reduces the number of remaining compatible
+                    intervals. Repeating this swap transforms any optimal schedule into the greedy one without shrinking it.
+                  </p>
+                </section>
+                <section id="core-implementation" className="activity98-section">
+                  <h2 className="activity98-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="activity98-section">
+                  <h2 className="activity98-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Greedy excels because the decision depends only on the current end time. When value weights, setup costs, or
+                    multiple resources enter, expect to pay more with DP, heaps, or approximation to preserve optimal or
+                    near-optimal schedules.
+                  </p>
+                </section>
+                <section id="core-advanced" className="activity98-section">
+                  <h2 className="activity98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="activity98-section">
+                  <h2 className="activity98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-guidance" className="activity98-section">
+                  <h2 className="activity98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Greedy excels because the decision depends only on the current end time. When value weights, setup costs, or
-                multiple resources enter, expect to pay more with DP, heaps, or approximation to preserve optimal or near-optimal schedules.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="activity98-section">
+                <h2 className="activity98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="activity98-subheading">{example.title}</h3>
+                    <div className="activity98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="activity98-section">
+                <h2 className="activity98-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
