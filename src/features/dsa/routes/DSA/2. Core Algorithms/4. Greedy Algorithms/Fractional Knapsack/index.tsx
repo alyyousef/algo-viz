@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -219,7 +218,7 @@ Repeat swaps to transform OPT into greedy without losing value.`,
 ]
 
 const pitfalls = [
-  'Using the same greedy for 0/1 knapsack--ratio order is not optimal when fractions are disallowed.',
+  'Using the same greedy for 0/1 knapsack; ratio order is not optimal when fractions are disallowed.',
   'Ignoring floating-point precision when summing fractional contributions.',
   'Forgetting to handle zero or negative weights, which break the ratio computation.',
   'Tie-breaking poorly can affect reproducibility or downstream deterministic tests.',
@@ -264,210 +263,536 @@ const takeaways = [
   'Precision, tie-breaking, and validity checks matter for correct implementations.',
 ]
 
+const quickGlossary = [
+  {
+    term: 'Value density',
+    definition: 'The value-to-weight ratio used to rank items for greedy filling.',
+  },
+  {
+    term: 'Breakpoint item',
+    definition: 'The item taken fractionally when remaining capacity is smaller than its full weight.',
+  },
+  {
+    term: 'LP relaxation',
+    definition: 'Version of knapsack where binary selection variables are relaxed to continuous fractions.',
+  },
+  {
+    term: 'Complementary slackness',
+    definition: 'LP optimality condition that explains why ratio-ordered greedy is exact here.',
+  },
+  {
+    term: 'Admissible upper bound',
+    definition: 'A bound that never underestimates the true optimum, used for pruning search.',
+  },
+  {
+    term: '0/1 knapsack',
+    definition: 'Indivisible-item variant where each item is either fully selected or excluded.',
+  },
+  {
+    term: 'Stable tie-breaking',
+    definition: 'Deterministic ordering for equal ratios to keep outputs reproducible.',
+  },
+  {
+    term: 'Divisible resource',
+    definition: 'Resource model where partial allocation of an item is allowed.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const frac98HelpStyles = `
+.frac98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.frac98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.frac98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.frac98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.frac98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  z-index: 1;
+}
+
+.frac98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.frac98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.frac98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.frac98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.frac98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.frac98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.frac98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.frac98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.frac98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.frac98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.frac98-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.frac98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.frac98-section {
+  margin: 0 0 22px;
+}
+
+.frac98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.frac98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.frac98-content p,
+.frac98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.frac98-content p {
+  margin: 0 0 10px;
+}
+
+.frac98-content ul,
+.frac98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.frac98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.frac98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.frac98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .frac98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .frac98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-real-world', label: 'Real-World Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-variants', label: 'Problem Variants' },
+    { id: 'core-workflow', label: 'Greedy Workflow' },
+    { id: 'core-implementation', label: 'Implementation Notes' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-guidance', label: 'When to Use It' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function FractionalKnapsackPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Fractional Knapsack (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Fractional Knapsack',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Fractional Knapsack</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+    <div className="frac98-help-page">
+      <style>{frac98HelpStyles}</style>
+      <div className="frac98-window" role="presentation">
+        <header className="frac98-titlebar">
+          <span className="frac98-title-text">Fractional Knapsack</span>
+          <div className="frac98-title-controls">
+            <button className="frac98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="frac98-control" aria-label="Close">
               X
             </Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Value density first: the greedy that is actually optimal</div>
-              <p className="win95-text">
-                Fractional knapsack allows taking partial items, making the objective linear and greedily solvable. Sorting by
-                value-to-weight ratio and filling until capacity is exhausted gives the exact optimum. The fractional answer also
-                upper-bounds the 0/1 knapsack solution, guiding branch-and-bound pruning. This page covers the greedy proof, pitfalls,
-                and how to use the relaxation in harder variants.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                By allowing fractional items, knapsack becomes a continuous optimization problem with a straightforward greedy
-                solution. Ordering by value density ensures every unit of capacity is spent on the best available "price per unit."
-                The last item may be partial; all earlier items are taken in full. The same logic underpins linear programming duality
-                and serves as the canonical relaxation for 0/1 knapsack.
-              </p>
-            </div>
-          </fieldset>
+        <div className="frac98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`frac98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="frac98-main">
+          <aside className="frac98-toc" aria-label="Table of contents">
+            <h2 className="frac98-toc-title">Contents</h2>
+            <ul className="frac98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="frac98-content">
+            <h1 className="frac98-doc-title">Fractional Knapsack</h1>
+            <p>
+              Fractional knapsack allows taking partial items, making the objective linear and greedily solvable. Sorting by
+              value-to-weight ratio and filling until capacity is exhausted gives the exact optimum.
+            </p>
+            <p>
+              The fractional answer also upper-bounds the 0/1 knapsack solution, guiding branch-and-bound pruning. This page
+              covers the greedy proof, pitfalls, and how to use the relaxation in harder variants.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: problem variants</legend>
-            <div className="win95-grid win95-grid-3">
-              {problemVariants.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="frac98-section">
+                  <h2 className="frac98-heading">Overview</h2>
+                  <p>
+                    By allowing fractional items, knapsack becomes a continuous optimization problem with a straightforward greedy
+                    solution. Ordering by value density ensures every unit of capacity is spent on the best available price per
+                    unit.
+                  </p>
+                  <p>
+                    The last item may be partial; all earlier items are taken in full. The same logic underpins linear programming
+                    duality and serves as the canonical relaxation for 0/1 knapsack.
+                  </p>
+                </section>
+                <hr className="frac98-divider" />
+                <section id="bp-history" className="frac98-section">
+                  <h2 className="frac98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="frac98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="frac98-divider" />
+                <section id="bp-real-world" className="frac98-section">
+                  <h2 className="frac98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="frac98-divider" />
+                <section id="bp-takeaways" className="frac98-section">
+                  <h2 className="frac98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: greedy workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Correctness idea: in any optimal solution, if capacity is spent on a lower ratio item while a higher ratio item has
-                remaining mass, swapping equal mass of the higher ratio item increases or preserves value. Repeating these exchanges
-                reorders any optimum into the greedy order, proving greedy optimality.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="frac98-section">
+                  <h2 className="frac98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="frac98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-variants" className="frac98-section">
+                  <h2 className="frac98-heading">Problem Variants</h2>
+                  {problemVariants.map((item) => (
+                    <div key={item.heading}>
+                      <h3 className="frac98-subheading">{item.heading}</h3>
+                      <ul>
+                        {item.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-workflow" className="frac98-section">
+                  <h2 className="frac98-heading">Greedy Workflow</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Correctness idea: in any optimal solution, if capacity is spent on a lower ratio item while a higher ratio item
+                    has remaining mass, swapping equal mass of the higher ratio item increases or preserves value. Repeating these
+                    exchanges reorders any optimum into the greedy order, proving greedy optimality.
+                  </p>
+                </section>
+                <section id="core-implementation" className="frac98-section">
+                  <h2 className="frac98-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="frac98-section">
+                  <h2 className="frac98-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Sorting dominates runtime; the greedy scan is linear. Unlike 0/1 knapsack, there is no exponential blowup. The
+                    fractional optimum is both exact for the divisible case and an upper bound for the indivisible case.
+                  </p>
+                </section>
+                <section id="core-advanced" className="frac98-section">
+                  <h2 className="frac98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="frac98-section">
+                  <h2 className="frac98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-guidance" className="frac98-section">
+                  <h2 className="frac98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Sorting dominates runtime; the greedy scan is linear. Unlike 0/1 knapsack, there is no exponential blowup. The
-                fractional optimum is both exact for the divisible case and an upper bound for the indivisible case.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="frac98-section">
+                <h2 className="frac98-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="frac98-subheading">{example.title}</h3>
+                    <div className="frac98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="frac98-section">
+                <h2 className="frac98-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
