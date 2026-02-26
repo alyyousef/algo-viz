@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -271,256 +271,532 @@ const takeaways = [
   'Many planning and ordering tasks reduce to this DP shape once costs are associative.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.mcm98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.mcm98-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.mcm98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mcm98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.mcm98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.mcm98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  padding: 0;
+}
+
+.mcm98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.mcm98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mcm98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.mcm98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.mcm98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.mcm98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.mcm98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mcm98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.mcm98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.mcm98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.mcm98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.mcm98-section {
+  margin: 0 0 20px;
+}
+
+.mcm98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.mcm98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.mcm98-content p,
+.mcm98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mcm98-content p {
+  margin: 0 0 10px;
+}
+
+.mcm98-content ul,
+.mcm98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.mcm98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.mcm98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.mcm98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .mcm98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .mcm98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const glossary = [
+  { term: 'Interval DP', definition: 'Dynamic programming over subranges [i, j] where longer intervals depend on shorter ones.' },
+  { term: 'Parenthesization', definition: 'A grouping of associative multiplications that preserves matrix order but changes cost.' },
+  { term: 'split[i][j]', definition: 'Index k that gives the minimum cost split for interval i..j.' },
+  { term: 'Catalan number', definition: 'Counts valid parenthesizations of a chain; grows exponentially with chain length.' },
+  { term: 'Associativity', definition: 'Matrices can be regrouped as (AB)C = A(BC) when dimensions are compatible.' },
+  { term: 'Scalar multiplication cost', definition: 'Cost of multiplying (p x q) and (q x r) equals p*q*r scalar operations.' },
+  { term: 'Top-down memoization', definition: 'Recursive recurrence with caching to avoid recomputing subproblems.' },
+  { term: 'Tabulation', definition: 'Bottom-up DP fill order by increasing chain length.' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-mental-models', label: 'Mental Models' },
+    { id: 'bp-framing', label: 'Problem Framing' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-cost-model', label: 'Cost Model' },
+    { id: 'core-dp', label: 'DP Recurrence' },
+    { id: 'core-options', label: 'Algorithm Options' },
+    { id: 'core-walkthrough', label: 'Interval Walkthrough' },
+    { id: 'core-complexity', label: 'Complexity Notes' },
+    { id: 'core-correctness', label: 'Correctness Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-variations', label: 'Variations' },
+    { id: 'core-checklist', label: 'Implementation Checklist' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Example' },
+    { id: 'ex-code', label: 'Code Examples' },
+    { id: 'ex-applications', label: 'Applications' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function MatrixChainMultiplicationPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab: TabId = isTabId(searchParams.get('tab')) ? (searchParams.get('tab') as TabId) : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Matrix Chain Multiplication (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Matrix Chain Multiplication',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Matrix Chain Multiplication</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
+    <div className="mcm98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="mcm98-window" role="presentation">
+        <header className="mcm98-titlebar">
+          <span className="mcm98-title-text">Matrix Chain Multiplication</span>
+          <div className="mcm98-title-controls">
+            <button className="mcm98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="mcm98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Pick parentheses to minimize scalar multiplications</div>
-              <p className="win95-text">
-                Given matrices A1..An with compatible dimensions, all multiplication orders yield the same matrix but not the same
-                work. Matrix Chain Multiplication finds the parenthesization with minimum scalar multiplications using interval DP
-                and split tracking, and it cleanly illustrates interval DP structure and reconstruction.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                The problem is not to change matrix order, only to change grouping. The DP explores all split points, caching the
-                cheapest cost for every interval, and reconstructs one optimal parenthesization that achieves it. The key is the
-                cost model: multiplying (p x q) by (q x r) costs p*q*r, so the split point controls the expensive middle dimension.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mental models</legend>
-            <div className="win95-grid win95-grid-3">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="mcm98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`mcm98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setSearchParams((prev) => {
+                const next = new URLSearchParams(prev)
+                next.set('tab', tab.id)
+                return next
+              }, { replace: true })}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="mcm98-main">
+          <aside className="mcm98-toc" aria-label="Table of contents">
+            <h2 className="mcm98-toc-title">Contents</h2>
+            <ul className="mcm98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="mcm98-content">
+            <h1 className="mcm98-doc-title">Matrix Chain Multiplication</h1>
+            <p>
+              Given matrices A1..An with compatible dimensions, all multiplication orders yield the same matrix but not the same
+              work. Matrix Chain Multiplication finds the parenthesization with minimum scalar multiplications using interval DP
+              and split tracking, and it cleanly illustrates interval DP structure and reconstruction.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem framing</legend>
-            <div className="win95-grid win95-grid-2">
-              <div className="win95-panel">
-                <div className="win95-heading">Definition</div>
-                <p className="win95-text">
-                  Input: dimensions array dims of length n+1. Matrix i has shape dims[i] x dims[i+1]. Find the minimum scalar
-                  multiplications to compute A1 x A2 x ... x An by choosing parentheses (grouping).
-                </p>
-                <p className="win95-text">Output: minimum cost and an example parenthesization achieving it.</p>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-heading">Why it matters</div>
-                <ul className="win95-list">
-                  <li>Illustrates interval DP and optimal substructure cleanly.</li>
-                  <li>Maps to query planners, expression optimizers, and geometry DPs.</li>
-                  <li>Shows how associativity frees grouping choices that impact performance.</li>
-                </ul>
-              </div>
-            </div>
-            <div className="win95-grid win95-grid-2" style={{ marginTop: '6px' }}>
-              <div className="win95-panel">
-                <div className="win95-heading">Dimensions and cost</div>
-                <p className="win95-text">
-                  Compatibility requires that adjacent matrices share inner dimensions. The only cost term for a split i..j at k is
-                  dims[i] * dims[k+1] * dims[j+1], so the middle dimension dims[k+1] dominates the choice.
-                </p>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-heading">Indexing sanity</div>
-                <ul className="win95-list">
-                  <li>There are n matrices but n+1 dimensions.</li>
-                  <li>dp is indexed by matrices (0..n-1).</li>
-                  <li>dims is indexed by boundaries (0..n).</li>
-                </ul>
-              </div>
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="mcm98-section">
+                  <h2 className="mcm98-heading">Overview</h2>
+                  <p>
+                    The problem is not to change matrix order, only to change grouping. The DP explores all split points, caching
+                    the cheapest cost for every interval, and reconstructs one optimal parenthesization that achieves it.
+                  </p>
+                  <p>
+                    The key cost model is multiplying (p x q) by (q x r), which costs p*q*r scalar multiplications, so split choice
+                    controls the expensive middle dimension.
+                  </p>
+                </section>
+                <hr className="mcm98-divider" />
+                <section id="bp-mental-models" className="mcm98-section">
+                  <h2 className="mcm98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="mcm98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-framing" className="mcm98-section">
+                  <h2 className="mcm98-heading">Problem Framing</h2>
+                  <h3 className="mcm98-subheading">Definition</h3>
+                  <p>
+                    Input: dimensions array dims of length n+1. Matrix i has shape dims[i] x dims[i+1]. Find the minimum scalar
+                    multiplications to compute A1 x A2 x ... x An by choosing parentheses (grouping).
+                  </p>
+                  <p>Output: minimum cost and an example parenthesization achieving it.</p>
+                  <h3 className="mcm98-subheading">Why it matters</h3>
+                  <ul>
+                    <li>Illustrates interval DP and optimal substructure cleanly.</li>
+                    <li>Maps to query planners, expression optimizers, and geometry DPs.</li>
+                    <li>Shows how associativity frees grouping choices that impact performance.</li>
+                  </ul>
+                  <h3 className="mcm98-subheading">Dimensions and indexing sanity</h3>
+                  <ul>
+                    <li>There are n matrices but n+1 dimensions.</li>
+                    <li>dp is indexed by matrices (0..n-1).</li>
+                    <li>dims is indexed by boundaries (0..n).</li>
+                  </ul>
+                </section>
+                <section id="bp-takeaways" className="mcm98-section">
+                  <h2 className="mcm98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Cost model</legend>
-            <div className="win95-grid win95-grid-3">
-              {costModel.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-cost-model" className="mcm98-section">
+                  <h2 className="mcm98-heading">Cost Model</h2>
+                  {costModel.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-dp" className="mcm98-section">
+                  <h2 className="mcm98-heading">DP Recurrence</h2>
+                  {dpRecurrence.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-options" className="mcm98-section">
+                  <h2 className="mcm98-heading">Algorithm Options</h2>
+                  {algorithmOptions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The tabulation order is by chain length so that all shorter subranges are ready when computing longer ones.
+                    Storing split indices costs O(n^2) extra but is crucial for reconstructing the optimal grouping.
+                  </p>
+                </section>
+                <section id="core-walkthrough" className="mcm98-section">
+                  <h2 className="mcm98-heading">Step-by-step (Interval DP)</h2>
+                  <ol>
+                    {walkthroughSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-complexity" className="mcm98-section">
+                  <h2 className="mcm98-heading">Complexity Notes</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-correctness" className="mcm98-section">
+                  <h2 className="mcm98-heading">Correctness Insights</h2>
+                  {correctnessInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="mcm98-section">
+                  <h2 className="mcm98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-variations" className="mcm98-section">
+                  <h2 className="mcm98-heading">Variations and Related Problems</h2>
+                  {variations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-checklist" className="mcm98-section">
+                  <h2 className="mcm98-heading">Implementation Checklist</h2>
+                  <ul>
+                    {implementationChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>DP recurrence</legend>
-            <div className="win95-grid win95-grid-2">
-              {dpRecurrence.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="mcm98-section">
+                  <h2 className="mcm98-heading">Worked Example</h2>
+                  <p><strong>dims:</strong> {workedExample.dims}</p>
+                  <p><strong>Matrices:</strong> {workedExample.matrices}</p>
+                  <p><strong>Minimum cost:</strong> {workedExample.bestCost}</p>
+                  <p><strong>One optimal order:</strong> {workedExample.bestOrder}</p>
+                  <ul>
+                    {workedExample.notes.map((note) => (
+                      <li key={note}>{note}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="ex-code" className="mcm98-section">
+                  <h2 className="mcm98-heading">Practical Examples</h2>
+                  {codeExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="mcm98-subheading">{example.title}</h3>
+                      <div className="mcm98-codebox">
+                        <code>{example.code}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-applications" className="mcm98-section">
+                  <h2 className="mcm98-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm options</legend>
-            <div className="win95-grid win95-grid-3">
-              {algorithmOptions.map((option) => (
-                <div key={option.title} className="win95-panel">
-                  <div className="win95-heading">{option.title}</div>
-                  <p className="win95-text">{option.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The tabulation order is by chain length so that all shorter subranges are ready when computing longer ones. Storing
-                split indices costs O(n^2) extra but is crucial for reconstructing the optimal grouping.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Step-by-step (interval DP)</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {walkthroughSteps.map((step) => (
-                  <li key={step}>{step}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="mcm98-section">
+                <h2 className="mcm98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked example</legend>
-            <div className="win95-panel">
-              <div className="win95-heading">Classic input</div>
-              <p className="win95-text">dims = <code>{workedExample.dims}</code></p>
-              <p className="win95-text">Matrices: {workedExample.matrices}</p>
-              <p className="win95-text">Minimum cost: {workedExample.bestCost}</p>
-              <p className="win95-text">One optimal order: {workedExample.bestOrder}</p>
-              <ul className="win95-list">
-                {workedExample.notes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity & correctness</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-3" style={{ marginTop: '6px' }}>
-              {correctnessInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variations & related problems</legend>
-            <div className="win95-grid win95-grid-2">
-              {variations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {implementationChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
