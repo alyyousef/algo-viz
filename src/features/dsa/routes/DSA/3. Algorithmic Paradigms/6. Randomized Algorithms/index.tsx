@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -33,7 +32,7 @@ const foundations = [
   {
     title: 'Las Vegas vs Monte Carlo',
     detail:
-      'Las Vegas algorithms are always correct but have random runtime (e.g., randomized quicksort). Monte Carlo algorithms run fast but may be wrong with tiny probability (e.g., Miller-Rabin).',
+      'Las Vegas algorithms are always correct but have random runtime (for example, randomized quicksort). Monte Carlo algorithms run fast but may be wrong with tiny probability (for example, Miller-Rabin).',
   },
   {
     title: 'Probability is part of the spec',
@@ -168,7 +167,7 @@ const howItWorks = [
   },
   {
     title: 'Add verification when possible',
-    detail: 'For Monte Carlo, bolt on a cheap checker to catch false positives/negatives.',
+    detail: 'For Monte Carlo, bolt on a cheap checker to catch false positives or negatives.',
   },
   {
     title: 'Isolate the RNG',
@@ -207,7 +206,6 @@ const designChecklist = [
   'Add verification or fallback when possible.',
   'Expose seed and randomness source for reproducible tests.',
 ]
-
 const complexityTable = [
   {
     approach: 'Randomized quicksort (shuffled)',
@@ -238,7 +236,7 @@ const complexityTable = [
 const verificationStrategies = [
   {
     title: 'Certificate checks',
-    detail: 'Verify output with a deterministic validator (e.g., primality witness).',
+    detail: 'Verify output with a deterministic validator (for example, primality witness).',
   },
   {
     title: 'Independent reruns',
@@ -404,7 +402,6 @@ const instrumentation = [
     detail: 'Rotate or randomize seeds to prevent long-term bias and adversarial adaptation.',
   },
 ]
-
 const codeExamples = [
   {
     title: 'Reservoir sampling (size k)',
@@ -500,326 +497,609 @@ const keyTakeaways = [
   },
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Las Vegas algorithm',
+    definition:
+      'A randomized algorithm that is always correct, with randomness affecting runtime rather than correctness.',
+  },
+  {
+    term: 'Monte Carlo algorithm',
+    definition:
+      'A randomized algorithm with bounded runtime but a small probability of error.',
+  },
+  {
+    term: 'Error amplification',
+    definition:
+      'Reducing failure probability by repeating independent trials and combining results.',
+  },
+  {
+    term: 'Universal hashing',
+    definition:
+      'A family of hash functions with provable collision bounds across all inputs.',
+  },
+  {
+    term: 'Reservoir sampling',
+    definition:
+      'A one-pass method for drawing a uniform sample of fixed size from a stream of unknown length.',
+  },
+  {
+    term: 'Chernoff bound',
+    definition:
+      'A concentration inequality that bounds how far independent random sums deviate from expectation.',
+  },
+  {
+    term: 'Seed',
+    definition:
+      'The initial state for a pseudorandom generator that determines the produced sequence.',
+  },
+  {
+    term: 'Variance reduction',
+    definition:
+      'Sampling techniques that decrease estimator noise without proportionally increasing sample size.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const randomizedHelpStyles = `
+.randomized-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  padding: 0;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.randomized-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.randomized-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.randomized-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.randomized-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.randomized-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+.randomized-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.randomized-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.randomized-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.randomized-help-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.randomized-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.randomized-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.randomized-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.randomized-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.randomized-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.randomized-help-content {
+  overflow: auto;
+  padding: 14px 20px 24px;
+}
+
+.randomized-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.randomized-help-section {
+  margin: 0 0 20px;
+}
+
+.randomized-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.randomized-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.randomized-help-content p,
+.randomized-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.randomized-help-content p {
+  margin: 0 0 10px;
+}
+
+.randomized-help-content ul,
+.randomized-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.randomized-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.randomized-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.randomized-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .randomized-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .randomized-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-foundations', label: 'Foundations' },
+    { id: 'bp-overview', label: 'Big Picture' },
+    { id: 'bp-taxonomy', label: 'Taxonomy' },
+    { id: 'bp-history', label: 'History' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Pillars and Models' },
+    { id: 'core-randomness', label: 'Randomness Sources' },
+    { id: 'core-how', label: 'How It Works' },
+    { id: 'core-probability', label: 'Probability Toolkit' },
+    { id: 'core-design', label: 'Design Checklist' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-verification', label: 'Verification' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-comparisons', label: 'Comparisons' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-debugging', label: 'Debugging' },
+    { id: 'core-use', label: 'When To Use It' },
+    { id: 'core-avoid', label: 'When To Avoid It' },
+    { id: 'core-advanced', label: 'Advanced Moves' },
+    { id: 'core-instrumentation', label: 'Instrumentation' },
+    { id: 'core-takeaways', label: 'Key Takeaways' },
+  ],
+  examples: [{ id: 'examples-code', label: 'Code Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function RandomizedAlgorithmsPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Randomized Algorithms (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Randomized Algorithms',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Randomized Algorithms</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Harness probability to outpace worst cases</div>
-              <p className="win95-text">
-                Randomized algorithms trade determinism for predictable averages and tunable confidence. By injecting randomness into choices,
-                they neutralize adversaries, shrink memory, and deliver answers within a stated error budget.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="randomized-help-page">
+      <style>{randomizedHelpStyles}</style>
+      <div className="randomized-help-window" role="presentation">
+        <header className="randomized-help-titlebar">
+          <span className="randomized-help-title">Randomized Algorithms</span>
+          <div className="randomized-help-controls">
+            <button className="randomized-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="randomized-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>Foundations</legend>
-            <div className="win95-grid win95-grid-2">
-              {foundations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="randomized-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`randomized-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="randomized-help-main">
+          <aside className="randomized-help-toc" aria-label="Table of contents">
+            <h2 className="randomized-help-toc-title">Contents</h2>
+            <ul className="randomized-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Randomized algorithm taxonomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {taxonomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>History that shaped the paradigm</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
-                  <p className="win95-text">{event.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pillars and mental hooks</legend>
-            <div className="win95-grid win95-grid-2">
-              <div className="win95-panel">
-                <div className="win95-heading">Pillars</div>
-                <ul className="win95-list">
-                  {pillars.map((pillar) => (
-                    <li key={pillar.title}>
-                      <strong>{pillar.title}:</strong> {pillar.detail}
-                    </li>
+          <main className="randomized-help-content">
+            <h1 className="randomized-help-doc-title">Randomized Algorithms</h1>
+            <p>
+              Randomized algorithms trade determinism for predictable averages and tunable confidence. By injecting randomness into choices,
+              they neutralize adversaries, shrink memory, and deliver answers within a stated error budget.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-foundations" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Foundations</h2>
+                  {foundations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </ul>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-heading">Mental models</div>
-                <ul className="win95-list">
-                  {mentalModels.map((model) => (
-                    <li key={model.title}>
-                      <strong>{model.title}:</strong> {model.detail}
-                    </li>
+                </section>
+                <hr className="randomized-help-divider" />
+                <section id="bp-overview" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Big Picture</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="randomized-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
                   ))}
-                </ul>
-              </div>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="randomized-help-divider" />
+                <section id="bp-taxonomy" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Randomized Algorithm Taxonomy</h2>
+                  {taxonomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="randomized-help-divider" />
+                <section id="bp-history" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">History That Shaped the Paradigm</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="randomized-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Randomness sources</legend>
-            <div className="win95-grid win95-grid-2">
-              {randomnessSources.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works, step by step</legend>
-            <div className="win95-grid win95-grid-2">
-              {howItWorks.map((step, idx) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
-                    Step {idx + 1}: {step.title}
-                  </div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Probability toolkit</legend>
-            <div className="win95-grid win95-grid-2">
-              {probabilityToolkit.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Design checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {designChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity at a glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Pillars and Mental Hooks</h2>
+                  {pillars.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-randomness" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Randomness Sources</h2>
+                  {randomnessSources.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-how" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">How It Works, Step by Step</h2>
+                  {howItWorks.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-probability" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Probability Toolkit</h2>
+                  {probabilityToolkit.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-design" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Design Checklist</h2>
+                  <ul>
+                    {designChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-complexity" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Complexity at a Glance</h2>
                   {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                    <div key={row.approach}>
+                      <h3 className="randomized-help-subheading">{row.approach}</h3>
+                      <p><strong>Time:</strong> {row.time}</p>
+                      <p><strong>Space:</strong> {row.space}</p>
+                      <p><strong>Note:</strong> {row.note}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-verification" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Verification and Amplification</h2>
+                  {verificationStrategies.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-applications" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Where Randomness Wins</h2>
+                  {applications.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="randomized-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                  <h3 className="randomized-help-subheading">Failure Mode</h3>
+                  <p>{failureStory}</p>
+                </section>
+                <section id="core-comparisons" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Randomization in Context</h2>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Pitfalls to Avoid</h2>
+                  {pitfalls.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debugging" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Debugging Checklist</h2>
+                  <ul>
+                    {debuggingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-use" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">When to Reach for Randomness</h2>
+                  {whenToUse.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-avoid" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">When to Avoid Randomness</h2>
+                  {whenToAvoid.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Advanced Moves</h2>
+                  {advanced.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="randomized-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-instrumentation" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Instrumentation That Matters</h2>
+                  {instrumentation.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-takeaways" className="randomized-help-section">
+                  <h2 className="randomized-help-heading">Key Takeaways</h2>
+                  {keyTakeaways.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Verification and amplification</legend>
-            <div className="win95-grid win95-grid-2">
-              {verificationStrategies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Where randomness wins</legend>
-            <div className="win95-stack">
-              <div className="win95-grid win95-grid-2">
-                {applications.map((app) => (
-                  <div key={app.title} className="win95-panel">
-                    <div className="win95-heading">{app.title}</div>
-                    <p className="win95-text">{app.detail}</p>
-                    <p className="win95-text">{app.note}</p>
+            {activeTab === 'examples' && (
+              <section id="examples-code" className="randomized-help-section">
+                <h2 className="randomized-help-heading">Code Examples</h2>
+                {codeExamples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="randomized-help-subheading">{example.title}</h3>
+                    <div className="randomized-help-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
                   </div>
                 ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <div className="win95-heading">Failure mode</div>
-                <p className="win95-text">{failureStory}</p>
-              </div>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Randomization in context</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls to avoid</legend>
-            <div className="win95-stack">
-              {pitfalls.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {debuggingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="randomized-help-section">
+                <h2 className="randomized-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to reach for randomness</legend>
-            <div className="win95-stack">
-              {whenToUse.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to avoid randomness</legend>
-            <div className="win95-stack">
-              {whenToAvoid.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced moves</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Instrumentation that matters</legend>
-            <div className="win95-grid win95-grid-2">
-              {instrumentation.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
