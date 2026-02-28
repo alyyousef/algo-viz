@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -270,204 +269,556 @@ const takeaways = [
   'For shortest paths, use BFS or Dijkstra rather than backtracking.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Backtracking',
+    definition:
+      'A search technique that tries a choice, recurses, and undoes that choice when it leads to a dead end.',
+  },
+  {
+    term: 'Maze grid',
+    definition:
+      'A 2D array where open cells can be visited and blocked cells cannot.',
+  },
+  {
+    term: 'Solution matrix',
+    definition:
+      'A companion matrix that records the cells currently included in the path.',
+  },
+  {
+    term: 'Visited set',
+    definition:
+      'A tracker used when moving in four directions so the search does not revisit the same cell in a cycle.',
+  },
+  {
+    term: 'Move order',
+    definition:
+      'The sequence in which directions are tried; it affects which valid solution is found first.',
+  },
+  {
+    term: 'Completeness',
+    definition:
+      'The guarantee that the algorithm will find a solution if one exists within the allowed move set.',
+  },
+  {
+    term: 'Soundness',
+    definition:
+      'The guarantee that every reported solution uses only legal moves through open cells.',
+  },
+  {
+    term: 'Monotonic path',
+    definition:
+      'A path that moves only right and down, reducing branching but excluding some valid routes.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const ratMazeHelpStyles = `
+.rat-maze-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  padding: 0;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.rat-maze-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.rat-maze-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.rat-maze-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rat-maze-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.rat-maze-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.rat-maze-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.rat-maze-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rat-maze-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.rat-maze-help-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.rat-maze-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.rat-maze-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rat-maze-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rat-maze-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.rat-maze-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.rat-maze-help-content {
+  overflow: auto;
+  padding: 14px 20px 24px;
+}
+
+.rat-maze-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.rat-maze-help-section {
+  margin: 0 0 20px;
+}
+
+.rat-maze-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.rat-maze-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.rat-maze-help-content p,
+.rat-maze-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rat-maze-help-content p {
+  margin: 0 0 10px;
+}
+
+.rat-maze-help-content ul,
+.rat-maze-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.rat-maze-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.rat-maze-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.rat-maze-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .rat-maze-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .rat-maze-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-mental-models', label: 'Mental Models' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-foundation', label: 'Core Foundation' },
+    { id: 'core-process', label: 'Step-by-Step Process' },
+    { id: 'core-structures', label: 'Data Structures' },
+    { id: 'core-correctness', label: 'Why It Works' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-edge-cases', label: 'Edge Cases' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-variants', label: 'Variants' },
+  ],
+  examples: [
+    { id: 'examples-code', label: 'Code Examples' },
+    { id: 'examples-notes', label: 'Example Notes' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function RatInMazePage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Rat in a Maze (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Rat in a Maze',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Rat in a Maze</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Backtracking through a grid of obstacles</div>
-              <p className="win95-text">
-                Rat in a Maze is a classic backtracking problem: move through a grid from start to finish while avoiding blocked cells.
-                The algorithm tries steps, records the path, and backtracks whenever it hits a dead end.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="rat-maze-help-page">
+      <style>{ratMazeHelpStyles}</style>
+      <div className="rat-maze-help-window" role="presentation">
+        <header className="rat-maze-help-titlebar">
+          <span className="rat-maze-help-title">Rat in a Maze</span>
+          <div className="rat-maze-help-controls">
+            <button className="rat-maze-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="rat-maze-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                The maze is a grid graph with obstacles. Backtracking searches for a path by exploring moves, undoing them when they fail.
-                It is a simple but powerful example of depth-first search on a constrained space.
-              </p>
-            </div>
-          </fieldset>
+        <div className="rat-maze-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`rat-maze-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="rat-maze-help-main">
+          <aside className="rat-maze-help-toc" aria-label="Table of contents">
+            <h2 className="rat-maze-help-toc-title">Contents</h2>
+            <ul className="rat-maze-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="rat-maze-help-content">
+            <h1 className="rat-maze-help-doc-title">Rat in a Maze</h1>
+            <p>
+              Rat in a Maze is a classic backtracking problem: move through a grid from start to finish while avoiding blocked
+              cells. The algorithm tries steps, records the path, and backtracks whenever it hits a dead end.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>What the algorithm does</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreIdeas.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Overview</h2>
+                  <p>
+                    The maze is a grid graph with obstacles. Backtracking searches for a path by exploring moves, undoing them
+                    when they fail. It is a simple but powerful example of depth-first search on a constrained space.
+                  </p>
+                  {coreIdeas.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="rat-maze-help-divider" />
+                <section id="bp-history" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="rat-maze-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="rat-maze-help-divider" />
+                <section id="bp-mental-models" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="rat-maze-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="rat-maze-help-divider" />
+                <section id="bp-applications" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="rat-maze-help-divider" />
+                <section id="bp-takeaways" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Step-by-step process</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {algorithmSteps.map((step) => (
-                  <li key={step}>{step}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-foundation" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Core Foundation</h2>
+                  <p>
+                    The backtracking approach moves step by step through the maze and undoes work whenever a branch cannot reach
+                    the goal. That simple pattern turns the puzzle into a disciplined search procedure rather than random trial and
+                    error.
+                  </p>
+                  <p>
+                    Backtracking explores all reachable paths consistent with the move rules, so it is complete and correct.
+                  </p>
+                </section>
+                <section id="core-process" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Step-by-Step Process</h2>
+                  <ol>
+                    {algorithmSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-structures" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Data Structures</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-correctness" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Why It Works</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Complexity</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-edge-cases" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Edge Cases and Conventions</h2>
+                  {edgeCases.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-variants" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Variants and Extensions</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="examples-code" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Code Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="rat-maze-help-subheading">{example.title}</h3>
+                      <div className="rat-maze-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="examples-notes" className="rat-maze-help-section">
+                  <h2 className="rat-maze-help-heading">Example Notes</h2>
+                  <p>
+                    The example set covers the core recursive solver, a restricted move list, and a version that keeps exploring
+                    after reaching the destination so every valid path can be listed.
+                  </p>
+                  <p>
+                    These examples reinforce the same underlying rules: valid moves only, explicit path marking, and careful undo
+                    logic during unwinding.
+                  </p>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="rat-maze-help-section">
+                <h2 className="rat-maze-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data structures used</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Why the backtracking works</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Backtracking explores all reachable paths consistent with the move rules, so it is complete and correct.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases and conventions</legend>
-            <div className="win95-grid win95-grid-2">
-              {edgeCases.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
