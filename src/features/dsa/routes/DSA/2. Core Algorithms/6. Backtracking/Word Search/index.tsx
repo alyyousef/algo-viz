@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -267,199 +266,549 @@ const takeaways = [
   'The same backbone powers many grid path problems and scales to multi-word searches with a trie.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Backtracking',
+    definition:
+      'A search strategy that tries a path, recurses, and restores state when that path fails.',
+  },
+  {
+    term: 'DFS',
+    definition:
+      'Depth-first search, the traversal pattern used to follow one candidate path as far as possible before backtracking.',
+  },
+  {
+    term: 'Prefix pruning',
+    definition:
+      'Abandoning a branch as soon as the partial path no longer matches the needed prefix of the target word.',
+  },
+  {
+    term: 'Visited marking',
+    definition:
+      'Temporary state used to prevent reusing the same board cell within one search path.',
+  },
+  {
+    term: 'Adjacency',
+    definition:
+      'The movement rule that determines which neighboring cells may be used next, usually up, down, left, and right.',
+  },
+  {
+    term: 'Frequency precheck',
+    definition:
+      'A fast count-based test that rejects impossible searches before DFS begins if the board lacks enough required letters.',
+  },
+  {
+    term: 'Sentinel value',
+    definition:
+      'A placeholder such as "#" used to mark a cell temporarily during in-place backtracking.',
+  },
+  {
+    term: 'Trie',
+    definition:
+      'A prefix tree used in multi-word variants to share prefixes and prune many searches at once.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const wordSearchHelpStyles = `
+.word-search-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  padding: 0;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.word-search-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.word-search-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.word-search-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.word-search-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.word-search-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.word-search-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.word-search-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.word-search-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.word-search-help-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.word-search-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.word-search-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.word-search-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.word-search-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.word-search-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.word-search-help-content {
+  overflow: auto;
+  padding: 14px 20px 24px;
+}
+
+.word-search-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.word-search-help-section {
+  margin: 0 0 20px;
+}
+
+.word-search-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.word-search-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.word-search-help-content p,
+.word-search-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.word-search-help-content p {
+  margin: 0 0 10px;
+}
+
+.word-search-help-content ul,
+.word-search-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.word-search-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.word-search-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.word-search-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .word-search-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .word-search-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-mental-models', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-structure', label: 'Problem Structure' },
+    { id: 'core-flow', label: 'Backtracking Flow' },
+    { id: 'core-pruning', label: 'Pruning Strategies' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-guidance', label: 'When To Use It' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-variants', label: 'Variants' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [
+    { id: 'examples-code', label: 'Code Examples' },
+    { id: 'examples-notes', label: 'Example Notes' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function WordSearchPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Word Search (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Word Search',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Word Search</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Grid-based backtracking that finds a word by walking adjacent letters</div>
-              <p className="win95-text">
-                Word Search asks if a sequence of letters can be traced through a 2D board by moving up, down, left, or right without
-                reusing a cell. It is the canonical backtracking problem: try a step, mark it, recurse, and undo the step if it fails.
-                The simplicity of the rules makes it perfect for learning recursion, pruning, and grid traversal patterns.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="word-search-help-page">
+      <style>{wordSearchHelpStyles}</style>
+      <div className="word-search-help-window" role="presentation">
+        <header className="word-search-help-titlebar">
+          <span className="word-search-help-title">Word Search</span>
+          <div className="word-search-help-controls">
+            <button className="word-search-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="word-search-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Word Search is a depth-first exploration of a grid. Each step advances one letter into the word. If a step violates the
-                rules, that path stops immediately. If a step reaches the final letter, the search ends successfully. The algorithm is
-                straightforward, but the key is how quickly you can prune dead ends.
-              </p>
-            </div>
-          </fieldset>
+        <div className="word-search-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`word-search-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="word-search-help-main">
+          <aside className="word-search-help-toc" aria-label="Table of contents">
+            <h2 className="word-search-help-toc-title">Contents</h2>
+            <ul className="word-search-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="word-search-help-content">
+            <h1 className="word-search-help-doc-title">Word Search</h1>
+            <p>
+              Word Search asks if a sequence of letters can be traced through a 2D board by moving up, down, left, or right without
+              reusing a cell. It is the canonical backtracking problem: try a step, mark it, recurse, and undo the step if it fails.
+              The simplicity of the rules makes it perfect for learning recursion, pruning, and grid traversal patterns.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem structure</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreRules.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Overview</h2>
+                  <p>
+                    Word Search is a depth-first exploration of a grid. Each step advances one letter into the word. If a step
+                    violates the rules, that path stops immediately. If a step reaches the final letter, the search ends
+                    successfully. The algorithm is straightforward, but the key is how quickly you can prune dead ends.
+                  </p>
+                </section>
+                <hr className="word-search-help-divider" />
+                <section id="bp-history" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="word-search-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="word-search-help-divider" />
+                <section id="bp-mental-models" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="word-search-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="word-search-help-divider" />
+                <section id="bp-takeaways" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Backtracking flow</legend>
-            <div className="win95-grid win95-grid-2">
-              {backtrackingFlow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The correctness hinges on restoring state after exploring. Mark, recurse, unmark. This keeps each search branch
-                independent and prevents accidental reuse of cells.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-structure" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Problem Structure</h2>
+                  {coreRules.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="word-search-help-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-flow" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Backtracking Flow</h2>
+                  {backtrackingFlow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The correctness hinges on restoring state after exploring. Mark, recurse, unmark. This keeps each search branch
+                    independent and prevents accidental reuse of cells.
+                  </p>
+                </section>
+                <section id="core-pruning" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Pruning Strategies</h2>
+                  {pruningIdeas.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Complexity Analysis and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-guidance" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">When To Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-pitfalls" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-variants" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Variants and Extensions</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Pruning strategies</legend>
-            <div className="win95-grid win95-grid-2">
-              {pruningIdeas.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="examples-code" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Code Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="word-search-help-subheading">{example.title}</h3>
+                      <div className="word-search-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="examples-notes" className="word-search-help-section">
+                  <h2 className="word-search-help-heading">Example Notes</h2>
+                  <p>
+                    The examples cover the core DFS, a cheap letter-frequency rejection pass, and a concrete path through a board.
+                    Together they show the full shape of the algorithm: validate, branch, and restore.
+                  </p>
+                  <p>
+                    The implementation details matter. In-place marking avoids extra memory, while the precheck can eliminate entire
+                    searches before recursion starts.
+                  </p>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="word-search-help-section">
+                <h2 className="word-search-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
