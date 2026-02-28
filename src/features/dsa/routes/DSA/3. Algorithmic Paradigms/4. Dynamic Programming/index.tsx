@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -434,316 +433,602 @@ const keyTakeaways = [
   'Reconstruction turns a score into a story. Products often need the path.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Dynamic programming',
+    definition:
+      'A method for solving overlapping subproblems by storing and reusing intermediate answers.',
+  },
+  {
+    term: 'State',
+    definition:
+      'The minimal description of a subproblem that contains all information needed for future decisions.',
+  },
+  {
+    term: 'Recurrence',
+    definition:
+      'The formula that expresses a state in terms of smaller states.',
+  },
+  {
+    term: 'Memoization',
+    definition:
+      'Top-down caching of computed states so repeated recursive calls do not redo work.',
+  },
+  {
+    term: 'Tabulation',
+    definition:
+      'Bottom-up filling of a DP table in dependency-safe order.',
+  },
+  {
+    term: 'Optimal substructure',
+    definition:
+      'The property that an optimal solution can be built from optimal solutions to smaller subproblems.',
+  },
+  {
+    term: 'Overlapping subproblems',
+    definition:
+      'The property that the same subproblem appears many times during naive recursion.',
+  },
+  {
+    term: 'Sentinel',
+    definition:
+      'A special value such as infinity or negative infinity used to represent impossible or uninitialized states.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const dynamicProgrammingHelpStyles = `
+.dynamic-programming-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  padding: 0;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.dynamic-programming-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.dynamic-programming-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.dynamic-programming-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dynamic-programming-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.dynamic-programming-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.dynamic-programming-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.dynamic-programming-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dynamic-programming-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.dynamic-programming-help-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.dynamic-programming-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.dynamic-programming-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dynamic-programming-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dynamic-programming-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.dynamic-programming-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.dynamic-programming-help-content {
+  overflow: auto;
+  padding: 14px 20px 24px;
+}
+
+.dynamic-programming-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dynamic-programming-help-section {
+  margin: 0 0 20px;
+}
+
+.dynamic-programming-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dynamic-programming-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dynamic-programming-help-content p,
+.dynamic-programming-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.dynamic-programming-help-content p {
+  margin: 0 0 10px;
+}
+
+.dynamic-programming-help-content ul,
+.dynamic-programming-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.dynamic-programming-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.dynamic-programming-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.dynamic-programming-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .dynamic-programming-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dynamic-programming-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-foundations', label: 'Foundations' },
+    { id: 'bp-taxonomy', label: 'DP Taxonomy' },
+    { id: 'bp-history', label: 'Historical Context' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Pillars and Models' },
+    { id: 'core-how', label: 'How It Works' },
+    { id: 'core-state', label: 'State Design Rules' },
+    { id: 'core-transitions', label: 'Transition Templates' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-reconstruction', label: 'Reconstruction' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-comparisons', label: 'DP vs Other Paradigms' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-debugging', label: 'Debugging Checklist' },
+    { id: 'core-use', label: 'When To Use DP' },
+    { id: 'core-avoid', label: 'When To Avoid DP' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-optimization', label: 'Optimization Toolbox' },
+    { id: 'core-takeaways', label: 'Key Takeaways' },
+  ],
+  examples: [{ id: 'examples-code', label: 'Code Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function DynamicProgrammingParadigmPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Dynamic Programming Paradigm (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Dynamic Programming Paradigm',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Dynamic Programming Paradigm</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Reuse overlapping solutions</div>
-              <p className="win95-text">
-                Dynamic programming is the craft of converting repeated work into cached answers. It trades exponential branching for orderly
-                state transitions and underpins routing, parsing, alignment, and planning systems across industry.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="dynamic-programming-help-page">
+      <style>{dynamicProgrammingHelpStyles}</style>
+      <div className="dynamic-programming-help-window" role="presentation">
+        <header className="dynamic-programming-help-titlebar">
+          <span className="dynamic-programming-help-title">Dynamic Programming Paradigm</span>
+          <div className="dynamic-programming-help-controls">
+            <button className="dynamic-programming-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="dynamic-programming-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>Foundations</legend>
-            <div className="win95-grid win95-grid-2">
-              {foundations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="dynamic-programming-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`dynamic-programming-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="dynamic-programming-help-main">
+          <aside className="dynamic-programming-help-toc" aria-label="Table of contents">
+            <h2 className="dynamic-programming-help-toc-title">Contents</h2>
+            <ul className="dynamic-programming-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>DP taxonomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {dpTaxonomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental hooks</legend>
-            <div className="win95-grid win95-grid-2">
-              <div className="win95-panel">
-                <div className="win95-heading">Three pillars</div>
-                <ul className="win95-list">
-                  {pillars.map((pillar) => (
-                    <li key={pillar.title}>
-                      <strong>{pillar.title}:</strong> {pillar.detail}
-                    </li>
+          <main className="dynamic-programming-help-content">
+            <h1 className="dynamic-programming-help-doc-title">Dynamic Programming Paradigm</h1>
+            <p>
+              Dynamic programming is the craft of converting repeated work into cached answers. It trades exponential branching for orderly
+              state transitions and underpins routing, parsing, alignment, and planning systems across industry.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </ul>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-heading">Mental models</div>
-                <ul className="win95-list">
-                  {mentalModels.map((model) => (
-                    <li key={model.title}>
-                      <strong>{model.title}:</strong> {model.detail}
-                    </li>
+                </section>
+                <hr className="dynamic-programming-help-divider" />
+                <section id="bp-foundations" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Foundations</h2>
+                  {foundations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </ul>
-              </div>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="dynamic-programming-help-divider" />
+                <section id="bp-taxonomy" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">DP Taxonomy</h2>
+                  {dpTaxonomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="dynamic-programming-help-divider" />
+                <section id="bp-history" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Historical Context</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dynamic-programming-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works, step by step</legend>
-            <div className="win95-grid win95-grid-2">
-              {howItWorks.map((step) => (
-                <div key={step.heading} className="win95-panel">
-                  <div className="win95-heading">{step.heading}</div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>State design rules</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {stateDesignRules.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common transition templates</legend>
-            <div className="win95-grid win95-grid-2">
-              {transitionTemplates.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity in practice</legend>
-            <div className="win95-stack">
-              <div className="win95-panel">
-                <table className="win95-table">
-                  <thead>
-                    <tr>
-                      <th>Approach</th>
-                      <th>Time</th>
-                      <th>Space</th>
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {complexityTable.map((row) => (
-                      <tr key={row.approach}>
-                        <td>{row.approach}</td>
-                        <td>{row.time}</td>
-                        <td>{row.space}</td>
-                        <td>{row.note}</td>
-                      </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Pillars and Mental Hooks</h2>
+                  {pillars.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-how" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">How It Works, Step by Step</h2>
+                  {howItWorks.map((item) => (
+                    <p key={item.heading}>
+                      <strong>{item.heading}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-state" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">State Design Rules</h2>
+                  <ul>
+                    {stateDesignRules.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text">
-                  Big O hides constants, but memory layout and cache behavior matter. Bottom-up tables often outperform memoized recursion in tight
-                  loops because they avoid call overhead and exhibit better spatial locality.
-                </p>
-              </div>
-            </div>
-          </fieldset>
+                  </ul>
+                </section>
+                <section id="core-transitions" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Common Transition Templates</h2>
+                  {transitionTemplates.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Complexity in Practice</h2>
+                  {complexityTable.map((row) => (
+                    <div key={row.approach}>
+                      <h3 className="dynamic-programming-help-subheading">{row.approach}</h3>
+                      <p><strong>Time:</strong> {row.time}</p>
+                      <p><strong>Space:</strong> {row.space}</p>
+                      <p><strong>Notes:</strong> {row.note}</p>
+                    </div>
+                  ))}
+                  <p>
+                    Big O hides constants, but memory layout and cache behavior matter. Bottom-up tables often outperform memoized recursion in tight
+                    loops because they avoid call overhead and exhibit better spatial locality.
+                  </p>
+                </section>
+                <section id="core-reconstruction" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Reconstruction Strategies</h2>
+                  {reconstruction.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-applications" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Applications and Failure Stories</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="dynamic-programming-help-subheading">Failure Case</h3>
+                  <p>
+                    A video streaming team once used a greedy bitrate selector per segment, ignoring future bandwidth drops. Under load tests,
+                    sessions oscillated and rebuffered. Reframing it as a DP over time and buffer levels stabilized playback and cut rebuffering by
+                    double digits.
+                  </p>
+                </section>
+                <section id="core-comparisons" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">DP vs Other Paradigms</h2>
+                  {dpVsOtherParadigms.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-debugging" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Debugging Checklist</h2>
+                  <ul>
+                    {debuggingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-use" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">When to Use Dynamic Programming</h2>
+                  <ol>
+                    {whenToUse.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-avoid" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">When to Avoid DP</h2>
+                  <ul>
+                    {whenToAvoid.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-advanced" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Advanced Insights and Optimizations</h2>
+                  {advanced.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-optimization" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Optimization Toolbox</h2>
+                  {optimizationIdeas.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-takeaways" className="dynamic-programming-help-section">
+                  <h2 className="dynamic-programming-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Reconstruction strategies</legend>
-            <div className="win95-grid win95-grid-2">
-              {reconstruction.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications and failure stories</legend>
-            <div className="win95-stack">
-              <div className="win95-grid win95-grid-2">
-                {applications.map((app) => (
-                  <div key={app.title} className="win95-panel">
-                    <div className="win95-heading">{app.title}</div>
-                    <p className="win95-text">{app.detail}</p>
+            {activeTab === 'examples' && (
+              <section id="examples-code" className="dynamic-programming-help-section">
+                <h2 className="dynamic-programming-help-heading">Practical Examples</h2>
+                {codeExamples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="dynamic-programming-help-subheading">{example.title}</h3>
+                    <div className="dynamic-programming-help-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
                   </div>
                 ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <div className="win95-heading">Failure case</div>
-                <p className="win95-text">
-                  A video streaming team once used a greedy bitrate selector per segment, ignoring future bandwidth drops. Under load tests,
-                  sessions oscillated and rebuffered. Reframing it as a DP over time and buffer levels stabilized playback and cut rebuffering by
-                  double digits.
-                </p>
-              </div>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>DP vs other paradigms</legend>
-            <div className="win95-grid win95-grid-2">
-              {dpVsOtherParadigms.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall}>{pitfall}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="dynamic-programming-help-section">
+                <h2 className="dynamic-programming-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {debuggingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use dynamic programming</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to avoid DP</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {whenToAvoid.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and optimizations</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Optimization toolbox</legend>
-            <div className="win95-grid win95-grid-2">
-              {optimizationIdeas.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {keyTakeaways.map((takeaway) => (
-                  <li key={takeaway}>{takeaway}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-

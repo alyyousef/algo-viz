@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -20,7 +19,7 @@ const bigPicture = [
   {
     title: 'Declarative constraints, imperative traversal',
     detail:
-      'Constraints shape which branches survive; recursion/stack drives traversal order. This split makes heuristics pluggable.',
+      'Constraints shape which branches survive; recursion or a stack drives traversal order. This split makes heuristics pluggable.',
     note: 'Works well when constraints are fast to evaluate relative to the branching factor.',
   },
   {
@@ -80,7 +79,7 @@ const history = [
 const pillars = [
   {
     title: 'Ordered branching',
-    detail: 'Choose the next variable/value to shrink branching factor (most constrained first, fail-fast).',
+    detail: 'Choose the next variable or value to shrink branching factor (most constrained first, fail-fast).',
   },
   {
     title: 'Pruning predicates',
@@ -111,11 +110,11 @@ const taxonomy = [
   },
   {
     title: 'Exact cover search',
-    detail: 'Model as exact cover and use DLX for O(1) remove/restore operations.',
+    detail: 'Model as exact cover and use DLX for O(1) remove and restore operations.',
   },
   {
     title: 'Anytime search',
-    detail: 'Iterative deepening or time-bounded DFS that returns best-so-far solution.',
+    detail: 'Iterative deepening or time-bounded DFS that returns the best-so-far solution.',
   },
 ]
 
@@ -149,7 +148,7 @@ const howItWorks = [
   {
     title: 'Apply, test, and prune',
     detail:
-      'Make the move, update auxiliary structures, then run constraint/bound checks. If it fails, undo immediately.',
+      'Make the move, update auxiliary structures, then run constraint or bound checks. If it fails, undo immediately.',
   },
   {
     title: 'Recurse and collect answers',
@@ -192,7 +191,7 @@ const heuristics = [
 const pruningToolkit = [
   {
     title: 'Constraint violation checks',
-    detail: 'Reject partial assignments that already break constraints (row/col/diag conflicts).',
+    detail: 'Reject partial assignments that already break constraints (row, col, or diagonal conflicts).',
   },
   {
     title: 'Forward checking',
@@ -226,7 +225,7 @@ const stateManagement = [
   {
     title: 'Bitmasks for constraints',
     detail:
-      'Use integer masks to test conflicts in O(1), e.g., rows/cols/diagonals in Sudoku or N-Queens.',
+      'Use integer masks to test conflicts in O(1), for example rows, cols, and diagonals in Sudoku or N-Queens.',
   },
   {
     title: 'Early exit flags',
@@ -234,7 +233,6 @@ const stateManagement = [
       'If you only need the first solution, propagate a found flag to cut remaining recursion.',
   },
 ]
-
 const complexityTable = [
   {
     approach: 'Plain DFS enumeration',
@@ -246,7 +244,7 @@ const complexityTable = [
     approach: 'Heuristic ordering + pruning',
     time: 'O(p^d) with p << b in practice',
     space: 'O(d)',
-    note: 'Effective b shrinks when early contradictions are found.',
+    note: 'Effective branching factor shrinks when early contradictions are found.',
   },
   {
     approach: 'Branch and bound (maximize/minimize)',
@@ -268,7 +266,7 @@ const stepByStepExample = [
     steps: [
       'Represent each cell as a variable with domain 1..9.',
       'Pick the cell with the smallest domain (MRV).',
-      'Try a value, update row/col/box masks, and remove conflicts.',
+      'Try a value, update row, col, and box masks, and remove conflicts.',
       'If any domain becomes empty, undo and try the next value.',
       'When all cells are filled, record the solution.',
     ],
@@ -295,9 +293,9 @@ const applications = [
     note: 'Dancing Links and bitmask diagonals enable millisecond-level solves.',
   },
   {
-    title: 'SAT/SMT engines',
+    title: 'SAT and SMT engines',
     detail: 'Modern CDCL solvers descend from backtracking with learned clauses as aggressive pruning.',
-    note: 'Used in hardware verification and compilers (e.g., superoptimizer search).',
+    note: 'Used in hardware verification and compilers (for example, superoptimizer search).',
   },
   {
     title: 'Resource allocation and rostering',
@@ -326,7 +324,7 @@ const comparisons = [
       'Greedy takes one path based on a proof; backtracking explores many paths and prunes unsafe ones.',
   },
   {
-    title: 'Backtracking vs BFS/DFS on graphs',
+    title: 'Backtracking vs BFS or DFS on graphs',
     detail:
       'Graph search typically revisits nodes with visited sets; backtracking explores assignments with undo of constraints.',
   },
@@ -351,7 +349,7 @@ const pitfalls = [
   },
   {
     title: 'Ignoring instrumentation',
-    detail: 'Without node/prune counters you cannot tell if heuristics are actually helping.',
+    detail: 'Without node or prune counters you cannot tell if heuristics are actually helping.',
   },
 ]
 
@@ -374,7 +372,7 @@ const whenToUse = [
   },
   {
     title: 'State is reversible and compact',
-    detail: 'If you can encode state in arrays/bitmasks and undo in O(1), backtracking stays fast.',
+    detail: 'If you can encode state in arrays or bitmasks and undo in O(1), backtracking stays fast.',
   },
   {
     title: 'Latency budget allows guided search',
@@ -396,7 +394,7 @@ const whenToAvoid = [
     detail: 'Worst-case exponential behavior makes hard guarantees difficult.',
   },
   {
-    title: 'Streaming/online decisions',
+    title: 'Streaming or online decisions',
     detail: 'Backtracking assumes you can undo and revisit; online settings forbid that.',
   },
 ]
@@ -409,12 +407,12 @@ const advanced = [
   },
   {
     title: 'Dancing Links (DLX)',
-    detail: 'Linked-list representation for exact cover with O(1) remove/restore operations.',
+    detail: 'Linked-list representation for exact cover with O(1) remove and restore operations.',
     note: 'Minimizes undo cost; excellent for Sudoku and polyomino tiling.',
   },
   {
     title: 'Bitmask acceleration',
-    detail: 'Use integer masks for subsets (rows/cols/diagonals) to make checks O(1).',
+    detail: 'Use integer masks for subsets (rows, cols, diagonals) to make checks O(1).',
     note: 'Pairs well with languages that have fast bitwise ops; reduces GC churn.',
   },
   {
@@ -438,7 +436,6 @@ const instrumentation = [
     detail: 'If randomized ordering is used, store seeds for reproducibility.',
   },
 ]
-
 const codeExamples = [
   {
     title: 'N-Queens with diagonal bitmasks',
@@ -551,7 +548,7 @@ function knapsack(items: Item[], capacity: number): number {
 
   return dfs(0)
 }`,
-    explanation: 'Bitmasks make checks O(1). Each assignment updates row/col/box masks and is undone on backtrack.',
+    explanation: 'Bitmasks make checks O(1). Each assignment updates row, col, and box masks and is undone on backtrack.',
   },
 ]
 
@@ -562,7 +559,7 @@ const keyTakeaways = [
   },
   {
     title: 'Ordering is leverage',
-    detail: 'The right variable/value order often beats asymptotic tricks; measure node counts, not just runtime.',
+    detail: 'The right variable or value order often beats asymptotic tricks; measure node counts, not just runtime.',
   },
   {
     title: 'Bounds turn exploration into search',
@@ -574,343 +571,628 @@ const keyTakeaways = [
   },
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Backtracking',
+    definition:
+      'Depth-first search over choices where invalid partial states are pruned and each decision is explicitly undone.',
+  },
+  {
+    term: 'Pruning',
+    definition:
+      'Stopping a branch early because the partial state cannot lead to a valid or better solution.',
+  },
+  {
+    term: 'Branch and bound',
+    definition:
+      'A backtracking variant that prunes branches using an optimistic estimate of the best possible score.',
+  },
+  {
+    term: 'MRV',
+    definition:
+      'Minimum Remaining Values, a heuristic that picks the variable with the smallest remaining domain first.',
+  },
+  {
+    term: 'Forward checking',
+    definition:
+      'Removing values from neighboring domains immediately after an assignment to detect failure earlier.',
+  },
+  {
+    term: 'Undo stack',
+    definition:
+      'A stack of reversible state changes used to restore shared mutable state after exploring a branch.',
+  },
+  {
+    term: 'Exact cover',
+    definition:
+      'A formulation where each constraint must be satisfied exactly once, often solved with Dancing Links.',
+  },
+  {
+    term: 'Symmetry breaking',
+    definition:
+      'Eliminating equivalent branches so the solver does not repeat the same logical solution in multiple forms.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const backtrackingHelpStyles = `
+.backtracking-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  padding: 0;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.backtracking-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.backtracking-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.backtracking-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.backtracking-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.backtracking-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+.backtracking-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.backtracking-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.backtracking-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.backtracking-help-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.backtracking-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.backtracking-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.backtracking-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.backtracking-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.backtracking-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.backtracking-help-content {
+  overflow: auto;
+  padding: 14px 20px 24px;
+}
+
+.backtracking-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.backtracking-help-section {
+  margin: 0 0 20px;
+}
+
+.backtracking-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.backtracking-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.backtracking-help-content p,
+.backtracking-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.backtracking-help-content p {
+  margin: 0 0 10px;
+}
+
+.backtracking-help-content ul,
+.backtracking-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.backtracking-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.backtracking-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.backtracking-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .backtracking-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .backtracking-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-foundations', label: 'Foundations' },
+    { id: 'bp-big-picture', label: 'Big Picture' },
+    { id: 'bp-taxonomy', label: 'Taxonomy' },
+    { id: 'bp-history', label: 'History' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Pillars and Mental Models' },
+    { id: 'core-how', label: 'How It Works' },
+    { id: 'core-modeling', label: 'Modeling Checklist' },
+    { id: 'core-heuristics', label: 'Heuristics' },
+    { id: 'core-pruning', label: 'Pruning Toolkit' },
+    { id: 'core-state', label: 'State Management' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-comparisons', label: 'Comparisons' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-debugging', label: 'Debugging' },
+    { id: 'core-use', label: 'When To Use It' },
+    { id: 'core-avoid', label: 'When To Avoid It' },
+    { id: 'core-advanced', label: 'Advanced Moves' },
+    { id: 'core-instrumentation', label: 'Instrumentation' },
+    { id: 'core-takeaways', label: 'Key Takeaways' },
+  ],
+  examples: [
+    { id: 'examples-worked', label: 'Worked Examples' },
+    { id: 'examples-code', label: 'Code Examples' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function BacktrackingParadigmPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Backtracking Paradigm (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Backtracking Paradigm',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Backtracking Paradigm</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Search, prune, and undo with discipline</div>
-              <p className="win95-text">
-                Backtracking is depth-first search with deliberate undo steps and aggressive pruning. It trades exponential worst cases for
-                practical performance by exposing early contradictions and keeping state reversible.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="backtracking-help-page">
+      <style>{backtrackingHelpStyles}</style>
+      <div className="backtracking-help-window" role="presentation">
+        <header className="backtracking-help-titlebar">
+          <span className="backtracking-help-title">Backtracking Paradigm</span>
+          <div className="backtracking-help-controls">
+            <button className="backtracking-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="backtracking-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>Foundations</legend>
-            <div className="win95-grid win95-grid-2">
-              {foundations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="backtracking-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`backtracking-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="backtracking-help-main">
+          <aside className="backtracking-help-toc" aria-label="Table of contents">
+            <h2 className="backtracking-help-toc-title">Contents</h2>
+            <ul className="backtracking-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Backtracking taxonomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {taxonomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>History that shaped backtracking</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
-                  <p className="win95-text">{event.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core pillars and mental hooks</legend>
-            <div className="win95-grid win95-grid-2">
-              <div className="win95-panel">
-                <div className="win95-heading">Core pillars</div>
-                <ul className="win95-list">
-                  {pillars.map((pillar) => (
-                    <li key={pillar.title}>
-                      <strong>{pillar.title}:</strong> {pillar.detail}
-                    </li>
+          <main className="backtracking-help-content">
+            <h1 className="backtracking-help-doc-title">Backtracking Paradigm</h1>
+            <p>
+              Backtracking is depth-first search with deliberate undo steps and aggressive pruning. It trades exponential worst cases for
+              practical performance by exposing early contradictions and keeping state reversible.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-foundations" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Foundations</h2>
+                  {foundations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </ul>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-heading">Mental models</div>
-                <ul className="win95-list">
-                  {mentalModels.map((model) => (
-                    <li key={model.title}>
-                      <strong>{model.title}:</strong> {model.detail}
-                    </li>
+                </section>
+                <hr className="backtracking-help-divider" />
+                <section id="bp-big-picture" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Big Picture</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="backtracking-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
                   ))}
-                </ul>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works, step by step</legend>
-            <div className="win95-grid win95-grid-2">
-              {howItWorks.map((step, idx) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
-                    Step {idx + 1}: {step.title}
-                  </div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Modeling checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {modelingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Heuristics that save time</legend>
-            <div className="win95-grid win95-grid-2">
-              {heuristics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pruning toolkit</legend>
-            <div className="win95-grid win95-grid-2">
-              {pruningToolkit.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>State and undo management</legend>
-            <div className="win95-grid win95-grid-2">
-              {stateManagement.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity at a glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                </section>
+                <hr className="backtracking-help-divider" />
+                <section id="bp-taxonomy" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Backtracking Taxonomy</h2>
+                  {taxonomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="backtracking-help-divider" />
+                <section id="bp-history" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">History That Shaped Backtracking</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="backtracking-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Worked examples</legend>
-            <div className="win95-stack">
-              {stepByStepExample.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <ol className="win95-list win95-list--numbered">
-                    {item.steps.map((step) => (
-                      <li key={step}>{step}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Core Pillars and Mental Hooks</h2>
+                  {pillars.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-how" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">How It Works, Step by Step</h2>
+                  {howItWorks.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-modeling" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Modeling Checklist</h2>
+                  <ul>
+                    {modelingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
-                  </ol>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                  </ul>
+                </section>
+                <section id="core-heuristics" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Heuristics That Save Time</h2>
+                  {heuristics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pruning" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Pruning Toolkit</h2>
+                  {pruningToolkit.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-state" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">State and Undo Management</h2>
+                  {stateManagement.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Complexity at a Glance</h2>
+                  {complexityTable.map((row) => (
+                    <div key={row.approach}>
+                      <h3 className="backtracking-help-subheading">{row.approach}</h3>
+                      <p><strong>Time:</strong> {row.time}</p>
+                      <p><strong>Space:</strong> {row.space}</p>
+                      <p><strong>Note:</strong> {row.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-applications" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Where It Powers Real Systems</h2>
+                  {applications.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="backtracking-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                  <h3 className="backtracking-help-subheading">Failure Mode</h3>
+                  <p>{failureStory}</p>
+                </section>
+                <section id="core-comparisons" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Backtracking vs Other Paradigms</h2>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Pitfalls to Avoid</h2>
+                  {pitfalls.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debugging" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Debugging Checklist</h2>
+                  <ul>
+                    {debuggingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-use" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">When to Reach for Backtracking</h2>
+                  {whenToUse.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-avoid" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">When to Avoid Backtracking</h2>
+                  {whenToAvoid.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-advanced" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Advanced Moves</h2>
+                  {advanced.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="backtracking-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-instrumentation" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Instrumentation That Pays Off</h2>
+                  {instrumentation.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-takeaways" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Key Takeaways</h2>
+                  {keyTakeaways.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Where it powers real systems</legend>
-            <div className="win95-stack">
-              <div className="win95-grid win95-grid-2">
-                {applications.map((app) => (
-                  <div key={app.title} className="win95-panel">
-                    <div className="win95-heading">{app.title}</div>
-                    <p className="win95-text">{app.detail}</p>
-                    <p className="win95-text">{app.note}</p>
-                  </div>
+            {activeTab === 'examples' && (
+              <>
+                <section id="examples-worked" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Worked Examples</h2>
+                  {stepByStepExample.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="backtracking-help-subheading">{item.title}</h3>
+                      <ol>
+                        {item.steps.map((step) => (
+                          <li key={step}>{step}</li>
+                        ))}
+                      </ol>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="examples-code" className="backtracking-help-section">
+                  <h2 className="backtracking-help-heading">Code Examples</h2>
+                  {codeExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="backtracking-help-subheading">{example.title}</h3>
+                      <div className="backtracking-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="backtracking-help-section">
+                <h2 className="backtracking-help-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <div className="win95-heading">Failure mode</div>
-                <p className="win95-text">{failureStory}</p>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Backtracking vs other paradigms</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls to avoid</legend>
-            <div className="win95-stack">
-              {pitfalls.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {debuggingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to reach for backtracking</legend>
-            <div className="win95-stack">
-              {whenToUse.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to avoid backtracking</legend>
-            <div className="win95-stack">
-              {whenToAvoid.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced moves</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Instrumentation that pays off</legend>
-            <div className="win95-grid win95-grid-2">
-              {instrumentation.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
