@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -363,237 +361,592 @@ export default function ComplexProblemsPage(): JSX.Element {
   const stepText = selectedScenario?.steps[stepIndex] ?? 'No steps available.'
   const canStepForward = selectedScenario ? stepIndex < selectedScenario.steps.length - 1 : false
 
+  const glossary = useMemo(
+    () => [
+      {
+        term: 'Complex problem',
+        definition:
+          'A multi-constraint, multi-objective scenario that requires hybrid algorithm strategies.',
+      },
+      {
+        term: 'Feasibility',
+        definition:
+          'Whether a solution satisfies all constraints before optimizing the objective.',
+      },
+      {
+        term: 'Optimality gap',
+        definition:
+          'The distance between a solution and a known lower bound or exact optimum.',
+      },
+      {
+        term: 'Heuristic',
+        definition:
+          'A fast method that produces good-enough solutions without guarantees.',
+      },
+      {
+        term: 'Approximation',
+        definition:
+          'An algorithm with a proven bound on how close the solution is to optimal.',
+      },
+      {
+        term: 'Hybrid strategy',
+        definition:
+          'A combination of exact, approximate, and heuristic methods used together.',
+      },
+      {
+        term: 'Baseline',
+        definition:
+          'A simple reference solution used to justify added algorithmic complexity.',
+      },
+    ],
+    [],
+  )
+
+  type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return tab === 'big-picture' || tab === 'core-concepts' || tab === 'examples' || tab === 'glossary'
+      ? tab
+      : 'big-picture'
+  })
+  const activeTabLabel =
+    activeTab === 'big-picture'
+      ? 'The Big Picture'
+      : activeTab === 'core-concepts'
+        ? 'Core Concepts'
+        : activeTab === 'examples'
+          ? 'Examples'
+          : 'Glossary'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Complex Problems (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Complex Problems',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
+  const tabs: Array<{ id: TabId; label: string }> = [
+    { id: 'big-picture', label: 'The Big Picture' },
+    { id: 'core-concepts', label: 'Core Concepts' },
+    { id: 'examples', label: 'Examples' },
+    { id: 'glossary', label: 'Glossary' },
+  ]
+
+  const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+    'big-picture': [
+      { id: 'bp-overview', label: 'Overview' },
+      { id: 'bp-categories', label: 'Categories' },
+      { id: 'bp-takeaways', label: 'Key Takeaways' },
+    ],
+    'core-concepts': [
+      { id: 'core-skills', label: 'Core Skills' },
+      { id: 'core-toolbox', label: 'Algorithmic Toolbox' },
+      { id: 'core-design', label: 'Design Checklist' },
+      { id: 'core-eval', label: 'Evaluation Metrics' },
+      { id: 'core-pitfalls', label: 'Common Pitfalls' },
+      { id: 'core-mindmap', label: 'Mind Map' },
+      { id: 'core-edges', label: 'Mind Map Edges' },
+    ],
+    examples: [
+      { id: 'ex-frames', label: 'Problem Frames' },
+      { id: 'ex-timeline', label: 'Workflow Timeline' },
+    ],
+    glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+  }
+
+  const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-content p,
+.win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-content ul,
+.win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.win98-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.win98-table th,
+.win98-table td {
+  border: 1px solid #808080;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.win98-table thead th {
+  background: #e6e6e6;
+}
+
+.win98-button {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.win98-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+}
+
+@media (max-width: 900px) {
+  .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+  `
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Complex Problems</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">Complex Problems</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Hard, multifaceted computer science scenarios</div>
-              <p className="win95-text">
-                Complex problems combine multiple constraints, objectives, and system limitations. This page is a roadmap for modeling,
-                algorithm selection, evaluation, and real-world integration of solutions.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">Complex Problems</h1>
+            <p>
+              Complex problems combine multiple constraints, objectives, and system limitations. This page is a roadmap for modeling,
+              algorithm selection, evaluation, and real-world integration of solutions.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Categories</legend>
-            <div className="win95-grid win95-grid-2">
-              {categories.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core Skills</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreSkills.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithmic Toolbox</legend>
-            <div className="win95-grid win95-grid-2">
-              {toolbox.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Design Checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {designChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Evaluation Metrics</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationMetrics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Example Problem Frames</legend>
-            <div className="win95-grid win95-grid-2">
-              {exampleProblemFrames.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Timeline</legend>
-            <div className="win95-panel">
-              <div className="win95-heading">Strategy Stepper</div>
-              <p className="win95-text">
-                Step through common workflows for tackling complex problems.
-              </p>
-              <div className="win95-grid win95-grid-3">
-                {timelineScenarios.map((scenario) => (
-                  <button
-                    key={scenario.id}
-                    type="button"
-                    className="win95-button"
-                    onClick={() => {
-                      setSelectedScenarioId(scenario.id)
-                      setStepIndex(0)
-                    }}
-                  >
-                    {scenario.title}
-                  </button>
-                ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text"><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
-                <p className="win95-text">{stepText}</p>
-                <p className="win95-text win95-note">{selectedScenario?.summary ?? ''}</p>
-              </div>
-              <div className="win95-grid win95-grid-3">
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex(0)}
-                >
-                  RESET
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
-                >
-                  BACK
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => {
-                    if (canStepForward) {
-                      setStepIndex((prev) => prev + 1)
-                    }
-                  }}
-                >
-                  STEP
-                </button>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map (Concept Walkthrough)</legend>
-            <div className="win95-grid win95-grid-2">
-              {mindMapNodes.map((item) => (
-                <div key={item.id} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                <strong>Walkthrough:</strong> Start at Complex Problems -&gt; Modeling -&gt; Algorithms -&gt; Analysis -&gt; Evaluation.
-                Then connect to Systems for real-world constraints.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map Edges</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Why it connects</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mindMapEdges.map((edge) => (
-                    <tr key={`${edge.from}-${edge.to}`}>
-                      <td>{edge.from}</td>
-                      <td>{edge.to}</td>
-                      <td>{edge.note}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">The Big Picture</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="bp-categories" className="win98-section">
+                  <h2 className="win98-heading">Categories</h2>
+                  {categories.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {commonPitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-skills" className="win98-section">
+                  <h2 className="win98-heading">Core Skills</h2>
+                  {coreSkills.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-toolbox" className="win98-section">
+                  <h2 className="win98-heading">Algorithmic Toolbox</h2>
+                  {toolbox.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-design" className="win98-section">
+                  <h2 className="win98-heading">Design Checklist</h2>
+                  {designChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-eval" className="win98-section">
+                  <h2 className="win98-heading">Evaluation Metrics</h2>
+                  {evaluationMetrics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {commonPitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-mindmap" className="win98-section">
+                  <h2 className="win98-heading">Mind Map (Concept Walkthrough)</h2>
+                  {mindMapNodes.map((item) => (
+                    <p key={item.id}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    <strong>Walkthrough:</strong> Start at Complex Problems -&gt; Modeling -&gt; Algorithms -&gt; Analysis -&gt; Evaluation.
+                    Then connect to Systems for real-world constraints.
+                  </p>
+                </section>
+                <section id="core-edges" className="win98-section">
+                  <h2 className="win98-heading">Mind Map Edges</h2>
+                  <table className="win98-table">
+                    <thead>
+                      <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Why it connects</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {mindMapEdges.map((edge) => (
+                        <tr key={`${edge.from}-${edge.to}`}>
+                          <td>{edge.from}</td>
+                          <td>{edge.to}</td>
+                          <td>{edge.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-frames" className="win98-section">
+                  <h2 className="win98-heading">Example Problem Frames</h2>
+                  {exampleProblemFrames.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="ex-timeline" className="win98-section">
+                  <h2 className="win98-heading">Interactive Timeline</h2>
+                  <p>Step through common workflows for tackling complex problems.</p>
+                  <div className="win98-button-row">
+                    {timelineScenarios.map((scenario) => (
+                      <button
+                        key={scenario.id}
+                        type="button"
+                        className="win98-button"
+                        onClick={() => {
+                          setSelectedScenarioId(scenario.id)
+                          setStepIndex(0)
+                        }}
+                      >
+                        {scenario.title}
+                      </button>
+                    ))}
+                  </div>
+                  <p><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
+                  <p>{stepText}</p>
+                  <p><strong>Summary:</strong> {selectedScenario?.summary ?? ''}</p>
+                  <div className="win98-button-row">
+                    <button
+                      type="button"
+                      className="win98-button"
+                      onClick={() => setStepIndex(0)}
+                    >
+                      RESET
+                    </button>
+                    <button
+                      type="button"
+                      className="win98-button"
+                      onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
+                    >
+                      BACK
+                    </button>
+                    <button
+                      type="button"
+                      className="win98-button"
+                      onClick={() => {
+                        if (canStepForward) {
+                          setStepIndex((prev) => prev + 1)
+                        }
+                      }}
+                    >
+                      STEP
+                    </button>
+                  </div>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="win98-section">
+                <h2 className="win98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
