@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -112,7 +112,7 @@ const howToThink = [
   {
     title: 'Think in states, not moves',
     detail:
-      'Each board configuration is a state. Your job is to find a shortest path in the state graph, not to “solve by hand.”',
+      'Each board configuration is a state. Your job is to find a shortest path in the state graph, not to solve by hand.',
   },
   {
     title: 'Search is the baseline',
@@ -269,9 +269,9 @@ const comparisons = [
       'Sudoku is a constraint satisfaction and deduction problem. The puzzle is pure search with a simple transition model.',
   },
   {
-    title: '8/15-puzzle vs Rubik’s Cube',
+    title: '8/15-puzzle vs Rubik\'s Cube',
     detail:
-      'Rubik’s has a far larger state space and higher branching. The puzzle is smaller but still hard without heuristics.',
+      'Rubik\'s has a far larger state space and higher branching. The puzzle is smaller but still hard without heuristics.',
   },
   {
     title: '8/15-puzzle vs Graph shortest path',
@@ -363,7 +363,7 @@ const whatsItFor = [
   {
     title: 'Explaining admissibility',
     detail:
-      'A clean example for why “never overestimate” matters and how it guarantees optimality.',
+      'A clean example for why never overestimate matters and how it guarantees optimality.',
   },
   {
     title: 'Algorithm design patterns',
@@ -472,269 +472,585 @@ const keyTakeaways = [
   'Better heuristics reduce runtime dramatically by shrinking the search space.',
 ]
 
+const glossary = [
+  {
+    term: 'Inversion',
+    definition:
+      'A pair of tiles out of order in the flattened board; used to test solvability.',
+  },
+  {
+    term: 'Admissible heuristic',
+    definition:
+      'A heuristic that never overestimates the true distance to the goal.',
+  },
+  {
+    term: 'Consistent heuristic',
+    definition:
+      'A heuristic where f = g + h never decreases along any path.',
+  },
+  {
+    term: 'Pattern database',
+    definition:
+      'A precomputed table of exact distances for subsets of tiles, used as a heuristic.',
+  },
+  {
+    term: 'State space',
+    definition:
+      'The graph of all reachable puzzle configurations connected by legal moves.',
+  },
+  {
+    term: 'Branching factor',
+    definition:
+      'Average number of legal moves from a state; roughly 2.13 for 8-puzzle and 2.67 for 15-puzzle.',
+  },
+]
+
 export default function EightPuzzlePage(): JSX.Element {
+  type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return tab === 'big-picture' || tab === 'core-concepts' || tab === 'examples' || tab === 'glossary'
+      ? tab
+      : 'big-picture'
+  })
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    const label =
+      activeTab === 'big-picture'
+        ? 'The Big Picture'
+        : activeTab === 'core-concepts'
+          ? 'Core Concepts'
+          : activeTab === 'examples'
+            ? 'Examples'
+            : 'Glossary'
+    document.title = `8-Puzzle & 15-Puzzle (${label})`
+  }, [activeTab, searchParams, setSearchParams])
+
+  const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: '8-Puzzle & 15-Puzzle',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
+  const tabs: Array<{ id: TabId; label: string }> = [
+    { id: 'big-picture', label: 'The Big Picture' },
+    { id: 'core-concepts', label: 'Core Concepts' },
+    { id: 'examples', label: 'Examples' },
+    { id: 'glossary', label: 'Glossary' },
+  ]
+
+  const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+    'big-picture': [
+      { id: 'bp-overview', label: 'Overview' },
+      { id: 'bp-history', label: 'Historical Context' },
+      { id: 'bp-takeaways', label: 'Key Takeaways' },
+    ],
+    'core-concepts': [
+      { id: 'core-concepts', label: 'Core Concepts' },
+      { id: 'core-thinking', label: 'How to Think' },
+      { id: 'core-solvable', label: 'Solvability Rules' },
+      { id: 'core-algorithms', label: 'Algorithm Options' },
+      { id: 'core-heuristics', label: 'Heuristics' },
+      { id: 'core-admissible', label: 'Admissibility Notes' },
+      { id: 'core-complexity', label: 'Complexity Table' },
+      { id: 'core-use', label: 'What It Is Used For' },
+      { id: 'core-optimizations', label: 'Optimization Tips' },
+      { id: 'core-compare', label: 'Compare and Contrast' },
+      { id: 'core-pitfalls', label: 'Common Pitfalls' },
+      { id: 'core-variants', label: 'Variants and Extensions' },
+      { id: 'core-real', label: 'Real-World Connections' },
+      { id: 'core-eval', label: 'Evaluate a Solver' },
+    ],
+    examples: [{ id: 'ex-worked', label: 'Worked Examples' }],
+    glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+  }
+
+  const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-content p,
+.win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-content ul,
+.win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.win98-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.win98-table th,
+.win98-table td {
+  border: 1px solid #808080;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.win98-table thead th {
+  background: #e6e6e6;
+}
+
+@media (max-width: 900px) {
+  .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+  `
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">8-Puzzle & 15-Puzzle</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">8-Puzzle &amp; 15-Puzzle</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Sliding tile puzzles that defined heuristic search</div>
-              <p className="win95-text">
-                The 8-puzzle and 15-puzzle are classic sliding-tile problems that highlight how search algorithms
-                behave in large state spaces. With only one empty space, each move is simple, but finding an optimal
-                sequence can be difficult without strong heuristics. These puzzles are the go-to teaching example
-                for A*, admissible heuristics, and solvability.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">8-Puzzle &amp; 15-Puzzle</h1>
+            <p>
+              The 8-puzzle and 15-puzzle are classic sliding-tile problems that highlight how search algorithms behave in large
+              state spaces. With only one empty space, each move is simple, but finding an optimal sequence can be difficult without
+              strong heuristics. These puzzles are the go-to teaching example for A*, admissible heuristics, and solvability.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core Concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreConcepts.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Think About It</legend>
-            <div className="win95-grid win95-grid-2">
-              {howToThink.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Solvability Rules</legend>
-            <div className="win95-grid win95-grid-2">
-              {solvabilityRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Practical tip: If your solver runs forever on a random board, it is often because the board is unsolvable.
-                The inversion check is O(n^2) and avoids huge wasted searches.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Options</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmOptions.map((item) => (
-                <div key={item.name} className="win95-panel">
-                  <div className="win95-heading">{item.name}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Heuristics That Matter</legend>
-            <div className="win95-grid win95-grid-2">
-              {heuristics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-grid win95-grid-2">
-              {admissibilityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and Practical Trade-offs</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">The Big Picture</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="bp-history" className="win98-section">
+                  <h2 className="win98-heading">Historical Context</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="win98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>What It Is Used For</legend>
-            <div className="win95-grid win95-grid-2">
-              {whatsItFor.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-concepts" className="win98-section">
+                  <h2 className="win98-heading">Core Concepts</h2>
+                  {coreConcepts.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-thinking" className="win98-section">
+                  <h2 className="win98-heading">How to Think About It</h2>
+                  {howToThink.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-solvable" className="win98-section">
+                  <h2 className="win98-heading">Solvability Rules</h2>
+                  {solvabilityRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    <strong>Practical tip:</strong> If your solver runs forever on a random board, it is often because the board is
+                    unsolvable. The inversion check is O(n^2) and avoids huge wasted searches.
+                  </p>
+                </section>
+                <section id="core-algorithms" className="win98-section">
+                  <h2 className="win98-heading">Algorithm Options</h2>
+                  {algorithmOptions.map((item) => (
+                    <p key={item.name}>
+                      <strong>{item.name}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-heuristics" className="win98-section">
+                  <h2 className="win98-heading">Heuristics That Matter</h2>
+                  {heuristics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-admissible" className="win98-section">
+                  <h2 className="win98-heading">Admissibility Notes</h2>
+                  {admissibilityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="win98-section">
+                  <h2 className="win98-heading">Complexity and Practical Trade-offs</h2>
+                  <table className="win98-table">
+                    <thead>
+                      <tr>
+                        <th>Approach</th>
+                        <th>Time</th>
+                        <th>Space</th>
+                        <th>Note</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {complexityTable.map((row) => (
+                        <tr key={row.approach}>
+                          <td>{row.approach}</td>
+                          <td>{row.time}</td>
+                          <td>{row.space}</td>
+                          <td>{row.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+                <section id="core-use" className="win98-section">
+                  <h2 className="win98-heading">What It Is Used For</h2>
+                  {whatsItFor.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-optimizations" className="win98-section">
+                  <h2 className="win98-heading">Optimization Tips</h2>
+                  {optimizationTips.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-compare" className="win98-section">
+                  <h2 className="win98-heading">Compare and Contrast</h2>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-variants" className="win98-section">
+                  <h2 className="win98-heading">Variants and Extensions</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-real" className="win98-section">
+                  <h2 className="win98-heading">Real-World Connections</h2>
+                  {realWorldConnections.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-eval" className="win98-section">
+                  <h2 className="win98-heading">How to Evaluate a Solver</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Optimization Tips</legend>
-            <div className="win95-grid win95-grid-2">
-              {optimizationTips.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'examples' && (
+              <section id="ex-worked" className="win98-section">
+                <h2 className="win98-heading">Worked Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="win98-subheading">{example.title}</h3>
+                    <div className="win98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Variants and Extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Connections</legend>
-            <div className="win95-grid win95-grid-3">
-              {realWorldConnections.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate a Solver</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="win98-section">
+                <h2 className="win98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
