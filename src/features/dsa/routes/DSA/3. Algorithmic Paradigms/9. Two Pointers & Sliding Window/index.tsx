@@ -2,511 +2,388 @@ import { useEffect, useMemo, useState } from 'react'
 import type { JSX } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-export default function TwoPointersSlidingWindowPage(): JSX.Element {
-  const overviewPanels = [
-    {
-      title: 'What it is',
-      detail:
-        'Two pointers and sliding window are linear scan techniques that move one or two indices through an array or string to maintain a useful invariant.',
-    },
-    {
-      title: 'Why it matters',
-      detail:
-        'They turn nested loops into single passes. Many O(n^2) brute force checks collapse to O(n) with the right pointer logic.',
-    },
-    {
-      title: 'Where it shines',
-      detail:
-        'Sorted arrays, subarray sums, substring constraints, and problems with monotonic or accumulative structure.',
-    },
-  ]
+const historicalContext = [
+  {
+    title: 'Interval scheduling makes greedy proofs famous (1970s)',
+    detail:
+      'Earliest finishing time feels obvious, but the exchange argument formalizes why swapping a later finish for an earlier one never harms optimality.',
+  },
+  {
+    title: 'Matroid theory formalizes exchange (1971)',
+    detail:
+      'Matroids encode exactly when a greedy algorithm is optimal. Their exchange axiom is a global version of the local swap idea.',
+  },
+  {
+    title: 'Huffman coding and optimal prefix trees (1952)',
+    detail:
+      'Huffman coding uses a greedy merge; proofs rely on exchanging deep leaves to show there is an optimal tree that agrees with the greedy choice.',
+  },
+  {
+    title: 'Scheduling theory popularizes swap arguments (1980s)',
+    detail:
+      'Single-machine scheduling results are full of adjacent-swap proofs that show out-of-order jobs can be exchanged without increasing cost.',
+  },
+]
 
-  const foundations = [
-    {
-      title: 'Monotonic pointer movement',
-      detail:
-        'The key guarantee is that pointers only move forward. Each index advances at most n times, keeping total work linear.',
-    },
-    {
-      title: 'Invariant-driven design',
-      detail:
-        'You must define a condition that is always true for the current window or pointer configuration. Pointer moves exist only to restore or extend that invariant.',
-    },
-    {
-      title: 'Incremental updates',
-      detail:
-        'All updates to counts, sums, or frequency maps must be O(1). Recomputing window state destroys the linear advantage.',
-    },
-    {
-      title: 'Order or contiguity matters',
-      detail:
-        'Two pointers usually need sorted order or monotonic properties; sliding windows require contiguity. Without these, the technique is often invalid.',
-    },
-  ]
+const foundations = [
+  {
+    title: 'Proof by repair',
+    detail:
+      'Assume an optimal solution exists. If it differs from your greedy choice, repair it with a local exchange to create another optimal solution that agrees with the greedy choice.',
+  },
+  {
+    title: 'Local swaps, global optimality',
+    detail:
+      'The exchange must be local and safe: it preserves feasibility and does not worsen the objective. Repeating the swap aligns the entire solution.',
+  },
+  {
+    title: 'Existence, not uniqueness',
+    detail:
+      'Exchange arguments show that there exists an optimal solution consistent with greedy choices, not that the greedy solution is the only optimum.',
+  },
+  {
+    title: 'Invariant + induction',
+    detail:
+      'After k steps, there is an optimal solution that matches the greedy prefix. The exchange maintains this invariant, so induction completes the proof.',
+  },
+]
 
-  const taxonomy = [
-    {
-      title: 'Opposing pointers',
-      detail: 'Two pointers move toward each other in a sorted array to find pairs or ranges.',
-    },
-    {
-      title: 'Fast/slow pointers',
-      detail: 'A slow pointer anchors write position, a fast pointer scans ahead (dedup, partition).',
-    },
-    {
-      title: 'Fixed-size window',
-      detail: 'Maintain a window of size k with O(1) updates for rolling sums or averages.',
-    },
-    {
-      title: 'Variable-size window',
-      detail: 'Expand until a constraint breaks, then shrink to restore validity.',
-    },
-    {
-      title: 'Multi-constraint windows',
-      detail: 'Track multiple counts or conditions; window moves when any constraint fails.',
-    },
-    {
-      title: 'Monotonic queue windows',
-      detail: 'Use a deque to maintain max/min values for each window in O(1) amortized.',
-    },
-  ]
+const taxonomy = [
+  {
+    title: 'Ordering exchanges',
+    detail: 'Swap adjacent elements to enforce greedy ordering (scheduling, sorting by due date).',
+  },
+  {
+    title: 'Set exchanges',
+    detail: 'Replace one chosen item with the greedy item while maintaining feasibility (intervals, knapsack variants).',
+  },
+  {
+    title: 'Cycle exchanges',
+    detail: 'Swap edges along a cycle to include a greedy edge without breaking connectivity (MST).',
+  },
+  {
+    title: 'Cut exchanges',
+    detail: 'Use a cut property: any minimum edge across a cut can be forced into an optimal solution.',
+  },
+  {
+    title: 'Tree/leaf swaps',
+    detail: 'Swap leaves or subtrees to place greedy elements deeper or earlier (Huffman).',
+  },
+]
 
-  const mentalModels = [
-    {
-      title: 'Moving fences',
-      detail:
-        'The pointers are fences that enclose a valid region. Move left or right to keep the region valid while expanding coverage.',
-    },
-    {
-      title: 'Invariant first',
-      detail:
-        'Every pointer move is justified by an invariant. If the invariant breaks, advance the pointer that restores it.',
-    },
-    {
-      title: 'Each element touched once',
-      detail:
-        'Well designed pointer rules ensure each index advances monotonically, so total work is linear.',
-    },
-  ]
+const mentalModels = [
+  {
+    title: 'Repair an optimal solution',
+    detail:
+      'Assume an optimal solution exists. If it differs from your greedy choice, swap in the greedy choice and show the cost does not get worse.',
+  },
+  {
+    title: 'Local swap, global consequence',
+    detail:
+      'One small exchange aligns the optimal solution with the greedy one. Repeat the argument to align all choices.',
+  },
+  {
+    title: 'Stay-ahead by swapping',
+    detail:
+      'After each greedy choice, show the greedy partial solution can be transformed into an optimal one with the same prefix.',
+  },
+]
 
-  const modelingChecklist = [
-    'Define the invariant (sum <= k, distinct count <= m, sorted condition holds).',
-    'Decide which pointer moves on violation vs on success.',
-    'Pick state to maintain: counts, sum, frequency, deque, or map.',
-    'Confirm monotonicity: each pointer should only move forward.',
-    'Plan how to update the answer when the invariant is satisfied.',
-    'Check edge cases: empty input, duplicates, or negative numbers.',
-  ]
+const modelingChecklist = [
+  'State the objective and feasibility constraints explicitly.',
+  'Identify the greedy choice at a single step.',
+  'Define the structure of an optimal solution O you want to compare against.',
+  'Specify the conflicting element in O and the exchange operation.',
+  'Prove the swap preserves feasibility.',
+  'Compare objective values before and after the swap.',
+  'State the invariant and apply induction over steps.',
+]
 
-  const techniquePanels = [
-    {
-      title: 'Opposing pointers (two sum on sorted)',
-      detail:
-        'One pointer starts at the left, one at the right. Move inward based on whether the sum is too small or too large.',
-    },
-    {
-      title: 'Fast and slow (remove duplicates)',
-      detail:
-        'A slow pointer marks the write position, while a fast pointer scans ahead to find the next valid element.',
-    },
-    {
-      title: 'Sliding window fixed size',
-      detail:
-        'Keep a window of size k and update the aggregate in O(1) as it moves.',
-    },
-    {
-      title: 'Sliding window variable size',
-      detail:
-        'Expand to include new items, then shrink from the left while a constraint is violated.',
-    },
-    {
-      title: 'Multiple window constraints',
-      detail:
-        'Track counts or sums in maps. The window moves based on whether all constraints are satisfied.',
-    },
-    {
-      title: 'Prefix + pointers',
-      detail:
-        'Prefix sums and two pointers can locate target ranges without re-summing each subarray.',
-    },
-  ]
+const coreDefinitions = [
+  {
+    heading: 'Greedy choice',
+    bullets: [
+      'A locally optimal decision taken at each step (earliest finish, smallest weight, largest value density).',
+      'Must be justified by a structural property of optimal solutions.',
+    ],
+  },
+  {
+    heading: 'Exchange',
+    bullets: [
+      'Operation that replaces part of an optimal solution with the greedy choice.',
+      'Keeps feasibility and does not increase cost (or does not reduce value).',
+    ],
+  },
+  {
+    heading: 'Invariant',
+    bullets: [
+      'After k steps, there exists an optimal solution consistent with the greedy prefix.',
+      'The exchange step preserves this invariant for the next choice.',
+    ],
+  },
+]
 
-  const pointerRules = [
-    {
-      title: 'Move the pointer that fixes the invariant',
-      detail: 'If the window is invalid, advance the left pointer until it is valid again.',
-    },
-    {
-      title: 'Move the pointer that explores new candidates',
-      detail: 'If valid, advance the right pointer to expand the search space.',
-    },
-    {
-      title: 'Advance in a single direction',
-      detail: 'Never move pointers backward; backtracking typically breaks linear complexity.',
-    },
-    {
-      title: 'Record answers consistently',
-      detail: 'Decide whether to update on every valid window or only on exact matches.',
-    },
-  ]
+const exchangeBlueprint = [
+  {
+    title: 'Step 1: Choose the greedy decision',
+    detail: 'Define the rule (earliest finish, smallest weight, highest density).',
+  },
+  {
+    title: 'Step 2: Pick any optimal solution',
+    detail: 'Let O be an optimal solution; if it already agrees with greedy, proceed to the next step.',
+  },
+  {
+    title: 'Step 3: Identify conflict',
+    detail: 'Find the element in O that conflicts with the greedy choice.',
+  },
+  {
+    title: 'Step 4: Exchange safely',
+    detail: 'Replace the conflicting element with the greedy choice while keeping feasibility.',
+  },
+  {
+    title: 'Step 5: Compare objective',
+    detail: 'Show the new solution O\' is no worse than O.',
+  },
+  {
+    title: 'Step 6: Conclude the invariant',
+    detail: 'Therefore there exists an optimal solution consistent with the greedy prefix.',
+  },
+]
 
-  const algorithmSteps = [
-    {
-      heading: '1) Define the invariant',
-      bullets: [
-        'What makes the current window or pointer state valid?',
-        'Examples: sum <= target, unique characters, array sorted order.',
-      ],
-    },
-    {
-      heading: '2) Initialize pointers',
-      bullets: [
-        'Set left and right (or slow and fast) positions.',
-        'Initialize the state needed for the invariant (counts, sum, etc).',
-      ],
-    },
-    {
-      heading: '3) Expand or move',
-      bullets: [
-        'Advance the pointer that makes progress toward the goal.',
-        'Update state in O(1) for each move.',
-      ],
-    },
-    {
-      heading: '4) Restore validity',
-      bullets: [
-        'If the invariant breaks, advance the other pointer until it holds again.',
-        'Never move pointers backwards unless you must reset the scan.',
-      ],
-    },
-    {
-      heading: '5) Record answers',
-      bullets: [
-        'Whenever the invariant holds, update the best result or collect matches.',
-        'Keep a consistent way to compare or store candidates.',
-      ],
-    },
-  ]
+const exchangeTemplate = [
+  'State the greedy algorithm and define the greedy choice at step k.',
+  'Assume an optimal solution O. If O already uses the greedy choice, continue; otherwise identify a conflicting element.',
+  'Exchange the conflicting element with the greedy choice to build O\'.',
+  'Prove O\' is feasible (constraints still satisfied).',
+  'Show cost(O\') <= cost(O) for minimization, or value(O\') >= value(O) for maximization.',
+  'Conclude there exists an optimal solution agreeing with the greedy choice; proceed inductively.',
+]
 
-  const comparisonParadigms = [
-    {
-      title: 'Two pointers vs binary search',
-      detail:
-        'Binary search repeatedly splits; two pointers sweep once. When order is monotone and you need all pairs or windows, two pointers are usually faster.',
-    },
-    {
-      title: 'Sliding window vs prefix sums',
-      detail:
-        'Prefix sums answer range queries quickly but still need a search strategy. Sliding window excels when constraints are monotone and windows move forward.',
-    },
-    {
-      title: 'Two pointers vs greedy',
-      detail:
-        'Greedy makes global choices; two pointers are local scans that exploit order. They can complement each other (e.g., greedy sort + two pointers).',
-    },
-    {
-      title: 'Sliding window vs DP',
-      detail:
-        'DP handles complex substructure; sliding window handles simple monotone constraints. DP is heavier but more general.',
-    },
-    {
-      title: 'Two pointers vs hashing',
-      detail:
-        'Hashing finds complements without order; two pointers need order but avoid extra memory.',
-    },
-  ]
+const exchangePatterns = [
+  {
+    title: 'Swap adjacent elements',
+    detail:
+      'Used in scheduling. If two neighboring jobs are out of greedy order, swapping them does not worsen the objective. Repeat until sorted.',
+  },
+  {
+    title: 'Replace one item',
+    detail:
+      'Used in interval scheduling and knapsack variants. Replace a conflicting interval with one that finishes earlier or weighs less.',
+  },
+  {
+    title: 'Cycle exchange',
+    detail:
+      'Used in MST proofs. If a non-greedy edge is heavier on a cycle, swap it for a lighter greedy edge without disconnecting the tree.',
+  },
+  {
+    title: 'Tree leaf swap',
+    detail:
+      'Used in Huffman coding. Exchange deep leaves so the two smallest weights sit deepest, keeping prefix property intact.',
+  },
+  {
+    title: 'Cut-based exchange',
+    detail:
+      'Used in shortest paths and MST. If the greedy choice crosses a cut with minimum weight, any optimal structure can exchange to include it.',
+  },
+  {
+    title: 'Prefix exchange',
+    detail:
+      'Show the greedy prefix can be made identical to an optimal prefix, often by repeatedly swapping earlier decisions.',
+  },
+]
 
-  const complexityNotes = [
-    {
-      title: 'Time is linear',
-      detail:
-        'Each pointer advances at most n times. Total work is O(n), even though there are two pointers.',
-    },
-    {
-      title: 'Space is small',
-      detail:
-        'Often O(1), or O(k) for character counts and frequency maps in sliding window problems.',
-    },
-    {
-      title: 'Monotonicity is key',
-      detail:
-        'If pointers only move forward, the algorithm remains linear. Breaking monotonicity can reintroduce quadratic behavior.',
-    },
-    {
-      title: 'Sorting can dominate',
-      detail:
-        'Two pointer solutions on unsorted input may need O(n log n) sorting first.',
-    },
-  ]
+const proofToolkit = [
+  {
+    title: 'Stay-ahead property',
+    detail:
+      'Show that after each step the greedy partial solution is at least as good as any other partial solution of the same size.',
+  },
+  {
+    title: 'Cut property',
+    detail:
+      'For MSTs, the lightest edge across any cut is safe and can be exchanged into an optimal tree.',
+  },
+  {
+    title: 'Matroid exchange axiom',
+    detail:
+      'If feasible sets form a matroid, the greedy algorithm is optimal; the exchange axiom provides the swap logic.',
+  },
+  {
+    title: 'Dominance arguments',
+    detail:
+      'If one partial solution dominates another, you can discard the dominated one without losing optimality.',
+  },
+]
 
-  const workedExamples = [
-    {
-      title: 'Longest substring without repeats',
-      steps: [
-        'Use a map of last seen indices.',
-        'Expand right pointer; if a duplicate appears, move left to just after last seen.',
-        'Update best length after each move.',
-      ],
-      note:
-        'Each character is added and removed at most once; the total work remains linear.',
-    },
-    {
-      title: 'Minimum window with sum >= target (positive numbers)',
-      steps: [
-        'Expand right pointer and accumulate sum.',
-        'When sum >= target, shrink from left to minimize window.',
-        'Track the smallest valid length.',
-      ],
-      note:
-        'Monotonicity holds only with non-negative numbers; with negatives, this fails.',
-    },
-  ]
+const proofChecklist = [
+  'Define the objective clearly (minimize or maximize) and list feasibility constraints.',
+  'Identify the single conflicting element when greedy and optimal differ.',
+  'Describe the exchange operation explicitly and keep it local.',
+  'Prove feasibility after the swap (no overlaps, no cycles, no broken constraints).',
+  'Compare costs using algebra or ordering properties.',
+  'Conclude the existence of an optimal solution that contains the greedy choice.',
+]
 
-  const comparisonTable = [
-    {
-      method: 'Brute force',
-      time: 'O(n^2)',
-      memory: 'O(1)',
-      note: 'Checks all pairs or subarrays',
-    },
-    {
-      method: 'Two pointers',
-      time: 'O(n) or O(n log n)',
-      memory: 'O(1)',
-      note: 'Requires order or monotonicity',
-    },
-    {
-      method: 'Sliding window',
-      time: 'O(n)',
-      memory: 'O(1) to O(k)',
-      note: 'Best for contiguous subarrays',
-    },
-  ]
+const workedExampleSteps = [
+  {
+    title: 'Activity selection (interval scheduling)',
+    steps: [
+      'Greedy choice: pick the activity that finishes earliest.',
+      'Let O be an optimal schedule; if it starts with the greedy activity, continue.',
+      'Otherwise, O starts with activity i that finishes later.',
+      'Swap i with the greedy activity; feasibility is preserved because the greedy one ends earlier.',
+      'The swap does not reduce the number of activities, so there is an optimal schedule that starts with the greedy choice.',
+    ],
+    note:
+      'Inductively apply the same argument to the remaining intervals after the greedy finish time.',
+  },
+  {
+    title: 'Kruskal MST (cycle exchange)',
+    steps: [
+      'Greedy choice: take the lightest edge that does not form a cycle.',
+      'Let T be an optimal MST that excludes that edge e.',
+      'Adding e creates a cycle; remove the heaviest edge f in that cycle.',
+      'The resulting tree is no heavier and now includes e.',
+      'Therefore there is an optimal MST consistent with the greedy choice.',
+    ],
+    note:
+      'The cycle exchange is local and preserves feasibility (tree property).',
+  },
+]
 
-  const applicationsExtended = [
-    {
-      context: 'Remove duplicates in-place',
-      detail:
-        'Fast/slow pointers compress sorted arrays without extra memory.',
-    },
-    {
-      context: 'Max consecutive ones with flips',
-      detail:
-        'Variable window keeps at most k zeros; shrink left when constraint breaks.',
-    },
-    {
-      context: 'Smallest subarray with all chars',
-      detail:
-        'Frequency map tracks coverage, shrink when all constraints are met.',
-    },
-    {
-      context: 'Merge intervals by sweep',
-      detail:
-        'Two pointers over sorted endpoints to combine overlapping intervals efficiently.',
-    },
-  ]
+const workedExamples = [
+  {
+    title: 'Interval scheduling (earliest finish time)',
+    code: `// Select max number of non-overlapping intervals
+sort intervals by finish time
+pick the first interval
+for each interval in order:
+    if interval.start >= last_finish:
+        pick interval
+        last_finish = interval.finish`,
+    explanation:
+      'Exchange argument: take any optimal schedule O. Let g be the greedy interval with earliest finish. If O starts with g, done. Otherwise O starts with some interval i that finishes later than g. Swap i with g. The swap preserves feasibility because g finishes earlier, leaving at least as much time for the remaining intervals. Therefore there is an optimal schedule starting with g, so the greedy choice is safe.',
+  },
+  {
+    title: 'Minimum spanning tree (Kruskal cycle exchange)',
+    code: `// Add lightest edges without creating a cycle
+sort edges by weight
+for each edge e in order:
+    if e does not form a cycle:
+        add e to the tree`,
+    explanation:
+      'Exchange argument: suppose an optimal MST T does not include greedy edge e (the lightest edge that connects two components). Adding e to T creates a cycle. That cycle contains some edge f heavier than or equal to e. Remove f to restore a tree. The new tree is no heavier and includes e, so an optimal tree can be adjusted to match the greedy choice.',
+  },
+  {
+    title: 'Minimize maximum lateness (EDD rule)',
+    code: `// Single machine, each job has duration p and due date d
+sort jobs by increasing due date
+process in that order`,
+    explanation:
+      'Exchange argument: consider two adjacent jobs i, j with d_i > d_j (out of EDD order). Swapping them can only decrease the maximum lateness, because j has an earlier due date and finishes no later after the swap. Repeatedly swapping inversions yields EDD order without increasing the objective, so the greedy order is optimal.',
+  },
+]
 
-  const applications = [
-    {
-      context: 'Two sum in sorted array',
-      detail:
-        'Move pointers inward to find a pair that matches the target without nested loops.',
-    },
-    {
-      context: 'Longest substring without repeats',
-      detail:
-        'Expand the right pointer and shrink left pointer to maintain unique characters.',
-    },
-    {
-      context: 'Minimum size subarray sum',
-      detail:
-        'Use variable window and shrink when sum exceeds target to find minimal length.',
-    },
-    {
-      context: 'Merge of two sorted arrays',
-      detail:
-        'Advance pointers across both arrays to stream the merged order.',
-    },
-  ]
+const comparisons = [
+  {
+    title: 'Exchange argument vs contradiction',
+    detail:
+      'Contradiction shows the greedy choice must be part of an optimal solution; exchange provides a constructive way to transform one.',
+  },
+  {
+    title: 'Exchange argument vs matroid proof',
+    detail:
+      'Matroid proofs are general and abstract; exchange arguments are concrete and problem-specific.',
+  },
+  {
+    title: 'Exchange argument vs cut property',
+    detail:
+      'Cut property is a specialized exchange argument for graphs. Use it when a cut-based minimum edge can be proven safe.',
+  },
+]
 
-  const failureStory =
-    'A substring solver allowed negative weights in its scoring and still used a sliding window. The window oscillated and missed valid answers. Switching to prefix sums with binary search fixed correctness.'
+const failureStory =
+  'A scheduling solution claimed earliest start time was greedy-optimal. The exchange failed because swapping jobs changed feasibility due to deadlines. Only earliest finish time preserves feasibility, which the exchange argument reveals.'
 
-  const examples = [
-    {
-      title: 'Two sum on sorted array',
-      code: `function twoSumSorted(nums, target):
-    left = 0
-    right = nums.length - 1
-    while left < right:
-        sum = nums[left] + nums[right]
-        if sum == target: return [left, right]
-        if sum < target: left += 1
-        else: right -= 1
-    return null`,
-      explanation:
-        'The array is sorted, so if the sum is too small, only moving left upward can increase it. Each pointer moves at most n times.',
-    },
-    {
-      title: 'Longest substring with at most k distinct',
-      code: `function longestSubstringK(s, k):
-    counts = map()
-    left = 0
-    best = 0
-    for right in 0..s.length-1:
-        add s[right] to counts
-        while counts.size > k:
-            remove s[left] from counts
-            left += 1
-        best = max(best, right - left + 1)
-    return best`,
-      explanation:
-        'The window expands to include new characters, and shrinks only when the constraint breaks. This keeps the scan linear.',
-    },
-    {
-      title: 'Minimum length subarray sum',
-      code: `function minSubarrayLen(nums, target):
-    left = 0
-    sum = 0
-    best = Infinity
-    for right in 0..nums.length-1:
-        sum += nums[right]
-        while sum >= target:
-            best = min(best, right - left + 1)
-            sum -= nums[left]
-            left += 1
-    return best == Infinity ? 0 : best`,
-      explanation:
-        'Shrink from the left to keep the window minimal whenever the sum is large enough.',
-    },
-  ]
+const pitfalls = [
+  'Swapping breaks feasibility. If the exchange creates overlap, cycles, or violates constraints, the proof fails.',
+  'Comparing the wrong cost. Exchange arguments must compare objective values, not unrelated metrics like total weight when minimizing maximum lateness.',
+  'Using a non-local swap. Exchanges should be small and justified; large rearrangements often hide gaps.',
+  'Assuming uniqueness. Greedy proofs show existence of an optimal solution that matches greedy choices, not that it is the only optimal solution.',
+  'Missing the induction step. You must show the invariant continues after the swap, not just for the first step.',
+]
 
-  const pitfalls = [
-    'Forgetting the invariant, leading to incorrect pointer moves.',
-    'Moving both pointers in the wrong order, skipping valid answers.',
-    'Handling duplicates incorrectly when compressing or filtering.',
-    'Using sliding window on problems that are not contiguous.',
-    'Breaking monotonicity and accidentally reintroducing O(n^2).',
-  ]
+const debuggingChecklist = [
+  'Write down the exact constraint that must remain true after the swap.',
+  'Check the swap on a small counterexample candidate.',
+  'Make sure the swap is local; avoid restructuring the whole solution.',
+  'Confirm you are comparing the correct objective (min vs max).',
+  'State the induction invariant explicitly.',
+]
 
-  const debuggingChecklist = [
-    'Print pointer positions and window state on small inputs.',
-    'Assert invariants before and after pointer moves.',
-    'Verify pointer monotonicity (no backward moves).',
-    'Test edge cases: empty arrays, all duplicates, large k.',
-    'If negative numbers exist, reconsider sliding window assumptions.',
-  ]
+const decisionGuidance = [
+  'Use exchange arguments when a greedy choice conflicts with some optimal solution but can replace it without harm.',
+  'Look for problems with ordering or selection where a local swap makes future choices easier.',
+  'If constraints are global but decomposable into local conflicts, exchange arguments are a strong fit.',
+  'If a swap cannot be shown to preserve feasibility, consider matroid or cut-property approaches instead.',
+]
 
-  const decisionGuidance = [
-    'The problem asks for a pair, triplet, or range with sorted or monotonic structure.',
-    'You need subarray or substring constraints that can be updated incrementally.',
-    'A brute force double loop is too slow for the input size.',
-    'You can maintain a valid window with a simple counter or aggregate.',
-  ]
+const whenToAvoid = [
+  'Constraints are global and a local swap can break feasibility.',
+  'The greedy choice is not uniquely defined or depends on future information.',
+  'You cannot define an exchange that preserves the objective.',
+  'The problem lacks optimal substructure for greedy choices.',
+]
 
-  const whenToAvoid = [
-    'Constraints are not monotone (negative numbers or non-local conditions).',
-    'You need non-contiguous subsets (sliding window does not apply).',
-    'The array is unsorted and cannot be sorted without breaking requirements.',
-    'A hashing-based solution is simpler and acceptable in memory.',
-  ]
+const takeaways = [
+  'Exchange arguments prove greedy optimality by repairing an optimal solution to match the greedy choice.',
+  'The key is a local swap that preserves feasibility and does not worsen the objective.',
+  'Once the first greedy choice is justified, induction carries the rest of the algorithm.',
+  'Clear statements of constraints and objectives make exchange proofs concise and rigorous.',
+]
 
-  const advancedInsights = [
-    {
-      title: 'Monotonic queue for sliding window extremes',
-      detail:
-        'Maintain a deque of candidates to get max or min of each window in O(1) per step.',
-    },
-    {
-      title: 'Two pointers with prefix sums',
-      detail:
-        'If sums are nonnegative, pointers can advance using prefix sums to find ranges efficiently.',
-    },
-    {
-      title: 'Three pointers for cyclic windows',
-      detail:
-        'Circular arrays sometimes need a second right pointer to represent wraparound windows.',
-    },
-    {
-      title: 'Window with frequency constraints',
-      detail:
-        'Track counts and number of satisfied conditions to handle problems with multiple constraints.',
-    },
-  ]
-
-  const instrumentation = [
-    {
-      title: 'Pointer move counters',
-      detail: 'Track left/right moves to confirm linear behavior.',
-    },
-    {
-      title: 'Constraint hit rate',
-      detail: 'Measure how often the window is valid vs invalid to tune heuristics.',
-    },
-    {
-      title: 'State update cost',
-      detail: 'Ensure per-step updates are O(1); profile maps or deques if slow.',
-    },
-  ]
-
-  const takeaways = [
-    'Two pointers and sliding window reduce quadratic scans to linear passes.',
-    'The invariant defines the algorithm. Keep it explicit and easy to update.',
-    'Monotonic pointer movement is the performance guarantee.',
-    'Use sorting, hashing, or queues to maintain window state efficiently.',
-  ]
-
+export default function GreedyProofTechniquesExchangeArgumentPage(): JSX.Element {
   const glossary = useMemo(
     () => [
       {
-        term: 'Two pointers',
+        term: 'Greedy choice',
         definition:
-          'A linear scan technique that moves one or two indices through an array or string to maintain a useful invariant.',
+          'A locally optimal decision taken at each step that must be justified by a structural property of optimal solutions.',
       },
       {
-        term: 'Sliding window',
+        term: 'Exchange',
         definition:
-          'A contiguous window that expands and shrinks while maintaining a condition such as a sum, count, or frequency bound.',
+          'An operation that replaces part of an optimal solution with the greedy choice while keeping feasibility and objective value.',
       },
       {
         term: 'Invariant',
         definition:
-          'A condition that must always be true for the current window or pointer configuration. Pointer moves exist to restore or extend it.',
+          'After k steps, there exists an optimal solution consistent with the greedy prefix; the exchange maintains this property.',
       },
       {
-        term: 'Monotonicity',
+        term: 'Ordering exchange',
         definition:
-          'Pointers only move forward; each index advances at most n times, keeping total work linear.',
+          'Swap adjacent elements to enforce greedy order without worsening the objective.',
       },
       {
-        term: 'Opposing pointers',
+        term: 'Cycle exchange',
         definition:
-          'Two pointers move toward each other in a sorted array to find pairs or ranges.',
+          'Swap edges along a cycle to include a greedy edge without breaking connectivity (MST).',
       },
       {
-        term: 'Fast/slow pointers',
+        term: 'Cut property',
         definition:
-          'A slow pointer anchors a write position while a fast pointer scans ahead to find the next valid element.',
+          'Any minimum edge across a cut can be exchanged into an optimal solution (graph greedy proofs).',
       },
       {
-        term: 'Fixed-size window',
+        term: 'Stay-ahead property',
         definition:
-          'A window of size k that moves with O(1) updates for rolling sums or averages.',
+          'After each step the greedy partial solution is at least as good as any other partial solution of the same size.',
       },
       {
-        term: 'Variable-size window',
+        term: 'Matroid exchange axiom',
         definition:
-          'Expand until a constraint breaks, then shrink from the left to restore validity.',
-      },
-      {
-        term: 'Monotonic queue window',
-        definition:
-          'A deque maintains max/min values for each window in O(1) amortized time.',
-      },
-      {
-        term: 'Prefix + pointers',
-        definition:
-          'Prefix sums and two pointers can locate target ranges without re-summing each subarray.',
+          'A structural rule that guarantees greedy optimality for matroid feasibility sets.',
       },
     ],
     [],
@@ -537,14 +414,14 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = `Two Pointers & Sliding Window (${activeTabLabel})`
+    document.title = `Greedy Proof Techniques (${activeTabLabel})`
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
   const handleMinimize = () => {
     const minimizedTask = {
       id: `help:${location.pathname}`,
-      title: 'Two Pointers & Sliding Window',
+      title: 'Greedy Proof Techniques (Exchange Argument)',
       url: `${location.pathname}${location.search}${location.hash}`,
       kind: 'help',
     }
@@ -570,32 +447,31 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
 
   const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
     'big-picture': [
-      { id: 'bp-overview', label: 'Overview' },
-      { id: 'bp-why-it-works', label: 'Why It Works' },
+      { id: 'bp-intro', label: 'Overview' },
+      { id: 'bp-foundations', label: 'Foundations' },
+      { id: 'bp-context', label: 'Historical Context' },
       { id: 'bp-takeaways', label: 'Key Takeaways' },
     ],
     'core-concepts': [
-      { id: 'core-foundations', label: 'Foundations' },
-      { id: 'core-taxonomy', label: 'Technique Taxonomy' },
-      { id: 'core-models', label: 'Mental Models' },
-      { id: 'core-checklist', label: 'Modeling Checklist' },
-      { id: 'core-patterns', label: 'Common Patterns' },
-      { id: 'core-rules', label: 'Pointer Rules' },
-      { id: 'core-loop', label: 'The Pointer Loop' },
-      { id: 'core-comparisons', label: 'Paradigm Comparisons' },
-      { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
-      { id: 'core-table', label: 'Comparisons at a Glance' },
-      { id: 'core-applications', label: 'Real-World Applications' },
+      { id: 'core-taxonomy', label: 'Exchange Taxonomy' },
+      { id: 'core-mental', label: 'Mental Models' },
+      { id: 'core-modeling', label: 'Modeling Checklist' },
+      { id: 'core-definitions', label: 'Key Definitions' },
+      { id: 'core-blueprint', label: 'Exchange Blueprint' },
+      { id: 'core-template', label: 'Proof Template' },
+      { id: 'core-patterns', label: 'Exchange Patterns' },
+      { id: 'core-toolkit', label: 'Proof Toolkit' },
+      { id: 'core-checklist', label: 'Proof Checklist' },
+      { id: 'core-comparisons', label: 'In Context' },
+      { id: 'core-failure', label: 'Failure Mode' },
       { id: 'core-pitfalls', label: 'Common Pitfalls' },
-      { id: 'core-debugging', label: 'Debugging Checklist' },
-      { id: 'core-when-to-use', label: 'When to Use It' },
-      { id: 'core-when-to-avoid', label: 'When to Avoid It' },
-      { id: 'core-advanced', label: 'Advanced Insights' },
-      { id: 'core-instrumentation', label: 'Instrumentation' },
+      { id: 'core-debug', label: 'Debugging Checklist' },
+      { id: 'core-use', label: 'When to Use It' },
+      { id: 'core-avoid', label: 'When to Avoid It' },
     ],
     examples: [
-      { id: 'ex-worked', label: 'Worked Examples' },
-      { id: 'ex-code', label: 'Practical Code' },
+      { id: 'ex-code', label: 'Worked Examples' },
+      { id: 'ex-steps', label: 'Step-by-Step' },
     ],
     glossary: [{ id: 'glossary-terms', label: 'Terms' }],
   }
@@ -792,24 +668,6 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
   display: block;
 }
 
-.win98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-  font-size: 12px;
-}
-
-.win98-table th,
-.win98-table td {
-  border: 1px solid #808080;
-  padding: 6px 8px;
-  text-align: left;
-}
-
-.win98-table thead th {
-  background: #e6e6e6;
-}
-
 @media (max-width: 900px) {
   .win98-main {
     grid-template-columns: 1fr;
@@ -827,7 +685,7 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
       <style>{win98HelpStyles}</style>
       <div className="win98-window" role="presentation">
         <header className="win98-titlebar">
-          <span className="win98-title-text">Two Pointers &amp; Sliding Window</span>
+          <span className="win98-title-text">Greedy Proof Techniques (Exchange Argument)</span>
           <div className="win98-title-controls">
             <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
             <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
@@ -859,36 +717,40 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
             </ul>
           </aside>
           <main className="win98-content">
-            <h1 className="win98-doc-title">Two Pointers &amp; Sliding Window</h1>
+            <h1 className="win98-doc-title">Greedy Proof Techniques (Exchange Argument)</h1>
             <p>
-              Two pointers and sliding window techniques sweep through arrays and strings while maintaining a clean invariant.
-              When used correctly, they collapse O(n^2) loops into O(n) passes with minimal memory.
+              Exchange arguments are the workhorse proof technique for greedy algorithms. The idea is simple but powerful: if an
+              optimal solution does not make the greedy choice, show how to swap the greedy choice in without making the solution
+              worse. That swap proves there exists an optimal solution that agrees with the greedy step, and induction finishes the
+              proof.
             </p>
 
             {activeTab === 'big-picture' && (
               <>
-                <section id="bp-overview" className="win98-section">
+                <section id="bp-intro" className="win98-section">
                   <h2 className="win98-heading">Overview</h2>
-                  {overviewPanels.map((panel) => (
-                    <div key={panel.title}>
-                      <h3 className="win98-subheading">{panel.title}</h3>
-                      <p>{panel.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-why-it-works" className="win98-section">
-                  <h2 className="win98-heading">Why It Works</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
                   <p>
-                    The win comes from monotonic pointer movement. If each pointer only moves forward, the algorithm stays linear.
+                    Greedy algorithms build a solution one decision at a time. The exchange argument justifies each decision by
+                    showing it can replace a conflicting choice in some optimal solution without harming feasibility or objective
+                    value. The proof is constructive: it repairs an optimal solution to match the greedy one step by step.
                   </p>
                 </section>
-                <hr className="win98-divider" />
+                <section id="bp-foundations" className="win98-section">
+                  <h2 className="win98-heading">Foundations</h2>
+                  {foundations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-context" className="win98-section">
+                  <h2 className="win98-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
                 <section id="bp-takeaways" className="win98-section">
                   <h2 className="win98-heading">Key Takeaways</h2>
                   <ul>
@@ -902,23 +764,15 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
 
             {activeTab === 'core-concepts' && (
               <>
-                <section id="core-foundations" className="win98-section">
-                  <h2 className="win98-heading">Foundations</h2>
-                  {foundations.map((panel) => (
-                    <p key={panel.title}>
-                      <strong>{panel.title}:</strong> {panel.detail}
-                    </p>
-                  ))}
-                </section>
                 <section id="core-taxonomy" className="win98-section">
-                  <h2 className="win98-heading">Technique Taxonomy</h2>
+                  <h2 className="win98-heading">Exchange Taxonomy</h2>
                   {taxonomy.map((item) => (
                     <p key={item.title}>
                       <strong>{item.title}:</strong> {item.detail}
                     </p>
                   ))}
                 </section>
-                <section id="core-models" className="win98-section">
+                <section id="core-mental" className="win98-section">
                   <h2 className="win98-heading">Core Mental Models</h2>
                   {mentalModels.map((item) => (
                     <p key={item.title}>
@@ -926,7 +780,7 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                     </p>
                   ))}
                 </section>
-                <section id="core-checklist" className="win98-section">
+                <section id="core-modeling" className="win98-section">
                   <h2 className="win98-heading">Modeling Checklist</h2>
                   <ul>
                     {modelingChecklist.map((item) => (
@@ -934,87 +788,74 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                     ))}
                   </ul>
                 </section>
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Common Patterns</h2>
-                  {techniquePanels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-rules" className="win98-section">
-                  <h2 className="win98-heading">Pointer Movement Rules</h2>
-                  {pointerRules.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-loop" className="win98-section">
-                  <h2 className="win98-heading">How It Works: The Pointer Loop</h2>
-                  {algorithmSteps.map((step) => (
-                    <div key={step.heading}>
-                      <h3 className="win98-subheading">{step.heading}</h3>
+                <section id="core-definitions" className="win98-section">
+                  <h2 className="win98-heading">Key Definitions</h2>
+                  {coreDefinitions.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="win98-subheading">{block.heading}</h3>
                       <ul>
-                        {step.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
                         ))}
                       </ul>
                     </div>
                   ))}
                 </section>
-                <section id="core-comparisons" className="win98-section">
-                  <h2 className="win98-heading">Comparisons with Other Paradigms</h2>
-                  {comparisonParadigms.map((item) => (
+                <section id="core-blueprint" className="win98-section">
+                  <h2 className="win98-heading">Exchange Blueprint</h2>
+                  {exchangeBlueprint.map((step) => (
+                    <p key={step.title}>
+                      <strong>{step.title}:</strong> {step.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-template" className="win98-section">
+                  <h2 className="win98-heading">Exchange Argument Template</h2>
+                  <ol>
+                    {exchangeTemplate.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <p>
+                    The strength of this template is its locality. Each step only changes a small part of the solution, which keeps
+                    feasibility and objective comparisons simple.
+                  </p>
+                </section>
+                <section id="core-patterns" className="win98-section">
+                  <h2 className="win98-heading">Common Exchange Patterns</h2>
+                  {exchangePatterns.map((item) => (
                     <p key={item.title}>
                       <strong>{item.title}:</strong> {item.detail}
                     </p>
                   ))}
                 </section>
-                <section id="core-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
+                <section id="core-toolkit" className="win98-section">
+                  <h2 className="win98-heading">Proof Toolkit</h2>
+                  {proofToolkit.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
                     </p>
                   ))}
                 </section>
-                <section id="core-table" className="win98-section">
-                  <h2 className="win98-heading">Comparisons at a Glance</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Method</th>
-                        <th>Time</th>
-                        <th>Memory</th>
-                        <th>Note</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.method}>
-                          <td>{row.method}</td>
-                          <td>{row.time}</td>
-                          <td>{row.memory}</td>
-                          <td>{row.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <section id="core-checklist" className="win98-section">
+                  <h2 className="win98-heading">Proof Checklist</h2>
+                  <ul>
+                    {proofChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                 </section>
-                <section id="core-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
+                <section id="core-comparisons" className="win98-section">
+                  <h2 className="win98-heading">Greedy Proof Techniques in Context</h2>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
                     </p>
                   ))}
-                  {applicationsExtended.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p><strong>Failure mode:</strong> {failureStory}</p>
+                </section>
+                <section id="core-failure" className="win98-section">
+                  <h2 className="win98-heading">Failure Mode</h2>
+                  <p>{failureStory}</p>
                 </section>
                 <section id="core-pitfalls" className="win98-section">
                   <h2 className="win98-heading">Common Pitfalls</h2>
@@ -1024,7 +865,7 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                     ))}
                   </ul>
                 </section>
-                <section id="core-debugging" className="win98-section">
+                <section id="core-debug" className="win98-section">
                   <h2 className="win98-heading">Debugging Checklist</h2>
                   <ul>
                     {debuggingChecklist.map((item) => (
@@ -1032,7 +873,7 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                     ))}
                   </ul>
                 </section>
-                <section id="core-when-to-use" className="win98-section">
+                <section id="core-use" className="win98-section">
                   <h2 className="win98-heading">When to Use It</h2>
                   <ol>
                     {decisionGuidance.map((item) => (
@@ -1040,7 +881,7 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                     ))}
                   </ol>
                 </section>
-                <section id="core-when-to-avoid" className="win98-section">
+                <section id="core-avoid" className="win98-section">
                   <h2 className="win98-heading">When to Avoid It</h2>
                   <ul>
                     {whenToAvoid.map((item) => (
@@ -1048,30 +889,26 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                     ))}
                   </ul>
                 </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-instrumentation" className="win98-section">
-                  <h2 className="win98-heading">Instrumentation That Helps</h2>
-                  {instrumentation.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
               </>
             )}
 
             {activeTab === 'examples' && (
               <>
-                <section id="ex-worked" className="win98-section">
+                <section id="ex-code" className="win98-section">
                   <h2 className="win98-heading">Worked Examples</h2>
                   {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="win98-subheading">{example.title}</h3>
+                      <div className="win98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-steps" className="win98-section">
+                  <h2 className="win98-heading">Worked Examples (Step-by-Step)</h2>
+                  {workedExampleSteps.map((example) => (
                     <div key={example.title}>
                       <h3 className="win98-subheading">{example.title}</h3>
                       <ol>
@@ -1080,18 +917,6 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
                         ))}
                       </ol>
                       <p>{example.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-code" className="win98-section">
-                  <h2 className="win98-heading">Practical Code</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
                     </div>
                   ))}
                 </section>
