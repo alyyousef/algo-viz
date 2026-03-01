@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -26,6 +25,7 @@ const historicalMilestones = [
       'Bitset shifts pack many sums per word and can be accelerated with SIMD for moderate targets.',
   },
 ]
+
 const mentalModels = [
   {
     title: 'Reachable sums as a frontier',
@@ -58,6 +58,7 @@ const mentalModels = [
       'Split jobs so totals are as even as possible; partition is the exact balance special case.',
   },
 ]
+
 const problemVariants = [
   {
     heading: 'Subset Sum (decision)',
@@ -108,6 +109,7 @@ const problemVariants = [
     ],
   },
 ]
+
 const algorithmSteps = [
   {
     title: 'Define state',
@@ -145,6 +147,7 @@ const algorithmSteps = [
       'Store parent pointers or retrace from dp table: if dp[s] && !dp_prev[s], then item that flipped s is included.',
   },
 ]
+
 const implementationNotes = [
   {
     title: 'Space-optimized DP',
@@ -177,6 +180,7 @@ const implementationNotes = [
       'Iterative DP avoids recursion depth issues and keeps memory predictable.',
   },
 ]
+
 const complexityNotes = [
   {
     title: 'Pseudopolynomial runtime',
@@ -204,6 +208,7 @@ const complexityNotes = [
       'NP-complete in general. Exponential blowup is unavoidable for worst-case inputs.',
   },
 ]
+
 const realWorldUses = [
   {
     context: 'Load balancing',
@@ -292,6 +297,7 @@ const pitfalls = [
   'Overflow when counting subsets in languages with small integer ranges.',
   'Assuming pseudopolynomial DP is fast for huge targets; it is only efficient when target is modest.',
 ]
+
 const decisionGuidance = [
   'Use 1D boolean DP when target (or total/2) is at most a few tens of thousands.',
   'Use bitset DP when target is moderate and you want constant-factor speedups on CPU.',
@@ -299,6 +305,7 @@ const decisionGuidance = [
   'Switch to approximation or heuristics for huge n and huge sums (e.g., greedy with sorting).',
   'If items repeat many times or are small, consider bounded/unbounded knapsack formulations.',
 ]
+
 const advancedInsights = [
   {
     title: 'Recovering the actual subset',
@@ -409,278 +416,548 @@ const takeaways = [
   'Balance accuracy against cost: exact DP for small targets, heuristics for large ones.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.ssp98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.ssp98-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.ssp98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ssp98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.ssp98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.ssp98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  padding: 0;
+}
+
+.ssp98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.ssp98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ssp98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.ssp98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.ssp98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.ssp98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.ssp98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ssp98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.ssp98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.ssp98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.ssp98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.ssp98-section {
+  margin: 0 0 20px;
+}
+
+.ssp98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.ssp98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.ssp98-content p,
+.ssp98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ssp98-content p {
+  margin: 0 0 10px;
+}
+
+.ssp98-content ul,
+.ssp98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.ssp98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.ssp98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.ssp98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .ssp98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ssp98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const glossary = [
+  { term: 'Subset Sum', definition: 'Decision problem asking whether any subset reaches target S.' },
+  { term: 'Partition', definition: 'Special case asking whether a set splits into two equal-sum subsets.' },
+  { term: 'Pseudopolynomial', definition: 'Polynomial in numeric target value, not in number of input bits.' },
+  { term: 'Bitset DP', definition: 'Represents reachable sums as bits and updates by shift-or operations.' },
+  { term: 'Meet-in-the-middle', definition: 'Splits input and combines subset sums from each half to reduce exponent.' },
+  { term: 'Reachability state', definition: 'Boolean DP entry indicating whether sum s can be formed.' },
+  { term: '0/1 transition', definition: 'Descending sum loop so each item is used at most once.' },
+  { term: 'Reconstruction', definition: 'Backtracking or parent pointers to recover which items were chosen.' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-models', label: 'Mental Models' },
+    { id: 'bp-framing', label: 'Problem Framing' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-variants', label: 'Problem Variants' },
+    { id: 'core-dp', label: 'DP Recurrence' },
+    { id: 'core-workflow', label: 'DP Workflow' },
+    { id: 'core-impl', label: 'Implementation Notes' },
+    { id: 'core-reconstruct', label: 'Reconstruction Notes' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-guidance', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-checklist', label: 'Implementation Checklist' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Example' },
+    { id: 'ex-code', label: 'Practical Examples' },
+    { id: 'ex-applications', label: 'Real-World Applications' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function SubsetSumPartitionPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab: TabId = isTabId(searchParams.get('tab')) ? (searchParams.get('tab') as TabId) : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Subset Sum & Partition (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Subset Sum & Partition',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Subset Sum &amp; Partition</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
+    <div className="ssp98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="ssp98-window" role="presentation">
+        <header className="ssp98-titlebar">
+          <span className="ssp98-title-text">Subset Sum &amp; Partition</span>
+          <div className="ssp98-title-controls">
+            <button className="ssp98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="ssp98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Reachable sums, balanced partitions, and the DP that powers both</div>
-              <p className="win95-text">
-                Subset Sum asks whether any subset hits a target total. Partition asks for a perfect split between two halves.
-                Both ride on the same pseudopolynomial DP that grows with the sum bound, not just the item count. This page walks
-                through the DP recurrence, reconstruction, bitset accelerations, meet-in-the-middle for medium n, and the common traps to avoid.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Subset Sum and Partition show how dynamic programming can convert an NP-complete problem into something tractable
-                when numeric bounds are modest. The DP marks which sums are reachable, building outward like ripples as each item is
-                considered. When totals are too large, alternative techniques like meet-in-the-middle or heuristics take over.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="ssp98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`ssp98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setSearchParams((prev) => {
+                const next = new URLSearchParams(prev)
+                next.set('tab', tab.id)
+                return next
+              }, { replace: true })}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="ssp98-main">
+          <aside className="ssp98-toc" aria-label="Table of contents">
+            <h2 className="ssp98-toc-title">Contents</h2>
+            <ul className="ssp98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="ssp98-content">
+            <h1 className="ssp98-doc-title">Subset Sum &amp; Partition</h1>
+            <p>
+              Subset Sum asks whether any subset hits a target total. Partition asks for a perfect split between two halves.
+              Both ride on the same pseudopolynomial DP that grows with the sum bound, not just the item count.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Problem framing</legend>
-            <div className="win95-grid win95-grid-3">
-              {problemFraming.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: problem variants</legend>
-            <div className="win95-grid win95-grid-3">
-              {problemVariants.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="ssp98-section">
+                  <h2 className="ssp98-heading">Overview</h2>
+                  <p>
+                    Subset Sum and Partition show how dynamic programming can convert an NP-complete problem into something tractable
+                    when numeric bounds are modest. The DP marks which sums are reachable, building outward like ripples as each item is considered.
+                  </p>
+                  <p>
+                    When totals are too large, alternative techniques like meet-in-the-middle or heuristics take over.
+                  </p>
+                </section>
+                <hr className="ssp98-divider" />
+                <section id="bp-history" className="ssp98-section">
+                  <h2 className="ssp98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="ssp98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-models" className="ssp98-section">
+                  <h2 className="ssp98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="ssp98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="bp-framing" className="ssp98-section">
+                  <h2 className="ssp98-heading">Problem Framing</h2>
+                  {problemFraming.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="bp-takeaways" className="ssp98-section">
+                  <h2 className="ssp98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>DP recurrence</legend>
-            <div className="win95-grid win95-grid-2">
-              {dpRecurrence.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: DP workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Correctness sketch: the DP table is closed under adding each item. If a sum s was reachable before, then s + w is
-                reachable after adding item w. Iterating items once in descending sum order preserves the 0/1 constraint. The
-                monotone growth of reachable sums guarantees you find the target if it exists.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked example</legend>
-            <div className="win95-grid win95-grid-2">
-              <div className="win95-panel">
-                <div className="win95-heading">Subset Sum</div>
-                <p className="win95-text">nums = <code>{workedExample.nums}</code></p>
-                <p className="win95-text">target = {workedExample.target} - result: {workedExample.result}</p>
-                <p className="win95-text">One subset: {workedExample.oneSubset}</p>
-                <ul className="win95-list">
-                  {workedExample.steps.map((step) => (
-                    <li key={step}>{step}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-variants" className="ssp98-section">
+                  <h2 className="ssp98-heading">Problem Variants</h2>
+                  {problemVariants.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="ssp98-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </ul>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-heading">Partition</div>
-                <p className="win95-text">nums = <code>{partitionExample.nums}</code></p>
-                <p className="win95-text">total = {partitionExample.total}, target = {partitionExample.target}</p>
-                <p className="win95-text">result: {partitionExample.result}</p>
-                <p className="win95-text">One partition: {partitionExample.onePartition}</p>
-              </div>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-dp" className="ssp98-section">
+                  <h2 className="ssp98-heading">DP Recurrence</h2>
+                  {dpRecurrence.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-workflow" className="ssp98-section">
+                  <h2 className="ssp98-heading">DP Workflow</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Correctness sketch: the DP table is closed under adding each item. If a sum s was reachable before, then s + w
+                    is reachable after adding item w. Descending iteration preserves the 0/1 constraint.
+                  </p>
+                </section>
+                <section id="core-impl" className="ssp98-section">
+                  <h2 className="ssp98-heading">Implementation Notes</h2>
+                  {implementationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-reconstruct" className="ssp98-section">
+                  <h2 className="ssp98-heading">Reconstruction Notes</h2>
+                  <ol>
+                    {reconstructionSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-complexity" className="ssp98-section">
+                  <h2 className="ssp98-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="ssp98-section">
+                  <h2 className="ssp98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-guidance" className="ssp98-section">
+                  <h2 className="ssp98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-advanced" className="ssp98-section">
+                  <h2 className="ssp98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-checklist" className="ssp98-section">
+                  <h2 className="ssp98-heading">Implementation Checklist</h2>
+                  <ul>
+                    {implementationChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Reconstruction notes</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {reconstructionSteps.map((step) => (
-                  <li key={step}>{step}</li>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="ssp98-section">
+                  <h2 className="ssp98-heading">Worked Example</h2>
+                  <h3 className="ssp98-subheading">Subset Sum</h3>
+                  <p><strong>nums:</strong> {workedExample.nums}</p>
+                  <p><strong>target:</strong> {workedExample.target} - <strong>result:</strong> {workedExample.result}</p>
+                  <p><strong>One subset:</strong> {workedExample.oneSubset}</p>
+                  <ul>
+                    {workedExample.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ul>
+                  <h3 className="ssp98-subheading">Partition</h3>
+                  <p><strong>nums:</strong> {partitionExample.nums}</p>
+                  <p><strong>total:</strong> {partitionExample.total}, <strong>target:</strong> {partitionExample.target}</p>
+                  <p><strong>result:</strong> {partitionExample.result}</p>
+                  <p><strong>One partition:</strong> {partitionExample.onePartition}</p>
+                </section>
+                <section id="ex-code" className="ssp98-section">
+                  <h2 className="ssp98-heading">Practical Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="ssp98-subheading">{example.title}</h3>
+                      <div className="ssp98-codebox">
+                        <code>{example.code}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-applications" className="ssp98-section">
+                  <h2 className="ssp98-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="ssp98-section">
+                <h2 className="ssp98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Subset Sum is easy when the target is small, hard in the worst case, and flexible enough to admit faster special
-                cases via bitsets or meet-in-the-middle. Choose the technique that matches your constraints on n, target, and memory.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {implementationChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-

@@ -1,6 +1,6 @@
+import { useEffect, useMemo, useState } from 'react'
 import type { JSX } from 'react'
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 export default function TwoPointersSlidingWindowPage(): JSX.Element {
   const overviewPanels = [
@@ -456,324 +456,661 @@ export default function TwoPointersSlidingWindowPage(): JSX.Element {
     'Use sorting, hashing, or queues to maintain window state efficiently.',
   ]
 
+  const glossary = useMemo(
+    () => [
+      {
+        term: 'Two pointers',
+        definition:
+          'A linear scan technique that moves one or two indices through an array or string to maintain a useful invariant.',
+      },
+      {
+        term: 'Sliding window',
+        definition:
+          'A contiguous window that expands and shrinks while maintaining a condition such as a sum, count, or frequency bound.',
+      },
+      {
+        term: 'Invariant',
+        definition:
+          'A condition that must always be true for the current window or pointer configuration. Pointer moves exist to restore or extend it.',
+      },
+      {
+        term: 'Monotonicity',
+        definition:
+          'Pointers only move forward; each index advances at most n times, keeping total work linear.',
+      },
+      {
+        term: 'Opposing pointers',
+        definition:
+          'Two pointers move toward each other in a sorted array to find pairs or ranges.',
+      },
+      {
+        term: 'Fast/slow pointers',
+        definition:
+          'A slow pointer anchors a write position while a fast pointer scans ahead to find the next valid element.',
+      },
+      {
+        term: 'Fixed-size window',
+        definition:
+          'A window of size k that moves with O(1) updates for rolling sums or averages.',
+      },
+      {
+        term: 'Variable-size window',
+        definition:
+          'Expand until a constraint breaks, then shrink from the left to restore validity.',
+      },
+      {
+        term: 'Monotonic queue window',
+        definition:
+          'A deque maintains max/min values for each window in O(1) amortized time.',
+      },
+      {
+        term: 'Prefix + pointers',
+        definition:
+          'Prefix sums and two pointers can locate target ranges without re-summing each subarray.',
+      },
+    ],
+    [],
+  )
+
+  type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return tab === 'big-picture' || tab === 'core-concepts' || tab === 'examples' || tab === 'glossary'
+      ? tab
+      : 'big-picture'
+  })
+  const activeTabLabel =
+    activeTab === 'big-picture'
+      ? 'The Big Picture'
+      : activeTab === 'core-concepts'
+        ? 'Core Concepts'
+        : activeTab === 'examples'
+          ? 'Examples'
+          : 'Glossary'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Two Pointers & Sliding Window (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Two Pointers & Sliding Window',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
+  const tabs: Array<{ id: TabId; label: string }> = [
+    { id: 'big-picture', label: 'The Big Picture' },
+    { id: 'core-concepts', label: 'Core Concepts' },
+    { id: 'examples', label: 'Examples' },
+    { id: 'glossary', label: 'Glossary' },
+  ]
+
+  const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+    'big-picture': [
+      { id: 'bp-overview', label: 'Overview' },
+      { id: 'bp-why-it-works', label: 'Why It Works' },
+      { id: 'bp-takeaways', label: 'Key Takeaways' },
+    ],
+    'core-concepts': [
+      { id: 'core-foundations', label: 'Foundations' },
+      { id: 'core-taxonomy', label: 'Technique Taxonomy' },
+      { id: 'core-models', label: 'Mental Models' },
+      { id: 'core-checklist', label: 'Modeling Checklist' },
+      { id: 'core-patterns', label: 'Common Patterns' },
+      { id: 'core-rules', label: 'Pointer Rules' },
+      { id: 'core-loop', label: 'The Pointer Loop' },
+      { id: 'core-comparisons', label: 'Paradigm Comparisons' },
+      { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+      { id: 'core-table', label: 'Comparisons at a Glance' },
+      { id: 'core-applications', label: 'Real-World Applications' },
+      { id: 'core-pitfalls', label: 'Common Pitfalls' },
+      { id: 'core-debugging', label: 'Debugging Checklist' },
+      { id: 'core-when-to-use', label: 'When to Use It' },
+      { id: 'core-when-to-avoid', label: 'When to Avoid It' },
+      { id: 'core-advanced', label: 'Advanced Insights' },
+      { id: 'core-instrumentation', label: 'Instrumentation' },
+    ],
+    examples: [
+      { id: 'ex-worked', label: 'Worked Examples' },
+      { id: 'ex-code', label: 'Practical Code' },
+    ],
+    glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+  }
+
+  const win98HelpStyles = `
+.win98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.win98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.win98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.win98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.win98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.win98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.win98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.win98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.win98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.win98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.win98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.win98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.win98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.win98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.win98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.win98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.win98-section {
+  margin: 0 0 20px;
+}
+
+.win98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.win98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.win98-content p,
+.win98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.win98-content p {
+  margin: 0 0 10px;
+}
+
+.win98-content ul,
+.win98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.win98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.win98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.win98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.win98-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.win98-table th,
+.win98-table td {
+  border: 1px solid #808080;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.win98-table thead th {
+  background: #e6e6e6;
+}
+
+@media (max-width: 900px) {
+  .win98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .win98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+  `
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Two Pointers & Sliding Window</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="win98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="win98-window" role="presentation">
+        <header className="win98-titlebar">
+          <span className="win98-title-text">Two Pointers &amp; Sliding Window</span>
+          <div className="win98-title-controls">
+            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Linear scans that replace nested loops with pointer logic</div>
-              <p className="win95-text">
-                Two pointers and sliding window techniques sweep through arrays and strings while maintaining a clean invariant.
-                When used correctly, they collapse O(n^2) loops into O(n) passes with minimal memory.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>Foundations</legend>
-            <div className="win95-grid win95-grid-2">
-              {foundations.map((panel) => (
-                <div key={panel.title} className="win95-panel">
-                  <div className="win95-heading">{panel.title}</div>
-                  <p className="win95-text">{panel.detail}</p>
-                </div>
+        <div className="win98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="win98-main">
+          <aside className="win98-toc" aria-label="Table of contents">
+            <h2 className="win98-toc-title">Contents</h2>
+            <ul className="win98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="win98-content">
+            <h1 className="win98-doc-title">Two Pointers &amp; Sliding Window</h1>
+            <p>
+              Two pointers and sliding window techniques sweep through arrays and strings while maintaining a clean invariant.
+              When used correctly, they collapse O(n^2) loops into O(n) passes with minimal memory.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {overviewPanels.map((panel) => (
-                <div key={panel.title} className="win95-panel">
-                  <div className="win95-heading">{panel.title}</div>
-                  <p className="win95-text">{panel.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Technique taxonomy</legend>
-            <div className="win95-grid win95-grid-3">
-              {taxonomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Modeling checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {modelingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common patterns</legend>
-            <div className="win95-grid win95-grid-3">
-              {techniquePanels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pointer movement rules</legend>
-            <div className="win95-grid win95-grid-2">
-              {pointerRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How it works: the pointer loop</legend>
-            <div className="win95-grid win95-grid-3">
-              {algorithmSteps.map((step) => (
-                <div key={step.heading} className="win95-panel">
-                  <div className="win95-heading">{step.heading}</div>
-                  <ul className="win95-list">
-                    {step.bullets.map((bullet) => (
-                      <li key={bullet}>{bullet}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="win98-section">
+                  <h2 className="win98-heading">Overview</h2>
+                  {overviewPanels.map((panel) => (
+                    <div key={panel.title}>
+                      <h3 className="win98-subheading">{panel.title}</h3>
+                      <p>{panel.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-why-it-works" className="win98-section">
+                  <h2 className="win98-heading">Why It Works</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The win comes from monotonic pointer movement. If each pointer only moves forward, the algorithm stays linear.
+                  </p>
+                </section>
+                <hr className="win98-divider" />
+                <section id="bp-takeaways" className="win98-section">
+                  <h2 className="win98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Comparisons with other paradigms</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisonParadigms.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The win comes from monotonic pointer movement. If each pointer only moves forward, the algorithm stays linear.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <ol className="win95-list win95-list--numbered">
-                    {example.steps.map((step) => (
-                      <li key={step}>{step}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-foundations" className="win98-section">
+                  <h2 className="win98-heading">Foundations</h2>
+                  {foundations.map((panel) => (
+                    <p key={panel.title}>
+                      <strong>{panel.title}:</strong> {panel.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-taxonomy" className="win98-section">
+                  <h2 className="win98-heading">Technique Taxonomy</h2>
+                  {taxonomy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-models" className="win98-section">
+                  <h2 className="win98-heading">Core Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-checklist" className="win98-section">
+                  <h2 className="win98-heading">Modeling Checklist</h2>
+                  <ul>
+                    {modelingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-patterns" className="win98-section">
+                  <h2 className="win98-heading">Common Patterns</h2>
+                  {techniquePanels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-rules" className="win98-section">
+                  <h2 className="win98-heading">Pointer Movement Rules</h2>
+                  {pointerRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-loop" className="win98-section">
+                  <h2 className="win98-heading">How It Works: The Pointer Loop</h2>
+                  {algorithmSteps.map((step) => (
+                    <div key={step.heading}>
+                      <h3 className="win98-subheading">{step.heading}</h3>
+                      <ul>
+                        {step.bullets.map((bullet) => (
+                          <li key={bullet}>{bullet}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-comparisons" className="win98-section">
+                  <h2 className="win98-heading">Comparisons with Other Paradigms</h2>
+                  {comparisonParadigms.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="win98-section">
+                  <h2 className="win98-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-table" className="win98-section">
+                  <h2 className="win98-heading">Comparisons at a Glance</h2>
+                  <table className="win98-table">
+                    <thead>
+                      <tr>
+                        <th>Method</th>
+                        <th>Time</th>
+                        <th>Memory</th>
+                        <th>Note</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {comparisonTable.map((row) => (
+                        <tr key={row.method}>
+                          <td>{row.method}</td>
+                          <td>{row.time}</td>
+                          <td>{row.memory}</td>
+                          <td>{row.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+                <section id="core-applications" className="win98-section">
+                  <h2 className="win98-heading">Real-World Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  {applicationsExtended.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p><strong>Failure mode:</strong> {failureStory}</p>
+                </section>
+                <section id="core-pitfalls" className="win98-section">
+                  <h2 className="win98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-debugging" className="win98-section">
+                  <h2 className="win98-heading">Debugging Checklist</h2>
+                  <ul>
+                    {debuggingChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-when-to-use" className="win98-section">
+                  <h2 className="win98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ol>
-                  <p className="win95-text">{example.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Comparisons at a glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Method</th>
-                    <th>Time</th>
-                    <th>Memory</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparisonTable.map((row) => (
-                    <tr key={row.method}>
-                      <td>{row.method}</td>
-                      <td>{row.time}</td>
-                      <td>{row.memory}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                </section>
+                <section id="core-when-to-avoid" className="win98-section">
+                  <h2 className="win98-heading">When to Avoid It</h2>
+                  <ul>
+                    {whenToAvoid.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-advanced" className="win98-section">
+                  <h2 className="win98-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <section id="core-instrumentation" className="win98-section">
+                  <h2 className="win98-heading">Instrumentation That Helps</h2>
+                  {instrumentation.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-stack">
-              <div className="win95-grid win95-grid-2">
-                {applications.map((item) => (
-                  <div key={item.context} className="win95-panel">
-                    <div className="win95-heading">{item.context}</div>
-                    <p className="win95-text">{item.detail}</p>
-                  </div>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="win98-section">
+                  <h2 className="win98-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="win98-subheading">{example.title}</h3>
+                      <ol>
+                        {example.steps.map((step) => (
+                          <li key={step}>{step}</li>
+                        ))}
+                      </ol>
+                      <p>{example.note}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-code" className="win98-section">
+                  <h2 className="win98-heading">Practical Code</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="win98-subheading">{example.title}</h3>
+                      <div className="win98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="win98-section">
+                <h2 className="win98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </div>
-              <div className="win95-grid win95-grid-2">
-                {applicationsExtended.map((item) => (
-                  <div key={item.context} className="win95-panel">
-                    <div className="win95-heading">{item.context}</div>
-                    <p className="win95-text">{item.detail}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <div className="win95-heading">Failure mode</div>
-                <p className="win95-text">{failureStory}</p>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging checklist</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
-                {debuggingChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to avoid it</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {whenToAvoid.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Instrumentation that helps</legend>
-            <div className="win95-grid win95-grid-2">
-              {instrumentation.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
-
