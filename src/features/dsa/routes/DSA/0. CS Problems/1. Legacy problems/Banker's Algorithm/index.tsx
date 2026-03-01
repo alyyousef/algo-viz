@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -24,7 +23,7 @@ const bigPicture = [
     details:
       'Safety vs liveness, conservative resource allocation, and the difference between deadlock avoidance and deadlock prevention.',
     notes:
-      'It formalizes the idea of “can everyone still finish?” before granting resources.',
+      `It formalizes the idea of "can everyone still finish?" before granting resources.`,
   },
 ]
 
@@ -102,7 +101,7 @@ const coreConcepts = [
   {
     title: 'Safety vs progress',
     detail:
-      'Banker’s can delay requests even when the system is not deadlocked, prioritizing safety over immediate progress.',
+      `Banker's can delay requests even when the system is not deadlocked, prioritizing safety over immediate progress.`,
   },
 ]
 
@@ -156,12 +155,12 @@ const howToThink = [
   {
     title: 'Avoidance vs prevention',
     detail:
-      'Banker’s avoids deadlock by checking safety. Prevention forbids one of the deadlock conditions entirely.',
+      `Banker's avoids deadlock by checking safety. Prevention forbids one of the deadlock conditions entirely.`,
   },
   {
     title: 'Requests are provisional',
     detail:
-      'Treat every request as a “what-if.” Temporarily grant it, test safety, then keep or roll back.',
+      `Treat every request as a "what-if." Temporarily grant it, test safety, then keep or roll back.`,
   },
   {
     title: 'It is conservative by design',
@@ -296,12 +295,12 @@ const pitfalls = [
 
 const variants = [
   {
-    title: 'Single-resource Banker’s',
+    title: "Single-resource Banker's",
     detail:
       'Simplified version used for teaching. It reduces the matrix to vectors and makes safety checks easy to visualize.',
   },
   {
-    title: 'Priority-aware Banker’s',
+    title: "Priority-aware Banker's",
     detail:
       'Adds priorities; can still be safe but may bias allocations toward critical processes.',
   },
@@ -316,22 +315,22 @@ const comparisons = [
   {
     title: "Banker's vs deadlock detection",
     detail:
-      'Banker’s avoids unsafe states proactively. Detection allows deadlock and then recovers (e.g., kill processes).',
+      `Banker's avoids unsafe states proactively. Detection allows deadlock and then recovers (e.g., kill processes).`,
   },
   {
-    title: 'Banker’s vs prevention',
+    title: "Banker's vs prevention",
     detail:
-      'Prevention forbids a condition like hold-and-wait. Banker’s allows it but only when safe.',
+      `Prevention forbids a condition like hold-and-wait. Banker's allows it but only when safe.`,
   },
   {
-    title: 'Banker’s vs optimistic allocation',
+    title: "Banker's vs optimistic allocation",
     detail:
-      'Optimistic allocation grants requests immediately and handles failure later. Banker’s is conservative.',
+      `Optimistic allocation grants requests immediately and handles failure later. Banker's is conservative.`,
   },
   {
-    title: 'Banker’s vs lock ordering',
+    title: "Banker's vs lock ordering",
     detail:
-      'Lock ordering is a simple prevention strategy for specific resources; Banker’s is general but heavier.',
+      `Lock ordering is a simple prevention strategy for specific resources; Banker's is general but heavier.`,
   },
 ]
 
@@ -366,12 +365,12 @@ const realWorld = [
   {
     title: 'Databases',
     detail:
-      'Transaction managers sometimes use simplified safety checks or timeouts rather than full Banker’s logic.',
+      `Transaction managers sometimes use simplified safety checks or timeouts rather than full Banker's logic.`,
   },
   {
     title: 'Cloud schedulers',
     detail:
-      'Some schedulers use similar “can we still satisfy all commitments?” checks for resource reservations.',
+      `Some schedulers use similar "can we still satisfy all commitments?" checks for resource reservations.`,
   },
 ]
 
@@ -414,7 +413,7 @@ const whenToUse = [
   {
     title: 'When max claims are known',
     detail:
-      'Banker’s requires processes to declare Max upfront. If claims are unknown, the model breaks.',
+      `Banker's requires processes to declare Max upfront. If claims are unknown, the model breaks.`,
   },
   {
     title: 'When safety is critical',
@@ -442,7 +441,7 @@ const tradeoffs = [
   {
     title: 'Complexity vs simplicity',
     detail:
-      'Banker’s is more complex than lock ordering or timeouts but offers stronger guarantees.',
+      `Banker's is more complex than lock ordering or timeouts but offers stronger guarantees.`,
   },
 ]
 
@@ -460,7 +459,7 @@ const evaluationChecklist = [
   {
     title: 'Performance budget',
     detail:
-      'Are safety checks fast enough for the system’s request rate?',
+      `Are safety checks fast enough for the system's request rate?`,
   },
   {
     title: 'Starvation risk',
@@ -470,320 +469,589 @@ const evaluationChecklist = [
 ]
 
 const keyTakeaways = [
-  'Banker’s Algorithm prevents deadlock by only granting requests that keep the system safe.',
+  `Banker's Algorithm prevents deadlock by only granting requests that keep the system safe.`,
   'Safety depends on the existence of at least one completion order (safe sequence).',
   'It requires processes to declare their maximum resource needs in advance.',
   'It is conservative and can reduce utilization in exchange for safety.',
   'Most real systems use lighter-weight strategies, but the concepts remain essential.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'overview', label: 'Overview' },
+    { id: 'history', label: 'Historical Context' },
+    { id: 'use-cases', label: 'When to Use It' },
+    { id: 'tradeoffs', label: 'Trade-offs' },
+    { id: 'real-world', label: 'Real-World Connections' },
+    { id: 'takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'concepts', label: 'Core Concepts' },
+    { id: 'model', label: 'Data Model' },
+    { id: 'invariants', label: 'Invariants' },
+    { id: 'intuition', label: 'How to Think About It' },
+    { id: 'workflow', label: 'Decision Workflow' },
+    { id: 'safety-test', label: 'Safety Test' },
+    { id: 'request-test', label: 'Request Algorithm' },
+    { id: 'correctness', label: 'Correctness Notes' },
+    { id: 'complexity', label: 'Complexity and Cost' },
+    { id: 'implementation', label: 'Implementation Tips' },
+    { id: 'comparisons', label: 'Compare and Contrast' },
+    { id: 'variants', label: 'Variants and Extensions' },
+    { id: 'pitfalls', label: 'Common Pitfalls' },
+    { id: 'evaluation', label: 'Evaluation Checklist' },
+  ],
+  examples: [
+    { id: 'safe-sequence', label: 'Walkthrough: Safe Sequence' },
+    { id: 'worked-examples', label: 'Worked Examples' },
+  ],
+  glossary: [{ id: 'terms', label: 'Terms' }],
+}
+
+const win98HelpStyles = `
+.banker98-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.banker98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.banker98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+}
+
+.banker98-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.banker98-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.banker98-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  font-size: 11px;
+  line-height: 1;
+  text-decoration: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.banker98-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+  background: #c0c0c0;
+}
+
+.banker98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #000;
+  cursor: pointer;
+}
+
+.banker98-tab.is-active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.banker98-main {
+  display: grid;
+  grid-template-columns: 238px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.banker98-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f1f1f1;
+  border-right: 1px solid #808080;
+}
+
+.banker98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.banker98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.banker98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.banker98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.banker98-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.banker98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.banker98-section {
+  margin: 0 0 20px;
+}
+
+.banker98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.banker98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.banker98-content p,
+.banker98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.banker98-content p {
+  margin: 0 0 10px;
+}
+
+.banker98-content ul,
+.banker98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.banker98-rule {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.banker98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.banker98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .banker98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .banker98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .banker98-title {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+    padding-left: 18px;
+  }
+}
+`
+
 export default function BankersAlgorithmPage(): JSX.Element {
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const currentTab = searchParams.get('tab')
+  const activeTab: TabId = isTabId(currentTab) ? currentTab : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Banker's Algorithm (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Banker&apos;s Algorithm</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Deadlock avoidance by proving the system stays safe</div>
-              <p className="win95-text">
-                Banker&apos;s Algorithm models resource allocation like a cautious bank. It grants requests only if the
-                system can still finish all processes in some order. This makes it the canonical example of
-                deadlock avoidance and a clean way to formalize safe states in operating systems.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="banker98-page">
+      <style>{win98HelpStyles}</style>
+      <div className="banker98-window" role="presentation">
+        <header className="banker98-titlebar">
+          <span className="banker98-title">Banker&apos;s Algorithm</span>
+          <div className="banker98-controls">
+            <button type="button" className="banker98-control" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="banker98-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="banker98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`banker98-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              onClick={() => {
+                const nextParams = new URLSearchParams(searchParams)
+                nextParams.set('tab', tab.id)
+                setSearchParams(nextParams, { replace: true })
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="banker98-main">
+          <aside className="banker98-toc" aria-label="Table of contents">
+            <h2 className="banker98-toc-title">Contents</h2>
+            <ul className="banker98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="banker98-content">
+            <h1 className="banker98-doc-title">Banker&apos;s Algorithm</h1>
+            <p>
+              Banker&apos;s Algorithm models resource allocation like a cautious bank. It grants requests only if the system can still
+              finish all processes in some order. This makes it the canonical example of deadlock avoidance and a clean way to
+              formalize safe states in operating systems.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="overview" className="banker98-section">
+                  <h2 className="banker98-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="banker98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="banker98-rule" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Core Concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreConcepts.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="history" className="banker98-section">
+                  <h2 className="banker98-heading">Historical Context</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="banker98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Data Model</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataModel.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="use-cases" className="banker98-section">
+                  <h2 className="banker98-heading">When to Use It</h2>
+                  {whenToUse.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Invariants to Keep True</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="tradeoffs" className="banker98-section">
+                  <h2 className="banker98-heading">Trade-offs</h2>
+                  {tradeoffs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How to Think About It</legend>
-            <div className="win95-grid win95-grid-2">
-              {howToThink.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="real-world" className="banker98-section">
+                  <h2 className="banker98-heading">Real-World Connections</h2>
+                  {realWorld.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Decision Workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {decisionWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="takeaways" className="banker98-section">
+                  <h2 className="banker98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Safety Algorithm (Safe State Test)</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {safetyAlgorithm.map((step) => (
-                  <li key={step}>{step}</li>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="concepts" className="banker98-section">
+                  <h2 className="banker98-heading">Core Concepts</h2>
+                  {coreConcepts.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="model" className="banker98-section">
+                  <h2 className="banker98-heading">Data Model</h2>
+                  {dataModel.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="invariants" className="banker98-section">
+                  <h2 className="banker98-heading">Invariants to Keep True</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="intuition" className="banker98-section">
+                  <h2 className="banker98-heading">How to Think About It</h2>
+                  {howToThink.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="workflow" className="banker98-section">
+                  <h2 className="banker98-heading">Decision Workflow</h2>
+                  {decisionWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="safety-test" className="banker98-section">
+                  <h2 className="banker98-heading">Safety Algorithm (Safe State Test)</h2>
+                  <ol>
+                    {safetyAlgorithm.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="request-test" className="banker98-section">
+                  <h2 className="banker98-heading">Resource Request Algorithm</h2>
+                  <ol>
+                    {requestAlgorithm.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="correctness" className="banker98-section">
+                  <h2 className="banker98-heading">Correctness Notes</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="complexity" className="banker98-section">
+                  <h2 className="banker98-heading">Complexity and Cost</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="implementation" className="banker98-section">
+                  <h2 className="banker98-heading">Implementation Tips</h2>
+                  {implementationTips.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="comparisons" className="banker98-section">
+                  <h2 className="banker98-heading">Compare and Contrast</h2>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="variants" className="banker98-section">
+                  <h2 className="banker98-heading">Variants and Extensions</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="pitfalls" className="banker98-section">
+                  <h2 className="banker98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="evaluation" className="banker98-section">
+                  <h2 className="banker98-heading">How to Evaluate an Implementation</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="safe-sequence" className="banker98-section">
+                  <h2 className="banker98-heading">Walkthrough: Safe Sequence</h2>
+                  {workedThrough.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="banker98-subheading">{example.title}</h3>
+                      <div className="banker98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="worked-examples" className="banker98-section">
+                  <h2 className="banker98-heading">Worked Examples</h2>
+                  {exampleMatrices.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="banker98-subheading">{example.title}</h3>
+                      <div className="banker98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="terms" className="banker98-section">
+                <h2 className="banker98-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Resource Request Algorithm</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {requestAlgorithm.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and Cost</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Implementation Tips</legend>
-            <div className="win95-grid win95-grid-2">
-              {implementationTips.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants and Extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to Use It</legend>
-            <div className="win95-grid win95-grid-2">
-              {whenToUse.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Trade-offs</legend>
-            <div className="win95-grid win95-grid-2">
-              {tradeoffs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Connections</legend>
-            <div className="win95-grid win95-grid-3">
-              {realWorld.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Walkthrough: Safe Sequence</legend>
-            <div className="win95-stack">
-              {workedThrough.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {exampleMatrices.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate an Implementation</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
