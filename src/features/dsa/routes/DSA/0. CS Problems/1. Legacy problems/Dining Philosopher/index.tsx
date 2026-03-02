@@ -1,37 +1,44 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
     title: 'What It Is',
-    details: 'A classic thought experiment in computer science illustrating synchronization problems.',
-    notes: 'It models a set of processes (philosophers) that need to acquire shared, limited resources (forks) to perform a task (eat).',
+    details:
+      'A classic thought experiment in computer science illustrating synchronization problems.',
+    notes:
+      'It models a set of processes (philosophers) that need to acquire shared, limited resources (forks) to perform a task (eat).',
   },
   {
     title: 'Why It Exists',
     details: 'To expose the dangers of deadlock and resource starvation in concurrent systems.',
-    notes: 'If every philosopher picks up their left fork simultaneously, no one can pick up their right fork, and they all wait forever.',
+    notes:
+      'If every philosopher picks up their left fork simultaneously, no one can pick up their right fork, and they all wait forever.',
   },
   {
     title: 'Where It Shows Up',
-    details: 'Any system with shared resources: operating systems, database transaction managers, network protocols.',
-    notes: 'Think of processes needing exclusive access to files, database records, or hardware peripherals.',
+    details:
+      'Any system with shared resources: operating systems, database transaction managers, network protocols.',
+    notes:
+      'Think of processes needing exclusive access to files, database records, or hardware peripherals.',
   },
 ]
 
 const history = [
   {
     title: '1965: Proposed by Edsger Dijkstra',
-    details: 'Dijkstra originally framed the problem as five computers trying to access five shared tape drives.',
+    details:
+      'Dijkstra originally framed the problem as five computers trying to access five shared tape drives.',
     notes: 'His goal was to illustrate a specific deadlock scenario in a clear, memorable way.',
   },
   {
     title: '1971: Popularized by Tony Hoare',
-    details: 'Hoare, another titan of computer science, gave the problem its now-famous "Dining Philosophers" formulation.',
-    notes: 'This analogy made the abstract problem of resource allocation much more intuitive and widely taught.',
+    details:
+      'Hoare, another titan of computer science, gave the problem its now-famous "Dining Philosophers" formulation.',
+    notes:
+      'This analogy made the abstract problem of resource allocation much more intuitive and widely taught.',
   },
 ]
 
@@ -61,13 +68,16 @@ const pillars = [
 const mentalModels = [
   {
     title: 'Roundtable Meeting',
-    details: 'Imagine a meeting where everyone needs two specific documents to review. Each person grabs the document on their left. Now they all must wait for the person on their right to finish with the document they need. No one can proceed.',
+    details:
+      'Imagine a meeting where everyone needs two specific documents to review. Each person grabs the document on their left. Now they all must wait for the person on their right to finish with the document they need. No one can proceed.',
     notes: 'This maps directly to the philosophers, forks, and the resulting deadlock.',
   },
   {
     title: 'Single-Track Train Tunnel',
-    details: 'Two trains enter a long, single-track tunnel from opposite ends. They meet in the middle. Neither can move forward, and neither can back up easily. They are deadlocked.',
-    notes: 'This analogy is good for mutual exclusion and deadlock, but less so for the "circular" wait aspect of the multi-process original problem.',
+    details:
+      'Two trains enter a long, single-track tunnel from opposite ends. They meet in the middle. Neither can move forward, and neither can back up easily. They are deadlocked.',
+    notes:
+      'This analogy is good for mutual exclusion and deadlock, but less so for the "circular" wait aspect of the multi-process original problem.',
   },
 ]
 
@@ -75,12 +85,14 @@ const howItWorks = [
   {
     step: 1,
     title: 'The Setup',
-    details: 'Five silent philosophers sit at a round table. In the center is a large bowl of spaghetti. Between each pair of adjacent philosophers is a single fork.',
+    details:
+      'Five silent philosophers sit at a round table. In the center is a large bowl of spaghetti. Between each pair of adjacent philosophers is a single fork.',
   },
   {
     step: 2,
     title: 'The Goal',
-    details: 'To eat, a philosopher needs two forks: the one on their left and the one on their right. They can only pick up one fork at a time.',
+    details:
+      'To eat, a philosopher needs two forks: the one on their left and the one on their right. They can only pick up one fork at a time.',
   },
   {
     step: 3,
@@ -127,7 +139,8 @@ const applications = [
   {
     domain: 'Operating Systems',
     useCase: 'Process Scheduling',
-    details: 'OS schedulers manage processes that request exclusive access to resources like CPU cores, files, or printers. A deadlock here can freeze the entire system.',
+    details:
+      'OS schedulers manage processes that request exclusive access to resources like CPU cores, files, or printers. A deadlock here can freeze the entire system.',
     why: 'The OS must act as a "waiter" or enforce a resource hierarchy to prevent processes from deadlocking over I/O devices or kernel data structures.',
   },
   {
@@ -167,7 +180,8 @@ const pitfalls = [
 const whenToUse = [
   {
     criteria: 'As an educational tool',
-    guidance: 'It is the go-to example for introducing concurrency issues like deadlock and starvation in any CS curriculum.',
+    guidance:
+      'It is the go-to example for introducing concurrency issues like deadlock and starvation in any CS curriculum.',
   },
   {
     criteria: 'During system design reviews',
@@ -215,7 +229,7 @@ class Philosopher(threading.Thread):
             print(f"{self.name} is thinking.")
             time.sleep(random.randint(1, 5))
             print(f"{self.name} is hungry.")
-            
+
             # This is the danger zone!
             self.left_fork.acquire()
             print(f"{self.name} picked up left fork.")
@@ -251,13 +265,13 @@ import (
 )
 
 type Philosopher struct {
-    id              int
+    id                  int
     leftFork, rightFork int
 }
 
 func (p *Philosopher) dine(wg *sync.WaitGroup, forks []*sync.Mutex) {
     defer wg.Done()
-    fmt.Printf("Philosopher %d is thinking.\n", p.id)
+    fmt.Printf("Philosopher %d is thinking.\\n", p.id)
     time.Sleep(time.Second)
 
     // Enforce hierarchy: always lock smaller index fork first
@@ -268,13 +282,13 @@ func (p *Philosopher) dine(wg *sync.WaitGroup, forks []*sync.Mutex) {
         forks[p.rightFork].Lock()
         forks[p.leftFork].Lock()
     }
-    
-    fmt.Printf("Philosopher %d is eating.\n", p.id)
+
+    fmt.Printf("Philosopher %d is eating.\\n", p.id)
     time.Sleep(time.Second)
 
     forks[p.leftFork].Unlock()
     forks[p.rightFork].Unlock()
-    fmt.Printf("Philosopher %d is done eating.\n", p.id)
+    fmt.Printf("Philosopher %d is done eating.\\n", p.id)
 }
 
 func main() {
@@ -314,214 +328,603 @@ const keyTakeaways = [
   'Beware of solutions that prevent deadlock but introduce starvation or livelock.',
 ]
 
-export default function DiningPhilosophersPage(): JSX.Element {
+const glossary = [
+  {
+    term: 'Deadlock',
+    definition:
+      'A state where each participant is waiting forever for a resource held by someone else.',
+  },
+  {
+    term: 'Starvation',
+    definition:
+      'A process repeatedly loses access to resources and never makes progress, even though the system keeps running.',
+  },
+  {
+    term: 'Livelock',
+    definition:
+      'Processes keep reacting to each other and changing state, but useful work never completes.',
+  },
+  {
+    term: 'Mutual Exclusion',
+    definition: 'A resource can be held by only one participant at a time.',
+  },
+  {
+    term: 'Hold and Wait',
+    definition: 'A participant keeps one resource while waiting for another.',
+  },
+  {
+    term: 'No Preemption',
+    definition: 'A resource cannot be forcibly taken away; it must be released voluntarily.',
+  },
+  {
+    term: 'Circular Wait',
+    definition: 'Each participant waits on the next participant in a closed dependency cycle.',
+  },
+  {
+    term: 'Resource Hierarchy',
+    definition: 'An ordering rule that forces resources to be acquired in a consistent sequence.',
+  },
+  {
+    term: 'Arbitrator / Waiter',
+    definition: 'A central authority that controls who is allowed to request resources.',
+  },
+  {
+    term: 'Chandy/Misra',
+    definition: 'A distributed, fairness-oriented solution that tracks clean and dirty forks.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const diningHelpStyles = `
+.dp-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.dp-help-window {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.dp-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dp-help-title {
+  position: absolute;
+  inset: 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.dp-help-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.dp-help-control {
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dp-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+  background: #c0c0c0;
+}
+
+.dp-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  color: #000;
+  padding: 5px 10px 4px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dp-help-tab.is-active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.dp-help-main {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-top: 1px solid #404040;
+}
+
+.dp-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.dp-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dp-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dp-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.dp-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.dp-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.dp-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dp-help-section {
+  margin: 0 0 20px;
+}
+
+.dp-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dp-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dp-help-content p,
+.dp-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.dp-help-content p {
+  margin: 0 0 10px;
+}
+
+.dp-help-content ul,
+.dp-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.dp-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.dp-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  overflow: auto;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.dp-help-codebox code {
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+}
+
+@media (max-width: 900px) {
+  .dp-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dp-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 560px) {
+  .dp-help-title {
+    inset: 0 44px;
+    font-size: 13px;
+  }
+
+  .dp-help-content {
+    padding: 12px 14px 16px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Deadlock Conditions' },
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-solutions', label: 'Solution Strategies' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-when', label: 'When To Apply It' },
+    { id: 'core-advanced', label: 'Advanced Considerations' },
+  ],
+  examples: [
+    { id: 'ex-scenario', label: 'Step-by-Step Scenario' },
+    { id: 'ex-applications', label: 'Real-World Applications' },
+    { id: 'ex-code', label: 'Code Examples' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Dining Philosophers</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">The classic concurrency puzzle about deadlock and resource starvation</div>
-              <p className="win95-text">
-                The Dining Philosophers problem is a thought experiment that illustrates a set of fundamental challenges in concurrent
-                programming. When multiple processes must compete for a finite set of shared resources, how do you design a protocol
-                that ensures nobody gets stuck waiting forever?
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    value === 'big-picture' ||
+    value === 'core-concepts' ||
+    value === 'examples' ||
+    value === 'glossary'
+  )
+}
+
+export default function DiningPhilosophersPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Dining Philosophers (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams)
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Dining Philosophers',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+
+    void navigate('/algoViz')
+  }
+
+  return (
+    <div className="dp-help-page">
+      <style>{diningHelpStyles}</style>
+      <div className="dp-help-window" role="presentation">
+        <header className="dp-help-titlebar">
+          <span className="dp-help-title">Dining Philosophers</span>
+          <div className="dp-help-controls">
+            <button
+              className="dp-help-control"
+              type="button"
+              aria-label="Minimize"
+              onClick={handleMinimize}
+            >
+              _
+            </button>
+            <Link to="/algoViz" className="dp-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="dp-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`dp-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="dp-help-main">
+          <aside className="dp-help-toc" aria-label="Table of contents">
+            <h2 className="dp-help-toc-title">Contents</h2>
+            <ul className="dp-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="dp-help-content">
+            <h1 className="dp-help-doc-title">Dining Philosophers</h1>
+            <p>
+              The Dining Philosophers problem is a thought experiment that illustrates a set of
+              fundamental challenges in concurrent programming. When multiple processes must compete
+              for a finite set of shared resources, how do you design a protocol that ensures nobody
+              gets stuck waiting forever?
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Four Conditions of Deadlock (The Pillars)</legend>
-            <div className="win95-grid win95-grid-2">
-              {pillars.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mental Models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How It Works: A Step-by-Step Scenario</legend>
-            <div className="win95-grid win95-grid-2">
-              {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">
-                    Step {item.step}: {item.title}
-                  </div>
-                  <p className="win95-text">{item.details}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity & Solutions</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time Complexity</th>
-                    <th>Space Complexity</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="dp-help-section">
+                  <h2 className="dp-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dp-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Applications</legend>
-            <div className="win95-grid win95-grid-3">
-              {applications.map((app) => (
-                <div key={app.useCase} className="win95-panel">
-                  <div className="win95-heading">{app.domain}</div>
-                  <div className="win95-subheading">{app.useCase}</div>
-                  <p className="win95-text">{app.details}</p>
-                  <p className="win95-text">{app.why}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">A Failure Story: Therac-25</div>
-              <p className="win95-text">
-                The Therac-25 radiation therapy machine (1980s) was responsible for several patient deaths due to massive overdoses of
-                radiation. One root cause was a race condition, a problem related to concurrency control. The software controlling the
-                machine had no proper locking mechanism (like the forks for philosophers), allowing a fast-typing operator to enter
-                settings in a way the developers did not anticipate, putting the machine into an unsafe state that delivered lethal
-                radiation. It serves as a grim reminder that concurrency bugs can have catastrophic, real-world consequences.
-              </p>
-            </div>
-          </fieldset>
+                <hr className="dp-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls & Traps</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+                <section id="bp-history" className="dp-help-section">
+                  <h2 className="dp-help-heading">Historical Context</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dp-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <hr className="dp-help-divider" />
+
+                <section id="bp-takeaways" className="dp-help-section">
+                  <h2 className="dp-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="dp-help-section">
+                  <h2 className="dp-help-heading">The Four Conditions of Deadlock</h2>
+                  {pillars.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dp-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-mental-models" className="dp-help-section">
+                  <h2 className="dp-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dp-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-solutions" className="dp-help-section">
+                  <h2 className="dp-help-heading">Solution Strategies</h2>
+                  {complexityTable.map((row) => (
+                    <div key={row.approach}>
+                      <h3 className="dp-help-subheading">{row.approach}</h3>
+                      <p>
+                        <strong>Time:</strong> {row.time}
+                      </p>
+                      <p>
+                        <strong>Space:</strong> {row.space}
+                      </p>
+                      <p>{row.note}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="dp-help-section">
+                  <h2 className="dp-help-heading">Common Pitfalls and Traps</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-when" className="dp-help-section">
+                  <h2 className="dp-help-heading">When To Think About This Problem</h2>
+                  <ul>
+                    {whenToUse.map((item) => (
+                      <li key={item.criteria}>
+                        <strong>{item.criteria}:</strong> {item.guidance}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-advanced" className="dp-help-section">
+                  <h2 className="dp-help-heading">Advanced Considerations</h2>
+                  {advanced.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dp-help-subheading">{item.title}</h3>
+                      <p>{item.rationale}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-scenario" className="dp-help-section">
+                  <h2 className="dp-help-heading">Step-by-Step Scenario</h2>
+                  <ol>
+                    {howItWorks.map((item) => (
+                      <li key={item.step}>
+                        <strong>
+                          Step {item.step}: {item.title}
+                        </strong>{' '}
+                        {item.details}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="ex-applications" className="dp-help-section">
+                  <h2 className="dp-help-heading">Real-World Applications</h2>
+                  {applications.map((app) => (
+                    <div key={app.useCase}>
+                      <h3 className="dp-help-subheading">
+                        {app.domain}: {app.useCase}
+                      </h3>
+                      <p>{app.details}</p>
+                      <p>{app.why}</p>
+                    </div>
+                  ))}
+                  <h3 className="dp-help-subheading">A Failure Story: Therac-25</h3>
+                  <p>
+                    The Therac-25 radiation therapy machine (1980s) was responsible for several
+                    patient deaths due to massive overdoses of radiation. One root cause was a race
+                    condition, a problem related to concurrency control. The software controlling
+                    the machine had no proper locking mechanism (like the forks for philosophers),
+                    allowing a fast-typing operator to enter settings in a way the developers did
+                    not anticipate, putting the machine into an unsafe state that delivered lethal
+                    radiation. It serves as a grim reminder that concurrency bugs can have
+                    catastrophic, real-world consequences.
+                  </p>
+                </section>
+
+                <section id="ex-code" className="dp-help-section">
+                  <h2 className="dp-help-heading">Code Examples</h2>
+                  {codeExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="dp-help-subheading">
+                        {example.title} ({example.language})
+                      </h3>
+                      <pre className="dp-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </pre>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="dp-help-section">
+                <h2 className="dp-help-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to Think About This Problem</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {whenToUse.map((item) => (
-                  <li key={item.criteria}>
-                    <strong>{item.criteria}:</strong> {item.guidance}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced Considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.rationale}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Code Examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
