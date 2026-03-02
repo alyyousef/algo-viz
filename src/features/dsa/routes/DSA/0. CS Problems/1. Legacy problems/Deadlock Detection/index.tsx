@@ -1,53 +1,44 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
     title: 'What it is',
     details:
       'Deadlock detection identifies cycles of waiting processes and determines which resources are involved.',
-    notes:
-      'Unlike avoidance, it allows deadlocks to occur and then detects them.',
+    notes: 'Unlike avoidance, it allows deadlocks to occur and then detects them.',
   },
   {
     title: 'Why it matters',
     details:
       'Deadlocks can freeze systems. Detection lets you recover instead of over-constraining allocation.',
-    notes:
-      'Many real systems favor detection + recovery over conservative avoidance.',
+    notes: 'Many real systems favor detection + recovery over conservative avoidance.',
   },
   {
     title: 'What it teaches',
-    details:
-      'Graph modeling of waits, cycles, and resource ownership.',
-    notes:
-      'It distinguishes deadlock detection from prevention and avoidance.',
+    details: 'Graph modeling of waits, cycles, and resource ownership.',
+    notes: 'It distinguishes deadlock detection from prevention and avoidance.',
   },
 ]
 
 const quickGlossary = [
   {
     term: 'Wait-for edge',
-    definition:
-      'A directed edge P1 -> P2 meaning P1 is blocked waiting for a resource held by P2.',
+    definition: 'A directed edge P1 -> P2 meaning P1 is blocked waiting for a resource held by P2.',
   },
   {
     term: 'Deadlock set',
-    definition:
-      'The set of processes involved in a deadlock cycle.',
+    definition: 'The set of processes involved in a deadlock cycle.',
   },
   {
     term: 'Victim',
-    definition:
-      'A process chosen to terminate or roll back to break the deadlock.',
+    definition: 'A process chosen to terminate or roll back to break the deadlock.',
   },
   {
     term: 'Detection interval',
-    definition:
-      'How often the system runs the detection algorithm (periodic or on-demand).',
+    definition: 'How often the system runs the detection algorithm (periodic or on-demand).',
   },
 ]
 
@@ -56,15 +47,12 @@ const history = [
     title: '1970s: Formal models',
     details:
       'Resource allocation graphs and wait-for graphs became standard ways to model deadlock.',
-    notes:
-      'Detection algorithms were adapted from graph cycle detection and safety tests.',
+    notes: 'Detection algorithms were adapted from graph cycle detection and safety tests.',
   },
   {
     title: 'Modern systems',
-    details:
-      'Databases and distributed systems often include deadlock detectors.',
-    notes:
-      'Detection enables higher concurrency with periodic cleanup of unsafe states.',
+    details: 'Databases and distributed systems often include deadlock detectors.',
+    notes: 'Detection enables higher concurrency with periodic cleanup of unsafe states.',
   },
 ]
 
@@ -81,13 +69,12 @@ const coreConcepts = [
   },
   {
     title: 'Cycle detection',
-    detail:
-      'In single-instance resources, any cycle in a wait-for graph indicates deadlock.',
+    detail: 'In single-instance resources, any cycle in a wait-for graph indicates deadlock.',
   },
   {
     title: 'Multiple-instance resources',
     detail:
-      'Cycles are not sufficient; you need a detection algorithm similar to Banker’s safety test.',
+      "Cycles are not sufficient; you need a detection algorithm similar to Banker's safety test.",
   },
   {
     title: 'Single vs multiple instances',
@@ -104,8 +91,7 @@ const resourceGraphs = [
   },
   {
     title: 'Wait-for graph (WFG)',
-    detail:
-      'Only processes as nodes. Edge P1 -> P2 if P1 is waiting for a resource held by P2.',
+    detail: 'Only processes as nodes. Edge P1 -> P2 if P1 is waiting for a resource held by P2.',
   },
   {
     title: 'Graph construction',
@@ -117,36 +103,30 @@ const resourceGraphs = [
 const howToThink = [
   {
     title: 'Deadlock = circular wait',
-    detail:
-      'If each process holds at least one resource and waits for another, a cycle can form.',
+    detail: 'If each process holds at least one resource and waits for another, a cycle can form.',
   },
   {
     title: 'Detect, then recover',
-    detail:
-      'Detection is only half the story. You must decide how to break the deadlock.',
+    detail: 'Detection is only half the story. You must decide how to break the deadlock.',
   },
   {
     title: 'Trade-off with avoidance',
-    detail:
-      'Detection allows more concurrency but accepts that some work may be rolled back.',
+    detail: 'Detection allows more concurrency but accepts that some work may be rolled back.',
   },
   {
     title: 'Detect late, recover fast',
-    detail:
-      'Detection is only valuable if recovery can restore progress quickly.',
+    detail: 'Detection is only valuable if recovery can restore progress quickly.',
   },
 ]
 
 const algorithms = [
   {
     title: 'Wait-for graph cycle detection',
-    detail:
-      'Convert resource allocation graph to a wait-for graph and look for cycles.',
+    detail: 'Convert resource allocation graph to a wait-for graph and look for cycles.',
   },
   {
     title: 'Matrix-based detection (multi-instance)',
-    detail:
-      'Use Allocation, Request, and Available matrices to find if processes can finish.',
+    detail: 'Use Allocation, Request, and Available matrices to find if processes can finish.',
   },
   {
     title: 'Distributed detection',
@@ -158,8 +138,7 @@ const algorithms = [
 const detectionWorkflow = [
   {
     title: 'Build the model',
-    detail:
-      'Gather Allocation and Request data (or build a wait-for graph).',
+    detail: 'Gather Allocation and Request data (or build a wait-for graph).',
   },
   {
     title: 'Run detection',
@@ -168,13 +147,11 @@ const detectionWorkflow = [
   },
   {
     title: 'Identify victims',
-    detail:
-      'Select processes to terminate or roll back based on cost, priority, or age.',
+    detail: 'Select processes to terminate or roll back based on cost, priority, or age.',
   },
   {
     title: 'Recover and resume',
-    detail:
-      'Preempt resources or abort processes, then resume the remaining processes.',
+    detail: 'Preempt resources or abort processes, then resume the remaining processes.',
   },
 ]
 
@@ -188,8 +165,7 @@ const detectionSteps = [
 const correctnessNotes = [
   {
     title: 'Soundness (single-instance)',
-    detail:
-      'A cycle in a wait-for graph is both necessary and sufficient for deadlock.',
+    detail: 'A cycle in a wait-for graph is both necessary and sufficient for deadlock.',
   },
   {
     title: 'Soundness (multiple-instance)',
@@ -198,67 +174,56 @@ const correctnessNotes = [
   },
   {
     title: 'False positives',
-    detail:
-      'Cycle detection can over-report deadlock when resources have multiple instances.',
+    detail: 'Cycle detection can over-report deadlock when resources have multiple instances.',
   },
 ]
 
 const recoveryStrategies = [
   {
     title: 'Process termination',
-    detail:
-      'Abort one or more processes to break the cycle. Choose victims by cost or priority.',
+    detail: 'Abort one or more processes to break the cycle. Choose victims by cost or priority.',
   },
   {
     title: 'Resource preemption',
-    detail:
-      'Temporarily take resources from a process and roll it back to a safe point.',
+    detail: 'Temporarily take resources from a process and roll it back to a safe point.',
   },
   {
     title: 'Rollback and retry',
-    detail:
-      'Common in databases: kill a transaction and let it restart.',
+    detail: 'Common in databases: kill a transaction and let it restart.',
   },
   {
     title: 'Manual intervention',
-    detail:
-      'Some systems require operators to choose which job to kill.',
+    detail: 'Some systems require operators to choose which job to kill.',
   },
 ]
 
 const victimSelection = [
   {
     title: 'Minimize rollback cost',
-    detail:
-      'Choose the process with least work done or cheapest recovery.',
+    detail: 'Choose the process with least work done or cheapest recovery.',
   },
   {
     title: 'Priority-aware',
-    detail:
-      'Prefer to kill low-priority or batch jobs rather than interactive tasks.',
+    detail: 'Prefer to kill low-priority or batch jobs rather than interactive tasks.',
   },
   {
     title: 'Age and fairness',
-    detail:
-      'Avoid always killing the same process; rotate victims or use aging.',
+    detail: 'Avoid always killing the same process; rotate victims or use aging.',
   },
 ]
 
 const detectionPolicy = [
   {
     title: 'Periodic detection',
-    detail:
-      'Run every N seconds or on a schedule to control overhead.',
+    detail: 'Run every N seconds or on a schedule to control overhead.',
   },
   {
     title: 'On-demand detection',
-    detail:
-      'Trigger when a request blocks too long or a timeout fires.',
+    detail: 'Trigger when a request blocks too long or a timeout fires.',
   },
   {
     title: 'Hybrid strategy',
-    detail:
-      'Run a lightweight check on demand and a full detection periodically.',
+    detail: 'Run a lightweight check on demand and a full detection periodically.',
   },
 ]
 
@@ -270,8 +235,7 @@ const comparisons = [
   },
   {
     title: 'Detection vs prevention',
-    detail:
-      'Prevention forbids one of the deadlock conditions entirely; detection accepts risk.',
+    detail: 'Prevention forbids one of the deadlock conditions entirely; detection accepts risk.',
   },
   {
     title: 'Detection vs timeouts',
@@ -283,8 +247,7 @@ const comparisons = [
 const tradeoffs = [
   {
     title: 'Concurrency vs overhead',
-    detail:
-      'Detection allows more concurrency but costs CPU to analyze graphs or matrices.',
+    detail: 'Detection allows more concurrency but costs CPU to analyze graphs or matrices.',
   },
   {
     title: 'False positives vs delays',
@@ -293,16 +256,14 @@ const tradeoffs = [
   },
   {
     title: 'Recovery cost',
-    detail:
-      'Terminating or rolling back processes can be expensive and disruptive.',
+    detail: 'Terminating or rolling back processes can be expensive and disruptive.',
   },
 ]
 
 const pitfalls = [
   {
     mistake: 'Assuming a cycle always means deadlock',
-    description:
-      'In multiple-instance resources, cycles can exist without deadlock.',
+    description: 'In multiple-instance resources, cycles can exist without deadlock.',
   },
   {
     mistake: 'Ignoring recovery cost',
@@ -311,8 +272,7 @@ const pitfalls = [
   },
   {
     mistake: 'Running detection too often',
-    description:
-      'Frequent detection adds overhead. Many systems run it periodically.',
+    description: 'Frequent detection adds overhead. Many systems run it periodically.',
   },
 ]
 
@@ -324,31 +284,26 @@ const realWorldPatterns = [
   },
   {
     title: 'Kernel lock debugging',
-    detail:
-      'Some kernels build lock graphs to detect cycles for diagnostics.',
+    detail: 'Some kernels build lock graphs to detect cycles for diagnostics.',
   },
   {
     title: 'Distributed detection',
-    detail:
-      'Edge-chasing (probe) algorithms detect global cycles across nodes.',
+    detail: 'Edge-chasing (probe) algorithms detect global cycles across nodes.',
   },
 ]
 
 const realWorld = [
   {
     title: 'Databases',
-    detail:
-      'Deadlock detection kills one transaction to allow others to proceed.',
+    detail: 'Deadlock detection kills one transaction to allow others to proceed.',
   },
   {
     title: 'Operating systems',
-    detail:
-      'OS kernels may detect lock cycles for debugging or runtime recovery.',
+    detail: 'OS kernels may detect lock cycles for debugging or runtime recovery.',
   },
   {
     title: 'Distributed systems',
-    detail:
-      'Global deadlock detection is harder due to message delays and partial visibility.',
+    detail: 'Global deadlock detection is harder due to message delays and partial visibility.',
   },
 ]
 
@@ -362,8 +317,7 @@ P3 holds C, requests A
 
 Wait-for graph:
 P1 -> P2 -> P3 -> P1 (cycle)`,
-    explanation:
-      'This is a deadlock: each process waits for a resource held by the next.',
+    explanation: 'This is a deadlock: each process waits for a resource held by the next.',
   },
   {
     title: 'Multiple-instance detection',
@@ -376,31 +330,26 @@ P0: [0, 1]
 P1: [1, 0]
 
 No process can proceed => deadlock set {P0, P1}`,
-    explanation:
-      'Matrix detection shows both processes are stuck given available resources.',
+    explanation: 'Matrix detection shows both processes are stuck given available resources.',
   },
 ]
 
 const evaluationChecklist = [
   {
     title: 'Detection accuracy',
-    detail:
-      'Does the algorithm correctly identify deadlocked sets for the resource model?',
+    detail: 'Does the algorithm correctly identify deadlocked sets for the resource model?',
   },
   {
     title: 'Recovery effectiveness',
-    detail:
-      'Does the chosen recovery strategy actually break the cycle quickly?',
+    detail: 'Does the chosen recovery strategy actually break the cycle quickly?',
   },
   {
     title: 'Operational overhead',
-    detail:
-      'Is detection frequency tuned to avoid excessive CPU use?',
+    detail: 'Is detection frequency tuned to avoid excessive CPU use?',
   },
   {
     title: 'Fairness and stability',
-    detail:
-      'Are the same processes repeatedly killed? Do you prevent starvation?',
+    detail: 'Are the same processes repeatedly killed? Do you prevent starvation?',
   },
 ]
 
@@ -408,8 +357,7 @@ const examples = [
   {
     title: 'Wait-for cycle',
     code: `P1 -> P2 -> P3 -> P1`,
-    explanation:
-      'In single-instance resources, this cycle indicates deadlock.',
+    explanation: 'In single-instance resources, this cycle indicates deadlock.',
   },
   {
     title: 'Matrix detection sketch',
@@ -419,8 +367,7 @@ while exists i with Request[i] <= Work:
   Work += Allocation[i]
   Finish[i] = true
 Deadlocked = all i where Finish[i] == false`,
-    explanation:
-      'Processes that cannot finish are considered deadlocked.',
+    explanation: 'Processes that cannot finish are considered deadlocked.',
   },
 ]
 
@@ -431,302 +378,600 @@ const keyTakeaways = [
   'Recovery policy is as important as detection accuracy.',
 ]
 
-export default function DeadlockDetectionPage(): JSX.Element {
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const deadlockHelpStyles = `
+.dd-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.dd-help-window {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.dd-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dd-help-title {
+  position: absolute;
+  inset: 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.dd-help-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.dd-help-control {
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dd-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+  background: #c0c0c0;
+}
+
+.dd-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  color: #000;
+  padding: 5px 10px 4px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dd-help-tab.is-active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.dd-help-main {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-top: 1px solid #404040;
+}
+
+.dd-help-toc {
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+}
+
+.dd-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dd-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dd-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.dd-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.dd-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.dd-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dd-help-section {
+  margin: 0 0 20px;
+}
+
+.dd-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dd-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dd-help-content p,
+.dd-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.dd-help-content p {
+  margin: 0 0 10px;
+}
+
+.dd-help-content ul,
+.dd-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.dd-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.dd-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  overflow: auto;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.dd-help-codebox code {
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+}
+
+@media (max-width: 900px) {
+  .dd-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dd-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 560px) {
+  .dd-help-title {
+    inset: 0 44px;
+    font-size: 13px;
+  }
+
+  .dd-help-content {
+    padding: 12px 14px 16px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-foundations', label: 'Foundations' },
+    { id: 'core-graphs', label: 'Graph Models' },
+    { id: 'core-thinking', label: 'How To Think About It' },
+    { id: 'core-workflow', label: 'Detection Workflow' },
+    { id: 'core-algorithms', label: 'Detection Algorithms' },
+    { id: 'core-correctness', label: 'Correctness Notes' },
+    { id: 'core-recovery', label: 'Recovery Strategies' },
+    { id: 'core-policy', label: 'Policy and Trade-offs' },
+    { id: 'core-evaluation', label: 'Evaluation Checklist' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-steps', label: 'Matrix Detection Steps' },
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-snippets', label: 'Algorithm Sketches' },
+    { id: 'ex-real-world', label: 'Real-World Use' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Deadlock Detection</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Finding and resolving circular wait conditions</div>
-              <p className="win95-text">
-                Deadlock detection is the pragmatic alternative to deadlock avoidance. Instead of preventing
-                unsafe allocations, the system permits them and periodically checks whether processes are
-                stuck in a circular wait. If so, it chooses a recovery strategy to break the deadlock.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    value === 'big-picture' ||
+    value === 'core-concepts' ||
+    value === 'examples' ||
+    value === 'glossary'
+  )
+}
+
+export default function DeadlockDetectionPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Deadlock Detection (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams)
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Deadlock Detection',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+
+    void navigate('/algoViz')
+  }
+
+  return (
+    <div className="dd-help-page">
+      <style>{deadlockHelpStyles}</style>
+      <div className="dd-help-window" role="presentation">
+        <header className="dd-help-titlebar">
+          <span className="dd-help-title">Deadlock Detection</span>
+          <div className="dd-help-controls">
+            <button
+              className="dd-help-control"
+              type="button"
+              aria-label="Minimize"
+              onClick={handleMinimize}
+            >
+              _
+            </button>
+            <Link to="/algoViz" className="dd-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="dd-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`dd-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="dd-help-main">
+          <aside className="dd-help-toc" aria-label="Table of contents">
+            <h2 className="dd-help-toc-title">Contents</h2>
+            <ul className="dd-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="dd-help-content">
+            <h1 className="dd-help-doc-title">Deadlock Detection</h1>
+            <p>
+              Deadlock detection is the pragmatic alternative to deadlock avoidance. Instead of
+              preventing unsafe allocations, the system permits them and periodically checks whether
+              processes are stuck in a circular wait. If so, it chooses a recovery strategy to break
+              the deadlock.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="dd-help-section">
+                  <h2 className="dd-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dd-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core Concepts</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreConcepts.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="dd-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Graph Models</legend>
-            <div className="win95-grid win95-grid-2">
-              {resourceGraphs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-history" className="dd-help-section">
+                  <h2 className="dd-help-heading">Historical Context</h2>
+                  {history.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dd-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How to Think About It</legend>
-            <div className="win95-grid win95-grid-2">
-              {howToThink.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="dd-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Detection Workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {detectionWorkflow.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-takeaways" className="dd-help-section">
+                  <h2 className="dd-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Detection Algorithms</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithms.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-foundations" className="dd-help-section">
+                  <h2 className="dd-help-heading">Foundations</h2>
+                  {coreConcepts.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Matrix-Based Detection Steps</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {detectionSteps.map((step) => (
-                  <li key={step}>{step}</li>
+                <section id="core-graphs" className="dd-help-section">
+                  <h2 className="dd-help-heading">Graph Models</h2>
+                  {resourceGraphs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-thinking" className="dd-help-section">
+                  <h2 className="dd-help-heading">How To Think About It</h2>
+                  {howToThink.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-workflow" className="dd-help-section">
+                  <h2 className="dd-help-heading">Detection Workflow</h2>
+                  {detectionWorkflow.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-algorithms" className="dd-help-section">
+                  <h2 className="dd-help-heading">Detection Algorithms</h2>
+                  {algorithms.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-correctness" className="dd-help-section">
+                  <h2 className="dd-help-heading">Correctness Notes</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-recovery" className="dd-help-section">
+                  <h2 className="dd-help-heading">Recovery Strategies</h2>
+                  {recoveryStrategies.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="dd-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                  <h3 className="dd-help-subheading">Victim Selection Criteria</h3>
+                  {victimSelection.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-policy" className="dd-help-section">
+                  <h2 className="dd-help-heading">Policy and Trade-offs</h2>
+                  <h3 className="dd-help-subheading">Detection Policy</h3>
+                  {detectionPolicy.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="dd-help-subheading">Compare and Contrast</h3>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="dd-help-subheading">Trade-offs</h3>
+                  {tradeoffs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-evaluation" className="dd-help-section">
+                  <h2 className="dd-help-heading">How To Evaluate a Detector</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="dd-help-section">
+                  <h2 className="dd-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-steps" className="dd-help-section">
+                  <h2 className="dd-help-heading">Matrix-Based Detection Steps</h2>
+                  <ol>
+                    {detectionSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="ex-worked" className="dd-help-section">
+                  <h2 className="dd-help-heading">Worked Examples</h2>
+                  {workedExample.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="dd-help-subheading">{example.title}</h3>
+                      <pre className="dd-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </pre>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-snippets" className="dd-help-section">
+                  <h2 className="dd-help-heading">Algorithm Sketches</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="dd-help-subheading">{example.title}</h3>
+                      <pre className="dd-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </pre>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-real-world" className="dd-help-section">
+                  <h2 className="dd-help-heading">Real-World Use</h2>
+                  <h3 className="dd-help-subheading">Patterns</h3>
+                  {realWorldPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="dd-help-subheading">Connections</h3>
+                  {realWorld.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="dd-help-section">
+                <h2 className="dd-help-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Recovery Strategies</legend>
-            <div className="win95-grid win95-grid-2">
-              {recoveryStrategies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Victim Selection Criteria</legend>
-            <div className="win95-grid win95-grid-2">
-              {victimSelection.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Detection Policy</legend>
-            <div className="win95-grid win95-grid-2">
-              {detectionPolicy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Trade-offs</legend>
-            <div className="win95-grid win95-grid-2">
-              {tradeoffs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Patterns</legend>
-            <div className="win95-grid win95-grid-3">
-              {realWorldPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Connections</legend>
-            <div className="win95-grid win95-grid-3">
-              {realWorld.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExample.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate a Detector</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
