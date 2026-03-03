@@ -1,9 +1,7 @@
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -47,7 +45,7 @@ const historicalContext = [
   {
     title: '1970s+: Dinic and beyond',
     details:
-      'Dinic?s blocking-flow algorithm improved practical performance and asymptotic bounds.',
+      "Dinic's blocking-flow algorithm improved practical performance and asymptotic bounds.",
     notes:
       'Modern implementations use scaling, push-relabel, and advanced heuristics.',
   },
@@ -427,294 +425,563 @@ const keyTakeaways = [
   'The min cut can be read directly from reachability in the final residual graph.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const flow98Styles = `
+.flow98-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.flow98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.flow98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.flow98-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.flow98-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.flow98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.flow98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.flow98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.flow98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.flow98-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 236px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.flow98-toc {
+  padding: 12px;
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.flow98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.flow98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flow98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.flow98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.flow98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.flow98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.flow98-section {
+  margin: 0 0 20px;
+}
+
+.flow98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.flow98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.flow98-content p,
+.flow98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.flow98-content p {
+  margin: 0 0 10px;
+}
+
+.flow98-content ul,
+.flow98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.flow98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.flow98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.flow98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .flow98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .flow98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 560px) {
+  .flow98-titletext {
+    font-size: 14px;
+  }
+
+  .flow98-content {
+    padding: 12px 14px 16px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-setup', label: 'Problem Setup' },
+    { id: 'bp-theorem', label: 'Max-Flow Min-Cut' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-rules', label: 'Flow Rules' },
+    { id: 'core-residual', label: 'Residual Graph' },
+    { id: 'core-landscape', label: 'Algorithm Landscape' },
+    { id: 'core-ford', label: 'Ford-Fulkerson Steps' },
+    { id: 'core-edmonds', label: 'Edmonds-Karp Steps' },
+    { id: 'core-dinic', label: 'Dinic Steps' },
+    { id: 'core-correctness', label: 'Correctness Notes' },
+    { id: 'core-complexity', label: 'Complexity and Scaling' },
+    { id: 'core-data', label: 'Data Structures' },
+    { id: 'core-edge', label: 'Edge Cases' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-evaluate', label: 'Evaluation Checklist' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function MaximumFlowMinCutPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Maximum Flow & Min Cut (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Maximum Flow & Min Cut',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Maximum Flow & Min Cut</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Pushing flow to the limit and finding the tightest cut</div>
-              <p className="win95-text">
-                Maximum flow finds how much "stuff" can move from a source to a sink through capacity-limited edges. Minimum cut
-                finds the smallest total capacity that separates the source from the sink. The max-flow min-cut theorem guarantees
-                these two quantities are equal, giving a powerful duality between sending flow and cutting the network.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="flow98-page">
+      <style>{flow98Styles}</style>
+      <div className="flow98-window" role="presentation">
+        <header className="flow98-titlebar">
+          <span className="flow98-titletext">Maximum Flow &amp; Min Cut</span>
+          <div className="flow98-controls">
+            <button className="flow98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="flow98-control" aria-label="Close">
+              X
             </Link>
           </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        </header>
+        <div className="flow98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`flow98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="flow98-main">
+          <aside className="flow98-toc" aria-label="Table of contents">
+            <h2 className="flow98-toc-title">Contents</h2>
+            <ul className="flow98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="flow98-content">
+            <h1 className="flow98-doc-title">Maximum Flow &amp; Min Cut</h1>
+            <p>
+              Maximum flow finds how much &quot;stuff&quot; can move from a source to a sink through capacity-limited edges. Minimum cut
+              finds the smallest total capacity that separates the source from the sink. The max-flow min-cut theorem guarantees
+              these two quantities are equal, giving a powerful duality between sending flow and cutting the network.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="flow98-section">
+                  <h2 className="flow98-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="flow98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="flow98-divider" />
+                <section id="bp-history" className="flow98-section">
+                  <h2 className="flow98-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="flow98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="flow98-divider" />
+                <section id="bp-setup" className="flow98-section">
+                  <h2 className="flow98-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow98-divider" />
+                <section id="bp-theorem" className="flow98-section">
+                  <h2 className="flow98-heading">Max-Flow Min-Cut Theorem</h2>
+                  {maxFlowMinCut.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="flow98-divider" />
+                <section id="bp-takeaways" className="flow98-section">
+                  <h2 className="flow98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalContext.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-rules" className="flow98-section">
+                  <h2 className="flow98-heading">Flow Rules</h2>
+                  {flowRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-residual" className="flow98-section">
+                  <h2 className="flow98-heading">Residual Graph</h2>
+                  {residualGraph.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The residual graph is what makes max flow work. It tracks not only remaining capacity but also how to undo or
+                    reroute earlier decisions.
+                  </p>
+                </section>
+                <section id="core-landscape" className="flow98-section">
+                  <h2 className="flow98-heading">Algorithm Landscape</h2>
+                  {algorithmLandscape.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-ford" className="flow98-section">
+                  <h2 className="flow98-heading">Ford-Fulkerson Steps</h2>
+                  <ol>
+                    {fordFulkersonSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-edmonds" className="flow98-section">
+                  <h2 className="flow98-heading">Edmonds-Karp Steps</h2>
+                  <ol>
+                    {edmondsKarpSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-dinic" className="flow98-section">
+                  <h2 className="flow98-heading">Dinic Steps</h2>
+                  <ol>
+                    {dinicSteps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-correctness" className="flow98-section">
+                  <h2 className="flow98-heading">Correctness Notes</h2>
+                  {correctnessNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="flow98-section">
+                  <h2 className="flow98-heading">Complexity and Scaling</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-data" className="flow98-section">
+                  <h2 className="flow98-heading">Data Structures</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-edge" className="flow98-section">
+                  <h2 className="flow98-heading">Edge Cases</h2>
+                  {edgeCases.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-applications" className="flow98-section">
+                  <h2 className="flow98-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-evaluate" className="flow98-section">
+                  <h2 className="flow98-heading">How to Evaluate an Implementation</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="flow98-section">
+                  <h2 className="flow98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="flow98-section">
+                  <h2 className="flow98-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="flow98-subheading">{example.title}</h3>
+                      <div className="flow98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-pseudocode" className="flow98-section">
+                  <h2 className="flow98-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="flow98-subheading">{example.title}</h3>
+                      <div className="flow98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Flow Rules</legend>
-            <div className="win95-grid win95-grid-2">
-              {flowRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Residual Graph</legend>
-            <div className="win95-grid win95-grid-2">
-              {residualGraph.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The residual graph is what makes max flow work. It tracks not only remaining capacity but also how to undo
-                or reroute earlier decisions.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Max-Flow Min-Cut Theorem</legend>
-            <div className="win95-grid win95-grid-2">
-              {maxFlowMinCut.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Landscape</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmLandscape.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Ford-Fulkerson Steps</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {fordFulkersonSteps.map((step) => (
-                  <li key={step}>{step}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="flow98-section">
+                <h2 className="flow98-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edmonds-Karp Steps</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {edmondsKarpSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Dinic Steps</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {dinicSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Notes</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and Scaling</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data Structures</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge Cases</legend>
-            <div className="win95-grid win95-grid-2">
-              {edgeCases.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate an Implementation</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
