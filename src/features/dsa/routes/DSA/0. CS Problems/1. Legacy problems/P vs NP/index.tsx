@@ -1,9 +1,7 @@
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -690,402 +688,640 @@ const keyTakeaways = [
   'Regardless of the answer, approximations and special cases remain critical.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const pnp98Styles = `
+.pnp98-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.pnp98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.pnp98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pnp98-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.pnp98-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.pnp98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pnp98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.pnp98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pnp98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.pnp98-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 236px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.pnp98-toc {
+  padding: 12px;
+  overflow: auto;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.pnp98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pnp98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pnp98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.pnp98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.pnp98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.pnp98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pnp98-section {
+  margin: 0 0 20px;
+}
+
+.pnp98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pnp98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pnp98-content p,
+.pnp98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.pnp98-content p {
+  margin: 0 0 10px;
+}
+
+.pnp98-content ul,
+.pnp98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.pnp98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.pnp98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.pnp98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .pnp98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .pnp98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 560px) {
+  .pnp98-titletext {
+    font-size: 14px;
+  }
+
+  .pnp98-content {
+    padding: 12px 14px 16px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-setup', label: 'Problem Setup' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-defs', label: 'Formal Definitions' },
+    { id: 'core-p', label: 'What Makes P' },
+    { id: 'core-np', label: 'What Makes NP' },
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-pexamples', label: 'Examples in P' },
+    { id: 'core-npexamples', label: 'Examples in NP' },
+    { id: 'core-decision', label: 'Decision vs Search' },
+    { id: 'core-rel', label: 'Class Relationships' },
+    { id: 'core-closure', label: 'Closure and Reductions' },
+    { id: 'core-landscape', label: 'Complexity Landscape' },
+    { id: 'core-complete', label: 'NP-Complete Problems' },
+    { id: 'core-reduction', label: 'Reduction Primer' },
+    { id: 'core-cook', label: 'Cook-Levin Sketch' },
+    { id: 'core-techniques', label: 'Proof Barriers' },
+    { id: 'core-beliefs', label: 'Evidence and Beliefs' },
+    { id: 'core-pnp', label: 'If P = NP' },
+    { id: 'core-pneqnp', label: 'If P != NP' },
+    { id: 'core-consequences', label: 'Consequences' },
+    { id: 'core-approx', label: 'Approximation' },
+    { id: 'core-comparisons', label: 'Complexity Comparisons' },
+    { id: 'core-evaluate', label: 'Evaluation Checklist' },
+    { id: 'core-misconceptions', label: 'Misconceptions' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function PvsNPPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `P vs NP (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'P vs NP',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">P vs NP</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">The central open question of complexity theory</div>
-              <p className="win95-text">
-                P vs NP asks whether every problem whose solutions can be verified quickly can also be solved quickly. The answer is
-                unknown, but its implications would be dramatic for cryptography, optimization, and AI. The theory of NP-completeness
-                builds a web of reductions to identify the hardest problems in NP.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="pnp98-page">
+      <style>{pnp98Styles}</style>
+      <div className="pnp98-window" role="presentation">
+        <header className="pnp98-titlebar">
+          <span className="pnp98-titletext">P vs NP</span>
+          <div className="pnp98-controls">
+            <button className="pnp98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="pnp98-control" aria-label="Close">
+              X
             </Link>
           </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        </header>
+        <div className="pnp98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`pnp98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="pnp98-main">
+          <aside className="pnp98-toc" aria-label="Table of contents">
+            <h2 className="pnp98-toc-title">Contents</h2>
+            <ul className="pnp98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="pnp98-content">
+            <h1 className="pnp98-doc-title">P vs NP</h1>
+            <p>
+              P vs NP asks whether every problem whose solutions can be verified quickly can also be solved quickly. The answer is
+              unknown, but its implications would be dramatic for cryptography, optimization, and AI. The theory of
+              NP-completeness builds a web of reductions to identify the hardest problems in NP.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="pnp98-section">
+                  <h2 className="pnp98-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="pnp98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="pnp98-divider" />
+                <section id="bp-history" className="pnp98-section">
+                  <h2 className="pnp98-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="pnp98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="pnp98-divider" />
+                <section id="bp-setup" className="pnp98-section">
+                  <h2 className="pnp98-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="pnp98-divider" />
+                <section id="bp-takeaways" className="pnp98-section">
+                  <h2 className="pnp98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalContext.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-defs" className="pnp98-section">
+                  <h2 className="pnp98-heading">Formal Definitions</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The verifier view is the most practical: NP is the set of problems where a short certificate can be checked
+                    quickly.
+                  </p>
+                </section>
+                <section id="core-p" className="pnp98-section">
+                  <h2 className="pnp98-heading">What Makes a Problem P?</h2>
+                  {whatMakesP.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-np" className="pnp98-section">
+                  <h2 className="pnp98-heading">What Makes a Problem NP?</h2>
+                  {whatMakesNP.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-models" className="pnp98-section">
+                  <h2 className="pnp98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pexamples" className="pnp98-section">
+                  <h2 className="pnp98-heading">Examples of P Problems</h2>
+                  {pExamples.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-npexamples" className="pnp98-section">
+                  <h2 className="pnp98-heading">Examples of NP Problems</h2>
+                  {npExamples.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-decision" className="pnp98-section">
+                  <h2 className="pnp98-heading">Decision vs Search vs Optimization</h2>
+                  {decisionVsSearch.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-rel" className="pnp98-section">
+                  <h2 className="pnp98-heading">Relationships Between Classes</h2>
+                  {relationships.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The single most important fact: if any NP-complete problem has a polynomial-time algorithm, then P = NP.
+                  </p>
+                </section>
+                <section id="core-closure" className="pnp98-section">
+                  <h2 className="pnp98-heading">Closure and Reduction Facts</h2>
+                  {closureFacts.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-landscape" className="pnp98-section">
+                  <h2 className="pnp98-heading">Wider Complexity Landscape</h2>
+                  {classLandscape.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complete" className="pnp98-section">
+                  <h2 className="pnp98-heading">Canonical NP-Complete Problems</h2>
+                  {commonNPComplete.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-reduction" className="pnp98-section">
+                  <h2 className="pnp98-heading">Reduction Primer</h2>
+                  {reductionPrimer.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-cook" className="pnp98-section">
+                  <h2 className="pnp98-heading">Cook-Levin Proof Sketch</h2>
+                  {cookLevinSketch.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-techniques" className="pnp98-section">
+                  <h2 className="pnp98-heading">Proof Techniques and Barriers</h2>
+                  {proofTechniques.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-beliefs" className="pnp98-section">
+                  <h2 className="pnp98-heading">Evidence and Beliefs</h2>
+                  {evidenceAndBeliefs.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pnp" className="pnp98-section">
+                  <h2 className="pnp98-heading">Consequences if P = NP</h2>
+                  {ifPNP.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pneqnp" className="pnp98-section">
+                  <h2 className="pnp98-heading">Consequences if P != NP</h2>
+                  {ifPNotNP.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-consequences" className="pnp98-section">
+                  <h2 className="pnp98-heading">Consequences in Practice</h2>
+                  {consequences.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-approx" className="pnp98-section">
+                  <h2 className="pnp98-heading">Approximations and Heuristics</h2>
+                  {approximationNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Even if P != NP, many NP-hard problems are solvable in practice via heuristics or approximation.
+                  </p>
+                </section>
+                <section id="core-comparisons" className="pnp98-section">
+                  <h2 className="pnp98-heading">Complexity Comparisons</h2>
+                  {complexityComparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-evaluate" className="pnp98-section">
+                  <h2 className="pnp98-heading">How to Evaluate an Explanation</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-misconceptions" className="pnp98-section">
+                  <h2 className="pnp98-heading">Common Misconceptions</h2>
+                  <ul>
+                    {misconceptions.map((item) => (
+                      <li key={item.mistake}>
+                        <strong>{item.mistake}:</strong> {item.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="pnp98-section">
+                  <h2 className="pnp98-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="pnp98-subheading">{example.title}</h3>
+                      <div className="pnp98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-pseudocode" className="pnp98-section">
+                  <h2 className="pnp98-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="pnp98-subheading">{example.title}</h3>
+                      <div className="pnp98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal Definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinitions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The verifier view is the most practical: NP is the set of problems where a short certificate can be checked quickly.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>What Makes a Problem P?</legend>
-            <div className="win95-grid win95-grid-2">
-              {whatMakesP.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>What Makes a Problem NP?</legend>
-            <div className="win95-grid win95-grid-2">
-              {whatMakesNP.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mental Models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Examples of P Problems</legend>
-            <div className="win95-grid win95-grid-2">
-              {pExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Examples of NP Problems</legend>
-            <div className="win95-grid win95-grid-2">
-              {npExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Decision vs Search vs Optimization</legend>
-            <div className="win95-grid win95-grid-2">
-              {decisionVsSearch.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Relationships Between Classes</legend>
-            <div className="win95-grid win95-grid-2">
-              {relationships.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The single most important fact: if any NP-complete problem has a polynomial-time algorithm, then P = NP.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Closure and Reduction Facts</legend>
-            <div className="win95-grid win95-grid-2">
-              {closureFacts.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Wider Complexity Landscape</legend>
-            <div className="win95-grid win95-grid-2">
-              {classLandscape.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Canonical NP-Complete Problems</legend>
-            <div className="win95-grid win95-grid-2">
-              {commonNPComplete.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Reduction Primer</legend>
-            <div className="win95-grid win95-grid-2">
-              {reductionPrimer.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Cook-Levin Proof Sketch</legend>
-            <div className="win95-grid win95-grid-2">
-              {cookLevinSketch.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Proof Techniques and Barriers</legend>
-            <div className="win95-grid win95-grid-2">
-              {proofTechniques.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Evidence and Beliefs</legend>
-            <div className="win95-grid win95-grid-2">
-              {evidenceAndBeliefs.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Consequences if P = NP</legend>
-            <div className="win95-grid win95-grid-2">
-              {ifPNP.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Consequences if P != NP</legend>
-            <div className="win95-grid win95-grid-2">
-              {ifPNotNP.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Consequences in Practice</legend>
-            <div className="win95-grid win95-grid-2">
-              {consequences.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Approximations and Heuristics</legend>
-            <div className="win95-grid win95-grid-2">
-              {approximationNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Even if P != NP, many NP-hard problems are solvable in practice via heuristics or approximation.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity Comparisons</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityComparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Misconceptions</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {misconceptions.map((item) => (
-                  <li key={item.mistake}>
-                    <strong>{item.mistake}:</strong> {item.description}
-                  </li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="pnp98-section">
+                <h2 className="pnp98-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate an Explanation</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
