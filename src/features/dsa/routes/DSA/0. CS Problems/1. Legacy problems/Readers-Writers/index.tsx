@@ -673,27 +673,61 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ReadersWritersPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [policy, setPolicy] = useState<Policy>('reader')
   const [queue, setQueue] = useState<QueueItem[]>([])
   const [activeReaders, setActiveReaders] = useState(0)
   const [activeWriter, setActiveWriter] = useState(false)
   const [nextId, setNextId] = useState(1)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
-  const waitingReaders = useMemo(() => queue.filter((item) => item.type === 'R').length, [queue])
-  const waitingWriters = useMemo(() => queue.filter((item) => item.type === 'W').length, [queue])
+  const waitingReaders = queue.filter((item) => item.type === 'R').length
+  const waitingWriters = queue.filter((item) => item.type === 'W').length
+  const activePolicy = policyCards.find((card) => card.id === policy)
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
 
-  const statusText = useMemo(() => {
-    if (activeWriter) {
-      return 'Writer is active: all readers and other writers must wait.'
+  const statusText =
+    activeWriter
+      ? 'Writer is active: all readers and other writers must wait.'
+      : activeReaders > 0
+        ? `Readers active: ${activeReaders}. Writers must wait until readers finish.`
+        : waitingReaders > 0 || waitingWriters > 0
+          ? 'No active threads. Use Start Next to schedule the next reader or writer.'
+          : 'System idle: no active or waiting threads.'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
     }
-    if (activeReaders > 0) {
-      return `Readers active: ${activeReaders}. Writers must wait until readers finish.`
+    document.title = `Readers-Writers (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Readers-Writers',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
     }
-    if (waitingReaders > 0 || waitingWriters > 0) {
-      return 'No active threads. Use Start Next to schedule the next reader or writer.'
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
     }
-    return 'System idle: no active or waiting threads.'
-  }, [activeReaders, activeWriter, waitingReaders, waitingWriters])
+    void navigate('/algoViz')
+  }
 
   const enqueue = (type: 'R' | 'W') => {
     setQueue((prev) => [...prev, { id: nextId, type }])
@@ -788,286 +822,277 @@ export default function ReadersWritersPage(): JSX.Element {
   }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Readers-Writers</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="readers-help-page">
+      <style>{readersHelpStyles}</style>
+      <div className="readers-help-window" role="presentation">
+        <header className="readers-help-titlebar">
+          <span className="readers-help-title">Readers-Writers</span>
+          <div className="readers-help-controls">
+            <button className="readers-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="readers-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Coordinating shared reads with exclusive writes</div>
-              <p className="win95-text">
-                The readers-writers problem models access to shared data where reads are frequent and writes must be exclusive. The core
-                challenge is deciding who waits: should readers stream through while writers queue, or should writers get priority to
-                prevent starvation? This page explains the main policies, correctness invariants, and practical tradeoffs.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+        <div className="readers-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`readers-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalContext.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="readers-help-main">
+          <aside className="readers-help-toc" aria-label="Table of contents">
+            <h2 className="readers-help-toc-title">Contents</h2>
+            <ul className="readers-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="readers-help-content">
+            <h1 className="readers-help-doc-title">Readers-Writers</h1>
+            <p>
+              The readers-writers problem models access to shared data where reads are frequent and writes must be exclusive. The core
+              challenge is deciding who waits: should readers stream through while writers queue, or should writers get priority to
+              prevent starvation? This document explains the main policies, correctness invariants, and practical tradeoffs.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Goals</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessGoals.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Safety enforces exclusivity for writers. Fairness and throughput depend on which policy you choose to schedule readers
-                and writers.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Policy Variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {policyVariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core Claims</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyClaims.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Synchronization Patterns</legend>
-            <div className="win95-grid win95-grid-2">
-              {synchronizationPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Policy Explorer</legend>
-            <div className="win95-stack">
-              <div className="win95-panel">
-                <div className="win95-heading">Policy Selector</div>
-                <p className="win95-text">
-                  Choose a scheduling policy and then enqueue readers and writers. Use Start Next to see how the policy schedules work.
-                </p>
-                <div className="win95-grid win95-grid-3">
-                  {policyCards.map((card) => (
-                    <button
-                      key={card.id}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setPolicy(card.id as Policy)}
-                    >
-                      {card.name}
-                    </button>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="readers-help-section">
+                  <h2 className="readers-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="readers-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Active policy:</strong> {policyCards.find((card) => card.id === policy)?.name}</p>
-                  <p className="win95-text">{policyCards.find((card) => card.id === policy)?.summary}</p>
-                </div>
-              </div>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">Queue Controls</div>
-                <p className="win95-text">
-                  Add reader or writer requests to the waiting queue. The queue is used for fair scheduling and for visualization.
-                </p>
-                <div className="win95-grid win95-grid-3">
-                  <button type="button" className="win95-button" onClick={() => enqueue('R')}>ADD READER</button>
-                  <button type="button" className="win95-button" onClick={() => enqueue('W')}>ADD WRITER</button>
-                  <button type="button" className="win95-button" onClick={reset}>RESET</button>
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Waiting readers:</strong> {waitingReaders}</p>
-                  <p className="win95-text"><strong>Waiting writers:</strong> {waitingWriters}</p>
-                  <p className="win95-text"><strong>Queue:</strong> {queue.length ? queue.map((item) => item.type).join(' ') : 'Empty'}</p>
-                </div>
-              </div>
+                <hr className="readers-help-divider" />
 
-              <div className="win95-panel">
-                <div className="win95-heading">Scheduler Stepper</div>
-                <p className="win95-text">
-                  Step the scheduler and finish active readers or writers. This is a conceptual model for intuition.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  <div className="win95-panel win95-panel--raised">
-                    <p className="win95-text"><strong>Active readers:</strong> {activeReaders}</p>
-                    <p className="win95-text"><strong>Active writer:</strong> {activeWriter ? 'Yes' : 'No'}</p>
-                    <p className="win95-text">{statusText}</p>
+                <section id="bp-history" className="readers-help-section">
+                  <h2 className="readers-help-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="readers-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <hr className="readers-help-divider" />
+
+                <section id="bp-claims" className="readers-help-section">
+                  <h2 className="readers-help-heading">Core Claims</h2>
+                  {keyClaims.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Safety enforces exclusivity for writers. Fairness and throughput depend on which policy you choose to schedule
+                    readers and writers.
+                  </p>
+                </section>
+
+                <hr className="readers-help-divider" />
+
+                <section id="bp-takeaways" className="readers-help-section">
+                  <h2 className="readers-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-setup" className="readers-help-section">
+                  <h2 className="readers-help-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-correctness" className="readers-help-section">
+                  <h2 className="readers-help-heading">Correctness Goals</h2>
+                  {correctnessGoals.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-policies" className="readers-help-section">
+                  <h2 className="readers-help-heading">Policy Variants</h2>
+                  {policyVariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-invariants" className="readers-help-section">
+                  <h2 className="readers-help-heading">Key Invariants</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-patterns" className="readers-help-section">
+                  <h2 className="readers-help-heading">Synchronization Patterns</h2>
+                  {synchronizationPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-performance" className="readers-help-section">
+                  <h2 className="readers-help-heading">Performance Considerations</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-applications" className="readers-help-section">
+                  <h2 className="readers-help-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="readers-help-section">
+                  <h2 className="readers-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="readers-help-section">
+                  <h2 className="readers-help-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="readers-help-subheading">{example.title}</h3>
+                      <div className="readers-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-pseudocode" className="readers-help-section">
+                  <h2 className="readers-help-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="readers-help-subheading">{example.title}</h3>
+                      <div className="readers-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-policy" className="readers-help-section">
+                  <h2 className="readers-help-heading">Policy Selector</h2>
+                  <p>
+                    Choose a scheduling policy and then enqueue readers and writers. Use Start Next to see how the policy schedules
+                    work.
+                  </p>
+                  <div className="readers-help-inline-buttons">
+                    {policyCards.map((card) => (
+                      <button
+                        key={card.id}
+                        type="button"
+                        className={`readers-help-push ${policy === card.id ? 'active' : ''}`}
+                        onClick={() => setPolicy(card.id as Policy)}
+                        aria-pressed={policy === card.id}
+                      >
+                        {card.name}
+                      </button>
+                    ))}
                   </div>
-                  <div className="win95-panel win95-panel--raised">
-                    <button type="button" className="win95-button" onClick={startNext}>START NEXT</button>
-                    <button type="button" className="win95-button" onClick={finishReader}>FINISH READER</button>
-                    <button type="button" className="win95-button" onClick={finishWriter}>FINISH WRITER</button>
+                  <h3 className="readers-help-subheading">{activePolicy?.name}</h3>
+                  <p>{activePolicy?.summary}</p>
+                </section>
+
+                <section id="ex-queue" className="readers-help-section">
+                  <h2 className="readers-help-heading">Queue Controls</h2>
+                  <p>
+                    Add reader or writer requests to the waiting queue. The queue is used for fair scheduling and for visualization.
+                  </p>
+                  <div className="readers-help-formline">
+                    <button type="button" className="readers-help-push" onClick={() => enqueue('R')}>ADD READER</button>
+                    <button type="button" className="readers-help-push" onClick={() => enqueue('W')}>ADD WRITER</button>
+                    <button type="button" className="readers-help-push" onClick={reset}>RESET</button>
                   </div>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                  <p><strong>Waiting readers:</strong> {waitingReaders}</p>
+                  <p><strong>Waiting writers:</strong> {waitingWriters}</p>
+                  <p><strong>Queue:</strong> {queue.length ? queue.map((item) => item.type).join(' ') : 'Empty'}</p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Performance Considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="ex-scheduler" className="readers-help-section">
+                  <h2 className="readers-help-heading">Scheduler Stepper</h2>
+                  <p>
+                    Step the scheduler and finish active readers or writers. This is a conceptual model for intuition.
+                  </p>
+                  <p><strong>Active readers:</strong> {activeReaders}</p>
+                  <p><strong>Active writer:</strong> {activeWriter ? 'Yes' : 'No'}</p>
+                  <p>{statusText}</p>
+                  <div className="readers-help-formline">
+                    <button type="button" className="readers-help-push" onClick={startNext}>START NEXT</button>
+                    <button type="button" className="readers-help-push" onClick={finishReader}>FINISH READER</button>
+                    <button type="button" className="readers-help-push" onClick={finishWriter}>FINISH WRITER</button>
+                  </div>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="readers-help-section">
+                <h2 className="readers-help-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>

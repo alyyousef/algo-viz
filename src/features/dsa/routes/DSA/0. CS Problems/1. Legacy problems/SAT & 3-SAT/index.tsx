@@ -1,8 +1,6 @@
 
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -12,6 +10,11 @@ type Clause = {
 }
 
 type Assignment = Record<string, boolean>
+type MinimizedHelpTask = {
+  path: string
+  search: string
+  title: string
+}
 
 const bigPicture = [
   {
@@ -296,40 +299,317 @@ const clauseExamples: Clause[] = [
 
 const variableSet = ['x', 'y', 'z', 'w']
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const satHelpStyles = `
+.sat-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.sat-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.sat-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sat-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.sat-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.sat-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.sat-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.sat-help-tab {
+  flex: 0 0 auto;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sat-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.sat-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.sat-help-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.sat-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sat-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sat-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.sat-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.sat-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.sat-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sat-help-section {
+  margin: 0 0 22px;
+}
+
+.sat-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sat-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sat-help-content p,
+.sat-help-content li,
+.sat-help-content button {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sat-help-content p {
+  margin: 0 0 10px;
+}
+
+.sat-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.sat-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.sat-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.sat-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.sat-help-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.sat-help-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.sat-help-push.active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #b3b3b3;
+}
+
+@media (max-width: 900px) {
+  .sat-help-title {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 0;
+    font-size: 13px;
+  }
+
+  .sat-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .sat-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-claims', label: 'Key Claims' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-setup', label: 'Problem Setup' },
+    { id: 'core-reduction', label: 'Reduction Sketch' },
+    { id: 'core-algorithms', label: 'Algorithm Landscape' },
+    { id: 'core-proofs', label: 'Proof Ideas' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-assignment', label: 'Toggle Assignment' },
+    { id: 'ex-clause', label: 'Clause Inspector' },
+    { id: 'ex-3sat', label: '3-SAT View' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function SatAndThreeSatPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [assignment, setAssignment] = useState<Assignment>({
     x: false,
     y: false,
     z: false,
     w: false,
   })
-
   const [selectedClauseId, setSelectedClauseId] = useState(clauseExamples[0]?.id ?? 'c1')
-
+  const requestedTab = searchParams.get('tab')
+  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+  const tocSections = sectionLinks[activeTab]
   const selectedClause = clauseExamples.find((clause) => clause.id === selectedClauseId) ?? clauseExamples[0]
-
-  const clauseValue = useMemo(() => {
-    if (!selectedClause) {
-      return false
-    }
-    return selectedClause.literals.some((literal) => {
-      const isNegated = literal.startsWith('~')
-      const variable = isNegated ? literal.slice(1) : literal
-      const value = assignment[variable]
-      return isNegated ? !value : value
-    })
-  }, [assignment, selectedClause])
-
-  const formulaValue = useMemo(() => {
-    return clauseExamples.every((clause) => {
-      return clause.literals.some((literal) => {
+  const clauseValue = selectedClause
+    ? selectedClause.literals.some((literal) => {
         const isNegated = literal.startsWith('~')
         const variable = isNegated ? literal.slice(1) : literal
         const value = assignment[variable]
         return isNegated ? !value : value
       })
-    })
-  }, [assignment])
+    : false
+  const formulaValue = clauseExamples.every((clause) =>
+    clause.literals.some((literal) => {
+      const isNegated = literal.startsWith('~')
+      const variable = isNegated ? literal.slice(1) : literal
+      const value = assignment[variable]
+      return isNegated ? !value : value
+    }),
+  )
+  const assignmentSummary = variableSet.map((variable) => `${variable}=${assignment[variable] ? 'T' : 'F'}`).join(', ')
+  const formulaText = clauseExamples.map((clause) => `(${clause.literals.join(' ? ')})`).join(' ? ')
 
   const toggleVariable = (variable: string) => {
     setAssignment((prev) => ({
@@ -338,264 +618,327 @@ export default function SatAndThreeSatPage(): JSX.Element {
     }))
   }
 
+  const handleTabChange = (tab: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tab)
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const handleMinimize = () => {
+    try {
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.set('tab', activeTab)
+      const currentTask = {
+        path: location.pathname,
+        search: `?${nextParams.toString()}`,
+        title: 'SAT & 3-SAT',
+      }
+      const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+      const parsedTasks: unknown = rawTasks ? JSON.parse(rawTasks) : []
+      const existingTasks = Array.isArray(parsedTasks)
+        ? parsedTasks.filter((task): task is MinimizedHelpTask => {
+            if (!task || typeof task !== 'object') {
+              return false
+            }
+
+            const candidate = task as Record<string, unknown>
+            return (
+              typeof candidate.path === 'string' &&
+              typeof candidate.search === 'string' &&
+              typeof candidate.title === 'string'
+            )
+          })
+        : []
+      const nextTasks = existingTasks.filter(
+        (task) =>
+          (task.path !== currentTask.path || task.title !== currentTask.title),
+      )
+      nextTasks.push(currentTask)
+      window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+    } catch {
+      // Ignore storage failures and continue with navigation.
+    }
+
+    const historyState = window.history.state as { idx?: number } | null
+    const historyIndex = typeof historyState?.idx === 'number' ? historyState.idx : -1
+
+    if (historyIndex > 0) {
+      void navigate(-1)
+      return
+    }
+
+    void navigate('/algoViz')
+  }
+
+  useEffect(() => {
+    if (!isTabId(searchParams.get('tab'))) {
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+      return
+    }
+
+    document.title = `SAT & 3-SAT - Help - ${activeTabLabel}`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">SAT & 3-SAT</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Boolean satisfiability and the canonical NP-complete problem</div>
-              <p className="win95-text">
-                SAT asks if there exists a boolean assignment that makes every clause true. 3-SAT restricts clauses to exactly three
-                literals, yet remains NP-complete. This page covers the key definitions, proof ideas, algorithm landscape, and practical
-                solver intuition.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="sat-help-page">
+      <style>{satHelpStyles}</style>
+      <div className="sat-help-window" role="presentation">
+        <header className="sat-help-titlebar">
+          <span className="sat-help-title">SAT & 3-SAT</span>
+          <div className="sat-help-controls">
+            <button type="button" className="sat-help-control" onClick={handleMinimize} aria-label="Minimize help window">
+              _
+            </button>
+            <Link to="/algoViz" className="sat-help-control" aria-label="Close help window">
+              X
             </Link>
           </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        </header>
+        <nav className="sat-help-tabs" aria-label="Help sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`sat-help-tab${tab.id === activeTab ? ' active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+              aria-pressed={tab.id === activeTab}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+        <div className="sat-help-main">
+          <aside className="sat-help-toc" aria-label="Table of contents">
+            <p className="sat-help-toc-title">Contents</p>
+            <ul className="sat-help-toc-list">
+              {tocSections.map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="sat-help-content">
+            <h1 className="sat-help-doc-title">{activeTabLabel}</h1>
+            <p>
+              SAT asks if there exists a boolean assignment that makes every clause true. 3-SAT restricts clauses to exactly three
+              literals, yet remains NP-complete. This document covers the key definitions, proof ideas, algorithm landscape, and
+              practical solver intuition.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalContext.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Claims</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyClaims.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Reduction Sketch: SAT to 3-SAT</legend>
-            <div className="win95-grid win95-grid-2">
-              {reductionSketch.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Landscape</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmLandscape.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Proof Ideas</legend>
-            <div className="win95-grid win95-grid-2">
-              {proofIdeas.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive SAT Explorer</legend>
-            <div className="win95-stack">
-              <div className="win95-panel">
-                <div className="win95-heading">Toggle Assignment</div>
-                <p className="win95-text">
-                  Flip variables and see how clauses and the full formula evaluate. This models the SAT decision question.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  {variableSet.map((variable) => (
-                    <button
-                      key={variable}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => toggleVariable(variable)}
-                    >
-                      {variable}: {assignment[variable] ? 'true' : 'false'}
-                    </button>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="sat-help-section">
+                  <h2 className="sat-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Formula value:</strong> {formulaValue ? 'SATISFIED' : 'UNSAT'}</p>
-                  <p className="win95-text">
-                    Assignment: {variableSet.map((variable) => `${variable}=${assignment[variable] ? 'T' : 'F'}`).join(', ')}
-                  </p>
-                </div>
-              </div>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">Clause Inspector</div>
-                <p className="win95-text">
-                  Inspect a single clause and see whether it is satisfied under the current assignment.
-                </p>
-                <div className="win95-grid win95-grid-3">
-                  {clauseExamples.map((clause) => (
-                    <button
-                      key={clause.id}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setSelectedClauseId(clause.id)}
-                    >
-                      {clause.id.toUpperCase()}
-                    </button>
+                <section id="bp-history" className="sat-help-section">
+                  <h2 className="sat-help-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Selected clause:</strong> {selectedClause?.literals.join(' ? ')}</p>
-                  <p className="win95-text"><strong>Clause value:</strong> {clauseValue ? 'TRUE' : 'FALSE'}</p>
-                </div>
-              </div>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">3-SAT View</div>
-                <p className="win95-text">
-                  All clauses in 3-SAT must have exactly three literals. The example here is already in 3-CNF.
-                </p>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text">
-                    Formula: {clauseExamples.map((clause) => `(${clause.literals.join(' ? ')})`).join(' ? ')}
+                <section id="bp-claims" className="sat-help-section">
+                  <h2 className="sat-help-heading">Key Claims</h2>
+                  {keyClaims.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="bp-takeaways" className="sat-help-section">
+                  <h2 className="sat-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-setup" className="sat-help-section">
+                  <h2 className="sat-help-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-reduction" className="sat-help-section">
+                  <h2 className="sat-help-heading">Reduction Sketch</h2>
+                  {reductionSketch.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-algorithms" className="sat-help-section">
+                  <h2 className="sat-help-heading">Algorithm Landscape</h2>
+                  {algorithmLandscape.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-proofs" className="sat-help-section">
+                  <h2 className="sat-help-heading">Proof Ideas</h2>
+                  {proofIdeas.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-applications" className="sat-help-section">
+                  <h2 className="sat-help-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sat-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="sat-help-section">
+                  <h2 className="sat-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="sat-help-section">
+                  <h2 className="sat-help-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="sat-help-subheading">{example.title}</h3>
+                      <pre className="sat-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </pre>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-pseudocode" className="sat-help-section">
+                  <h2 className="sat-help-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="sat-help-subheading">{example.title}</h3>
+                      <pre className="sat-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </pre>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-assignment" className="sat-help-section">
+                  <h2 className="sat-help-heading">Toggle Assignment</h2>
+                  <p>Flip variables and see how clauses and the full formula evaluate. This models the SAT decision question.</p>
+                  <div className="sat-help-inline-buttons">
+                    {variableSet.map((variable) => (
+                      <button
+                        key={variable}
+                        type="button"
+                        className={`sat-help-push${assignment[variable] ? ' active' : ''}`}
+                        onClick={() => toggleVariable(variable)}
+                      >
+                        {variable}: {assignment[variable] ? 'true' : 'false'}
+                      </button>
+                    ))}
+                  </div>
+                  <p>
+                    <strong>Formula value:</strong> {formulaValue ? 'SATISFIED' : 'UNSAT'}
                   </p>
-                  <p className="win95-text">
-                    Each clause has {selectedClause?.literals.length ?? 3} literals.
+                  <p>
+                    <strong>Assignment:</strong> {assignmentSummary}
                   </p>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="ex-clause" className="sat-help-section">
+                  <h2 className="sat-help-heading">Clause Inspector</h2>
+                  <p>Inspect a single clause and see whether it is satisfied under the current assignment.</p>
+                  <div className="sat-help-inline-buttons">
+                    {clauseExamples.map((clause) => (
+                      <button
+                        key={clause.id}
+                        type="button"
+                        className={`sat-help-push${clause.id === selectedClauseId ? ' active' : ''}`}
+                        onClick={() => setSelectedClauseId(clause.id)}
+                      >
+                        {clause.id.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                  <p>
+                    <strong>Selected clause:</strong> {selectedClause?.literals.join(' ? ')}
+                  </p>
+                  <p>
+                    <strong>Clause value:</strong> {clauseValue ? 'TRUE' : 'FALSE'}
+                  </p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+                <section id="ex-3sat" className="sat-help-section">
+                  <h2 className="sat-help-heading">3-SAT View</h2>
+                  <p>All clauses in 3-SAT must have exactly three literals. The example here is already in 3-CNF.</p>
+                  <p>
+                    <strong>Formula:</strong> {formulaText}
+                  </p>
+                  <p>
+                    <strong>Each clause has:</strong> {selectedClause?.literals.length ?? 3} literals.
+                  </p>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="sat-help-section">
+                <h2 className="sat-help-heading">Terms</h2>
+                {quickGlossary.map((item) => (
+                  <div key={item.term}>
+                    <h3 className="sat-help-subheading">{item.term}</h3>
+                    <p>{item.definition}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
