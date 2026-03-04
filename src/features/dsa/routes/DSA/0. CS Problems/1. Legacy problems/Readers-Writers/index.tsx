@@ -1,8 +1,6 @@
 
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -386,6 +384,293 @@ const policyCards = [
     summary: 'Serve arrivals in order to avoid starvation.',
   },
 ]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const readersHelpStyles = `
+.readers-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.readers-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.readers-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.readers-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.readers-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.readers-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.readers-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.readers-help-tab {
+  flex: 0 0 auto;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.readers-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.readers-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.readers-help-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.readers-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.readers-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.readers-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.readers-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.readers-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.readers-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.readers-help-section {
+  margin: 0 0 22px;
+}
+
+.readers-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.readers-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.readers-help-content p,
+.readers-help-content li,
+.readers-help-content button {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.readers-help-content p {
+  margin: 0 0 10px;
+}
+
+.readers-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.readers-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.readers-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.readers-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.readers-help-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.readers-help-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.readers-help-push.active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #b3b3b3;
+}
+
+.readers-help-formline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 10px;
+}
+
+@media (max-width: 900px) {
+  .readers-help-title {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 0;
+    font-size: 13px;
+  }
+
+  .readers-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .readers-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-claims', label: 'Core Claims' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-setup', label: 'Problem Setup' },
+    { id: 'core-correctness', label: 'Correctness Goals' },
+    { id: 'core-policies', label: 'Policy Variants' },
+    { id: 'core-invariants', label: 'Key Invariants' },
+    { id: 'core-patterns', label: 'Synchronization Patterns' },
+    { id: 'core-performance', label: 'Performance Considerations' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-policy', label: 'Policy Selector' },
+    { id: 'ex-queue', label: 'Queue Controls' },
+    { id: 'ex-scheduler', label: 'Scheduler Stepper' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
 
 export default function ReadersWritersPage(): JSX.Element {
   const [policy, setPolicy] = useState<Policy>('reader')

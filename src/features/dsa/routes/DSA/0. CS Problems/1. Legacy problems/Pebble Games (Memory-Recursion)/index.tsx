@@ -1,8 +1,6 @@
 
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -487,7 +485,307 @@ const tradeoffCases = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const pebbleHelpStyles = `
+.pebble-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.pebble-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.pebble-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pebble-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.pebble-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.pebble-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.pebble-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.pebble-help-tab {
+  flex: 0 0 auto;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pebble-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.pebble-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.pebble-help-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.pebble-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pebble-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pebble-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.pebble-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.pebble-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.pebble-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pebble-help-section {
+  margin: 0 0 22px;
+}
+
+.pebble-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pebble-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pebble-help-content p,
+.pebble-help-content li,
+.pebble-help-content label,
+.pebble-help-content input,
+.pebble-help-content button {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.pebble-help-content p {
+  margin: 0 0 10px;
+}
+
+.pebble-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.pebble-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.pebble-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.pebble-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.pebble-help-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.pebble-help-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.pebble-help-push.active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #b3b3b3;
+}
+
+.pebble-help-formline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+}
+
+.pebble-help-range {
+  width: min(280px, 100%);
+}
+
+@media (max-width: 900px) {
+  .pebble-help-title {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 0;
+    font-size: 13px;
+  }
+
+  .pebble-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .pebble-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-claims', label: 'Key Claims' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-setup', label: 'Problem Setup' },
+    { id: 'core-rules', label: 'Core Rules' },
+    { id: 'core-variants', label: 'Rule Variants' },
+    { id: 'core-recursion', label: 'Memory and Recursion' },
+    { id: 'core-families', label: 'Graph Families' },
+    { id: 'core-metrics', label: 'Resource Metrics' },
+    { id: 'core-strategies', label: 'Strategy Landscape' },
+    { id: 'core-proofs', label: 'Lower-Bound Proof Ideas' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-compare', label: 'Compare and Contrast' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-tradeoffs', label: 'Tradeoff Profiles' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-gallery', label: 'Graph Gallery' },
+    { id: 'ex-selector', label: 'Strategy Selector' },
+    { id: 'ex-budget', label: 'Budget Estimator' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function PebbleGamesMemoryRecursionPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const defaultGraph = graphCases[0] ?? {
     id: 'fallback',
     name: 'Unavailable graph',
@@ -510,309 +808,372 @@ export default function PebbleGamesMemoryRecursionPage(): JSX.Element {
   const [selectedGraphId, setSelectedGraphId] = useState(defaultGraph.id)
   const [selectedStrategyId, setSelectedStrategyId] = useState(defaultStrategy.id)
   const [pebbleBudget, setPebbleBudget] = useState(3)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
   const selectedGraph = graphCases.find((graph) => graph.id === selectedGraphId) ?? defaultGraph
   const selectedStrategy = strategies.find((strategy) => strategy.id === selectedStrategyId) ?? defaultStrategy
 
   const blackFeasible = pebbleBudget >= selectedGraph.minBlackPebbles
   const blackWhiteFeasible = pebbleBudget >= selectedGraph.minBlackWhite
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
 
-  const budgetStatus = useMemo(() => {
-    if (pebbleBudget < 1) {
-      return 'Invalid budget.'
+  const budgetStatus =
+    pebbleBudget < 1
+      ? 'Invalid budget.'
+      : blackFeasible && blackWhiteFeasible
+        ? 'Budget is sufficient for both black and black-white pebbling.'
+        : blackWhiteFeasible
+          ? 'Budget is enough for black-white but not for black-only.'
+          : 'Budget is too small; no valid strategy can reach the target.'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
     }
-    if (blackFeasible && blackWhiteFeasible) {
-      return 'Budget is sufficient for both black and black-white pebbling.'
+    document.title = `Pebble Games (Memory-Recursion) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Pebble Games (Memory-Recursion)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
     }
-    if (blackWhiteFeasible) {
-      return 'Budget is enough for black-white but not for black-only.'
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
     }
-    return 'Budget is too small; no valid strategy can reach the target.'
-  }, [blackFeasible, blackWhiteFeasible, pebbleBudget])
+    void navigate('/algoViz')
+  }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Pebble Games (Memory-Recursion)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="pebble-help-page">
+      <style>{pebbleHelpStyles}</style>
+      <div className="pebble-help-window" role="presentation">
+        <header className="pebble-help-titlebar">
+          <span className="pebble-help-title">Pebble Games (Memory-Recursion)</span>
+          <div className="pebble-help-controls">
+            <button className="pebble-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="pebble-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">How pebbling models memory usage in recursive computation</div>
-              <p className="win95-text">
-                Pebble games are a classic abstraction for memory usage in computation. Each pebble stands for a stored intermediate
-                result. Placing a pebble means you computed and kept a value; removing it means you discarded it. The rules encode
-                dependency constraints, so pebbling reveals the inherent memory needed to compute an output. This page covers the black
-                pebble game, the black-white (reversible) variant, and the deep connection to recursion and time-space tradeoffs.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+        <div className="pebble-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`pebble-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalContext.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="pebble-help-main">
+          <aside className="pebble-help-toc" aria-label="Table of contents">
+            <h2 className="pebble-help-toc-title">Contents</h2>
+            <ul className="pebble-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="pebble-help-content">
+            <h1 className="pebble-help-doc-title">Pebble Games (Memory-Recursion)</h1>
+            <p>
+              Pebble games are a classic abstraction for memory usage in computation. Each pebble stands for a stored intermediate
+              result. Placing a pebble means you computed and kept a value; removing it means you discarded it. The rules encode
+              dependency constraints, so pebbling reveals the inherent memory needed to compute an output. This document covers the
+              black pebble game, the black-white variant, and the connection to recursion and time-space tradeoffs.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core Rules (Black Pebbling)</legend>
-            <div className="win95-grid win95-grid-2">
-              {coreRules.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Intuition: a black pebble means you have computed and stored the value of that node. To compute a node, all its inputs
-                must be in memory at the same time.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Rule Variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {ruleVariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Memory and Recursion Connection</legend>
-            <div className="win95-grid win95-grid-2">
-              {memoryRecursionLink.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                In recursive algorithms, the call stack holds intermediate results. Pebbling makes that memory explicit and shows that
-                when the stack is too small, the algorithm must recompute work that was previously done.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Claims</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyClaims.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Graph Families and Their Pebbling Behavior</legend>
-            <div className="win95-grid win95-grid-2">
-              {graphFamilies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Resource Metrics</legend>
-            <div className="win95-grid win95-grid-2">
-              {metrics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Strategy Landscape</legend>
-            <div className="win95-grid win95-grid-2">
-              {strategies.map((item) => (
-                <div key={item.id} className="win95-panel">
-                  <div className="win95-heading">{item.name}</div>
-                  <p className="win95-text">{item.description}</p>
-                  <p className="win95-text"><strong>Space:</strong> {item.space}</p>
-                  <p className="win95-text"><strong>Time:</strong> {item.time}</p>
-                  <p className="win95-text"><strong>Best for:</strong> {item.bestFor}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Proof Ideas for Lower Bounds</legend>
-            <div className="win95-grid win95-grid-2">
-              {proofIdeas.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Explorers</legend>
-            <div className="win95-stack">
-              <div className="win95-panel">
-                <div className="win95-heading">Graph Gallery</div>
-                <p className="win95-text">
-                  Select a DAG shape to see its structure and typical pebbling requirements. These examples are small but highlight
-                  general behavior.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  {graphCases.map((graph) => (
-                    <button
-                      key={graph.id}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setSelectedGraphId(graph.id)}
-                    >
-                      {graph.name}
-                    </button>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="pebble-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Selected:</strong> {selectedGraph.name}</p>
-                  <p className="win95-text"><strong>Nodes:</strong> {selectedGraph.nodes}</p>
-                  <p className="win95-text"><strong>Edges:</strong> {selectedGraph.edges}</p>
-                  <p className="win95-text"><strong>Black pebble minimum:</strong> {selectedGraph.minBlackPebbles}</p>
-                  <p className="win95-text"><strong>Black-white minimum:</strong> {selectedGraph.minBlackWhite}</p>
-                  <p className="win95-text">{selectedGraph.notes}</p>
-                </div>
-              </div>
+                  <p>
+                    Intuition: a black pebble means you have computed and stored the value of that node. To compute a node, all its
+                    inputs must be in memory at the same time.
+                  </p>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">Strategy Selector</div>
-                <p className="win95-text">
-                  Choose a strategy and see the expected tradeoffs. Real-world schedules often combine these ideas based on which
-                  subgraphs are reused the most.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  {strategies.map((strategy) => (
-                    <button
-                      key={strategy.id}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setSelectedStrategyId(strategy.id)}
-                    >
-                      {strategy.name}
-                    </button>
+                <hr className="pebble-help-divider" />
+
+                <section id="bp-history" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="pebble-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Strategy:</strong> {selectedStrategy.name}</p>
-                  <p className="win95-text">{selectedStrategy.description}</p>
-                  <p className="win95-text"><strong>Space:</strong> {selectedStrategy.space}</p>
-                  <p className="win95-text"><strong>Time:</strong> {selectedStrategy.time}</p>
-                  <p className="win95-text"><strong>Best for:</strong> {selectedStrategy.bestFor}</p>
-                </div>
-              </div>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">Pebble Budget Estimator</div>
-                <p className="win95-text">
-                  Adjust the pebble budget and see whether the chosen graph is feasible under black-only and black-white rules.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  <div className="win95-panel win95-panel--raised">
-                    <p className="win95-text"><strong>Budget:</strong> {pebbleBudget} pebble(s)</p>
+                <hr className="pebble-help-divider" />
+
+                <section id="bp-claims" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Key Claims</h2>
+                  {keyClaims.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <hr className="pebble-help-divider" />
+
+                <section id="bp-takeaways" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-setup" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-rules" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Core Rules (Black Pebbling)</h2>
+                  {coreRules.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-variants" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Rule Variants</h2>
+                  {ruleVariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-recursion" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Memory and Recursion</h2>
+                  {memoryRecursionLink.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    In recursive algorithms, the call stack holds intermediate results. Pebbling makes that memory explicit and shows
+                    that when the stack is too small, the algorithm must recompute work that was previously done.
+                  </p>
+                </section>
+
+                <section id="core-families" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Graph Families and Their Pebbling Behavior</h2>
+                  {graphFamilies.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-metrics" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Resource Metrics</h2>
+                  {metrics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-strategies" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Strategy Landscape</h2>
+                  {strategies.map((item) => (
+                    <div key={item.id}>
+                      <h3 className="pebble-help-subheading">{item.name}</h3>
+                      <p>{item.description}</p>
+                      <p><strong>Space:</strong> {item.space}</p>
+                      <p><strong>Time:</strong> {item.time}</p>
+                      <p><strong>Best for:</strong> {item.bestFor}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-proofs" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Proof Ideas for Lower Bounds</h2>
+                  {proofIdeas.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-applications" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-compare" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Compare and Contrast</h2>
+                  {compareContrast.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-tradeoffs" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Time-Space Tradeoff Profiles</h2>
+                  {tradeoffCases.map((item) => (
+                    <p key={item.id}>
+                      <strong>{item.label}:</strong> {item.summary} {item.effect}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="pebble-help-subheading">{example.title}</h3>
+                      <div className="pebble-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-pseudocode" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="pebble-help-subheading">{example.title}</h3>
+                      <div className="pebble-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-gallery" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Graph Gallery</h2>
+                  <p>
+                    Select a DAG shape to review its structure and typical pebbling requirements. These examples are small, but they
+                    illustrate general behavior.
+                  </p>
+                  <div className="pebble-help-inline-buttons">
+                    {graphCases.map((graph) => (
+                      <button
+                        key={graph.id}
+                        type="button"
+                        className={`pebble-help-push ${selectedGraph.id === graph.id ? 'active' : ''}`}
+                        onClick={() => setSelectedGraphId(graph.id)}
+                        aria-pressed={selectedGraph.id === graph.id}
+                      >
+                        {graph.name}
+                      </button>
+                    ))}
+                  </div>
+                  <h3 className="pebble-help-subheading">{selectedGraph.name}</h3>
+                  <p><strong>Nodes:</strong> {selectedGraph.nodes}</p>
+                  <p><strong>Edges:</strong> {selectedGraph.edges}</p>
+                  <p><strong>Black pebble minimum:</strong> {selectedGraph.minBlackPebbles}</p>
+                  <p><strong>Black-white minimum:</strong> {selectedGraph.minBlackWhite}</p>
+                  <p>{selectedGraph.notes}</p>
+                </section>
+
+                <section id="ex-selector" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Strategy Selector</h2>
+                  <p>
+                    Choose a strategy and review the tradeoff profile. Real schedules often combine these ideas based on which
+                    subgraphs are reused the most.
+                  </p>
+                  <div className="pebble-help-inline-buttons">
+                    {strategies.map((strategy) => (
+                      <button
+                        key={strategy.id}
+                        type="button"
+                        className={`pebble-help-push ${selectedStrategy.id === strategy.id ? 'active' : ''}`}
+                        onClick={() => setSelectedStrategyId(strategy.id)}
+                        aria-pressed={selectedStrategy.id === strategy.id}
+                      >
+                        {strategy.name}
+                      </button>
+                    ))}
+                  </div>
+                  <h3 className="pebble-help-subheading">{selectedStrategy.name}</h3>
+                  <p>{selectedStrategy.description}</p>
+                  <p><strong>Space:</strong> {selectedStrategy.space}</p>
+                  <p><strong>Time:</strong> {selectedStrategy.time}</p>
+                  <p><strong>Best for:</strong> {selectedStrategy.bestFor}</p>
+                </section>
+
+                <section id="ex-budget" className="pebble-help-section">
+                  <h2 className="pebble-help-heading">Pebble Budget Estimator</h2>
+                  <p>
+                    Adjust the pebble budget and compare feasibility for the selected graph under black-only and black-white rules.
+                  </p>
+                  <div className="pebble-help-formline">
+                    <label htmlFor="pebble-budget">
+                      <strong>Budget:</strong> {pebbleBudget} pebble(s)
+                    </label>
                     <input
+                      id="pebble-budget"
+                      className="pebble-help-range"
                       type="range"
                       min={1}
                       max={6}
@@ -821,82 +1182,29 @@ export default function PebbleGamesMemoryRecursionPage(): JSX.Element {
                       aria-label="Pebble budget"
                     />
                   </div>
-                  <div className="win95-panel win95-panel--raised">
-                    <p className="win95-text"><strong>Black-only feasible:</strong> {blackFeasible ? 'Yes' : 'No'}</p>
-                    <p className="win95-text"><strong>Black-white feasible:</strong> {blackWhiteFeasible ? 'Yes' : 'No'}</p>
-                    <p className="win95-text">{budgetStatus}</p>
-                  </div>
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text">
+                  <p><strong>Graph:</strong> {selectedGraph.name}</p>
+                  <p><strong>Black-only feasible:</strong> {blackFeasible ? 'Yes' : 'No'}</p>
+                  <p><strong>Black-white feasible:</strong> {blackWhiteFeasible ? 'Yes' : 'No'}</p>
+                  <p>{budgetStatus}</p>
+                  <p>
                     Increasing budget reduces recomputation, but real systems trade memory for time and energy. Pebbling makes this
                     explicit by counting both pebbles and moves.
                   </p>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Time-Space Tradeoff Profiles</legend>
-            <div className="win95-grid win95-grid-3">
-              {tradeoffCases.map((item) => (
-                <div key={item.id} className="win95-panel">
-                  <div className="win95-heading">{item.label}</div>
-                  <p className="win95-text">{item.summary}</p>
-                  <p className="win95-text">{item.effect}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {compareContrast.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="pebble-help-section">
+                <h2 className="pebble-help-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>

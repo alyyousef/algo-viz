@@ -1,8 +1,6 @@
 
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -385,7 +383,299 @@ const rateProfiles = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const producerHelpStyles = `
+.producer-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.producer-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+}
+
+.producer-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.producer-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.producer-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.producer-help-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.producer-help-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.producer-help-tab {
+  flex: 0 0 auto;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.producer-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.producer-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.producer-help-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.producer-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.producer-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.producer-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.producer-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.producer-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.producer-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.producer-help-section {
+  margin: 0 0 22px;
+}
+
+.producer-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.producer-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.producer-help-content p,
+.producer-help-content li,
+.producer-help-content label,
+.producer-help-content input,
+.producer-help-content button {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.producer-help-content p {
+  margin: 0 0 10px;
+}
+
+.producer-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.producer-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.producer-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.producer-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.producer-help-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.producer-help-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.producer-help-push.active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #b3b3b3;
+}
+
+.producer-help-formline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 10px;
+}
+
+@media (max-width: 900px) {
+  .producer-help-title {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 0;
+    font-size: 13px;
+  }
+
+  .producer-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .producer-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-claims', label: 'Core Claims' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-setup', label: 'Problem Setup' },
+    { id: 'core-correctness', label: 'Correctness Goals' },
+    { id: 'core-patterns', label: 'Synchronization Patterns' },
+    { id: 'core-invariants', label: 'Key Invariants' },
+    { id: 'core-variations', label: 'Variations and Extensions' },
+    { id: 'core-performance', label: 'Performance Considerations' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-buffer', label: 'Buffer Configurator' },
+    { id: 'ex-profile', label: 'Rate Profile' },
+    { id: 'ex-stepper', label: 'Buffer Stepper' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const defaultBuffer = bufferCases[0] ?? {
     id: 'fallback',
     name: 'Unavailable buffer',
@@ -404,6 +694,10 @@ export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
   const [selectedBufferId, setSelectedBufferId] = useState(defaultBuffer.id)
   const [selectedProfileId, setSelectedProfileId] = useState(defaultProfile.id)
   const [bufferCount, setBufferCount] = useState(0)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
   const selectedBuffer = bufferCases.find((buffer) => buffer.id === selectedBufferId) ?? defaultBuffer
   const selectedProfile = rateProfiles.find((profile) => profile.id === selectedProfileId) ?? defaultProfile
@@ -411,22 +705,47 @@ export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
   const capacity = selectedBuffer.capacity
   const canProduce = bufferCount < capacity
   const canConsume = bufferCount > 0
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
 
-  const statusText = useMemo(() => {
-    if (capacity === 0) {
-      return 'No buffer configured.'
+  const statusText =
+    capacity === 0
+      ? 'No buffer configured.'
+      : !canProduce && !canConsume
+        ? 'Invalid configuration.'
+        : !canProduce
+          ? 'Buffer full: producers must wait.'
+          : !canConsume
+            ? 'Buffer empty: consumers must wait.'
+            : 'Buffer has space and items; both sides can proceed.'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
     }
-    if (!canProduce && !canConsume) {
-      return 'Invalid configuration.'
+    document.title = `Producer-Consumer (Bounded Buffer) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Producer-Consumer (Bounded Buffer)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
     }
-    if (!canProduce) {
-      return 'Buffer full: producers must wait.'
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
     }
-    if (!canConsume) {
-      return 'Buffer empty: consumers must wait.'
-    }
-    return 'Buffer has space and items; both sides can proceed.'
-  }, [canConsume, canProduce, capacity])
+    void navigate('/algoViz')
+  }
 
   const applyProfile = () => {
     const nextCount = bufferCount + selectedProfile.producerRate - selectedProfile.consumerRate
@@ -435,302 +754,297 @@ export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
   }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Producer-Consumer (Bounded Buffer)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="producer-help-page">
+      <style>{producerHelpStyles}</style>
+      <div className="producer-help-window" role="presentation">
+        <header className="producer-help-titlebar">
+          <span className="producer-help-title">Producer-Consumer (Bounded Buffer)</span>
+          <div className="producer-help-controls">
+            <button className="producer-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="producer-help-control" aria-label="Close">X</Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">How producers and consumers safely share a finite buffer</div>
-              <p className="win95-text">
-                The bounded-buffer problem models how concurrent producers and consumers safely share a fixed-capacity queue. The rules
-                are simple: producers must wait when the buffer is full, consumers must wait when it is empty, and all access to shared
-                state must be synchronized. This page explains the classic solutions, correctness conditions, and practical tradeoffs.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+        <div className="producer-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`producer-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalContext.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="producer-help-main">
+          <aside className="producer-help-toc" aria-label="Table of contents">
+            <h2 className="producer-help-toc-title">Contents</h2>
+            <ul className="producer-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="producer-help-content">
+            <h1 className="producer-help-doc-title">Producer-Consumer (Bounded Buffer)</h1>
+            <p>
+              The bounded-buffer problem models how concurrent producers and consumers safely share a fixed-capacity queue. The rules
+              are simple: producers must wait when the buffer is full, consumers must wait when it is empty, and all access to shared
+              state must be synchronized. This document explains the classic solutions, correctness conditions, and practical
+              tradeoffs.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Goals</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessGoals.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Safety ensures the buffer never corrupts its contents. Liveness ensures that waiting threads eventually proceed when
-                the buffer state allows it.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Core Claims</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyClaims.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Synchronization Patterns</legend>
-            <div className="win95-grid win95-grid-2">
-              {synchronizationPatterns.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variations and Extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Explorers</legend>
-            <div className="win95-stack">
-              <div className="win95-panel">
-                <div className="win95-heading">Buffer Configurator</div>
-                <p className="win95-text">
-                  Select a buffer size and observe how capacity affects waiting behavior. This is a conceptual simulator for intuition,
-                  not a real thread scheduler.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  {bufferCases.map((buffer) => (
-                    <button
-                      key={buffer.id}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => {
-                        setSelectedBufferId(buffer.id)
-                        setBufferCount(0)
-                      }}
-                    >
-                      {buffer.name}
-                    </button>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="producer-help-section">
+                  <h2 className="producer-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="producer-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Selected:</strong> {selectedBuffer.name}</p>
-                  <p className="win95-text"><strong>Capacity:</strong> {selectedBuffer.capacity}</p>
-                  <p className="win95-text">{selectedBuffer.notes}</p>
-                </div>
-              </div>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">Rate Profile</div>
-                <p className="win95-text">
-                  Compare producer and consumer rates. Apply a step to see how the buffer count changes under that profile.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  {rateProfiles.map((profile) => (
-                    <button
-                      key={profile.id}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setSelectedProfileId(profile.id)}
-                    >
-                      {profile.label}
-                    </button>
+                <hr className="producer-help-divider" />
+
+                <section id="bp-history" className="producer-help-section">
+                  <h2 className="producer-help-heading">Historical Context</h2>
+                  {historicalContext.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="producer-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </div>
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Profile:</strong> {selectedProfile.label}</p>
-                  <p className="win95-text"><strong>Producer rate:</strong> {selectedProfile.producerRate} item(s)</p>
-                  <p className="win95-text"><strong>Consumer rate:</strong> {selectedProfile.consumerRate} item(s)</p>
-                  <p className="win95-text">{selectedProfile.summary}</p>
-                </div>
-              </div>
+                </section>
 
-              <div className="win95-panel">
-                <div className="win95-heading">Buffer Stepper</div>
-                <p className="win95-text">
-                  Step the simulation forward. The count is clamped to stay within bounds, reflecting the waiting rules.
-                </p>
-                <div className="win95-grid win95-grid-2">
-                  <div className="win95-panel win95-panel--raised">
-                    <p className="win95-text"><strong>Current count:</strong> {bufferCount}</p>
-                    <p className="win95-text"><strong>Capacity:</strong> {capacity}</p>
-                    <p className="win95-text">{statusText}</p>
+                <hr className="producer-help-divider" />
+
+                <section id="bp-claims" className="producer-help-section">
+                  <h2 className="producer-help-heading">Core Claims</h2>
+                  {keyClaims.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Safety ensures the buffer never corrupts its contents. Liveness ensures that waiting threads eventually proceed
+                    when the buffer state allows it.
+                  </p>
+                </section>
+
+                <hr className="producer-help-divider" />
+
+                <section id="bp-takeaways" className="producer-help-section">
+                  <h2 className="producer-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-setup" className="producer-help-section">
+                  <h2 className="producer-help-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-correctness" className="producer-help-section">
+                  <h2 className="producer-help-heading">Correctness Goals</h2>
+                  {correctnessGoals.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-patterns" className="producer-help-section">
+                  <h2 className="producer-help-heading">Synchronization Patterns</h2>
+                  {synchronizationPatterns.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-invariants" className="producer-help-section">
+                  <h2 className="producer-help-heading">Key Invariants</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-variations" className="producer-help-section">
+                  <h2 className="producer-help-heading">Variations and Extensions</h2>
+                  {variations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-performance" className="producer-help-section">
+                  <h2 className="producer-help-heading">Performance Considerations</h2>
+                  {performanceNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-applications" className="producer-help-section">
+                  <h2 className="producer-help-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="producer-help-section">
+                  <h2 className="producer-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {commonPitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-worked" className="producer-help-section">
+                  <h2 className="producer-help-heading">Worked Examples</h2>
+                  {workedExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="producer-help-subheading">{example.title}</h3>
+                      <div className="producer-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-pseudocode" className="producer-help-section">
+                  <h2 className="producer-help-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="producer-help-subheading">{example.title}</h3>
+                      <div className="producer-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-buffer" className="producer-help-section">
+                  <h2 className="producer-help-heading">Buffer Configurator</h2>
+                  <p>
+                    Select a buffer size and observe how capacity affects waiting behavior. This is a conceptual simulator for
+                    intuition, not a real thread scheduler.
+                  </p>
+                  <div className="producer-help-inline-buttons">
+                    {bufferCases.map((buffer) => (
+                      <button
+                        key={buffer.id}
+                        type="button"
+                        className={`producer-help-push ${selectedBuffer.id === buffer.id ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedBufferId(buffer.id)
+                          setBufferCount(0)
+                        }}
+                        aria-pressed={selectedBuffer.id === buffer.id}
+                      >
+                        {buffer.name}
+                      </button>
+                    ))}
                   </div>
-                  <div className="win95-panel win95-panel--raised">
-                    <button type="button" className="win95-button" onClick={applyProfile}>
+                  <h3 className="producer-help-subheading">{selectedBuffer.name}</h3>
+                  <p><strong>Capacity:</strong> {selectedBuffer.capacity}</p>
+                  <p>{selectedBuffer.notes}</p>
+                </section>
+
+                <section id="ex-profile" className="producer-help-section">
+                  <h2 className="producer-help-heading">Rate Profile</h2>
+                  <p>
+                    Compare producer and consumer rates. Apply a step to see how the buffer count changes under that profile.
+                  </p>
+                  <div className="producer-help-inline-buttons">
+                    {rateProfiles.map((profile) => (
+                      <button
+                        key={profile.id}
+                        type="button"
+                        className={`producer-help-push ${selectedProfile.id === profile.id ? 'active' : ''}`}
+                        onClick={() => setSelectedProfileId(profile.id)}
+                        aria-pressed={selectedProfile.id === profile.id}
+                      >
+                        {profile.label}
+                      </button>
+                    ))}
+                  </div>
+                  <h3 className="producer-help-subheading">{selectedProfile.label}</h3>
+                  <p><strong>Producer rate:</strong> {selectedProfile.producerRate} item(s)</p>
+                  <p><strong>Consumer rate:</strong> {selectedProfile.consumerRate} item(s)</p>
+                  <p>{selectedProfile.summary}</p>
+                </section>
+
+                <section id="ex-stepper" className="producer-help-section">
+                  <h2 className="producer-help-heading">Buffer Stepper</h2>
+                  <p>
+                    Step the simulation forward. The count is clamped to stay within bounds, reflecting the waiting rules.
+                  </p>
+                  <p><strong>Current count:</strong> {bufferCount}</p>
+                  <p><strong>Capacity:</strong> {capacity}</p>
+                  <p>{statusText}</p>
+                  <div className="producer-help-formline">
+                    <button type="button" className="producer-help-push" onClick={applyProfile}>
                       APPLY STEP
                     </button>
-                    <button type="button" className="win95-button" onClick={() => setBufferCount(0)}>
+                    <button type="button" className="producer-help-push" onClick={() => setBufferCount(0)}>
                       RESET
                     </button>
                   </div>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                  <p><strong>Can produce now:</strong> {canProduce ? 'Yes' : 'No'}</p>
+                  <p><strong>Can consume now:</strong> {canConsume ? 'Yes' : 'No'}</p>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Performance Considerations</legend>
-            <div className="win95-grid win95-grid-2">
-              {performanceNotes.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {commonPitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="producer-help-section">
+                <h2 className="producer-help-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
