@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -569,380 +567,668 @@ const keyTakeaways = [
   'Stability prevents mutually beneficial deviations.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const win98HelpStyles = `
+.sm98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.sm98-window {
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.sm98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sm98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.sm98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.sm98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.sm98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+
+.sm98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sm98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.sm98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.sm98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.sm98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.sm98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sm98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.sm98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.sm98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.sm98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.sm98-section {
+  margin: 0 0 20px;
+}
+
+.sm98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.sm98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.sm98-content p,
+.sm98-content li,
+.sm98-content th,
+.sm98-content td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sm98-content p {
+  margin: 0 0 10px;
+}
+
+.sm98-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.sm98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.sm98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.sm98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.sm98-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 6px 0 10px;
+}
+
+.sm98-table th,
+.sm98-table td {
+  border: 1px solid #808080;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sm98-table thead th {
+  background: #e4e4e4;
+}
+
+.sm98-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.sm98-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .sm98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .sm98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .sm98-title-text {
+    font-size: 13px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-setup', label: 'Problem Setup' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-algo', label: 'Algorithm Overview' },
+    { id: 'core-defs', label: 'Formal Definitions' },
+    { id: 'core-correct', label: 'Correctness Insights' },
+    { id: 'core-invariants', label: 'Invariants' },
+    { id: 'core-proofs', label: 'Proof Sketches' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-structures', label: 'Data Structures' },
+    { id: 'core-lattice', label: 'Stable Matching Lattice' },
+    { id: 'core-strategy', label: 'Strategy and Incentives' },
+    { id: 'core-variants', label: 'Variants' },
+    { id: 'core-edge', label: 'Edge Cases' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-debug', label: 'Debugging Checklist' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-faq', label: 'FAQ' },
+  ],
+  examples: [
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-table', label: 'Preference Table' },
+    { id: 'ex-timeline', label: 'Interactive Timeline' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function StableMarriagePage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
   const [selectedScenarioId, setSelectedScenarioId] = useState(timelineScenarios[0]?.id ?? 'a-proposes')
   const [stepIndex, setStepIndex] = useState(0)
 
   const selectedScenario = timelineScenarios.find((scenario) => scenario.id === selectedScenarioId) ?? timelineScenarios[0]
   const stepText = selectedScenario?.steps[stepIndex] ?? 'No steps available.'
   const canStepForward = selectedScenario ? stepIndex < selectedScenario.steps.length - 1 : false
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Stable Marriage (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Stable Marriage',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Stable Marriage</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Finding stable matchings with deferred acceptance</div>
-              <p className="win95-text">
-                The Stable Marriage problem asks for a perfect matching with no blocking pairs. The Gale-Shapley algorithm solves this
-                efficiently and reveals deep truths about stability, optimality, and fairness. This page covers definitions, algorithm
-                mechanics, proofs of correctness, and real-world applications.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="sm98-help-page">
+      <style>{win98HelpStyles}</style>
+      <div className="sm98-window" role="presentation">
+        <header className="sm98-titlebar">
+          <span className="sm98-title-text">Stable Marriage</span>
+          <div className="sm98-title-controls">
+            <button className="sm98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="sm98-control" aria-label="Close">
+              X
             </Link>
           </div>
-
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        </header>
+        <div className="sm98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`sm98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="sm98-main">
+          <aside className="sm98-toc" aria-label="Table of contents">
+            <h2 className="sm98-toc-title">Contents</h2>
+            <ul className="sm98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
+          <main className="sm98-content">
+            <h1 className="sm98-doc-title">Stable Marriage</h1>
+            <p>
+              The Stable Marriage problem asks for a perfect matching with no blocking pairs. The Gale-Shapley algorithm solves
+              this efficiently and reveals deep truths about stability, optimality, and fairness. This page covers definitions,
+              algorithm mechanics, proofs of correctness, and real-world applications.
+            </p>
+            <p>
+              <Link to="/algoViz">Back to Catalog</Link>
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {glossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Overview (Gale-Shapley)</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmOverview.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Formal Definitions</legend>
-            <div className="win95-grid win95-grid-2">
-              {formalDefinitions.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Proof Sketches</legend>
-            <div className="win95-grid win95-grid-2">
-              {proofSketches.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexity.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data Structures</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Preference Table (Example)</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Proposer (A)</th>
-                    <th>Preferences</th>
-                    <th>Receiver (B)</th>
-                    <th>Preferences</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {preferenceTable.map((row) => (
-                    <tr key={row.a}>
-                      <td>{row.a}</td>
-                      <td>{row.prefs}</td>
-                      <td>{row.b}</td>
-                      <td>{row.prefsB}</td>
-                    </tr>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="sm98-section">
+                  <h2 className="sm98-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sm98-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+                <hr className="sm98-divider" />
+                <section id="bp-setup" className="sm98-section">
+                  <h2 className="sm98-heading">Problem Setup</h2>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="sm98-divider" />
+                <section id="bp-takeaways" className="sm98-section">
+                  <h2 className="sm98-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Stable Matching Lattice</legend>
-            <div className="win95-grid win95-grid-2">
-              {latticeFacts.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-algo" className="sm98-section">
+                  <h2 className="sm98-heading">Algorithm Overview (Gale-Shapley)</h2>
+                  {algorithmOverview.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-defs" className="sm98-section">
+                  <h2 className="sm98-heading">Formal Definitions</h2>
+                  {formalDefinitions.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-correct" className="sm98-section">
+                  <h2 className="sm98-heading">Correctness Insights</h2>
+                  {correctnessInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-invariants" className="sm98-section">
+                  <h2 className="sm98-heading">Key Invariants</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-proofs" className="sm98-section">
+                  <h2 className="sm98-heading">Proof Sketches</h2>
+                  {proofSketches.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-complexity" className="sm98-section">
+                  <h2 className="sm98-heading">Complexity</h2>
+                  {complexity.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-structures" className="sm98-section">
+                  <h2 className="sm98-heading">Data Structures</h2>
+                  {dataStructures.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-lattice" className="sm98-section">
+                  <h2 className="sm98-heading">Stable Matching Lattice</h2>
+                  {latticeFacts.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-strategy" className="sm98-section">
+                  <h2 className="sm98-heading">Strategy and Incentives</h2>
+                  {strategyInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-variants" className="sm98-section">
+                  <h2 className="sm98-heading">Variants</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-edge" className="sm98-section">
+                  <h2 className="sm98-heading">Edge Cases</h2>
+                  {edgeCases.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-applications" className="sm98-section">
+                  <h2 className="sm98-heading">Applications</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-debug" className="sm98-section">
+                  <h2 className="sm98-heading">Debugging Checklist</h2>
+                  {debuggingChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="sm98-section">
+                  <h2 className="sm98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {commonPitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-faq" className="sm98-section">
+                  <h2 className="sm98-heading">FAQ</h2>
+                  {faq.map((item) => (
+                    <p key={item.question}>
+                      <strong>{item.question}</strong> {item.answer}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Strategy & Incentives</legend>
-            <div className="win95-grid win95-grid-2">
-              {strategyInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-pseudocode" className="sm98-section">
+                  <h2 className="sm98-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sm98-subheading">{item.title}</h3>
+                      <div className="sm98-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-worked" className="sm98-section">
+                  <h2 className="sm98-heading">Worked Examples</h2>
+                  {workedExamples.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sm98-subheading">{item.title}</h3>
+                      <div className="sm98-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="ex-table" className="sm98-section">
+                  <h2 className="sm98-heading">Preference Table (Example)</h2>
+                  <table className="sm98-table">
+                    <thead>
+                      <tr>
+                        <th>Proposer (A)</th>
+                        <th>Preferences</th>
+                        <th>Receiver (B)</th>
+                        <th>Preferences</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {preferenceTable.map((row) => (
+                        <tr key={row.a}>
+                          <td>{row.a}</td>
+                          <td>{row.prefs}</td>
+                          <td>{row.b}</td>
+                          <td>{row.prefsB}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+                <section id="ex-timeline" className="sm98-section">
+                  <h2 className="sm98-heading">Interactive Timeline</h2>
+                  <p>
+                    Select a scenario and step through proposal rounds to see how deferred acceptance builds a stable matching.
+                  </p>
+                  <div className="sm98-inline-buttons">
+                    {timelineScenarios.map((scenario) => (
+                      <button
+                        key={scenario.id}
+                        type="button"
+                        className="sm98-push"
+                        onClick={() => {
+                          setSelectedScenarioId(scenario.id)
+                          setStepIndex(0)
+                        }}
+                      >
+                        {scenario.title}
+                      </button>
+                    ))}
+                  </div>
+                  <h3 className="sm98-subheading">Selected: {selectedScenario?.title ?? 'None'}</h3>
+                  <p>{stepText}</p>
+                  <p>
+                    <strong>Summary:</strong> {selectedScenario?.summary ?? ''}
+                  </p>
+                  <div className="sm98-inline-buttons">
+                    <button type="button" className="sm98-push" onClick={() => setStepIndex(0)}>
+                      RESET
+                    </button>
+                    <button
+                      type="button"
+                      className="sm98-push"
+                      onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
+                    >
+                      BACK
+                    </button>
+                    <button
+                      type="button"
+                      className="sm98-push"
+                      onClick={() => {
+                        if (canStepForward) {
+                          setStepIndex((prev) => prev + 1)
+                        }
+                      }}
+                    >
+                      STEP
+                    </button>
+                  </div>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Timeline</legend>
-            <div className="win95-panel">
-              <div className="win95-heading">Proposal Stepper</div>
-              <p className="win95-text">
-                Select a scenario and step through proposal rounds to see how deferred acceptance builds a stable matching.
-              </p>
-              <div className="win95-grid win95-grid-2">
-                {timelineScenarios.map((scenario) => (
-                  <button
-                    key={scenario.id}
-                    type="button"
-                    className="win95-button"
-                    onClick={() => {
-                      setSelectedScenarioId(scenario.id)
-                      setStepIndex(0)
-                    }}
-                  >
-                    {scenario.title}
-                  </button>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="sm98-section">
+                <h2 className="sm98-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text"><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
-                <p className="win95-text">{stepText}</p>
-                <p className="win95-text win95-note">{selectedScenario?.summary ?? ''}</p>
-              </div>
-              <div className="win95-grid win95-grid-3">
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex(0)}
-                >
-                  RESET
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
-                >
-                  BACK
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => {
-                    if (canStepForward) {
-                      setStepIndex((prev) => prev + 1)
-                    }
-                  }}
-                >
-                  STEP
-                </button>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Edge Cases</legend>
-            <div className="win95-grid win95-grid-2">
-              {edgeCases.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Debugging Checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {debuggingChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {commonPitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>FAQ</legend>
-            <div className="win95-stack">
-              {faq.map((item) => (
-                <div key={item.question} className="win95-panel">
-                  <div className="win95-heading">{item.question}</div>
-                  <p className="win95-text">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
