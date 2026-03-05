@@ -1,7 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+﻿import { useEffect, useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -152,9 +150,9 @@ const variants = [
       'Uses binary patterns or parity rules to generate moves without recursion.',
   },
   {
-    title: 'Reve’s puzzle (4 pegs)',
+    title: "Reve's puzzle (4 pegs)",
     detail:
-      'The Frame–Stewart algorithm generalizes Hanoi with more pegs; optimality is more complex.',
+      'The Frame-Stewart algorithm generalizes Hanoi with more pegs; optimality is more complex.',
   },
   {
     title: 'Constrained Hanoi',
@@ -529,414 +527,663 @@ const keyTakeaways = [
   'Variants introduce new constraints and complex recurrences.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-setup', label: 'Problem Setup' },
+    { id: 'bp-recurrence', label: 'Recurrence and Growth' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-algorithm', label: 'Algorithm Overview' },
+    { id: 'core-correctness', label: 'Correctness Insights' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-structures', label: 'Data Structures' },
+    { id: 'core-iterative', label: 'Iterative Insights' },
+    { id: 'core-proof', label: 'Proof Walkthrough' },
+    { id: 'core-state', label: 'State-Space View' },
+    { id: 'core-mind-map', label: 'Mind Map Concepts' },
+    { id: 'core-edges', label: 'Mind Map Edges' },
+    { id: 'core-variants', label: 'Variants' },
+    { id: 'core-applications', label: 'Applications' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-table', label: 'Move Count Table' },
+    { id: 'ex-calculator', label: 'Move Count Calculator' },
+    { id: 'ex-timeline', label: 'Interactive Timeline' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const towerHelpStyles = `
+.hanoi98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.hanoi98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.hanoi98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-weight: 700;
+}
+
+.hanoi98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.hanoi98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.hanoi98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hanoi98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.hanoi98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.hanoi98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.hanoi98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.hanoi98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.hanoi98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.hanoi98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hanoi98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.hanoi98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.hanoi98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.hanoi98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.hanoi98-section {
+  margin: 0 0 20px;
+}
+
+.hanoi98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.hanoi98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.hanoi98-content p,
+.hanoi98-content li,
+.hanoi98-content td,
+.hanoi98-content th,
+.hanoi98-content button,
+.hanoi98-content a {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.hanoi98-content p {
+  margin: 0 0 10px;
+}
+
+.hanoi98-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.hanoi98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.hanoi98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+}
+
+.hanoi98-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+.hanoi98-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.hanoi98-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.hanoi98-link {
+  color: #000080;
+}
+
+.hanoi98-table {
+  border-collapse: collapse;
+  margin: 0 0 10px;
+}
+
+.hanoi98-table th,
+.hanoi98-table td {
+  border: 1px solid #b0b0b0;
+  padding: 4px 8px;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .hanoi98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .hanoi98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .hanoi98-title-text {
+    position: static;
+    transform: none;
+    margin-right: auto;
+    font-size: 14px;
+  }
+}
+`
+
 export default function TowerOfHanoiPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedScenarioId, setSelectedScenarioId] = useState(timelineScenarios[0]?.id ?? 'n3')
   const [stepIndex, setStepIndex] = useState(0)
   const [diskCount, setDiskCount] = useState(3)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
   const selectedScenario = timelineScenarios.find((scenario) => scenario.id === selectedScenarioId) ?? timelineScenarios[0]
   const stepText = selectedScenario?.steps[stepIndex] ?? 'No steps available.'
   const canStepForward = selectedScenario ? stepIndex < selectedScenario.steps.length - 1 : false
 
   const moveCount = useMemo(() => (diskCount > 0 ? Math.pow(2, diskCount) - 1 : 0), [diskCount])
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Tower of Hanoi (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Tower of Hanoi',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
 
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Tower of Hanoi</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+    <div className="hanoi98-help-page">
+        <style>{towerHelpStyles}</style>
+        <div className="hanoi98-window" role="presentation">
+          <header className="hanoi98-titlebar">
+            <span className="hanoi98-title-text">Tower of Hanoi</span>
+            <div className="hanoi98-title-controls">
+              <button className="hanoi98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+              <Link to="/algoViz" className="hanoi98-control" aria-label="Close">X</Link>
+            </div>
+          </header>
+
+          <div className="hanoi98-tabs" role="tablist" aria-label="Sections">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`hanoi98-tab ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">A recursive puzzle with exponential complexity</div>
-              <p className="win95-text">
-                The Tower of Hanoi problem is the classic example of recursion and exponential growth. Its elegant recursive solution
-                is optimal, and its move count grows as 2^n - 1. This page covers the problem definition, algorithm, proofs, and
-                practical insights into why the puzzle behaves the way it does.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {glossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Overview</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmOverview.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Recurrence & Move Count</legend>
-            <div className="win95-grid win95-grid-2">
-              {recurrence.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Correctness Insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexity.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Data Structures</legend>
-            <div className="win95-grid win95-grid-2">
-              {dataStructures.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Proof Walkthrough</legend>
-            <div className="win95-grid win95-grid-2">
-              {proofWalkthrough.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Move Count Table</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Disks (n)</th>
-                    <th>Moves (2^n - 1)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {diskSizes.map((row) => (
-                    <tr key={row.n}>
-                      <td>{row.n}</td>
-                      <td>{row.moves}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Iterative Method Insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {iterativeInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>State-Space View</legend>
-            <div className="win95-grid win95-grid-2">
-              {stateSpaceView.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Move Count Calculator</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Pick a disk count to compute the minimal number of moves.
-              </p>
-              <div className="win95-grid win95-grid-2">
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Disks:</strong> {diskCount}</p>
-                  <p className="win95-text"><strong>Minimal moves:</strong> {moveCount}</p>
-                </div>
-                <div className="win95-grid win95-grid-3">
-                  {[1, 2, 3, 4, 5, 6].map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setDiskCount(value)}
-                    >
-                      {value} disks
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Timeline</legend>
-            <div className="win95-panel">
-              <div className="win95-heading">Move Stepper</div>
-              <p className="win95-text">
-                Step through key sequences to see why the recurrence and move count are forced by the rules.
-              </p>
-              <div className="win95-grid win95-grid-3">
-                {timelineScenarios.map((scenario) => (
-                  <button
-                    key={scenario.id}
-                    type="button"
-                    className="win95-button"
-                    onClick={() => {
-                      setSelectedScenarioId(scenario.id)
-                      setStepIndex(0)
-                    }}
-                  >
-                    {scenario.title}
-                  </button>
-                ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text"><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
-                <p className="win95-text">{stepText}</p>
-                <p className="win95-text win95-note">{selectedScenario?.summary ?? ''}</p>
-              </div>
-              <div className="win95-grid win95-grid-3">
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex(0)}
-                >
-                  RESET
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
-                >
-                  BACK
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => {
-                    if (canStepForward) {
-                      setStepIndex((prev) => prev + 1)
-                    }
-                  }}
-                >
-                  STEP
-                </button>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map (Concept Walkthrough)</legend>
-            <div className="win95-grid win95-grid-2">
-              {mindMapNodes.map((item) => (
-                <div key={item.id} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                <strong>Walkthrough:</strong> Follow the nodes in order: Definition → Rules → Algorithm → Recurrence → Complexity.
-                Then branch to Proofs, Variants, and Applications.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map Walkthrough Steps</legend>
-            <div className="win95-grid win95-grid-2">
-              {mindMapWalkthrough.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map Edges</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Why it connects</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mindMapEdges.map((edge) => (
-                    <tr key={`${edge.from}-${edge.to}`}>
-                      <td>{edge.from}</td>
-                      <td>{edge.to}</td>
-                      <td>{edge.note}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {commonPitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
+          <div className="hanoi98-main">
+            <aside className="hanoi98-toc" aria-label="Table of contents">
+              <h2 className="hanoi98-toc-title">Contents</h2>
+              <ul className="hanoi98-toc-list">
+                {sectionLinks[activeTab].map((section) => (
+                  <li key={section.id}>
+                    <a href={`#${section.id}`}>{section.label}</a>
                   </li>
                 ))}
               </ul>
-            </div>
-          </fieldset>
+            </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            <main className="hanoi98-content">
+              <h1 className="hanoi98-doc-title">Tower of Hanoi</h1>
+              <p>
+                Tower of Hanoi is a canonical recursion problem where each legal move follows strict ordering constraints.
+                This page keeps the full reference in one place: setup, recurrence, correctness, variants, and worked examples.
+                <Link to="/algoViz" className="hanoi98-link"> Back to catalog</Link>.
+              </p>
+
+              {activeTab === 'big-picture' && (
+                <>
+                  <section id="bp-overview" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Overview</h2>
+                    {bigPicture.map((item) => (
+                      <div key={item.title}>
+                        <h3 className="hanoi98-subheading">{item.title}</h3>
+                        <p>{item.details}</p>
+                        <p>{item.notes}</p>
+                      </div>
+                    ))}
+                  </section>
+
+                  <hr className="hanoi98-divider" />
+
+                  <section id="bp-setup" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Problem Setup</h2>
+                    {problemSetup.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+
+                  <section id="bp-recurrence" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Recurrence and Growth</h2>
+                    {recurrence.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+
+                  <section id="bp-takeaways" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Key Takeaways</h2>
+                    <ul>
+                      {keyTakeaways.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </section>
+                </>
+              )}
+
+              {activeTab === 'core-concepts' && (
+                <>
+                  <section id="core-algorithm" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Algorithm Overview</h2>
+                    {algorithmOverview.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-correctness" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Correctness Insights</h2>
+                    {correctnessInsights.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-complexity" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Complexity</h2>
+                    {complexity.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-structures" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Data Structures</h2>
+                    {dataStructures.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-iterative" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Iterative Method Insights</h2>
+                    {iterativeInsights.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-proof" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Proof Walkthrough</h2>
+                    {proofWalkthrough.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-state" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">State-Space View</h2>
+                    {stateSpaceView.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-mind-map" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Mind Map Concepts</h2>
+                    {mindMapNodes.map((item) => (
+                      <p key={item.id}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                    <h3 className="hanoi98-subheading">Walkthrough Steps</h3>
+                    {mindMapWalkthrough.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-edges" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Mind Map Edges</h2>
+                    <ul>
+                      {mindMapEdges.map((edge) => (
+                        <li key={`${edge.from}-${edge.to}`}>
+                          <strong>{edge.from}</strong> -&gt; <strong>{edge.to}</strong>: {edge.note}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                  <section id="core-variants" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Variants</h2>
+                    {variants.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-applications" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Applications</h2>
+                    {applications.map((item) => (
+                      <p key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </p>
+                    ))}
+                  </section>
+                  <section id="core-pitfalls" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Common Pitfalls</h2>
+                    <ul>
+                      {commonPitfalls.map((pitfall) => (
+                        <li key={pitfall.mistake}>
+                          <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                </>
+              )}
+
+              {activeTab === 'examples' && (
+                <>
+                  <section id="ex-pseudocode" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Pseudocode Reference</h2>
+                    {pseudocode.map((item) => (
+                      <div key={item.title}>
+                        <h3 className="hanoi98-subheading">{item.title}</h3>
+                        <div className="hanoi98-codebox">
+                          <code>{item.code.trim()}</code>
+                        </div>
+                        <p>{item.explanation}</p>
+                      </div>
+                    ))}
+                  </section>
+                  <section id="ex-worked" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Worked Examples</h2>
+                    {workedExamples.map((item) => (
+                      <div key={item.title}>
+                        <h3 className="hanoi98-subheading">{item.title}</h3>
+                        <div className="hanoi98-codebox">
+                          <code>{item.code.trim()}</code>
+                        </div>
+                        <p>{item.explanation}</p>
+                      </div>
+                    ))}
+                  </section>
+                  <section id="ex-table" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Move Count Table</h2>
+                    <table className="hanoi98-table">
+                      <thead>
+                        <tr>
+                          <th>Disks (n)</th>
+                          <th>Moves (2^n - 1)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diskSizes.map((row) => (
+                          <tr key={row.n}>
+                            <td>{row.n}</td>
+                            <td>{row.moves}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </section>
+                  <section id="ex-calculator" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Move Count Calculator</h2>
+                    <p>Pick a disk count to compute the minimal number of moves.</p>
+                    <div className="hanoi98-inline-buttons">
+                      {[1, 2, 3, 4, 5, 6].map((value) => (
+                        <button key={value} type="button" className="hanoi98-push" onClick={() => setDiskCount(value)}>
+                          {value} disks
+                        </button>
+                      ))}
+                    </div>
+                    <p><strong>Disks:</strong> {diskCount}</p>
+                    <p><strong>Minimal moves:</strong> {moveCount}</p>
+                  </section>
+                  <section id="ex-timeline" className="hanoi98-section">
+                    <h2 className="hanoi98-heading">Interactive Timeline</h2>
+                    <p>Step through key sequences to see why the recurrence and move count are forced by the rules.</p>
+                    <div className="hanoi98-inline-buttons">
+                      {timelineScenarios.map((scenario) => (
+                        <button
+                          key={scenario.id}
+                          type="button"
+                          className="hanoi98-push"
+                          onClick={() => {
+                            setSelectedScenarioId(scenario.id)
+                            setStepIndex(0)
+                          }}
+                        >
+                          {scenario.title}
+                        </button>
+                      ))}
+                    </div>
+                    <p><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
+                    <p><strong>Current step:</strong> {stepText}</p>
+                    <p>{selectedScenario?.summary ?? ''}</p>
+                    <div className="hanoi98-inline-buttons">
+                      <button type="button" className="hanoi98-push" onClick={() => setStepIndex(0)}>Reset</button>
+                      <button type="button" className="hanoi98-push" onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}>Back</button>
+                      <button
+                        type="button"
+                        className="hanoi98-push"
+                        onClick={() => {
+                          if (canStepForward) {
+                            setStepIndex((prev) => prev + 1)
+                          }
+                        }}
+                      >
+                        Step
+                      </button>
+                    </div>
+                  </section>
+                </>
+              )}
+
+              {activeTab === 'glossary' && (
+                <section id="glossary-terms" className="hanoi98-section">
+                  <h2 className="hanoi98-heading">Glossary</h2>
+                  {glossary.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.definition}
+                    </p>
+                  ))}
+                </section>
+              )}
+            </main>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
 }
+
