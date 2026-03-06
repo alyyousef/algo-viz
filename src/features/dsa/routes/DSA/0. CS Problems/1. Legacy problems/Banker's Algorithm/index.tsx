@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -478,6 +478,8 @@ const keyTakeaways = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -525,6 +527,7 @@ const win98HelpStyles = `
 .banker98-page {
   min-height: 100dvh;
   background: #c0c0c0;
+  padding: 0;
   color: #000;
   font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
 }
@@ -550,14 +553,15 @@ const win98HelpStyles = `
   padding: 2px 4px;
   background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
   color: #fff;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .banker98-title {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 15px;
   white-space: nowrap;
 }
 
@@ -582,6 +586,7 @@ const win98HelpStyles = `
   font-size: 11px;
   line-height: 1;
   text-decoration: none;
+  font-family: inherit;
   padding: 0;
   cursor: pointer;
 }
@@ -708,6 +713,7 @@ const win98HelpStyles = `
   border-left: 2px solid #808080;
   border-right: 2px solid #fff;
   border-bottom: 2px solid #fff;
+  overflow-x: auto;
 }
 
 .banker98-codebox code {
@@ -737,6 +743,7 @@ const win98HelpStyles = `
 `
 
 export default function BankersAlgorithmPage(): JSX.Element {
+  const location = useLocation()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const currentTab = searchParams.get('tab')
@@ -753,6 +760,17 @@ export default function BankersAlgorithmPage(): JSX.Element {
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: "Banker's Algorithm",
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
     const historyState = window.history.state as { idx?: number } | null
     if (historyState?.idx && historyState.idx > 0) {
       void navigate(-1)
