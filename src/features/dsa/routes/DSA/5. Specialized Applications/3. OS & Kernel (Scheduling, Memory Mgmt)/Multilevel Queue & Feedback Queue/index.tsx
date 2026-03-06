@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -359,281 +359,558 @@ const takeaways = [
   'Modern schedulers are hybrids inspired by MLFQ principles.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-mental', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-policy', label: 'Policy Overview' },
+    { id: 'core-metrics', label: 'Scheduling Metrics' },
+    { id: 'core-design', label: 'Queue Design Choices' },
+    { id: 'core-flow', label: 'Algorithm Flow' },
+    { id: 'core-pseudocode', label: 'Pseudocode' },
+    { id: 'core-tuning', label: 'Tuning Guidelines' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-realworld', label: 'Real-World Applications' },
+    { id: 'core-compare', label: 'Compare and Contrast' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-evaluation', label: 'How to Evaluate a Scheduler' },
+  ],
+  examples: [
+    { id: 'ex-layouts', label: 'Practical Examples' },
+    { id: 'ex-movement', label: 'Queue Movement' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const mlfqHelpStyles = `
+.mlfq-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.mlfq-help-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.mlfq-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mlfq-help-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.mlfq-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.mlfq-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.mlfq-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.mlfq-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.mlfq-help-tab.is-active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.mlfq-help-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.mlfq-help-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.mlfq-help-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.mlfq-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mlfq-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.mlfq-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.mlfq-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.mlfq-help-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.mlfq-help-section {
+  margin: 0 0 20px;
+}
+
+.mlfq-help-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.mlfq-help-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.mlfq-help-content p,
+.mlfq-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mlfq-help-content p {
+  margin: 0 0 10px;
+}
+
+.mlfq-help-content ul,
+.mlfq-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.mlfq-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.mlfq-help-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+  overflow-x: auto;
+}
+
+.mlfq-help-codebox code {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .mlfq-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .mlfq-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 640px) {
+  .mlfq-help-title {
+    position: static;
+    transform: none;
+    margin-right: 8px;
+    font-size: 13px;
+  }
+}
+`
+
 export default function MultilevelQueueFeedbackQueuePage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Multilevel Queue & Feedback Queue (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Multilevel Queue & Feedback Queue',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Multilevel Queue &amp; Feedback Queue</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+    <div className="mlfq-help-page">
+      <style>{mlfqHelpStyles}</style>
+      <div className="mlfq-help-window" role="presentation">
+        <header className="mlfq-help-titlebar">
+          <span className="mlfq-help-title">Multilevel Queue &amp; Feedback Queue</span>
+          <div className="mlfq-help-title-controls">
+            <button className="mlfq-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="mlfq-help-control" aria-label="Close">
               X
             </Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Adaptive scheduling layers that balance responsiveness and fairness</div>
-              <p className="win95-text">
-                Multilevel Queue (MLQ) and Multilevel Feedback Queue (MLFQ) divide ready processes into multiple queues with
-                different policies and priorities. MLQ assigns processes to fixed classes, while MLFQ adapts to behavior by
-                promoting or demoting processes over time. These strategies are the foundation for interactive scheduling in
-                modern operating systems.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {overviewTiles.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="mlfq-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`mlfq-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mlfq-help-main">
+          <aside className="mlfq-help-toc" aria-label="Table of contents">
+            <h2 className="mlfq-help-toc-title">Contents</h2>
+            <ul className="mlfq-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="mlfq-help-content">
+            <h1 className="mlfq-help-doc-title">Multilevel Queue &amp; Feedback Queue</h1>
+            <p>
+              Multilevel Queue (MLQ) and Multilevel Feedback Queue (MLFQ) divide ready processes into multiple queues with
+              different policies and priorities. MLQ assigns processes to fixed classes, while MLFQ adapts to behavior by
+              promoting or demoting processes over time. These strategies are the foundation for interactive scheduling in
+              modern operating systems.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Overview</h2>
+                  {overviewTiles.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Mental Models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="mlfq-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Policy Overview</legend>
-            <div className="win95-grid win95-grid-3">
-              {policyCards.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                <section id="bp-history" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="bp-mental" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="bp-takeaways" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Scheduling Metrics</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Meaning</th>
-                    <th>Why it matters</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {schedulerMetrics.map((row) => (
-                    <tr key={row.metric}>
-                      <td>{row.metric}</td>
-                      <td>{row.meaning}</td>
-                      <td>{row.goal}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-policy" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Policy Overview</h2>
+                  {policyCards.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="mlfq-help-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Queue Design Choices</legend>
-            <div className="win95-grid win95-grid-2">
-              {queueDesign.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-metrics" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Scheduling Metrics</h2>
+                  {schedulerMetrics.map((row) => (
+                    <p key={row.metric}>
+                      <strong>{row.metric}:</strong> {row.meaning} {row.goal}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Flow</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                MLFQ approximates shortest-job-first by observing behavior: short or I/O-bound jobs stay near the top, while
-                CPU-bound jobs drift downward.
-              </p>
-            </div>
-          </fieldset>
+                <section id="core-design" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Queue Design Choices</h2>
+                  {queueDesign.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-flow" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Algorithm Flow</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    MLFQ approximates shortest-job-first by observing behavior: short or I/O-bound jobs stay near the top, while
+                    CPU-bound jobs drift downward.
+                  </p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Tuning Guidelines</legend>
-            <div className="win95-grid win95-grid-2">
-              {tuningGuidelines.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-pseudocode" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Pseudocode</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="mlfq-help-subheading">{example.title}</h3>
+                      <div className="mlfq-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and Tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-tuning" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Tuning Guidelines</h2>
+                  {tuningGuidelines.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical Examples</legend>
-            <div className="win95-stack">
-              {exampleLayouts.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-realworld" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Walkthrough: Queue Movement</legend>
-            <div className="win95-stack">
-              {workedExample.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-compare" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Compare and Contrast</h2>
+                  {comparisons.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Compare and Contrast</legend>
-            <div className="win95-grid win95-grid-2">
-              {comparisons.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-pitfalls" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+                <section id="core-evaluation" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">How to Evaluate a Scheduler</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-layouts" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Practical Examples</h2>
+                  {exampleLayouts.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="mlfq-help-subheading">{example.title}</h3>
+                      <div className="mlfq-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-movement" className="mlfq-help-section">
+                  <h2 className="mlfq-help-heading">Walkthrough: Queue Movement</h2>
+                  {workedExample.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="mlfq-help-subheading">{example.title}</h3>
+                      <div className="mlfq-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="mlfq-help-section">
+                <h2 className="mlfq-help-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate a Scheduler</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {takeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
