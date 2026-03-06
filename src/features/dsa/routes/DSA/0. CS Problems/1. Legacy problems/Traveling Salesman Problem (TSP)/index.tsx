@@ -1,7 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -642,419 +640,699 @@ const keyTakeaways = [
   'Practical solvers combine exact methods with heuristics.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tspHelpStyles = `
+.tsp-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.tsp-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.tsp-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tsp-help-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.tsp-help-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.tsp-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tsp-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.tsp-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tsp-help-tab.is-active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.tsp-help-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.tsp-help-toc {
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+  overflow: auto;
+}
+
+.tsp-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tsp-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tsp-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.tsp-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.tsp-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.tsp-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.tsp-help-section {
+  margin: 0 0 22px;
+}
+
+.tsp-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.tsp-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tsp-help-content p,
+.tsp-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tsp-help-content p {
+  margin: 0 0 10px;
+}
+
+.tsp-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.tsp-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.tsp-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  overflow-x: auto;
+}
+
+.tsp-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.tsp-help-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.tsp-help-push {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tsp-help-push.is-active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #b6b6b6;
+}
+
+.tsp-help-status {
+  color: #202020;
+}
+
+@media (max-width: 900px) {
+  .tsp-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .tsp-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 640px) {
+  .tsp-help-title-text {
+    position: static;
+    transform: none;
+    margin-right: 8px;
+    font-size: 13px;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-importance', label: 'Why It Matters' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-complexity', label: 'Complexity and Bounds' },
+    { id: 'core-exact', label: 'Exact Methods' },
+    { id: 'core-approx', label: 'Approximation' },
+    { id: 'core-heuristics', label: 'Heuristics' },
+    { id: 'core-correctness', label: 'Correctness' },
+    { id: 'core-variants', label: 'Variants' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-checklist', label: 'Evaluation Checklist' },
+    { id: 'core-faq', label: 'FAQ' },
+  ],
+  examples: [
+    { id: 'ex-pseudocode', label: 'Pseudocode Reference' },
+    { id: 'ex-worked', label: 'Worked Examples' },
+    { id: 'ex-growth', label: 'Tour Count Growth' },
+    { id: 'ex-stepper', label: 'Algorithm Stepper' },
+    { id: 'ex-mindmap', label: 'Concept Walkthrough' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function TspPage(): JSX.Element {
-  const [selectedScenarioId, setSelectedScenarioId] = useState(timelineScenarios[0]?.id ?? 'dp')
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const defaultScenario = timelineScenarios[0] ?? {
+    id: 'fallback',
+    title: 'No scenarios configured',
+    steps: ['No steps available.'],
+    summary: 'No summary available.',
+  }
+  const [selectedScenarioId, setSelectedScenarioId] = useState(defaultScenario.id)
   const [stepIndex, setStepIndex] = useState(0)
   const [cityCount, setCityCount] = useState(5)
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
 
-  const selectedScenario = timelineScenarios.find((scenario) => scenario.id === selectedScenarioId) ?? timelineScenarios[0]
-  const stepText = selectedScenario?.steps[stepIndex] ?? 'No steps available.'
-  const canStepForward = selectedScenario ? stepIndex < selectedScenario.steps.length - 1 : false
+  const selectedScenario = timelineScenarios.find((scenario) => scenario.id === selectedScenarioId) ?? defaultScenario
+  const stepText = selectedScenario.steps[stepIndex] ?? 'No steps available.'
+  const canStepForward = stepIndex < selectedScenario.steps.length - 1
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
 
   const approxTours = useMemo(() => {
     const factorial = (n: number): number => (n <= 1 ? 1 : n * factorial(n - 1))
-    return cityCount <= 10 ? factorial(cityCount - 1) : null
+    if (cityCount > 10) {
+      return null
+    }
+    return factorial(cityCount - 1) / 2
   }, [cityCount])
 
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Traveling Salesman Problem (TSP) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Traveling Salesman Problem (TSP)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Traveling Salesman Problem (TSP)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">The canonical hard optimization puzzle</div>
-              <p className="win95-text">
-                The Traveling Salesman Problem asks for the shortest tour that visits every city once and returns to the start. It is
-                a central NP-hard problem with deep theory and massive practical relevance. This page covers exact and approximate
-                algorithms, heuristics, correctness insights, and a conceptual mind map.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="tsp-help-page">
+      <style>{tspHelpStyles}</style>
+      <div className="tsp-help-window" role="presentation">
+        <header className="tsp-help-titlebar">
+          <span className="tsp-help-title-text">Traveling Salesman Problem (TSP)</span>
+          <div className="tsp-help-title-controls">
+            <button className="tsp-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="tsp-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.details}</p>
-                  <p className="win95-text">{item.notes}</p>
-                </div>
+        <div className="tsp-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`tsp-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="tsp-help-main">
+          <aside className="tsp-help-toc" aria-label="Table of contents">
+            <h2 className="tsp-help-toc-title">Contents</h2>
+            <ul className="tsp-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Problem Setup</legend>
-            <div className="win95-grid win95-grid-2">
-              {problemSetup.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="tsp-help-content">
+            <h1 className="tsp-help-doc-title">Traveling Salesman Problem (TSP)</h1>
+            <p>
+              The Traveling Salesman Problem asks for the shortest tour that visits every city once and returns to the start. It is
+              a central NP-hard problem with deep theory and massive practical relevance. This document keeps the full topic scope
+              intact while reorganizing it into a Windows Help style reference.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {glossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="tsp-help-subheading">{item.title}</h3>
+                      <p>{item.details}</p>
+                      <p>{item.notes}</p>
+                    </div>
+                  ))}
+                  <h3 className="tsp-help-subheading">Problem Setup</h3>
+                  {problemSetup.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Landscape</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmLandscape.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="tsp-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Exact Methods</legend>
-            <div className="win95-grid win95-grid-2">
-              {exactMethods.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-importance" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Why It Matters</h2>
+                  <h3 className="tsp-help-subheading">Algorithm Landscape</h3>
+                  {algorithmLandscape.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="tsp-help-subheading">Applications</h3>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Formulations</legend>
-            <div className="win95-grid win95-grid-2">
-              {formulations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="tsp-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Approximation Algorithms</legend>
-            <div className="win95-grid win95-grid-2">
-              {approximationAlgorithms.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-takeaways" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Heuristics & Metaheuristics</legend>
-            <div className="win95-grid win95-grid-2">
-              {heuristics.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-complexity" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Complexity and Bounds</h2>
+                  {complexity.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="tsp-help-subheading">Lower Bounds</h3>
+                  {lowerBounds.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Correctness & Guarantees</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-exact" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Exact Methods</h2>
+                  {exactMethods.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="tsp-help-subheading">Formulations</h3>
+                  {formulations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexity.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-approx" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Approximation</h2>
+                  {approximationAlgorithms.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Lower Bounds</legend>
-            <div className="win95-grid win95-grid-2">
-              {lowerBounds.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-heuristics" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Heuristics and Metaheuristics</h2>
+                  {heuristics.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Tour Count Growth</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Number of distinct tours grows as (n-1)! / 2 for symmetric TSP. This shows why brute force is infeasible.
-              </p>
-              <div className="win95-grid win95-grid-2">
-                <div className="win95-panel win95-panel--raised">
-                  <p className="win95-text"><strong>Cities:</strong> {cityCount}</p>
-                  <p className="win95-text">
-                    <strong>Approx tours:</strong> {approxTours ?? 'Too large to compute'}
+                <section id="core-correctness" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Correctness and Guarantees</h2>
+                  {correctnessInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-variants" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Variants</h2>
+                  {variants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Pitfalls and Counterexamples</h2>
+                  {pitfallsAndCounterexamples.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="tsp-help-subheading">Common Pitfalls</h3>
+                  <ul>
+                    {commonPitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-checklist" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Evaluation Checklist</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-faq" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">FAQ</h2>
+                  {faq.map((item) => (
+                    <p key={item.question}>
+                      <strong>{item.question}</strong> {item.answer}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-pseudocode" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Pseudocode Reference</h2>
+                  {pseudocode.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="tsp-help-subheading">{item.title}</h3>
+                      <div className="tsp-help-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-worked" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Worked Examples</h2>
+                  {workedExamples.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="tsp-help-subheading">{item.title}</h3>
+                      <div className="tsp-help-codebox">
+                        <code>{item.code.trim()}</code>
+                      </div>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-growth" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Tour Count Growth</h2>
+                  <p>Number of distinct tours grows as (n-1)! / 2 for symmetric TSP. This shows why brute force is infeasible.</p>
+                  <p className="tsp-help-status">
+                    <strong>Cities:</strong> {cityCount} <strong>Approx tours:</strong>{' '}
+                    {approxTours === null ? 'Too large to compute' : approxTours.toLocaleString()}
                   </p>
-                </div>
-                <div className="win95-grid win95-grid-3">
-                  {[4, 5, 6, 7, 8, 9, 10].map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      className="win95-button"
-                      onClick={() => setCityCount(value)}
-                    >
-                      {value} cities
+                  <div className="tsp-help-inline-buttons">
+                    {[4, 5, 6, 7, 8, 9, 10].map((value) => (
+                      <button
+                        key={value}
+                        type="button"
+                        className={`tsp-help-push ${cityCount === value ? 'is-active' : ''}`}
+                        onClick={() => setCityCount(value)}
+                        aria-pressed={cityCount === value}
+                      >
+                        {value} cities
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                <section id="ex-stepper" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Algorithm Stepper</h2>
+                  <p>Step through core ideas behind exact, approximation, and heuristic approaches.</p>
+                  <div className="tsp-help-inline-buttons">
+                    {timelineScenarios.map((scenario) => (
+                      <button
+                        key={scenario.id}
+                        type="button"
+                        className={`tsp-help-push ${selectedScenarioId === scenario.id ? 'is-active' : ''}`}
+                        onClick={() => {
+                          setSelectedScenarioId(scenario.id)
+                          setStepIndex(0)
+                        }}
+                        aria-pressed={selectedScenarioId === scenario.id}
+                      >
+                        {scenario.title}
+                      </button>
+                    ))}
+                  </div>
+                  <p>
+                    <strong>Selected:</strong> {selectedScenario.title}
+                  </p>
+                  <p>{stepText}</p>
+                  <p>
+                    <strong>Summary:</strong> {selectedScenario.summary}
+                  </p>
+                  <div className="tsp-help-inline-buttons">
+                    <button type="button" className="tsp-help-push" onClick={() => setStepIndex(0)}>
+                      Reset
                     </button>
+                    <button
+                      type="button"
+                      className="tsp-help-push"
+                      onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      className="tsp-help-push"
+                      onClick={() => {
+                        if (canStepForward) {
+                          setStepIndex((prev) => prev + 1)
+                        }
+                      }}
+                    >
+                      Step
+                    </button>
+                  </div>
+                </section>
+
+                <section id="ex-mindmap" className="tsp-help-section">
+                  <h2 className="tsp-help-heading">Concept Walkthrough</h2>
+                  <p>
+                    <strong>Walkthrough:</strong> Start at TSP -&gt; Complexity, then branch into Exact vs Approx vs Heuristic
+                    solutions. Finish with Variants and Applications.
+                  </p>
+                  <h3 className="tsp-help-subheading">Nodes</h3>
+                  {tspMindMap.map((item) => (
+                    <p key={item.id}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode Reference</legend>
-            <div className="win95-stack">
-              {pseudocode.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked Examples</legend>
-            <div className="win95-stack">
-              {workedExamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <pre className="win95-code">
-                    <code>{item.code.trim()}</code>
-                  </pre>
-                  <p className="win95-text">{item.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls & Counterexamples</legend>
-            <div className="win95-grid win95-grid-2">
-              {pitfallsAndCounterexamples.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Interactive Timeline</legend>
-            <div className="win95-panel">
-              <div className="win95-heading">Algorithm Stepper</div>
-              <p className="win95-text">
-                Step through core ideas behind exact, approximation, and heuristic approaches.
-              </p>
-              <div className="win95-grid win95-grid-3">
-                {timelineScenarios.map((scenario) => (
-                  <button
-                    key={scenario.id}
-                    type="button"
-                    className="win95-button"
-                    onClick={() => {
-                      setSelectedScenarioId(scenario.id)
-                      setStepIndex(0)
-                    }}
-                  >
-                    {scenario.title}
-                  </button>
-                ))}
-              </div>
-              <div className="win95-panel win95-panel--raised">
-                <p className="win95-text"><strong>Selected:</strong> {selectedScenario?.title ?? 'None'}</p>
-                <p className="win95-text">{stepText}</p>
-                <p className="win95-text win95-note">{selectedScenario?.summary ?? ''}</p>
-              </div>
-              <div className="win95-grid win95-grid-3">
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex(0)}
-                >
-                  RESET
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
-                >
-                  BACK
-                </button>
-                <button
-                  type="button"
-                  className="win95-button"
-                  onClick={() => {
-                    if (canStepForward) {
-                      setStepIndex((prev) => prev + 1)
-                    }
-                  }}
-                >
-                  STEP
-                </button>
-              </div>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {variants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map (Concept Walkthrough)</legend>
-            <div className="win95-grid win95-grid-2">
-              {tspMindMap.map((item) => (
-                <div key={item.id} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                <strong>Walkthrough:</strong> Start at TSP -&gt; Complexity, then branch into Exact vs Approx vs Heuristic solutions.
-                Finish with Variants and Applications.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Mind Map Edges</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Why it connects</th>
-                  </tr>
-                </thead>
-                <tbody>
+                  <h3 className="tsp-help-subheading">Connections</h3>
                   {mindMapEdges.map((edge) => (
-                    <tr key={`${edge.from}-${edge.to}`}>
-                      <td>{edge.from}</td>
-                      <td>{edge.to}</td>
-                      <td>{edge.note}</td>
-                    </tr>
+                    <p key={`${edge.from}-${edge.to}`}>
+                      <strong>
+                        {edge.from} -&gt; {edge.to}:
+                      </strong>{' '}
+                      {edge.note}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Evaluation Checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {commonPitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="tsp-help-section">
+                <h2 className="tsp-help-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>FAQ</legend>
-            <div className="win95-stack">
-              {faq.map((item) => (
-                <div key={item.question} className="win95-panel">
-                  <div className="win95-heading">{item.question}</div>
-                  <p className="win95-text">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
