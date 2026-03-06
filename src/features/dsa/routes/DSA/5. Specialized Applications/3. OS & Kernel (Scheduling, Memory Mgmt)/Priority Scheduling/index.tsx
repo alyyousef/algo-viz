@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
@@ -17,7 +17,7 @@ const overviewTiles = [
   {
     title: 'What it requires',
     detail:
-      'Priority values, a tie-breaking rule, and fairness guards (aging, boosts, inheritance).',
+      'Priority values, a tie-breaking rule, and fairness guards such as aging, boosts, or inheritance.',
   },
   {
     title: 'What it risks',
@@ -45,7 +45,7 @@ const quickGlossary = [
   },
   {
     term: 'Aging',
-    definition: 'Gradually increasing a waiting process’s priority to prevent starvation.',
+    definition: "Gradually increasing a waiting process's priority to prevent starvation.",
   },
 ]
 
@@ -101,15 +101,15 @@ const policyCards = [
     bullets: [
       'Run the highest priority job to completion.',
       'Lower overhead and simpler implementation.',
-      'Urgent jobs may wait if a low-priority job is running.',
+      'Urgent jobs may wait if a low-priority job is already running.',
     ],
   },
   {
     heading: 'Preemptive priority',
     bullets: [
-      'Interrupt running tasks when a higher priority arrives.',
+      'Interrupt running tasks when a higher-priority process arrives.',
       'Best response time for critical work.',
-      'Higher context-switch overhead and starvation risk.',
+      'Higher context-switch overhead and stronger starvation risk.',
     ],
   },
   {
@@ -141,22 +141,22 @@ const schedulerMetrics = [
   {
     metric: 'Overhead',
     meaning: 'Cost of context switching and bookkeeping.',
-    goal: 'Keep CPU time for actual work.',
+    goal: 'Keep CPU time focused on actual work.',
   },
 ]
 
 const algorithmSteps = [
   {
     title: 'Priority selection',
-    detail: 'Choose the ready process with the highest priority. Resolve ties with FCFS or RR.',
+    detail: 'Choose the ready process with the highest priority. Resolve ties with FCFS or Round Robin.',
   },
   {
     title: 'Preemption check',
-    detail: 'If preemptive, interrupt the current process when a higher-priority process arrives.',
+    detail: 'If the scheduler is preemptive, interrupt the current process when a higher-priority process arrives.',
   },
   {
     title: 'Aging and boosts',
-    detail: 'Increase priority of waiting processes to ensure progress and reduce starvation.',
+    detail: 'Increase the priority of waiting processes so they still make progress over time.',
   },
 ]
 
@@ -179,7 +179,7 @@ if preemptive and new.priority > running.priority:
     explanation: 'Aging raises long-waiting tasks to prevent starvation.',
   },
   {
-    title: 'Priority inheritance (lock)',
+    title: 'Priority inheritance for locks',
     code: `if high waits on lock held by low:
   low.priority = max(low.priority, high.priority)`,
     explanation: 'Inheritance prevents unbounded inversion.',
@@ -189,7 +189,7 @@ if preemptive and new.priority > running.priority:
 const complexityNotes = [
   {
     title: 'Implementation cost',
-    detail: 'Priority queues or multiple run queues are required; dynamic priorities add accounting.',
+    detail: 'Priority queues or multiple run queues are required; dynamic priorities add accounting overhead.',
   },
   {
     title: 'Preemption overhead',
@@ -197,7 +197,7 @@ const complexityNotes = [
   },
   {
     title: 'Priority inversion risk',
-    detail: 'Locks can block high-priority tasks unless inheritance/ceiling is used.',
+    detail: 'Locks can block high-priority tasks unless inheritance or ceiling protocols are used.',
   },
   {
     title: 'Policy tuning',
@@ -208,7 +208,7 @@ const complexityNotes = [
 const inversionMitigation = [
   {
     title: 'Priority inheritance',
-    detail: 'Boosts the lock holder to the highest waiting priority until the lock is released.',
+    detail: 'Boost the lock holder to the highest waiting priority until the lock is released.',
   },
   {
     title: 'Priority ceiling',
@@ -216,7 +216,7 @@ const inversionMitigation = [
   },
   {
     title: 'Avoid long critical sections',
-    detail: 'Shorter lock holds reduce inversion impact.',
+    detail: 'Shorter lock holds reduce the time that inversion can hurt critical tasks.',
   },
 ]
 
@@ -235,7 +235,7 @@ const realWorldUses = [
   },
   {
     context: 'Embedded devices',
-    detail: 'Priorities are usually known ahead of time, making static scheduling practical.',
+    detail: 'Priorities are often known ahead of time, making static scheduling practical.',
   },
 ]
 
@@ -255,7 +255,7 @@ P4       3        4      1`,
 t=1: P2 arrives (higher priority) -> preempt P1
 t=3: P2 finishes, P4 arrives (priority 1)
 t=3-7: P4 runs, then P1 resumes`,
-    explanation: 'Higher-priority arrivals interrupt lower priority tasks.',
+    explanation: 'Higher-priority arrivals interrupt lower-priority tasks.',
   },
   {
     title: 'Priority inversion scenario',
@@ -263,18 +263,18 @@ t=3-7: P4 runs, then P1 resumes`,
 High-priority waits on L
 Medium-priority keeps running
 => High-priority starves until low runs`,
-    explanation: 'Inheritance or ceiling protocols prevent this.',
+    explanation: 'Inheritance or ceiling protocols prevent this outcome.',
   },
 ]
 
 const pitfalls = [
   {
     mistake: 'Starvation of low-priority jobs',
-    description: 'Without aging or boosts, low priority tasks can wait forever.',
+    description: 'Without aging or boosts, low-priority tasks can wait forever.',
   },
   {
     mistake: 'Priority inversion',
-    description: 'Low priority tasks holding locks can block high priority tasks.',
+    description: 'Low-priority tasks holding locks can block high-priority tasks.',
   },
   {
     mistake: 'Overtuning priorities',
@@ -289,30 +289,30 @@ const pitfalls = [
 const decisionGuidance = [
   {
     title: 'Use priorities for urgency',
-    detail: 'Ideal when tasks have clear criticality or deadlines.',
+    detail: 'Priority scheduling fits systems where tasks have clear criticality or deadlines.',
   },
   {
     title: 'Choose preemption for latency',
-    detail: 'Preemptive priority improves responsiveness but increases overhead.',
+    detail: 'Preemptive priority improves responsiveness but increases switching overhead.',
   },
   {
     title: 'Add aging for fairness',
-    detail: 'Guarantee progress for low-priority jobs.',
+    detail: 'Aging guarantees progress for lower-priority jobs.',
   },
   {
     title: 'Use inheritance for locks',
-    detail: 'Protect high-priority tasks from inversion.',
+    detail: 'Priority inheritance protects urgent tasks from inversion.',
   },
 ]
 
 const advancedInsights = [
   {
     title: 'Priority inversion in practice',
-    detail: 'The Mars Pathfinder mission experienced inversion, fixed with priority inheritance.',
+    detail: 'The Mars Pathfinder mission experienced inversion and was fixed with priority inheritance.',
   },
   {
     title: 'Priority vs deadline',
-    detail: 'Priority scheduling uses static ranks; EDF uses dynamic deadlines.',
+    detail: 'Priority scheduling uses rank; EDF uses changing deadlines to decide who runs next.',
   },
   {
     title: 'Priority as policy',
@@ -331,283 +331,562 @@ const evaluationChecklist = [
   },
   {
     title: 'Fairness',
-    detail: 'Do low-priority tasks make steady progress?',
+    detail: 'Do low-priority tasks still make steady progress?',
   },
   {
     title: 'Inversion control',
-    detail: 'Are inheritance/ceiling policies implemented for lock-heavy workloads?',
+    detail: 'Are inheritance or ceiling policies implemented for lock-heavy workloads?',
   },
   {
     title: 'Overhead',
-    detail: 'Is preemption cost acceptable for the workload?',
+    detail: 'Is the cost of preemption acceptable for the workload?',
   },
 ]
 
 const takeaways = [
   'Priority scheduling favors urgent work but risks starvation without aging.',
-  'Preemptive priority improves response time at the cost of overhead.',
+  'Preemptive priority improves response time at the cost of extra overhead.',
   'Priority inversion must be mitigated with inheritance or ceiling protocols.',
   'Tuning priorities is a policy decision as much as a technical one.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-mental', label: 'Mental Models' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-policy', label: 'Policy Overview' },
+    { id: 'core-metrics', label: 'Scheduling Metrics' },
+    { id: 'core-flow', label: 'Algorithm Flow' },
+    { id: 'core-pseudocode', label: 'Pseudocode' },
+    { id: 'core-inversion', label: 'Priority Inversion' },
+    { id: 'core-complexity', label: 'Complexity and Tradeoffs' },
+    { id: 'core-realworld', label: 'Real-World Applications' },
+    { id: 'core-decisions', label: 'When to Use It' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-evaluation', label: 'Evaluation Checklist' },
+  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const priorityHelpStyles = `
+.priority-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.priority-help-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.priority-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.priority-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.priority-help-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.priority-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.priority-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.priority-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.priority-help-tab.is-active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.priority-help-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.priority-help-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.priority-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.priority-help-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.priority-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.priority-help-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.priority-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.priority-help-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.priority-help-section {
+  margin: 0 0 20px;
+}
+
+.priority-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.priority-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.priority-help-content p,
+.priority-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.priority-help-content p {
+  margin: 0 0 10px;
+}
+
+.priority-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.priority-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.priority-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  overflow-x: auto;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.priority-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .priority-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .priority-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 640px) {
+  .priority-help-title {
+    position: static;
+    transform: none;
+    margin-right: 8px;
+    font-size: 13px;
+  }
+}
+`
+
 export default function PrioritySchedulingPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Priority Scheduling (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Priority Scheduling',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Priority Scheduling</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+    <div className="priority-help-page">
+      <style>{priorityHelpStyles}</style>
+      <div className="priority-help-window" role="presentation">
+        <header className="priority-help-titlebar">
+          <span className="priority-help-title">Priority Scheduling</span>
+          <div className="priority-help-title-controls">
+            <button className="priority-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="priority-help-control" aria-label="Close">
               X
             </Link>
           </div>
         </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Scheduling by urgency, with fairness guards to avoid starvation</div>
-              <p className="win95-text">
-                Priority scheduling selects the process with the highest priority to run next. It can be non-preemptive or
-                preemptive, and priorities may be fixed or dynamic. While it improves responsiveness for critical tasks, it must
-                be paired with aging or inheritance to avoid starvation and inversion.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>The Big Picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {overviewTiles.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="priority-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`priority-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="priority-help-main">
+          <aside className="priority-help-toc" aria-label="Table of contents">
+            <h2 className="priority-help-toc-title">Contents</h2>
+            <ul className="priority-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Quick Glossary</legend>
-            <div className="win95-grid win95-grid-2">
-              {quickGlossary.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.definition}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="priority-help-content">
+            <h1 className="priority-help-doc-title">Priority Scheduling</h1>
+            <p>
+              Priority scheduling selects the ready process with the highest priority to run next. It can be non-preemptive or
+              preemptive, and priorities may be fixed or dynamic. The policy improves responsiveness for critical work, but it
+              needs fairness controls such as aging and inversion controls such as inheritance when locks are involved.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical Context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="priority-help-section">
+                  <h2 className="priority-help-heading">Overview</h2>
+                  {overviewTiles.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Mental Models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="priority-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Policy Overview</legend>
-            <div className="win95-grid win95-grid-3">
-              {policyCards.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                <section id="bp-history" className="priority-help-section">
+                  <h2 className="priority-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="bp-mental" className="priority-help-section">
+                  <h2 className="priority-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="bp-takeaways" className="priority-help-section">
+                  <h2 className="priority-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((takeaway) => (
+                      <li key={takeaway}>{takeaway}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Scheduling Metrics</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Meaning</th>
-                    <th>Why it matters</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {schedulerMetrics.map((row) => (
-                    <tr key={row.metric}>
-                      <td>{row.metric}</td>
-                      <td>{row.meaning}</td>
-                      <td>{row.goal}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-policy" className="priority-help-section">
+                  <h2 className="priority-help-heading">Policy Overview</h2>
+                  {policyCards.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="priority-help-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm Flow</legend>
-            <div className="win95-grid win95-grid-2">
-              {algorithmSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Priority scheduling is both a technical mechanism and a policy choice: it decides what the system values most.
-              </p>
-            </div>
-          </fieldset>
+                <section id="core-metrics" className="priority-help-section">
+                  <h2 className="priority-help-heading">Scheduling Metrics</h2>
+                  {schedulerMetrics.map((row) => (
+                    <p key={row.metric}>
+                      <strong>{row.metric}:</strong> {row.meaning} {row.goal}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pseudocode</legend>
-            <div className="win95-stack">
-              {pseudocode.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-flow" className="priority-help-section">
+                  <h2 className="priority-help-heading">Algorithm Flow</h2>
+                  {algorithmSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <p>
+                    Priority scheduling is both a technical mechanism and a policy choice. It determines what the system values
+                    most when not every process can run at once.
+                  </p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Priority Inversion Mitigation</legend>
-            <div className="win95-grid win95-grid-2">
-              {inversionMitigation.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-pseudocode" className="priority-help-section">
+                  <h2 className="priority-help-heading">Pseudocode</h2>
+                  {pseudocode.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="priority-help-subheading">{example.title}</h3>
+                      <div className="priority-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity and Tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-inversion" className="priority-help-section">
+                  <h2 className="priority-help-heading">Priority Inversion and Mitigation</h2>
+                  <p>
+                    Priority inversion happens when a low-priority task blocks a high-priority task by holding a needed lock.
+                    The scheduler may want to run the urgent task, but resource ownership forces the opposite order.
+                  </p>
+                  {inversionMitigation.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-World Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="priority-help-section">
+                  <h2 className="priority-help-heading">Complexity and Tradeoffs</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical Examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-realworld" className="priority-help-section">
+                  <h2 className="priority-help-heading">Real-World Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((pitfall) => (
-                  <li key={pitfall.mistake}>
-                    <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                  </li>
+                <section id="core-decisions" className="priority-help-section">
+                  <h2 className="priority-help-heading">When to Use It</h2>
+                  {decisionGuidance.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-advanced" className="priority-help-section">
+                  <h2 className="priority-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="priority-help-section">
+                  <h2 className="priority-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((pitfall) => (
+                      <li key={pitfall.mistake}>
+                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-evaluation" className="priority-help-section">
+                  <h2 className="priority-help-heading">Evaluation Checklist</h2>
+                  {evaluationChecklist.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <section id="ex-practical" className="priority-help-section">
+                <h2 className="priority-help-heading">Practical Examples</h2>
+                {examples.map((example) => (
+                  <div key={example.title}>
+                    <h3 className="priority-help-subheading">{example.title}</h3>
+                    <div className="priority-help-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>When to Use It</legend>
-            <div className="win95-grid win95-grid-2">
-              {decisionGuidance.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced Insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>How to Evaluate a Scheduler</legend>
-            <div className="win95-grid win95-grid-2">
-              {evaluationChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key Takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {takeaways.map((takeaway) => (
-                <div key={takeaway} className="win95-panel">
-                  <p className="win95-text">{takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="priority-help-section">
+                <h2 className="priority-help-heading">Glossary</h2>
+                {quickGlossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
