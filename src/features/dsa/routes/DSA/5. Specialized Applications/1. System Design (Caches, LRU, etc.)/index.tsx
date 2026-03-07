@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -354,208 +353,556 @@ const keyTakeaways = [
   },
 ]
 
+const glossary = [
+  {
+    term: 'Cache-aside',
+    definition: 'Application reads from cache first and falls back to the source of truth on a miss.',
+  },
+  {
+    term: 'Write-through',
+    definition: 'Writes update the cache and underlying store together to keep reads coherent.',
+  },
+  {
+    term: 'Write-back',
+    definition: 'Writes land in cache first and are persisted later, usually with WAL or queue support.',
+  },
+  {
+    term: 'LRU',
+    definition: 'Least Recently Used eviction policy that removes items not touched recently.',
+  },
+  {
+    term: 'TinyLFU',
+    definition: 'Frequency-aware admission approach that helps block one-off scans from polluting the cache.',
+  },
+  {
+    term: 'TTL',
+    definition: 'Time-to-live expiration window after which a cached item is no longer considered fresh.',
+  },
+  {
+    term: 'Consistent hashing',
+    definition: 'Sharding method that limits key movement when cache nodes join or leave.',
+  },
+  {
+    term: 'Stale-while-revalidate',
+    definition: 'Serve slightly stale data briefly while a background refresh repopulates the cache.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'History' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Design Pillars' },
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-flow', label: 'How It Works' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-when', label: 'When to Use Caches' },
+    { id: 'core-advanced', label: 'Advanced Moves' },
+  ],
+  examples: [
+    { id: 'ex-failure', label: 'Failure Mode' },
+    { id: 'ex-code', label: 'Code Examples' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const systemDesignHelpStyles = `
+.sd-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.sd-help-window {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.sd-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sd-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.sd-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.sd-help-control {
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sd-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.sd-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  color: #000;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sd-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.sd-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.sd-help-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.sd-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sd-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sd-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.sd-help-toc-list a {
+  color: #000;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.sd-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.sd-help-doc-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sd-help-intro {
+  margin: 0 0 16px;
+}
+
+.sd-help-section {
+  margin: 0 0 22px;
+}
+
+.sd-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sd-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sd-help-content p,
+.sd-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sd-help-content p {
+  margin: 0 0 10px;
+}
+
+.sd-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.sd-help-divider {
+  margin: 14px 0;
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+}
+
+.sd-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.sd-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .sd-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .sd-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 640px) {
+  .sd-help-content {
+    padding: 12px 14px 16px;
+  }
+
+  .sd-help-title {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+`
+
 export default function SystemDesignCachesPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = (() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })()
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `System Design (Caches, LRU, etc.) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'System Design (Caches, LRU, etc.)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+
+    try {
+      const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+      const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+      const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+      window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+    } catch {
+      // Ignore storage issues and keep navigation behavior intact.
+    }
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">System Design (Caches, LRU, etc.)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Keeping hot data close and consistent</div>
-              <p className="win95-text">
-                Caching is a system design lever for latency and load. The craft lies in picking interaction patterns, eviction and
-                admission rules, sharding strategy, and coherence mechanisms that fit your truth source and risk tolerance.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="sd-help-page">
+      <style>{systemDesignHelpStyles}</style>
+      <div className="sd-help-window" role="presentation">
+        <header className="sd-help-titlebar">
+          <span className="sd-help-title">System Design (Caches, LRU, etc.) - Help</span>
+          <div className="sd-help-controls">
+            <button className="sd-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="sd-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
+        <div className="sd-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`sd-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="sd-help-main">
+          <aside className="sd-help-toc" aria-label="Table of contents">
+            <h2 className="sd-help-toc-title">Contents</h2>
+            <ul className="sd-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>History that shaped cache design</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
-                  <p className="win95-text">{event.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="sd-help-content">
+            <h1 className="sd-help-doc-title">System Design (Caches, LRU, etc.)</h1>
+            <p className="sd-help-intro">
+              Caching is a system design lever for latency and load. The craft lies in picking interaction patterns, eviction and
+              admission rules, sharding strategy, and coherence mechanisms that fit your truth source and risk tolerance.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pillars and mental hooks</legend>
-            <div className="win95-row">
-              <div className="win95-panel">
-                <div className="win95-subheading">Pillars</div>
-                <div className="win95-stack">
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="sd-help-section">
+                  <h2 className="sd-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sd-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <hr className="sd-help-divider" />
+
+                <section id="bp-history" className="sd-help-section">
+                  <h2 className="sd-help-heading">History That Shaped Cache Design</h2>
+                  {history.map((event) => (
+                    <div key={event.title}>
+                      <h3 className="sd-help-subheading">{event.title}</h3>
+                      <p>{event.detail}</p>
+                      <p>{event.note}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="bp-applications" className="sd-help-section">
+                  <h2 className="sd-help-heading">Where Caches Power Systems</h2>
+                  {applications.map((app) => (
+                    <div key={app.title}>
+                      <h3 className="sd-help-subheading">{app.title}</h3>
+                      <p>{app.detail}</p>
+                      <p>{app.note}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="bp-takeaways" className="sd-help-section">
+                  <h2 className="sd-help-heading">Key Takeaways</h2>
+                  {keyTakeaways.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="sd-help-section">
+                  <h2 className="sd-help-heading">Design Pillars</h2>
                   {pillars.map((pillar) => (
-                    <div key={pillar.title} className="win95-panel">
-                      <div className="win95-heading">{pillar.title}</div>
-                      <p className="win95-text">{pillar.detail}</p>
-                    </div>
+                    <p key={pillar.title}>
+                      <strong>{pillar.title}:</strong> {pillar.detail}
+                    </p>
                   ))}
-                </div>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-subheading">Mental models</div>
-                <div className="win95-stack">
+                </section>
+
+                <section id="core-models" className="sd-help-section">
+                  <h2 className="sd-help-heading">Mental Models</h2>
                   {mentalModels.map((model) => (
-                    <div key={model.title} className="win95-panel">
-                      <div className="win95-heading">{model.title}</div>
-                      <p className="win95-text">{model.detail}</p>
+                    <p key={model.title}>
+                      <strong>{model.title}:</strong> {model.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-flow" className="sd-help-section">
+                  <h2 className="sd-help-heading">How It Works, Step by Step</h2>
+                  {howItWorks.map((step, index) => (
+                    <p key={step.title}>
+                      <strong>Step {index + 1}: {step.title}:</strong> {step.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-complexity" className="sd-help-section">
+                  <h2 className="sd-help-heading">Complexity at a Glance</h2>
+                  {complexityTable.map((row) => (
+                    <p key={row.approach}>
+                      <strong>{row.approach}:</strong> Time {row.time}; Space {row.space}; {row.note}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="sd-help-section">
+                  <h2 className="sd-help-heading">Pitfalls to Avoid</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item.title}>
+                        <strong>{item.title}:</strong> {item.detail}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-when" className="sd-help-section">
+                  <h2 className="sd-help-heading">When to Reach for Caches</h2>
+                  {whenToUse.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-advanced" className="sd-help-section">
+                  <h2 className="sd-help-heading">Advanced Moves</h2>
+                  {advanced.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="sd-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                      <p>{item.note}</p>
                     </div>
                   ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works, step by step</legend>
-            <div className="win95-grid win95-grid-3">
-              {howItWorks.map((step, index) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
-                    Step {index + 1}: {step.title}
-                  </div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-failure" className="sd-help-section">
+                  <h2 className="sd-help-heading">Failure Mode</h2>
+                  <p>{failureStory}</p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity at a glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                <section id="ex-code" className="sd-help-section">
+                  <h2 className="sd-help-heading">Code Examples</h2>
+                  {codeExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="sd-help-subheading">{example.title}</h3>
+                      <div className="sd-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Where caches power systems</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((app) => (
-                <div key={app.title} className="win95-panel">
-                  <div className="win95-heading">{app.title}</div>
-                  <p className="win95-text">{app.detail}</p>
-                  <p className="win95-text">{app.note}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">Failure mode</div>
-              <p className="win95-text">{failureStory}</p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls to avoid</legend>
-            <div className="win95-grid win95-grid-2">
-              {pitfalls.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to reach for caches</legend>
-            <div className="win95-grid win95-grid-2">
-              {whenToUse.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced moves</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="sd-help-section">
+                <h2 className="sd-help-heading">Glossary</h2>
+                {glossary.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
