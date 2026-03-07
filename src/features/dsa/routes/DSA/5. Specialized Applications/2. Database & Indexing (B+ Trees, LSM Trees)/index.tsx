@@ -1,407 +1,133 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
 
-
 const bigPicture = [
-  {
-    title: 'Workload first',
-    detail: 'B+ trees shine with mixed reads/writes and range scans; LSM trees dominate write-heavy ingest.',
-    note: 'Pick the engine that minimizes tail latency for your actual query mix.',
-  },
-  {
-    title: 'Amplification budgets',
-    detail: 'Both designs trade read, write, and space amplification against each other.',
-    note: 'You must set targets (read amp, write amp, storage overhead) before tuning.',
-  },
-  {
-    title: 'Durability is a protocol',
-    detail: 'Correctness depends on WAL ordering, checksums, and crash-recovery metadata.',
-    note: 'Data structure design matters less than the write discipline around it.',
-  },
-  {
-    title: 'Indexes are product features',
-    detail: 'Secondary indexes, covering indexes, and clustering choices dictate user-visible latency.',
-    note: 'Model queries, not theory, when designing indexes.',
-  },
-]
+  ['Workload first', 'B+ trees shine with mixed reads/writes and range scans; LSM trees dominate write-heavy ingest.', 'Pick the engine that minimizes tail latency for your actual query mix.'],
+  ['Amplification budgets', 'Both designs trade read, write, and space amplification against each other.', 'You must set targets (read amp, write amp, storage overhead) before tuning.'],
+  ['Durability is a protocol', 'Correctness depends on WAL ordering, checksums, and crash-recovery metadata.', 'Data structure design matters less than the write discipline around it.'],
+  ['Indexes are product features', 'Secondary indexes, covering indexes, and clustering choices dictate user-visible latency.', 'Model queries, not theory, when designing indexes.'],
+] as const
 
 const history = [
-  {
-    title: '1971: B-trees introduced',
-    detail: 'B-tree design targets disk IO with large fanout to keep height shallow.',
-    note: 'A direct response to slow random seeks on spinning disks.',
-  },
-  {
-    title: '1979: B+ trees in System R',
-    detail: 'B+ tree variant becomes dominant for relational indexing with sorted leaf pages.',
-    note: 'Leaf-linked ranges make scans predictable and efficient.',
-  },
-  {
-    title: '1996: LSM trees formalized',
-    detail: 'O\'Neil et al. propose log-structured merge trees for high write throughput.',
-    note: 'Introduced leveled vs tiered compaction as a core design choice.',
-  },
-  {
-    title: '2006: Bigtable + SSTables',
-    detail: 'Immutable sorted tables and memtables popularize LSM storage in distributed systems.',
-    note: 'Pattern spreads to HBase, Cassandra, and RocksDB/LevelDB.',
-  },
-  {
-    title: '2013+: Production-grade LSM',
-    detail: 'RocksDB, TiKV, and others add pluggable compaction, filters, and caches.',
-    note: 'Large-scale production makes observability and tuning first-class features.',
-  },
-]
+  ['1971: B-trees introduced', 'B-tree design targets disk IO with large fanout to keep height shallow.', 'A direct response to slow random seeks on spinning disks.'],
+  ['1979: B+ trees in System R', 'B+ tree variant becomes dominant for relational indexing with sorted leaf pages.', 'Leaf-linked ranges make scans predictable and efficient.'],
+  ["1996: LSM trees formalized", "O'Neil et al. propose log-structured merge trees for high write throughput.", 'Introduced leveled vs tiered compaction as a core design choice.'],
+  ['2006: Bigtable + SSTables', 'Immutable sorted tables and memtables popularize LSM storage in distributed systems.', 'Pattern spreads to HBase, Cassandra, and RocksDB/LevelDB.'],
+  ['2013+: Production-grade LSM', 'RocksDB, TiKV, and others add pluggable compaction, filters, and caches.', 'Large-scale production makes observability and tuning first-class features.'],
+] as const
 
 const pillars = [
-  {
-    title: 'Sorted structure',
-    detail: 'B+ leaf pages and LSM SSTables remain sorted to support efficient seeks and ranges.',
-  },
-  {
-    title: 'Fanout or levels',
-    detail: 'B+ uses node fanout to reduce height; LSM uses levels and sizes to bound compaction.',
-  },
-  {
-    title: 'Write discipline',
-    detail: 'WAL + ordered flushes guarantee crash safety and consistency.',
-  },
-  {
-    title: 'Amplification control',
-    detail: 'Splits/merges (B+) and compaction (LSM) reshape data to keep overhead bounded.',
-  },
-]
+  ['Sorted structure', 'B+ leaf pages and LSM SSTables remain sorted to support efficient seeks and ranges.'],
+  ['Fanout or levels', 'B+ uses node fanout to reduce height; LSM uses levels and sizes to bound compaction.'],
+  ['Write discipline', 'WAL + ordered flushes guarantee crash safety and consistency.'],
+  ['Amplification control', 'Splits/merges (B+) and compaction (LSM) reshape data to keep overhead bounded.'],
+] as const
 
 const mentalModels = [
-  {
-    title: 'Phone book vs journal',
-    detail:
-      'B+ tree keeps a phone book neatly sorted; LSM writes to a journal and periodically re-sorts it. The book gives steady reads; the journal gives fast appends.',
-  },
-  {
-    title: 'Library shelving',
-    detail:
-      'B+ shelves books immediately (split when full). LSM drops books onto carts and reshelves in batches (compaction).',
-  },
-  {
-    title: 'Shipping lanes',
-    detail:
-      'B+ spreads traffic across many lanes (fanout). LSM batches cargo into trains (runs) that merge on arrival.',
-  },
-]
+  ['Phone book vs journal', 'B+ tree keeps a phone book neatly sorted; LSM writes to a journal and periodically re-sorts it. The book gives steady reads; the journal gives fast appends.'],
+  ['Library shelving', 'B+ shelves books immediately (split when full). LSM drops books onto carts and reshelves in batches (compaction).'],
+  ['Shipping lanes', 'B+ spreads traffic across many lanes (fanout). LSM batches cargo into trains (runs) that merge on arrival.'],
+] as const
 
 const howItWorks = [
-  {
-    title: 'Model the workload',
-    detail: 'Measure read/write mix, range scan frequency, and p95/p99 latency targets.',
-  },
-  {
-    title: 'Pick the engine',
-    detail: 'Choose B+ for predictable reads and ranges; choose LSM for ingest-heavy workloads.',
-  },
-  {
-    title: 'Define the storage layout',
-    detail: 'Select page size (B+) or SSTable/block size (LSM) to match IO and cache behavior.',
-  },
-  {
-    title: 'Design the write path',
-    detail: 'WAL then in-memory updates; flush to disk with ordering barriers and checksums.',
-  },
-  {
-    title: 'Index for the query set',
-    detail: 'Pick clustered keys, secondary indexes, and covering indexes based on actual predicates.',
-  },
-  {
-    title: 'Tune amplification',
-    detail: 'Set fill factors (B+) and level sizes/compaction style (LSM) to cap overhead.',
-  },
-  {
-    title: 'Protect with recovery metadata',
-    detail: 'Maintain manifests, sequence numbers, and durable checkpoints for fast crash recovery.',
-  },
-  {
-    title: 'Observe and iterate',
-    detail: 'Track cache hit rate, compaction debt, and index effectiveness; retune as patterns shift.',
-  },
-]
+  ['Model the workload', 'Measure read/write mix, range scan frequency, and p95/p99 latency targets.'],
+  ['Pick the engine', 'Choose B+ for predictable reads and ranges; choose LSM for ingest-heavy workloads.'],
+  ['Define the storage layout', 'Select page size (B+) or SSTable/block size (LSM) to match IO and cache behavior.'],
+  ['Design the write path', 'WAL then in-memory updates; flush to disk with ordering barriers and checksums.'],
+  ['Index for the query set', 'Pick clustered keys, secondary indexes, and covering indexes based on actual predicates.'],
+  ['Tune amplification', 'Set fill factors (B+) and level sizes/compaction style (LSM) to cap overhead.'],
+  ['Protect with recovery metadata', 'Maintain manifests, sequence numbers, and durable checkpoints for fast crash recovery.'],
+  ['Observe and iterate', 'Track cache hit rate, compaction debt, and index effectiveness; retune as patterns shift.'],
+] as const
 
 const bplusAnatomy = [
-  {
-    title: 'Root, internal, leaf pages',
-    detail: 'Internal pages store separators; leaves store full keys and pointers/records.',
-  },
-  {
-    title: 'Fanout and height',
-    detail: 'Large page sizes give high fanout and small height; height is often 2-4 levels.',
-  },
-  {
-    title: 'Leaf links',
-    detail: 'Leaves link as a sorted list for fast range scans and ordered iteration.',
-  },
-  {
-    title: 'Split/merge policy',
-    detail: 'Splits on overflow; merges or redistributes on underflow to keep balance.',
-  },
-  {
-    title: 'Latch + lock layers',
-    detail: 'Latches protect page structure; transaction locks protect logical data.',
-  },
-  {
-    title: 'Clustered vs secondary',
-    detail: 'Clustered indexes store rows in leaf pages; secondary indexes point to rows.',
-  },
-]
+  ['Root, internal, leaf pages', 'Internal pages store separators; leaves store full keys and pointers/records.'],
+  ['Fanout and height', 'Large page sizes give high fanout and small height; height is often 2-4 levels.'],
+  ['Leaf links', 'Leaves link as a sorted list for fast range scans and ordered iteration.'],
+  ['Split/merge policy', 'Splits on overflow; merges or redistributes on underflow to keep balance.'],
+  ['Latch + lock layers', 'Latches protect page structure; transaction locks protect logical data.'],
+  ['Clustered vs secondary', 'Clustered indexes store rows in leaf pages; secondary indexes point to rows.'],
+] as const
 
 const lsmAnatomy = [
-  {
-    title: 'WAL + memtable',
-    detail: 'Writes append to WAL, then update an in-memory structure (skiplist or tree).',
-  },
-  {
-    title: 'SSTables',
-    detail: 'Immutable sorted files with per-block indexes and checksums.',
-  },
-  {
-    title: 'Levels and sizes',
-    detail: 'Data lives in levels sized by a ratio; compaction merges overlapping key ranges.',
-  },
-  {
-    title: 'Bloom and index blocks',
-    detail: 'Filters avoid disk reads on negative lookups; index blocks navigate files.',
-  },
-  {
-    title: 'Compaction styles',
-    detail: 'Leveled limits read amp; tiered reduces write amp; universal fits time-series.',
-  },
-  {
-    title: 'Tombstones',
-    detail: 'Deletes write tombstones that are eventually purged during compaction.',
-  },
-]
+  ['WAL + memtable', 'Writes append to WAL, then update an in-memory structure (skiplist or tree).'],
+  ['SSTables', 'Immutable sorted files with per-block indexes and checksums.'],
+  ['Levels and sizes', 'Data lives in levels sized by a ratio; compaction merges overlapping key ranges.'],
+  ['Bloom and index blocks', 'Filters avoid disk reads on negative lookups; index blocks navigate files.'],
+  ['Compaction styles', 'Leveled limits read amp; tiered reduces write amp; universal fits time-series.'],
+  ['Tombstones', 'Deletes write tombstones that are eventually purged during compaction.'],
+] as const
 
 const tradeoffMatrix = [
-  {
-    dimension: 'Read amplification',
-    bplus: 'Low and predictable (log fanout).',
-    lsm: 'Higher; depends on levels and bloom accuracy.',
-  },
-  {
-    dimension: 'Write amplification',
-    bplus: 'Moderate; splits and page rewrites.',
-    lsm: 'Potentially high; compaction rewrites data.',
-  },
-  {
-    dimension: 'Range scans',
-    bplus: 'Excellent with leaf links.',
-    lsm: 'Good but can touch many files if compaction lags.',
-  },
-  {
-    dimension: 'Point reads',
-    bplus: 'Fast; small number of page reads.',
-    lsm: 'Depends on bloom filters and cache.',
-  },
-  {
-    dimension: 'Write throughput',
-    bplus: 'Stable but limited by page updates.',
-    lsm: 'Very high ingest when compaction keeps up.',
-  },
-  {
-    dimension: 'Space overhead',
-    bplus: 'Low if fill factor is tuned.',
-    lsm: 'Higher due to multiple levels and obsolete data.',
-  },
-  {
-    dimension: 'Crash recovery',
-    bplus: 'Redo/undo from WAL and page checksums.',
-    lsm: 'Replay WAL and rebuild manifests/level lists.',
-  },
-]
+  ['Read amplification', 'Low and predictable (log fanout).', 'Higher; depends on levels and bloom accuracy.'],
+  ['Write amplification', 'Moderate; splits and page rewrites.', 'Potentially high; compaction rewrites data.'],
+  ['Range scans', 'Excellent with leaf links.', 'Good but can touch many files if compaction lags.'],
+  ['Point reads', 'Fast; small number of page reads.', 'Depends on bloom filters and cache.'],
+  ['Write throughput', 'Stable but limited by page updates.', 'Very high ingest when compaction keeps up.'],
+  ['Space overhead', 'Low if fill factor is tuned.', 'Higher due to multiple levels and obsolete data.'],
+  ['Crash recovery', 'Redo/undo from WAL and page checksums.', 'Replay WAL and rebuild manifests/level lists.'],
+] as const
 
 const complexityTable = [
-  {
-    approach: 'B+ point/range lookup',
-    time: 'O(log_f N + k)',
-    space: 'O(N)',
-    note: 'f = fanout, k = rows returned; shallow height with large pages.',
-  },
-  {
-    approach: 'B+ insert/update',
-    time: 'O(log_f N)',
-    space: 'O(N)',
-    note: 'Splits are localized; costs stable with buffer pool.',
-  },
-  {
-    approach: 'LSM point read (with bloom)',
-    time: 'O(levels) + O(k)',
-    space: 'O(N)',
-    note: 'Filters avoid most file probes; without filters reads degrade.',
-  },
-  {
-    approach: 'LSM range scan',
-    time: 'O(levels + k)',
-    space: 'O(N)',
-    note: 'Range iterators merge multiple files; compaction reduces fanout.',
-  },
-  {
-    approach: 'LSM write',
-    time: 'O(1) amortized ingest',
-    space: 'O(N + overhead)',
-    note: 'Compaction adds write amp; tuning decides the multiplier.',
-  },
-  {
-    approach: 'Bloom filter check',
-    time: 'O(h)',
-    space: 'O(m)',
-    note: 'h hashes, m bits per filter; only false positives.',
-  },
-]
+  ['B+ point/range lookup', 'O(log_f N + k)', 'O(N)', 'f = fanout, k = rows returned; shallow height with large pages.'],
+  ['B+ insert/update', 'O(log_f N)', 'O(N)', 'Splits are localized; costs stable with buffer pool.'],
+  ['LSM point read (with bloom)', 'O(levels) + O(k)', 'O(N)', 'Filters avoid most file probes; without filters reads degrade.'],
+  ['LSM range scan', 'O(levels + k)', 'O(N)', 'Range iterators merge multiple files; compaction reduces fanout.'],
+  ['LSM write', 'O(1) amortized ingest', 'O(N + overhead)', 'Compaction adds write amp; tuning decides the multiplier.'],
+  ['Bloom filter check', 'O(h)', 'O(m)', 'h hashes, m bits per filter; only false positives.'],
+] as const
 
 const applications = [
-  {
-    title: 'Relational OLTP engines',
-    detail: 'B+ trees back clustered and secondary indexes in Postgres, MySQL, SQL Server.',
-    note: 'Predictable latency under mixed workloads.',
-  },
-  {
-    title: 'Key-value ingest stores',
-    detail: 'RocksDB, Cassandra, HBase, and TiKV use LSM with filters and caches.',
-    note: 'Designed for append-heavy workloads and large fanout.',
-  },
-  {
-    title: 'Search and analytics',
-    detail: 'Inverted indexes and column stores combine LSM-like ingestion with merge segments.',
-    note: 'Segments merge to keep query latency bounded.',
-  },
-  {
-    title: 'Mobile and embedded',
-    detail: 'SQLite uses B+ trees; LevelDB/RocksDB power on-device key-value storage.',
-    note: 'Small footprint and reliable recovery are key.',
-  },
-]
+  ['Relational OLTP engines', 'B+ trees back clustered and secondary indexes in Postgres, MySQL, SQL Server.', 'Predictable latency under mixed workloads.'],
+  ['Key-value ingest stores', 'RocksDB, Cassandra, HBase, and TiKV use LSM with filters and caches.', 'Designed for append-heavy workloads and large fanout.'],
+  ['Search and analytics', 'Inverted indexes and column stores combine LSM-like ingestion with merge segments.', 'Segments merge to keep query latency bounded.'],
+  ['Mobile and embedded', 'SQLite uses B+ trees; LevelDB/RocksDB power on-device key-value storage.', 'Small footprint and reliable recovery are key.'],
+] as const
 
 const failureStory =
   'A metrics service selected tiered LSM compaction for write throughput but under-provisioned IO. Compaction debt grew, SSTables piled up, and point reads fanned out across dozens of files. Latency spiked and cache pressure increased. Switching to leveled compaction, increasing bloom bits per key, and reserving IO budget for compaction stabilized read latency within a week.'
 
 const pitfalls = [
-  {
-    title: 'Ignoring amplification budgets',
-    detail: 'Without targets, compaction or split policies silently blow IO and storage budgets.',
-  },
-  {
-    title: 'Hot key ranges',
-    detail: 'Sequential keys or skewed traffic cause page contention or compaction hotspots.',
-  },
-  {
-    title: 'Over-indexing',
-    detail: 'Every secondary index adds write cost and WAL overhead; unused indexes are pure tax.',
-  },
-  {
-    title: 'Weak crash protection',
-    detail: 'Missing WAL ordering or checksums risks torn pages and corrupted SSTables.',
-  },
-  {
-    title: 'Compaction starvation',
-    detail: 'If compaction lags, read amp and disk usage balloon quickly.',
-  },
-]
+  ['Ignoring amplification budgets', 'Without targets, compaction or split policies silently blow IO and storage budgets.'],
+  ['Hot key ranges', 'Sequential keys or skewed traffic cause page contention or compaction hotspots.'],
+  ['Over-indexing', 'Every secondary index adds write cost and WAL overhead; unused indexes are pure tax.'],
+  ['Weak crash protection', 'Missing WAL ordering or checksums risks torn pages and corrupted SSTables.'],
+  ['Compaction starvation', 'If compaction lags, read amp and disk usage balloon quickly.'],
+] as const
 
 const whenToUse = [
-  {
-    title: 'Balanced OLTP with ranges',
-    detail: 'B+ trees deliver predictable latency and fast ordered scans.',
-  },
-  {
-    title: 'Write-heavy ingest',
-    detail: 'LSM trees excel when ingest dominates and reads can tolerate amplification.',
-  },
-  {
-    title: 'Time-series workloads',
-    detail: 'LSM with tiered or universal compaction handles append-heavy time windows.',
-  },
-  {
-    title: 'Hybrid systems',
-    detail: 'Mix LSM ingestion with B+ or columnar snapshots for fast queries.',
-  },
-]
+  ['Balanced OLTP with ranges', 'B+ trees deliver predictable latency and fast ordered scans.'],
+  ['Write-heavy ingest', 'LSM trees excel when ingest dominates and reads can tolerate amplification.'],
+  ['Time-series workloads', 'LSM with tiered or universal compaction handles append-heavy time windows.'],
+  ['Hybrid systems', 'Mix LSM ingestion with B+ or columnar snapshots for fast queries.'],
+] as const
 
 const advanced = [
-  {
-    title: 'Partitioned B+ trees',
-    detail: 'Range partitioning spreads hot keys and reduces latch contention.',
-    note: 'Often combined with per-partition buffer pools.',
-  },
-  {
-    title: 'Prefix and ribbon filters',
-    detail: 'Filters reduce negative reads; ribbon filters trade build cost for space.',
-    note: 'Measure false positive rate in production.',
-  },
-  {
-    title: 'LSM adaptive compaction',
-    detail: 'Dynamic compaction schedules react to workloads and storage pressure.',
-    note: 'Avoids long tail stalls during bursts.',
-  },
-  {
-    title: 'Hot/cold tiering',
-    detail: 'Separate hot levels on SSD and cold on HDD or object storage.',
-    note: 'Keep index blocks on the fastest tier.',
-  },
-]
+  ['Partitioned B+ trees', 'Range partitioning spreads hot keys and reduces latch contention.', 'Often combined with per-partition buffer pools.'],
+  ['Prefix and ribbon filters', 'Filters reduce negative reads; ribbon filters trade build cost for space.', 'Measure false positive rate in production.'],
+  ['LSM adaptive compaction', 'Dynamic compaction schedules react to workloads and storage pressure.', 'Avoids long tail stalls during bursts.'],
+  ['Hot/cold tiering', 'Separate hot levels on SSD and cold on HDD or object storage.', 'Keep index blocks on the fastest tier.'],
+] as const
 
 const tuningChecklist = [
-  {
-    title: 'Page and block sizing',
-    detail: 'Align pages/blocks with storage IO and cache lines to avoid waste.',
-  },
-  {
-    title: 'Fanout and fill factor',
-    detail: 'Balance space utilization with split frequency to keep tree height low.',
-  },
-  {
-    title: 'Level size ratio',
-    detail: 'Higher ratios reduce levels but increase compaction cost per level.',
-  },
-  {
-    title: 'Bloom bits per key',
-    detail: 'Tune for acceptable false positives based on read fanout and cache.',
-  },
-  {
-    title: 'Compression strategy',
-    detail: 'Use lightweight compression for hot levels; heavier for cold levels.',
-  },
-  {
-    title: 'Compaction IO budget',
-    detail: 'Reserve IO bandwidth to prevent compaction debt spikes.',
-  },
-]
+  ['Page and block sizing', 'Align pages/blocks with storage IO and cache lines to avoid waste.'],
+  ['Fanout and fill factor', 'Balance space utilization with split frequency to keep tree height low.'],
+  ['Level size ratio', 'Higher ratios reduce levels but increase compaction cost per level.'],
+  ['Bloom bits per key', 'Tune for acceptable false positives based on read fanout and cache.'],
+  ['Compression strategy', 'Use lightweight compression for hot levels; heavier for cold levels.'],
+  ['Compaction IO budget', 'Reserve IO bandwidth to prevent compaction debt spikes.'],
+] as const
 
 const observability = [
-  {
-    title: 'B+ tree health',
-    detail: 'Track buffer pool hit rate, page split frequency, and latch contention.',
-  },
-  {
-    title: 'LSM health',
-    detail: 'Track compaction debt, level sizes, and read amplification per query.',
-  },
-  {
-    title: 'Index effectiveness',
-    detail: 'Measure index usage, selectivity, and scan vs seek ratios.',
-  },
-  {
-    title: 'Durability signals',
-    detail: 'Monitor WAL fsync latency and checksum failures.',
-  },
-  {
-    title: 'Cache behavior',
-    detail: 'Watch block cache hit rate and filter false positives.',
-  },
-  {
-    title: 'Space pressure',
-    detail: 'Observe live-data ratio and obsolete/tombstone accumulation.',
-  },
-]
+  ['B+ tree health', 'Track buffer pool hit rate, page split frequency, and latch contention.'],
+  ['LSM health', 'Track compaction debt, level sizes, and read amplification per query.'],
+  ['Index effectiveness', 'Measure index usage, selectivity, and scan vs seek ratios.'],
+  ['Durability signals', 'Monitor WAL fsync latency and checksum failures.'],
+  ['Cache behavior', 'Watch block cache hit rate and filter false positives.'],
+  ['Space pressure', 'Observe live-data ratio and obsolete/tombstone accumulation.'],
+] as const
 
 const codeExamples = [
   {
@@ -502,296 +228,587 @@ class Memtable {
 ]
 
 const keyTakeaways = [
-  {
-    title: 'Engine choice is a product decision',
-    detail: 'Pick B+ or LSM based on latency targets and workload shape, not fashion.',
-  },
-  {
-    title: 'Amplification is the real cost',
-    detail: 'Set budgets for read, write, and space amplification and tune to meet them.',
-  },
-  {
-    title: 'Durability is procedural',
-    detail: 'WAL ordering, checksums, and recovery metadata are as critical as the index.',
-  },
-  {
-    title: 'Observe and adapt',
-    detail: 'Compaction debt, cache hit rate, and index usage should drive tuning choices.',
-  },
+  ['Engine choice is a product decision', 'Pick B+ or LSM based on latency targets and workload shape, not fashion.'],
+  ['Amplification is the real cost', 'Set budgets for read, write, and space amplification and tune to meet them.'],
+  ['Durability is procedural', 'WAL ordering, checksums, and recovery metadata are as critical as the index.'],
+  ['Observe and adapt', 'Compaction debt, cache hit rate, and index usage should drive tuning choices.'],
+] as const
+
+const glossary = [
+  ['B+ tree', 'A balanced index structure with internal separator pages and leaf pages linked for sorted scans.'],
+  ['LSM tree', 'A log-structured merge design that buffers writes in memory and merges immutable sorted files on disk.'],
+  ['WAL', 'Write-ahead log used to preserve ordering and recover updates after a crash.'],
+  ['SSTable', 'Immutable sorted string table file used by LSM engines to store flushed or compacted runs.'],
+  ['Compaction', 'Background merge process that rewrites LSM files to control overlap, tombstones, and read amplification.'],
+  ['Bloom filter', 'Probabilistic filter that rules out most negative lookups while allowing false positives.'],
+  ['Fanout', 'Number of children per internal B+ tree node, which keeps tree height low.'],
+  ['Read amplification', 'Extra IO or file probes required to answer a query beyond the minimum necessary data read.'],
+] as const
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
 ]
 
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'History' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Pillars' },
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-flow', label: 'How It Works' },
+    { id: 'core-bplus', label: 'B+ Tree Anatomy' },
+    { id: 'core-lsm', label: 'LSM Anatomy' },
+    { id: 'core-tradeoffs', label: 'Tradeoff Matrix' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-when', label: 'When to Use' },
+    { id: 'core-advanced', label: 'Advanced Moves' },
+    { id: 'core-tuning', label: 'Tuning Checklist' },
+    { id: 'core-observability', label: 'Observability' },
+  ],
+  examples: [
+    { id: 'ex-failure', label: 'Failure Mode' },
+    { id: 'ex-code', label: 'Code Examples' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const databaseHelpStyles = `
+.db-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.db-help-window {
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.db-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.db-help-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.db-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.db-help-control {
+  width: 18px;
+  height: 16px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.db-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.db-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  color: #000;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.db-help-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.db-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.db-help-toc {
+  overflow: auto;
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+}
+
+.db-help-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.db-help-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.db-help-toc-list li {
+  margin: 0 0 8px;
+}
+
+.db-help-toc-list a {
+  color: #000;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.db-help-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.db-help-doc-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.db-help-intro {
+  margin: 0 0 16px;
+}
+
+.db-help-section {
+  margin: 0 0 22px;
+}
+
+.db-help-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.db-help-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.db-help-content p,
+.db-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.db-help-content p {
+  margin: 0 0 10px;
+}
+
+.db-help-content ul {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.db-help-divider {
+  margin: 14px 0;
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+}
+
+.db-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.db-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .db-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .db-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+
+@media (max-width: 640px) {
+  .db-help-content {
+    padding: 12px 14px 16px;
+  }
+
+  .db-help-title {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+    text-align: center;
+  }
+}
+`
+
 export default function DatabaseIndexingPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = (() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })()
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Database & Indexing (B+ Trees, LSM Trees) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleTabChange = (tabId: TabId) => {
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('tab', tabId)
+    setSearchParams(nextParams, { replace: false })
+  }
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Database & Indexing (B+ Trees, LSM Trees)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+
+    try {
+      const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+      const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+      const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+      window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+    } catch {
+      // Ignore storage issues and keep navigation behavior intact.
+    }
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Database & Indexing (B+ Trees, LSM Trees)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Designing storage engines for real workloads</div>
-              <p className="win95-text">
-                Storage engines trade off read latency, write throughput, and space efficiency. B+ trees provide stable read and
-                range-scan performance; LSM trees optimize ingest by batching and merging. The right choice comes from workload shape,
-                amplification budgets, and durability requirements.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="db-help-page">
+      <style>{databaseHelpStyles}</style>
+      <div className="db-help-window" role="presentation">
+        <header className="db-help-titlebar">
+          <span className="db-help-title">Database &amp; Indexing (B+ Trees, LSM Trees) - Help</span>
+          <div className="db-help-controls">
+            <button className="db-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="db-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-2">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
+        <div className="db-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              className={`db-help-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabChange(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="db-help-main">
+          <aside className="db-help-toc" aria-label="Table of contents">
+            <h2 className="db-help-toc-title">Contents</h2>
+            <ul className="db-help-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>History that shaped storage engines</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
-                  <p className="win95-text">{event.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="db-help-content">
+            <h1 className="db-help-doc-title">Database &amp; Indexing (B+ Trees, LSM Trees)</h1>
+            <p className="db-help-intro">
+              Storage engines trade off read latency, write throughput, and space efficiency. B+ trees provide stable read and
+              range-scan performance; LSM trees optimize ingest by batching and merging. The right choice comes from workload shape,
+              amplification budgets, and durability requirements.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pillars and mental hooks</legend>
-            <div className="win95-row">
-              <div className="win95-panel">
-                <div className="win95-subheading">Pillars</div>
-                <div className="win95-stack">
-                  {pillars.map((pillar) => (
-                    <div key={pillar.title} className="win95-panel">
-                      <div className="win95-heading">{pillar.title}</div>
-                      <p className="win95-text">{pillar.detail}</p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="db-help-section">
+                  <h2 className="db-help-heading">Overview</h2>
+                  {bigPicture.map(([title, detail, note]) => (
+                    <div key={title}>
+                      <h3 className="db-help-subheading">{title}</h3>
+                      <p>{detail}</p>
+                      <p>{note}</p>
                     </div>
                   ))}
-                </div>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-subheading">Mental models</div>
-                <div className="win95-stack">
-                  {mentalModels.map((model) => (
-                    <div key={model.title} className="win95-panel">
-                      <div className="win95-heading">{model.title}</div>
-                      <p className="win95-text">{model.detail}</p>
+                </section>
+
+                <hr className="db-help-divider" />
+
+                <section id="bp-history" className="db-help-section">
+                  <h2 className="db-help-heading">History That Shaped Storage Engines</h2>
+                  {history.map(([title, detail, note]) => (
+                    <div key={title}>
+                      <h3 className="db-help-subheading">{title}</h3>
+                      <p>{detail}</p>
+                      <p>{note}</p>
                     </div>
                   ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works, step by step</legend>
-            <div className="win95-grid win95-grid-3">
-              {howItWorks.map((step, index) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
-                    Step {index + 1}: {step.title}
-                  </div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>B+ tree anatomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {bplusAnatomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>LSM tree anatomy</legend>
-            <div className="win95-grid win95-grid-2">
-              {lsmAnatomy.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Tradeoff matrix</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Dimension</th>
-                    <th>B+ trees</th>
-                    <th>LSM trees</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tradeoffMatrix.map((row) => (
-                    <tr key={row.dimension}>
-                      <td>{row.dimension}</td>
-                      <td>{row.bplus}</td>
-                      <td>{row.lsm}</td>
-                    </tr>
+                <section id="bp-applications" className="db-help-section">
+                  <h2 className="db-help-heading">Where Engines Are Used</h2>
+                  {applications.map(([title, detail, note]) => (
+                    <div key={title}>
+                      <h3 className="db-help-subheading">{title}</h3>
+                      <p>{detail}</p>
+                      <p>{note}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity at a glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                <section id="bp-takeaways" className="db-help-section">
+                  <h2 className="db-help-heading">Key Takeaways</h2>
+                  {keyTakeaways.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Where engines are used</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((app) => (
-                <div key={app.title} className="win95-panel">
-                  <div className="win95-heading">{app.title}</div>
-                  <p className="win95-text">{app.detail}</p>
-                  <p className="win95-text">{app.note}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">Failure mode</div>
-              <p className="win95-text">{failureStory}</p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="db-help-section">
+                  <h2 className="db-help-heading">Pillars and Mental Hooks</h2>
+                  {pillars.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls to avoid</legend>
-            <div className="win95-grid win95-grid-2">
-              {pitfalls.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-models" className="db-help-section">
+                  <h2 className="db-help-heading">Mental Models</h2>
+                  {mentalModels.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to reach for each engine</legend>
-            <div className="win95-grid win95-grid-2">
-              {whenToUse.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-flow" className="db-help-section">
+                  <h2 className="db-help-heading">How It Works, Step by Step</h2>
+                  {howItWorks.map(([title, detail], index) => (
+                    <p key={title}>
+                      <strong>Step {index + 1}: {title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced moves</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-bplus" className="db-help-section">
+                  <h2 className="db-help-heading">B+ Tree Anatomy</h2>
+                  {bplusAnatomy.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Tuning checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {tuningChecklist.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-lsm" className="db-help-section">
+                  <h2 className="db-help-heading">LSM Tree Anatomy</h2>
+                  {lsmAnatomy.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Observability and signals</legend>
-            <div className="win95-grid win95-grid-2">
-              {observability.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-tradeoffs" className="db-help-section">
+                  <h2 className="db-help-heading">Tradeoff Matrix</h2>
+                  {tradeoffMatrix.map(([dimension, bplus, lsm]) => (
+                    <p key={dimension}>
+                      <strong>{dimension}:</strong> B+ trees: {bplus} LSM trees: {lsm}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="db-help-section">
+                  <h2 className="db-help-heading">Complexity at a Glance</h2>
+                  {complexityTable.map(([approach, time, space, note]) => (
+                    <p key={approach}>
+                      <strong>{approach}:</strong> Time {time}; Space {space}; {note}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-pitfalls" className="db-help-section">
+                  <h2 className="db-help-heading">Pitfalls to Avoid</h2>
+                  <ul>
+                    {pitfalls.map(([title, detail]) => (
+                      <li key={title}>
+                        <strong>{title}:</strong> {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-when" className="db-help-section">
+                  <h2 className="db-help-heading">When to Reach for Each Engine</h2>
+                  {whenToUse.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-advanced" className="db-help-section">
+                  <h2 className="db-help-heading">Advanced Moves</h2>
+                  {advanced.map(([title, detail, note]) => (
+                    <div key={title}>
+                      <h3 className="db-help-subheading">{title}</h3>
+                      <p>{detail}</p>
+                      <p>{note}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="core-tuning" className="db-help-section">
+                  <h2 className="db-help-heading">Tuning Checklist</h2>
+                  {tuningChecklist.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-observability" className="db-help-section">
+                  <h2 className="db-help-heading">Observability and Signals</h2>
+                  {observability.map(([title, detail]) => (
+                    <p key={title}>
+                      <strong>{title}:</strong> {detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-failure" className="db-help-section">
+                  <h2 className="db-help-heading">Failure Mode</h2>
+                  <p>{failureStory}</p>
+                </section>
+
+                <section id="ex-code" className="db-help-section">
+                  <h2 className="db-help-heading">Code Examples</h2>
+                  {codeExamples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="db-help-subheading">{example.title}</h3>
+                      <div className="db-help-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="db-help-section">
+                <h2 className="db-help-heading">Glossary</h2>
+                {glossary.map(([term, definition]) => (
+                  <p key={term}>
+                    <strong>{term}:</strong> {definition}
+                  </p>
+                ))}
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
