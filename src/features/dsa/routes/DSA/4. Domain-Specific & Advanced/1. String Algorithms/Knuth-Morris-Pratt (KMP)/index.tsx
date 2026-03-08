@@ -1,8 +1,7 @@
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+
 import type { JSX } from 'react'
-
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
-
 
 const historicalMilestones = [
   {
@@ -270,202 +269,513 @@ const takeaways = [
   'Use KMP for one pattern; use Aho-Corasick for many.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-components', label: 'Core Components' },
+    { id: 'core-build', label: 'Prefix Table' },
+    { id: 'core-match', label: 'Matching Workflow' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-when', label: 'When to Use' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+  ],
+  examples: [{ id: 'ex-code', label: 'Practical Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const kmpHelpStyles = `
+.kmp-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.kmp-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.kmp-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.kmp-help-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.kmp-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.kmp-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.kmp-help-control:active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.kmp-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.kmp-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.kmp-help-tab.is-active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.kmp-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-top: 1px solid #404040;
+}
+
+.kmp-help-toc {
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+  overflow: auto;
+}
+
+.kmp-help-toc h2 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.kmp-help-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.kmp-help-toc li {
+  margin: 0 0 8px;
+}
+
+.kmp-help-toc a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.kmp-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.kmp-help-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.kmp-help-intro {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.kmp-help-section {
+  margin: 0 0 20px;
+}
+
+.kmp-help-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.kmp-help-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.kmp-help-content p,
+.kmp-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.kmp-help-content p {
+  margin: 0 0 10px;
+}
+
+.kmp-help-content ul,
+.kmp-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.kmp-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.kmp-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  overflow-x: auto;
+}
+
+.kmp-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .kmp-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .kmp-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .kmp-help-titletext {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 6px;
+    font-size: 13px;
+    white-space: normal;
+  }
+}
+`
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function KnuthMorrisPrattKMPPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Knuth-Morris-Pratt (KMP) (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Knuth-Morris-Pratt (KMP)',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Knuth-Morris-Pratt (KMP)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Single-pattern search with linear worst-case time</div>
-              <p className="win95-text">
-                Knuth-Morris-Pratt (KMP) searches for a single pattern by precomputing how the pattern overlaps with itself.
-                That prefix knowledge lets the search skip redundant comparisons and scan the text once, without backtracking.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="kmp-help-page">
+      <style>{kmpHelpStyles}</style>
+      <div className="kmp-help-window" role="presentation">
+        <header className="kmp-help-titlebar">
+          <span className="kmp-help-titletext">Knuth-Morris-Pratt (KMP)</span>
+          <div className="kmp-help-controls">
+            <button className="kmp-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="kmp-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                KMP solves the classic substring search problem in guaranteed linear time by avoiding re-checking text characters.
-                It does this by building a prefix table (also called LPS) for the pattern and using it to decide how far the pattern
-                can shift after a mismatch.
-              </p>
-            </div>
-          </fieldset>
+        <div className="kmp-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`kmp-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="kmp-help-main">
+          <aside className="kmp-help-toc" aria-label="Table of contents">
+            <h2>Contents</h2>
+            <ul>
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="kmp-help-content">
+            <h1 className="kmp-help-doc-title">Knuth-Morris-Pratt (KMP)</h1>
+            <p className="kmp-help-intro">
+              KMP solves single-pattern search by precomputing how the pattern overlaps with itself. This page keeps the original
+              material intact, but presents it as a Windows-style help document focused on the LPS table, mismatch fallback, and
+              the practical cases where linear worst-case search matters.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: core components</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreComponents.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Overview</h2>
+                  <p>
+                    KMP solves the classic substring search problem in guaranteed linear time by avoiding re-checking text characters.
+                    It does this by building a prefix table, also called LPS, for the pattern and using it to decide how far the pattern
+                    can shift after a mismatch.
+                  </p>
+                </section>
+
+                <hr className="kmp-help-divider" />
+
+                <section id="bp-history" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <hr className="kmp-help-divider" />
+
+                <section id="bp-applications" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <hr className="kmp-help-divider" />
+
+                <section id="bp-takeaways" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Prefix table construction</legend>
-            <div className="win95-grid win95-grid-2">
-              {buildSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Think of LPS as the pattern telling you: "If you fail here, this is how much progress you can safely keep."
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-models" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Matching workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {matchSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-components" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Core Components</h2>
+                  {coreComponents.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="kmp-help-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                KMP trades a small preprocessing step for a strict linear-time guarantee during search.
-              </p>
-            </div>
-          </fieldset>
+                <section id="core-build" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Prefix Table Construction</h2>
+                  {buildSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-match" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Matching Workflow</h2>
+                  {matchSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Complexity Analysis and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+                <section id="core-pitfalls" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-when" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="core-advanced" className="kmp-help-section">
+                  <h2 className="kmp-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <section id="ex-code" className="kmp-help-section">
+                <h2 className="kmp-help-heading">Practical Examples</h2>
+                {examples.map((item) => (
+                  <div key={item.title}>
+                    <h3 className="kmp-help-subheading">{item.title}</h3>
+                    <pre className="kmp-help-codebox">
+                      <code>{item.code.trim()}</code>
+                    </pre>
+                    <p>{item.explanation}</p>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="kmp-help-section">
+                <h2 className="kmp-help-heading">Glossary</h2>
+                <p><strong>LPS:</strong> Longest proper prefix that is also a suffix for each pattern prefix.</p>
+                <p><strong>Proper prefix:</strong> A prefix shorter than the whole string.</p>
+                <p><strong>Overlap:</strong> A suffix of the matched prefix that can continue as a prefix of the pattern.</p>
+                <p><strong>Streaming search:</strong> Processing text left-to-right without backtracking or full buffering.</p>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-

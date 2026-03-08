@@ -1,8 +1,7 @@
-﻿import type { JSX } from 'react'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
-
+import type { JSX } from 'react'
 
 const historicalMilestones = [
   {
@@ -64,6 +63,7 @@ const mentalModels = [
       'Every node carries the set of pattern ids that end there or via its failure chain, so outputs are immediate.',
   },
 ]
+
 const coreComponents = [
   {
     heading: 'Trie nodes',
@@ -141,6 +141,7 @@ const definitions = [
     detail: 'The automaton transition for a character; often derived from trie edges and failures.',
   },
 ]
+
 const buildSteps = [
   {
     title: 'Insert patterns into a trie',
@@ -223,6 +224,7 @@ const invariants = [
       'The automaton never rewinds the text pointer; all work is done by state transitions.',
   },
 ]
+
 const complexityNotes = [
   {
     title: 'Construction time',
@@ -273,6 +275,7 @@ const realWorldUses = [
       'Match lists of error signatures or compliance keywords in massive log streams.',
   },
 ]
+
 const examples = [
   {
     title: 'Build the automaton (pseudocode)',
@@ -336,6 +339,7 @@ for id in node.output:
       'Store lengths or strings for each pattern to recover the start index when a match is found.',
   },
 ]
+
 const workedExample = {
   patterns: ['he', 'she', 'his', 'hers'],
   text: 'ushers',
@@ -390,6 +394,7 @@ const exampleTrace = [
     outputs: 'hers',
   },
 ]
+
 const outputReporting = [
   {
     title: 'Store ids vs store strings',
@@ -429,6 +434,7 @@ const decisionGuidance = [
   'Alphabet is moderate (ASCII, bytes). If huge, use sparse transitions or hashed edges.',
   'If only one or few patterns are searched once, KMP or direct search may be simpler.',
 ]
+
 const advancedInsights = [
   {
     title: 'Sparse vs dense transitions',
@@ -507,6 +513,7 @@ const correctnessSketch = [
       'Each character advances once; failure transitions only move along existing links and are amortized across the scan.',
   },
 ]
+
 const implementationChecklist = [
   'Normalize text and patterns consistently before building the trie.',
   'Store pattern lengths or strings to recover match start indices.',
@@ -581,358 +588,627 @@ const takeaways = [
   'Correct output reporting depends on failure-link outputs and consistent text normalization.',
   'The algorithm scales well when the pattern dictionary is large and reused often.',
 ]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-definitions', label: 'Definitions' },
+    { id: 'core-components', label: 'Core Components' },
+    { id: 'core-build', label: 'Construction Workflow' },
+    { id: 'core-match', label: 'Matching Workflow' },
+    { id: 'core-invariants', label: 'Invariants' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-output', label: 'Output Reporting' },
+    { id: 'core-correctness', label: 'Correctness' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-edge-cases', label: 'Edge Cases' },
+    { id: 'core-when', label: 'When to Use' },
+    { id: 'core-comparison', label: 'Comparisons' },
+    { id: 'core-advanced', label: 'Advanced Insights' },
+    { id: 'core-tuning', label: 'Tuning Tips' },
+    { id: 'core-variations', label: 'Variations' },
+    { id: 'core-implementation', label: 'Implementation Checklist' },
+  ],
+  examples: [
+    { id: 'ex-code', label: 'Practical Examples' },
+    { id: 'ex-worked', label: 'Worked Example' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const ahoHelpStyles = `
+.aho-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.aho-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.aho-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.aho-help-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.aho-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.aho-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.aho-help-control:active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.aho-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.aho-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.aho-help-tab.is-active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.aho-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-top: 1px solid #404040;
+}
+
+.aho-help-toc {
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+  overflow: auto;
+}
+
+.aho-help-toc h2 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.aho-help-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aho-help-toc li {
+  margin: 0 0 8px;
+}
+
+.aho-help-toc a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.aho-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.aho-help-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.aho-help-intro {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.aho-help-section {
+  margin: 0 0 20px;
+}
+
+.aho-help-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.aho-help-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.aho-help-content p,
+.aho-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.aho-help-content p {
+  margin: 0 0 10px;
+}
+
+.aho-help-content ul,
+.aho-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.aho-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.aho-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  overflow-x: auto;
+}
+
+.aho-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .aho-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .aho-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .aho-help-titletext {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 6px;
+    font-size: 13px;
+    white-space: normal;
+  }
+}
+`
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function AhoCorasickPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Aho-Corasick (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Aho-Corasick',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Aho-Corasick</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Multi-pattern string matching in a single linear scan</div>
-              <p className="win95-text">
-                Aho-Corasick builds a trie of patterns and augments it with failure links, turning a dictionary of strings into
-                a finite automaton. That automaton can scan text once, reporting every match for every pattern without backtracking.
-                It shines when you have many patterns, repeated searches, or streaming input.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="aho-help-page">
+      <style>{ahoHelpStyles}</style>
+      <div className="aho-help-window" role="presentation">
+        <header className="aho-help-titlebar">
+          <span className="aho-help-titletext">Aho-Corasick</span>
+          <div className="aho-help-controls">
+            <button className="aho-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="aho-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                Aho-Corasick is a multi-string search algorithm that compiles a set of patterns into one machine. It merges the
-                prefixes of all patterns in a trie and adds failure links so the search never moves backward in the text. The result
-                is predictable, linear-time scanning that reports all matches as they occur.
-              </p>
-            </div>
-          </fieldset>
+        <div className="aho-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`aho-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="aho-help-main">
+          <aside className="aho-help-toc" aria-label="Table of contents">
+            <h2>Contents</h2>
+            <ul>
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="aho-help-content">
+            <h1 className="aho-help-doc-title">Aho-Corasick</h1>
+            <p className="aho-help-intro">
+              Aho-Corasick compiles a dictionary of patterns into one automaton, then scans text in a single forward pass without
+              backtracking. This page keeps the original material intact, but presents it as a Windows-style help document focused on
+              failure links, reporting, and the practical tradeoffs of multi-pattern search.
+            </p>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="aho-help-section">
+                  <h2 className="aho-help-heading">Overview</h2>
+                  <p>
+                    Aho-Corasick is a multi-string search algorithm that compiles a set of patterns into one machine. It merges the
+                    prefixes of all patterns in a trie and adds failure links so the search never moves backward in the text. The result
+                    is predictable, linear-time scanning that reports all matches as they occur.
+                  </p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Definitions and notation</legend>
-            <div className="win95-grid win95-grid-2">
-              {definitions.map((item) => (
-                <div key={item.term} className="win95-panel">
-                  <div className="win95-heading">{item.term}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="aho-help-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: core components</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreComponents.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
-                    {block.bullets.map((point) => (
-                      <li key={point}>{point}</li>
+                <section id="bp-history" className="aho-help-section">
+                  <h2 className="aho-help-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <hr className="aho-help-divider" />
+
+                <section id="bp-applications" className="aho-help-section">
+                  <h2 className="aho-help-heading">Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <hr className="aho-help-divider" />
+
+                <section id="bp-takeaways" className="aho-help-section">
+                  <h2 className="aho-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Construction workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {buildSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                Building the automaton is a one-time cost. Once built, it can be reused across many texts or long-lived streams.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Matching workflow</legend>
-            <div className="win95-grid win95-grid-2">
-              {matchSteps.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {invariants.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The algorithm is linear in the text size plus matches, but memory depends heavily on how you represent transitions.
-                Choose dense tables for speed with small alphabets, or sparse maps for large alphabets and big pattern sets.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Worked example (patterns vs text)</legend>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">Pattern set</div>
-              <p className="win95-text">{workedExample.patterns.join(', ')}</p>
-              <div className="win95-heading">Text</div>
-              <p className="win95-text">{workedExample.text}</p>
-              <ul className="win95-list">
-                {workedExample.notes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="win95-panel">
-              <div className="win95-heading">Step-by-step trace</div>
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Index</th>
-                    <th>Char</th>
-                    <th>State after step</th>
-                    <th>Action</th>
-                    <th>Outputs</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {exampleTrace.map((row) => (
-                    <tr key={`${row.index}-${row.char}`}>
-                      <td>{row.index}</td>
-                      <td>{row.char}</td>
-                      <td>{row.state}</td>
-                      <td>{row.action}</td>
-                      <td>{row.outputs}</td>
-                    </tr>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-models" className="aho-help-section">
+                  <h2 className="aho-help-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Output reporting strategy</legend>
-            <div className="win95-grid win95-grid-2">
-              {outputReporting.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-definitions" className="aho-help-section">
+                  <h2 className="aho-help-heading">Definitions and Notation</h2>
+                  {definitions.map((item) => (
+                    <p key={item.term}>
+                      <strong>{item.term}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Correctness intuition</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessSketch.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-components" className="aho-help-section">
+                  <h2 className="aho-help-heading">Core Components</h2>
+                  {coreComponents.map((block) => (
+                    <div key={block.heading}>
+                      <h3 className="aho-help-subheading">{block.heading}</h3>
+                      <ul>
+                        {block.bullets.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Edge cases to plan for</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {edgeCases.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-build" className="aho-help-section">
+                  <h2 className="aho-help-heading">Construction Workflow</h2>
+                  {buildSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-          <fieldset className="win95-fieldset">
-            <legend>Comparisons with related algorithms</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Algorithm</th>
-                    <th>Strengths</th>
-                    <th>Weaknesses</th>
-                    <th>Best use</th>
-                  </tr>
-                </thead>
-                <tbody>
+                <section id="core-match" className="aho-help-section">
+                  <h2 className="aho-help-heading">Matching Workflow</h2>
+                  {matchSteps.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-invariants" className="aho-help-section">
+                  <h2 className="aho-help-heading">Algorithm Invariants</h2>
+                  {invariants.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-complexity" className="aho-help-section">
+                  <h2 className="aho-help-heading">Complexity Analysis and Tradeoffs</h2>
+                  {complexityNotes.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-output" className="aho-help-section">
+                  <h2 className="aho-help-heading">Output Reporting Strategy</h2>
+                  {outputReporting.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-correctness" className="aho-help-section">
+                  <h2 className="aho-help-heading">Correctness Intuition</h2>
+                  {correctnessSketch.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-pitfalls" className="aho-help-section">
+                  <h2 className="aho-help-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-edge-cases" className="aho-help-section">
+                  <h2 className="aho-help-heading">Edge Cases to Plan For</h2>
+                  <ul>
+                    {edgeCases.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-when" className="aho-help-section">
+                  <h2 className="aho-help-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="core-comparison" className="aho-help-section">
+                  <h2 className="aho-help-heading">Comparisons with Related Algorithms</h2>
                   {comparisonRows.map((row) => (
-                    <tr key={row.algorithm}>
-                      <td>{row.algorithm}</td>
-                      <td>{row.strengths}</td>
-                      <td>{row.weaknesses}</td>
-                      <td>{row.bestUse}</td>
-                    </tr>
+                    <div key={row.algorithm}>
+                      <h3 className="aho-help-subheading">{row.algorithm}</h3>
+                      <p><strong>Strengths:</strong> {row.strengths}</p>
+                      <p><strong>Weaknesses:</strong> {row.weaknesses}</p>
+                      <p><strong>Best use:</strong> {row.bestUse}</p>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-advanced" className="aho-help-section">
+                  <h2 className="aho-help-heading">Advanced Insights</h2>
+                  {advancedInsights.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Performance tuning checklist</legend>
-            <div className="win95-grid win95-grid-2">
-              {tuningTips.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-tuning" className="aho-help-section">
+                  <h2 className="aho-help-heading">Performance Tuning Checklist</h2>
+                  {tuningTips.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Variations and extensions</legend>
-            <div className="win95-grid win95-grid-2">
-              {variations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-variations" className="aho-help-section">
+                  <h2 className="aho-help-heading">Variations and Extensions</h2>
+                  {variations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Implementation checklist</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {implementationChecklist.map((item) => (
-                  <li key={item}>{item}</li>
+                <section id="core-implementation" className="aho-help-section">
+                  <h2 className="aho-help-heading">Implementation Checklist</h2>
+                  <ol>
+                    {implementationChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-code" className="aho-help-section">
+                  <h2 className="aho-help-heading">Practical Examples</h2>
+                  {examples.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="aho-help-subheading">{item.title}</h3>
+                      <pre className="aho-help-codebox">
+                        <code>{item.code.trim()}</code>
+                      </pre>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-worked" className="aho-help-section">
+                  <h2 className="aho-help-heading">Worked Example</h2>
+                  <p><strong>Pattern set:</strong> {workedExample.patterns.join(', ')}</p>
+                  <p><strong>Text:</strong> {workedExample.text}</p>
+                  <ul>
+                    {workedExample.notes.map((note) => (
+                      <li key={note}>{note}</li>
+                    ))}
+                  </ul>
+                  <h3 className="aho-help-subheading">Step-by-step trace</h3>
+                  {exampleTrace.map((row) => (
+                    <p key={`${row.index}-${row.char}`}>
+                      <strong>Index {row.index} ({row.char}):</strong> state `{row.state}`. {row.action} Outputs: {row.outputs}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="aho-help-section">
+                <h2 className="aho-help-heading">Glossary</h2>
+                {definitions.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.detail}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
