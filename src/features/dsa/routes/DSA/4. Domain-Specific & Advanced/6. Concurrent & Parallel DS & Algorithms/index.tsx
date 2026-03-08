@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -171,14 +170,54 @@ const algorithmMap = [
 ]
 
 const complexityTable = [
-  { approach: 'Work-stealing deque (Chase-Lev)', time: 'O(1) amortized', space: 'O(n)', note: 'Local push/pop are fast; thieves contend on the opposite end with atomics.' },
-  { approach: 'Michael-Scott MPMC queue', time: 'O(1) amortized', space: 'O(n)', note: 'Lock-free with CAS; throughput sensitive to ABA and reclamation strategy.' },
-  { approach: 'Striped concurrent hash map', time: 'O(1) avg', space: 'O(n)', note: 'Locks per stripe reduce contention; resizing and rehashing can serialize writers.' },
-  { approach: 'Parallel prefix sum (scan)', time: 'O(n)', space: 'O(n)', note: 'Work O(n), span O(log n) enabling near-linear speedup with enough cores.' },
-  { approach: 'Flat combining stack/queue', time: 'O(1) avg', space: 'O(n)', note: 'One combiner batches operations, reducing contention at cost of latency under light load.' },
-  { approach: 'RCU read path', time: 'O(1)', space: 'O(n) versions', note: 'Reads are wait-free; writers pay update + grace period costs.' },
-  { approach: 'Parallel reduction', time: 'O(n)', space: 'O(n)', note: 'Work O(n), span O(log n) with associative operations.' },
-  { approach: 'Elimination stack', time: 'O(1) avg', space: 'O(n)', note: 'Opposing push/pop pair off-structure to reduce contention.' },
+  {
+    approach: 'Work-stealing deque (Chase-Lev)',
+    time: 'O(1) amortized',
+    space: 'O(n)',
+    note: 'Local push/pop are fast; thieves contend on the opposite end with atomics.',
+  },
+  {
+    approach: 'Michael-Scott MPMC queue',
+    time: 'O(1) amortized',
+    space: 'O(n)',
+    note: 'Lock-free with CAS; throughput sensitive to ABA and reclamation strategy.',
+  },
+  {
+    approach: 'Striped concurrent hash map',
+    time: 'O(1) avg',
+    space: 'O(n)',
+    note: 'Locks per stripe reduce contention; resizing and rehashing can serialize writers.',
+  },
+  {
+    approach: 'Parallel prefix sum (scan)',
+    time: 'O(n)',
+    space: 'O(n)',
+    note: 'Work O(n), span O(log n) enabling near-linear speedup with enough cores.',
+  },
+  {
+    approach: 'Flat combining stack/queue',
+    time: 'O(1) avg',
+    space: 'O(n)',
+    note: 'One combiner batches operations, reducing contention at cost of latency under light load.',
+  },
+  {
+    approach: 'RCU read path',
+    time: 'O(1)',
+    space: 'O(n) versions',
+    note: 'Reads are wait-free; writers pay update + grace period costs.',
+  },
+  {
+    approach: 'Parallel reduction',
+    time: 'O(n)',
+    space: 'O(n)',
+    note: 'Work O(n), span O(log n) with associative operations.',
+  },
+  {
+    approach: 'Elimination stack',
+    time: 'O(1) avg',
+    space: 'O(n)',
+    note: 'Opposing push/pop pair off-structure to reduce contention.',
+  },
 ]
 
 const queueToolkit = [
@@ -244,6 +283,9 @@ const applications = [
     detail: 'Parallel scans, reductions, and partitioning drive GPU sorting, ray tracing, and simulation kernels.',
   },
 ]
+
+const failureStory =
+  'A trading platform deployed a lock-free MPMC queue without hazard pointers. Under load, a consumer freed nodes while another thread still held an old pointer, leading to swapped reuse and incorrect orders. ABA-safe CAS and epoch reclamation would have prevented the heisenbug.'
 
 const pitfalls = [
   'Ignoring memory reclamation causes use-after-free or ABA in lock-free queues.',
@@ -367,14 +409,38 @@ function update(newPtr):
 ]
 
 const glossary = [
-  'Progress guarantee: liveness property (blocking, lock-free, wait-free).',
-  'Happens-before: ordering relation that makes writes visible to other threads.',
-  'ABA problem: CAS sees same value after change, hiding intervening updates.',
-  'False sharing: multiple cores modify independent data on same cache line.',
-  'Backpressure: signals that slow producers when consumers lag.',
-  'Span: length of the critical path in a parallel algorithm.',
-  'RCU grace period: time until all pre-existing readers have exited.',
-  'Work stealing: idle threads steal tasks from busy ones.',
+  {
+    term: 'Progress guarantee',
+    definition: 'A liveness property such as blocking, lock-free, or wait-free.',
+  },
+  {
+    term: 'Happens-before',
+    definition: 'An ordering relation that makes writes visible to other threads.',
+  },
+  {
+    term: 'ABA problem',
+    definition: 'CAS sees the same value after a change, hiding intervening updates.',
+  },
+  {
+    term: 'False sharing',
+    definition: 'Multiple cores modify independent data on the same cache line.',
+  },
+  {
+    term: 'Backpressure',
+    definition: 'Signals that slow producers when consumers lag.',
+  },
+  {
+    term: 'Span',
+    definition: 'The length of the critical path in a parallel algorithm.',
+  },
+  {
+    term: 'RCU grace period',
+    definition: 'Time until all pre-existing readers have exited.',
+  },
+  {
+    term: 'Work stealing',
+    definition: 'Idle threads steal tasks from busy ones.',
+  },
 ]
 
 const practicePrompts = [
@@ -393,344 +459,608 @@ const keyTakeaways = [
   'Measure contention and rebalance instead of guessing.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'History' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars', label: 'Core Pillars' },
+    { id: 'core-families', label: 'Structure Families' },
+    { id: 'core-coordination', label: 'Coordination Toolbox' },
+    { id: 'core-memory', label: 'Memory Checklist' },
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-algorithms', label: 'Algorithm Map' },
+    { id: 'core-workflow', label: 'How It Works' },
+    { id: 'core-queues', label: 'Queue Toolkit' },
+    { id: 'core-scheduling', label: 'Scheduling Toolkit' },
+    { id: 'core-reclamation', label: 'Reclamation Toolkit' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-debugging', label: 'Debugging Signals' },
+    { id: 'core-when', label: 'When to Use' },
+    { id: 'core-implementation', label: 'Implementation Checklist' },
+    { id: 'core-advanced', label: 'Advanced Topics' },
+  ],
+  examples: [
+    { id: 'ex-code', label: 'Code Examples' },
+    { id: 'ex-prompts', label: 'Practice Prompts' },
+  ],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+const concurrentHelpStyles = `
+.con-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.con-help-window {
+  width: 100%;
+  min-height: 100dvh;
+  background: #c0c0c0;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.con-help-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.con-help-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.con-help-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.con-help-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
+}
+
+.con-help-control:active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.con-help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.con-help-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.con-help-tab.is-active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.con-help-main {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-top: 1px solid #404040;
+}
+
+.con-help-toc {
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  padding: 12px;
+  overflow: auto;
+}
+
+.con-help-toc h2 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.con-help-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.con-help-toc li {
+  margin: 0 0 8px;
+}
+
+.con-help-toc a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.con-help-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.con-help-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.con-help-intro {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.con-help-section {
+  margin: 0 0 20px;
+}
+
+.con-help-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.con-help-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.con-help-content p,
+.con-help-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.con-help-content p {
+  margin: 0 0 10px;
+}
+
+.con-help-content ul,
+.con-help-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.con-help-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.con-help-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  overflow-x: auto;
+}
+
+.con-help-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .con-help-main {
+    grid-template-columns: 1fr;
+  }
+
+  .con-help-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .con-help-titletext {
+    position: static;
+    transform: none;
+    margin: 0 auto 0 6px;
+    font-size: 13px;
+    white-space: normal;
+  }
+}
+`
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function ConcurrentParallelPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Concurrent & Parallel DS/Algorithms (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Concurrent & Parallel DS/Algorithms',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Concurrent & Parallel DS/Algorithms</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Scaling across threads and cores</div>
-              <p className="win95-text">
-                Concurrency hides latency; parallelism splits work. Pick the right primitives, respect the memory model, and size queues
-                so throughput rises without correctness regressions.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="con-help-page">
+      <style>{concurrentHelpStyles}</style>
+      <div className="con-help-window" role="presentation">
+        <header className="con-help-titlebar">
+          <span className="con-help-titletext">Concurrent &amp; Parallel DS/Algorithms</span>
+          <div className="con-help-controls">
+            <button className="con-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="con-help-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-3">
-              {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="con-help-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`con-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="con-help-main">
+          <aside className="con-help-toc" aria-label="Table of contents">
+            <h2>Contents</h2>
+            <ul>
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>History</legend>
-            <div className="win95-grid win95-grid-2">
-              {history.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="con-help-content">
+            <h1 className="con-help-doc-title">Concurrent &amp; Parallel DS/Algorithms</h1>
+            <p className="con-help-intro">
+              Concurrency hides latency, while parallelism splits work across cores. This page keeps the original content intact but
+              presents it as a Windows-style help manual focused on ownership, progress guarantees, memory ordering, and the
+              operational discipline needed to scale safely.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental hooks</legend>
-            <div className="win95-row">
-              <div className="win95-panel">
-                <div className="win95-subheading">Pillars</div>
-                <div className="win95-stack">
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="con-help-section">
+                  <h2 className="con-help-heading">Overview</h2>
+                  {bigPicture.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="con-help-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <hr className="con-help-divider" />
+
+                <section id="bp-history" className="con-help-section">
+                  <h2 className="con-help-heading">History</h2>
+                  {history.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <hr className="con-help-divider" />
+
+                <section id="bp-applications" className="con-help-section">
+                  <h2 className="con-help-heading">Applications and Failure Story</h2>
+                  {applications.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                  <h3 className="con-help-subheading">Failure story: ABA and reclaimed nodes</h3>
+                  <p>{failureStory}</p>
+                </section>
+
+                <hr className="con-help-divider" />
+
+                <section id="bp-takeaways" className="con-help-section">
+                  <h2 className="con-help-heading">Key Takeaways</h2>
+                  <ul>
+                    {keyTakeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-pillars" className="con-help-section">
+                  <h2 className="con-help-heading">Core Pillars</h2>
                   {pillars.map((item) => (
-                    <div key={item.title} className="win95-panel">
-                      <div className="win95-heading">{item.title}</div>
-                      <p className="win95-text">{item.detail}</p>
-                    </div>
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </div>
-              </div>
-              <div className="win95-panel">
-                <div className="win95-subheading">Mental models</div>
-                <div className="win95-stack">
+                </section>
+
+                <section id="core-families" className="con-help-section">
+                  <h2 className="con-help-heading">Structure Families</h2>
+                  {structureFamilies.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-coordination" className="con-help-section">
+                  <h2 className="con-help-heading">Coordination Toolbox</h2>
+                  {coordinationToolbox.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-memory" className="con-help-section">
+                  <h2 className="con-help-heading">Memory Model Checklist</h2>
+                  <ul>
+                    {memoryModelChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section id="core-models" className="con-help-section">
+                  <h2 className="con-help-heading">Mental Models</h2>
                   {mentalModels.map((item) => (
-                    <div key={item.title} className="win95-panel">
-                      <div className="win95-heading">{item.title}</div>
-                      <p className="win95-text">{item.detail}</p>
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-algorithms" className="con-help-section">
+                  <h2 className="con-help-heading">Algorithm Map</h2>
+                  {algorithmMap.map((item) => (
+                    <div key={item.goal}>
+                      <h3 className="con-help-subheading">{item.goal}</h3>
+                      <p><strong>Primary:</strong> {item.primary}</p>
+                      <p><strong>Output:</strong> {item.output}</p>
+                      <p>{item.note}</p>
                     </div>
                   ))}
-                </div>
-              </div>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Structure families</legend>
-            <div className="win95-grid win95-grid-2">
-              {structureFamilies.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Coordination toolbox</legend>
-            <div className="win95-grid win95-grid-2">
-              {coordinationToolbox.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Memory model checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {memoryModelChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Algorithm map</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Goal</th>
-                    <th>Primary</th>
-                    <th>Output</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {algorithmMap.map((row) => (
-                    <tr key={row.goal}>
-                      <td>{row.goal}</td>
-                      <td>{row.primary}</td>
-                      <td>{row.output}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                <section id="core-workflow" className="con-help-section">
+                  <h2 className="con-help-heading">How It Works</h2>
+                  {howItWorks.map((item) => (
+                    <p key={item.step}>
+                      <strong>{item.step}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-3">
-              {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Queue toolkit</legend>
-            <div className="win95-grid win95-grid-3">
-              {queueToolkit.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Scheduling toolkit</legend>
-            <div className="win95-grid win95-grid-3">
-              {schedulingToolkit.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Reclamation toolkit</legend>
-            <div className="win95-grid win95-grid-3">
-              {reclamationToolkit.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity table</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Approach</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complexityTable.map((row) => (
-                    <tr key={row.approach}>
-                      <td>{row.approach}</td>
-                      <td>{row.time}</td>
-                      <td>{row.space}</td>
-                      <td>{row.note}</td>
-                    </tr>
+                <section id="core-queues" className="con-help-section">
+                  <h2 className="con-help-heading">Queue Toolkit</h2>
+                  {queueToolkit.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">Failure story: ABA and reclaimed nodes</div>
-              <p className="win95-text">
-                A trading platform deployed a lock-free MPMC queue without hazard pointers. Under load, a consumer freed nodes while another
-                thread still held an old pointer, leading to swapped reuse and incorrect orders. ABA-safe CAS and epoch reclamation would have
-                prevented the heisenbug.
-              </p>
-            </div>
-          </fieldset>
+                <section id="core-scheduling" className="con-help-section">
+                  <h2 className="con-help-heading">Scheduling Toolkit</h2>
+                  {schedulingToolkit.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-reclamation" className="con-help-section">
+                  <h2 className="con-help-heading">Reclamation Toolkit</h2>
+                  {reclamationToolkit.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Debugging signals</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {debuggingSignals.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-complexity" className="con-help-section">
+                  <h2 className="con-help-heading">Complexity Table</h2>
+                  {complexityTable.map((item) => (
+                    <p key={item.approach}>
+                      <strong>{item.approach}:</strong> time {item.time}, space {item.space}. {item.note}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {whenToUse.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
+                <section id="core-pitfalls" className="con-help-section">
+                  <h2 className="con-help-heading">Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Implementation checklist</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {implementationChecklist.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-debugging" className="con-help-section">
+                  <h2 className="con-help-heading">Debugging Signals</h2>
+                  <ul>
+                    {debuggingSignals.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced</legend>
-            <div className="win95-grid win95-grid-3">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-when" className="con-help-section">
+                  <h2 className="con-help-heading">When to Use</h2>
+                  <ol>
+                    {whenToUse.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="core-implementation" className="con-help-section">
+                  <h2 className="con-help-heading">Implementation Checklist</h2>
+                  <ul>
+                    {implementationChecklist.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Glossary</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
+                <section id="core-advanced" className="con-help-section">
+                  <h2 className="con-help-heading">Advanced Topics</h2>
+                  {advanced.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="ex-code" className="con-help-section">
+                  <h2 className="con-help-heading">Code Examples</h2>
+                  {codeExamples.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="con-help-subheading">{item.title}</h3>
+                      <pre className="con-help-codebox">
+                        <code>{item.code.trim()}</code>
+                      </pre>
+                      <p>{item.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="ex-prompts" className="con-help-section">
+                  <h2 className="con-help-heading">Practice Prompts</h2>
+                  <ol>
+                    {practicePrompts.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="con-help-section">
+                <h2 className="con-help-heading">Glossary</h2>
                 {glossary.map((item) => (
-                  <li key={item}>{item}</li>
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practice prompts</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {practicePrompts.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item} className="win95-panel">
-                  <p className="win95-text">{item}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
