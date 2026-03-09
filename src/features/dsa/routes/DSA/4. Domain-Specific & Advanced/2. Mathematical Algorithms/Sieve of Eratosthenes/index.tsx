@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -304,226 +303,649 @@ const takeaways = [
   'The output can be a list, a count, or a reusable primality lookup table.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Prime',
+    definition:
+      'An integer greater than 1 with no positive divisors other than 1 and itself.',
+  },
+  {
+    term: 'Composite',
+    definition:
+      'An integer greater than 1 that has a non-trivial factorization.',
+  },
+  {
+    term: 'Sieve',
+    definition:
+      'A process that removes invalid candidates systematically until the desired set remains.',
+  },
+  {
+    term: 'Bitset',
+    definition:
+      'A compact representation that stores boolean flags as individual bits instead of bytes.',
+  },
+  {
+    term: 'Segmented sieve',
+    definition:
+      'A variant that sieves a range in windows so memory use stays bounded.',
+  },
+  {
+    term: 'Wheel factorization',
+    definition:
+      'A skipping pattern that avoids obvious composites based on small primes.',
+  },
+]
+
+const notationTable = [
+  { symbol: 'n', meaning: 'Upper bound of the range being sieved' },
+  { symbol: 'p', meaning: 'Current prime candidate used to mark multiples' },
+  { symbol: 'isPrime[i]', meaning: 'Boolean flag showing whether i is still considered prime' },
+  { symbol: 'low, high', meaning: 'Current segment boundaries in a segmented sieve' },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const sieveHelpStyles = `
+.sieve98-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.sieve98-window {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-sizing: border-box;
+}
+
+.sieve98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  min-height: 24px;
+}
+
+.sieve98-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.sieve98-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.sieve98-control {
+  width: 18px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sieve98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+  background: #c0c0c0;
+}
+
+.sieve98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sieve98-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.sieve98-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.sieve98-toc {
+  padding: 12px;
+  background: #f2f2f2;
+  border-right: 1px solid #808080;
+  overflow: auto;
+}
+
+.sieve98-toc-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sieve98-toc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sieve98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.sieve98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.sieve98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.sieve98-doc-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sieve98-intro {
+  margin: 0 0 16px;
+}
+
+.sieve98-section {
+  margin: 0 0 20px;
+}
+
+.sieve98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sieve98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sieve98-content p,
+.sieve98-content li,
+.sieve98-content dt,
+.sieve98-content dd,
+.sieve98-table th,
+.sieve98-table td {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sieve98-content p {
+  margin: 0 0 10px;
+}
+
+.sieve98-content ul,
+.sieve98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.sieve98-content dl {
+  margin: 0;
+}
+
+.sieve98-content dt {
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+
+.sieve98-content dd {
+  margin: 0 0 10px 0;
+}
+
+.sieve98-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 10px;
+}
+
+.sieve98-table th,
+.sieve98-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 3px 10px 3px 0;
+}
+
+.sieve98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.sieve98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.sieve98-codebox code {
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+}
+
+@media (max-width: 900px) {
+  .sieve98-titletext {
+    position: static;
+    transform: none;
+    margin-right: auto;
+    font-size: 14px;
+  }
+
+  .sieve98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .sieve98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+
+  .sieve98-content {
+    padding: 14px 14px 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sieve98-tabs {
+    flex-wrap: wrap;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-uses', label: 'Why It Matters' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-models', label: 'Mental Models' },
+    { id: 'core-steps', label: 'Step By Step' },
+    { id: 'core-correctness', label: 'Correctness' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-optimizations', label: 'Optimizations' },
+    { id: 'core-guidance', label: 'When To Use It' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+  ],
+  examples: [
+    { id: 'examples-worked', label: 'Worked Examples' },
+    { id: 'examples-snapshot', label: 'Complexity Snapshot' },
+  ],
+  glossary: [
+    { id: 'glossary-notation', label: 'Notation' },
+    { id: 'glossary-terms', label: 'Terms' },
+  ],
+}
+
 export default function SieveOfEratosthenesPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Sieve of Eratosthenes (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Sieve of Eratosthenes',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Sieve of Eratosthenes</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">A classic prime generator that turns cross-outs into a near-linear pipeline</div>
-              <p className="win95-text">
-                The sieve of Eratosthenes generates every prime up to a limit by repeatedly striking out multiples of each prime.
-                Instead of testing each number independently, it builds a shared table of composite markers. The result is a fast,
-                exact, and highly cache-friendly algorithm that scales to large ranges with simple optimizations.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="sieve98-page">
+      <style>{sieveHelpStyles}</style>
+      <div className="sieve98-window" role="presentation">
+        <header className="sieve98-titlebar">
+          <span className="sieve98-titletext">Sieve of Eratosthenes</span>
+          <div className="sieve98-controls">
+            <button className="sieve98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="sieve98-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                The sieve treats primes as the source of all composites. By marking every multiple of each prime, the numbers left
-                unmarked are guaranteed prime. This transforms the task from many separate primality tests into one coordinated sweep.
-              </p>
-            </div>
-          </fieldset>
+        <div className="sieve98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`sieve98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="sieve98-main">
+          <aside className="sieve98-toc" aria-label="Table of contents">
+            <h2 className="sieve98-toc-title">Contents</h2>
+            <ul className="sieve98-toc-list">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="sieve98-content">
+            <h1 className="sieve98-doc-title">Sieve of Eratosthenes</h1>
+            <p className="sieve98-intro">
+              The sieve of Eratosthenes generates every prime up to a limit by repeatedly striking out multiples of each
+              prime. Instead of testing each number independently, it builds a shared table of composite markers. The result
+              is a fast, exact, and highly cache-friendly algorithm that scales to large ranges with simple optimizations.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreSteps.map((step, index) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
-                    {index + 1}. {step.title}
-                  </div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="sieve98-section">
+                  <h2 className="sieve98-heading">Overview</h2>
+                  <p>
+                    The sieve treats primes as the source of all composites. By marking every multiple of each prime, the
+                    numbers left unmarked are guaranteed prime. This transforms the task from many separate primality tests
+                    into one coordinated sweep.
+                  </p>
+                  <p>
+                    The sieve wins whenever you need many primes in a bounded range. It trades one-time preprocessing and
+                    memory for extremely fast queries and a complete prime list.
+                  </p>
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Why it works: correctness invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The sieve is correct because it only removes numbers that have a smaller prime factor, and every composite has such
-                a factor. What remains is exactly the set of primes.
-              </p>
-            </div>
-          </fieldset>
+                <hr className="sieve98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The sieve wins whenever you need many primes in a bounded range. It trades one-time preprocessing and memory for
-                extremely fast queries and a complete prime list.
-              </p>
-            </div>
-          </fieldset>
+                <section id="bp-history" className="sieve98-section">
+                  <h2 className="sieve98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity snapshot</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Classic sieve</td>
-                    <td>O(n log log n)</td>
-                    <td>O(n)</td>
-                    <td>Fastest for moderate n with full list.</td>
-                  </tr>
-                  <tr>
-                    <td>Odd-only sieve</td>
-                    <td>O(n log log n)</td>
-                    <td>O(n / 2)</td>
-                    <td>Skip evens after handling 2.</td>
-                  </tr>
-                  <tr>
-                    <td>Segmented sieve</td>
-                    <td>O(n log log n)</td>
-                    <td>O(sqrt(n))</td>
-                    <td>Uses window size around sqrt(n).</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
+                <hr className="sieve98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Optimizations and variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {optimizations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-uses" className="sieve98-section">
+                  <h2 className="sieve98-heading">Why It Matters</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <hr className="sieve98-divider" />
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+                <section id="bp-takeaways" className="sieve98-section">
+                  <h2 className="sieve98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-models" className="sieve98-section">
+                  <h2 className="sieve98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ol>
-            </div>
-          </fieldset>
+                <section id="core-steps" className="sieve98-section">
+                  <h2 className="sieve98-heading">Step By Step</h2>
+                  {coreSteps.map((step, index) => (
+                    <p key={step.title}>
+                      <strong>
+                        {index + 1}. {step.title}:
+                      </strong>{' '}
+                      {step.detail}
+                    </p>
+                  ))}
+                </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+                <section id="core-correctness" className="sieve98-section">
+                  <h2 className="sieve98-heading">Correctness</h2>
+                  {correctnessNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The sieve is correct because it only removes numbers that have a smaller prime factor, and every
+                    composite has such a factor. What remains is exactly the set of primes.
+                  </p>
+                </section>
+
+                <section id="core-complexity" className="sieve98-section">
+                  <h2 className="sieve98-heading">Complexity</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-optimizations" className="sieve98-section">
+                  <h2 className="sieve98-heading">Optimizations</h2>
+                  {optimizations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+
+                <section id="core-guidance" className="sieve98-section">
+                  <h2 className="sieve98-heading">When To Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section id="core-pitfalls" className="sieve98-section">
+                  <h2 className="sieve98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'examples' && (
+              <>
+                <section id="examples-worked" className="sieve98-section">
+                  <h2 className="sieve98-heading">Worked Examples</h2>
+                  {examples.map((example) => (
+                    <div key={example.title}>
+                      <h3 className="sieve98-subheading">{example.title}</h3>
+                      <div className="sieve98-codebox">
+                        <code>{example.code.trim()}</code>
+                      </div>
+                      <p>{example.explanation}</p>
+                    </div>
+                  ))}
+                </section>
+
+                <section id="examples-snapshot" className="sieve98-section">
+                  <h2 className="sieve98-heading">Complexity Snapshot</h2>
+                  <table className="sieve98-table">
+                    <thead>
+                      <tr>
+                        <th>Variant</th>
+                        <th>Time</th>
+                        <th>Space</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Classic sieve</td>
+                        <td>O(n log log n)</td>
+                        <td>O(n)</td>
+                        <td>Fastest for moderate n with full list.</td>
+                      </tr>
+                      <tr>
+                        <td>Odd-only sieve</td>
+                        <td>O(n log log n)</td>
+                        <td>O(n / 2)</td>
+                        <td>Skip evens after handling 2.</td>
+                      </tr>
+                      <tr>
+                        <td>Segmented sieve</td>
+                        <td>O(n log log n)</td>
+                        <td>O(sqrt(n))</td>
+                        <td>Uses window size around sqrt(n).</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+              </>
+            )}
+
+            {activeTab === 'glossary' && (
+              <>
+                <section id="glossary-notation" className="sieve98-section">
+                  <h2 className="sieve98-heading">Notation</h2>
+                  <table className="sieve98-table">
+                    <thead>
+                      <tr>
+                        <th>Symbol</th>
+                        <th>Meaning</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {notationTable.map((row) => (
+                        <tr key={row.symbol}>
+                          <td>{row.symbol}</td>
+                          <td>{row.meaning}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+
+                <section id="glossary-terms" className="sieve98-section">
+                  <h2 className="sieve98-heading">Terms</h2>
+                  <dl>
+                    {glossaryTerms.map((item) => (
+                      <div key={item.term}>
+                        <dt>{item.term}</dt>
+                        <dd>{item.definition}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              </>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
