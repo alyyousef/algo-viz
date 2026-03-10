@@ -1,8 +1,7 @@
-import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -149,6 +148,27 @@ const complexityNotes = [
   },
 ]
 
+const complexityVariants = [
+  {
+    variant: 'Brute force',
+    time: 'O(n^2)',
+    space: 'O(1)',
+    notes: 'Simple, only practical for small n.',
+  },
+  {
+    variant: 'Divide and conquer',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    notes: 'Exact, standard 2D solution.',
+  },
+  {
+    variant: 'Grid or KD-tree (approx)',
+    time: 'Varies',
+    space: 'O(n)',
+    notes: 'Fast for repeated queries, not always exact.',
+  },
+]
+
 const optimizations = [
   {
     title: 'Use squared distances',
@@ -217,6 +237,7 @@ const realWorldUses = [
 
 const examples = [
   {
+    id: 'ex-divide-conquer',
     title: 'Divide and conquer (pseudocode)',
     code: `function closestPair(points):
     sort points by x
@@ -242,6 +263,7 @@ function solve(pointsByX):
       'The strip scan is the key: you only compare a constant number of neighbors per point.',
   },
   {
+    id: 'ex-distance-helper',
     title: 'Squared distance helper',
     code: `function dist2(a, b):
     dx = a.x - b.x
@@ -251,6 +273,7 @@ function solve(pointsByX):
       'Squared distance is sufficient for comparisons and avoids sqrt until the final answer.',
   },
   {
+    id: 'ex-bruteforce',
     title: 'Brute force base case',
     code: `function bruteForce(points):
     best = Infinity
@@ -293,226 +316,551 @@ const takeaways = [
   'Exact 2D performance is excellent; higher dimensions require different tools.',
 ]
 
+const glossaryTerms = [
+  {
+    term: 'Closest pair problem',
+    definition:
+      'The task of finding the two points in a set with the smallest Euclidean distance.',
+  },
+  {
+    term: 'Divide and conquer',
+    definition:
+      'A strategy that splits the point set into balanced halves, solves them recursively, and merges the results.',
+  },
+  {
+    term: 'Strip',
+    definition:
+      'The vertical band around the split line that contains every possible cross-boundary pair closer than d.',
+  },
+  {
+    term: 'Squared distance',
+    definition:
+      'A comparison-friendly distance form that avoids square roots until the final answer is needed.',
+  },
+  {
+    term: 'Brute force',
+    definition:
+      'The baseline method that checks every pair directly in O(n^2) time.',
+  },
+  {
+    term: 'KD-tree',
+    definition:
+      'A spatial data structure that can support repeated nearest-neighbor style queries efficiently.',
+  },
+  {
+    term: 'Voronoi diagram',
+    definition:
+      'A geometric structure related to nearest-neighbor relationships and the closest pair problem.',
+  },
+  {
+    term: 'Delaunay triangulation',
+    definition:
+      'A structure linked to Voronoi diagrams that also appears in closest-pair discussions.',
+  },
+]
+
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+
+const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+const closestPairHelpStyles = `
+.closest-help98-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+}
+
+.closest-help98-window {
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+}
+
+.closest-help98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.closest-help98-titletext {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.closest-help98-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.closest-help98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.closest-help98-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.closest-help98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.closest-help98-tab.active {
+  position: relative;
+  top: 1px;
+  background: #fff;
+}
+
+.closest-help98-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border-top: 1px solid #404040;
+  background: #fff;
+}
+
+.closest-help98-toc {
+  overflow: auto;
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+}
+
+.closest-help98-toctitle {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.closest-help98-toclist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.closest-help98-toclist li {
+  margin: 0 0 8px;
+}
+
+.closest-help98-toclist a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.closest-help98-content {
+  overflow: auto;
+  padding: 14px 20px 20px;
+}
+
+.closest-help98-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.closest-help98-section {
+  margin: 0 0 20px;
+}
+
+.closest-help98-heading {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.closest-help98-subheading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.closest-help98-content p,
+.closest-help98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.closest-help98-content p {
+  margin: 0 0 10px;
+}
+
+.closest-help98-content ul,
+.closest-help98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.closest-help98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.closest-help98-codebox {
+  margin: 6px 0 10px;
+  padding: 8px;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  background: #f4f4f4;
+}
+
+.closest-help98-codebox code {
+  display: block;
+  white-space: pre;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+}
+
+.closest-help98-inline-link {
+  color: #000080;
+}
+
+@media (max-width: 900px) {
+  .closest-help98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .closest-help98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}
+`
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-applications', label: 'Applications' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-mental-models', label: 'Mental Models' },
+    { id: 'core-walkthrough', label: 'Step-by-Step' },
+    { id: 'core-correctness', label: 'Correctness' },
+    { id: 'core-complexity', label: 'Complexity' },
+    { id: 'core-optimizations', label: 'Optimizations' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-when-to-use', label: 'When to Use It' },
+  ],
+  examples: examples.map((example) => ({
+    id: example.id,
+    label: example.title,
+  })),
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
+function isTabId(value: string | null): value is TabId {
+  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+}
+
 export default function ClosestPairOfPointsPage(): JSX.Element {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab')
+    return isTabId(tab) ? tab : 'big-picture'
+  })
+
+  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
+
+  useEffect(() => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (nextParams.get('tab') !== activeTab) {
+      nextParams.set('tab', activeTab)
+      setSearchParams(nextParams, { replace: true })
+    }
+    document.title = `Closest Pair of Points (${activeTabLabel})`
+  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
+
+  const handleMinimize = () => {
+    const minimizedTask = {
+      id: `help:${location.pathname}`,
+      title: 'Closest Pair of Points',
+      url: `${location.pathname}${location.search}${location.hash}`,
+      kind: 'help',
+    }
+    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
+    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
+    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
+    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
+
+    const historyState = window.history.state as { idx?: number } | null
+    if (historyState?.idx && historyState.idx > 0) {
+      void navigate(-1)
+      return
+    }
+    void navigate('/algoViz')
+  }
+
   return (
-    <div className="win95-page">
-      <style>{win95Styles}</style>
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Closest Pair of Points</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Exact nearest neighbors in the plane with divide-and-conquer speed</div>
-              <p className="win95-text">
-                The closest pair of points problem asks for the two points in a set with the smallest Euclidean distance.
-                A naive all-pairs check is quadratic, but the classic divide-and-conquer method runs in O(n log n) by splitting
-                the plane, solving subproblems, and only checking a narrow strip around the split line.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
+    <div className="closest-help98-page">
+      <style>{closestPairHelpStyles}</style>
+      <div className="closest-help98-window" role="presentation">
+        <header className="closest-help98-titlebar">
+          <span className="closest-help98-titletext">Closest Pair of Points</span>
+          <div className="closest-help98-controls">
+            <button className="closest-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
+              _
+            </button>
+            <Link to="/algoViz" className="closest-help98-control" aria-label="Close">
+              X
             </Link>
           </div>
+        </header>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
-                The algorithm uses spatial structure to avoid unnecessary comparisons. Once you know a best distance d on each side,
-                any closer cross-boundary pair must live in a thin vertical strip. Sorting that strip by y makes the merge step linear.
-              </p>
-            </div>
-          </fieldset>
+        <div className="closest-help98-tabs" role="tablist" aria-label="Sections">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`closest-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
-              {historicalMilestones.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
+        <div className="closest-help98-main">
+          <aside className="closest-help98-toc" aria-label="Table of contents">
+            <h2 className="closest-help98-toctitle">Contents</h2>
+            <ul className="closest-help98-toclist">
+              {sectionLinks[activeTab].map((section) => (
+                <li key={section.id}>
+                  <a href={`#${section.id}`}>{section.label}</a>
+                </li>
               ))}
-            </div>
-          </fieldset>
+            </ul>
+          </aside>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
-              {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+          <main className="closest-help98-content">
+            <h1 className="closest-help98-title">Closest Pair of Points</h1>
+            <p>
+              The closest pair of points problem asks for the two points in a set with the smallest Euclidean distance. A naive
+              all-pairs check is quadratic, but the classic divide-and-conquer method runs in O(n log n) by splitting the plane,
+              solving subproblems, and only checking a narrow strip around the split line.
+            </p>
+            <p>
+              This page keeps the material in help-document form: text first, code only where examples are needed, and page-local
+              tab state stored in the URL query string so the current section can be restored.
+            </p>
+            <p>
+              The title-bar minimize control returns to the previous page when possible, or to{' '}
+              <Link to="/algoViz" className="closest-help98-inline-link">
+                /algoViz
+              </Link>{' '}
+              when there is no prior history entry.
+            </p>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: step-by-step</legend>
-            <div className="win95-grid win95-grid-3">
-              {coreSteps.map((step, index) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
-                    {index + 1}. {step.title}
-                  </div>
-                  <p className="win95-text">{step.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+            {activeTab === 'big-picture' && (
+              <>
+                <section id="bp-overview" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Overview</h2>
+                  <p>
+                    The algorithm uses spatial structure to avoid unnecessary comparisons. Once you know a best distance d on each
+                    side, any closer cross-boundary pair must live in a thin vertical strip. Sorting that strip by y makes the merge
+                    step linear.
+                  </p>
+                  <p>
+                    The central idea is that geometry does part of the pruning work. You still solve recursive subproblems like any
+                    divide-and-conquer algorithm, but the strip argument prevents the combine step from falling back to quadratic
+                    behavior.
+                  </p>
+                </section>
+                <hr className="closest-help98-divider" />
+                <section id="bp-history" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Historical Context</h2>
+                  {historicalMilestones.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="closest-help98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <hr className="closest-help98-divider" />
+                <section id="bp-applications" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Applications</h2>
+                  {realWorldUses.map((item) => (
+                    <p key={item.context}>
+                      <strong>{item.context}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <hr className="closest-help98-divider" />
+                <section id="bp-takeaways" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Key Takeaways</h2>
+                  <ul>
+                    {takeaways.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Why it works: correctness invariants</legend>
-            <div className="win95-grid win95-grid-2">
-              {correctnessNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The geometry of the strip guarantees that checking only a few neighbors per point is enough, so the merge step is
-                linear and no candidate closest pair is missed.
-              </p>
-            </div>
-          </fieldset>
+            {activeTab === 'core-concepts' && (
+              <>
+                <section id="core-mental-models" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Mental Models</h2>
+                  {mentalModels.map((item) => (
+                    <div key={item.title}>
+                      <h3 className="closest-help98-subheading">{item.title}</h3>
+                      <p>{item.detail}</p>
+                    </div>
+                  ))}
+                </section>
+                <section id="core-walkthrough" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Step-by-Step</h2>
+                  <ol>
+                    {coreSteps.map((step) => (
+                      <li key={step.title}>
+                        <strong>{step.title}:</strong> {step.detail}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+                <section id="core-correctness" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Correctness</h2>
+                  {correctnessNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The geometry of the strip guarantees that checking only a few neighbors per point is enough, so the merge step
+                    is linear and no candidate closest pair is missed.
+                  </p>
+                </section>
+                <section id="core-complexity" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Complexity</h2>
+                  {complexityNotes.map((note) => (
+                    <p key={note.title}>
+                      <strong>{note.title}:</strong> {note.detail}
+                    </p>
+                  ))}
+                  <p>
+                    The closest pair problem is a textbook demonstration of how geometric constraints reduce work from quadratic to
+                    near linear per level. Sorting is the dominant cost.
+                  </p>
+                  <ul>
+                    {complexityVariants.map((item) => (
+                      <li key={item.variant}>
+                        <strong>{item.variant}:</strong> time {item.time}, space {item.space}. {item.notes}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-optimizations" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Optimizations and Variants</h2>
+                  {optimizations.map((item) => (
+                    <p key={item.title}>
+                      <strong>{item.title}:</strong> {item.detail}
+                    </p>
+                  ))}
+                </section>
+                <section id="core-pitfalls" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">Common Pitfalls</h2>
+                  <ul>
+                    {pitfalls.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+                <section id="core-when-to-use" className="closest-help98-section">
+                  <h2 className="closest-help98-heading">When to Use It</h2>
+                  <ol>
+                    {decisionGuidance.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ol>
+                </section>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and tradeoffs</legend>
-            <div className="win95-grid win95-grid-2">
-              {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
-                The closest pair problem is a textbook demonstration of how geometric constraints reduce work from quadratic to near
-                linear per level. Sorting is the dominant cost.
-              </p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Complexity snapshot</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    <th>Time</th>
-                    <th>Space</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Brute force</td>
-                    <td>O(n^2)</td>
-                    <td>O(1)</td>
-                    <td>Simple, only practical for small n.</td>
-                  </tr>
-                  <tr>
-                    <td>Divide and conquer</td>
-                    <td>O(n log n)</td>
-                    <td>O(n)</td>
-                    <td>Exact, standard 2D solution.</td>
-                  </tr>
-                  <tr>
-                    <td>Grid or KD-tree (approx)</td>
-                    <td>Varies</td>
-                    <td>O(n)</td>
-                    <td>Fast for repeated queries, not always exact.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Optimizations and variants</legend>
-            <div className="win95-grid win95-grid-2">
-              {optimizations.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorldUses.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
-              {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {pitfalls.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'examples' && (
+              <>
+                {examples.map((example) => (
+                  <section key={example.id} id={example.id} className="closest-help98-section">
+                    <h2 className="closest-help98-heading">{example.title}</h2>
+                    <div className="closest-help98-codebox">
+                      <code>{example.code.trim()}</code>
+                    </div>
+                    <p>{example.explanation}</p>
+                  </section>
                 ))}
-              </ul>
-            </div>
-          </fieldset>
+              </>
+            )}
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
-                {decisionGuidance.map((item) => (
-                  <li key={item}>{item}</li>
+            {activeTab === 'glossary' && (
+              <section id="glossary-terms" className="closest-help98-section">
+                <h2 className="closest-help98-heading">Glossary</h2>
+                {glossaryTerms.map((item) => (
+                  <p key={item.term}>
+                    <strong>{item.term}:</strong> {item.definition}
+                  </p>
                 ))}
-              </ol>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
-                {takeaways.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </fieldset>
+              </section>
+            )}
+          </main>
         </div>
       </div>
     </div>
   )
 }
-
