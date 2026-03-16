@@ -12,6 +12,7 @@ type SectionNote = {
 }
 
 type NarrativeSection = {
+  id: string
   title: string
   paragraphs: string[]
 }
@@ -31,155 +32,155 @@ type GlossaryTerm = {
 const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
-  'Crossplane turns Kubernetes into a control plane for external infrastructure and higher-level platform APIs. Instead of asking every team to know each cloud provider API directly, platform engineers define Kubernetes-native abstractions and let Crossplane reconcile those abstractions into concrete resources.',
-  'The core value is not just provisioning. Crossplane lets a platform team model opinionated products such as databases, buckets, clusters, or internal service foundations as APIs with defaults, policy boundaries, and reusable compositions. Developers consume those APIs; the platform owns how they map to cloud infrastructure.',
-  'This page keeps the focus on platform engineering: where Crossplane fits, how providers and managed resources work, what XRDs, claims, and compositions do, how reconciliation behaves, and what tradeoffs appear compared with tools such as Terraform and Argo CD.',
+  'Crossplane turns Kubernetes into a control plane for external infrastructure and higher-level platform APIs. Instead of asking every application team to understand each cloud provider API, a platform team can define Kubernetes-native abstractions and let Crossplane reconcile those abstractions into real infrastructure.',
+  'That matters because platform engineering is not mainly about provisioning raw resources. It is about publishing reusable internal products such as databases, buckets, clusters, or service foundations with stable interfaces, defaults, policies, and ownership boundaries.',
+  'This page focuses on providers, managed resources, XRDs, claims, compositions, connection details, reconciliation, security boundaries, and the design tradeoffs that decide whether a Crossplane platform becomes a useful product layer or just a complicated YAML surface.',
 ]
 
 const bigPicture: SectionNote[] = [
   {
     title: 'What it is',
     details:
-      'Crossplane is an open-source control plane framework built on Kubernetes. It extends the Kubernetes API with custom resources that represent cloud and platform infrastructure.',
+      'Crossplane is a Kubernetes-native control plane framework. It extends the Kubernetes API with custom resources that represent external infrastructure and platform abstractions, then uses controllers to keep those external systems aligned with declared state.',
     notes:
-      'The important shift is that infrastructure becomes part of a reconciled API model rather than a one-time provisioning job.',
+      'The important idea is not simply that Kubernetes can create infrastructure. It is that infrastructure becomes part of an API-and-reconciliation model with status, conditions, ownership, and ongoing control loops.',
   },
   {
-    title: 'Why platform teams use it',
+    title: 'Why teams adopt it',
     details:
-      'It lets a platform team publish stable internal APIs such as databases, object storage, or application environments while hiding provider-specific complexity behind compositions.',
+      'Teams adopt Crossplane when they want a platform API instead of a loose collection of Terraform modules, shell scripts, or cloud-console instructions. It lets a platform team publish safer, reusable internal products while hiding provider-specific complexity.',
     notes:
-      'This improves self-service, policy consistency, and reuse because the platform owns the abstraction layer instead of each application team inventing its own templates.',
+      'This is especially useful when many teams need the same classes of resources with consistent policy, naming, connection handling, and lifecycle behavior.',
   },
   {
     title: 'Where it fits',
     details:
-      'Crossplane fits when Kubernetes is already a trusted control plane and the organization wants continuous reconciliation for infrastructure, reusable platform APIs, and declarative workflows that stay inside the Kubernetes operating model.',
+      'Crossplane fits best when Kubernetes is already trusted as a control plane and the organization wants long-lived declarative management for infrastructure, platform products, or shared service foundations.',
     notes:
-      'It is especially useful for internal platforms, multi-cloud abstractions, and teams that want claims or higher-level APIs instead of raw cloud resources.',
+      'It fits naturally beside GitOps controllers, policy engines, secret managers, and internal developer portals because the platform API is exposed through the same Kubernetes operating model those systems already understand.',
   },
   {
     title: 'What it is not',
     details:
-      'Crossplane is not primarily a CI tool, not just a YAML wrapper, and not a perfect substitute for every Terraform workflow. It shines when long-lived infrastructure should be expressed as APIs and continuously reconciled.',
+      'Crossplane is not primarily a CI tool, not a drop-in replacement for every Terraform workflow, and not a reason to move every infrastructure problem into Kubernetes automatically. It is strongest where reconciliation and internal platform APIs are the point.',
     notes:
-      'If the need is mostly one-off provisioning or imperative orchestration outside a Kubernetes control plane, another tool may fit better.',
+      'If the need is imperative orchestration, one-off provisioning, or a control plane outside Kubernetes, another tool may be the simpler fit.',
+  },
+]
+
+const adoptionGuide: Array<{ title: string; choice: string }> = [
+  {
+    title: 'Need a Kubernetes-native control plane for reusable infrastructure APIs',
+    choice: 'Use Crossplane as the abstraction and reconciliation layer.',
+  },
+  {
+    title: 'Need to give developers self-service access to databases, buckets, or clusters',
+    choice: 'Use XRDs, claims, and compositions rather than exposing raw provider resources directly.',
+  },
+  {
+    title: 'Need GitOps delivery of Kubernetes applications',
+    choice: 'Pair Crossplane with Argo CD or another GitOps controller instead of expecting Crossplane alone to be the application delivery plane.',
+  },
+  {
+    title: 'Need broad standalone infrastructure workflows outside a Kubernetes control plane',
+    choice: 'Terraform may still be the simpler fit depending on the operating model and ecosystem already in use.',
   },
 ]
 
 const keyTakeaways = [
-  'Crossplane uses Kubernetes APIs and controllers to manage external infrastructure continuously.',
-  'Providers expose managed resources for specific systems, while XRDs and compositions let platform teams publish safer higher-level APIs.',
-  'Claims give application teams a self-service interface without forcing them to understand provider-specific resource details.',
-  'The hardest design work is usually the platform API and composition model, not the YAML syntax itself.',
-  'Crossplane works best when the organization wants reconciliation and control-plane ownership, not just provisioning scripts.',
+  'Crossplane uses Kubernetes APIs and controllers to manage external infrastructure continuously, not as one-time provisioning jobs.',
+  'Providers expose low-level managed resources, but the platform value comes from XRDs, claims, and compositions that publish higher-level APIs.',
+  'Claims separate platform ownership from application-team consumption by giving developers a namespaced self-service interface.',
+  'The hard work is API design, lifecycle policy, and ownership boundaries, not the YAML syntax itself.',
+  'Crossplane is most effective when the organization wants reconciliation, internal platform products, and Kubernetes-native control-plane behavior.',
 ]
 
-const controlPlaneSections: NarrativeSection[] = [
+const coreSections: NarrativeSection[] = [
   {
+    id: 'core-model',
     title: 'Control plane model',
     paragraphs: [
-      'Crossplane runs as controllers inside Kubernetes. Those controllers watch Kubernetes resources, compare desired state with observed state, and call external provider APIs until the external system converges on the declared intent.',
-      'That means infrastructure lives in the same API-and-reconciliation model as other Kubernetes resources. Instead of thinking in terms of "run this provisioning command," the platform thinks in terms of "declare the resource and let the control loop keep it true."',
+      'Crossplane runs as controllers inside Kubernetes. Those controllers watch custom resources, compare desired state with observed state, and call external provider APIs until the external system converges on the declared spec.',
+      'That changes the operational model. Infrastructure is not just something a pipeline applied once. It becomes an object with status, conditions, events, and ongoing controller ownership.',
+      'This is why Crossplane feels more like platform API engineering than like a sequence of provisioning commands. The platform publishes the API; the controller keeps enforcing it.',
     ],
   },
   {
-    title: 'Providers and packages',
+    id: 'core-providers',
+    title: 'Packages, providers, and managed resources',
     paragraphs: [
-      'Crossplane itself is the framework. Providers are packages that install controllers and custom resource definitions for specific clouds or external systems such as AWS, Azure, GCP, Kubernetes, Helm, or SQL providers.',
-      'Installing a provider extends the cluster with managed resource kinds. Each managed resource maps closely to a provider-specific object such as a bucket, database instance, network, or IAM policy.',
+      'Crossplane itself is the framework. Providers are packages that extend the cluster with controllers and custom resource definitions for clouds and external systems such as AWS, Azure, GCP, Kubernetes, Helm, or database services.',
+      'Managed resources are the low-level provider-backed objects. They map fairly closely to actual provider APIs because they need fields such as region, size, engine, version, network, retention policy, or tags.',
+      'A common anti-pattern is to stop here and expose those managed resources directly to developers. That technically works, but it bypasses most of the platform value because consumers still need to understand provider-specific details.',
     ],
   },
   {
-    title: 'Managed resources and ProviderConfig',
+    id: 'core-provider-config',
+    title: 'ProviderConfig and credential boundaries',
     paragraphs: [
-      'Managed resources are the low-level objects that talk directly to an external API. They typically resemble the provider model fairly closely because they need to capture concrete configuration such as region, size, tags, version, or network settings.',
-      'ProviderConfig and related credential references tell those resources how to authenticate. This is one of the main operational and security boundaries because those credentials are what give Crossplane authority over external systems.',
+      'ProviderConfig tells managed resources how to authenticate. In practice, this is one of the most sensitive surfaces in Crossplane because it defines where the platform has authority to create, mutate, or delete real infrastructure.',
+      'The platform should treat provider credentials, namespace boundaries, RBAC, and provider upgrades as control-plane governance concerns rather than as minor setup details.',
+      'A useful mental model is that Crossplane is a privileged infrastructure control plane. The value is high, but so is the blast radius if credentials or permissions are too broad.',
     ],
   },
-]
-
-const abstractionSections: NarrativeSection[] = [
   {
-    title: 'XRDs define the platform API',
+    id: 'core-xrd',
+    title: 'XRDs, claims, and compositions',
     paragraphs: [
-      'An XRD, or CompositeResourceDefinition, defines a new custom API that the platform wants to offer. This is where the platform says, in effect, "our users may ask for a database" or "our users may ask for an object store" without exposing every field from the raw provider resources.',
-      'The XRD is the contract. It defines schema, names, versions, and whether a namespaced claim should exist. Good XRD design is less about copying a cloud provider API and more about publishing an interface that is stable, opinionated, and useful to internal consumers.',
+      'An XRD, or CompositeResourceDefinition, defines a new API that the platform wants to publish. Claims give application teams a namespaced self-service interface to that API. Compositions implement the contract by mapping the higher-level request to one or more managed resources.',
+      'That separation is where the platform value lives. The consumer sees a stable product API; the platform retains freedom to change how that product is realized internally.',
+      'Weak design copies a provider API field-for-field. Strong design publishes a product interface that matches how internal users think about the resource they want.',
     ],
   },
   {
-    title: 'Compositions map the API to real infrastructure',
+    id: 'core-secrets',
+    title: 'Connection details, secrets, and lifecycle',
     paragraphs: [
-      'A composition tells Crossplane how a composite resource should be realized. It takes the higher-level API from the XRD and maps it to one or more managed resources, patching fields between the user-facing object and the concrete infrastructure resources.',
-      'This is where platform logic lives: defaulting, wiring, dependency structure, naming conventions, connection secret publishing, and provider-specific implementation details. The composition is what turns the abstract request into a deployable product.',
+      'Many composed resources produce connection details such as hostnames, ports, usernames, passwords, certificates, or endpoints. Crossplane can publish those details into Kubernetes secrets so workloads or operators can consume them.',
+      'A platform API is incomplete until the consumer can actually use what was provisioned. A claim that creates a database but does not surface usable connection information still leaves manual work and hidden operational steps.',
+      'Deletion policy, drift handling, and ownership rules also matter here. The platform must decide whether deleting the Kubernetes object should delete the external resource, orphan it, or protect it under stricter policy.',
     ],
   },
   {
-    title: 'Claims create a safer self-service surface',
+    id: 'core-operations',
+    title: 'GitOps, portability, and operational tradeoffs',
     paragraphs: [
-      'A claim is the namespaced object a developer typically creates. Instead of authoring a provider-specific bucket or database resource directly, the developer asks for the platform-defined claim. Crossplane then creates the backing composite resource and managed resources behind it.',
-      'This pattern is useful because it separates platform ownership from application ownership. The platform team owns the abstraction and its implementation. Application teams consume the API in their own namespaces with fewer ways to bypass policy or complexity boundaries.',
+      'Crossplane is commonly used alongside GitOps tools rather than instead of them. Git stores the resource declarations, a tool such as Argo CD delivers them into the cluster, and Crossplane reconciles the infrastructure behind those objects.',
+      'Crossplane is often discussed in multi-cloud terms, but portability is only real when the abstraction offered to users remains meaningful across providers. The best designs standardize on product outcomes rather than exposing every provider-specific knob.',
+      'Compared with Terraform, Crossplane is more naturally embedded in Kubernetes and better aligned with reusable platform APIs under controller ownership. Compared with Argo CD, it is broader on infrastructure abstraction while Argo CD remains stronger as the Kubernetes application delivery plane.',
     ],
   },
   {
-    title: 'Composition Functions extend assembly logic',
-    paragraphs: [
-      'Modern Crossplane setups can use Composition Functions to build pipeline-style composition logic. Functions make it easier to generate or transform desired resources when simple field patching is not enough.',
-      'They add flexibility, but they also add another layer of logic to own and debug. The platform should use functions when they clarify the abstraction model, not when they merely hide a design that should have been simplified first.',
-    ],
-  },
-]
-
-const operationsSections: NarrativeSection[] = [
-  {
-    title: 'Reconciliation and lifecycle',
-    paragraphs: [
-      'Crossplane continuously reconciles. If a managed resource drifts, credentials change, an external object is deleted, or the desired spec changes, the controllers attempt to bring the external state back in line with the declared state.',
-      'That makes Crossplane different from a tool that runs once and exits. The reward is continuous control. The cost is that the platform must understand ownership boundaries, drift sources, and what should happen when external systems reject or mutate requests.',
-    ],
-  },
-  {
-    title: 'Connection details and secrets',
-    paragraphs: [
-      'Many composed resources produce connection details such as hostnames, usernames, passwords, ports, or endpoints. Crossplane can publish those details into Kubernetes secrets so workloads or operators can consume them.',
-      'This is operationally important because the platform API is not complete until consumers can use the resource they requested. A database claim that provisions successfully but does not surface usable credentials is not actually self-service.',
-    ],
-  },
-  {
-    title: 'Architecture and ecosystem notes',
-    paragraphs: [
-      'Crossplane is usually used alongside GitOps tooling, policy engines, secret-management systems, and internal developer portals. The cluster remains the control plane, while surrounding tools handle delivery workflows, policy review, or secret distribution.',
-      'The ecosystem question is therefore not just "can Crossplane create a resource?" It is "how does this abstraction fit into repository layout, environment promotion, credential handling, RBAC, and the developer experience of the platform?"',
-    ],
-  },
-  {
-    title: 'Tradeoffs and compare and contrast',
-    paragraphs: [
-      'Compared with Terraform, Crossplane is more naturally embedded in Kubernetes and better suited to publishing reusable platform APIs with ongoing reconciliation. Terraform often feels simpler for standalone infrastructure stacks, large existing module ecosystems, or teams that do not want Kubernetes to be the control plane.',
-      'Compared with Argo CD, Crossplane is broader on infrastructure abstraction while Argo CD is stronger as an application delivery and reconciliation layer for Kubernetes workloads. They are complementary more often than they are direct substitutes.',
-    ],
-  },
-  {
+    id: 'core-pitfalls',
     title: 'Common failure modes',
     paragraphs: [
-      'Teams get into trouble when they expose provider-shaped APIs directly to developers, leak credentials too broadly, or build compositions so clever that nobody can reason about them during incidents. Another common problem is adopting Crossplane before deciding what the internal platform products should actually be.',
-      'The YAML is rarely the hard part. The hard part is product design for the platform: choosing the right abstractions, defaults, lifecycle rules, ownership boundaries, and escape hatches.',
+      'Teams get into trouble when they expose provider-shaped APIs directly to developers, install powerful providers without clear governance, or build compositions so clever that nobody can debug them during incidents.',
+      'Another frequent mistake is adopting Crossplane before deciding what the platform products should actually be. The result is lots of controller machinery wrapped around an unclear service model.',
+      'The hard part is therefore not resource syntax. It is choosing the right abstraction surface, lifecycle ownership, security boundaries, deletion policy, connection strategy, and upgrade path for the products the platform wants to offer.',
     ],
   },
+]
+
+const designChecklist = [
+  'Define platform products first instead of exposing raw managed resources and hoping an internal API appears later.',
+  'Keep XRDs narrow enough to stay stable. Every exposed field becomes part of the support contract.',
+  'Use claims when teams need safe namespace-scoped self-service instead of privileged control-plane access.',
+  'Decide explicitly how connection secrets are published, rotated, and authorized.',
+  'Treat provider credentials and provider upgrades as governance concerns, not minor setup details.',
 ]
 
 const examples: ExampleSection[] = [
   {
     id: 'example-provider',
-    title: 'Install a provider and credential configuration',
+    title: 'Install a provider and bind credentials with ProviderConfig',
     code: `apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: provider-aws-s3
+  name: provider-aws-rds
 spec:
-  package: xpkg.crossplane.io/crossplane-contrib/provider-aws-s3:v1
+  package: xpkg.crossplane.io/upbound/provider-aws-rds:v1.9.0
 ---
-apiVersion: aws.crossplane.io/v1beta1
+apiVersion: aws.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
   name: default
@@ -191,11 +192,11 @@ spec:
       name: aws-creds
       key: creds`,
     explanation:
-      'Crossplane becomes useful only after a provider installs the managed resource APIs and the provider is given credentials. The exact group names vary by provider package, but the pattern is consistent: install the package, then bind it to credentials through a ProviderConfig.',
+      'The provider installs managed resource APIs and controller logic. The ProviderConfig gives those resources authority to talk to the external system.',
   },
   {
     id: 'example-xrd',
-    title: 'Define a platform API with an XRD and claim',
+    title: 'Publish a platform API with an XRD',
     code: `apiVersion: apiextensions.crossplane.io/v1
 kind: CompositeResourceDefinition
 metadata:
@@ -207,32 +208,9 @@ spec:
     plural: xpostgresinstances
   claimNames:
     kind: PostgresInstance
-    plural: postgresinstances
-  versions:
-    - name: v1alpha1
-      served: true
-      referenceable: true
-      schema:
-        openAPIV3Schema:
-          type: object
-          properties:
-            spec:
-              type: object
-              properties:
-                storageGiB:
-                  type: integer
-                region:
-                  type: string
----
-apiVersion: platform.example.org/v1alpha1
-kind: PostgresInstance
-metadata:
-  name: team-a-db
-spec:
-  storageGiB: 50
-  region: us-east-1`,
+    plural: postgresinstances`,
     explanation:
-      'The XRD publishes the contract. The claim is what a team creates in its namespace. That lets the platform expose a clean API for "give me a Postgres instance" without requiring application teams to understand every cloud-specific field.',
+      'The XRD defines the contract the platform offers. It says what consumers may ask for, which is separate from how the platform chooses to implement that request in a specific provider.',
   },
   {
     id: 'example-composition',
@@ -249,76 +227,36 @@ spec:
     - name: database
       base:
         apiVersion: rds.aws.upbound.io/v1beta1
-        kind: Instance
-        spec:
-          forProvider:
-            engine: postgres
-            instanceClass: db.t3.micro
-            allocatedStorage: 20
-            region: us-east-1
-          providerConfigRef:
-            name: default
-      patches:
-        - fromFieldPath: spec.storageGiB
-          toFieldPath: spec.forProvider.allocatedStorage
-        - fromFieldPath: spec.region
-          toFieldPath: spec.forProvider.region`,
+        kind: Instance`,
     explanation:
-      'The composition expresses the implementation. The platform API stays stable, while the composition decides which managed resources are created and how claim fields patch into provider-specific infrastructure objects.',
+      'The composition is where the product API becomes real infrastructure. It chooses the provider resource, applies defaults, and maps user-facing fields into the implementation.',
+  },
+  {
+    id: 'example-claim',
+    title: 'Consume the platform API with a claim',
+    code: `apiVersion: platform.example.org/v1alpha1
+kind: PostgresInstance
+metadata:
+  name: team-a-db
+  namespace: team-a
+spec:
+  storageGiB: 50
+  region: us-east-1`,
+    explanation:
+      'This is the self-service experience the platform wants to create. The application team asks for a database product in its own namespace without needing to know the exact provider CRDs or composition internals.',
   },
 ]
 
 const glossary: GlossaryTerm[] = [
-  {
-    term: 'Crossplane',
-    definition:
-      'A Kubernetes-native control plane framework for managing external infrastructure and publishing higher-level platform APIs.',
-  },
-  {
-    term: 'Provider',
-    definition:
-      'A Crossplane package that installs controllers and custom resources for a specific external system or cloud service.',
-  },
-  {
-    term: 'Managed resource',
-    definition:
-      'A low-level Crossplane resource that maps closely to an external provider object such as a bucket, network, or database instance.',
-  },
-  {
-    term: 'ProviderConfig',
-    definition:
-      'Configuration that tells managed resources how to authenticate and connect to the target provider.',
-  },
-  {
-    term: 'XRD',
-    definition:
-      'CompositeResourceDefinition. It defines a new higher-level API that the platform wants to offer.',
-  },
-  {
-    term: 'Composite resource',
-    definition:
-      'The cluster-scoped object created from an XRD. It represents the platform-defined abstraction behind one request.',
-  },
-  {
-    term: 'Claim',
-    definition:
-      'A namespaced self-service resource that lets application teams request a platform product without working with provider-specific managed resources directly.',
-  },
-  {
-    term: 'Composition',
-    definition:
-      'The template or assembly logic that maps a composite resource to one or more managed resources.',
-  },
-  {
-    term: 'Composition Function',
-    definition:
-      'A pipeline step used in modern Crossplane compositions to generate or transform desired resources with more flexible logic.',
-  },
-  {
-    term: 'Reconciliation',
-    definition:
-      'The controller loop that keeps the actual external state aligned with the declared desired state over time.',
-  },
+  { term: 'Crossplane', definition: 'A Kubernetes-native control plane framework for managing external infrastructure and publishing higher-level platform APIs.' },
+  { term: 'Provider', definition: 'A package that installs controllers and resource definitions for a specific external system or cloud service.' },
+  { term: 'Managed resource', definition: 'A low-level Crossplane resource that maps closely to a provider object such as a bucket, database instance, or network.' },
+  { term: 'ProviderConfig', definition: 'Configuration that tells managed resources how to authenticate and connect to the target provider.' },
+  { term: 'XRD', definition: 'CompositeResourceDefinition. It defines a new higher-level API that the platform wants to publish.' },
+  { term: 'Claim', definition: 'A namespaced self-service resource that lets application teams request a platform product without working with provider-specific resources directly.' },
+  { term: 'Composition', definition: 'The mapping layer that realizes a composite resource through one or more managed resources.' },
+  { term: 'Connection details', definition: 'Usable outputs such as hostnames, credentials, or ports that Crossplane can publish for consumers after provisioning.' },
+  { term: 'Reconciliation', definition: 'The controller loop that continually works to align actual external state with declared desired state.' },
 ]
 
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -331,233 +269,51 @@ const tabs: Array<{ id: TabId; label: string }> = [
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
     { id: 'bp-overview', label: 'Overview' },
-    { id: 'bp-why', label: 'Why It Matters' },
     { id: 'bp-takeaways', label: 'Key Takeaways' },
   ],
   'core-concepts': [
-    { id: 'core-control-plane', label: 'Control Plane Model' },
-    { id: 'core-abstractions', label: 'Platform Abstractions' },
+    { id: 'core-model', label: 'Control Plane Model' },
+    { id: 'core-providers', label: 'Providers and Resources' },
+    { id: 'core-provider-config', label: 'ProviderConfig' },
+    { id: 'core-xrd', label: 'XRDs and Claims' },
+    { id: 'core-secrets', label: 'Connection Details' },
     { id: 'core-operations', label: 'Operations and Tradeoffs' },
+    { id: 'core-pitfalls', label: 'Pitfalls' },
+    { id: 'core-checklist', label: 'Design Checklist' },
   ],
-  examples: examples.map((example) => ({
-    id: example.id,
-    label: example.title,
-  })),
+  examples: examples.map((example) => ({ id: example.id, label: example.title })),
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
 const pageStyles = `
-.crossplane-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.crossplane-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.crossplane-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 6px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.crossplane-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: calc(100% - 92px);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  pointer-events: none;
-  font-size: 15px;
-}
-
-.crossplane-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.crossplane-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.crossplane-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.crossplane-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.crossplane-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.crossplane-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.crossplane-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f1f1f1;
-  border-right: 1px solid #808080;
-}
-
-.crossplane-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.crossplane-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.crossplane-toc-list li {
-  margin: 0 0 8px;
-}
-
-.crossplane-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.crossplane-toc-list a:hover {
-  text-decoration: underline;
-}
-
-.crossplane-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.crossplane-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.crossplane-section {
-  margin: 0 0 20px;
-}
-
-.crossplane-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.crossplane-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.crossplane-content p,
-.crossplane-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.crossplane-content p {
-  margin: 0 0 10px;
-}
-
-.crossplane-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.crossplane-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.crossplane-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.crossplane-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .crossplane-main {
-    grid-template-columns: 1fr;
-  }
-
-  .crossplane-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
+.crossplane-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
+.crossplane-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box;}
+.crossplane-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
+.crossplane-title-text{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px;}
+.crossplane-title-controls{display:flex;gap:2px;margin-left:auto;}
+.crossplane-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer;padding:0;}
+.crossplane-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0;}
+.crossplane-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer;}
+.crossplane-tab.active{position:relative;top:1px;background:#fff;}
+.crossplane-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff;}
+.crossplane-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080;}
+.crossplane-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
+.crossplane-toc-list{margin:0;padding:0;list-style:none;}
+.crossplane-toc-list li{margin:0 0 8px;}
+.crossplane-toc-list a{color:#000;text-decoration:none;font-size:12px;}
+.crossplane-toc-list a:hover{text-decoration:underline;}
+.crossplane-content{overflow:auto;padding:14px 20px 20px;}
+.crossplane-doc-title{margin:0 0 12px;font-size:20px;font-weight:700;}
+.crossplane-section{margin:0 0 20px;}
+.crossplane-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
+.crossplane-subheading{margin:0 0 6px;font-size:13px;font-weight:700;}
+.crossplane-content p,.crossplane-content li{font-size:12px;line-height:1.5;}
+.crossplane-content p{margin:0 0 10px;}
+.crossplane-content ul{margin:0 0 10px 20px;padding:0;}
+.crossplane-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0;}
+.crossplane-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;}
+.crossplane-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;}
+@media (max-width:900px){.crossplane-main{grid-template-columns:1fr}.crossplane-toc{border-right:none;border-bottom:1px solid #808080}}
 `
 
 function isTabId(value: string | null): value is TabId {
@@ -611,152 +367,66 @@ export default function CrossplanePage(): JSX.Element {
         <header className="crossplane-titlebar">
           <span className="crossplane-title-text">Crossplane</span>
           <div className="crossplane-title-controls">
-            <button className="crossplane-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="crossplane-control" aria-label="Close">
-              X
-            </Link>
+            <button className="crossplane-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
+            <Link to="/algoViz" className="crossplane-control" aria-label="Close">X</Link>
           </div>
         </header>
-
         <div className="crossplane-tabs" role="tablist" aria-label="Sections">
           {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`crossplane-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
+            <button key={tab.id} type="button" className={`crossplane-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)} role="tab" aria-selected={activeTab === tab.id}>
               {tab.label}
             </button>
           ))}
         </div>
-
         <div className="crossplane-main">
           <aside className="crossplane-toc" aria-label="Table of contents">
             <h2 className="crossplane-toc-title">Contents</h2>
             <ul className="crossplane-toc-list">
               {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+                <li key={section.id}><a href={`#${section.id}`}>{section.label}</a></li>
               ))}
             </ul>
           </aside>
-
           <main className="crossplane-content">
             <h1 className="crossplane-doc-title">Crossplane</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="crossplane-section">
-                  <h2 className="crossplane-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="crossplane-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
+            {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            {activeTab === 'big-picture' && <>
+              <section id="bp-overview" className="crossplane-section">
+                <h2 className="crossplane-heading">Overview</h2>
+                {bigPicture.map((item) => <div key={item.title}><h3 className="crossplane-subheading">{item.title}</h3><p>{item.details}</p><p>{item.notes}</p></div>)}
+              </section>
+              <hr className="crossplane-divider" />
+              <section id="bp-takeaways" className="crossplane-section">
+                <h2 className="crossplane-heading">Key Takeaways</h2>
+                {adoptionGuide.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.choice}</p>)}
+                <ul>{keyTakeaways.map((item) => <li key={item}>{item}</li>)}</ul>
+              </section>
+            </>}
+            {activeTab === 'core-concepts' && <>
+              {coreSections.map((section) => (
+                <section key={section.id} id={section.id} className="crossplane-section">
+                  <h2 className="crossplane-heading">{section.title}</h2>
+                  {section.paragraphs.map((paragraph) => <p key={`${section.id}-${paragraph}`}>{paragraph}</p>)}
                 </section>
-
-                <hr className="crossplane-divider" />
-
-                <section id="bp-why" className="crossplane-section">
-                  <h2 className="crossplane-heading">Why It Matters</h2>
-                  <p>
-                    Platform engineering is usually less about raw provisioning and more about publishing reliable self-service
-                    products. Crossplane matters because it gives the platform team a way to express those products as APIs rather
-                    than as copied Terraform modules, custom shell scripts, or provider-specific YAML scattered across repositories.
-                  </p>
-                  <p>
-                    It also changes operations. Because the system keeps reconciling, the platform does not stop caring after the
-                    first successful apply. Drift, deleted resources, invalid credentials, and lifecycle changes all remain visible
-                    inside the control plane.
-                  </p>
+              ))}
+              <section id="core-checklist" className="crossplane-section">
+                <h2 className="crossplane-heading">Design Checklist</h2>
+                <ul>{designChecklist.map((item) => <li key={item}>{item}</li>)}</ul>
+              </section>
+            </>}
+            {activeTab === 'examples' && <>
+              {examples.map((example) => (
+                <section key={example.id} id={example.id} className="crossplane-section">
+                  <h2 className="crossplane-heading">{example.title}</h2>
+                  <div className="crossplane-codebox"><code>{example.code.trim()}</code></div>
+                  <p>{example.explanation}</p>
                 </section>
-
-                <hr className="crossplane-divider" />
-
-                <section id="bp-takeaways" className="crossplane-section">
-                  <h2 className="crossplane-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-control-plane" className="crossplane-section">
-                  <h2 className="crossplane-heading">Control Plane Model</h2>
-                  {controlPlaneSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="crossplane-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={`${section.title}-${paragraph}`}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <section id="core-abstractions" className="crossplane-section">
-                  <h2 className="crossplane-heading">Platform Abstractions</h2>
-                  {abstractionSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="crossplane-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={`${section.title}-${paragraph}`}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <section id="core-operations" className="crossplane-section">
-                  <h2 className="crossplane-heading">Operations and Tradeoffs</h2>
-                  {operationsSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="crossplane-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={`${section.title}-${paragraph}`}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="crossplane-section">
-                    <h2 className="crossplane-heading">{example.title}</h2>
-                    <div className="crossplane-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
+              ))}
+            </>}
             {activeTab === 'glossary' && (
               <section id="glossary-terms" className="crossplane-section">
                 <h2 className="crossplane-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
+                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
               </section>
             )}
           </main>
