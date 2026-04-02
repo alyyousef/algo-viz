@@ -50,6 +50,14 @@ const bigPictureSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'bp-why-it-feels-different',
+    title: 'Why It Feels Different from React-Style JSX',
+    paragraphs: [
+      'SolidJS can look familiar because it uses JSX, but it behaves differently because it does not default to rerunning whole component functions after each state change. Signals and their dependents form a reactive graph that updates more precisely.',
+      'That difference matters in both performance reasoning and code style. The familiar syntax can hide a very different mental model until the team understands signals, accessors, and reactive dependency tracking clearly.',
+    ],
+  },
+  {
     id: 'bp-scope',
     title: 'What This Page Covers',
     paragraphs: [
@@ -66,6 +74,14 @@ const bigPictureSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'bp-misconceptions',
+    title: 'Common Misconceptions',
+    paragraphs: [
+      'A common misconception is that SolidJS is just React but faster. In practice, the more important distinction is the update model: signals and fine-grained subscriptions rather than broad component rerendering.',
+      'Another misconception is that a small runtime model removes architectural decisions. Teams still need clear patterns for routing, async data, shared state, and full app structure.',
+    ],
+  },
+  {
     id: 'bp-takeaways',
     title: 'Quick Takeaways',
     paragraphs: [
@@ -77,6 +93,14 @@ const bigPictureSections: readonly DocSection[] = [
 ] as const
 
 const coreConceptSections: readonly DocSection[] = [
+  {
+    id: 'core-mental-model',
+    title: 'Mental Model',
+    paragraphs: [
+      'SolidJS asks developers to think in terms of reactive dependencies rather than rerendered component bodies. Signals are read where values are needed, and the framework updates only the computations and DOM bindings that depend on those reads.',
+      'This can feel extremely precise once it clicks, but it requires more deliberate understanding of where reactive reads happen and what they imply.',
+    ],
+  },
   {
     id: 'core-key-ideas',
     title: 'Overview and Key Ideas',
@@ -91,6 +115,14 @@ const coreConceptSections: readonly DocSection[] = [
     paragraphs: [
       'SolidJS components are usually functions written with JSX, which can make the surface look familiar to React developers. The important difference is that the component function typically runs once to establish the reactive graph rather than rerunning on every state update.',
       'That gives SolidJS a distinct feel. The component body sets up signals, derived computations, and event handlers, while reactive reads inside JSX stay connected to the fine-grained update system.',
+    ],
+  },
+  {
+    id: 'core-control-flow',
+    title: 'Control Flow Helpers',
+    paragraphs: [
+      'SolidJS commonly uses helpers such as `<Show>` and `<For>` for conditional and list rendering. These helpers fit naturally into the fine-grained update model and make control-flow behavior explicit.',
+      'This is one of the places where SolidJS stops feeling like ordinary React-style JSX and starts feeling like its own reactive system with its own rendering assumptions.',
     ],
   },
   {
@@ -110,6 +142,14 @@ const coreConceptSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'core-resources',
+    title: 'Async Resources and Data Flow',
+    paragraphs: [
+      'SolidJS includes helpers such as `createResource` for async reactive data patterns. This lets teams model loading and data dependencies inside the same reactive vocabulary rather than immediately reaching for a separate fetch abstraction.',
+      'At larger application scale, the bigger question is still where data loading belongs: component-local, route-level, or framework-level. That is where the broader app ecosystem becomes important.',
+    ],
+  },
+  {
     id: 'core-apis',
     title: 'APIs and Authoring Style',
     paragraphs: [
@@ -118,11 +158,59 @@ const coreConceptSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'core-shared-state',
+    title: 'Shared State and Context',
+    paragraphs: [
+      'SolidJS supports context and module-level reactive patterns for shared values. Because the core reactive model is already fine-grained, teams can often build shared state with fewer abstractions than they might expect in other ecosystems.',
+      'That freedom is useful, but it still needs discipline. Shared state should have clear ownership and boundaries rather than growing into an unstructured global reactive graph.',
+    ],
+  },
+  {
     id: 'core-ecosystem',
     title: 'Ecosystem and Architecture',
     paragraphs: [
       'The Solid ecosystem is smaller than the largest frontend ecosystems, but it is organized around a clear reactive philosophy. Router support, data utilities, and surrounding tooling exist, and SolidStart provides the broader application-framework story for routing, server rendering, and full-stack workflows.',
       'Architecturally, this means teams often distinguish between SolidJS as the reactive UI library and SolidStart as the path to a more integrated app platform, much as other ecosystems distinguish component layers from broader application frameworks.',
+    ],
+  },
+  {
+    id: 'core-routing',
+    title: 'Routing and App Framework Story',
+    paragraphs: [
+      'Routing can be handled through router utilities in the ecosystem, while SolidStart provides the stronger app-framework story for routing, SSR, and broader full-stack workflows.',
+      'This means serious product decisions often involve SolidJS plus its broader application layer rather than the component library alone.',
+    ],
+  },
+  {
+    id: 'core-ssr',
+    title: 'SSR and Server Workflows',
+    paragraphs: [
+      'SolidJS can participate in server rendering, but the fuller SSR and app-platform conversation usually belongs to SolidStart. This is similar to the way many UI libraries become materially different when paired with their broader framework layer.',
+      'The key point is to keep the layers conceptually separate: the signal-driven component model on one side, and the route, request, and server workflow model on the other.',
+    ],
+  },
+  {
+    id: 'core-typescript',
+    title: 'TypeScript and Developer Experience',
+    paragraphs: [
+      'SolidJS works naturally with TypeScript because its component model and core APIs stay relatively compact. Type relationships often stay close to components, props, resources, and signal-driven helpers instead of being spread across many framework subsystems.',
+      'This can make typed Solid code feel lightweight, especially for engineers who want precision without a very large framework surface.',
+    ],
+  },
+  {
+    id: 'core-performance',
+    title: 'Performance and Update Precision',
+    paragraphs: [
+      'SolidJS is well known for efficient updates because its reactive graph targets only the places that depend on changed values. In many workloads, that produces a compelling rendering story without requiring broad rerender passes.',
+      'The practical engineering lesson is still to design state and component boundaries carefully. Fine-grained reactivity is powerful, but product-level performance also depends on network behavior, list size, expensive computations, and broader app architecture.',
+    ],
+  },
+  {
+    id: 'core-team-fit',
+    title: 'Team Fit and Scaling',
+    paragraphs: [
+      'SolidJS is often attractive to teams that want precise reactive behavior and are comfortable with a specialized mental model. It can be a strong fit for engineers who prefer understanding state propagation explicitly rather than leaning on rerender-driven conventions.',
+      'At the same time, the smaller ecosystem and less mainstream model can slow onboarding in teams that depend heavily on common React assumptions or on a broad pool of preexisting tutorials and libraries.',
     ],
   },
   {
@@ -139,6 +227,14 @@ const coreConceptSections: readonly DocSection[] = [
     paragraphs: [
       'SolidJS offers a very strong local reactivity story, but the ecosystem is smaller and the reactive model is less familiar to the average frontend team than the mainstream React mental model. That can affect hiring, onboarding, and availability of long-tail third-party guidance.',
       'Another tradeoff is that the precision of the reactive system expects developers to reason accurately about dependency tracking. Used well, this is a strength. Used casually, it can confuse teams that still expect component reruns to be the default mechanism.',
+    ],
+  },
+  {
+    id: 'core-pitfalls',
+    title: 'Common Pitfalls',
+    paragraphs: [
+      'A recurring mistake is reading SolidJS code as if it followed React rerender semantics. Another is assuming JSX familiarity means the state model will behave the same way as other JSX libraries.',
+      'A second pitfall is underestimating the architecture layer. Even a very efficient local reactive model still needs clear patterns for async data, routing, shared state, and full product structure.',
     ],
   },
   {
@@ -203,6 +299,67 @@ export default function PriceSummary(props: {
     ],
     takeaway:
       'Derived state is modeled as a reactive computation rather than as a rerender-time expression alone.',
+  },
+  {
+    id: 'examples-control-flow',
+    title: 'Control Flow Example',
+    description:
+      'SolidJS uses dedicated helpers for common control flow so the update model stays explicit and efficient.',
+    snippets: [
+      {
+        label: 'FrameworkList.tsx',
+        code: `import { createMemo, createSignal, For, Show } from 'solid-js'
+
+export default function FrameworkList() {
+  const [query, setQuery] = createSignal('')
+  const items = ['Vue', 'Svelte', 'React', 'Solid']
+  const filtered = createMemo(() =>
+    items.filter((item) => item.toLowerCase().includes(query().toLowerCase()))
+  )
+
+  return (
+    <>
+      <input value={query()} onInput={(event) => setQuery(event.currentTarget.value)} />
+      <Show when={filtered().length > 0} fallback={<p>No matches</p>}>
+        <ul>
+          <For each={filtered()}>{(item) => <li>{item}</li>}</For>
+        </ul>
+      </Show>
+    </>
+  )
+}`,
+      },
+    ],
+    takeaway:
+      'This is where SolidJS becomes visibly distinct from rerender-driven JSX libraries: the control-flow layer is reactive and explicit.',
+  },
+  {
+    id: 'examples-resource',
+    title: 'Async Resource Example',
+    description:
+      'Resources show how asynchronous data can participate directly in Solid\'s reactive model.',
+    snippets: [
+      {
+        label: 'UserCard.tsx',
+        code: `import { Show, createResource } from 'solid-js'
+
+async function fetchUser(id: number) {
+  return { id, name: 'Ali' }
+}
+
+export default function UserCard() {
+  const [user] = createResource(() => 1, fetchUser)
+
+  return (
+    <Show when={user()} fallback={<p>Loading...</p>}>
+      <p>{user()!.name}</p>
+    </Show>
+  )
+}`,
+      },
+    ],
+    takeaway:
+      'Async work can stay inside the same reactive vocabulary rather than immediately forcing a separate architectural style.',
   },
   {
     id: 'examples-patterns',
@@ -271,6 +428,10 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'SolidStart',
     definition: 'The broader Solid application framework used for routing, SSR, and full-stack workflows.',
+  },
+  {
+    term: 'Fine-grained update',
+    definition: 'A targeted UI update that affects only the computations or DOM bindings that depend on changed state.',
   },
 ] as const
 
@@ -595,8 +756,8 @@ export default function SolidJsPage(): JSX.Element {
           <main className="solid-help-content">
             <h1 className="solid-help-doc-title">SolidJS</h1>
             <p className="solid-help-doc-subtitle">
-              Manual-style reference covering overview, signals, fine-grained reactivity, JSX authoring, ecosystem, architecture,
-              use cases, tradeoffs, and examples.
+              Manual-style reference covering overview, signals, fine-grained reactivity, JSX authoring, app-framework layering,
+              tradeoffs, and practical examples.
             </p>
 
             {activeTab === 'big-picture' &&

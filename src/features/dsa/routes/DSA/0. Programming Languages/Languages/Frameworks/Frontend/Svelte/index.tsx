@@ -50,6 +50,14 @@ const bigPictureSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'bp-compiler',
+    title: 'Why the Compiler-Centered Model Matters',
+    paragraphs: [
+      'Svelte is unusual because the compiler is not just an implementation detail. It shapes the mental model, the syntax feel, and the runtime cost profile. More framework work happens ahead of time, which often makes components look smaller and more direct.',
+      'That does not mean the compiler makes architecture decisions disappear. It means the visible framework surface is different from runtime-heavy systems, and teams need to understand that difference when debugging or comparing frameworks.',
+    ],
+  },
+  {
     id: 'bp-scope',
     title: 'What This Page Covers',
     paragraphs: [
@@ -66,6 +74,14 @@ const bigPictureSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'bp-misconceptions',
+    title: 'Common Misconceptions',
+    paragraphs: [
+      'A common misconception is that Svelte is only about performance. Its more important distinction is often the authoring model: concise components, low ceremony, and a more compiler-shaped way of thinking about reactivity.',
+      'Another misconception is that all Svelte advice is timeless. Modern Svelte discussion needs to account for its current reactive direction rather than relying only on older store-first tutorials.',
+    ],
+  },
+  {
     id: 'bp-takeaways',
     title: 'Quick Takeaways',
     paragraphs: [
@@ -77,6 +93,14 @@ const bigPictureSections: readonly DocSection[] = [
 ] as const
 
 const coreConceptSections: readonly DocSection[] = [
+  {
+    id: 'core-mental-model',
+    title: 'Mental Model',
+    paragraphs: [
+      'Svelte asks developers to think of components as close-to-the-platform modules that are compiled into targeted update logic. The framework surface stays relatively small, but the compiler does more work on the developer\'s behalf.',
+      'This means the code often feels direct, but teams still need to understand the reactive model and the compile-time transformations that make the experience possible.',
+    ],
+  },
   {
     id: 'core-key-ideas',
     title: 'Overview and Key Ideas',
@@ -91,6 +115,14 @@ const coreConceptSections: readonly DocSection[] = [
     paragraphs: [
       'A Svelte component typically colocates script, markup, and style in a single `.svelte` file. That keeps component structure compact and easy to read without requiring separate framework-specific files for ordinary UI work.',
       'This single-file model is similar in spirit to other component systems, but Svelte usually feels terser because the template and reactive syntax are intentionally lightweight.',
+    ],
+  },
+  {
+    id: 'core-templates',
+    title: 'Templates and Control Flow',
+    paragraphs: [
+      'Svelte templates stay visually close to ordinary markup while adding focused control-flow blocks such as `{#if}` and `{#each}`. Many teams like this because the framework grammar stays narrow and readable.',
+      'That narrow syntax surface is part of Svelte\'s appeal. It often feels like plain HTML with carefully chosen reactive extensions rather than a large template language.',
     ],
   },
   {
@@ -110,6 +142,14 @@ const coreConceptSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'core-state',
+    title: 'State and Shared Data',
+    paragraphs: [
+      'Svelte handles local state elegantly inside components. For broader sharing, teams can use module patterns, context, and stores. Modern guidance is more selective about stores than older tutorials were, because not every shared-state problem needs a classic store abstraction.',
+      'This smaller state surface can feel freeing, but it also shifts more responsibility onto the team to keep architecture disciplined as an application grows.',
+    ],
+  },
+  {
     id: 'core-apis',
     title: 'APIs and Authoring Style',
     paragraphs: [
@@ -126,11 +166,51 @@ const coreConceptSections: readonly DocSection[] = [
     ],
   },
   {
-    id: 'core-state',
-    title: 'State and Shared Data',
+    id: 'core-routing',
+    title: 'Routing and Application Story',
     paragraphs: [
-      'Svelte handles local state elegantly inside components. For broader sharing, teams can use module patterns, context, and stores. Modern guidance is more selective about stores than older tutorials were, because not every shared-state problem needs a classic store abstraction.',
-      'This smaller state surface can feel freeing, but it also shifts more responsibility onto the team to keep architecture disciplined as an application grows.',
+      'Svelte alone is primarily the component layer. SvelteKit is the official answer for file-based routing, layouts, route-level loading, form actions, and broader app workflow.',
+      'This is one of the most important distinctions in any Svelte discussion. A component framework decision and an app-framework decision are related, but they are not the same layer.',
+    ],
+  },
+  {
+    id: 'core-forms',
+    title: 'Forms and Bindings',
+    paragraphs: [
+      'Svelte is especially concise for local forms because bindings such as `bind:value` and `bind:checked` keep ordinary input work short and easy to scan.',
+      'At the broader application level, SvelteKit form actions give the ecosystem a stronger request-response story than a plain client-only component comparison would suggest.',
+    ],
+  },
+  {
+    id: 'core-ssr',
+    title: 'SSR and SvelteKit',
+    paragraphs: [
+      'SvelteKit provides the stronger SSR story around Svelte. Routing, layouts, load functions, and request-aware workflows live in one official application model, which many teams find unusually coherent.',
+      'That means products evaluating Svelte for SSR or server-driven interactions are usually really evaluating Svelte together with SvelteKit.',
+    ],
+  },
+  {
+    id: 'core-typescript',
+    title: 'TypeScript and Tooling',
+    paragraphs: [
+      'Svelte supports TypeScript well, and the experience often feels light because the component model is compact. The broader toolchain, language tooling, and app-level story become more important as teams move from isolated components into full applications.',
+      'In practice, typed Svelte can feel pleasant because there are fewer framework layers competing for attention inside the component file.',
+    ],
+  },
+  {
+    id: 'core-performance',
+    title: 'Performance and Runtime Cost',
+    paragraphs: [
+      'Svelte has a strong reputation for small bundles and efficient updates because the compiler can emit specialized code rather than relying as heavily on generic runtime behavior.',
+      'The correct engineering conclusion is not that Svelte automatically wins every performance discussion. Real applications still depend on architecture, data flow, rendering discipline, and network behavior.',
+    ],
+  },
+  {
+    id: 'core-adoption',
+    title: 'Adoption and Team Fit',
+    paragraphs: [
+      'Svelte is often loved by small or medium teams because the local authoring experience is so direct. It can reduce day-to-day framework friction and make components easy to read.',
+      'At larger organizational scale, teams should think carefully about conventions and architecture discipline because the framework intentionally imposes less visible ceremony than more opinionated systems.',
     ],
   },
   {
@@ -147,6 +227,14 @@ const coreConceptSections: readonly DocSection[] = [
     paragraphs: [
       'Svelte often wins on directness, but that same low-ceremony model can provide fewer visible guardrails in large organizations. Teams with uneven architecture practices may need to impose more conventions themselves as complexity increases.',
       'Another tradeoff is ecosystem size. Svelte has a strong reputation for developer satisfaction, but the third-party library surface, hiring pool, and long-tail example volume are still smaller than the largest frontend ecosystems.',
+    ],
+  },
+  {
+    id: 'core-pitfalls',
+    title: 'Common Pitfalls',
+    paragraphs: [
+      'A recurring mistake is evaluating Svelte only through old tutorials that overemphasize stores and underdescribe the newer reactive direction. Another is comparing raw Svelte to fuller application frameworks without keeping the layer mismatch explicit.',
+      'A second pitfall is assuming low ceremony removes the need for architecture. Directness helps a lot, but large applications still need disciplined boundaries for state, data loading, and routing.',
     ],
   },
   {
@@ -204,6 +292,41 @@ const examples: readonly ExampleSection[] = [
     ],
     takeaway:
       'For local forms, the framework stays out of the way and lets bindings read almost like plain markup annotations.',
+  },
+  {
+    id: 'examples-lists',
+    title: 'Control Flow Example',
+    description:
+      'Svelte list and conditional syntax shows how compact the template layer can stay for common UI patterns.',
+    snippets: [
+      {
+        label: 'FrameworkList.svelte',
+        code: `<script lang="ts">
+  let query = $state('')
+  let items = ['Vue', 'Svelte', 'React', 'Solid']
+
+  let filtered = $derived(
+    items.filter((item) =>
+      item.toLowerCase().includes(query.toLowerCase())
+    )
+  )
+</script>
+
+<input bind:value={query} placeholder="Filter frameworks" />
+
+{#if filtered.length === 0}
+  <p>No matches</p>
+{:else}
+  <ul>
+    {#each filtered as item}
+      <li>{item}</li>
+    {/each}
+  </ul>
+{/if}`,
+      },
+    ],
+    takeaway:
+      'This is where Svelte often feels especially direct: control flow reads close to markup and script rather than like a large framework ceremony.',
   },
   {
     id: 'examples-architecture',
@@ -272,6 +395,18 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Form action',
     definition: 'A SvelteKit server-side mutation workflow connected directly to HTML forms.',
+  },
+  {
+    term: 'Context',
+    definition: 'A Svelte mechanism for sharing values across parts of the component tree without ordinary prop passing.',
+  },
+  {
+    term: 'on:click',
+    definition: 'Svelte event syntax used to attach event handlers in markup.',
+  },
+  {
+    term: 'Scoped styles',
+    definition: 'Svelte component styling behavior where local CSS is isolated to the component by default.',
   },
 ] as const
 
@@ -596,8 +731,8 @@ export default function SveltePage(): JSX.Element {
           <main className="svelte-help-content">
             <h1 className="svelte-help-doc-title">Svelte</h1>
             <p className="svelte-help-doc-subtitle">
-              Manual-style reference covering overview, compiler model, runes, SvelteKit, shared state, use cases, tradeoffs,
-              and examples.
+              Manual-style reference covering overview, compiler model, reactivity, SvelteKit, forms, routing, team fit,
+              tradeoffs, and examples.
             </p>
 
             {activeTab === 'big-picture' &&

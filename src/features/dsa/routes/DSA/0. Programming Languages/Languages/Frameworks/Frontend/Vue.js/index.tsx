@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Vue.js is a progressive frontend framework for building interactive user interfaces. It focuses on declarative rendering, component composition, and a built-in reactivity model that lets UI update when application state changes.',
       'The framework is often adopted for single-page applications, dashboards, content-rich frontends, and incrementally enhanced interfaces. Teams frequently choose it when they want a cohesive developer experience without moving to a heavier all-in platform.',
-      'The original page scope was placeholder content for Vue.js. This help-style version keeps that scope while organizing the material into overview, key ideas, core syntax, APIs, ecosystem, architecture, examples, use cases, tradeoffs, and reference-oriented terminology.',
+      'The original page scope was placeholder content for Vue.js. This help-style version keeps that scope while expanding it into a fuller reference covering mental model, templates, reactivity, component authoring, routing, state, SSR, use cases, migration concerns, examples, and glossary terms.',
     ],
   },
   {
@@ -47,6 +47,14 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Vue offers a relatively approachable path into component-based frontend development. Templates stay readable, Single-File Components keep related concerns together, and the reactivity system gives developers explicit primitives for state and derived values.',
       'The practical appeal is not only syntax. Vue also provides official or closely aligned solutions for routing, state management, dev tooling, and server-rendering-related workflows, which can reduce architecture drift across projects.',
+    ],
+  },
+  {
+    id: 'bp-progressive',
+    title: 'Why the Progressive Model Matters',
+    paragraphs: [
+      'Vue is often described as progressive because teams can adopt it at different scales. It can start as a small enhancement inside an existing page, grow into a client-rendered application, and later expand into a broader full-stack or SSR setup through the surrounding ecosystem.',
+      'That matters for real engineering work because adoption path affects risk. A framework that can enter gradually is often easier to justify in existing products than one that assumes a full rewrite from the beginning.',
     ],
   },
   {
@@ -66,6 +74,14 @@ const bigPictureSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'bp-misconceptions',
+    title: 'Common Misconceptions',
+    paragraphs: [
+      'A common misconception is that Vue is only a beginner framework. In practice, it can support large production applications, typed development, design systems, SSR-related workflows, and disciplined state architecture when used well.',
+      'Another misconception is that Vue is simply React with templates. The reactivity model, component authoring style, ecosystem shape, and progressive adoption story give it a distinct engineering character.',
+    ],
+  },
+  {
     id: 'bp-takeaways',
     title: 'Quick Takeaways',
     paragraphs: [
@@ -77,6 +93,14 @@ const bigPictureSections: readonly DocSection[] = [
 ] as const
 
 const coreConceptSections: readonly DocSection[] = [
+  {
+    id: 'core-mental-model',
+    title: 'Mental Model',
+    paragraphs: [
+      'Vue asks developers to think in terms of reactive state driving rendered output. Components expose state and behavior, templates describe UI structure, and the framework updates the DOM when tracked dependencies change.',
+      'This model often feels explicit and teachable because Vue gives names to its main building blocks: refs, reactive objects, computed values, watchers, props, emits, components, router, and store.',
+    ],
+  },
   {
     id: 'core-key-ideas',
     title: 'Overview and Key Ideas',
@@ -91,6 +115,14 @@ const coreConceptSections: readonly DocSection[] = [
     paragraphs: [
       'A common Vue unit is the Single-File Component, typically stored in a `.vue` file. It can colocate template, script, and style, which makes a component easy to inspect as one document.',
       'This structure is one of Vue\'s defining ergonomics. It keeps markup-like UI structure readable while still allowing JavaScript or TypeScript logic to live close to the rendered output.',
+    ],
+  },
+  {
+    id: 'core-templates',
+    title: 'Templates and Rendering Style',
+    paragraphs: [
+      'Vue templates use HTML-like syntax enhanced with Vue directives and bindings. This keeps the presentation layer visually familiar while still giving the framework a clear place to express reactivity, control flow, and component composition.',
+      'For many teams, templates are a readability advantage because UI intent remains easy to scan. For other teams, JSX-style rendering feels more natural. This is one of Vue\'s most meaningful style tradeoffs compared with code-centric libraries.',
     ],
   },
   {
@@ -110,6 +142,14 @@ const coreConceptSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'core-props-emits',
+    title: 'Props, Emits, and Component Boundaries',
+    paragraphs: [
+      'Vue components typically receive inputs through props and communicate upward through emitted events. This gives teams a clear one-way data-flow story at the component boundary and keeps parent-child responsibilities legible.',
+      'As applications grow, this matters because predictable component contracts make it easier to refactor, test, and separate UI concerns from shared application state.',
+    ],
+  },
+  {
     id: 'core-apis',
     title: 'APIs and Authoring Styles',
     paragraphs: [
@@ -118,11 +158,75 @@ const coreConceptSections: readonly DocSection[] = [
     ],
   },
   {
+    id: 'core-composables',
+    title: 'Composables and Logic Reuse',
+    paragraphs: [
+      'Composables are a common Composition API pattern for packaging reusable stateful logic into normal functions. This gives Vue teams a consistent way to share logic without forcing mixin-heavy patterns from older eras.',
+      'The result is that logic reuse can stay explicit and testable while still fitting naturally into the framework\'s reactive model.',
+    ],
+  },
+  {
     id: 'core-ecosystem',
     title: 'Ecosystem and Architecture',
     paragraphs: [
       'Vue\'s ecosystem often feels more coordinated than some library-first alternatives. Vue Router is the standard routing layer, Pinia is the current official state management recommendation, and the development toolchain is designed around Vue\'s component model.',
       'For application architecture, this means teams can adopt a cohesive baseline quickly. The framework gives enough flexibility for different project sizes while still offering a clear happy path for common frontend concerns.',
+    ],
+  },
+  {
+    id: 'core-routing',
+    title: 'Routing and Page Structure',
+    paragraphs: [
+      'Vue Router is the usual routing solution in Vue applications. Nested routes, route params, guards, and common navigation patterns have a strong official or near-official home, which reduces debate about the routing layer in many projects.',
+      'This usually helps teams converge on a more uniform application shape than they might get in a more ecosystem-fragmented stack.',
+    ],
+  },
+  {
+    id: 'core-state',
+    title: 'State Management',
+    paragraphs: [
+      'Vue supports local state, shared reactive modules, provide and inject, and larger store patterns. Pinia is the current official recommendation for broader app state, which gives teams a relatively clear escalation path from component state to shared application state.',
+      'The main architectural advantage here is coordination. Teams can adopt state patterns with less uncertainty about what the framework community considers healthy defaults.',
+    ],
+  },
+  {
+    id: 'core-forms',
+    title: 'Forms and Input Handling',
+    paragraphs: [
+      'Vue is widely appreciated for form ergonomics, especially through `v-model` and the general clarity of template bindings. Simple forms can often stay concise without introducing a large framework-specific abstraction layer.',
+      'For larger form systems, teams still need validation and workflow conventions, but Vue gives a smooth starting point for ordinary input handling.',
+    ],
+  },
+  {
+    id: 'core-ssr',
+    title: 'SSR and Full-Stack Story',
+    paragraphs: [
+      'Vue supports SSR and larger rendering workflows, but the most cohesive full-framework path is usually through Nuxt. This means plain Vue and Vue with Nuxt can feel materially different in terms of routing, data loading, and application conventions.',
+      'The important engineering point is that Vue has a strong component and app-level story on its own, then becomes a fuller platform choice when paired with its broader framework ecosystem.',
+    ],
+  },
+  {
+    id: 'core-typescript',
+    title: 'TypeScript and Tooling',
+    paragraphs: [
+      'Vue supports TypeScript well, especially in modern Composition API and `script setup` codebases. The tooling story usually feels coherent because the framework, SFC format, and dev tooling are designed to work together.',
+      'Typed Vue can stay approachable because type information usually lives close to component props, emitted events, and composable logic rather than being spread across many disconnected framework layers.',
+    ],
+  },
+  {
+    id: 'core-performance',
+    title: 'Performance and Rendering',
+    paragraphs: [
+      'Vue uses compiler-informed rendering and reactive dependency tracking to keep updates efficient in many common UI scenarios. Real-world performance still depends more on architecture, component boundaries, list handling, and data flow discipline than on marketing slogans about framework speed.',
+      'The practical takeaway is that Vue can be very fast, but teams should still reason about rendering cost and state churn rather than assuming the framework will solve every performance issue automatically.',
+    ],
+  },
+  {
+    id: 'core-adoption',
+    title: 'Incremental Adoption and Migration',
+    paragraphs: [
+      'Vue is especially attractive for incremental adoption because the framework identity itself includes that progressive story. Teams can start small, enhance existing pages, and later grow into a broader application without discarding the original component model.',
+      'That makes Vue useful not only for greenfield work but also for staged modernization where a full rewrite would be too disruptive.',
     ],
   },
   {
@@ -139,6 +243,14 @@ const coreConceptSections: readonly DocSection[] = [
     paragraphs: [
       'Vue\'s template-first style is a strength for many teams, but developers who prefer JavaScript-only rendering may still favor JSX-heavy workflows. The ecosystem is strong, yet the market size and third-party library breadth are still often compared against React\'s larger surface area.',
       'Another tradeoff is historical variation. Because Vue has evolved through multiple major API styles, teams sometimes have to understand both Options API patterns and Composition API patterns when maintaining mixed-age codebases.',
+    ],
+  },
+  {
+    id: 'core-pitfalls',
+    title: 'Common Pitfalls',
+    paragraphs: [
+      'A recurring mistake is mixing Options API and Composition API without clear conventions, which can make codebases feel inconsistent. Another is overusing watchers when a computed value or cleaner data boundary would be simpler.',
+      'A second pitfall is underestimating the architecture layer because Vue feels easy at the component level. Large applications still need discipline around state boundaries, routing, data ownership, and composable structure.',
     ],
   },
   {
@@ -201,6 +313,69 @@ const total = computed(() =>
     ],
     takeaway:
       'Computed state keeps derivation logic close to the component while preserving a clean template.',
+  },
+  {
+    id: 'examples-composable',
+    title: 'Composable Example',
+    description:
+      'Composables are a common way to package reusable reactive logic in modern Vue codebases.',
+    snippets: [
+      {
+        label: 'useCounter.ts',
+        code: `import { computed, ref } from 'vue'
+
+export function useCounter() {
+  const count = ref(0)
+  const isLarge = computed(() => count.value >= 10)
+
+  function increment() {
+    count.value += 1
+  }
+
+  return { count, isLarge, increment }
+}`,
+      },
+      {
+        label: 'CounterPanel.vue',
+        code: `<script setup lang="ts">
+import { useCounter } from './useCounter'
+
+const { count, isLarge, increment } = useCounter()
+</script>
+
+<template>
+  <button @click="increment">Count: {{ count }}</button>
+  <p v-if="isLarge">Large count</p>
+</template>`,
+      },
+    ],
+    takeaway:
+      'Vue logic reuse in modern code usually happens through composables rather than through older mixin-heavy patterns.',
+  },
+  {
+    id: 'examples-forms',
+    title: 'Form Binding Example',
+    description:
+      'Vue is especially well known for concise local form handling through bindings like `v-model`.',
+    snippets: [
+      {
+        label: 'NewsletterForm.vue',
+        code: `<script setup lang="ts">
+import { ref } from 'vue'
+
+const email = ref('')
+const subscribed = ref(true)
+</script>
+
+<template>
+  <input v-model="email" type="email" />
+  <input v-model="subscribed" type="checkbox" />
+  <p>{{ email }} / subscribed: {{ subscribed ? 'yes' : 'no' }}</p>
+</template>`,
+      },
+    ],
+    takeaway:
+      'For everyday input handling, Vue often stays unusually readable without forcing much ceremony.',
   },
   {
     id: 'examples-patterns',
@@ -270,6 +445,30 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Pinia',
     definition: 'The official state management library recommended for shared Vue application state.',
+  },
+  {
+    term: 'Vue Router',
+    definition: 'The standard routing solution commonly used for navigation and route structure in Vue applications.',
+  },
+  {
+    term: 'Composable',
+    definition: 'A reusable function, commonly used with the Composition API, that packages reactive state and related behavior.',
+  },
+  {
+    term: 'script setup',
+    definition: 'A concise Vue Single-File Component syntax for Composition API authoring.',
+  },
+  {
+    term: 'v-model',
+    definition: 'Vue syntax for two-way style binding between component state and form inputs.',
+  },
+  {
+    term: 'provide/inject',
+    definition: 'A Vue mechanism for sharing values across parts of the component tree without ordinary prop drilling.',
+  },
+  {
+    term: 'Nuxt',
+    definition: 'A broader Vue framework commonly used for SSR, routing conventions, and fuller application-platform behavior.',
   },
 ] as const
 
@@ -594,8 +793,8 @@ export default function VueJsPage(): JSX.Element {
           <main className="vue-js-help-content">
             <h1 className="vue-js-help-doc-title">Vue.js</h1>
             <p className="vue-js-help-doc-subtitle">
-              Manual-style reference covering overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases,
-              tradeoffs, and examples.
+              Manual-style reference covering overview, templates, reactivity, component authoring, ecosystem shape, SSR story,
+              tradeoffs, and practical examples.
             </p>
 
             {activeTab === 'big-picture' &&
