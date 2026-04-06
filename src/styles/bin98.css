@@ -279,6 +279,9 @@
   font-size: 14px;
 }
 
+/* ===== Responsive breakpoints ============================================= */
+
+/* Collapse sidebar at 900px */
 @media (max-width: 900px) {
   .bin98-main {
     grid-template-columns: 1fr;
@@ -287,5 +290,129 @@
   .bin98-toc {
     border-right: none;
     border-bottom: 1px solid #808080;
+  }
+}
+
+/* Tablet portrait — tighten layout, enlarge touch targets */
+@media (max-width: 768px) {
+  .bin98-control {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .bin98-tabs {
+    flex-wrap: wrap;
+    padding: 4px 6px 0;
+    gap: 2px;
+  }
+
+  .bin98-tab {
+    padding: 5px 8px 4px;
+    font-size: 11px;
+  }
+
+  .bin98-content {
+    padding: 10px 14px 16px;
+  }
+
+  [class*="98-help-page"]::after {
+    width: 130px;
+    height: 36px;
+    bottom: 14px;
+    right: 14px;
+  }
+}
+
+/* Large phone — fix absolute title centering, wrap tabs */
+@media (max-width: 600px) {
+  .bin98-title-text {
+    position: static;
+    transform: none;
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bin98-doc-title {
+    font-size: 17px;
+  }
+}
+
+/* Mobile phone — hide sidebar TOC, compact spacing */
+@media (max-width: 480px) {
+  .bin98-window {
+    border-width: 1px;
+  }
+
+  .bin98-titlebar {
+    padding: 3px 4px;
+  }
+
+  .bin98-title-text {
+    font-size: 12px;
+  }
+
+  .bin98-toc {
+    display: none;
+  }
+
+  .bin98-content {
+    padding: 8px 10px 14px;
+  }
+
+  .bin98-doc-title {
+    font-size: 15px;
+  }
+
+  .bin98-heading {
+    font-size: 14px;
+  }
+
+  .bin98-codebox {
+    padding: 6px;
+    margin: 4px 0 8px;
+  }
+
+  .bin98-codebox code {
+    font-size: 11px;
+  }
+
+  [class*="98-help-page"]::after {
+    width: 100px;
+    height: 28px;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .topic-nav {
+    padding: 8px 0 2px;
+    margin-top: 10px;
+  }
+
+  .topic-nav__link {
+    padding: 5px 8px;
+    font-size: 10px;
+    max-width: 46%;
+  }
+
+  .topic-nav__hint {
+    font-size: 9px;
+  }
+}
+
+/* Very small phones (≤360px) — extra-compact tabs */
+@media (max-width: 360px) {
+  .bin98-tabs {
+    padding: 3px 4px 0;
+    gap: 1px;
+  }
+
+  .bin98-tab {
+    font-size: 10px;
+    padding: 5px 6px 4px;
   }
 }

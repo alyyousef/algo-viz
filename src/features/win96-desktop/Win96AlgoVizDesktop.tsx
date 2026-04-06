@@ -19,6 +19,10 @@ import VisualizationWindowContent from './components/VisualizationWindowContent'
 
 const BASE_DESKTOP_WIDTH = 1440
 const BASE_DESKTOP_HEIGHT = 900
+/** On narrow viewports, scale from a smaller logical canvas so content is usable */
+const MOBILE_BREAKPOINT = 768
+const BASE_MOBILE_WIDTH = 480
+const BASE_MOBILE_HEIGHT = 800
 const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 /**
@@ -429,29 +433,35 @@ function DesktopChrome(): JSX.Element {
 
 export default function Win96AlgoVizDesktop(): JSX.Element {
   const { enable } = useWin97Theme()
-  const [scaleState, setScaleState] = useState(() => ({
-    scale: 1,
-    scaledWidth: BASE_DESKTOP_WIDTH,
-    scaledHeight: BASE_DESKTOP_HEIGHT,
-  }))
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const outerRef = useRef<HTMLDivElement | null>(null)
+  const scaleRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    const updateScale = () => {
-      const widthScale = window.innerWidth / BASE_DESKTOP_WIDTH
-      const heightScale = window.innerHeight / BASE_DESKTOP_HEIGHT
+    const applyScale = () => {
+      const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+      const baseW = isMobile ? BASE_MOBILE_WIDTH : BASE_DESKTOP_WIDTH
+      const baseH = isMobile ? BASE_MOBILE_HEIGHT : BASE_DESKTOP_HEIGHT
+      const widthScale = window.innerWidth / baseW
+      const heightScale = window.innerHeight / baseH
       const nextScale = Math.min(widthScale, heightScale, 1)
-      const safeScale = Number.isFinite(nextScale) ? nextScale : 1
-      setScaleState({
-        scale: safeScale,
-        scaledWidth: Math.round(BASE_DESKTOP_WIDTH * safeScale),
-        scaledHeight: Math.round(BASE_DESKTOP_HEIGHT * safeScale),
-      })
+      const scale = Number.isFinite(nextScale) ? nextScale : 1
+
+      if (outerRef.current) {
+        outerRef.current.style.width = `${Math.round(baseW * scale)}px`
+        outerRef.current.style.height = `${Math.round(baseH * scale)}px`
+      }
+      if (scaleRef.current) {
+        scaleRef.current.style.width = `${baseW}px`
+        scaleRef.current.style.height = `${baseH}px`
+        scaleRef.current.style.transform = `scale(${scale})`
+      }
     }
 
-    updateScale()
-    window.addEventListener('resize', updateScale)
+    applyScale()
+    window.addEventListener('resize', applyScale)
     return () => {
-      window.removeEventListener('resize', updateScale)
+      window.removeEventListener('resize', applyScale)
     }
   }, [])
 
@@ -461,22 +471,9 @@ export default function Win96AlgoVizDesktop(): JSX.Element {
 
   return (
     <Win96WindowManagerProvider>
-      <div className="win96-desktop-scale-root">
-        <div
-          className="win96-desktop-scale-outer"
-          style={{
-            width: `${scaleState.scaledWidth}px`,
-            height: `${scaleState.scaledHeight}px`,
-          }}
-        >
-          <div
-            className="win96-desktop-scale"
-            style={{
-              width: `${BASE_DESKTOP_WIDTH}px`,
-              height: `${BASE_DESKTOP_HEIGHT}px`,
-              transform: `scale(${scaleState.scale})`,
-            }}
-          >
+      <div ref={rootRef} className="win96-desktop-scale-root">
+        <div ref={outerRef} className="win96-desktop-scale-outer">
+          <div ref={scaleRef} className="win96-desktop-scale">
             <DesktopContainer />
           </div>
         </div>

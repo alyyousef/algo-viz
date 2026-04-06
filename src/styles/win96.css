@@ -745,6 +745,62 @@
   }
 }
 
+/* ===== Responsive fixes for desktop chrome (outside scaled container) ====== */
+
+/* Mobile — taller Chrome (taskbar is outside scale, renders at real px) */
+@media (max-width: 768px) {
+  .win96-taskbar__clock {
+    font-size: 14px;
+    padding: 4px 10px;
+  }
+
+  .win96-taskbar__button {
+    min-width: 90px;
+    font-size: 13px;
+  }
+
+  .win96-start-menu {
+    bottom: 56px; /* clear the taller taskbar */
+  }
+}
+
+/* Small tablet / large phone — constrain start menu width */
+@media (max-width: 600px) {
+  .win96-start-menu {
+    min-width: min(420px, calc(100vw - 8px));
+    left: 4px;
+  }
+
+  .win96-taskbar__button {
+    min-width: 80px;
+  }
+}
+
+/* Small phone — start menu fills near-full width, columns stack */
+@media (max-width: 440px) {
+  .win96-start-menu {
+    left: 4px;
+    right: 4px;
+    min-width: unset;
+    width: calc(100vw - 8px);
+  }
+
+  .win96-start-menu__list {
+    min-width: unset;
+    flex: 1;
+  }
+
+  .win96-start-menu__subpanel {
+    min-width: unset;
+    flex: 1;
+  }
+
+  .win96-taskbar__button {
+    min-width: 64px;
+    font-size: 11px;
+  }
+}
+
 .visualization-window {
   display: flex;
   flex-direction: column;
@@ -894,7 +950,5 @@
   font-size: 12px;
   color: var(--win97-text);
   padding: 2px 8px;
-  border: 1px solid var(--win97-3d-dark);
-  background: var(--win97-bg);
 }
 

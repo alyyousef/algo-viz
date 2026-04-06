@@ -19,13 +19,13 @@ export default function NotFound({
       <div className="flex flex-wrap items-center justify-center gap-4 text-xs uppercase tracking-[0.25em] text-[#003366]">
         <Link
           to="/"
-          className="inline-flex w-[200px] items-center justify-center border-2 border-[#000] bg-gradient-to-br from-[#fefefe] via-[#cfcfcf] to-[#d4d4d4] px-6 py-3 text-base font-semibold text-[#003366] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.8)] transition hover:shadow-[2px_2px_0_rgba(0,0,0,0.7)] active:translate-y-0.5"
+          className="inline-flex w-full max-w-[200px] items-center justify-center border-2 border-[#000] bg-gradient-to-br from-[#fefefe] via-[#cfcfcf] to-[#d4d4d4] px-6 py-3 text-base font-semibold text-[#003366] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.8)] transition hover:shadow-[2px_2px_0_rgba(0,0,0,0.7)] active:translate-y-0.5"
         >
           Go home
         </Link>
         <Link
           to="/algoViz"
-          className="inline-flex w-[200px] items-center justify-center border-2 border-[#000] bg-gradient-to-br from-[#fefefe] via-[#cfcfcf] to-[#d4d4d4] px-6 py-3 text-base font-semibold text-[#003366] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.8)] transition hover:shadow-[2px_2px_0_rgba(0,0,0,0.7)] active:translate-y-0.5"
+          className="inline-flex w-full max-w-[200px] items-center justify-center border-2 border-[#000] bg-gradient-to-br from-[#fefefe] via-[#cfcfcf] to-[#d4d4d4] px-6 py-3 text-base font-semibold text-[#003366] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.8)] transition hover:shadow-[2px_2px_0_rgba(0,0,0,0.7)] active:translate-y-0.5"
         >
           Browse
         </Link>
