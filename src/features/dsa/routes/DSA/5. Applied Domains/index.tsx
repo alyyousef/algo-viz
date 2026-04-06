@@ -1,6 +1,6 @@
 import { createComingSoonPage } from '@/features/dsa/components/ComingSoonPage'
 
 export default createComingSoonPage({
-  title: 'Programming Paradigm',
-  subtitle: 'Organizing computation and state',
+  title: 'Applied Domains',
+  subtitle: 'Applying core ideas in real systems',
 })

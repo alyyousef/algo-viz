@@ -1,6 +1,6 @@
 import { createComingSoonPage } from '@/features/dsa/components/ComingSoonPage'
 
 export default createComingSoonPage({
-  title: 'Specialised Applications',
-  subtitle: 'Applying core ideas in real systems',
+  title: 'Classic Problems',
+  subtitle: 'Foundational CS puzzles and thought experiments',
 })

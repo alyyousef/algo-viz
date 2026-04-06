@@ -24,6 +24,7 @@ const MOBILE_BREAKPOINT = 768
 const BASE_MOBILE_WIDTH = 480
 const BASE_MOBILE_HEIGHT = 800
 const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+const FALLBACK_TASKBAR_HEIGHT = 28
 
 /**
  * Display order for root folders on the desktop and in the Start menu.
@@ -31,13 +32,14 @@ const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
  */
 const ROOT_FOLDER_ORDER = [
   'folder:0-fundamentals',
-  'folder:0-programming-languages',
+  'folder:0-languages-ecosystems',
+  'alias:languages-and-frameworks:folder:languages-and-frameworks',
   'folder:1-core-data-structures',
   'folder:2-core-algorithms',
   'folder:3-algorithmic-paradigms',
-  'folder:0-cs-problems',
-  'folder:4-domain-specific-advanced',
-  'folder:5-specialized-applications',
+  'folder:0-cs-problems-theory',
+  'folder:4-advanced-topics',
+  'folder:5-applied-domains',
 ]
 
 function sortRootFolders<T extends { id: string }>(folders: T[]): T[] {
@@ -438,12 +440,36 @@ export default function Win96AlgoVizDesktop(): JSX.Element {
   const scaleRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    const getViewportSize = () => {
+      const viewport = window.visualViewport
+      return {
+        width: viewport?.width ?? window.innerWidth,
+        height: viewport?.height ?? window.innerHeight,
+      }
+    }
+
+    const getTaskbarHeight = () => {
+      if (!rootRef.current) {
+        return FALLBACK_TASKBAR_HEIGHT
+      }
+
+      const rawValue = window
+        .getComputedStyle(rootRef.current)
+        .getPropertyValue('--win96-taskbar-total-height')
+        .trim()
+      const parsedValue = Number.parseFloat(rawValue)
+
+      return Number.isFinite(parsedValue) ? parsedValue : FALLBACK_TASKBAR_HEIGHT
+    }
+
     const applyScale = () => {
-      const isMobile = window.innerWidth < MOBILE_BREAKPOINT
+      const viewport = getViewportSize()
+      const isMobile = viewport.width < MOBILE_BREAKPOINT
       const baseW = isMobile ? BASE_MOBILE_WIDTH : BASE_DESKTOP_WIDTH
       const baseH = isMobile ? BASE_MOBILE_HEIGHT : BASE_DESKTOP_HEIGHT
-      const widthScale = window.innerWidth / baseW
-      const heightScale = window.innerHeight / baseH
+      const availableHeight = Math.max(viewport.height - getTaskbarHeight(), 0)
+      const widthScale = viewport.width / baseW
+      const heightScale = availableHeight / baseH
       const nextScale = Math.min(widthScale, heightScale, 1)
       const scale = Number.isFinite(nextScale) ? nextScale : 1
 
@@ -460,14 +486,39 @@ export default function Win96AlgoVizDesktop(): JSX.Element {
 
     applyScale()
     window.addEventListener('resize', applyScale)
+    window.visualViewport?.addEventListener('resize', applyScale)
+    window.visualViewport?.addEventListener('scroll', applyScale)
     return () => {
       window.removeEventListener('resize', applyScale)
+      window.visualViewport?.removeEventListener('resize', applyScale)
+      window.visualViewport?.removeEventListener('scroll', applyScale)
     }
   }, [])
 
   useEffect(() => {
     enable()
   }, [enable])
+
+  useEffect(() => {
+    const html = document.documentElement
+    const body = document.body
+    const previousHtmlOverflow = html.style.overflow
+    const previousHtmlOverscrollBehavior = html.style.overscrollBehavior
+    const previousBodyOverflow = body.style.overflow
+    const previousBodyOverscrollBehavior = body.style.overscrollBehavior
+
+    html.style.overflow = 'hidden'
+    html.style.overscrollBehavior = 'none'
+    body.style.overflow = 'hidden'
+    body.style.overscrollBehavior = 'none'
+
+    return () => {
+      html.style.overflow = previousHtmlOverflow
+      html.style.overscrollBehavior = previousHtmlOverscrollBehavior
+      body.style.overflow = previousBodyOverflow
+      body.style.overscrollBehavior = previousBodyOverscrollBehavior
+    }
+  }, [])
 
   return (
     <Win96WindowManagerProvider>

@@ -1,8 +1,9 @@
-﻿import {
+import {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -76,6 +77,7 @@ const DEFAULT_POSITION: Position = { x: 120, y: 120 }
 const DEFAULT_SIZE: Size = { width: 420, height: 320 }
 const DESKTOP_MARGIN = 8
 const TASKBAR_HEIGHT = 36
+const MOBILE_BREAKPOINT = 768
 
 const cn = (...classes: Array<string | false | null | undefined>): string =>
   classes.filter(Boolean).join(' ')
@@ -103,6 +105,7 @@ const Window96 = forwardRef(function Window96(
   const containerRef = useRef<HTMLDivElement | null>(null)
   const dragStateRef = useRef<DragState>({ type: null })
   const previousMetricsRef = useRef<{ position: Position; size: Size } | null>(null)
+  const hasNormalizedInitialLayoutRef = useRef(false)
 
   const [position, setPosition] = useState<Position>(() => ({
     x: initialPosition.x,
@@ -126,22 +129,88 @@ const Window96 = forwardRef(function Window96(
     [],
   )
 
-  const ensureWithinViewport = useCallback(
-    (next: Position, nextSize?: Size): Position => {
-      if (typeof window === 'undefined') {
-        return next
+  const getHostBounds = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return {
+        width: currentWidth,
+        height: currentHeight,
       }
+    }
 
-      const dimensions = nextSize ?? { width: currentWidth, height: currentHeight }
-      const maxX = Math.max(0, window.innerWidth - dimensions.width)
-      const maxY = Math.max(0, window.innerHeight - dimensions.height)
+    const host = containerRef.current?.parentElement
+
+    return {
+      width: host?.clientWidth ?? window.innerWidth,
+      height: host?.clientHeight ?? window.innerHeight,
+    }
+  }, [currentHeight, currentWidth])
+
+  const constrainWindowMetrics = useCallback(
+    (
+      nextPosition: Position,
+      nextSize: Size,
+      options?: {
+        preferCenteredX?: boolean
+      },
+    ) => {
+      const host = getHostBounds()
+      const availableWidth = Math.max(minWidth, host.width - DESKTOP_MARGIN * 2)
+      const availableHeight = Math.max(minHeight, host.height - DESKTOP_MARGIN * 2)
+      const constrainedSize = {
+        width: Math.min(nextSize.width, availableWidth),
+        height: Math.min(nextSize.height, availableHeight),
+      }
+      const maxX = Math.max(DESKTOP_MARGIN, host.width - constrainedSize.width - DESKTOP_MARGIN)
+      const maxY = Math.max(DESKTOP_MARGIN, host.height - constrainedSize.height - DESKTOP_MARGIN)
+      const shouldCenterX =
+        Boolean(options?.preferCenteredX) && host.width <= MOBILE_BREAKPOINT
+      const centeredX = Math.max(
+        DESKTOP_MARGIN,
+        Math.round((host.width - constrainedSize.width) / 2),
+      )
+      const preferredPosition = shouldCenterX
+        ? {
+            x: centeredX,
+            y: Math.max(DESKTOP_MARGIN, nextPosition.y),
+          }
+        : nextPosition
 
       return {
-        x: Math.min(Math.max(0, next.x), maxX),
-        y: Math.min(Math.max(0, next.y), maxY),
+        size: constrainedSize,
+        position: {
+          x: Math.min(Math.max(DESKTOP_MARGIN, preferredPosition.x), maxX),
+          y: Math.min(Math.max(DESKTOP_MARGIN, preferredPosition.y), maxY),
+        },
       }
     },
-    [currentHeight, currentWidth],
+    [getHostBounds, minHeight, minWidth],
+  )
+
+  const normalizeWindowLayout = useCallback(
+    (preferCenteredX: boolean) => {
+      const constrainedMetrics = constrainWindowMetrics(position, size, { preferCenteredX })
+
+      setSize((prev) => {
+        if (
+          prev.width === constrainedMetrics.size.width &&
+          prev.height === constrainedMetrics.size.height
+        ) {
+          return prev
+        }
+        return constrainedMetrics.size
+      })
+
+      setPosition((prev) => {
+        if (
+          prev.x === constrainedMetrics.position.x &&
+          prev.y === constrainedMetrics.position.y
+        ) {
+          return prev
+        }
+        return constrainedMetrics.position
+      })
+    },
+    [constrainWindowMetrics, position, size],
   )
 
   const handlePointerMove = useCallback(
@@ -153,10 +222,13 @@ const Window96 = forwardRef(function Window96(
 
       if (state.type === 'drag') {
         event.preventDefault()
-        const nextPosition = ensureWithinViewport({
-          x: event.clientX - state.offsetX,
-          y: event.clientY - state.offsetY,
-        })
+        const nextPosition = constrainWindowMetrics(
+          {
+            x: event.clientX - state.offsetX,
+            y: event.clientY - state.offsetY,
+          },
+          size,
+        ).position
 
         setPosition((prev) => {
           if (prev.x === nextPosition.x && prev.y === nextPosition.y) {
@@ -202,27 +274,33 @@ const Window96 = forwardRef(function Window96(
           nextY = state.y + usedDelta
         }
 
-        const constrainedPosition = ensureWithinViewport(
+        const constrainedMetrics = constrainWindowMetrics(
           { x: nextX, y: nextY },
           { width: nextWidth, height: nextHeight },
         )
 
         setSize((prev) => {
-          if (prev.width === nextWidth && prev.height === nextHeight) {
+          if (
+            prev.width === constrainedMetrics.size.width &&
+            prev.height === constrainedMetrics.size.height
+          ) {
             return prev
           }
-          return { width: nextWidth, height: nextHeight }
+          return constrainedMetrics.size
         })
 
         setPosition((prev) => {
-          if (prev.x === constrainedPosition.x && prev.y === constrainedPosition.y) {
+          if (
+            prev.x === constrainedMetrics.position.x &&
+            prev.y === constrainedMetrics.position.y
+          ) {
             return prev
           }
-          return constrainedPosition
+          return constrainedMetrics.position
         })
       }
     },
-    [ensureWithinViewport, minHeight, minWidth],
+    [constrainWindowMetrics, minHeight, minWidth, size],
   )
 
   const handlePointerUp = useCallback(
@@ -269,6 +347,15 @@ const Window96 = forwardRef(function Window96(
     },
     [draggable, handlePointerMove, handlePointerUp, isMaximized, position.x, position.y],
   )
+
+  useLayoutEffect(() => {
+    if (isMaximized || hasNormalizedInitialLayoutRef.current) {
+      return
+    }
+
+    normalizeWindowLayout(true)
+    hasNormalizedInitialLayoutRef.current = true
+  }, [isMaximized, normalizeWindowLayout])
 
   const createResizeStart = useCallback(
     (direction: ResizeDirection) =>
@@ -319,21 +406,18 @@ const Window96 = forwardRef(function Window96(
 
     // Maximize within the desktop layer bounds (not raw browser viewport).
     // The desktop can be scaled/cropped, so viewport math can overflow and hide controls.
-    const host = containerRef.current?.parentElement
-    const hostWidth = host?.clientWidth ?? window.innerWidth
-    const hostHeight = host?.clientHeight ?? window.innerHeight
-
-    const viewportWidth = Math.max(minWidth, hostWidth - DESKTOP_MARGIN * 2)
+    const host = getHostBounds()
+    const viewportWidth = Math.max(minWidth, host.width - DESKTOP_MARGIN * 2)
     const viewportHeight = Math.max(
       minHeight,
-      hostHeight - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2,
+      host.height - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2,
     )
 
     return {
       position: { x: DESKTOP_MARGIN, y: DESKTOP_MARGIN },
       size: { width: viewportWidth, height: viewportHeight },
     }
-  }, [minHeight, minWidth, position.x, position.y, size.height, size.width])
+  }, [getHostBounds, minHeight, minWidth, position.x, position.y, size.height, size.width])
 
   const handleMaximize = useCallback(() => {
     if (isMaximized) {
@@ -357,7 +441,17 @@ const Window96 = forwardRef(function Window96(
 
   useEffect(() => {
     if (!isMaximized) {
-      return
+      const handleResize = () => {
+        normalizeWindowLayout(false)
+      }
+
+      handleResize()
+      window.addEventListener('resize', handleResize)
+      window.visualViewport?.addEventListener('resize', handleResize)
+      return () => {
+        window.removeEventListener('resize', handleResize)
+        window.visualViewport?.removeEventListener('resize', handleResize)
+      }
     }
 
     const handleResize = () => {
@@ -368,10 +462,12 @@ const Window96 = forwardRef(function Window96(
 
     handleResize()
     window.addEventListener('resize', handleResize)
+    window.visualViewport?.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
+      window.visualViewport?.removeEventListener('resize', handleResize)
     }
-  }, [computeMaximizedMetrics, isMaximized])
+  }, [computeMaximizedMetrics, isMaximized, normalizeWindowLayout])
 
   const handleResizeNorth = useMemo(() => createResizeStart('n'), [createResizeStart])
   const handleResizeSouth = useMemo(() => createResizeStart('s'), [createResizeStart])
@@ -505,4 +601,3 @@ const Window96 = forwardRef(function Window96(
 })
 
 export default Window96
-

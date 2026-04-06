@@ -1,6 +1,6 @@
 import { createComingSoonPage } from '@/features/dsa/components/ComingSoonPage'
 
 export default createComingSoonPage({
-  title: 'Execution Method',
-  subtitle: 'How source code becomes running instructions',
+  title: 'CS Problems & Theory',
+  subtitle: 'Classic and modern CS challenges',
 })

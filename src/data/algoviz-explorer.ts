@@ -64,6 +64,30 @@ const SEGMENT_DELIMITER = '\u0000'
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
 const joinPrefix = (segments: string[]) => segments.join(SEGMENT_DELIMITER)
+const findFolderChild = (parent: ExplorerFolderNode, id: string): ExplorerFolderNode | undefined => {
+  const child = parent.children.find((node) => node.id === id)
+  return child?.kind === 'folder' ? child : undefined
+}
+
+const cloneExplorerNode = (node: ExplorerNode, aliasPrefix: string): ExplorerNode => {
+  if (node.kind === 'visualization') {
+    return visualization(
+      `${aliasPrefix}:${node.id}`,
+      node.name,
+      node.description,
+      node.route,
+      node.icon,
+      node.estimatedDurationMinutes,
+    )
+  }
+
+  return {
+    ...folder(`${aliasPrefix}:${node.id}`, node.name, [], node.icon),
+    description: node.description,
+    children: node.children.map((child) => cloneExplorerNode(child, aliasPrefix)),
+  }
+}
+
 const formatSegmentName = (segment: string): string => {
   const normalized = segment.replace(/^\d+\.\s*/, '').trim() || segment
   if (normalized === 'Concurrency & Synchronization') {
@@ -196,6 +220,38 @@ segmentPaths.forEach((segments) => {
 
   parentFolder.children.push(visualization(pageId, pageName, undefined, route))
 })
+
+const languagesEcosystemsFolder = findFolderChild(
+  explorerRoot,
+  'folder:0-languages-ecosystems',
+)
+
+if (languagesEcosystemsFolder) {
+  const aliasChildren = [
+    'folder:0-languages-ecosystems/platforms-cloud',
+    'folder:0-languages-ecosystems/frameworks',
+    'folder:0-languages-ecosystems/databases-storage',
+    'folder:0-languages-ecosystems/mobile-development',
+    'folder:0-languages-ecosystems/ai-ml-tools',
+    'folder:0-languages-ecosystems/comparisons',
+    'folder:0-languages-ecosystems/object-oriented-languages',
+    'folder:0-languages-ecosystems/systems-languages',
+    'folder:0-languages-ecosystems/web-technologies',
+  ]
+    .map((id) => findFolderChild(languagesEcosystemsFolder, id))
+    .filter((node): node is ExplorerFolderNode => Boolean(node))
+    .map((node) => cloneExplorerNode(node, 'alias:languages-and-frameworks'))
+
+  if (aliasChildren.length > 0) {
+    explorerRoot.children.push(
+      folder(
+        'alias:languages-and-frameworks:folder:languages-and-frameworks',
+        'Languages and Frameworks',
+        aliasChildren,
+      ),
+    )
+  }
+}
 
 export const createExplorerIndex = (root: ExplorerFolderNode): ExplorerIndex => {
   const map = new Map<string, ExplorerIndexEntry>()

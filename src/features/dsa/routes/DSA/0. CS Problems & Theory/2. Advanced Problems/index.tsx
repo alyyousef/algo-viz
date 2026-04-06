@@ -7,7 +7,7 @@ const bigPicture = [
   {
     title: 'What this section is',
     details:
-      'Complex problems are multi-constraint, multi-objective scenarios where a single data structure or algorithm is not enough.',
+      'Advanced problems are multi-constraint, multi-objective scenarios where a single data structure or algorithm is not enough.',
     notes:
       'They combine modeling, algorithm choice, tradeoffs, and systems thinking.',
   },
@@ -261,7 +261,7 @@ const commonPitfalls = [
 const mindMapNodes = [
   {
     id: 'root',
-    title: 'Complex Problems',
+    title: 'Advanced Problems',
     detail:
       'Multi-constraint, multi-objective problems requiring hybrid algorithm strategies.',
   },
@@ -298,7 +298,7 @@ const mindMapNodes = [
 ]
 
 const mindMapEdges = [
-  { from: 'Complex Problems', to: 'Modeling', note: 'Define the problem clearly' },
+  { from: 'Advanced Problems', to: 'Modeling', note: 'Define the problem clearly' },
   { from: 'Modeling', to: 'Algorithms', note: 'Pick solution strategies' },
   { from: 'Algorithms', to: 'Analysis', note: 'Prove or estimate quality' },
   { from: 'Analysis', to: 'Evaluation', note: 'Measure and compare' },
@@ -427,14 +427,14 @@ export default function ComplexProblemsPage(): JSX.Element {
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = `Complex Problems (${activeTabLabel})`
+    document.title = `Advanced Problems (${activeTabLabel})`
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
   const handleMinimize = () => {
     const minimizedTask = {
       id: `help:${location.pathname}`,
-      title: 'Complex Problems',
+      title: 'Advanced Problems',
       url: `${location.pathname}${location.search}${location.hash}`,
       kind: 'help',
     }
@@ -725,7 +725,7 @@ export default function ComplexProblemsPage(): JSX.Element {
       <style>{win98HelpStyles}</style>
       <div className="win98-window" role="presentation">
         <header className="win98-titlebar">
-          <span className="win98-title-text">Complex Problems</span>
+          <span className="win98-title-text">Advanced Problems</span>
           <div className="win98-title-controls">
             <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
             <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
@@ -757,7 +757,7 @@ export default function ComplexProblemsPage(): JSX.Element {
             </ul>
           </aside>
           <main className="win98-content">
-            <h1 className="win98-doc-title">Complex Problems</h1>
+            <h1 className="win98-doc-title">Advanced Problems</h1>
             <p>
               Complex problems combine multiple constraints, objectives, and system limitations. This page is a roadmap for modeling,
               algorithm selection, evaluation, and real-world integration of solutions.
@@ -846,7 +846,7 @@ export default function ComplexProblemsPage(): JSX.Element {
                     </p>
                   ))}
                   <p>
-                    <strong>Walkthrough:</strong> Start at Complex Problems -&gt; Modeling -&gt; Algorithms -&gt; Analysis -&gt; Evaluation.
+                    <strong>Walkthrough:</strong> Start at Advanced Problems -&gt; Modeling -&gt; Algorithms -&gt; Analysis -&gt; Evaluation.
                     Then connect to Systems for real-world constraints.
                   </p>
                 </section>

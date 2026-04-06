@@ -1,6 +1,6 @@
 import { createComingSoonPage } from '@/features/dsa/components/ComingSoonPage'
 
 export default createComingSoonPage({
-  title: 'Programming Languages',
+  title: 'Languages & Ecosystems',
   subtitle: 'Taxonomy of language design',
 })

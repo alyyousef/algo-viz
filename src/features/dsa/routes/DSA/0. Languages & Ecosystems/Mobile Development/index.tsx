@@ -1,9 +1,9 @@
 ﻿import { createComingSoonPage } from '@/features/dsa/components/ComingSoonPage'
 
 export default createComingSoonPage({
-  title: 'Cloud Platforms',
+  title: 'Mobile Development',
   subtitle: 'Placeholder page',
-  intro: 'Placeholder content for Cloud Platforms. Detailed notes and examples will be added soon.',
+  intro: 'Placeholder content for Mobile Development. Detailed notes and examples will be added soon.',
   notes: [
     'Overview and key ideas will be added.',
     'Core syntax, APIs, ecosystem, and architecture notes will be added.',

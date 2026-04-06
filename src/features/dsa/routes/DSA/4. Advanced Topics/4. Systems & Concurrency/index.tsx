@@ -749,13 +749,13 @@ export default function ConcurrentParallelPage(): JSX.Element {
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = `Concurrent & Parallel DS/Algorithms (${activeTabLabel})`
+    document.title = `Systems & Concurrency (${activeTabLabel})`
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleMinimize = () => {
     const minimizedTask = {
       id: `help:${location.pathname}`,
-      title: 'Concurrent & Parallel DS/Algorithms',
+      title: 'Systems & Concurrency',
       url: `${location.pathname}${location.search}${location.hash}`,
       kind: 'help',
     }

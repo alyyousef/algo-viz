@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom'
 
 import { getExplorerNode } from '@/data/algoviz-explorer'
-import { getVisualisation } from '@/features/algorithms'
+import { getVisualisation } from '@/features/visualizations'
 
 import type { VisualizationWindowState } from '@/systems/win96/context/Win96WindowManager'
 import type { JSX } from 'react'

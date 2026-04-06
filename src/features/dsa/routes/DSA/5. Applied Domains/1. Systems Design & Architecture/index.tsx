@@ -664,7 +664,7 @@ export default function SystemDesignCachesPage(): JSX.Element {
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = `System Design (Caches, LRU, etc.) (${activeTabLabel})`
+    document.title = `Systems Design & Architecture (${activeTabLabel})`
   }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleTabChange = (tabId: TabId) => {
@@ -676,7 +676,7 @@ export default function SystemDesignCachesPage(): JSX.Element {
   const handleMinimize = () => {
     const minimizedTask = {
       id: `help:${location.pathname}`,
-      title: 'System Design (Caches, LRU, etc.)',
+      title: 'Systems Design & Architecture',
       url: `${location.pathname}${location.search}${location.hash}`,
       kind: 'help',
     }
@@ -704,7 +704,7 @@ export default function SystemDesignCachesPage(): JSX.Element {
       <style>{systemDesignHelpStyles}</style>
       <div className="sd-help-window" role="presentation">
         <header className="sd-help-titlebar">
-          <span className="sd-help-title">System Design (Caches, LRU, etc.) - Help</span>
+          <span className="sd-help-title">Systems Design & Architecture - Help</span>
           <div className="sd-help-controls">
             <button className="sd-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
               _
@@ -743,7 +743,7 @@ export default function SystemDesignCachesPage(): JSX.Element {
           </aside>
 
           <main className="sd-help-content">
-            <h1 className="sd-help-doc-title">System Design (Caches, LRU, etc.)</h1>
+            <h1 className="sd-help-doc-title">Systems Design & Architecture</h1>
             <p className="sd-help-intro">
               Caching is a system design lever for latency and load. The craft lies in picking interaction patterns, eviction and
               admission rules, sharding strategy, and coherence mechanisms that fit your truth source and risk tolerance.
