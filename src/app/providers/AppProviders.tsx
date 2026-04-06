@@ -1,54 +1,11 @@
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 
-import { useEffect, useMemo, useRef, useState, type JSX, type ReactNode } from 'react'
+import { type CSSProperties, useEffect, useMemo, useRef, useState, type JSX, type ReactNode } from 'react'
 
 export interface AppProvidersProps {
   children: ReactNode
 }
 
-const win95ContextMenuStyles = `
-.win95-context-menu {
-  position: fixed;
-  background: #C0C0C0;
-  border: 2px solid;
-  border-color: #fff #404040 #404040 #fff;
-  padding: 2px;
-  font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
-  font-size: 11px;
-  color: #000;
-  z-index: 9999;
-  min-width: 180px;
-}
-
-.win95-context-menu__item {
-  width: 100%;
-  padding: 3px 18px 3px 8px;
-  background: #C0C0C0;
-  border: 0;
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
-
-.win95-context-menu__item:hover,
-.win95-context-menu__item:focus {
-  background: #000080;
-  color: #fff;
-}
-
-.win95-context-menu__item:focus {
-  outline: 1px dotted #fff;
-  outline-offset: -3px;
-}
-
-.win95-context-menu__separator {
-  height: 1px;
-  background: #808080;
-  margin: 2px 1px;
-}
-`
 
 interface Win95ContextMenuState {
   open: boolean
@@ -129,14 +86,28 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
 
   return (
     <>
-      <style>{win95ContextMenuStyles}</style>
       {menuState.open ? (
-        <div className="win95-context-menu" style={{ left, top }} ref={menuRef} role="menu">
-          <button className="win95-context-menu__item" type="button" onClick={handleOpenInNewTab} role="menuitem">
+        <div
+          className="win95-context-menu"
+          style={{ '--menu-left': `${left}px`, '--menu-top': `${top}px` } as CSSProperties}
+          ref={menuRef}
+          role="menu"
+        >
+          <button
+            className="win95-context-menu__item"
+            type="button"
+            onClick={handleOpenInNewTab}
+            role="menuitem"
+          >
             Open in new tab
           </button>
           <div className="win95-context-menu__separator" aria-hidden="true" />
-          <button className="win95-context-menu__item" type="button" onClick={handleClose} role="menuitem">
+          <button
+            className="win95-context-menu__item"
+            type="button"
+            onClick={handleClose}
+            role="menuitem"
+          >
             Cancel
           </button>
         </div>

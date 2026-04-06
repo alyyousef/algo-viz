@@ -4,8 +4,8 @@ const config = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
-        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        display: ['"Space Grotesk Variable"', '"Space Grotesk"', 'system-ui', 'sans-serif'],
+        sans: ['"Inter Variable"', '"Inter"', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'hero-radial':

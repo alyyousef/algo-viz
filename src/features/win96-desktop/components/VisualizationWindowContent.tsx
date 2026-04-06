@@ -1,6 +1,8 @@
-﻿import { Link } from 'react-router-dom'
+﻿import { Suspense } from 'react'
+import { Link } from 'react-router-dom'
 
 import { getExplorerNode } from '@/data/algoviz-explorer'
+import { getVisualisation } from '@/features/algorithms'
 
 import type { VisualizationWindowState } from '@/systems/win96/context/Win96WindowManager'
 import type { JSX } from 'react'
@@ -28,6 +30,8 @@ export default function VisualizationWindowContent({
     )
   }
 
+  const Visualisation = node.route ? getVisualisation(node.route) : undefined
+
   return (
     <div className="visualization-window" data-context-url={node.route || undefined}>
       <header className="visualization-window__header">
@@ -46,17 +50,24 @@ export default function VisualizationWindowContent({
       {node.description ? (
         <p className="visualization-window__description">{node.description}</p>
       ) : null}
-      <div className="visualization-window__actions">
-        {node.route ? (
-          <Link to={node.route} className="visualization-window__action-btn">
-            Launch interactive view
-          </Link>
-        ) : (
-          <span className="visualization-window__action-placeholder">
-            Interactive workspace coming soon.
-          </span>
-        )}
-      </div>
+
+      {Visualisation ? (
+        <Suspense fallback={<div className="visualization-window__loading">Loading…</div>}>
+          <Visualisation route={node.route ?? ''} />
+        </Suspense>
+      ) : (
+        <div className="visualization-window__actions">
+          {node.route ? (
+            <Link to={node.route} className="visualization-window__action-btn">
+              Open topic page
+            </Link>
+          ) : (
+            <span className="visualization-window__action-placeholder">
+              Interactive workspace coming soon.
+            </span>
+          )}
+        </div>
+      )}
     </div>
   )
 }

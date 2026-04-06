@@ -1,0 +1,291 @@
+/**
+ * bin98 — Win98-era help-page styling used by all DSA topic pages.
+ *
+ * Previously duplicated as a <style> injection in every page component.
+ * Import once in main.tsx instead.
+ */
+
+.bin98-help-page {
+  min-height: 100dvh;
+  background: #c0c0c0;
+  padding: 0;
+  color: #000;
+  font-family: 'MS Sans Serif', Tahoma, 'Segoe UI', sans-serif;
+}
+
+/* AlgoViz logo — fixed to bottom-right on every DSA topic page.
+   Matches all 59 page-specific class prefixes (win98-, bin98-, bub98-, etc.)
+   without touching individual page files. */
+[class*="98-help-page"]::after {
+  content: '';
+  position: fixed;
+  bottom: 18px;
+  right: 20px;
+  width: 160px;
+  height: 44px;
+  background-image: url('/transparentTextBlack.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.bin98-window {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.bin98-titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.bin98-title-text {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+}
+
+.bin98-title-controls {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.bin98-control {
+  width: 18px;
+  height: 16px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bin98-tabs {
+  display: flex;
+  gap: 1px;
+  padding: 6px 8px 0;
+}
+
+.bin98-tab {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: none;
+  background: #b6b6b6;
+  padding: 5px 10px 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bin98-tab.active {
+  background: #fff;
+  position: relative;
+  top: 1px;
+}
+
+.bin98-main {
+  border-top: 1px solid #404040;
+  background: #fff;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.bin98-toc {
+  border-right: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 12px;
+  overflow: auto;
+}
+
+.bin98-toc-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.bin98-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bin98-toc-list li {
+  margin: 0 0 8px;
+}
+
+.bin98-toc-list a {
+  color: #000;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.bin98-content {
+  padding: 14px 20px 20px;
+  overflow: auto;
+}
+
+.bin98-doc-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.bin98-section {
+  margin: 0 0 20px;
+}
+
+.bin98-heading {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.bin98-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.bin98-content p,
+.bin98-content li {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.bin98-content p {
+  margin: 0 0 10px;
+}
+
+.bin98-content ul,
+.bin98-content ol {
+  margin: 0 0 10px 20px;
+  padding: 0;
+}
+
+.bin98-divider {
+  border: 0;
+  border-top: 1px solid #d0d0d0;
+  margin: 14px 0;
+}
+
+.bin98-codebox {
+  background: #f4f4f4;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 8px;
+  margin: 6px 0 10px;
+  overflow-x: auto;
+}
+
+.bin98-codebox code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  white-space: pre;
+  display: block;
+}
+
+/* Topic-to-topic navigation bar ------------------------------------------- */
+
+.topic-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 8px;
+  padding: 12px 0 4px;
+  border-top: 1px solid #d0d0d0;
+  margin-top: 16px;
+}
+
+.topic-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  text-decoration: none;
+  font-size: 11px;
+  min-width: 0;
+  max-width: 48%;
+}
+
+.topic-nav__link--next {
+  margin-left: auto;
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+.topic-nav__link:hover,
+.topic-nav__link:focus {
+  background: #000080;
+  color: #fff;
+}
+
+.topic-nav__label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topic-nav__hint {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.topic-nav__name {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topic-nav__arrow {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .bin98-main {
+    grid-template-columns: 1fr;
+  }
+
+  .bin98-toc {
+    border-right: none;
+    border-bottom: 1px solid #808080;
+  }
+}

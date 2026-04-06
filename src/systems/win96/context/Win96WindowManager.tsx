@@ -42,7 +42,7 @@ interface ManagerState {
   nextOffset: number
 }
 
-const INITIAL_STATE: ManagerState = {
+export const INITIAL_STATE: ManagerState = {
   windows: [],
   zCounter: 10,
   nextOffset: 0,
@@ -94,7 +94,7 @@ const withFocusedWindow = (state: ManagerState, windowId: string): ManagerState 
   }
 }
 
-const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState => {
+export const reduceManager = (state: ManagerState, action: ManagerAction): ManagerState => {
   switch (action.type) {
     case 'OPEN_FOLDER_WINDOW': {
       const entry = getExplorerNode(action.nodeId)

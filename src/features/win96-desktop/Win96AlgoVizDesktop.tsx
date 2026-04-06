@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { ErrorBoundary } from '@/app/ErrorBoundary'
 import { getExplorerNode } from '@/data/algoviz-explorer'
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import Window96 from '@/systems/win96/components/Window96'
@@ -19,6 +20,30 @@ import VisualizationWindowContent from './components/VisualizationWindowContent'
 const BASE_DESKTOP_WIDTH = 1440
 const BASE_DESKTOP_HEIGHT = 900
 const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+
+/**
+ * Display order for root folders on the desktop and in the Start menu.
+ * Folders not in this list appear at the end in discovery order.
+ */
+const ROOT_FOLDER_ORDER = [
+  'folder:0-fundamentals',
+  'folder:0-programming-languages',
+  'folder:1-core-data-structures',
+  'folder:2-core-algorithms',
+  'folder:3-algorithmic-paradigms',
+  'folder:0-cs-problems',
+  'folder:4-domain-specific-advanced',
+  'folder:5-specialized-applications',
+]
+
+function sortRootFolders<T extends { id: string }>(folders: T[]): T[] {
+  const lookup = new Map(folders.map((node) => [node.id, node]))
+  const ordered = ROOT_FOLDER_ORDER.map((id) => lookup.get(id)).filter(
+    (node): node is NonNullable<typeof node> => Boolean(node),
+  )
+  const rest = folders.filter((node) => !ROOT_FOLDER_ORDER.includes(node.id))
+  return [...ordered, ...rest]
+}
 
 function FolderIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
   return (
@@ -79,7 +104,7 @@ const WindowLayer = (): JSX.Element => {
           }}
           className={activeWindowId === win.id ? 'win96-window--active' : undefined}
         >
-          {renderContent(win)}
+          <ErrorBoundary>{renderContent(win)}</ErrorBoundary>
         </Window96>
       ))}
     </div>
@@ -89,24 +114,7 @@ const WindowLayer = (): JSX.Element => {
 function DesktopContainer(): JSX.Element {
   const { rootFolders, openFolderWindow } = useWin96WindowManager()
 
-  const orderedRootFolders = useMemo(() => {
-    const desiredOrder = [
-      'folder:0-fundamentals',
-      'folder:0-programming-languages',
-      'folder:1-core-data-structures',
-      'folder:2-core-algorithms',
-      'folder:3-algorithmic-paradigms',
-      'folder:0-cs-problems',
-      'folder:4-domain-specific-advanced',
-      'folder:5-specialized-applications',
-    ]
-    const lookup = new Map(rootFolders.map((node) => [node.id, node]))
-    const ordered = desiredOrder
-      .map((id) => lookup.get(id))
-      .filter((node): node is NonNullable<typeof node> => Boolean(node))
-    const rest = rootFolders.filter((node) => !desiredOrder.includes(node.id))
-    return [...ordered, ...rest]
-  }, [rootFolders])
+  const orderedRootFolders = useMemo(() => sortRootFolders(rootFolders), [rootFolders])
 
   return (
     <div className="win96-desktop win96-desktop--scaled theme-win97">
@@ -121,7 +129,9 @@ function DesktopContainer(): JSX.Element {
           />
         ))}
       </div>
-      <WindowLayer />
+      <ErrorBoundary>
+        <WindowLayer />
+      </ErrorBoundary>
     </div>
   )
 }
@@ -170,24 +180,7 @@ function DesktopChrome(): JSX.Element {
     }
   }, [])
 
-  const orderedRootFolders = useMemo(() => {
-    const desiredOrder = [
-      'folder:0-fundamentals',
-      'folder:0-programming-languages',
-      'folder:1-core-data-structures',
-      'folder:2-core-algorithms',
-      'folder:3-algorithmic-paradigms',
-      'folder:0-cs-problems',
-      'folder:4-domain-specific-advanced',
-      'folder:5-specialized-applications',
-    ]
-    const lookup = new Map(rootFolders.map((node) => [node.id, node]))
-    const ordered = desiredOrder
-      .map((id) => lookup.get(id))
-      .filter((node): node is NonNullable<typeof node> => Boolean(node))
-    const rest = rootFolders.filter((node) => !desiredOrder.includes(node.id))
-    return [...ordered, ...rest]
-  }, [rootFolders])
+  const orderedRootFolders = useMemo(() => sortRootFolders(rootFolders), [rootFolders])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -333,11 +326,11 @@ function DesktopChrome(): JSX.Element {
         <div
           ref={startMenuRef}
           className="win96-start-menu"
-          role="menu"
+          role="dialog"
           aria-label="AlgoViz start menu"
         >
           <div className="win96-start-menu__columns">
-            <div className="win96-start-menu__list">
+            <div className="win96-start-menu__list" role="menu" aria-label="Main menu">
               {startMenuEntries.map((node) => {
                 const isActive = node.id === activeStartFolder?.id
                 return (
@@ -362,7 +355,7 @@ function DesktopChrome(): JSX.Element {
               })}
             </div>
 
-            <div className="win96-start-menu__subpanel" role="menu">
+            <div className="win96-start-menu__subpanel">
               <div className="win96-start-menu__subpanel-header">
                 <span className="win96-start-menu__subpanel-title">
                   {activeStartFolder?.name ?? 'Items'}
@@ -377,7 +370,7 @@ function DesktopChrome(): JSX.Element {
                   </button>
                 ) : null}
               </div>
-              <div className="win96-start-menu__sublist">
+              <div className="win96-start-menu__sublist" role="menu" aria-label="Sub menu">
                 {activeStartFolderChildren.length === 0 ? (
                   <div className="win96-start-menu__subpanel-empty">No items</div>
                 ) : (
