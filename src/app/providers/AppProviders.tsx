@@ -1,11 +1,17 @@
+import {
+  type CSSProperties,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type JSX,
+  type ReactNode,
+} from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
-
-import { type CSSProperties, useEffect, useMemo, useRef, useState, type JSX, type ReactNode } from 'react'
 
 export interface AppProvidersProps {
   children: ReactNode
 }
-
 
 interface Win95ContextMenuState {
   open: boolean
@@ -28,16 +34,18 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
       const target = event.target instanceof Element ? event.target : null
       const contextElement = target?.closest('[data-context-url]')
       const rawUrl = contextElement?.getAttribute('data-context-url')?.trim()
-      const resolvedUrl = rawUrl
-        ? new URL(rawUrl, window.location.origin).toString()
-        : currentUrl
+      const resolvedUrl = rawUrl ? new URL(rawUrl, window.location.origin).toString() : currentUrl
       event.preventDefault()
       event.stopPropagation()
       setMenuState({ open: true, x: event.clientX, y: event.clientY, url: resolvedUrl })
     }
 
     const handleClick = (event: MouseEvent) => {
-      if (menuRef.current && event.target instanceof Node && menuRef.current.contains(event.target)) {
+      if (
+        menuRef.current &&
+        event.target instanceof Node &&
+        menuRef.current.contains(event.target)
+      ) {
         return
       }
       setMenuState((prev) => (prev.open ? { ...prev, open: false } : prev))
@@ -150,9 +158,9 @@ function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
 
       const historyState = window.history.state as { idx?: number } | null
       if (historyState?.idx && historyState.idx > 0) {
-        navigate(-1)
+        void navigate(-1)
       } else {
-        navigate('/algoViz')
+        void navigate('/algoViz')
       }
     }
 

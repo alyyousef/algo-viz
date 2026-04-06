@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { JSX } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+
+import type { JSX } from 'react'
 
 const historicalContext = [
   {
@@ -55,15 +56,18 @@ const taxonomy = [
   },
   {
     title: 'Set exchanges',
-    detail: 'Replace one chosen item with the greedy item while maintaining feasibility (intervals, knapsack variants).',
+    detail:
+      'Replace one chosen item with the greedy item while maintaining feasibility (intervals, knapsack variants).',
   },
   {
     title: 'Cycle exchanges',
-    detail: 'Swap edges along a cycle to include a greedy edge without breaking connectivity (MST).',
+    detail:
+      'Swap edges along a cycle to include a greedy edge without breaking connectivity (MST).',
   },
   {
     title: 'Cut exchanges',
-    detail: 'Use a cut property: any minimum edge across a cut can be forced into an optimal solution.',
+    detail:
+      'Use a cut property: any minimum edge across a cut can be forced into an optimal solution.',
   },
   {
     title: 'Tree/leaf swaps',
@@ -130,7 +134,8 @@ const exchangeBlueprint = [
   },
   {
     title: 'Step 2: Pick any optimal solution',
-    detail: 'Let O be an optimal solution; if it already agrees with greedy, proceed to the next step.',
+    detail:
+      'Let O be an optimal solution; if it already agrees with greedy, proceed to the next step.',
   },
   {
     title: 'Step 3: Identify conflict',
@@ -142,7 +147,7 @@ const exchangeBlueprint = [
   },
   {
     title: 'Step 5: Compare objective',
-    detail: 'Show the new solution O\' is no worse than O.',
+    detail: "Show the new solution O' is no worse than O.",
   },
   {
     title: 'Step 6: Conclude the invariant',
@@ -153,9 +158,9 @@ const exchangeBlueprint = [
 const exchangeTemplate = [
   'State the greedy algorithm and define the greedy choice at step k.',
   'Assume an optimal solution O. If O already uses the greedy choice, continue; otherwise identify a conflicting element.',
-  'Exchange the conflicting element with the greedy choice to build O\'.',
-  'Prove O\' is feasible (constraints still satisfied).',
-  'Show cost(O\') <= cost(O) for minimization, or value(O\') >= value(O) for maximization.',
+  "Exchange the conflicting element with the greedy choice to build O'.",
+  "Prove O' is feasible (constraints still satisfied).",
+  "Show cost(O') <= cost(O) for minimization, or value(O') >= value(O) for maximization.",
   'Conclude there exists an optimal solution agreeing with the greedy choice; proceed inductively.',
 ]
 
@@ -234,8 +239,7 @@ const workedExampleSteps = [
       'Swap i with the greedy activity; feasibility is preserved because the greedy one ends earlier.',
       'The swap does not reduce the number of activities, so there is an optimal schedule that starts with the greedy choice.',
     ],
-    note:
-      'Inductively apply the same argument to the remaining intervals after the greedy finish time.',
+    note: 'Inductively apply the same argument to the remaining intervals after the greedy finish time.',
   },
   {
     title: 'Kruskal MST (cycle exchange)',
@@ -246,8 +250,7 @@ const workedExampleSteps = [
       'The resulting tree is no heavier and now includes e.',
       'Therefore there is an optimal MST consistent with the greedy choice.',
     ],
-    note:
-      'The cycle exchange is local and preserves feasibility (tree property).',
+    note: 'The cycle exchange is local and preserves feasibility (tree property).',
   },
 ]
 
@@ -395,7 +398,10 @@ export default function GreedyProofTechniquesExchangeArgumentPage(): JSX.Element
   const [searchParams, setSearchParams] = useSearchParams()
   const [activeTab, setActiveTab] = useState<TabId>(() => {
     const tab = searchParams.get('tab')
-    return tab === 'big-picture' || tab === 'core-concepts' || tab === 'examples' || tab === 'glossary'
+    return tab === 'big-picture' ||
+      tab === 'core-concepts' ||
+      tab === 'examples' ||
+      tab === 'glossary'
       ? tab
       : 'big-picture'
   })
@@ -687,8 +693,17 @@ export default function GreedyProofTechniquesExchangeArgumentPage(): JSX.Element
         <header className="win98-titlebar">
           <span className="win98-title-text">Greedy Proof Techniques (Exchange Argument)</span>
           <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
+            <button
+              className="win98-control"
+              type="button"
+              aria-label="Minimize"
+              onClick={handleMinimize}
+            >
+              _
+            </button>
+            <Link to="/algoViz" className="win98-control" aria-label="Close">
+              X
+            </Link>
           </div>
         </header>
         <div className="win98-tabs" role="tablist" aria-label="Sections">
@@ -719,10 +734,11 @@ export default function GreedyProofTechniquesExchangeArgumentPage(): JSX.Element
           <main className="win98-content">
             <h1 className="win98-doc-title">Greedy Proof Techniques (Exchange Argument)</h1>
             <p>
-              Exchange arguments are the workhorse proof technique for greedy algorithms. The idea is simple but powerful: if an
-              optimal solution does not make the greedy choice, show how to swap the greedy choice in without making the solution
-              worse. That swap proves there exists an optimal solution that agrees with the greedy step, and induction finishes the
-              proof.
+              Exchange arguments are the workhorse proof technique for greedy algorithms. The idea
+              is simple but powerful: if an optimal solution does not make the greedy choice, show
+              how to swap the greedy choice in without making the solution worse. That swap proves
+              there exists an optimal solution that agrees with the greedy step, and induction
+              finishes the proof.
             </p>
 
             {activeTab === 'big-picture' && (
@@ -730,9 +746,11 @@ export default function GreedyProofTechniquesExchangeArgumentPage(): JSX.Element
                 <section id="bp-intro" className="win98-section">
                   <h2 className="win98-heading">Overview</h2>
                   <p>
-                    Greedy algorithms build a solution one decision at a time. The exchange argument justifies each decision by
-                    showing it can replace a conflicting choice in some optimal solution without harming feasibility or objective
-                    value. The proof is constructive: it repairs an optimal solution to match the greedy one step by step.
+                    Greedy algorithms build a solution one decision at a time. The exchange argument
+                    justifies each decision by showing it can replace a conflicting choice in some
+                    optimal solution without harming feasibility or objective value. The proof is
+                    constructive: it repairs an optimal solution to match the greedy one step by
+                    step.
                   </p>
                 </section>
                 <section id="bp-foundations" className="win98-section">
@@ -817,8 +835,8 @@ export default function GreedyProofTechniquesExchangeArgumentPage(): JSX.Element
                     ))}
                   </ol>
                   <p>
-                    The strength of this template is its locality. Each step only changes a small part of the solution, which keeps
-                    feasibility and objective comparisons simple.
+                    The strength of this template is its locality. Each step only changes a small
+                    part of the solution, which keeps feasibility and objective comparisons simple.
                   </p>
                 </section>
                 <section id="core-patterns" className="win98-section">

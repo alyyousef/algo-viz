@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
+
 import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
-
 
 const bigPicture = [
   {
@@ -17,12 +17,14 @@ const bigPicture = [
   },
   {
     title: 'Isolation first',
-    detail: 'cgroups, priorities, and NUMA affinity keep noisy neighbors from stealing CPU or cache lines.',
+    detail:
+      'cgroups, priorities, and NUMA affinity keep noisy neighbors from stealing CPU or cache lines.',
     note: 'Isolation is a feature, not an afterthought, in multi-tenant systems.',
   },
   {
     title: 'Predictable under stress',
-    detail: 'Policies need guardrails for overload: preemption, throttling, reclamation, and OOM handling.',
+    detail:
+      'Policies need guardrails for overload: preemption, throttling, reclamation, and OOM handling.',
     note: 'Test with failure drills, not just benchmarks.',
   },
 ]
@@ -61,11 +63,13 @@ const pillars = [
   },
   {
     title: 'Locality and affinity',
-    detail: 'Keep threads near their data (NUMA, cache); avoid bouncing to reduce TLB and cache misses.',
+    detail:
+      'Keep threads near their data (NUMA, cache); avoid bouncing to reduce TLB and cache misses.',
   },
   {
     title: 'Memory residency',
-    detail: 'Decide what stays in RAM and what gets reclaimed; huge pages and slab caches cut overhead.',
+    detail:
+      'Decide what stays in RAM and what gets reclaimed; huge pages and slab caches cut overhead.',
   },
 ]
 
@@ -90,27 +94,33 @@ const mentalModels = [
 const howItWorks = [
   {
     title: 'Profile the workload',
-    detail: 'Measure CPU burstiness, IO wait, and memory footprint. Separate latency-sensitive from batch tasks.',
+    detail:
+      'Measure CPU burstiness, IO wait, and memory footprint. Separate latency-sensitive from batch tasks.',
   },
   {
     title: 'Pick a scheduler class',
-    detail: 'General-purpose (CFS/MLFQ) for mixed loads; deadline/RT for bounded latency; batch for background jobs.',
+    detail:
+      'General-purpose (CFS/MLFQ) for mixed loads; deadline/RT for bounded latency; batch for background jobs.',
   },
   {
     title: 'Set quanta and priorities',
-    detail: 'Tune slice length and weights; add aging to prevent starvation; cap RT budget to protect the rest.',
+    detail:
+      'Tune slice length and weights; add aging to prevent starvation; cap RT budget to protect the rest.',
   },
   {
     title: 'Place tasks',
-    detail: 'Use CPU affinity and NUMA policies; keep related threads and memory on the same node when possible.',
+    detail:
+      'Use CPU affinity and NUMA policies; keep related threads and memory on the same node when possible.',
   },
   {
     title: 'Shape memory',
-    detail: 'Choose page sizes, enable huge pages where stable, layer buddy+slab allocators, and watch TLB and reclaim metrics.',
+    detail:
+      'Choose page sizes, enable huge pages where stable, layer buddy+slab allocators, and watch TLB and reclaim metrics.',
   },
   {
     title: 'Add guardrails',
-    detail: 'Throttle noisy tasks with cgroups; set OOM policies; instrument run queues, faults, shootdowns, and latency.',
+    detail:
+      'Throttle noisy tasks with cgroups; set OOM policies; instrument run queues, faults, shootdowns, and latency.',
   },
 ]
 
@@ -149,7 +159,8 @@ const applications = [
   },
   {
     title: 'Mobile and edge',
-    detail: 'Short quanta and aggressive boosts preserve UI latency while background tasks run at low priority.',
+    detail:
+      'Short quanta and aggressive boosts preserve UI latency while background tasks run at low priority.',
     note: 'Thermal limits double as scheduling input.',
   },
   {
@@ -170,7 +181,8 @@ const failureStory =
 const pitfalls = [
   {
     title: 'Noisy neighbor starvation',
-    detail: 'Background tasks without quotas can starve foreground work; enforce cgroup limits and aging.',
+    detail:
+      'Background tasks without quotas can starve foreground work; enforce cgroup limits and aging.',
   },
   {
     title: 'Overlong quanta',
@@ -178,15 +190,18 @@ const pitfalls = [
   },
   {
     title: 'Excessive migrations',
-    detail: 'Moving threads across cores trashes caches and TLBs; use affinity for stable workloads.',
+    detail:
+      'Moving threads across cores trashes caches and TLBs; use affinity for stable workloads.',
   },
   {
     title: 'TLB shootdown storms',
-    detail: 'Frequent global invalidations (e.g., page table churn) stall all cores; batch changes and prefer huge pages when stable.',
+    detail:
+      'Frequent global invalidations (e.g., page table churn) stall all cores; batch changes and prefer huge pages when stable.',
   },
   {
     title: 'Unbounded reclaim',
-    detail: 'Aggressive swapping or reclaim during load spikes can deadlock progress; set pressure controls and admission gates.',
+    detail:
+      'Aggressive swapping or reclaim during load spikes can deadlock progress; set pressure controls and admission gates.',
   },
 ]
 
@@ -201,7 +216,8 @@ const whenToUse = [
   },
   {
     title: 'NUMA-heavy servers',
-    detail: 'Pin threads and memory; avoid cross-node bouncing; size huge pages to stable hotspots.',
+    detail:
+      'Pin threads and memory; avoid cross-node bouncing; size huge pages to stable hotspots.',
   },
   {
     title: 'Real-time control',
@@ -217,17 +233,20 @@ const advanced = [
   },
   {
     title: 'Scheduler classes mix',
-    detail: 'Run RT/deadline on reserved cores, CFS for general work, and batch for background chores.',
+    detail:
+      'Run RT/deadline on reserved cores, CFS for general work, and batch for background chores.',
     note: 'Keeps critical paths isolated from bulk tasks.',
   },
   {
     title: 'NUMA balancing',
-    detail: 'Kernel migrates pages toward the CPU that touches them most; disable when pinning manually.',
+    detail:
+      'Kernel migrates pages toward the CPU that touches them most; disable when pinning manually.',
     note: 'Can help generic workloads but harms pinned services.',
   },
   {
     title: 'Transparent huge pages (THP) policy',
-    detail: 'Use madvise/hugepage hints for stable regions; disable for bursty allocators to avoid latency spikes.',
+    detail:
+      'Use madvise/hugepage hints for stable regions; disable for bursty allocators to avoid latency spikes.',
     note: 'Reduces page walks; risks compaction stalls if misused.',
   },
 ]
@@ -262,7 +281,8 @@ class MLFQ {
     }
   }
 }`,
-    explanation: 'Short quanta at the top favor interactive tasks; longer quanta catch CPU hogs without starvation.',
+    explanation:
+      'Short quanta at the top favor interactive tasks; longer quanta catch CPU hogs without starvation.',
   },
   {
     title: 'Simple LRU page cache',
@@ -298,7 +318,8 @@ class PageCache {
     this.order = [key, ...this.order.filter((k) => k !== key)]
   }
 }`,
-    explanation: 'Models a small page cache; LRU keeps hot pages resident, reducing page faults and TLB churn.',
+    explanation:
+      'Models a small page cache; LRU keeps hot pages resident, reducing page faults and TLB churn.',
   },
 ]
 
@@ -329,7 +350,9 @@ export default function OSKernelSchedulingMemoryPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">OS & Kernel (Scheduling, Memory Mgmt)</span>
           <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+              X
+            </Link>
           </div>
         </header>
         <div className="win95-content">
@@ -337,8 +360,9 @@ export default function OSKernelSchedulingMemoryPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Balancing CPU fairness and memory health</div>
               <p className="win95-text">
-                Schedulers decide who runs; memory managers decide what stays resident. Matching policies to workloads, keeping
-                locality, and enforcing isolation deliver predictable latency and solid throughput.
+                Schedulers decide who runs; memory managers decide what stays resident. Matching
+                policies to workloads, keeping locality, and enforcing isolation deliver predictable
+                latency and solid throughput.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -525,4 +549,3 @@ export default function OSKernelSchedulingMemoryPage(): JSX.Element {
     </div>
   )
 }
-

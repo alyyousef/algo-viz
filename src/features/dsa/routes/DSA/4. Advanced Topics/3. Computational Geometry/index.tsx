@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
-import type { JSX } from 'react'
 
+import { win95Styles } from '@/styles/win95'
+
+import type { JSX } from 'react'
 
 const bigPicture = [
   {
@@ -31,12 +32,30 @@ const bigPicture = [
 ]
 
 const history = [
-  { title: '1979: Graham scan', detail: 'One of the first practical convex hull algorithms; popularized angle sorting.' },
-  { title: '1983-1986: Divide-and-conquer hulls (Preparata-Shamos)', detail: 'Showed n log n lower bounds and efficient hull merges.' },
-  { title: '1986: Bentley-Ottmann sweep', detail: 'Sweep-line framework for segment intersections in O((n + k) log n).' },
-  { title: '1990s: Rotating calipers', detail: 'Geared hull post-processing for widths, diameters, and antipodal pairs.' },
-  { title: '2000s: Robust predicates (Shewchuk)', detail: 'Adaptive precision techniques stabilized orientation and incircle tests.' },
-  { title: '2010s+: CGAL/GEOS standardization', detail: 'Robust libraries set defaults for predicates and tolerance handling.' },
+  {
+    title: '1979: Graham scan',
+    detail: 'One of the first practical convex hull algorithms; popularized angle sorting.',
+  },
+  {
+    title: '1983-1986: Divide-and-conquer hulls (Preparata-Shamos)',
+    detail: 'Showed n log n lower bounds and efficient hull merges.',
+  },
+  {
+    title: '1986: Bentley-Ottmann sweep',
+    detail: 'Sweep-line framework for segment intersections in O((n + k) log n).',
+  },
+  {
+    title: '1990s: Rotating calipers',
+    detail: 'Geared hull post-processing for widths, diameters, and antipodal pairs.',
+  },
+  {
+    title: '2000s: Robust predicates (Shewchuk)',
+    detail: 'Adaptive precision techniques stabilized orientation and incircle tests.',
+  },
+  {
+    title: '2010s+: CGAL/GEOS standardization',
+    detail: 'Robust libraries set defaults for predicates and tolerance handling.',
+  },
 ]
 
 const pillars = [
@@ -47,7 +66,8 @@ const pillars = [
   },
   {
     title: 'Consistent epsilon policy',
-    detail: 'Pick one tolerance for equality and ordering under floats; centralize it to avoid contradictory decisions.',
+    detail:
+      'Pick one tolerance for equality and ordering under floats; centralize it to avoid contradictory decisions.',
   },
   {
     title: 'Canonical ordering',
@@ -123,12 +143,42 @@ const howItWorks = [
 ]
 
 const complexityTable = [
-  { approach: 'Orientation / intersection check', time: 'O(1)', space: 'O(1)', note: 'Assumes constant-time arithmetic.' },
-  { approach: 'Graham scan / monotone hull', time: 'O(n log n)', space: 'O(n)', note: 'Lower bound for sorting-based hulls.' },
-  { approach: 'Bentley-Ottmann sweep (k intersections)', time: 'O((n + k) log n)', space: 'O(n + k)', note: 'Event queue + balanced tree.' },
-  { approach: 'Closest pair (divide-and-conquer)', time: 'O(n log n)', space: 'O(n)', note: 'Strip merge reduces to linear within each level.' },
-  { approach: 'Delaunay via incremental flipping', time: 'O(n^2) worst, O(n log n) expected', space: 'O(n)', note: 'Robust incircle predicate required.' },
-  { approach: 'Spatial grid neighbor lookup', time: 'O(1) avg', space: 'O(n)', note: 'Depends on uniform distribution and cell sizing.' },
+  {
+    approach: 'Orientation / intersection check',
+    time: 'O(1)',
+    space: 'O(1)',
+    note: 'Assumes constant-time arithmetic.',
+  },
+  {
+    approach: 'Graham scan / monotone hull',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    note: 'Lower bound for sorting-based hulls.',
+  },
+  {
+    approach: 'Bentley-Ottmann sweep (k intersections)',
+    time: 'O((n + k) log n)',
+    space: 'O(n + k)',
+    note: 'Event queue + balanced tree.',
+  },
+  {
+    approach: 'Closest pair (divide-and-conquer)',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    note: 'Strip merge reduces to linear within each level.',
+  },
+  {
+    approach: 'Delaunay via incremental flipping',
+    time: 'O(n^2) worst, O(n log n) expected',
+    space: 'O(n)',
+    note: 'Robust incircle predicate required.',
+  },
+  {
+    approach: 'Spatial grid neighbor lookup',
+    time: 'O(1) avg',
+    space: 'O(n)',
+    note: 'Depends on uniform distribution and cell sizing.',
+  },
 ]
 
 const applications = [
@@ -184,19 +234,23 @@ const whenToUse = [
 const advanced = [
   {
     title: 'Adaptive precision predicates',
-    detail: 'Shewchuk-style expansions compute orientation/incircle exactly only when floats are ambiguous.',
+    detail:
+      'Shewchuk-style expansions compute orientation/incircle exactly only when floats are ambiguous.',
   },
   {
     title: 'Fraction-free determinants',
-    detail: 'Avoids intermediate fractions in 3D orientation; reduces overflow risk with integer inputs.',
+    detail:
+      'Avoids intermediate fractions in 3D orientation; reduces overflow risk with integer inputs.',
   },
   {
     title: 'Minkowski sums and configuration space',
-    detail: 'Transforms collision checks into point-in-polygon on expanded obstacles for robot/path planning.',
+    detail:
+      'Transforms collision checks into point-in-polygon on expanded obstacles for robot/path planning.',
   },
   {
     title: 'Voronoi/Delaunay duality',
-    detail: 'Switch between triangulation and Voronoi diagrams to answer proximity and region queries efficiently.',
+    detail:
+      'Switch between triangulation and Voronoi diagrams to answer proximity and region queries efficiently.',
   },
   {
     title: 'Line sweep with fractional cascading',
@@ -259,7 +313,9 @@ export default function ComputationalGeometryPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Computational Geometry</span>
           <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+              X
+            </Link>
           </div>
         </header>
         <div className="win95-content">
@@ -267,8 +323,9 @@ export default function ComputationalGeometryPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Robust spatial reasoning</div>
               <p className="win95-text">
-                Reliable predicates, disciplined tolerances, and sweep or hull patterns turn spatial problems into predictable
-                computations. Robustness beats elegance when coordinates get messy.
+                Reliable predicates, disciplined tolerances, and sweep or hull patterns turn spatial
+                problems into predictable computations. Robustness beats elegance when coordinates
+                get messy.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -441,4 +498,3 @@ export default function ComputationalGeometryPage(): JSX.Element {
     </div>
   )
 }
-

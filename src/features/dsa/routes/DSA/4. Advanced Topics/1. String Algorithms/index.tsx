@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
-import type { JSX } from 'react'
 
+import { win95Styles } from '@/styles/win95'
+
+import type { JSX } from 'react'
 
 const bigPicture = [
   {
@@ -31,34 +32,57 @@ const bigPicture = [
 ]
 
 const history = [
-  { title: '1970: KMP (Knuth, Morris, Pratt)', detail: 'Introduced prefix-function search in O(n + m) without backtracking.' },
-  { title: '1977: Boyer-Moore', detail: 'Bad-character and good-suffix shifts made pattern skipping practical on long texts.' },
-  { title: '1975-1976: Aho-Corasick', detail: 'Automaton for multi-pattern search with output links; ideal for lexicons.' },
-  { title: '1990: Suffix array (Manber, Myers)', detail: 'Array + LCP replaced suffix trees with better memory locality.' },
-  { title: '1994: Rabin-Karp popularization', detail: 'Rolling hashes enabled fast plagiarism and multi-pattern scans.' },
-  { title: '2000s: FM-index/BWT', detail: 'Compressed full-text search became standard in genomics and big-text search.' },
+  {
+    title: '1970: KMP (Knuth, Morris, Pratt)',
+    detail: 'Introduced prefix-function search in O(n + m) without backtracking.',
+  },
+  {
+    title: '1977: Boyer-Moore',
+    detail: 'Bad-character and good-suffix shifts made pattern skipping practical on long texts.',
+  },
+  {
+    title: '1975-1976: Aho-Corasick',
+    detail: 'Automaton for multi-pattern search with output links; ideal for lexicons.',
+  },
+  {
+    title: '1990: Suffix array (Manber, Myers)',
+    detail: 'Array + LCP replaced suffix trees with better memory locality.',
+  },
+  {
+    title: '1994: Rabin-Karp popularization',
+    detail: 'Rolling hashes enabled fast plagiarism and multi-pattern scans.',
+  },
+  {
+    title: '2000s: FM-index/BWT',
+    detail: 'Compressed full-text search became standard in genomics and big-text search.',
+  },
 ]
 
 const pillars = [
   {
     title: 'Deterministic preprocessing',
-    detail: 'Prefix tables, LCP, and automata must be built in linear or n log n time with no ambiguity about encoding.',
+    detail:
+      'Prefix tables, LCP, and automata must be built in linear or n log n time with no ambiguity about encoding.',
   },
   {
     title: 'Canonical text handling',
-    detail: 'Normalize Unicode (NFC/NFD), decide on case folding, and define alphabet before hashing or building automata.',
+    detail:
+      'Normalize Unicode (NFC/NFD), decide on case folding, and define alphabet before hashing or building automata.',
   },
   {
     title: 'Collision discipline',
-    detail: 'Rolling hashes need secondary verification; choose bases/moduli to minimize collisions and avoid overflow.',
+    detail:
+      'Rolling hashes need secondary verification; choose bases/moduli to minimize collisions and avoid overflow.',
   },
   {
     title: 'Boundary safety',
-    detail: 'Off-by-one errors at pattern/text boundaries or sentinel handling break correctness; indexes need clear sentinels.',
+    detail:
+      'Off-by-one errors at pattern/text boundaries or sentinel handling break correctness; indexes need clear sentinels.',
   },
   {
     title: 'Memory locality',
-    detail: 'Prefer arrays over pointer-heavy trees; cache-friendly layouts keep throughput high on large corpora.',
+    detail:
+      'Prefer arrays over pointer-heavy trees; cache-friendly layouts keep throughput high on large corpora.',
   },
 ]
 
@@ -119,34 +143,69 @@ const howItWorks = [
 ]
 
 const complexityTable = [
-  { approach: 'KMP / Z-algorithm', time: 'O(n + m)', space: 'O(m)', note: 'Linear scan with prefix/Z preprocessing.' },
-  { approach: 'Boyer-Moore (full heuristics)', time: 'O(n / m) avg', space: 'O(|Sigma| + m)', note: 'Skips on mismatches; worst-case O(nm).' },
-  { approach: 'Rabin-Karp rolling hash', time: 'O(n + m)', space: 'O(1)', note: 'Expected linear; collisions require verification.' },
-  { approach: 'Suffix array construction (SA-IS)', time: 'O(n)', space: 'O(n)', note: 'Practical n log n (prefix-doubling) is common.' },
-  { approach: 'Aho-Corasick (multi-pattern)', time: 'O(n + z)', space: 'O(total patterns)', note: 'z outputs; streaming, failure links guide jumps.' },
-  { approach: 'Suffix automaton', time: 'O(n)', space: 'O(n)', note: 'All substrings represented; answers existence/longest queries fast.' },
+  {
+    approach: 'KMP / Z-algorithm',
+    time: 'O(n + m)',
+    space: 'O(m)',
+    note: 'Linear scan with prefix/Z preprocessing.',
+  },
+  {
+    approach: 'Boyer-Moore (full heuristics)',
+    time: 'O(n / m) avg',
+    space: 'O(|Sigma| + m)',
+    note: 'Skips on mismatches; worst-case O(nm).',
+  },
+  {
+    approach: 'Rabin-Karp rolling hash',
+    time: 'O(n + m)',
+    space: 'O(1)',
+    note: 'Expected linear; collisions require verification.',
+  },
+  {
+    approach: 'Suffix array construction (SA-IS)',
+    time: 'O(n)',
+    space: 'O(n)',
+    note: 'Practical n log n (prefix-doubling) is common.',
+  },
+  {
+    approach: 'Aho-Corasick (multi-pattern)',
+    time: 'O(n + z)',
+    space: 'O(total patterns)',
+    note: 'z outputs; streaming, failure links guide jumps.',
+  },
+  {
+    approach: 'Suffix automaton',
+    time: 'O(n)',
+    space: 'O(n)',
+    note: 'All substrings represented; answers existence/longest queries fast.',
+  },
 ]
 
 const applications = [
   {
     title: 'IDE search and autocomplete',
-    detail: 'Prefix tries and suffix arrays back fuzzy finders; fast substring checks enable instant results as you type.',
+    detail:
+      'Prefix tries and suffix arrays back fuzzy finders; fast substring checks enable instant results as you type.',
   },
   {
     title: 'Plagiarism and clone detection',
-    detail: 'Rolling hashes and suffix arrays compare many documents efficiently; collisions are mitigated with double hashes.',
+    detail:
+      'Rolling hashes and suffix arrays compare many documents efficiently; collisions are mitigated with double hashes.',
   },
   {
     title: 'Security scanning',
-    detail: 'Aho-Corasick scans traffic or binaries for signatures in one pass with bounded memory.',
+    detail:
+      'Aho-Corasick scans traffic or binaries for signatures in one pass with bounded memory.',
   },
   {
     title: 'Genome substring queries',
-    detail: 'Suffix arrays/FM-index let large genomes be searched for motifs or read seeds without loading all sequences.',
+    detail:
+      'Suffix arrays/FM-index let large genomes be searched for motifs or read seeds without loading all sequences.',
   },
   {
     title: 'Log and telemetry parsing',
-    detail: 'Streaming matchers detect patterns in unbounded logs; failure links keep latency flat as volume spikes.',
+    detail:
+      'Streaming matchers detect patterns in unbounded logs; failure links keep latency flat as volume spikes.',
   },
 ]
 
@@ -175,11 +234,13 @@ const whenToUse = [
 const advanced = [
   {
     title: 'Suffix array + LCP + RMQ',
-    detail: 'Combining LCP with RMQ answers longest common prefix of any two suffixes in O(1) after O(n) prep.',
+    detail:
+      'Combining LCP with RMQ answers longest common prefix of any two suffixes in O(1) after O(n) prep.',
   },
   {
     title: 'Suffix automaton for LCS',
-    detail: 'Build SAM on one string, traverse with another to find longest common substring in linear time.',
+    detail:
+      'Build SAM on one string, traverse with another to find longest common substring in linear time.',
   },
   {
     title: 'FM-index with wavelet trees',
@@ -187,11 +248,13 @@ const advanced = [
   },
   {
     title: 'Bitset-accelerated DP',
-    detail: 'Shift-Or/Bitap uses word-level ops for approximate matching on short patterns at very high speed.',
+    detail:
+      'Shift-Or/Bitap uses word-level ops for approximate matching on short patterns at very high speed.',
   },
   {
     title: 'Double-hash and 128-bit mixing',
-    detail: 'Reduces collision probability when rolling hashes are used for deduplication or integrity checks.',
+    detail:
+      'Reduces collision probability when rolling hashes are used for deduplication or integrity checks.',
   },
 ]
 
@@ -271,7 +334,9 @@ export default function StringAlgorithmsPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">String Algorithms</span>
           <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+              X
+            </Link>
           </div>
         </header>
         <div className="win95-content">
@@ -279,8 +344,9 @@ export default function StringAlgorithmsPage(): JSX.Element {
             <div>
               <div className="win95-subheading">Pattern search, indexing, and text rigor</div>
               <p className="win95-text">
-                From single-pattern scans to compressed full-text search, string algorithms trade preprocessing for predictable queries.
-                The right normalization, hashing discipline, and indexes keep results correct at scale.
+                From single-pattern scans to compressed full-text search, string algorithms trade
+                preprocessing for predictable queries. The right normalization, hashing discipline,
+                and indexes keep results correct at scale.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -453,4 +519,3 @@ export default function StringAlgorithmsPage(): JSX.Element {
     </div>
   )
 }
-

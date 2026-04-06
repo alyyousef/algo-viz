@@ -11,8 +11,7 @@ const historicalMilestones = [
   },
   {
     title: 'Standardization begins (1998)',
-    detail:
-      'The first ISO C++ standard established a stable core language and library baseline.',
+    detail: 'The first ISO C++ standard established a stable core language and library baseline.',
   },
   {
     title: 'Templates and the STL (1994)',
@@ -39,13 +38,11 @@ const historicalMilestones = [
 const mentalModels = [
   {
     title: 'Zero-cost abstractions',
-    detail:
-      'C++ abstractions aim to cost no more than hand-written low-level code once compiled.',
+    detail: 'C++ abstractions aim to cost no more than hand-written low-level code once compiled.',
   },
   {
     title: 'Resource ownership is explicit',
-    detail:
-      'You control memory and lifetimes, often through RAII, enabling deterministic cleanup.',
+    detail: 'You control memory and lifetimes, often through RAII, enabling deterministic cleanup.',
   },
   {
     title: 'Classes model real-world behavior',
@@ -62,23 +59,19 @@ const mentalModels = [
 const languageFundamentals = [
   {
     title: 'Compiled with direct memory access',
-    detail:
-      'C++ compiles to native code and exposes pointers for low-level control.',
+    detail: 'C++ compiles to native code and exposes pointers for low-level control.',
   },
   {
     title: 'Multiple paradigms',
-    detail:
-      'Supports OOP, generic programming, and functional styles in one language.',
+    detail: 'Supports OOP, generic programming, and functional styles in one language.',
   },
   {
     title: 'Strong static typing',
-    detail:
-      'Types are checked at compile time, enabling optimization and early error detection.',
+    detail: 'Types are checked at compile time, enabling optimization and early error detection.',
   },
   {
     title: 'Deterministic destructors',
-    detail:
-      'Object lifetime is deterministic, making cleanup predictable and safe.',
+    detail: 'Object lifetime is deterministic, making cleanup predictable and safe.',
   },
 ]
 
@@ -104,46 +97,38 @@ const compilationPipeline = [
 const typeSystemDetails = [
   {
     title: 'Value and reference types',
-    detail:
-      'Value types copy by default, references provide aliasing without ownership.',
+    detail: 'Value types copy by default, references provide aliasing without ownership.',
   },
   {
     title: 'RAII ownership',
-    detail:
-      'std::unique_ptr and std::shared_ptr express ownership explicitly.',
+    detail: 'std::unique_ptr and std::shared_ptr express ownership explicitly.',
   },
   {
     title: 'Templates and concepts',
-    detail:
-      'Templates enable generic code; concepts add constraints and better diagnostics.',
+    detail: 'Templates enable generic code; concepts add constraints and better diagnostics.',
   },
   {
     title: 'Move semantics',
-    detail:
-      'Moves avoid expensive copies for large objects and resources.',
+    detail: 'Moves avoid expensive copies for large objects and resources.',
   },
 ]
 
 const standardLibraryHighlights = [
   {
     title: 'Containers',
-    detail:
-      'vector, map, unordered_map, deque, and array cover common data structures.',
+    detail: 'vector, map, unordered_map, deque, and array cover common data structures.',
   },
   {
     title: 'Algorithms',
-    detail:
-      'A rich algorithm library encourages reuse and composability.',
+    detail: 'A rich algorithm library encourages reuse and composability.',
   },
   {
     title: 'Concurrency',
-    detail:
-      'Threads, atomics, mutexes, and futures support parallel workflows.',
+    detail: 'Threads, atomics, mutexes, and futures support parallel workflows.',
   },
   {
     title: 'Ranges and views',
-    detail:
-      'Lazy views express pipelines without extra allocations.',
+    detail: 'Lazy views express pipelines without extra allocations.',
   },
 ]
 const coreOopFeatures = [
@@ -206,8 +191,7 @@ const coreOopFeatures = [
 const performanceNotes = [
   {
     title: 'Avoid unnecessary allocations',
-    detail:
-      'Prefer stack allocation and reserve capacity in containers to reduce heap churn.',
+    detail: 'Prefer stack allocation and reserve capacity in containers to reduce heap churn.',
   },
   {
     title: 'Prefer value semantics',
@@ -216,56 +200,46 @@ const performanceNotes = [
   },
   {
     title: 'Minimize virtual dispatch',
-    detail:
-      'Use templates or final where polymorphism costs are not needed.',
+    detail: 'Use templates or final where polymorphism costs are not needed.',
   },
   {
     title: 'Profile with real data',
-    detail:
-      'Use profilers to locate hot paths and verify optimizations.',
+    detail: 'Use profilers to locate hot paths and verify optimizations.',
   },
   {
     title: 'Keep abstractions thin',
-    detail:
-      'Inlining and templates help avoid runtime overhead in performance-critical paths.',
+    detail: 'Inlining and templates help avoid runtime overhead in performance-critical paths.',
   },
   {
     title: 'Use sanitizers early',
-    detail:
-      'AddressSanitizer and UndefinedBehaviorSanitizer catch costly bugs.',
+    detail: 'AddressSanitizer and UndefinedBehaviorSanitizer catch costly bugs.',
   },
 ]
 
 const realWorldUses = [
   {
     context: 'Game engines',
-    detail:
-      'C++ powers real-time engines where performance and memory control are essential.',
+    detail: 'C++ powers real-time engines where performance and memory control are essential.',
   },
   {
     context: 'Systems software',
-    detail:
-      'Operating systems, browsers, and compilers rely on C++ for speed and control.',
+    detail: 'Operating systems, browsers, and compilers rely on C++ for speed and control.',
   },
   {
     context: 'Finance and trading',
-    detail:
-      'Low-latency systems use C++ for deterministic performance and tight memory usage.',
+    detail: 'Low-latency systems use C++ for deterministic performance and tight memory usage.',
   },
   {
     context: 'Embedded and robotics',
-    detail:
-      'C++ balances hardware control with abstractions for complex behavior.',
+    detail: 'C++ balances hardware control with abstractions for complex behavior.',
   },
   {
     context: 'High performance computing',
-    detail:
-      'Numerical simulation and scientific computing depend on tuned C++ kernels.',
+    detail: 'Numerical simulation and scientific computing depend on tuned C++ kernels.',
   },
   {
     context: 'Graphics and media',
-    detail:
-      'Renderers, video pipelines, and codecs rely on C++ for throughput.',
+    detail: 'Renderers, video pipelines, and codecs rely on C++ for throughput.',
   },
 ]
 const examples = [
@@ -326,8 +300,7 @@ T clamp(T value, T lo, T hi) {
 int main() {
   int x = clamp(12, 0, 10);
 }`,
-    explanation:
-      'Templates provide compile-time polymorphism without runtime dispatch overhead.',
+    explanation: 'Templates provide compile-time polymorphism without runtime dispatch overhead.',
   },
   {
     title: 'Modern value type with move',
@@ -345,8 +318,7 @@ Packet makePacket() {
   p.tag = "frame";
   return p;
 }`,
-    explanation:
-      'Return values move efficiently in modern C++ without extra copies.',
+    explanation: 'Return values move efficiently in modern C++ without extra copies.',
   },
   {
     title: 'std::unique_ptr ownership',
@@ -358,8 +330,7 @@ struct Node {
 };
 
 auto head = std::make_unique<Node>();`,
-    explanation:
-      'unique_ptr makes ownership explicit and prevents accidental leaks.',
+    explanation: 'unique_ptr makes ownership explicit and prevents accidental leaks.',
   },
 ]
 
@@ -394,18 +365,15 @@ const advancedInsights = [
   },
   {
     title: 'ABI boundaries',
-    detail:
-      'C++ ABI stability varies by compiler and version. Expose C APIs when needed.',
+    detail: 'C++ ABI stability varies by compiler and version. Expose C APIs when needed.',
   },
   {
     title: 'Modern C++ concurrency',
-    detail:
-      'std::thread, atomics, and async support many concurrency models when used carefully.',
+    detail: 'std::thread, atomics, and async support many concurrency models when used carefully.',
   },
   {
     title: 'Build and tooling discipline',
-    detail:
-      'Use CMake, clang-tidy, and sanitizers for quality in large codebases.',
+    detail: 'Use CMake, clang-tidy, and sanitizers for quality in large codebases.',
   },
 ]
 
@@ -420,148 +388,125 @@ const takeaways = [
 const toolingWorkflow = [
   {
     title: 'Build systems',
-    detail:
-      'CMake and Meson manage cross-platform builds and dependencies.',
+    detail: 'CMake and Meson manage cross-platform builds and dependencies.',
   },
   {
     title: 'Package managers',
-    detail:
-      'vcpkg and Conan help standardize third-party libraries.',
+    detail: 'vcpkg and Conan help standardize third-party libraries.',
   },
   {
     title: 'Static analysis',
-    detail:
-      'clang-tidy and cppcheck catch issues early.',
+    detail: 'clang-tidy and cppcheck catch issues early.',
   },
   {
     title: 'Profiling',
-    detail:
-      'perf, VTune, and Tracy help diagnose performance bottlenecks.',
+    detail: 'perf, VTune, and Tracy help diagnose performance bottlenecks.',
   },
 ]
 
 const concurrencyOptions = [
   {
     title: 'Threads and tasks',
-    detail:
-      'std::thread, std::async, and thread pools power parallel work.',
+    detail: 'std::thread, std::async, and thread pools power parallel work.',
   },
   {
     title: 'Lock-free and atomics',
-    detail:
-      'Atomics enable high-performance synchronization when used carefully.',
+    detail: 'Atomics enable high-performance synchronization when used carefully.',
   },
   {
     title: 'Coroutines',
-    detail:
-      'C++20 coroutines support async IO and lazy generators.',
+    detail: 'C++20 coroutines support async IO and lazy generators.',
   },
   {
     title: 'Parallel STL',
-    detail:
-      'Parallel algorithms can speed up data processing workloads.',
+    detail: 'Parallel algorithms can speed up data processing workloads.',
   },
 ]
 const interopOptions = [
   {
     title: 'C compatibility',
-    detail:
-      'Expose C-style APIs for stable ABI and broad language support.',
+    detail: 'Expose C-style APIs for stable ABI and broad language support.',
   },
   {
     title: 'Python bindings',
-    detail:
-      'pybind11 makes it easy to call C++ from Python.',
+    detail: 'pybind11 makes it easy to call C++ from Python.',
   },
   {
     title: 'Rust and Zig',
-    detail:
-      'C ABI bridges allow safe interop with modern systems languages.',
+    detail: 'C ABI bridges allow safe interop with modern systems languages.',
   },
   {
     title: '.NET and Java',
-    detail:
-      'C++/CLI and JNI integrate with managed runtimes.',
+    detail: 'C++/CLI and JNI integrate with managed runtimes.',
   },
 ]
 
 const deploymentOptions = [
   {
     title: 'Static and shared libraries',
-    detail:
-      'Ship performance-critical components as .a or .so/.dll.',
+    detail: 'Ship performance-critical components as .a or .so/.dll.',
   },
   {
     title: 'Native executables',
-    detail:
-      'Standalone binaries are common for tools and services.',
+    detail: 'Standalone binaries are common for tools and services.',
   },
   {
     title: 'Embedded targets',
-    detail:
-      'Cross-compile with toolchains for microcontrollers and devices.',
+    detail: 'Cross-compile with toolchains for microcontrollers and devices.',
   },
   {
     title: 'Plugins and SDKs',
-    detail:
-      'Expose ABI-stable plugin boundaries for extensions.',
+    detail: 'Expose ABI-stable plugin boundaries for extensions.',
   },
 ]
 
 const comparisonNotes = [
   {
     title: 'Compared to Rust',
-    detail:
-      'Rust offers stronger compile-time safety, while C++ has broader legacy and ecosystem.',
+    detail: 'Rust offers stronger compile-time safety, while C++ has broader legacy and ecosystem.',
   },
   {
     title: 'Compared to Java',
-    detail:
-      'C++ provides lower-level control and faster startup, Java offers managed safety.',
+    detail: 'C++ provides lower-level control and faster startup, Java offers managed safety.',
   },
   {
     title: 'Compared to C',
-    detail:
-      'C++ adds RAII, templates, and OOP while keeping low-level access.',
+    detail: 'C++ adds RAII, templates, and OOP while keeping low-level access.',
   },
   {
     title: 'Compared to Python',
-    detail:
-      'C++ is far faster for hot paths but slower to develop for quick prototypes.',
+    detail: 'C++ is far faster for hot paths but slower to develop for quick prototypes.',
   },
 ]
 
 const learningPath = [
   {
     title: 'Core syntax and RAII',
-    detail:
-      'Learn classes, constructors, destructors, and ownership rules.',
+    detail: 'Learn classes, constructors, destructors, and ownership rules.',
   },
   {
     title: 'STL mastery',
-    detail:
-      'Use vectors, maps, algorithms, and iterators idiomatically.',
+    detail: 'Use vectors, maps, algorithms, and iterators idiomatically.',
   },
   {
     title: 'Modern C++ features',
-    detail:
-      'Practice move semantics, smart pointers, and lambdas.',
+    detail: 'Practice move semantics, smart pointers, and lambdas.',
   },
   {
     title: 'Performance and debugging',
-    detail:
-      'Use sanitizers, profilers, and careful measurement.',
+    detail: 'Use sanitizers, profilers, and careful measurement.',
   },
   {
     title: 'Systems and concurrency',
-    detail:
-      'Learn threads, atomics, and low-level system integration.',
+    detail: 'Learn threads, atomics, and low-level system integration.',
   },
 ]
 const glossaryTerms = [
   {
     term: 'Zero-cost abstractions',
-    definition: mentalModels[0].detail,
+    definition:
+      mentalModels[0]?.detail ??
+      'High-level constructs that compile down to the same cost as hand-written low-level code.',
   },
   {
     term: 'RAII',
@@ -570,27 +515,39 @@ const glossaryTerms = [
   },
   {
     term: 'Move semantics',
-    definition: typeSystemDetails[3].detail,
+    definition:
+      typeSystemDetails[3]?.detail ??
+      'Ownership can be transferred instead of copied so expensive resources move cheaply and safely.',
   },
   {
     term: 'Smart pointers',
-    definition: typeSystemDetails[1].detail,
+    definition:
+      typeSystemDetails[1]?.detail ??
+      'Library-managed pointer wrappers express ownership and automate cleanup.',
   },
   {
     term: 'Concepts',
-    definition: typeSystemDetails[2].detail,
+    definition:
+      typeSystemDetails[2]?.detail ??
+      'Compile-time constraints that make templates easier to read, diagnose, and reason about.',
   },
   {
     term: 'Rule of zero',
-    definition: advancedInsights[0].detail,
+    definition:
+      advancedInsights[0]?.detail ??
+      'Prefer types whose special member functions can stay compiler-generated by composing existing resource-managing members.',
   },
   {
     term: 'ABI boundaries',
-    definition: advancedInsights[2].detail,
+    definition:
+      advancedInsights[2]?.detail ??
+      'Binary interfaces between modules must stay stable when code is shared across compilers or releases.',
   },
   {
     term: 'Modern C++ concurrency',
-    definition: advancedInsights[3].detail,
+    definition:
+      advancedInsights[3]?.detail ??
+      'Concurrency work combines threads, atomics, memory ordering, and measurement to keep systems correct and fast.',
   },
 ]
 
@@ -852,7 +809,12 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ]
 
 function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+  return (
+    value === 'big-picture' ||
+    value === 'core-concepts' ||
+    value === 'examples' ||
+    value === 'glossary'
+  )
 }
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
@@ -929,8 +891,17 @@ export default function CPlusPlusPage(): JSX.Element {
         <header className="cpp98-titlebar">
           <span className="cpp98-title-text">C++</span>
           <div className="cpp98-title-controls">
-            <button className="cpp98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="cpp98-control" aria-label="Close">X</Link>
+            <button
+              className="cpp98-control"
+              type="button"
+              aria-label="Minimize"
+              onClick={handleMinimize}
+            >
+              _
+            </button>
+            <Link to="/algoViz" className="cpp98-control" aria-label="Close">
+              X
+            </Link>
           </div>
         </header>
         <div className="cpp98-tabs" role="tablist" aria-label="Sections">
@@ -960,14 +931,18 @@ export default function CPlusPlusPage(): JSX.Element {
           </aside>
           <main className="cpp98-content">
             <h1 className="cpp98-doc-title">C++</h1>
-            <p className="cpp98-doc-subtitle">Object-oriented power with systems-level performance</p>
+            <p className="cpp98-doc-subtitle">
+              Object-oriented power with systems-level performance
+            </p>
             <div className="cpp98-inline-actions">
-              <Link to="/algoViz" className="cpp98-push">Back to Catalog</Link>
+              <Link to="/algoViz" className="cpp98-push">
+                Back to Catalog
+              </Link>
             </div>
             <p>
-              C++ blends object-oriented design, generic programming, and low-level control. It lets you build high-performance
-              systems while modeling rich domain concepts, but it expects discipline around ownership, lifetimes, and undefined
-              behavior.
+              C++ blends object-oriented design, generic programming, and low-level control. It lets
+              you build high-performance systems while modeling rich domain concepts, but it expects
+              discipline around ownership, lifetimes, and undefined behavior.
             </p>
 
             {activeTab === 'big-picture' && (
@@ -975,8 +950,9 @@ export default function CPlusPlusPage(): JSX.Element {
                 <section id="bp-overview" className="cpp98-section">
                   <h2 className="cpp98-heading">Overview</h2>
                   <p>
-                    C++ is the classic language for performance-critical software. It supports OOP for modular design and RAII for
-                    deterministic resource management, while offering templates for zero-cost abstractions.
+                    C++ is the classic language for performance-critical software. It supports OOP
+                    for modular design and RAII for deterministic resource management, while
+                    offering templates for zero-cost abstractions.
                   </p>
                 </section>
                 <hr className="cpp98-divider" />
@@ -1084,8 +1060,8 @@ export default function CPlusPlusPage(): JSX.Element {
                     </p>
                   ))}
                   <p>
-                    C++ performance is about memory layout, ownership, and eliminating overhead. Modern C++ features help you
-                    write safe code without sacrificing speed.
+                    C++ performance is about memory layout, ownership, and eliminating overhead.
+                    Modern C++ features help you write safe code without sacrificing speed.
                   </p>
                 </section>
                 <section id="core-concurrency" className="cpp98-section">

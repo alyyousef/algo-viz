@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { win95Styles } from '@/styles/win95'
-import type { JSX } from 'react'
 
+import { win95Styles } from '@/styles/win95'
+
+import type { JSX } from 'react'
 
 const bigPicture = [
   {
@@ -31,19 +32,52 @@ const bigPicture = [
 ]
 
 const history = [
-  { title: '300 BCE: Euclid', detail: 'GCD algorithm formalized; still the backbone of inverses and Diophantine solutions.' },
-  { title: '1640: Fermat Little Theorem', detail: 'Basis for modular inverses and primality testing tricks.' },
-  { title: '1965: Cooley-Tukey FFT', detail: 'Dropped convolution from quadratic to n log n, enabling modern signal processing.' },
-  { title: '1976-1977: Miller-Rabin and RSA', detail: 'Probabilistic primality checks and public-key crypto galvanized modular arithmetic in software.' },
-  { title: '1990s: NTT in competitive programming', detail: 'Prime-friendly FFT variants made integer convolutions exact under modulus.' },
+  {
+    title: '300 BCE: Euclid',
+    detail: 'GCD algorithm formalized; still the backbone of inverses and Diophantine solutions.',
+  },
+  {
+    title: '1640: Fermat Little Theorem',
+    detail: 'Basis for modular inverses and primality testing tricks.',
+  },
+  {
+    title: '1965: Cooley-Tukey FFT',
+    detail: 'Dropped convolution from quadratic to n log n, enabling modern signal processing.',
+  },
+  {
+    title: '1976-1977: Miller-Rabin and RSA',
+    detail:
+      'Probabilistic primality checks and public-key crypto galvanized modular arithmetic in software.',
+  },
+  {
+    title: '1990s: NTT in competitive programming',
+    detail: 'Prime-friendly FFT variants made integer convolutions exact under modulus.',
+  },
 ]
 
 const pillars = [
-  { title: 'Fixed modulus discipline', detail: 'Pick one modulus per computation; stay prime for easy inverses or fall back to xgcd.' },
-  { title: 'Overflow awareness', detail: 'Use 128-bit widening or splitting for products; avoid UB in languages with silent wrap quirks.' },
-  { title: 'Precompute aggressively', detail: 'Factorials, inverse factorials, powers, logs save repeated O(n) work across queries.' },
-  { title: 'Canonical forms', detail: 'Normalize negatives ((x % mod) + mod) % mod; consistent representations prevent mismatch.' },
-  { title: 'Edge-case proofs', detail: 'CRT with non-coprime moduli, zero factorial, and empty sums need explicit handling.' },
+  {
+    title: 'Fixed modulus discipline',
+    detail: 'Pick one modulus per computation; stay prime for easy inverses or fall back to xgcd.',
+  },
+  {
+    title: 'Overflow awareness',
+    detail:
+      'Use 128-bit widening or splitting for products; avoid UB in languages with silent wrap quirks.',
+  },
+  {
+    title: 'Precompute aggressively',
+    detail: 'Factorials, inverse factorials, powers, logs save repeated O(n) work across queries.',
+  },
+  {
+    title: 'Canonical forms',
+    detail:
+      'Normalize negatives ((x % mod) + mod) % mod; consistent representations prevent mismatch.',
+  },
+  {
+    title: 'Edge-case proofs',
+    detail: 'CRT with non-coprime moduli, zero factorial, and empty sums need explicit handling.',
+  },
 ]
 
 const mentalModels = [
@@ -103,34 +137,69 @@ const howItWorks = [
 ]
 
 const complexityTable = [
-  { approach: 'Euclid / extended GCD', time: 'O(log min(a,b))', space: 'O(1)', note: 'Bezout coefficients enable inverses and CRT.' },
-  { approach: 'Fast modular exponentiation', time: 'O(log e)', space: 'O(1)', note: 'Binary exponentiation; safe with 128-bit multiply.' },
-  { approach: 'Sieve of Eratosthenes', time: 'O(n log log n)', space: 'O(n)', note: 'Linear sieve reduces constant factors.' },
-  { approach: 'FFT/NTT convolution', time: 'O(n log n)', space: 'O(n)', note: 'Requires root of unity; pad to power of two or use Bluestein.' },
-  { approach: 'nCk with precomputation', time: 'O(N) prep + O(1) query', space: 'O(N)', note: 'Factorials and inverse factorials under prime mod.' },
-  { approach: 'Miller-Rabin primality (k rounds)', time: 'O(k log^3 n)', space: 'O(1)', note: 'Deterministic bases exist for 64-bit n.' },
+  {
+    approach: 'Euclid / extended GCD',
+    time: 'O(log min(a,b))',
+    space: 'O(1)',
+    note: 'Bezout coefficients enable inverses and CRT.',
+  },
+  {
+    approach: 'Fast modular exponentiation',
+    time: 'O(log e)',
+    space: 'O(1)',
+    note: 'Binary exponentiation; safe with 128-bit multiply.',
+  },
+  {
+    approach: 'Sieve of Eratosthenes',
+    time: 'O(n log log n)',
+    space: 'O(n)',
+    note: 'Linear sieve reduces constant factors.',
+  },
+  {
+    approach: 'FFT/NTT convolution',
+    time: 'O(n log n)',
+    space: 'O(n)',
+    note: 'Requires root of unity; pad to power of two or use Bluestein.',
+  },
+  {
+    approach: 'nCk with precomputation',
+    time: 'O(N) prep + O(1) query',
+    space: 'O(N)',
+    note: 'Factorials and inverse factorials under prime mod.',
+  },
+  {
+    approach: 'Miller-Rabin primality (k rounds)',
+    time: 'O(k log^3 n)',
+    space: 'O(1)',
+    note: 'Deterministic bases exist for 64-bit n.',
+  },
 ]
 
 const applications = [
   {
     title: 'Cryptography',
-    detail: 'Modular exponentiation, inverses, and CRT underpin RSA, Diffie-Hellman, and signature schemes.',
+    detail:
+      'Modular exponentiation, inverses, and CRT underpin RSA, Diffie-Hellman, and signature schemes.',
   },
   {
     title: 'Competitive programming',
-    detail: 'nCk mod p, fast power, and inclusion-exclusion solve counting, DP, and probability problems under tight limits.',
+    detail:
+      'nCk mod p, fast power, and inclusion-exclusion solve counting, DP, and probability problems under tight limits.',
   },
   {
     title: 'Signal processing and substring similarity',
-    detail: 'FFT/NTT accelerate convolution for polynomial multiply, cross-correlation, and wildcard substring scoring.',
+    detail:
+      'FFT/NTT accelerate convolution for polynomial multiply, cross-correlation, and wildcard substring scoring.',
   },
   {
     title: 'Linear recurrences',
-    detail: 'Matrix exponentiation or linear recurrences with exponentiation answer k-th term queries in logarithmic time.',
+    detail:
+      'Matrix exponentiation or linear recurrences with exponentiation answer k-th term queries in logarithmic time.',
   },
   {
     title: 'Scheduling with congruences',
-    detail: 'CRT and modular arithmetic solve alignment and cycle problems in calendars or distributed systems.',
+    detail:
+      'CRT and modular arithmetic solve alignment and cycle problems in calendars or distributed systems.',
   },
 ]
 
@@ -167,7 +236,8 @@ const advanced = [
   },
   {
     title: 'Bluestein and mixed-radix FFT',
-    detail: 'Handle arbitrary lengths without heavy padding; keeps precision better for awkward sizes.',
+    detail:
+      'Handle arbitrary lengths without heavy padding; keeps precision better for awkward sizes.',
   },
   {
     title: 'NTT-friendly primes',
@@ -175,7 +245,8 @@ const advanced = [
   },
   {
     title: 'Baby-step giant-step',
-    detail: 'Solves discrete logs in O(sqrt n) time/space; handy for multiplicative order problems.',
+    detail:
+      'Solves discrete logs in O(sqrt n) time/space; handy for multiplicative order problems.',
   },
 ]
 
@@ -232,16 +303,21 @@ export default function MathematicalAlgorithmsPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Mathematical Algorithms</span>
           <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+              X
+            </Link>
           </div>
         </header>
         <div className="win95-content">
           <div className="win95-header-row">
             <div>
-              <div className="win95-subheading">Number theory, combinatorics, and algebraic power tools</div>
+              <div className="win95-subheading">
+                Number theory, combinatorics, and algebraic power tools
+              </div>
               <p className="win95-text">
-                Math kernels like gcd, modular inverses, sieves, and transforms turn hard problems into mechanical steps. Discipline
-                with moduli, proofs, and precomputation keeps answers correct at scale.
+                Math kernels like gcd, modular inverses, sieves, and transforms turn hard problems
+                into mechanical steps. Discipline with moduli, proofs, and precomputation keeps
+                answers correct at scale.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -414,4 +490,3 @@ export default function MathematicalAlgorithmsPage(): JSX.Element {
     </div>
   )
 }
-

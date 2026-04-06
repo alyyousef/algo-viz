@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { type TopicTab, useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -20,9 +20,9 @@ const historicalMilestones = [
       'C mapped directly to hardware while promising portability. Its int, char, and float influenced many later type systems.',
   },
   {
-    title: 'Two\'s complement becomes ubiquitous (1970s)',
+    title: "Two's complement becomes ubiquitous (1970s)",
     detail:
-      'Signed integer representation converged on two\'s complement, simplifying arithmetic and overflow behavior in hardware.',
+      "Signed integer representation converged on two's complement, simplifying arithmetic and overflow behavior in hardware.",
   },
   {
     title: 'IEEE 754 standardizes floating point (1985)',
@@ -74,7 +74,7 @@ const primitiveCategories = [
     heading: 'Integers',
     bullets: [
       'Signed vs unsigned; range is determined by bit width (int8 to int64, BigInt for arbitrary precision).',
-      'Two\'s complement dominates CPUs, simplifying arithmetic and overflow behavior.',
+      "Two's complement dominates CPUs, simplifying arithmetic and overflow behavior.",
       'Fixed-width integers are essential for protocols, file formats, and binary storage.',
       'Choose the smallest width that fits to reduce memory and cache pressure.',
     ],
@@ -141,7 +141,7 @@ const representationTable = [
     type: 'int8',
     bits: '8',
     range: '-128 to 127',
-    notes: 'Two\'s complement signed byte.',
+    notes: "Two's complement signed byte.",
   },
   {
     type: 'uint16',
@@ -177,7 +177,7 @@ const representationTable = [
 
 const integerDetails = [
   {
-    title: 'Two\'s complement layout',
+    title: "Two's complement layout",
     detail:
       'The highest bit is the sign. Negatives are represented by bitwise inversion plus one, making addition uniform.',
   },
@@ -203,16 +203,14 @@ const integerDetails = [
   },
   {
     title: 'Endianness interactions',
-    detail:
-      'Integer byte order matters in serialization; always define network order explicitly.',
+    detail: 'Integer byte order matters in serialization; always define network order explicitly.',
   },
 ]
 
 const floatingPointDetails = [
   {
     title: 'Sign, exponent, mantissa',
-    detail:
-      'Float32 uses 1 sign bit, 8 exponent bits, 23 mantissa bits; float64 uses 1, 11, 52.',
+    detail: 'Float32 uses 1 sign bit, 8 exponent bits, 23 mantissa bits; float64 uses 1, 11, 52.',
   },
   {
     title: 'ULP and rounding',
@@ -231,21 +229,18 @@ const floatingPointDetails = [
   },
   {
     title: 'Denormals',
-    detail:
-      'Very small magnitudes fall into subnormal numbers, which are slower and less precise.',
+    detail: 'Very small magnitudes fall into subnormal numbers, which are slower and less precise.',
   },
   {
     title: 'Stable comparisons',
-    detail:
-      'Use epsilon comparisons or relative error checks instead of direct equality.',
+    detail: 'Use epsilon comparisons or relative error checks instead of direct equality.',
   },
 ]
 
 const encodingDetails = [
   {
     title: 'UTF-8 as dominant encoding',
-    detail:
-      'UTF-8 uses 1 to 4 bytes per code point and preserves ASCII for the first 128 values.',
+    detail: 'UTF-8 uses 1 to 4 bytes per code point and preserves ASCII for the first 128 values.',
   },
   {
     title: 'UTF-16 surrogate pairs',
@@ -294,21 +289,18 @@ Particle particles[N]
 
 // SoA (SIMD-friendly)
 float x[N], y[N], z[N], vx[N], vy[N], vz[N]`,
-    explanation:
-      'SoA keeps each field contiguous, improving cache behavior and vectorization.',
+    explanation: 'SoA keeps each field contiguous, improving cache behavior and vectorization.',
   },
 ]
 
 const conversionRules = [
   {
     title: 'Widening conversions',
-    detail:
-      'Going from int32 to int64 is safe for values, but may affect performance and memory.',
+    detail: 'Going from int32 to int64 is safe for values, but may affect performance and memory.',
   },
   {
     title: 'Narrowing conversions',
-    detail:
-      'Int64 to int32 can lose high bits; prefer explicit checks and range guards.',
+    detail: 'Int64 to int32 can lose high bits; prefer explicit checks and range guards.',
   },
   {
     title: 'Float to int',
@@ -340,8 +332,7 @@ const languageQuirks = [
   },
   {
     title: 'Java',
-    detail:
-      'Primitive sizes are fixed (int32, long64). Overflow wraps; float uses IEEE 754.',
+    detail: 'Primitive sizes are fixed (int32, long64). Overflow wraps; float uses IEEE 754.',
   },
   {
     title: 'JavaScript / TypeScript',
@@ -507,8 +498,7 @@ const realWorldUses = [
   },
   {
     context: 'Embedded systems',
-    detail:
-      'Memory is scarce. uint8 and bitfields conserve RAM; floating point may be emulated.',
+    detail: 'Memory is scarce. uint8 and bitfields conserve RAM; floating point may be emulated.',
   },
   {
     context: 'Machine learning',
@@ -566,8 +556,7 @@ function toUInt16(x):
     if x < 0 or x > 65535:
         throw RangeError("out of range")
     return x`,
-    explanation:
-      'Explicit range checks prevent accidental truncation or wraparound during casts.',
+    explanation: 'Explicit range checks prevent accidental truncation or wraparound during casts.',
   },
   {
     title: 'Fixed-point representation',
@@ -643,253 +632,12 @@ const takeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.win98-inline-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-
-.win98-push {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  font-size: 12px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-
-.win98-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin: 4px 0 10px;
-}
-
-.win98-table th,
-.win98-table td {
-  border: 1px solid #808080;
-  padding: 4px 6px;
-  text-align: left;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-const tabs: Array<{ id: TabId; label: string }> = [
+const tabs: TopicTab<TabId>[] = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -925,338 +673,276 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function PrimitiveTypesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Primitive Types',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Primitive Types (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Primitive Types',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Primitive Types</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Primitive Types"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Primitive Types</h1>
+      <p>
+        Primitive types turn raw bits into integers, booleans, characters, and pointers. They look
+        simple, yet the choices you make at this level ripple through performance, storage, and even
+        security. This page unpacks the history, intuition, mechanics, and tradeoffs behind these
+        smallest units of data.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Primitive types are the contract between your program and the machine. They determine
+              how many bits are read, how they are interpreted, and how the CPU aligns and moves
+              them. Every higher-level structure relies on these atoms behaving predictably.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Primitive Types</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-categories" className="bin98-section">
+            <h2 className="bin98-heading">Primitive Categories</h2>
+            {primitiveCategories.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-reference" className="bin98-section">
+            <h2 className="bin98-heading">Bit-Width Reference</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Bits</th>
+                  <th>Range / Precision</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {representationTable.map((row) => (
+                  <tr key={row.type}>
+                    <td>{row.type}</td>
+                    <td>{row.bits}</td>
+                    <td>{row.range}</td>
+                    <td>{row.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-integers" className="bin98-section">
+            <h2 className="bin98-heading">Integer Details and Overflow Behavior</h2>
+            {integerDetails.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-floats" className="bin98-section">
+            <h2 className="bin98-heading">Floating Point Deep Dive</h2>
+            {floatingPointDetails.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Primitive types turn raw bits into integers, booleans, characters, and pointers. They look simple, yet the choices
-              you make at this level ripple through performance, storage, and even security. This page unpacks the history, intuition,
-              mechanics, and tradeoffs behind these smallest units of data.
+              If you need predictable decimal math, move to fixed-point or decimal libraries. Float
+              is excellent for scientific ranges but must be treated as approximate.
             </p>
+          </section>
+          <section id="core-encoding" className="bin98-section">
+            <h2 className="bin98-heading">Text and Encoding Realities</h2>
+            {encodingDetails.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-machine" className="bin98-section">
+            <h2 className="bin98-heading">Machine Considerations</h2>
+            {machineConsiderations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-conversions" className="bin98-section">
+            <h2 className="bin98-heading">Conversion Rules and Casting Hazards</h2>
+            {conversionRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-language" className="bin98-section">
+            <h2 className="bin98-heading">Language-Specific Differences</h2>
+            {languageQuirks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              Every primitive choice balances range, precision, memory, and speed. The right call
+              depends on the data domain, error tolerance, and performance envelope you need to hit.
+            </p>
+          </section>
+          <section id="core-complexity-table" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Snapshot</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Operation</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {complexityTable.map((row) => (
+                  <tr key={row.operation}>
+                    <td>{row.operation}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    Primitive types are the contract between your program and the machine. They determine how many bits are read, how they
-                    are interpreted, and how the CPU aligns and moves them. Every higher-level structure relies on these atoms behaving predictably.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-mental-models" className="win98-section">
-                  <h2 className="win98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-layout" className="bin98-section">
+            <h2 className="bin98-heading">Memory Layout Patterns</h2>
+            {memoryLayoutExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-real-world" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-categories" className="win98-section">
-                  <h2 className="win98-heading">Primitive Categories</h2>
-                  {primitiveCategories.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-reference" className="win98-section">
-                  <h2 className="win98-heading">Bit-Width Reference</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Type</th>
-                        <th>Bits</th>
-                        <th>Range / Precision</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {representationTable.map((row) => (
-                        <tr key={row.type}>
-                          <td>{row.type}</td>
-                          <td>{row.bits}</td>
-                          <td>{row.range}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-integers" className="win98-section">
-                  <h2 className="win98-heading">Integer Details and Overflow Behavior</h2>
-                  {integerDetails.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-floats" className="win98-section">
-                  <h2 className="win98-heading">Floating Point Deep Dive</h2>
-                  {floatingPointDetails.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    If you need predictable decimal math, move to fixed-point or decimal libraries. Float is excellent for scientific
-                    ranges but must be treated as approximate.
-                  </p>
-                </section>
-                <section id="core-encoding" className="win98-section">
-                  <h2 className="win98-heading">Text and Encoding Realities</h2>
-                  {encodingDetails.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-machine" className="win98-section">
-                  <h2 className="win98-heading">Machine Considerations</h2>
-                  {machineConsiderations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-conversions" className="win98-section">
-                  <h2 className="win98-heading">Conversion Rules and Casting Hazards</h2>
-                  {conversionRules.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-language" className="win98-section">
-                  <h2 className="win98-heading">Language-Specific Differences</h2>
-                  {languageQuirks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Every primitive choice balances range, precision, memory, and speed. The right call depends on the data domain,
-                    error tolerance, and performance envelope you need to hit.
-                  </p>
-                </section>
-                <section id="core-complexity-table" className="win98-section">
-                  <h2 className="win98-heading">Complexity Snapshot</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Operation</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {complexityTable.map((row) => (
-                        <tr key={row.operation}>
-                          <td>{row.operation}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-layout" className="win98-section">
-                  <h2 className="win98-heading">Memory Layout Patterns</h2>
-                  {memoryLayoutExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-practical" className="win98-section">
-                  <h2 className="win98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-real-world" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="glossary-checklist" className="win98-section">
-                  <h2 className="win98-heading">Type Selection Checklist</h2>
-                  <ol>
-                    {selectionChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="glossary-when" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="glossary-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="glossary-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Type Selection Checklist</h2>
+            <ol>
+              {selectionChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="glossary-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="glossary-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

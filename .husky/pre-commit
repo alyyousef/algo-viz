@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-# empty hook – do nothing
+npx lint-staged

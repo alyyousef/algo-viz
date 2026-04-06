@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
+
 import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
-
 
 const historicalMoments = [
   {
@@ -261,18 +261,23 @@ export default function SegmentFenwickPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Segment & Fenwick Trees</span>
           <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+              X
+            </Link>
           </div>
         </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
             <div>
-              <div className="win95-subheading">Range queries and updates with logarithmic guarantees</div>
+              <div className="win95-subheading">
+                Range queries and updates with logarithmic guarantees
+              </div>
               <p className="win95-text">
-                Segment trees and Fenwick trees are the workhorses for range queries on arrays. They provide predictable O(log n)
-                bounds even as data changes, trading modest memory for versatility. This page explores how they work, when to choose
-                one over the other, and the engineering details that make them fast in practice.
+                Segment trees and Fenwick trees are the workhorses for range queries on arrays. They
+                provide predictable O(log n) bounds even as data changes, trading modest memory for
+                versatility. This page explores how they work, when to choose one over the other,
+                and the engineering details that make them fast in practice.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -284,10 +289,11 @@ export default function SegmentFenwickPage(): JSX.Element {
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                Arrays answer random access in O(1) but struggle with dynamic range sums, mins, or maxes. Recomputing from scratch is
-                O(n); both segment and Fenwick trees organize partial aggregates so every query or update touches only O(log n)
-                nodes. The choice hinges on how rich your aggregates and updates must be and how much memory and cache locality you
-                can spare.
+                Arrays answer random access in O(1) but struggle with dynamic range sums, mins, or
+                maxes. Recomputing from scratch is O(n); both segment and Fenwick trees organize
+                partial aggregates so every query or update touches only O(log n) nodes. The choice
+                hinges on how rich your aggregates and updates must be and how much memory and cache
+                locality you can spare.
               </p>
             </div>
           </fieldset>
@@ -344,8 +350,9 @@ export default function SegmentFenwickPage(): JSX.Element {
             </div>
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
-                Measure constants: in practice Fenwick trees often beat segment trees for prefix sums due to tighter loops, while
-                segment trees pay off when you need lazy range updates or non-invertible merges like min with range assignment.
+                Measure constants: in practice Fenwick trees often beat segment trees for prefix
+                sums due to tighter loops, while segment trees pay off when you need lazy range
+                updates or non-invertible merges like min with range assignment.
               </p>
             </div>
           </fieldset>
@@ -426,4 +433,3 @@ export default function SegmentFenwickPage(): JSX.Element {
     </div>
   )
 }
-

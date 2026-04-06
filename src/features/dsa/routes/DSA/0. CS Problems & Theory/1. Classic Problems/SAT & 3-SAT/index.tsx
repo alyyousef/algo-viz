@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -21,20 +20,16 @@ const bigPicture = [
     title: 'What it is',
     details:
       'SAT asks if there exists an assignment of boolean variables that makes a propositional formula true.',
-    notes:
-      '3-SAT is the special case where each clause has exactly three literals.',
+    notes: '3-SAT is the special case where each clause has exactly three literals.',
   },
   {
     title: 'Why it matters',
-    details:
-      'SAT is the first known NP-complete problem and a cornerstone of complexity theory.',
-    notes:
-      '3-SAT remains NP-complete and is used as the canonical source for reductions.',
+    details: 'SAT is the first known NP-complete problem and a cornerstone of complexity theory.',
+    notes: '3-SAT remains NP-complete and is used as the canonical source for reductions.',
   },
   {
     title: 'What it teaches',
-    details:
-      'The difference between decision and search, and how reductions show NP-completeness.',
+    details: 'The difference between decision and search, and how reductions show NP-completeness.',
     notes:
       'It also shows how structure (like clause size) changes algorithms without changing hardness.',
   },
@@ -43,24 +38,20 @@ const bigPicture = [
 const historicalContext = [
   {
     title: '1971: Cook-Levin theorem',
-    details:
-      'Stephen Cook and Leonid Levin proved that SAT is NP-complete, the first such result.',
-    notes:
-      'This established the framework for NP-completeness via polynomial-time reductions.',
+    details: 'Stephen Cook and Leonid Levin proved that SAT is NP-complete, the first such result.',
+    notes: 'This established the framework for NP-completeness via polynomial-time reductions.',
   },
   {
     title: '3-SAT standardization',
     details:
       '3-SAT became the standard NP-complete problem used in reductions across theory and practice.',
-    notes:
-      'Any SAT instance can be transformed into 3-CNF with polynomial blow-up.',
+    notes: 'Any SAT instance can be transformed into 3-CNF with polynomial blow-up.',
   },
   {
     title: 'Modern SAT solvers',
     details:
       'SAT solvers now handle millions of variables using DPLL/CDCL, watched literals, and clause learning.',
-    notes:
-      'Practical success does not change the worst-case NP-completeness result.',
+    notes: 'Practical success does not change the worst-case NP-completeness result.',
   },
 ]
 
@@ -187,23 +178,20 @@ const workedExamples = [
     title: 'Simple satisfiable formula',
     code: `F = (x ? y) ? (~x ? z)
 Assignment: x = true, y = false, z = true`,
-    explanation:
-      'Both clauses are true under this assignment, so F is satisfiable.',
+    explanation: 'Both clauses are true under this assignment, so F is satisfiable.',
   },
   {
     title: 'Unsatisfiable example',
     code: `F = (x) ? (~x)
 No assignment can satisfy both clauses.`,
-    explanation:
-      'A variable and its negation cannot both be true.',
+    explanation: 'A variable and its negation cannot both be true.',
   },
   {
     title: '3-SAT padding',
     code: `Clause: (x ? y)
 Pad: (x ? y ? y)
 Still equivalent for satisfiability.`,
-    explanation:
-      'Duplicating literals creates 3-clauses without changing satisfiability.',
+    explanation: 'Duplicating literals creates 3-clauses without changing satisfiability.',
   },
 ]
 
@@ -223,23 +211,22 @@ const pseudocode = [
     return DPLL(formula)
   choose variable v
   return DPLL(formula with v=true) OR DPLL(formula with v=false)`,
-    explanation:
-      'DPLL is the classic backtracking solver with pruning rules.',
+    explanation: 'DPLL is the classic backtracking solver with pruning rules.',
   },
   {
     title: 'SAT to 3-SAT conversion (long clause)',
     code: `Clause: (a ? b ? c ? d ? e)
 Introduce y1, y2:
 (a ? b ? y1) ? (~y1 ? c ? y2) ? (~y2 ? d ? e)`,
-    explanation:
-      'The chain preserves satisfiability while making every clause size 3.',
+    explanation: 'The chain preserves satisfiability while making every clause size 3.',
   },
 ]
 
 const pitfalls = [
   {
     mistake: 'Assuming 3-SAT is easier than SAT',
-    description: '3-SAT is still NP-complete; it is a restriction but not a simplification in complexity.',
+    description:
+      '3-SAT is still NP-complete; it is a restriction but not a simplification in complexity.',
   },
   {
     mistake: 'Confusing 2-SAT with 3-SAT',
@@ -247,7 +234,8 @@ const pitfalls = [
   },
   {
     mistake: 'Dropping equisatisfiability',
-    description: 'Transformations must preserve satisfiability, not necessarily logical equivalence.',
+    description:
+      'Transformations must preserve satisfiability, not necessarily logical equivalence.',
   },
   {
     mistake: 'Ignoring clause learning',
@@ -548,7 +536,12 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ]
 
 function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
+  return (
+    value === 'big-picture' ||
+    value === 'core-concepts' ||
+    value === 'examples' ||
+    value === 'glossary'
+  )
 }
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
@@ -591,7 +584,8 @@ export default function SatAndThreeSatPage(): JSX.Element {
   const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
   const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
   const tocSections = sectionLinks[activeTab]
-  const selectedClause = clauseExamples.find((clause) => clause.id === selectedClauseId) ?? clauseExamples[0]
+  const selectedClause =
+    clauseExamples.find((clause) => clause.id === selectedClauseId) ?? clauseExamples[0]
   const clauseValue = selectedClause
     ? selectedClause.literals.some((literal) => {
         const isNegated = literal.startsWith('~')
@@ -608,7 +602,9 @@ export default function SatAndThreeSatPage(): JSX.Element {
       return isNegated ? !value : value
     }),
   )
-  const assignmentSummary = variableSet.map((variable) => `${variable}=${assignment[variable] ? 'T' : 'F'}`).join(', ')
+  const assignmentSummary = variableSet
+    .map((variable) => `${variable}=${assignment[variable] ? 'T' : 'F'}`)
+    .join(', ')
   const formulaText = clauseExamples.map((clause) => `(${clause.literals.join(' ? ')})`).join(' ? ')
 
   const toggleVariable = (variable: string) => {
@@ -643,15 +639,14 @@ export default function SatAndThreeSatPage(): JSX.Element {
 
             const candidate = task as Record<string, unknown>
             return (
-              typeof candidate.path === 'string' &&
-              typeof candidate.search === 'string' &&
-              typeof candidate.title === 'string'
+              typeof candidate['path'] === 'string' &&
+              typeof candidate['search'] === 'string' &&
+              typeof candidate['title'] === 'string'
             )
           })
         : []
       const nextTasks = existingTasks.filter(
-        (task) =>
-          (task.path !== currentTask.path || task.title !== currentTask.title),
+        (task) => task.path !== currentTask.path || task.title !== currentTask.title,
       )
       nextTasks.push(currentTask)
       window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
@@ -688,7 +683,12 @@ export default function SatAndThreeSatPage(): JSX.Element {
         <header className="sat-help-titlebar">
           <span className="sat-help-title">SAT & 3-SAT</span>
           <div className="sat-help-controls">
-            <button type="button" className="sat-help-control" onClick={handleMinimize} aria-label="Minimize help window">
+            <button
+              type="button"
+              className="sat-help-control"
+              onClick={handleMinimize}
+              aria-label="Minimize help window"
+            >
               _
             </button>
             <Link to="/algoViz" className="sat-help-control" aria-label="Close help window">
@@ -723,9 +723,10 @@ export default function SatAndThreeSatPage(): JSX.Element {
           <main className="sat-help-content">
             <h1 className="sat-help-doc-title">{activeTabLabel}</h1>
             <p>
-              SAT asks if there exists a boolean assignment that makes every clause true. 3-SAT restricts clauses to exactly three
-              literals, yet remains NP-complete. This document covers the key definitions, proof ideas, algorithm landscape, and
-              practical solver intuition.
+              SAT asks if there exists a boolean assignment that makes every clause true. 3-SAT
+              restricts clauses to exactly three literals, yet remains NP-complete. This document
+              covers the key definitions, proof ideas, algorithm landscape, and practical solver
+              intuition.
             </p>
 
             {activeTab === 'big-picture' && (
@@ -868,7 +869,10 @@ export default function SatAndThreeSatPage(): JSX.Element {
 
                 <section id="ex-assignment" className="sat-help-section">
                   <h2 className="sat-help-heading">Toggle Assignment</h2>
-                  <p>Flip variables and see how clauses and the full formula evaluate. This models the SAT decision question.</p>
+                  <p>
+                    Flip variables and see how clauses and the full formula evaluate. This models
+                    the SAT decision question.
+                  </p>
                   <div className="sat-help-inline-buttons">
                     {variableSet.map((variable) => (
                       <button
@@ -891,7 +895,10 @@ export default function SatAndThreeSatPage(): JSX.Element {
 
                 <section id="ex-clause" className="sat-help-section">
                   <h2 className="sat-help-heading">Clause Inspector</h2>
-                  <p>Inspect a single clause and see whether it is satisfied under the current assignment.</p>
+                  <p>
+                    Inspect a single clause and see whether it is satisfied under the current
+                    assignment.
+                  </p>
                   <div className="sat-help-inline-buttons">
                     {clauseExamples.map((clause) => (
                       <button
@@ -914,12 +921,16 @@ export default function SatAndThreeSatPage(): JSX.Element {
 
                 <section id="ex-3sat" className="sat-help-section">
                   <h2 className="sat-help-heading">3-SAT View</h2>
-                  <p>All clauses in 3-SAT must have exactly three literals. The example here is already in 3-CNF.</p>
+                  <p>
+                    All clauses in 3-SAT must have exactly three literals. The example here is
+                    already in 3-CNF.
+                  </p>
                   <p>
                     <strong>Formula:</strong> {formulaText}
                   </p>
                   <p>
-                    <strong>Each clause has:</strong> {selectedClause?.literals.length ?? 3} literals.
+                    <strong>Each clause has:</strong> {selectedClause?.literals.length ?? 3}{' '}
+                    literals.
                   </p>
                 </section>
               </>

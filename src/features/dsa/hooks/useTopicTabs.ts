@@ -58,7 +58,7 @@ export function useTopicTabs<T extends string>({
       nextParams.set('tab', activeTab)
       setSearchParams(nextParams, { replace: true })
     }
-    document.title = activeTabLabel ? `${pageTitle} — ${activeTabLabel}` : pageTitle
+    document.title = activeTabLabel ? `${pageTitle} - ${activeTabLabel}` : pageTitle
   }, [activeTab, activeTabLabel, pageTitle, searchParams, setSearchParams])
 
   const handleMinimize = () => {

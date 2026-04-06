@@ -32,10 +32,7 @@ export function useTopicNavigation(): TopicNavigation {
     // Find the current node by matching its route
     let currentNodeId: string | null = null
     for (const [id, entry] of explorerIndex.map.entries()) {
-      if (
-        entry.node.kind === 'visualization' &&
-        (entry.node as ExplorerVisualizationNode).route === currentPath
-      ) {
+      if (entry.node.kind === 'visualization' && entry.node.route === currentPath) {
         currentNodeId = id
         break
       }

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
+
 import { win95Styles } from '@/styles/win95'
 
 import type { JSX } from 'react'
-
 
 const historicalMoments = [
   {
@@ -253,19 +253,24 @@ export default function TriesPage(): JSX.Element {
         <header className="win95-titlebar">
           <span className="win95-title">Tries (Prefix Trees)</span>
           <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">X</Link>
+            <Link to="/algoViz" className="win95-control" aria-label="Close window">
+              X
+            </Link>
           </div>
         </header>
 
         <div className="win95-content">
           <div className="win95-header-row">
             <div>
-              <div className="win95-subheading">Prefix-guided lookup, autocomplete, and longest-match data structures</div>
+              <div className="win95-subheading">
+                Prefix-guided lookup, autocomplete, and longest-match data structures
+              </div>
               <p className="win95-text">
-                Tries index strings by walking characters from root to leaf. They buy predictable O(length) lookups, lexicographic
-                traversal, and longest-prefix matching at the cost of extra memory and careful engineering around sparsity and cache
-                locality. This page unpacks how tries work, the variants professionals use, and the pitfalls that have broken routers,
-                search bars, and spell-checkers in the wild.
+                Tries index strings by walking characters from root to leaf. They buy predictable
+                O(length) lookups, lexicographic traversal, and longest-prefix matching at the cost
+                of extra memory and careful engineering around sparsity and cache locality. This
+                page unpacks how tries work, the variants professionals use, and the pitfalls that
+                have broken routers, search bars, and spell-checkers in the wild.
               </p>
             </div>
             <Link to="/algoViz" className="win95-button" role="button">
@@ -277,11 +282,12 @@ export default function TriesPage(): JSX.Element {
             <legend>The big picture</legend>
             <div className="win95-panel">
               <p className="win95-text">
-                When datasets are strings or tokens, the natural question is how quickly you can answer prefix-heavy queries without
-                hashing the entire string or performing many comparisons. Tries answer by turning each character into a step along a
-                path. The time bound tracks the query length, not the corpus size, so million-scale dictionaries still answer in a
-                handful of steps. The trade-off is space: every possible branching option costs memory unless you compress or encode
-                it smartly.
+                When datasets are strings or tokens, the natural question is how quickly you can
+                answer prefix-heavy queries without hashing the entire string or performing many
+                comparisons. Tries answer by turning each character into a step along a path. The
+                time bound tracks the query length, not the corpus size, so million-scale
+                dictionaries still answer in a handful of steps. The trade-off is space: every
+                possible branching option costs memory unless you compress or encode it smartly.
               </p>
             </div>
           </fieldset>
@@ -338,8 +344,9 @@ export default function TriesPage(): JSX.Element {
             </div>
             <div className="win95-panel win95-panel--raised">
               <p className="win95-text">
-                Think in constants: 30 character steps at a few cycles each is microseconds; three cache misses per level can dwarf
-                asymptotic wins. Packed layouts and compression often matter more than shaving a comparison.
+                Think in constants: 30 character steps at a few cycles each is microseconds; three
+                cache misses per level can dwarf asymptotic wins. Packed layouts and compression
+                often matter more than shaving a comparison.
               </p>
             </div>
           </fieldset>
@@ -420,4 +427,3 @@ export default function TriesPage(): JSX.Element {
     </div>
   )
 }
-

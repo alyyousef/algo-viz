@@ -16,7 +16,7 @@
 /* AlgoViz logo — fixed to bottom-right on every DSA topic page.
    Matches all 59 page-specific class prefixes (win98-, bin98-, bub98-, etc.)
    without touching individual page files. */
-[class*="98-help-page"]::after {
+[class*='98-help-page']::after {
   content: '';
   position: fixed;
   bottom: 18px;
@@ -215,6 +215,20 @@
   display: block;
 }
 
+.bin98-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 4px 0 10px;
+}
+
+.bin98-table th,
+.bin98-table td {
+  border: 1px solid #808080;
+  padding: 4px 6px;
+  text-align: left;
+}
+
 /* Topic-to-topic navigation bar ------------------------------------------- */
 
 .topic-nav {
@@ -316,7 +330,7 @@
     padding: 10px 14px 16px;
   }
 
-  [class*="98-help-page"]::after {
+  [class*='98-help-page']::after {
     width: 130px;
     height: 36px;
     bottom: 14px;
@@ -381,7 +395,7 @@
     font-size: 11px;
   }
 
-  [class*="98-help-page"]::after {
+  [class*='98-help-page']::after {
     width: 100px;
     height: 28px;
     bottom: 10px;
