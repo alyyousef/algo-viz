@@ -133,6 +133,21 @@ function Win95ContextMenuProvider(): JSX.Element {
   return <Win95ContextMenu currentUrl={currentUrl} />
 }
 
+function GlobalWatermark(): JSX.Element | null {
+  const { pathname } = useLocation()
+  // The desktop page renders its own white logo — skip the black one there.
+  if (pathname === '/algoViz') return null
+  return (
+    <img
+      src="/transparentTextBlack.png"
+      alt=""
+      aria-hidden="true"
+      draggable={false}
+      className="global-watermark"
+    />
+  )
+}
+
 function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
   const navigate = useNavigate()
 
@@ -177,6 +192,7 @@ export default function AppProviders({ children }: AppProvidersProps): JSX.Eleme
   return (
     <BrowserRouter>
       <Win95ContextMenuProvider />
+      <GlobalWatermark />
       <Win95ReturnHandler>{children}</Win95ReturnHandler>
     </BrowserRouter>
   )

@@ -35,6 +35,11 @@
   font-size: 14px;
   font-weight: 700;
   cursor: grab;
+  /* Prevent iOS Safari overscroll and text selection from firing during
+     pointer-event drag on the title bar. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .win96-window__icon {
@@ -197,6 +202,7 @@
   text-align: center;
   border: 1px solid transparent;
   border-radius: 4px;
+  -webkit-user-select: none;
   user-select: none;
   cursor: default;
   transition:
@@ -385,6 +391,7 @@
   width: clamp(84px, 9vw, 150px);
   height: auto;
   pointer-events: none;
+  -webkit-user-select: none;
   user-select: none;
   z-index: 2;
 }
@@ -768,6 +775,26 @@
 
   .folder-window__summary-title {
     font-size: 15px;
+  }
+}
+
+/* ===== Window controls: larger touch targets inside the scaled canvas ======= */
+/* The desktop canvas is scaled down on mobile, so logical-pixel sizes need to
+   be larger to remain fingertip-sized after the CSS transform is applied.
+   At mobile scale ≈ 0.78 (375px / 480px canvas), a 30px button becomes ~23px
+   real pixels — still tight but meaningfully better than the default 20px. */
+
+@media (max-width: 768px) {
+  .win96-window__button {
+    width: 28px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .win96-window__title-bar {
+    padding: 6px 8px;
+    font-size: 15px;
+    gap: 10px;
   }
 }
 

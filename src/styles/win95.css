@@ -296,3 +296,40 @@
   font-style: italic;
   margin-top: 4px;
 }
+
+/* ===== Responsive breakpoints ============================================= */
+
+@media (max-width: 640px) {
+  /* Header row: let the back button drop below the description text instead
+     of cramming both onto one line. */
+  .win95-header-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .win95-header-row .win95-text {
+    max-width: 100%;
+  }
+
+  /* Give panels that contain a table horizontal scroll so the table doesn't
+     clip or break the page layout. */
+  .win95-panel {
+    overflow-x: auto;
+  }
+
+  /* Tighter content padding on small phones. */
+  .win95-content {
+    padding: 8px;
+  }
+
+  /* Two-column grids drop to one column when 260px per cell is too wide. */
+  .win95-grid-2,
+  .win95-grid-3,
+  .win95-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .win95-row {
+    grid-template-columns: 1fr;
+  }
+}
