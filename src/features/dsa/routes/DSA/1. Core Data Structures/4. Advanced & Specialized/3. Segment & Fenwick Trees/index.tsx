@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom'
 
-import { win95Styles } from '@/styles/win95'
-
 import type { JSX } from 'react'
 
 const historicalMoments = [
@@ -256,7 +254,6 @@ const takeaways = [
 export default function SegmentFenwickPage(): JSX.Element {
   return (
     <div className="win95-page">
-      <style>{win95Styles}</style>
       <div className="win95-window" role="presentation">
         <header className="win95-titlebar">
           <span className="win95-title">Segment & Fenwick Trees</span>

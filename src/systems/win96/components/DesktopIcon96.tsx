@@ -1,4 +1,5 @@
 import {
+  memo,
   useCallback,
   useMemo,
   useState,
@@ -28,7 +29,7 @@ export interface DesktopIcon96Props {
   title?: string
 }
 
-export default function DesktopIcon96({
+function DesktopIcon96({
   label,
   icon,
   className,
@@ -88,23 +89,10 @@ export default function DesktopIcon96({
   )
 
   const iconContent = useMemo(() => {
-    if (icon) {
-      return icon
-    }
-
-    return (
-      <span
-        aria-hidden="true"
-        className="desktop-icon-96__placeholder"
-        style={{
-          width: '100%',
-          height: '100%',
-          background:
-            'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(59,109,165,0.9) 100%)',
-          border: '1px solid rgba(0,0,0,0.35)',
-        }}
-      />
-    )
+    if (icon) return icon
+    // Placeholder rendered when no icon prop is provided.
+    // Styles live in win96.css (.desktop-icon-96__placeholder).
+    return <span aria-hidden="true" className="desktop-icon-96__placeholder" />
   }, [icon])
 
   return (
@@ -119,7 +107,7 @@ export default function DesktopIcon96({
       onKeyDown={handleKeyDown}
       onContextMenu={onContextMenu}
       tabIndex={0}
-      aria-selected={isSelected}
+      aria-pressed={isSelected ? 'true' : 'false'}
       title={title ?? label}
     >
       <span className="desktop-icon-96__image">{iconContent}</span>
@@ -127,3 +115,5 @@ export default function DesktopIcon96({
     </button>
   )
 }
+
+export default memo(DesktopIcon96)

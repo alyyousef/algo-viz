@@ -238,6 +238,10 @@
 
 .desktop-icon-96__placeholder {
   display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(59, 109, 165, 0.9) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.35);
 }
 
 .desktop-icon-96__label {
@@ -993,4 +997,3 @@
   color: var(--win97-text);
   padding: 2px 8px;
 }
-

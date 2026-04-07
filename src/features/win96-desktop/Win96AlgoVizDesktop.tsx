@@ -16,6 +16,8 @@ import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 
 import FolderWindowContent from './components/FolderWindowContent'
 import VisualizationWindowContent from './components/VisualizationWindowContent'
+import { useMinimizedTasks } from './hooks/useMinimizedTasks'
+import { useViewportScale } from './hooks/useViewportScale'
 
 const BASE_DESKTOP_WIDTH = 1440
 const BASE_DESKTOP_HEIGHT = 900
@@ -23,8 +25,6 @@ const BASE_DESKTOP_HEIGHT = 900
 const MOBILE_BREAKPOINT = 768
 const BASE_MOBILE_WIDTH = 480
 const BASE_MOBILE_HEIGHT = 800
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-const FALLBACK_TASKBAR_HEIGHT = 28
 
 /**
  * Display order for root folders on the desktop and in the Start menu.
@@ -62,17 +62,32 @@ function FolderIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element
 function VisualizationIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
   return (
     <span aria-hidden="true" className="win96-computer-icon-wrap">
-      <img src="/computer.png" alt="" className={`win96-computer-icon win96-computer-icon--${size}`} />
+      <img
+        src="/computer.png"
+        alt=""
+        className={`win96-computer-icon win96-computer-icon--${size}`}
+      />
     </span>
   )
 }
 
-interface MinimizedHelpTask {
-  id: string
-  title: string
-  url: string
-  kind: 'help'
+// ── Clock ────────────────────────────────────────────────────────────────────
+// Isolated into its own component so the 1-minute tick only re-renders the
+// clock, not the entire DesktopChrome subtree.
+
+function DesktopClock(): JSX.Element {
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 60_000)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  const timeLabel = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  return <div className="win96-taskbar__clock">{timeLabel}</div>
 }
+
+// ── Window layer ─────────────────────────────────────────────────────────────
 
 const WindowLayer = (): JSX.Element => {
   const { windows, activeWindowId, focusWindow, minimizeWindow, closeWindow } =
@@ -117,6 +132,8 @@ const WindowLayer = (): JSX.Element => {
   )
 }
 
+// ── Desktop container (icons + windows) ──────────────────────────────────────
+
 function DesktopContainer(): JSX.Element {
   const { rootFolders, openFolderWindow } = useWin96WindowManager()
 
@@ -142,66 +159,21 @@ function DesktopContainer(): JSX.Element {
   )
 }
 
+// ── Desktop chrome (taskbar + start menu) ────────────────────────────────────
+
 function DesktopChrome(): JSX.Element {
   const navigate = useNavigate()
-  const {
-    windows,
-    activeWindowId,
-    rootFolders,
-    openFolderWindow,
-    toggleMinimize,
-    getChildren,
-  } = useWin96WindowManager()
-  const [now, setNow] = useState(() => new Date())
+  const { windows, activeWindowId, rootFolders, openFolderWindow, toggleMinimize, getChildren } =
+    useWin96WindowManager()
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [activeStartFolderId, setActiveStartFolderId] = useState<string | null>(null)
-  const [minimizedHelpTasks, setMinimizedHelpTasks] = useState<MinimizedHelpTask[]>([])
+  const { tasks: minimizedHelpTasks, removeTask } = useMinimizedTasks()
   const startMenuRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    const loadTasks = () => {
-      const raw = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-      if (!raw) {
-        setMinimizedHelpTasks([])
-        return
-      }
-      try {
-        const parsed = JSON.parse(raw) as MinimizedHelpTask[]
-        setMinimizedHelpTasks(Array.isArray(parsed) ? parsed : [])
-      } catch {
-        setMinimizedHelpTasks([])
-      }
-    }
-
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === MINIMIZED_HELP_TASKS_KEY) {
-        loadTasks()
-      }
-    }
-
-    loadTasks()
-    window.addEventListener('storage', handleStorage)
-    return () => {
-      window.removeEventListener('storage', handleStorage)
-    }
-  }, [])
 
   const orderedRootFolders = useMemo(() => sortRootFolders(rootFolders), [rootFolders])
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setNow(new Date())
-    }, 60_000)
-
-    return () => {
-      window.clearInterval(timer)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isStartMenuOpen) {
-      return
-    }
+    if (!isStartMenuOpen) return
 
     const listenerOptions: AddEventListenerOptions = { capture: true }
 
@@ -218,9 +190,7 @@ function DesktopChrome(): JSX.Element {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsStartMenuOpen(false)
-      }
+      if (event.key === 'Escape') setIsStartMenuOpen(false)
     }
 
     window.addEventListener('pointerdown', handlePointerDown, listenerOptions)
@@ -246,11 +216,6 @@ function DesktopChrome(): JSX.Element {
       return next
     })
   }
-
-  const timeLabel = useMemo(
-    () => now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    [now],
-  )
 
   const orderedWindows = useMemo(() => [...windows].sort((a, b) => a.zIndex - b.zIndex), [windows])
 
@@ -287,9 +252,7 @@ function DesktopChrome(): JSX.Element {
       className="win96-taskbar__button win96-taskbar__button--minimized"
       data-state="minimized"
       onClick={() => {
-        const nextTasks = minimizedHelpTasks.filter((item) => item.id !== task.id)
-        window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-        setMinimizedHelpTasks(nextTasks)
+        removeTask(task.id)
         void navigate(task.url)
       }}
       iconLeft={<VisualizationIcon size="sm" />}
@@ -304,9 +267,7 @@ function DesktopChrome(): JSX.Element {
   )
 
   const activeStartFolderChildren = useMemo(() => {
-    if (!activeStartFolder) {
-      return []
-    }
+    if (!activeStartFolder) return []
     return getChildren(activeStartFolder.id)
   }, [activeStartFolder, getChildren])
 
@@ -347,7 +308,9 @@ function DesktopChrome(): JSX.Element {
                     role="menuitem"
                     onClick={() => handleSelectStartFolder(node.id)}
                   >
-                    <span className="win96-start-menu__item-icon" aria-hidden="true"><FolderIcon size="sm" /></span>
+                    <span className="win96-start-menu__item-icon" aria-hidden="true">
+                      <FolderIcon size="sm" />
+                    </span>
                     <span className="win96-start-menu__item-content">
                       <span className="win96-start-menu__item-label">{node.name}</span>
                       {node.description ? (
@@ -389,7 +352,11 @@ function DesktopChrome(): JSX.Element {
                       onClick={() => handleLaunchNode(child.id, child.kind)}
                     >
                       <span className="win96-start-menu__item-icon" aria-hidden="true">
-                        {child.kind === 'folder' ? <FolderIcon size="sm" /> : <VisualizationIcon size="sm" />}
+                        {child.kind === 'folder' ? (
+                          <FolderIcon size="sm" />
+                        ) : (
+                          <VisualizationIcon size="sm" />
+                        )}
                       </span>
                       <span className="win96-start-menu__item-content">
                         <span className="win96-start-menu__item-label">{child.name}</span>
@@ -427,73 +394,23 @@ function DesktopChrome(): JSX.Element {
             {minimizedHelpButtons}
           </div>
         }
-        tray={<div className="win96-taskbar__clock">{timeLabel}</div>}
+        tray={<DesktopClock />}
       />
     </div>
   )
 }
 
+// ── Root desktop page ─────────────────────────────────────────────────────────
+
 export default function Win96AlgoVizDesktop(): JSX.Element {
   const { enable } = useWin97Theme()
-  const rootRef = useRef<HTMLDivElement | null>(null)
-  const outerRef = useRef<HTMLDivElement | null>(null)
-  const scaleRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    const getViewportSize = () => {
-      const viewport = window.visualViewport
-      return {
-        width: viewport?.width ?? window.innerWidth,
-        height: viewport?.height ?? window.innerHeight,
-      }
-    }
-
-    const getTaskbarHeight = () => {
-      if (!rootRef.current) {
-        return FALLBACK_TASKBAR_HEIGHT
-      }
-
-      const rawValue = window
-        .getComputedStyle(rootRef.current)
-        .getPropertyValue('--win96-taskbar-total-height')
-        .trim()
-      const parsedValue = Number.parseFloat(rawValue)
-
-      return Number.isFinite(parsedValue) ? parsedValue : FALLBACK_TASKBAR_HEIGHT
-    }
-
-    const applyScale = () => {
-      const viewport = getViewportSize()
-      const isMobile = viewport.width < MOBILE_BREAKPOINT
-      const baseW = isMobile ? BASE_MOBILE_WIDTH : BASE_DESKTOP_WIDTH
-      const baseH = isMobile ? BASE_MOBILE_HEIGHT : BASE_DESKTOP_HEIGHT
-      const availableHeight = Math.max(viewport.height - getTaskbarHeight(), 0)
-      const widthScale = viewport.width / baseW
-      const heightScale = availableHeight / baseH
-      const nextScale = Math.min(widthScale, heightScale, 1)
-      const scale = Number.isFinite(nextScale) ? nextScale : 1
-
-      if (outerRef.current) {
-        outerRef.current.style.width = `${Math.round(baseW * scale)}px`
-        outerRef.current.style.height = `${Math.round(baseH * scale)}px`
-      }
-      if (scaleRef.current) {
-        scaleRef.current.style.width = `${baseW}px`
-        scaleRef.current.style.height = `${baseH}px`
-        scaleRef.current.style.transform = `scale(${scale})`
-      }
-    }
-
-    applyScale()
-    window.addEventListener('resize', applyScale)
-    window.visualViewport?.addEventListener('resize', applyScale)
-    window.visualViewport?.addEventListener('scroll', applyScale)
-    return () => {
-      window.removeEventListener('resize', applyScale)
-      window.visualViewport?.removeEventListener('resize', applyScale)
-      window.visualViewport?.removeEventListener('scroll', applyScale)
-    }
-  }, [])
+  const { rootRef, outerRef, scaleRef } = useViewportScale({
+    desktopWidth: BASE_DESKTOP_WIDTH,
+    desktopHeight: BASE_DESKTOP_HEIGHT,
+    mobileWidth: BASE_MOBILE_WIDTH,
+    mobileHeight: BASE_MOBILE_HEIGHT,
+    mobileBreakpoint: MOBILE_BREAKPOINT,
+  })
 
   useEffect(() => {
     enable()

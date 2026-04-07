@@ -47,6 +47,13 @@ export default function TopicPageShell<T extends string>({
 }: TopicPageShellProps<T>): JSX.Element {
   return (
     <div className="bin98-help-page">
+      <img
+        src="/transparentTextBlack.png"
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+        className="bin98-watermark"
+      />
       <div className="bin98-window" role="presentation">
         <header className="bin98-titlebar">
           <span className="bin98-title-text">{title}</span>
@@ -73,7 +80,7 @@ export default function TopicPageShell<T extends string>({
               className={`bin98-tab${activeTab === tab.id ? ' active' : ''}`}
               onClick={() => onTabChange(tab.id)}
               role="tab"
-              aria-selected={activeTab === tab.id}
+              aria-selected={activeTab === tab.id ? 'true' : 'false'}
             >
               {tab.label}
             </button>

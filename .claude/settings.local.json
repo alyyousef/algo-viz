@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/aliyo/.claude/projects/c--Users-aliyo-Projects-myProjects-algo-viz/a476da11-94bc-4ce7-92c8-07afc640ee7e/tool-results/**)"
+    ]
+  }
+}

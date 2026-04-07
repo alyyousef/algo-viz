@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useSyncExternalStore } from 'react'
 
 const STORAGE_KEY = 'win97-theme-enabled'
 const THEME_CLASS = 'theme-win97'
@@ -17,7 +17,8 @@ const readStoredPreference = (): boolean => {
   }
 }
 
-const listeners = new Set<(value: boolean) => void>()
+// Module-level store — a single source of truth shared by all hook instances.
+const listeners = new Set<() => void>()
 let themeEnabled = readStoredPreference()
 
 const applyThemeClass = (value: boolean) => {
@@ -38,8 +39,8 @@ const persistPreference = (value: boolean) => {
   }
 }
 
-const notifyListeners = (value: boolean) => {
-  listeners.forEach((listener) => listener(value))
+const notifyListeners = () => {
+  listeners.forEach((listener) => listener())
 }
 
 const setThemeEnabled = (value: boolean) => {
@@ -47,7 +48,7 @@ const setThemeEnabled = (value: boolean) => {
   themeEnabled = value
   applyThemeClass(value)
   persistPreference(value)
-  notifyListeners(value)
+  notifyListeners()
 }
 
 if (isBrowser()) {
@@ -57,10 +58,20 @@ if (isBrowser()) {
     if (themeEnabled === nextValue) return
     themeEnabled = nextValue
     applyThemeClass(nextValue)
-    notifyListeners(nextValue)
+    notifyListeners()
   }
   window.addEventListener('storage', storageListener)
 }
+
+// useSyncExternalStore-compatible interface.
+const subscribe = (callback: () => void): (() => void) => {
+  listeners.add(callback)
+  return () => {
+    listeners.delete(callback)
+  }
+}
+
+const getSnapshot = (): boolean => themeEnabled
 
 export interface UseWin97ThemeResult {
   enabled: boolean
@@ -71,42 +82,15 @@ export interface UseWin97ThemeResult {
 }
 
 export const useWin97Theme = (): UseWin97ThemeResult => {
-  const [enabled, setState] = useState<boolean>(() => themeEnabled)
+  const enabled = useSyncExternalStore(subscribe, getSnapshot)
 
-  useEffect(() => {
-    const listener = (value: boolean) => {
-      setState(value)
-    }
-    listeners.add(listener)
-    return () => {
-      listeners.delete(listener)
-    }
-  }, [])
-
-  const enable = useCallback(() => {
-    setThemeEnabled(true)
-  }, [])
-
-  const disable = useCallback(() => {
-    setThemeEnabled(false)
-  }, [])
-
-  const toggle = useCallback(() => {
-    setThemeEnabled(!themeEnabled)
-  }, [])
-
-  const setEnabled = useCallback((value: boolean) => {
-    setThemeEnabled(value)
-  }, [])
+  const enable = useCallback(() => setThemeEnabled(true), [])
+  const disable = useCallback(() => setThemeEnabled(false), [])
+  const toggle = useCallback(() => setThemeEnabled(!themeEnabled), [])
+  const setEnabled = useCallback((value: boolean) => setThemeEnabled(value), [])
 
   return useMemo(
-    () => ({
-      enabled,
-      toggle,
-      enable,
-      disable,
-      setEnabled,
-    }),
+    () => ({ enabled, toggle, enable, disable, setEnabled }),
     [disable, enable, enabled, setEnabled, toggle],
   )
 }

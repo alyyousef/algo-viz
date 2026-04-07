@@ -14,19 +14,16 @@
 }
 
 /* AlgoViz logo — fixed to bottom-right on every DSA topic page.
-   Matches all 59 page-specific class prefixes (win98-, bin98-, bub98-, etc.)
-   without touching individual page files. */
-[class*='98-help-page']::after {
-  content: '';
+   Rendered as a real <img aria-hidden> inside TopicPageShell so it is
+   accessible, lazy-loadable, and part of the React tree. */
+.bin98-watermark {
   position: fixed;
   bottom: 18px;
   right: 20px;
   width: 160px;
   height: 44px;
-  background-image: url('/transparentTextBlack.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: right bottom;
+  object-fit: contain;
+  object-position: right bottom;
   pointer-events: none;
   z-index: 9999;
 }
@@ -330,7 +327,7 @@
     padding: 10px 14px 16px;
   }
 
-  [class*='98-help-page']::after {
+  .bin98-watermark {
     width: 130px;
     height: 36px;
     bottom: 14px;
@@ -395,7 +392,7 @@
     font-size: 11px;
   }
 
-  [class*='98-help-page']::after {
+  .bin98-watermark {
     width: 100px;
     height: 28px;
     bottom: 10px;
