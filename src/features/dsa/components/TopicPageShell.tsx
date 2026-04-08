@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom'
 
-import TopicNav from '@/features/dsa/components/TopicNav'
-
 import type { TopicTab } from '@/features/dsa/hooks/useTopicTabs'
 import type { JSX, ReactNode } from 'react'
 
@@ -92,10 +90,7 @@ export default function TopicPageShell<T extends string>({
             </ul>
           </aside>
 
-          <div className="bin98-content">
-            {children}
-            <TopicNav />
-          </div>
+          <div className="bin98-content">{children}</div>
         </div>
       </div>
     </div>

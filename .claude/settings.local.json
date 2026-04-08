@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/aliyo/.claude/projects/c--Users-aliyo-Projects-myProjects-algo-viz/a476da11-94bc-4ce7-92c8-07afc640ee7e/tool-results/**)"
+      "Read(//c/Users/aliyo/.claude/projects/c--Users-aliyo-Projects-myProjects-algo-viz/a476da11-94bc-4ce7-92c8-07afc640ee7e/tool-results/**)",
+      "Bash(find \"src/features/dsa/routes\" -name \"index.tsx\" -exec grep -L \"createComingSoonPage\" {} \\\\;)",
+      "Bash(find \"src/features/dsa/routes\" -name \"index.tsx\" -exec grep -c \"createComingSoonPage\" {} +)",
+      "Bash(grep -c \"1$\")",
+      "Bash(find src/features/dsa/routes -name index.tsx -exec sh -c 'lines=$\\(wc -l < \"$1\"\\); if [ \"$lines\" -lt 20 ] && ! grep -q \"createComingSoonPage\" \"$1\"; then echo \"$1 \\($lines lines\\)\"; fi' _ '{}' ';')",
+      "Bash(xargs grep:*)"
     ]
   }
 }
