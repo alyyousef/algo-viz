@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 
+import type { RefObject } from 'react'
+
 interface UseViewportScaleOptions {
   desktopWidth: number
   desktopHeight: number
@@ -9,12 +11,12 @@ interface UseViewportScaleOptions {
 }
 
 interface UseViewportScaleRefs {
-  /** Root element — used to read the CSS taskbar-height custom property. */
-  rootRef: React.RefObject<HTMLDivElement>
-  /** Sized to match the scaled logical canvas exactly (avoids layout gaps). */
-  outerRef: React.RefObject<HTMLDivElement>
+  /** Root element used to read the CSS taskbar-height custom property. */
+  rootRef: RefObject<HTMLDivElement | null>
+  /** Sized to match the scaled logical canvas exactly. */
+  outerRef: RefObject<HTMLDivElement | null>
   /** Holds the full logical canvas and receives the CSS scale transform. */
-  scaleRef: React.RefObject<HTMLDivElement>
+  scaleRef: RefObject<HTMLDivElement | null>
 }
 
 const FALLBACK_TASKBAR_HEIGHT = 28
@@ -46,7 +48,10 @@ export function useViewportScale({
     }
 
     const getTaskbarHeight = (): number => {
-      if (!rootRef.current) return FALLBACK_TASKBAR_HEIGHT
+      if (!rootRef.current) {
+        return FALLBACK_TASKBAR_HEIGHT
+      }
+
       const rawValue = window
         .getComputedStyle(rootRef.current)
         .getPropertyValue('--win96-taskbar-total-height')
@@ -70,6 +75,7 @@ export function useViewportScale({
         outerRef.current.style.width = `${Math.round(baseW * scale)}px`
         outerRef.current.style.height = `${Math.round(baseH * scale)}px`
       }
+
       if (scaleRef.current) {
         scaleRef.current.style.width = `${baseW}px`
         scaleRef.current.style.height = `${baseH}px`

@@ -1,24 +1,11 @@
 import { useEffect, useState } from 'react'
 
-export interface MinimizedHelpTask {
-  id: string
-  title: string
-  url: string
-  kind: 'help'
-}
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const readTasks = (): MinimizedHelpTask[] => {
-  const raw = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-  if (!raw) return []
-  try {
-    const parsed = JSON.parse(raw) as MinimizedHelpTask[]
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
-}
+import {
+  MINIMIZED_HELP_TASKS_KEY,
+  readMinimizedHelpTasks,
+  writeMinimizedHelpTasks,
+  type MinimizedHelpTask,
+} from '@/features/dsa/utils/topicPageState'
 
 /**
  * Manages the list of DSA topic pages that have been minimised from their
@@ -29,12 +16,12 @@ const readTasks = (): MinimizedHelpTask[] => {
  * taskbar without a full reload.
  */
 export function useMinimizedTasks() {
-  const [tasks, setTasks] = useState<MinimizedHelpTask[]>(readTasks)
+  const [tasks, setTasks] = useState<MinimizedHelpTask[]>(readMinimizedHelpTasks)
 
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (event.key === MINIMIZED_HELP_TASKS_KEY) {
-        setTasks(readTasks())
+        setTasks(readMinimizedHelpTasks())
       }
     }
     window.addEventListener('storage', handleStorage)
@@ -44,7 +31,7 @@ export function useMinimizedTasks() {
   const removeTask = (id: string) => {
     setTasks((prev) => {
       const next = prev.filter((task) => task.id !== id)
-      window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(next))
+      writeMinimizedHelpTasks(next)
       return next
     })
   }

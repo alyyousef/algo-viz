@@ -8,14 +8,12 @@ import Window96 from '@/systems/win96/components/Window96'
 import {
   Win96WindowManagerProvider,
   useWin96WindowManager,
-  type WindowState,
 } from '@/systems/win96/context/Win96WindowManager'
 import Button97 from '@/systems/win97/components/Button97'
 import Taskbar97 from '@/systems/win97/components/Taskbar97'
 import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 
 import FolderWindowContent from './components/FolderWindowContent'
-import VisualizationWindowContent from './components/VisualizationWindowContent'
 import { useMinimizedTasks } from './hooks/useMinimizedTasks'
 import { useViewportScale } from './hooks/useViewportScale'
 
@@ -95,24 +93,13 @@ const WindowLayer = (): JSX.Element => {
 
   const sortedWindows = useMemo(() => [...windows].sort((a, b) => a.zIndex - b.zIndex), [windows])
 
-  const renderContent = (window: WindowState) => {
-    switch (window.kind) {
-      case 'folder':
-        return <FolderWindowContent window={window} />
-      case 'visualization':
-        return <VisualizationWindowContent window={window} />
-      default:
-        return null
-    }
-  }
-
   return (
     <div className="win96-window-layer">
       {sortedWindows.map((win) => (
         <Window96
           key={win.id}
           title={win.title}
-          icon={win.kind === 'folder' ? <FolderIcon size="md" /> : <VisualizationIcon size="md" />}
+          icon={<FolderIcon size="md" />}
           initialPosition={win.initialPosition}
           onPointerDown={() => focusWindow(win.id)}
           onMinimize={() => minimizeWindow(win.id)}
@@ -125,7 +112,9 @@ const WindowLayer = (): JSX.Element => {
           }}
           className={activeWindowId === win.id ? 'win96-window--active' : undefined}
         >
-          <ErrorBoundary>{renderContent(win)}</ErrorBoundary>
+          <ErrorBoundary>
+            <FolderWindowContent window={win} />
+          </ErrorBoundary>
         </Window96>
       ))}
     </div>
@@ -234,9 +223,7 @@ function DesktopChrome(): JSX.Element {
         key={win.id}
         size="sm"
         className={classes}
-        iconLeft={
-          win.kind === 'folder' ? <FolderIcon size="sm" /> : <VisualizationIcon size="sm" />
-        }
+        iconLeft={<FolderIcon size="sm" />}
         data-state={isActive ? 'active' : win.isMinimized ? 'minimized' : 'inactive'}
         onClick={() => toggleMinimize(win.id)}
       >

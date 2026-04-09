@@ -1,5 +1,5 @@
 /**
- * bin98 — Win98-era help-page styling used by all DSA topic pages.
+ * bin98 - Win98-era help-page styling used by shared DSA topic pages.
  *
  * Previously duplicated as a <style> injection in every page component.
  * Import once in main.tsx instead.
@@ -11,21 +11,6 @@
   padding: 0;
   color: #000;
   font-family: 'MS Sans Serif', Tahoma, 'Segoe UI', sans-serif;
-}
-
-/* AlgoViz logo — fixed to bottom-right on every DSA topic page.
-   Rendered as a real <img aria-hidden> inside TopicPageShell so it is
-   accessible, lazy-loadable, and part of the React tree. */
-.bin98-watermark {
-  position: fixed;
-  bottom: 18px;
-  right: 20px;
-  width: 160px;
-  height: 44px;
-  object-fit: contain;
-  object-position: right bottom;
-  pointer-events: none;
-  z-index: 9999;
 }
 
 .bin98-window {
@@ -205,8 +190,12 @@
   overflow-x: auto;
 }
 
-.bin98-codebox code {
+.bin98-codebox code,
+.bin98-mono {
   font-family: 'Courier New', Courier, monospace;
+}
+
+.bin98-codebox code {
   font-size: 12px;
   white-space: pre;
   display: block;
@@ -226,73 +215,8 @@
   text-align: left;
 }
 
-/* Topic-to-topic navigation bar ------------------------------------------- */
+/* Responsive breakpoints */
 
-.topic-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 8px;
-  padding: 12px 0 4px;
-  border-top: 1px solid #d0d0d0;
-  margin-top: 16px;
-}
-
-.topic-nav__link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  min-width: 0;
-  max-width: 48%;
-}
-
-.topic-nav__link--next {
-  margin-left: auto;
-  text-align: right;
-  flex-direction: row-reverse;
-}
-
-.topic-nav__link:hover,
-.topic-nav__link:focus {
-  background: #000080;
-  color: #fff;
-}
-
-.topic-nav__label {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.topic-nav__hint {
-  font-size: 10px;
-  opacity: 0.7;
-}
-
-.topic-nav__name {
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.topic-nav__arrow {
-  flex-shrink: 0;
-  font-size: 14px;
-}
-
-/* ===== Responsive breakpoints ============================================= */
-
-/* Collapse sidebar at 900px */
 @media (max-width: 900px) {
   .bin98-main {
     grid-template-columns: 1fr;
@@ -304,7 +228,7 @@
   }
 }
 
-/* Tablet portrait — tighten layout, enlarge touch targets */
+/* Tablet portrait - tighten layout, enlarge touch targets */
 @media (max-width: 768px) {
   .bin98-control {
     width: 28px;
@@ -326,16 +250,9 @@
   .bin98-content {
     padding: 10px 14px 16px;
   }
-
-  .bin98-watermark {
-    width: 130px;
-    height: 36px;
-    bottom: 14px;
-    right: 14px;
-  }
 }
 
-/* Large phone — fix absolute title centering, wrap tabs */
+/* Large phone - fix absolute title centering, wrap tabs */
 @media (max-width: 600px) {
   .bin98-title-text {
     position: static;
@@ -353,7 +270,7 @@
   }
 }
 
-/* Mobile phone — hide sidebar TOC, compact spacing */
+/* Mobile phone - hide sidebar TOC, compact spacing */
 @media (max-width: 480px) {
   .bin98-window {
     border-width: 1px;
@@ -391,31 +308,9 @@
   .bin98-codebox code {
     font-size: 11px;
   }
-
-  .bin98-watermark {
-    width: 100px;
-    height: 28px;
-    bottom: 10px;
-    right: 10px;
-  }
-
-  .topic-nav {
-    padding: 8px 0 2px;
-    margin-top: 10px;
-  }
-
-  .topic-nav__link {
-    padding: 5px 8px;
-    font-size: 10px;
-    max-width: 46%;
-  }
-
-  .topic-nav__hint {
-    font-size: 9px;
-  }
 }
 
-/* Very small phones (≤360px) — extra-compact tabs */
+/* Very small phones (<=360px) - extra-compact tabs */
 @media (max-width: 360px) {
   .bin98-tabs {
     padding: 3px 4px 0;

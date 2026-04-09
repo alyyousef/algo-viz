@@ -57,7 +57,12 @@ export default function TopicPageShell<T extends string>({
             >
               _
             </button>
-            <Link to="/algoViz" className="bin98-control" aria-label="Close">
+            <Link
+              to="/algoViz"
+              className="bin98-control"
+              aria-label="Close"
+              data-return-target="history-or-desktop"
+            >
               X
             </Link>
           </div>

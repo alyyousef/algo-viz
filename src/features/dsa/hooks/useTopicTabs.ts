@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
+import {
+  upsertMinimizedHelpTask,
+  navigateToDesktopOrHistory,
+} from '@/features/dsa/utils/topicPageState'
 
 export interface TopicTab<T extends string = string> {
   id: T
@@ -64,20 +67,8 @@ export function useTopicTabs<T extends string>({
   const handleMinimize = () => {
     const taskId = `help:${location.pathname}`
     const taskUrl = `${location.pathname}${location.search}${location.hash}`
-    const raw = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const existing = raw ? (JSON.parse(raw) as Array<{ id: string }>) : []
-    const next = [
-      ...existing.filter((t) => t.id !== taskId),
-      { id: taskId, title: pageTitle, url: taskUrl, kind: 'help' },
-    ]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(next))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-    } else {
-      void navigate('/algoViz')
-    }
+    upsertMinimizedHelpTask({ id: taskId, title: pageTitle, url: taskUrl, kind: 'help' })
+    navigateToDesktopOrHistory(navigate)
   }
 
   return { activeTab, setActiveTab, handleMinimize }

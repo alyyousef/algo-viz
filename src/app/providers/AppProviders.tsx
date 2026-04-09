@@ -9,6 +9,8 @@ import {
 } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 
+import { navigateToDesktopOrHistory } from '@/features/dsa/utils/topicPageState'
+
 export interface AppProvidersProps {
   children: ReactNode
 }
@@ -34,7 +36,11 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
       const target = event.target instanceof Element ? event.target : null
       const contextElement = target?.closest('[data-context-url]')
       const rawUrl = contextElement?.getAttribute('data-context-url')?.trim()
-      const resolvedUrl = rawUrl ? new URL(rawUrl, window.location.origin).toString() : currentUrl
+      if (!rawUrl) {
+        return
+      }
+
+      const resolvedUrl = new URL(rawUrl, window.location.origin).toString()
       event.preventDefault()
       event.stopPropagation()
       setMenuState({ open: true, x: event.clientX, y: event.clientY, url: resolvedUrl })
@@ -48,6 +54,7 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
       ) {
         return
       }
+
       setMenuState((prev) => (prev.open ? { ...prev, open: false } : prev))
     }
 
@@ -74,10 +81,10 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
       window.removeEventListener('scroll', handleDismiss, true)
       window.removeEventListener('resize', handleDismiss)
     }
-  }, [currentUrl])
+  }, [])
 
   const handleOpenInNewTab = () => {
-    window.open(menuState.url, '_blank', 'noopener,noreferrer')
+    window.open(menuState.url || currentUrl, '_blank', 'noopener,noreferrer')
     setMenuState((prev) => ({ ...prev, open: false }))
   }
 
@@ -92,51 +99,52 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
   const left = Math.max(6, Math.min(menuState.x, maxX))
   const top = Math.max(6, Math.min(menuState.y, maxY))
 
-  return (
-    <>
-      {menuState.open ? (
-        <div
-          className="win95-context-menu"
-          style={{ '--menu-left': `${left}px`, '--menu-top': `${top}px` } as CSSProperties}
-          ref={menuRef}
-          role="menu"
-        >
-          <button
-            className="win95-context-menu__item"
-            type="button"
-            onClick={handleOpenInNewTab}
-            role="menuitem"
-          >
-            Open in new tab
-          </button>
-          <div className="win95-context-menu__separator" aria-hidden="true" />
-          <button
-            className="win95-context-menu__item"
-            type="button"
-            onClick={handleClose}
-            role="menuitem"
-          >
-            Cancel
-          </button>
-        </div>
-      ) : null}
-    </>
+  return menuState.open ? (
+    <div
+      className="win95-context-menu"
+      style={{ '--menu-left': `${left}px`, '--menu-top': `${top}px` } as CSSProperties}
+      ref={menuRef}
+      role="menu"
+    >
+      <button
+        className="win95-context-menu__item"
+        type="button"
+        onClick={handleOpenInNewTab}
+        role="menuitem"
+      >
+        Open in new tab
+      </button>
+      <div className="win95-context-menu__separator" aria-hidden="true" />
+      <button
+        className="win95-context-menu__item"
+        type="button"
+        onClick={handleClose}
+        role="menuitem"
+      >
+        Cancel
+      </button>
+    </div>
+  ) : (
+    <></>
   )
 }
 
 function Win95ContextMenuProvider(): JSX.Element {
   const location = useLocation()
-  const currentUrl = useMemo(() => {
-    return `${window.location.origin}${location.pathname}${location.search}${location.hash}`
-  }, [location])
+  const currentUrl = useMemo(
+    () => `${window.location.origin}${location.pathname}${location.search}${location.hash}`,
+    [location],
+  )
 
   return <Win95ContextMenu currentUrl={currentUrl} />
 }
 
 function GlobalWatermark(): JSX.Element | null {
   const { pathname } = useLocation()
-  // The desktop page renders its own white logo — skip the black one there.
-  if (pathname === '/algoViz') return null
+  if (pathname === '/algoViz') {
+    return null
+  }
+
   return (
     <img
       src="/transparentTextBlack.png"
@@ -158,25 +166,22 @@ function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
         return
       }
 
-      const control = target.closest('.win95-control')
-      if (!control) {
+      const explicitControl = target.closest('[data-return-target="history-or-desktop"]')
+      const legacyControl = explicitControl ? null : target.closest('.win95-control')
+      if (!explicitControl && !legacyControl) {
         return
       }
 
-      const label = control.getAttribute('aria-label')
-      if (label && label !== 'Close window' && label !== 'Return') {
-        return
+      if (legacyControl) {
+        const label = legacyControl.getAttribute('aria-label')
+        if (label && label !== 'Close window' && label !== 'Return') {
+          return
+        }
       }
 
       event.preventDefault()
       event.stopPropagation()
-
-      const historyState = window.history.state as { idx?: number } | null
-      if (historyState?.idx && historyState.idx > 0) {
-        void navigate(-1)
-      } else {
-        void navigate('/algoViz')
-      }
+      navigateToDesktopOrHistory(navigate)
     }
 
     document.addEventListener('click', handleClick, true)

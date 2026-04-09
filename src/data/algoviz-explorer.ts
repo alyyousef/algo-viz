@@ -1,4 +1,5 @@
-﻿import { slugifySegment } from '@/features/dsa/utils/slug'
+import { dsaRouteDefinitions } from '@/features/dsa/routeManifest'
+import { slugifySegment } from '@/features/dsa/utils/slug'
 
 export type ExplorerNodeKind = 'folder' | 'visualization'
 
@@ -17,7 +18,6 @@ export interface ExplorerFolderNode extends ExplorerNodeBase {
 export interface ExplorerVisualizationNode extends ExplorerNodeBase {
   kind: 'visualization'
   route?: string
-  estimatedDurationMinutes?: number
 }
 
 export type ExplorerNode = ExplorerFolderNode | ExplorerVisualizationNode
@@ -39,7 +39,6 @@ const visualization = (
   description?: string,
   route?: string,
   icon = '\uD83D\uDCCA',
-  estimatedDurationMinutes?: number,
 ): ExplorerVisualizationNode => ({
   id,
   name,
@@ -47,10 +46,14 @@ const visualization = (
   icon,
   route,
   kind: 'visualization',
-  estimatedDurationMinutes,
 })
 
-const folder = (id: string, name: string, children: ExplorerNode[], icon = '\uD83D\uDCC1'): ExplorerFolderNode => ({
+const folder = (
+  id: string,
+  name: string,
+  children: ExplorerNode[],
+  icon = '\uD83D\uDCC1',
+): ExplorerFolderNode => ({
   id,
   name,
   icon,
@@ -58,13 +61,15 @@ const folder = (id: string, name: string, children: ExplorerNode[], icon = '\uD8
   children,
 })
 
-const ROUTE_PREFIX = '../features/dsa/routes/DSA/'
 const SEGMENT_DELIMITER = '\u0000'
-
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
 const joinPrefix = (segments: string[]) => segments.join(SEGMENT_DELIMITER)
-const findFolderChild = (parent: ExplorerFolderNode, id: string): ExplorerFolderNode | undefined => {
+
+const findFolderChild = (
+  parent: ExplorerFolderNode,
+  id: string,
+): ExplorerFolderNode | undefined => {
   const child = parent.children.find((node) => node.id === id)
   return child?.kind === 'folder' ? child : undefined
 }
@@ -77,7 +82,6 @@ const cloneExplorerNode = (node: ExplorerNode, aliasPrefix: string): ExplorerNod
       node.description,
       node.route,
       node.icon,
-      node.estimatedDurationMinutes,
     )
   }
 
@@ -95,24 +99,9 @@ const formatSegmentName = (segment: string): string => {
   }
   return normalized
 }
-const slugPath = (segments: string[]): string => segments.map((segment) => slugifySegment(segment)).join('/')
 
-const routeFiles = Object.keys(
-  import.meta.glob('../features/dsa/routes/DSA/**/index.tsx', { eager: false }),
-)
-
-const getSegmentArray = (filePath: string): string[] => {
-  if (!filePath.startsWith(ROUTE_PREFIX)) {
-    return []
-  }
-
-  const relative = filePath.slice(ROUTE_PREFIX.length).replace(/\/index\.tsx$/, '')
-  if (!relative) {
-    return []
-  }
-
-  return relative.split('/')
-}
+const slugPath = (segments: string[]): string =>
+  segments.map((segment) => slugifySegment(segment)).join('/')
 
 const compareSegmentArrays = (a: string[], b: string[]): number => {
   const maxLength = Math.min(a.length, b.length)
@@ -125,8 +114,8 @@ const compareSegmentArrays = (a: string[], b: string[]): number => {
   return a.length - b.length
 }
 
-const segmentPaths = routeFiles
-  .map(getSegmentArray)
+const segmentPaths = dsaRouteDefinitions
+  .map(({ segments }) => segments)
   .filter((segments): segments is string[] => segments.length > 0)
   .sort(compareSegmentArrays)
 
@@ -190,13 +179,13 @@ sortedNonLeafPrefixes.forEach((prefix) => {
   if (!lastSegment) {
     return
   }
-  const displayName = formatSegmentName(lastSegment)
-  const childFolder = folder(nodeId, displayName, [])
+
+  const childFolder = folder(nodeId, formatSegmentName(lastSegment), [])
   parentFolder.children.push(childFolder)
   folderCache.set(prefix, childFolder)
 })
 
-segmentPaths.forEach((segments) => {
+dsaRouteDefinitions.forEach(({ segments, path }) => {
   if (segments.length === 0) {
     return
   }
@@ -209,22 +198,17 @@ segmentPaths.forEach((segments) => {
   const parentSegments = segments.slice(0, -1)
   const parentPrefix = joinPrefix(parentSegments)
   const parentFolder = folderCache.get(parentPrefix) ?? explorerRoot
-
   const lastSegment = segments[segments.length - 1]
   if (!lastSegment) {
     return
   }
-  const pageId = `page:${slugPath(segments)}`
-  const pageName = formatSegmentName(lastSegment)
-  const route = `/dsa/${slugPath(segments)}`
 
-  parentFolder.children.push(visualization(pageId, pageName, undefined, route))
+  parentFolder.children.push(
+    visualization(`page:${slugPath(segments)}`, formatSegmentName(lastSegment), undefined, path),
+  )
 })
 
-const languagesEcosystemsFolder = findFolderChild(
-  explorerRoot,
-  'folder:0-languages-ecosystems',
-)
+const languagesEcosystemsFolder = findFolderChild(explorerRoot, 'folder:0-languages-ecosystems')
 
 if (languagesEcosystemsFolder) {
   const aliasChildren = [

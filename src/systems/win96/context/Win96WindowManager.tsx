@@ -1,4 +1,4 @@
-﻿import { createContext, useCallback, useContext, useMemo, useReducer, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, useReducer, type ReactNode } from 'react'
 
 import {
   explorerIndex,
@@ -10,30 +10,20 @@ import {
 
 const { root } = explorerIndex
 
-type WindowKind = 'folder' | 'visualization'
-
-export interface BaseWindowState {
+export interface WindowState {
   id: string
-  kind: WindowKind
+  kind: 'folder'
   nodeId: string
   title: string
   isMinimized: boolean
   zIndex: number
   initialPosition: { x: number; y: number }
-}
-
-export interface FolderWindowState extends BaseWindowState {
-  kind: 'folder'
-  path: string[] // node ids from root to current node inclusive
+  path: string[]
   history: string[][]
   forwardHistory: string[][]
 }
 
-export interface VisualizationWindowState extends BaseWindowState {
-  kind: 'visualization'
-}
-
-export type WindowState = FolderWindowState | VisualizationWindowState
+export type FolderWindowState = WindowState
 
 interface ManagerState {
   windows: WindowState[]
@@ -50,7 +40,6 @@ export const INITIAL_STATE: ManagerState = {
 
 type ManagerAction =
   | { type: 'OPEN_FOLDER_WINDOW'; nodeId: string }
-  | { type: 'OPEN_VISUALIZATION_WINDOW'; nodeId: string }
   | { type: 'FOCUS_WINDOW'; windowId: string }
   | { type: 'CLOSE_WINDOW'; windowId: string }
   | { type: 'MINIMIZE_WINDOW'; windowId: string }
@@ -64,6 +53,7 @@ const createWindowId = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID()
   }
+
   return `win-${Math.random().toString(36).slice(2)}`
 }
 
@@ -102,10 +92,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
         return state
       }
 
-      const existing = state.windows.find(
-        (win) => win.kind === 'folder' && win.nodeId === action.nodeId,
-      )
-
+      const existing = state.windows.find((win) => win.nodeId === action.nodeId)
       if (existing) {
         const baseState = existing.isMinimized
           ? {
@@ -130,7 +117,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       const pathIds = entry.pathEntries.map((node) => node.id)
       const initialHistory = pathIds.length > 1 ? [pathIds.slice(0, -1)] : []
 
-      const newWindow: FolderWindowState = {
+      const newWindow: WindowState = {
         id: windowId,
         kind: 'folder',
         nodeId: action.nodeId,
@@ -140,33 +127,6 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
         path: pathIds,
         history: initialHistory,
         forwardHistory: [],
-        initialPosition: makePosition(offset),
-      }
-
-      return {
-        ...nextState,
-        windows: [...nextState.windows, newWindow],
-        activeWindowId: windowId,
-      }
-    }
-
-    case 'OPEN_VISUALIZATION_WINDOW': {
-      const entry = getExplorerNode(action.nodeId)
-      if (!entry || entry.node.kind !== 'visualization') {
-        return state
-      }
-
-      const windowId = createWindowId()
-      const offset = (state.nextOffset + 24) % 72
-      const [nextState, zIndex] = bumpZIndex({ ...state, nextOffset: offset })
-
-      const newWindow: VisualizationWindowState = {
-        id: windowId,
-        kind: 'visualization',
-        nodeId: action.nodeId,
-        title: entry.node.name,
-        isMinimized: false,
-        zIndex,
         initialPosition: makePosition(offset),
       }
 
@@ -226,7 +186,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId || win.kind !== 'folder') {
+          if (win.id !== action.windowId) {
             return win
           }
 
@@ -247,7 +207,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId || win.kind !== 'folder') {
+          if (win.id !== action.windowId) {
             return win
           }
 
@@ -261,6 +221,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
           if (!targetId) {
             return win
           }
+
           const entry = getExplorerNode(targetId)
           if (!entry) {
             return win
@@ -281,7 +242,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId || win.kind !== 'folder') {
+          if (win.id !== action.windowId) {
             return win
           }
 
@@ -295,6 +256,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
           if (!targetId) {
             return win
           }
+
           const entry = getExplorerNode(targetId)
           if (!entry) {
             return win
@@ -315,11 +277,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId || win.kind !== 'folder') {
-            return win
-          }
-
-          if (win.path.length <= 1) {
+          if (win.id !== action.windowId || win.path.length <= 1) {
             return win
           }
 
@@ -328,6 +286,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
           if (!targetId) {
             return win
           }
+
           const entry = getExplorerNode(targetId)
           if (!entry) {
             return win
@@ -359,7 +318,6 @@ interface WindowManagerValue {
   restoreWindow: (windowId: string) => void
   toggleMinimize: (windowId: string) => void
   openFolderWindow: (nodeId: string) => void
-  openVisualizationWindow: (nodeId: string) => void
   navigateToChild: (windowId: string, nodeId: string) => void
   navigateBack: (windowId: string) => void
   navigateForward: (windowId: string) => void
@@ -401,6 +359,7 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       if (!target) {
         return
       }
+
       if (target.isMinimized) {
         dispatch({ type: 'RESTORE_WINDOW', windowId })
       } else {
@@ -412,10 +371,6 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
 
   const openFolderWindow = useCallback((nodeId: string) => {
     dispatch({ type: 'OPEN_FOLDER_WINDOW', nodeId })
-  }, [])
-
-  const openVisualizationWindow = useCallback((nodeId: string) => {
-    dispatch({ type: 'OPEN_VISUALIZATION_WINDOW', nodeId })
   }, [])
 
   const navigateToChild = useCallback((windowId: string, nodeId: string) => {
@@ -453,7 +408,6 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       restoreWindow,
       toggleMinimize,
       openFolderWindow,
-      openVisualizationWindow,
       navigateToChild,
       navigateBack,
       navigateForward,
@@ -471,7 +425,6 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       restoreWindow,
       toggleMinimize,
       openFolderWindow,
-      openVisualizationWindow,
       navigateToChild,
       navigateBack,
       navigateForward,
@@ -493,5 +446,6 @@ export const useWin96WindowManager = (): WindowManagerValue => {
   if (!ctx) {
     throw new Error('useWin96WindowManager must be used within Win96WindowManagerProvider')
   }
+
   return ctx
 }
