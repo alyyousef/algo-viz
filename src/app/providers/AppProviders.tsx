@@ -22,7 +22,7 @@ interface Win95ContextMenuState {
   url: string
 }
 
-function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
+function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element | null {
   const [menuState, setMenuState] = useState<Win95ContextMenuState>({
     open: false,
     x: 0,
@@ -84,7 +84,7 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
   }, [])
 
   const handleOpenInNewTab = () => {
-    window.open(menuState.url || currentUrl, '_blank', 'noopener,noreferrer')
+    window.open(menuState.url, '_blank', 'noopener,noreferrer')
     setMenuState((prev) => ({ ...prev, open: false }))
   }
 
@@ -99,7 +99,9 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
   const left = Math.max(6, Math.min(menuState.x, maxX))
   const top = Math.max(6, Math.min(menuState.y, maxY))
 
-  return menuState.open ? (
+  if (!menuState.open) return null
+
+  return (
     <div
       className="win95-context-menu"
       style={{ '--menu-left': `${left}px`, '--menu-top': `${top}px` } as CSSProperties}
@@ -124,8 +126,6 @@ function Win95ContextMenu({ currentUrl }: { currentUrl: string }): JSX.Element {
         Cancel
       </button>
     </div>
-  ) : (
-    <></>
   )
 }
 
@@ -166,17 +166,8 @@ function Win95ReturnHandler({ children }: AppProvidersProps): JSX.Element {
         return
       }
 
-      const explicitControl = target.closest('[data-return-target="history-or-desktop"]')
-      const legacyControl = explicitControl ? null : target.closest('.win95-control')
-      if (!explicitControl && !legacyControl) {
+      if (!target.closest('[data-return-target="history-or-desktop"]')) {
         return
-      }
-
-      if (legacyControl) {
-        const label = legacyControl.getAttribute('aria-label')
-        if (label && label !== 'Close window' && label !== 'Return') {
-          return
-        }
       }
 
       event.preventDefault()

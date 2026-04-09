@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 import type { TopicTab } from '@/features/dsa/hooks/useTopicTabs'
 import type { JSX, ReactNode } from 'react'
 
@@ -57,14 +55,14 @@ export default function TopicPageShell<T extends string>({
             >
               _
             </button>
-            <Link
-              to="/algoViz"
+            <button
               className="bin98-control"
+              type="button"
               aria-label="Close"
               data-return-target="history-or-desktop"
             >
               X
-            </Link>
+            </button>
           </div>
         </header>
 
@@ -76,7 +74,7 @@ export default function TopicPageShell<T extends string>({
               className={`bin98-tab${activeTab === tab.id ? ' active' : ''}`}
               onClick={() => onTabChange(tab.id)}
               role="tab"
-              aria-selected={activeTab === tab.id ? 'true' : 'false'}
+              aria-selected={activeTab === tab.id}
             >
               {tab.label}
             </button>

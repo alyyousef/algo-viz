@@ -2,12 +2,10 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import eslintJs from '@eslint/js'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import'
-import nPlugin from 'eslint-plugin-n'
 import promisePlugin from 'eslint-plugin-promise'
 import reactHooks from 'eslint-plugin-react-hooks'
 import globals from 'globals'
@@ -25,11 +23,6 @@ const importRecommendedRules = (importPlugin.configs.recommended.rules ?? {}) as
   unknown
 >
 
-const nodeRecommendedRules = (nPlugin.configs['flat/recommended'].rules ?? {}) as Record<
-  string,
-  unknown
->
-
 const promiseRecommendedRules = (promisePlugin.configs.recommended.rules ?? {}) as Record<
   string,
   unknown
@@ -39,8 +32,6 @@ const reactHooksRecommendedRules = (reactHooks.configs.recommended.rules ?? {}) 
   string,
   unknown
 >
-
-const jsRecommendedRules = (eslintJs.configs.recommended.rules ?? {}) as Record<string, unknown>
 
 const importOrderRule = [
   'error',
@@ -108,33 +99,6 @@ export default [
           varsIgnorePattern: '^_',
         },
       ],
-      semi: 'off',
-    },
-  },
-  {
-    files: ['**/*.{js,cjs,mjs}'],
-    languageOptions: {
-      sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
-    plugins: {
-      import: importPlugin,
-      n: nPlugin,
-      promise: promisePlugin,
-    },
-    rules: {
-      ...jsRecommendedRules,
-      ...importRecommendedRules,
-      ...nodeRecommendedRules,
-      ...promiseRecommendedRules,
-      'import/no-unresolved': 'off',
-      'import/order': importOrderRule,
-      'n/no-missing-import': 'off',
-      'n/no-unsupported-features/es-syntax': 'off',
-      'n/no-process-env': 'off',
       semi: 'off',
     },
   },

@@ -61,6 +61,7 @@ export interface Window96Props extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
   onMaximize?: () => void
   draggable?: boolean
   resizable?: boolean
+  isMinimized?: boolean
   initialPosition?: Position
   initialSize?: Size
   minWidth?: number
@@ -93,6 +94,7 @@ const Window96 = forwardRef(function Window96(
     onMaximize,
     draggable = true,
     resizable = true,
+    isMinimized = false,
     initialPosition = DEFAULT_POSITION,
     initialSize = DEFAULT_SIZE,
     minWidth = 280,
@@ -162,8 +164,7 @@ const Window96 = forwardRef(function Window96(
       }
       const maxX = Math.max(DESKTOP_MARGIN, host.width - constrainedSize.width - DESKTOP_MARGIN)
       const maxY = Math.max(DESKTOP_MARGIN, host.height - constrainedSize.height - DESKTOP_MARGIN)
-      const shouldCenterX =
-        Boolean(options?.preferCenteredX) && host.width <= MOBILE_BREAKPOINT
+      const shouldCenterX = Boolean(options?.preferCenteredX) && host.width <= MOBILE_BREAKPOINT
       const centeredX = Math.max(
         DESKTOP_MARGIN,
         Math.round((host.width - constrainedSize.width) / 2),
@@ -201,10 +202,7 @@ const Window96 = forwardRef(function Window96(
       })
 
       setPosition((prev) => {
-        if (
-          prev.x === constrainedMetrics.position.x &&
-          prev.y === constrainedMetrics.position.y
-        ) {
+        if (prev.x === constrainedMetrics.position.x && prev.y === constrainedMetrics.position.y) {
           return prev
         }
         return constrainedMetrics.position
@@ -358,32 +356,31 @@ const Window96 = forwardRef(function Window96(
   }, [isMaximized, normalizeWindowLayout])
 
   const createResizeStart = useCallback(
-    (direction: ResizeDirection) =>
-      (event: ReactPointerEvent<HTMLDivElement>) => {
-        if (!resizable || isMaximized) {
-          return
-        }
+    (direction: ResizeDirection) => (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!resizable || isMaximized) {
+        return
+      }
 
-        event.preventDefault()
-        event.stopPropagation()
+      event.preventDefault()
+      event.stopPropagation()
 
-        dragStateRef.current = {
-          type: 'resize',
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          width: size.width,
-          height: size.height,
-          x: position.x,
-          y: position.y,
-          direction,
-        }
+      dragStateRef.current = {
+        type: 'resize',
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        width: size.width,
+        height: size.height,
+        x: position.x,
+        y: position.y,
+        direction,
+      }
 
-        setInteraction('resizing')
+      setInteraction('resizing')
 
-        window.addEventListener('pointermove', handlePointerMove)
-        window.addEventListener('pointerup', handlePointerUp)
-      },
+      window.addEventListener('pointermove', handlePointerMove)
+      window.addEventListener('pointerup', handlePointerUp)
+    },
     [
       handlePointerMove,
       handlePointerUp,
@@ -408,10 +405,7 @@ const Window96 = forwardRef(function Window96(
     // The desktop can be scaled/cropped, so viewport math can overflow and hide controls.
     const host = getHostBounds()
     const viewportWidth = Math.max(minWidth, host.width - DESKTOP_MARGIN * 2)
-    const viewportHeight = Math.max(
-      minHeight,
-      host.height - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2,
-    )
+    const viewportHeight = Math.max(minHeight, host.height - TASKBAR_HEIGHT - DESKTOP_MARGIN * 2)
 
     return {
       position: { x: DESKTOP_MARGIN, y: DESKTOP_MARGIN },
@@ -548,7 +542,7 @@ const Window96 = forwardRef(function Window96(
         </div>
       </div>
 
-      <div className="win96-window__body">{children}</div>
+      <div className="win96-window__body">{isMinimized ? null : children}</div>
 
       {statusText ? <div className="win96-window__status-bar">{statusText}</div> : null}
 

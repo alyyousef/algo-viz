@@ -23,7 +23,19 @@ const dsaRouteEntries: DsaRouteEntry[] = dsaRouteDefinitions.flatMap(
 )
 
 function PageLoader(): JSX.Element {
-  return <div className="page-loader">Loading...</div>
+  return (
+    <div className="page-loader">
+      <div className="page-loader__dialog">
+        <div className="page-loader__titlebar">AlgoViz</div>
+        <div className="page-loader__body">
+          <div className="page-loader__label">Loading page, please wait…</div>
+          <div className="page-loader__bar-track">
+            <div className="page-loader__bar-fill" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function App(): JSX.Element {

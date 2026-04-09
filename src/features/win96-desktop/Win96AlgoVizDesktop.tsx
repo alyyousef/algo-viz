@@ -11,7 +11,6 @@ import {
 } from '@/systems/win96/context/Win96WindowManager'
 import Button97 from '@/systems/win97/components/Button97'
 import Taskbar97 from '@/systems/win97/components/Taskbar97'
-import useWin97Theme from '@/systems/win97/hooks/useWin97Theme'
 
 import FolderWindowContent from './components/FolderWindowContent'
 import { useMinimizedTasks } from './hooks/useMinimizedTasks'
@@ -23,31 +22,6 @@ const BASE_DESKTOP_HEIGHT = 900
 const MOBILE_BREAKPOINT = 768
 const BASE_MOBILE_WIDTH = 480
 const BASE_MOBILE_HEIGHT = 800
-
-/**
- * Display order for root folders on the desktop and in the Start menu.
- * Folders not in this list appear at the end in discovery order.
- */
-const ROOT_FOLDER_ORDER = [
-  'folder:0-fundamentals',
-  'folder:0-languages-ecosystems',
-  'alias:languages-and-frameworks:folder:languages-and-frameworks',
-  'folder:1-core-data-structures',
-  'folder:2-core-algorithms',
-  'folder:3-algorithmic-paradigms',
-  'folder:0-cs-problems-theory',
-  'folder:4-advanced-topics',
-  'folder:5-applied-domains',
-]
-
-function sortRootFolders<T extends { id: string }>(folders: T[]): T[] {
-  const lookup = new Map(folders.map((node) => [node.id, node]))
-  const ordered = ROOT_FOLDER_ORDER.map((id) => lookup.get(id)).filter(
-    (node): node is NonNullable<typeof node> => Boolean(node),
-  )
-  const rest = folders.filter((node) => !ROOT_FOLDER_ORDER.includes(node.id))
-  return [...ordered, ...rest]
-}
 
 function FolderIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
   return (
@@ -101,6 +75,7 @@ const WindowLayer = (): JSX.Element => {
           title={win.title}
           icon={<FolderIcon size="md" />}
           initialPosition={win.initialPosition}
+          isMinimized={win.isMinimized}
           onPointerDown={() => focusWindow(win.id)}
           onMinimize={() => minimizeWindow(win.id)}
           onClose={() => closeWindow(win.id)}
@@ -108,7 +83,6 @@ const WindowLayer = (): JSX.Element => {
             zIndex: win.zIndex,
             visibility: win.isMinimized ? 'hidden' : undefined,
             pointerEvents: win.isMinimized ? 'none' : undefined,
-            opacity: win.isMinimized ? 0 : 1,
           }}
           className={activeWindowId === win.id ? 'win96-window--active' : undefined}
         >
@@ -124,12 +98,10 @@ const WindowLayer = (): JSX.Element => {
 // ── Desktop container (icons + windows) ──────────────────────────────────────
 
 function DesktopContainer(): JSX.Element {
-  const { rootFolders, openFolderWindow } = useWin96WindowManager()
-
-  const orderedRootFolders = useMemo(() => sortRootFolders(rootFolders), [rootFolders])
+  const { orderedRootFolders, openFolderWindow } = useWin96WindowManager()
 
   return (
-    <div className="win96-desktop win96-desktop--scaled theme-win97">
+    <div className="win96-desktop win96-desktop--scaled">
       <div className="win96-desktop-icons">
         {orderedRootFolders.map((node) => (
           <DesktopIcon96
@@ -152,14 +124,18 @@ function DesktopContainer(): JSX.Element {
 
 function DesktopChrome(): JSX.Element {
   const navigate = useNavigate()
-  const { windows, activeWindowId, rootFolders, openFolderWindow, toggleMinimize, getChildren } =
-    useWin96WindowManager()
+  const {
+    windows,
+    activeWindowId,
+    orderedRootFolders,
+    openFolderWindow,
+    toggleMinimize,
+    getChildren,
+  } = useWin96WindowManager()
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [activeStartFolderId, setActiveStartFolderId] = useState<string | null>(null)
   const { tasks: minimizedHelpTasks, removeTask } = useMinimizedTasks()
   const startMenuRef = useRef<HTMLDivElement | null>(null)
-
-  const orderedRootFolders = useMemo(() => sortRootFolders(rootFolders), [rootFolders])
 
   useEffect(() => {
     if (!isStartMenuOpen) return
@@ -390,7 +366,6 @@ function DesktopChrome(): JSX.Element {
 // ── Root desktop page ─────────────────────────────────────────────────────────
 
 export default function Win96AlgoVizDesktop(): JSX.Element {
-  const { enable } = useWin97Theme()
   const { rootRef, outerRef, scaleRef } = useViewportScale({
     desktopWidth: BASE_DESKTOP_WIDTH,
     desktopHeight: BASE_DESKTOP_HEIGHT,
@@ -398,10 +373,6 @@ export default function Win96AlgoVizDesktop(): JSX.Element {
     mobileHeight: BASE_MOBILE_HEIGHT,
     mobileBreakpoint: MOBILE_BREAKPOINT,
   })
-
-  useEffect(() => {
-    enable()
-  }, [enable])
 
   useEffect(() => {
     const html = document.documentElement
@@ -426,7 +397,7 @@ export default function Win96AlgoVizDesktop(): JSX.Element {
 
   return (
     <Win96WindowManagerProvider>
-      <div ref={rootRef} className="win96-desktop-scale-root">
+      <div ref={rootRef} className="win96-desktop-scale-root theme-win97">
         <div ref={outerRef} className="win96-desktop-scale-outer">
           <div ref={scaleRef} className="win96-desktop-scale">
             <DesktopContainer />
