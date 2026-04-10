@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Astro is a web framework centered on shipping fast HTML by default and sending as little JavaScript to the browser as possible. It is especially associated with content-heavy sites, multi-page applications, island architecture, and a rendering model that treats static output as the default starting point.',
       'In practice, Astro is used for marketing sites, documentation, blogs, content platforms, e-commerce fronts, and web experiences that need selective interactivity rather than a fully hydrated client application everywhere.',
-      'This help-style version expands the original placeholder into a fuller reference covering Astro components, islands, rendering modes, content collections, integrations, server endpoints, view transitions, use cases, tradeoffs, examples, and glossary terms.',
+      'This reference covers Astro components, islands, rendering modes, content collections, integrations, server endpoints, view transitions, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

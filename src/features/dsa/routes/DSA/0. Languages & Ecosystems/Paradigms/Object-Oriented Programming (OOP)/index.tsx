@@ -584,7 +584,7 @@ export default function OOPPage(): JSX.Element {
           {examples.map((example) => (
             <div key={example.title}>
               <h3>{example.title}</h3>
-              <div className="oop-win98-code">
+              <div className="bin98-codebox">
                 <code>{example.code.trim()}</code>
               </div>
               <p>{example.explanation}</p>

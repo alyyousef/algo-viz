@@ -8,7 +8,6 @@ import '@fontsource-variable/inter'
 import '@fontsource-variable/space-grotesk'
 import '@/styles/globals.css'
 import '@/styles/bin98.css'
-import '@/styles/win95.css'
 
 const rootElement = document.getElementById('root')
 

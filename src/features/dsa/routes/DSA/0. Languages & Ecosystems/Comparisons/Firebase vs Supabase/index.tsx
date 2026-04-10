@@ -523,7 +523,7 @@ export default function FirebaseVsSupabasePage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
       onMinimize={handleMinimize}
     >
-      <h1 className="firebase-win98-doctitle">{pageTitle}</h1>
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>
       <p>
         This page compares Firebase and Supabase as real architectural choices rather than as trendy

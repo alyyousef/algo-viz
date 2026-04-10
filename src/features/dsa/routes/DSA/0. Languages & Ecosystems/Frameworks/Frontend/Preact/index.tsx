@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Preact is a lightweight component library for building user interfaces with a modern React-like API. It focuses on small size, strong performance, and close alignment with the browser platform while still supporting familiar concepts such as components, JSX, hooks, context, and virtual DOM rendering.',
       'In practice, Preact is used for embedded widgets, marketing sites, content-heavy products, dashboards, progressive enhancement, and applications where every kilobyte matters. It is also used as a lower-overhead substitute for React in projects that want a similar authoring model with less framework weight.',
-      'This help-style version expands the original placeholder into a fuller reference covering mental model, rendering, hooks, events, DOM differences, signals, `preact/compat`, use cases, tradeoffs, examples, and glossary terms.',
+      'This reference covers the Preact mental model, rendering, hooks, events, DOM differences, signals, `preact/compat`, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

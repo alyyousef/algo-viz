@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Next.js is a React framework for building full-stack web applications. It provides file-system routing, server and client rendering strategies, route handlers, layouts, data-fetching patterns, middleware, deployment-aware optimizations, and a coordinated application model around React.',
       'In practice, Next.js is used for marketing sites, content platforms, e-commerce fronts, dashboards, SaaS products, internal tools, documentation systems, and large production web applications that need more than plain React components.',
-      'This help-style version expands the original placeholder into a fuller reference covering App Router mental model, server and client components, route handlers, caching, rendering, navigation, use cases, tradeoffs, examples, and glossary terms.',
+      'This reference covers the App Router mental model, server and client components, route handlers, caching, rendering, navigation, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

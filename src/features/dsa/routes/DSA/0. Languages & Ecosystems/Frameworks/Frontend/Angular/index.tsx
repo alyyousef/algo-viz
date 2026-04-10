@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Angular is a full front-end framework for building large web applications with TypeScript, components, dependency injection, routing, forms, HTTP tooling, testing support, and a coordinated CLI and build workflow. It aims to give teams an integrated application platform rather than only a rendering library.',
       'In practice, Angular is used for enterprise dashboards, internal tools, complex line-of-business software, consumer-facing apps, admin panels, and products where a strong architectural framework and long-term consistency matter.',
-      "This help-style version expands the original placeholder into a fuller reference covering Angular's mental model, standalone APIs, templates, signals, dependency injection, routing, forms, SSR and hydration, use cases, tradeoffs, examples, and glossary terms.",
+      "This reference covers Angular's mental model, standalone APIs, templates, signals, dependency injection, routing, forms, SSR and hydration, use cases, tradeoffs, examples, and glossary terms.",
     ],
   },
   {

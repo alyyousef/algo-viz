@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Nuxt is the full-stack framework built around Vue. It provides file-based routing, layouts, data-fetching conventions, server-side rendering, static generation options, server routes through Nitro, auto-imports, and a module-driven extension model in one coordinated application platform.',
       'In practice, Nuxt is used for content sites, e-commerce fronts, dashboards, SaaS products, marketing pages with rich interactivity, and full-stack Vue applications that need more than plain component rendering. Teams often choose it when they want Vue ergonomics together with a stronger app-level structure.',
-      'This help-style version expands the original placeholder into a fuller reference covering mental model, directory conventions, data fetching, Nitro, rendering modes, modules, layers, use cases, tradeoffs, examples, and glossary terms.',
+      'This reference covers the Nuxt mental model, directory conventions, data fetching, Nitro, rendering modes, modules, layers, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {
