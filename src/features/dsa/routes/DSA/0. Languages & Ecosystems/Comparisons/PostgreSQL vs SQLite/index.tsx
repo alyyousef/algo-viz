@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'PostgreSQL and SQLite are both respected SQL databases, but they solve meaningfully different architectural problems. PostgreSQL is a client-server database built for shared, concurrent, multi-user systems. SQLite is an embedded database library built to live inside an application process and store data in a local file.',
       'That means the real decision is rarely about sophistication. Both are sophisticated. The more useful decision is whether the product needs a managed database service with server-grade concurrency and operational controls, or a lightweight embedded engine that avoids database infrastructure almost entirely.',
-      'The original page scope was placeholder content for PostgreSQL vs SQLite, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference.',
+      'This help-style reference covers PostgreSQL vs SQLite across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

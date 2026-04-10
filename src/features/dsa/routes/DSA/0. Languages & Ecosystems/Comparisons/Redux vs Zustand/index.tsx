@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Redux and Zustand are both state-management tools commonly used in React applications, but they come from different philosophies. Modern Redux, usually written with Redux Toolkit, emphasizes explicit architecture, structured updates, middleware, serializable state, selectors, and a well-defined application data flow. Zustand emphasizes minimalism, direct store creation, fewer abstractions, and a very small API surface.',
       'That means the practical question is not only which one can hold shared state. Both can. The more useful question is whether the application benefits from a strongly structured state architecture with official patterns and middleware support, or whether it benefits more from a lightweight store layer that is easy to adopt and stays out of the way.',
-      'The original page scope was placeholder content for Redux vs Zustand, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference page.',
+      'This help-style reference covers Redux vs Zustand across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

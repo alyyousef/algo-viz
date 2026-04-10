@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Qwik is a front-end framework designed around resumability rather than the more common hydration-first model. Its goal is to deliver interactive applications that can resume work on the client without eagerly replaying large amounts of component logic after server rendering.',
       'In practice, Qwik is used for web applications where startup cost, interaction latency, and JavaScript delivery strategy matter a great deal. The framework is especially associated with fine-grained lazy loading, signal-driven state, and a serialization model that lets the browser continue from server-produced state.',
-      'The original page scope was placeholder content for Qwik. This help-style version keeps that scope while expanding it into a fuller reference covering resumability, signals, QRLs, `$` boundaries, Qwik City, SSR and streaming, use cases, tradeoffs, examples, and glossary terms.',
+      'This help-style reference covers Qwik across resumability, signals, QRLs, `$` boundaries, Qwik City, SSR and streaming, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

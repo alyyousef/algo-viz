@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'REST and gRPC are both ways to design network APIs, but they begin from different architectural assumptions. REST is an architectural style commonly associated with resource-oriented HTTP APIs, representations, stateless communication, and standard HTTP semantics. gRPC is a contract-first RPC framework built around service definitions, generated clients, Protocol Buffers by default, and HTTP/2 transport.',
       'That means the practical question is not which one can move data over the network. Both can. The more useful question is whether the system benefits more from resource-oriented HTTP APIs that are broadly understandable and web-friendly, or from strongly typed service contracts with efficient binary transport and RPC semantics.',
-      'The original page scope was placeholder content for REST vs gRPC, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers REST vs gRPC across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

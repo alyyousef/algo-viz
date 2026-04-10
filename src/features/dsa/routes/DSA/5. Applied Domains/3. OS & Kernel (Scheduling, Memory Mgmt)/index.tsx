@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -340,105 +341,166 @@ const keyTakeaways = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'takeaways'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'takeaways', label: 'Takeaways' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'overview', label: 'Overview' },
+    { id: 'big-picture', label: 'Big picture' },
+    { id: 'history-that-shaped-kernels', label: 'History that shaped kernels' },
+    { id: 'where-these-choices-matter', label: 'Where these choices matter' },
+  ],
+  'core-concepts': [
+    { id: 'pillars-and-mental-hooks', label: 'Pillars and mental hooks' },
+    { id: 'how-it-works-step-by-step', label: 'How it works, step by step' },
+    { id: 'complexity-at-a-glance', label: 'Complexity at a glance' },
+    { id: 'advanced-moves', label: 'Advanced moves' },
+  ],
+  examples: [
+    { id: 'failure-mode', label: 'Failure mode' },
+    { id: 'code-examples', label: 'Code examples' },
+  ],
+  takeaways: [
+    { id: 'pitfalls-to-avoid', label: 'Pitfalls to avoid' },
+    {
+      id: 'when-to-reach-for-each-approach',
+      label: 'When to reach for each approach',
+    },
+    { id: 'key-takeaways', label: 'Key takeaways' },
+  ],
+}
+
 export default function OSKernelSchedulingMemoryPage(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'OS & Kernel (Scheduling, Memory Mgmt)',
+    defaultTab: 'big-picture',
+  })
+
   return (
-    <div className="win95-page">
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">OS & Kernel (Scheduling, Memory Mgmt)</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Balancing CPU fairness and memory health</div>
-              <p className="win95-text">
-                Schedulers decide who runs; memory managers decide what stays resident. Matching
-                policies to workloads, keeping locality, and enforcing isolation deliver predictable
-                latency and solid throughput.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
+    <TopicPageShell
+      title="OS & Kernel (Scheduling, Memory Mgmt)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">OS &amp; Kernel (Scheduling, Memory Mgmt)</h1>
+      <p className="bin98-doc-subtitle">Balancing CPU fairness and memory health.</p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-2">
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <div className="bin98-subheading">Balancing CPU fairness and memory health</div>
+            <p>
+              Schedulers decide who runs; memory managers decide what stays resident. Matching
+              policies to workloads, keeping locality, and enforcing isolation deliver predictable
+              latency and solid throughput.
+            </p>
+          </section>
+
+          <section id="big-picture" className="bin98-section">
+            <h2 className="bin98-heading">Big picture</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
+                  <p>{item.note}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>History that shaped kernels</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="history-that-shaped-kernels" className="bin98-section">
+            <h2 className="bin98-heading">History that shaped kernels</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
-                  <p className="win95-text">{event.note}</p>
+                <div key={event.title} className="bin98-section">
+                  <div className="bin98-subheading">{event.title}</div>
+                  <p>{event.detail}</p>
+                  <p>{event.note}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Pillars and mental hooks</legend>
-            <div className="win95-row">
-              <div className="win95-panel">
-                <div className="win95-subheading">Pillars</div>
-                <div className="win95-stack">
+          <section id="where-these-choices-matter" className="bin98-section">
+            <h2 className="bin98-heading">Where these choices matter</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {applications.map((app) => (
+                <div key={app.title} className="bin98-section">
+                  <div className="bin98-subheading">{app.title}</div>
+                  <p>{app.detail}</p>
+                  <p>{app.note}</p>
+                </div>
+              ))}
+            </div>
+            <div className="bin98-section">
+              <div className="bin98-subheading">Failure mode</div>
+              <p>{failureStory}</p>
+            </div>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="pillars-and-mental-hooks" className="bin98-section">
+            <h2 className="bin98-heading">Pillars and mental hooks</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="bin98-section">
+                <div className="bin98-subheading">Pillars</div>
+                <div className="space-y-4">
                   {pillars.map((pillar) => (
-                    <div key={pillar.title} className="win95-panel">
-                      <div className="win95-heading">{pillar.title}</div>
-                      <p className="win95-text">{pillar.detail}</p>
+                    <div key={pillar.title} className="bin98-section">
+                      <div className="bin98-subheading">{pillar.title}</div>
+                      <p>{pillar.detail}</p>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="win95-panel">
-                <div className="win95-subheading">Mental models</div>
-                <div className="win95-stack">
+              <div className="bin98-section">
+                <div className="bin98-subheading">Mental models</div>
+                <div className="space-y-4">
                   {mentalModels.map((model) => (
-                    <div key={model.title} className="win95-panel">
-                      <div className="win95-heading">{model.title}</div>
-                      <p className="win95-text">{model.detail}</p>
+                    <div key={model.title} className="bin98-section">
+                      <div className="bin98-subheading">{model.title}</div>
+                      <p>{model.detail}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works, step by step</legend>
-            <div className="win95-grid win95-grid-3">
+          <section id="how-it-works-step-by-step" className="bin98-section">
+            <h2 className="bin98-heading">How it works, step by step</h2>
+            <div className="grid gap-4 md:grid-cols-3">
               {howItWorks.map((step, index) => (
-                <div key={step.title} className="win95-panel">
-                  <div className="win95-heading">
+                <div key={step.title} className="bin98-section">
+                  <div className="bin98-subheading">
                     Step {index + 1}: {step.title}
                   </div>
-                  <p className="win95-text">{step.detail}</p>
+                  <p>{step.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity at a glance</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
+          <section id="complexity-at-a-glance" className="bin98-section">
+            <h2 className="bin98-heading">Complexity at a glance</h2>
+            <div className="bin98-section">
+              <table className="bin98-table">
                 <thead>
                   <tr>
                     <th>Approach</th>
@@ -459,90 +521,88 @@ export default function OSKernelSchedulingMemoryPage(): JSX.Element {
                 </tbody>
               </table>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Where these choices matter</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((app) => (
-                <div key={app.title} className="win95-panel">
-                  <div className="win95-heading">{app.title}</div>
-                  <p className="win95-text">{app.detail}</p>
-                  <p className="win95-text">{app.note}</p>
-                </div>
-              ))}
-            </div>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">Failure mode</div>
-              <p className="win95-text">{failureStory}</p>
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls to avoid</legend>
-            <div className="win95-grid win95-grid-2">
-              {pitfalls.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>When to reach for each approach</legend>
-            <div className="win95-grid win95-grid-2">
-              {whenToUse.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Advanced moves</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="advanced-moves" className="bin98-section">
+            <h2 className="bin98-heading">Advanced moves</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
+                  <p>{item.note}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
+        </>
+      )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
+      {activeTab === 'examples' && (
+        <>
+          <section id="failure-mode" className="bin98-section">
+            <h2 className="bin98-heading">Failure mode</h2>
+            <div className="bin98-section">
+              <p>{failureStory}</p>
+            </div>
+          </section>
+
+          <section id="code-examples" className="bin98-section">
+            <h2 className="bin98-heading">Code examples</h2>
+            <div className="space-y-4">
               {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
+                <div key={example.title} className="bin98-section">
+                  <div className="bin98-subheading">{example.title}</div>
+                  <pre className="bin98-codebox">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text">{example.explanation}</p>
+                  <p>{example.explanation}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
+        </>
+      )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-grid win95-grid-2">
-              {keyTakeaways.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
+      {activeTab === 'takeaways' && (
+        <>
+          <section id="pitfalls-to-avoid" className="bin98-section">
+            <h2 className="bin98-heading">Pitfalls to avoid</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {pitfalls.map((item) => (
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
-        </div>
-      </div>
-    </div>
+          </section>
+
+          <section id="when-to-reach-for-each-approach" className="bin98-section">
+            <h2 className="bin98-heading">When to reach for each approach</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {whenToUse.map((item) => (
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section id="key-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key takeaways</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {keyTakeaways.map((item) => (
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

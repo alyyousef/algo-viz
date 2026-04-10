@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'React is a UI library for building component-based user interfaces with declarative rendering. Its core job is to describe interface structure as a function of state and props, then coordinate updates when that state changes.',
       'In practice, React is used for dashboards, product interfaces, design systems, content applications, embedded widgets, internal tools, and large front-end products. It also serves as the foundation for broader frameworks and full-stack application platforms.',
-      'The original page scope was placeholder content for React. This help-style version keeps that scope while expanding it into a fuller reference covering mental model, syntax, hooks, architecture, ecosystem, application-platform choices, examples, tradeoffs, and glossary terms.',
+      'This help-style reference covers React across mental model, syntax, hooks, architecture, ecosystem, application-platform choices, examples, tradeoffs, and glossary terms.',
     ],
   },
   {

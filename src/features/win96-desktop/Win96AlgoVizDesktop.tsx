@@ -1,65 +1,23 @@
-import { useEffect, useMemo, useRef, useState, type JSX } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, type JSX } from 'react'
 
 import { ErrorBoundary } from '@/app/ErrorBoundary'
-import { getExplorerNode } from '@/data/algoviz-explorer'
 import DesktopIcon96 from '@/systems/win96/components/DesktopIcon96'
 import Window96 from '@/systems/win96/components/Window96'
 import {
   Win96WindowManagerProvider,
   useWin96WindowManager,
 } from '@/systems/win96/context/Win96WindowManager'
-import Button97 from '@/systems/win97/components/Button97'
-import Taskbar97 from '@/systems/win97/components/Taskbar97'
 
+import DesktopChrome from './components/DesktopChrome'
+import { FolderIcon } from './components/DesktopShellIcons'
 import FolderWindowContent from './components/FolderWindowContent'
-import { useMinimizedTasks } from './hooks/useMinimizedTasks'
 import { useViewportScale } from './hooks/useViewportScale'
 
 const BASE_DESKTOP_WIDTH = 1440
 const BASE_DESKTOP_HEIGHT = 900
-/** On narrow viewports, scale from a smaller logical canvas so content is usable */
 const MOBILE_BREAKPOINT = 768
 const BASE_MOBILE_WIDTH = 480
 const BASE_MOBILE_HEIGHT = 800
-
-function FolderIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
-  return (
-    <span aria-hidden="true" className="win96-folder-icon-wrap">
-      <img src="/folder.png" alt="" className={`win96-folder-icon win96-folder-icon--${size}`} />
-    </span>
-  )
-}
-
-function VisualizationIcon({ size = 'sm' }: { size?: 'sm' | 'md' | 'lg' }): JSX.Element {
-  return (
-    <span aria-hidden="true" className="win96-computer-icon-wrap">
-      <img
-        src="/computer.png"
-        alt=""
-        className={`win96-computer-icon win96-computer-icon--${size}`}
-      />
-    </span>
-  )
-}
-
-// ── Clock ────────────────────────────────────────────────────────────────────
-// Isolated into its own component so the 1-minute tick only re-renders the
-// clock, not the entire DesktopChrome subtree.
-
-function DesktopClock(): JSX.Element {
-  const [now, setNow] = useState(() => new Date())
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 60_000)
-    return () => window.clearInterval(timer)
-  }, [])
-
-  const timeLabel = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  return <div className="win96-taskbar__clock">{timeLabel}</div>
-}
-
-// ── Window layer ─────────────────────────────────────────────────────────────
 
 const WindowLayer = (): JSX.Element => {
   const { windows, activeWindowId, focusWindow, minimizeWindow, closeWindow } =
@@ -95,8 +53,6 @@ const WindowLayer = (): JSX.Element => {
   )
 }
 
-// ── Desktop container (icons + windows) ──────────────────────────────────────
-
 function DesktopContainer(): JSX.Element {
   const { orderedRootFolders, openFolderWindow } = useWin96WindowManager()
 
@@ -119,251 +75,6 @@ function DesktopContainer(): JSX.Element {
     </div>
   )
 }
-
-// ── Desktop chrome (taskbar + start menu) ────────────────────────────────────
-
-function DesktopChrome(): JSX.Element {
-  const navigate = useNavigate()
-  const {
-    windows,
-    activeWindowId,
-    orderedRootFolders,
-    openFolderWindow,
-    toggleMinimize,
-    getChildren,
-  } = useWin96WindowManager()
-  const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
-  const [activeStartFolderId, setActiveStartFolderId] = useState<string | null>(null)
-  const { tasks: minimizedHelpTasks, removeTask } = useMinimizedTasks()
-  const startMenuRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    if (!isStartMenuOpen) return
-
-    const listenerOptions: AddEventListenerOptions = { capture: true }
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target
-      if (
-        !(target instanceof Node) ||
-        startMenuRef.current?.contains(target) ||
-        (target instanceof Element && target.closest('.start-button-97'))
-      ) {
-        return
-      }
-      setIsStartMenuOpen(false)
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsStartMenuOpen(false)
-    }
-
-    window.addEventListener('pointerdown', handlePointerDown, listenerOptions)
-    window.addEventListener('keydown', handleKeyDown)
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown, listenerOptions)
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isStartMenuOpen])
-
-  const startMenuEntries = useMemo(
-    () => orderedRootFolders.filter((node) => node.kind === 'folder'),
-    [orderedRootFolders],
-  )
-
-  const handleStartButtonClick = () => {
-    setIsStartMenuOpen((open) => {
-      const next = !open
-      if (next) {
-        const firstFolder = startMenuEntries[0]
-        setActiveStartFolderId(firstFolder ? firstFolder.id : null)
-      }
-      return next
-    })
-  }
-
-  const orderedWindows = useMemo(() => [...windows].sort((a, b) => a.zIndex - b.zIndex), [windows])
-
-  const runningItemsContent = orderedWindows.map((win) => {
-    const isActive = !win.isMinimized && activeWindowId === win.id
-    const classes = [
-      'win96-taskbar__button',
-      isActive ? 'win96-taskbar__button--active' : undefined,
-      win.isMinimized ? 'win96-taskbar__button--minimized' : undefined,
-    ]
-      .filter(Boolean)
-      .join(' ')
-
-    return (
-      <Button97
-        key={win.id}
-        size="sm"
-        className={classes}
-        iconLeft={<FolderIcon size="sm" />}
-        data-state={isActive ? 'active' : win.isMinimized ? 'minimized' : 'inactive'}
-        onClick={() => toggleMinimize(win.id)}
-      >
-        {win.title}
-      </Button97>
-    )
-  })
-
-  const minimizedHelpButtons = minimizedHelpTasks.map((task) => (
-    <Button97
-      key={task.id}
-      size="sm"
-      className="win96-taskbar__button win96-taskbar__button--minimized"
-      data-state="minimized"
-      onClick={() => {
-        removeTask(task.id)
-        void navigate(task.url)
-      }}
-      iconLeft={<VisualizationIcon size="sm" />}
-    >
-      {task.title}
-    </Button97>
-  ))
-
-  const activeStartFolder = useMemo(
-    () => startMenuEntries.find((node) => node.id === activeStartFolderId) ?? startMenuEntries[0],
-    [activeStartFolderId, startMenuEntries],
-  )
-
-  const activeStartFolderChildren = useMemo(() => {
-    if (!activeStartFolder) return []
-    return getChildren(activeStartFolder.id)
-  }, [activeStartFolder, getChildren])
-
-  const handleSelectStartFolder = (folderId: string) => {
-    setActiveStartFolderId(folderId)
-  }
-
-  const handleLaunchNode = (nodeId: string, kind: 'folder' | 'visualization') => {
-    setIsStartMenuOpen(false)
-    if (kind === 'folder') {
-      openFolderWindow(nodeId)
-    } else {
-      const target = getExplorerNode(nodeId)
-      if (target?.node.kind === 'visualization' && target.node.route) {
-        void navigate(target.node.route)
-      }
-    }
-  }
-
-  return (
-    <div className="win96-desktop-chrome">
-      {isStartMenuOpen ? (
-        <div
-          ref={startMenuRef}
-          className="win96-start-menu"
-          role="dialog"
-          aria-label="AlgoViz start menu"
-        >
-          <div className="win96-start-menu__columns">
-            <div className="win96-start-menu__list" role="menu" aria-label="Main menu">
-              {startMenuEntries.map((node) => {
-                const isActive = node.id === activeStartFolder?.id
-                return (
-                  <button
-                    key={node.id}
-                    type="button"
-                    className={`win96-start-menu__item${isActive ? ' win96-start-menu__item--active' : ''}`}
-                    role="menuitem"
-                    onClick={() => handleSelectStartFolder(node.id)}
-                  >
-                    <span className="win96-start-menu__item-icon" aria-hidden="true">
-                      <FolderIcon size="sm" />
-                    </span>
-                    <span className="win96-start-menu__item-content">
-                      <span className="win96-start-menu__item-label">{node.name}</span>
-                      {node.description ? (
-                        <span className="win96-start-menu__item-description">
-                          {node.description}
-                        </span>
-                      ) : null}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-
-            <div className="win96-start-menu__subpanel">
-              <div className="win96-start-menu__subpanel-header">
-                <span className="win96-start-menu__subpanel-title">
-                  {activeStartFolder?.name ?? 'Items'}
-                </span>
-                {activeStartFolder ? (
-                  <button
-                    type="button"
-                    className="win96-start-menu__subpanel-action"
-                    onClick={() => handleLaunchNode(activeStartFolder.id, 'folder')}
-                  >
-                    Open
-                  </button>
-                ) : null}
-              </div>
-              <div className="win96-start-menu__sublist" role="menu" aria-label="Sub menu">
-                {activeStartFolderChildren.length === 0 ? (
-                  <div className="win96-start-menu__subpanel-empty">No items</div>
-                ) : (
-                  activeStartFolderChildren.map((child) => (
-                    <button
-                      key={child.id}
-                      type="button"
-                      className="win96-start-menu__item win96-start-menu__item--sub"
-                      role="menuitem"
-                      onClick={() => handleLaunchNode(child.id, child.kind)}
-                    >
-                      <span className="win96-start-menu__item-icon" aria-hidden="true">
-                        {child.kind === 'folder' ? (
-                          <FolderIcon size="sm" />
-                        ) : (
-                          <VisualizationIcon size="sm" />
-                        )}
-                      </span>
-                      <span className="win96-start-menu__item-content">
-                        <span className="win96-start-menu__item-label">{child.name}</span>
-                        {child.description ? (
-                          <span className="win96-start-menu__item-description">
-                            {child.description}
-                          </span>
-                        ) : null}
-                      </span>
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
-      <img
-        src="/transparentText.png"
-        alt="AlgoViz logo"
-        className="win96-desktop-logo"
-        draggable={false}
-      />
-      <Taskbar97
-        startButtonProps={{
-          onClick: handleStartButtonClick,
-          'aria-label': 'Show programs menu',
-          pressed: isStartMenuOpen,
-          'aria-expanded': isStartMenuOpen,
-          'aria-haspopup': 'menu',
-        }}
-        runningItems={
-          <div className="win96-taskbar__items">
-            {runningItemsContent}
-            {minimizedHelpButtons}
-          </div>
-        }
-        tray={<DesktopClock />}
-      />
-    </div>
-  )
-}
-
-// ── Root desktop page ─────────────────────────────────────────────────────────
 
 export default function Win96AlgoVizDesktop(): JSX.Element {
   const { rootRef, outerRef, scaleRef } = useViewportScale({

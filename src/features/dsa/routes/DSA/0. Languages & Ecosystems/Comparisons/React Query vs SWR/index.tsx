@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'React Query, now part of TanStack Query, and SWR are both React libraries for handling remote server state, but they have different design personalities. TanStack Query is a broader server-state toolkit with extensive caching, invalidation, mutations, optimistic updates, pagination, query lifecycle controls, and surrounding infrastructure. SWR is a lighter, more minimal data-fetching model centered on cache, stale-while-revalidate behavior, and ergonomic React usage.',
       'The practical question is not which one can fetch data at all. Both can. The more useful question is whether the app wants a rich server-state management system with explicit query client machinery and many knobs, or a smaller API with strong defaults for fetching, caching, and revalidation.',
-      'The original page scope was placeholder content for React Query vs SWR, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference page.',
+      'This help-style reference covers React Query vs SWR across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

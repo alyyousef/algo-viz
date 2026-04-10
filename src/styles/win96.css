@@ -567,6 +567,165 @@
   color: #444;
 }
 
+.win96-search {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--win96-taskbar-total-height) + 18px);
+  transform: translateX(-50%);
+  width: min(720px, calc(100vw - 32px));
+  background: #d4d0c8;
+  border-top: 2px solid #f5f5f5;
+  border-left: 2px solid #f5f5f5;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
+  color: #000;
+  z-index: 1100;
+  overflow: hidden;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+}
+
+.win96-search__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 6px;
+  color: #fff;
+  background: linear-gradient(90deg, #0a246a 0%, #2d63c8 100%);
+}
+
+.win96-search__titlecopy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.win96-search__title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.win96-search__shortcut {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.win96-search__close {
+  min-width: 19px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  background: #d4d0c8;
+  color: #000;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.win96-search__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.win96-search__label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.win96-search__input {
+  width: 100%;
+  height: 34px;
+  padding: 6px 10px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  background: #fff;
+  color: #000;
+  font: inherit;
+}
+
+.win96-search__input:focus {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.win96-search__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  color: #4a4a4a;
+}
+
+.win96-search__results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: min(52vh, 420px);
+  padding: 4px;
+  border: 2px solid;
+  border-color: #404040 #fff #fff #404040;
+  background: #efefef;
+  overflow: auto;
+}
+
+.win96-search__result {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.win96-search__result:hover,
+.win96-search__result:focus-visible,
+.win96-search__result--active {
+  outline: none;
+  background: linear-gradient(180deg, #0a246a 0%, #295fbc 100%);
+  color: #fff;
+}
+
+.win96-search__result-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.win96-search__result-breadcrumb,
+.win96-search__result-route,
+.win96-search__empty {
+  font-size: 11px;
+}
+
+.win96-search__result-breadcrumb,
+.win96-search__result-route {
+  color: rgba(0, 0, 0, 0.74);
+}
+
+.win96-search__result:hover .win96-search__result-breadcrumb,
+.win96-search__result:hover .win96-search__result-route,
+.win96-search__result:focus-visible .win96-search__result-breadcrumb,
+.win96-search__result:focus-visible .win96-search__result-route,
+.win96-search__result--active .win96-search__result-breadcrumb,
+.win96-search__result--active .win96-search__result-route {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.win96-search__empty {
+  padding: 12px;
+  color: #444;
+}
+
 .win96-window--active .win96-window__title-bar {
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4) inset;
 }
@@ -829,6 +988,16 @@
   .win96-start-menu {
     max-height: calc(100dvh - var(--win96-taskbar-total-height) - 16px);
   }
+
+  .win96-search {
+    width: calc(100vw - 16px);
+    bottom: calc(var(--win96-taskbar-total-height) + 10px);
+  }
+
+  .win96-search__meta {
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 
 /* Small tablet / large phone — constrain start menu width */
@@ -836,6 +1005,10 @@
   .win96-start-menu {
     min-width: min(420px, calc(100vw - 8px));
     left: 4px;
+  }
+
+  .win96-search {
+    width: calc(100vw - 8px);
   }
 
   .win96-desktop-icons {
@@ -856,6 +1029,10 @@
     right: 4px;
     min-width: unset;
     width: calc(100vw - 8px);
+  }
+
+  .win96-search {
+    bottom: calc(var(--win96-taskbar-total-height) + 8px);
   }
 
   .win96-start-menu__list {
@@ -893,6 +1070,10 @@
   height: 100%;
   flex-shrink: 0;
   white-space: nowrap;
+}
+
+.win96-taskbar__search-button {
+  min-width: 74px;
 }
 
 .win96-taskbar__button--active {

@@ -136,7 +136,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'backend98-roadmap',
     title: 'Coverage Roadmap',
     paragraphs: [
-      'The original page was a placeholder. That original intent is preserved here as a roadmap so the section can continue to deepen while remaining faithful to the same coverage goals.',
+      'This page provides a roadmap for the section and sets the coverage priorities for deeper follow-on topics.',
     ],
     bullets: [
       'Overview and key ideas will be added.',

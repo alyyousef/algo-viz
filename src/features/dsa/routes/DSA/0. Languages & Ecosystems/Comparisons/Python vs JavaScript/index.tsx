@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Python and JavaScript are both general-purpose languages with enormous ecosystems, but they grew around very different centers of gravity. Python became known for readability, scripting, automation, scientific work, and backend development. JavaScript became the language of the browser and later expanded into servers, tooling, and full-stack product development.',
       "The practical comparison is not which one is more legitimate. Both are foundational technologies. The more useful question is whether the work benefits more from Python's readability, scripting strength, and data-heavy ecosystem, or from JavaScript's browser-native position and ability to span frontend and backend web work.",
-      'The original page scope was placeholder content for Python vs JavaScript, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a more complete reference page.',
+      'This help-style reference covers Python vs JavaScript across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

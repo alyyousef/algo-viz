@@ -4,6 +4,7 @@ import {
   explorerIndex,
   getExplorerChildren,
   getExplorerNode,
+  type ExplorerFolderNode,
   type ExplorerIndexEntry,
   type ExplorerNode,
 } from '@/data/algoviz-explorer'
@@ -338,7 +339,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
 interface WindowManagerValue {
   windows: WindowState[]
   activeWindowId?: string
-  orderedRootFolders: ExplorerNode[]
+  orderedRootFolders: ExplorerFolderNode[]
   focusWindow: (windowId: string) => void
   closeWindow: (windowId: string) => void
   minimizeWindow: (windowId: string) => void
@@ -362,7 +363,13 @@ export interface Win96WindowManagerProviderProps {
 export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProviderProps) => {
   const [state, dispatch] = useReducer(reduceManager, INITIAL_STATE)
 
-  const orderedRootFolders = useMemo(() => sortRootFolders(root.children ?? []), [])
+  const orderedRootFolders = useMemo(
+    () =>
+      sortRootFolders(
+        (root.children ?? []).filter((node): node is ExplorerFolderNode => node.kind === 'folder'),
+      ),
+    [],
+  )
 
   const focusWindow = useCallback((windowId: string) => {
     dispatch({ type: 'FOCUS_WINDOW', windowId })

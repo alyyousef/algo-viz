@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Prisma and TypeORM are both important tools in the TypeScript database ecosystem, but they represent different mental models for persistence. Prisma is schema-first, generation-driven, and strongly centered on a typed client API. TypeORM is entity-centric, decorator-heavy, and more closely aligned with traditional ORM patterns built around classes, repositories, and object mapping.',
       'That means the useful comparison is not simply which one talks to PostgreSQL or MySQL more effectively. The real issue is how the team wants to express persistence: through a schema file that generates a client and migrations, or through class-based entities and ORM patterns living directly in application code.',
-      'The original page scope was placeholder content for Prisma vs TypeORM, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers Prisma vs TypeORM across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

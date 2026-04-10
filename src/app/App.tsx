@@ -24,14 +24,28 @@ const dsaRouteEntries: DsaRouteEntry[] = dsaRouteDefinitions.flatMap(
 
 function PageLoader(): JSX.Element {
   return (
-    <div className="page-loader">
+    <div className="page-loader" role="status" aria-live="polite">
       <div className="page-loader__dialog">
-        <div className="page-loader__titlebar">AlgoViz</div>
+        <div className="page-loader__titlebar">
+          <span className="page-loader__title">AlgoViz Explorer</span>
+          <span className="page-loader__controls" aria-hidden="true">
+            <span className="page-loader__control" />
+            <span className="page-loader__control" />
+            <span className="page-loader__control" />
+          </span>
+        </div>
         <div className="page-loader__body">
-          <div className="page-loader__label">Loading page, please wait…</div>
+          <div className="page-loader__status">
+            <span className="page-loader__status-icon" aria-hidden="true" />
+            <div className="page-loader__copy">
+              <div className="page-loader__label">Opening topic page...</div>
+              <div className="page-loader__detail">Loading the lesson shell and route content.</div>
+            </div>
+          </div>
           <div className="page-loader__bar-track">
             <div className="page-loader__bar-fill" />
           </div>
+          <div className="page-loader__footer">Retro desktop online</div>
         </div>
       </div>
     </div>

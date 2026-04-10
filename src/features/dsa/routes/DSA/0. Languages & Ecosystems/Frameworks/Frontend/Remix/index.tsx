@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Remix is a React framework centered on web fundamentals, route-based data loading, server-first mutations, and progressive enhancement. It treats loaders, actions, nested routes, and normal browser form behavior as primary architecture concepts rather than incidental implementation details.',
       'In practice, Remix is used for full-stack web applications where teams want a clear request-response model, explicit route boundaries, and a framework that stays close to the browser and HTTP platform instead of abstracting too much of it away.',
-      'The original page scope was placeholder content for Remix. This help-style version keeps that scope while organizing the material into overview, key ideas, syntax, APIs, ecosystem, architecture, use cases, tradeoffs, examples, and glossary terms.',
+      'This help-style reference covers Remix across overview, key ideas, syntax, APIs, ecosystem, architecture, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

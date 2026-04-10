@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Redis and Memcached are both in-memory technologies often used for caching, but they occupy different points on the capability spectrum. Memcached is a deliberately simple, distributed memory object cache focused on fast key-value storage and retrieval. Redis is an in-memory data store with richer data structures, optional persistence, and features that let it act as much more than a cache.',
       'That means the practical question is not just which one stores cached values faster. The more useful question is whether the system needs a very simple cache that is intentionally narrow, or an in-memory platform that can handle caching plus richer application patterns such as counters, lists, sets, streams, pub/sub, and persistence-aware use cases.',
-      'The original page scope was placeholder content for Redis vs Memcached, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference page.',
+      'This help-style reference covers Redis vs Memcached across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

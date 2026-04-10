@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Ruby on Rails and Laravel are both high-productivity web frameworks built around developer happiness, strong conventions, and batteries-included application development, but they belong to different language ecosystems. Rails is the iconic framework of the Ruby world and is deeply associated with convention over configuration, MVC structure, Active Record, and rapid full-stack web development. Laravel plays a very similar cultural role in the PHP world, emphasizing expressive syntax, Eloquent ORM, Artisan tooling, Blade templating, queues, and a polished end-to-end developer experience.',
       "That means the practical question is not which one can route requests, talk to a database, render templates, or run queued jobs. Both can. The more useful question is whether the team benefits more from the Ruby and Rails ecosystem or from the PHP and Laravel ecosystem, and whether the framework's style matches the team's preferred way of building applications.",
-      'The original page scope was placeholder content for Ruby on Rails vs Laravel, with planned notes on overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers Ruby on Rails vs Laravel across overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

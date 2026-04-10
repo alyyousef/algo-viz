@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'React Native and Kotlin Multiplatform are both used to reduce duplicated mobile work, but they do not begin from the same abstraction. React Native is primarily a cross-platform application framework for building mobile UI with React and JavaScript or TypeScript. Kotlin Multiplatform is primarily a code-sharing approach for Kotlin projects that can share business logic and optionally more, while still allowing native platform code where needed.',
       'That means the real comparison is not simply JavaScript versus Kotlin. The more useful question is whether the product wants one cross-platform app framework centered around shared UI and React-based development, or whether it wants shared Kotlin code across Android and iOS while keeping a more native platform-oriented application structure.',
-      'The original page scope was placeholder content for React Native vs Kotlin Multiplatform, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference.',
+      'This help-style reference covers React Native vs Kotlin Multiplatform across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

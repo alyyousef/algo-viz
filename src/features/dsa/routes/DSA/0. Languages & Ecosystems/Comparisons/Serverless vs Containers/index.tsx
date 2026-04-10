@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Serverless and containers are often presented as direct rivals, but they are not exactly the same kind of thing. Serverless is primarily an operational model where the cloud platform manages more of the infrastructure, scaling, and capacity behavior for you. Containers are primarily a packaging and runtime model that bundles an application and its dependencies into a portable unit that can run consistently across environments.',
       'That distinction matters because a container can be run in a serverless way, and a serverless platform may accept container images as its deployment artifact. The useful comparison is therefore not simply functions versus Docker. The real question is how much infrastructure ownership, runtime control, portability, scaling behavior, and operational visibility the team wants.',
-      'The original page scope was placeholder content for Serverless vs Containers, with planned notes on overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style page keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers Serverless vs Containers across overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

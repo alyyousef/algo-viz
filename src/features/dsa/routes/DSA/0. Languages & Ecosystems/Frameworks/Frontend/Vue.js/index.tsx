@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Vue.js is a progressive frontend framework for building interactive user interfaces. It focuses on declarative rendering, component composition, and a built-in reactivity model that lets UI update when application state changes.',
       'The framework is often adopted for single-page applications, dashboards, content-rich frontends, and incrementally enhanced interfaces. Teams frequently choose it when they want a cohesive developer experience without moving to a heavier all-in platform.',
-      'The original page scope was placeholder content for Vue.js. This help-style version keeps that scope while expanding it into a fuller reference covering mental model, templates, reactivity, component authoring, routing, state, SSR, use cases, migration concerns, examples, and glossary terms.',
+      'This help-style reference covers Vue.js across mental model, templates, reactivity, component authoring, routing, state, SSR, use cases, migration concerns, examples, and glossary terms.',
     ],
   },
   {

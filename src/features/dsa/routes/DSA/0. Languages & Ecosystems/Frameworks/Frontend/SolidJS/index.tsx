@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'SolidJS is a frontend library for building reactive user interfaces with fine-grained reactivity and JSX-based authoring. It is often discussed alongside component frameworks, but its identity is strongly tied to signals, direct DOM updates, and a runtime model that avoids broad component rerenders.',
       'In practice, SolidJS is used for interactive web applications, dashboards, embedded UI surfaces, and products where teams want a React-like JSX authoring experience with a smaller reactive surface and lower rendering overhead for many update patterns.',
-      'The original page scope was placeholder content for SolidJS. This help-style version keeps that scope while organizing the material into overview, key ideas, syntax, APIs, ecosystem, architecture, use cases, tradeoffs, examples, and glossary terms.',
+      'This help-style reference covers SolidJS across overview, key ideas, syntax, APIs, ecosystem, architecture, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

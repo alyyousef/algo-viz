@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'PostgreSQL and MySQL are both mature relational database systems used in serious production environments. Both support SQL, indexes, transactions, backups, replication, and the core expectations of modern application storage.',
       'The useful comparison is not whether one of them is real enterprise technology and the other is not. The more useful question is which default philosophy better matches the system being built. PostgreSQL tends to reward teams that want richer SQL, stronger database-level modeling, and feature depth. MySQL tends to reward teams that want broad operational familiarity, mainstream compatibility, and a very established path for conventional transactional web applications.',
-      'The original page scope was placeholder content for PostgreSQL vs MySQL, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope but expands it into a more complete reference page.',
+      'This help-style reference covers PostgreSQL vs MySQL across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

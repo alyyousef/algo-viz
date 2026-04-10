@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Spring Boot and ASP.NET Core are both mature, production-grade application platforms for building APIs, web apps, background services, and cloud backends, but they come from different ecosystem centers. Spring Boot is the dominant application platform in the modern Java world, emphasizing Spring auto-configuration, starters, dependency injection, and a very large enterprise integration ecosystem. ASP.NET Core is the modern web and service framework in the .NET world, emphasizing a unified host model, middleware pipeline, built-in dependency injection, strong tooling, and first-class alignment with the broader .NET runtime and libraries.',
       'That means the practical question is not which one can build a REST API, connect to a database, or run in containers. Both can. The more useful question is whether the team benefits more from Spring Boot and the wider Spring platform or from ASP.NET Core and the broader .NET application stack.',
-      'The original page scope was placeholder content for Spring Boot vs ASP.NET Core, with planned notes on overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style page keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers Spring Boot vs ASP.NET Core across overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

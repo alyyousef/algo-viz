@@ -137,7 +137,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'mobdev98-roadmap',
     title: 'Coverage Roadmap',
     paragraphs: [
-      'The original page was a placeholder. That original intent is preserved here as a roadmap so the subsection can continue expanding while keeping the same scope goals.',
+      'This page provides a roadmap for the subsection and clarifies the scope for deeper follow-on topics.',
     ],
     bullets: [
       'Overview and key ideas will be added.',

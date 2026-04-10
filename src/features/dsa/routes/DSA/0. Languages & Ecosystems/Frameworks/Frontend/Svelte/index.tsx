@@ -38,7 +38,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Svelte is a component framework with a compiler-first model. Instead of relying as heavily on a large generic browser runtime, it pushes more work into compilation so components can ship with smaller, more specialized update logic.',
       'In practice, Svelte is used for modern interactive frontends, single-page applications, content-heavy interfaces, and products that value concise component authoring with low runtime ceremony. For broader application concerns such as routing, data loading, form actions, and SSR, the ecosystem becomes most complete when paired with SvelteKit.',
-      'The original page scope was placeholder content for Svelte. This help-style version keeps that scope while organizing the material into overview, key ideas, syntax, APIs, ecosystem, architecture, use cases, tradeoffs, examples, and glossary terms.',
+      'This help-style reference covers Svelte across overview, key ideas, syntax, APIs, ecosystem, architecture, use cases, tradeoffs, examples, and glossary terms.',
     ],
   },
   {

@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'SQL and NoSQL are not just two query syntaxes. They represent different families of database design priorities. SQL usually refers to relational databases that organize data into tables with explicit schemas, relationships, joins, and mature transactional guarantees. NoSQL refers to a broader umbrella of non-relational systems such as document stores, key-value stores, wide-column stores, and graph databases.',
       'That umbrella point matters. Comparing SQL to NoSQL is not like comparing PostgreSQL to MySQL. SQL is a data model and query tradition centered on relations. NoSQL is a catch-all category for systems that often relax or replace relational assumptions in order to optimize for scale patterns, flexible data shapes, or specialized access paths.',
-      'The original page scope was placeholder content promising overview, key ideas, syntax, APIs, ecosystem, architecture notes, use cases, and tradeoffs. This page keeps that scope but turns it into a full help-style manual that explains where each approach fits, where the comparison is oversimplified, and how real engineering decisions are usually made.',
+      'This help-style manual covers overview, key ideas, syntax, APIs, ecosystem, architecture notes, use cases, and tradeoffs while explaining where each approach fits, where the comparison is oversimplified, and how real engineering decisions are usually made.',
     ],
   },
   {

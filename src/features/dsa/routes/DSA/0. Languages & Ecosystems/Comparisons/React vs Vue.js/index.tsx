@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'React and Vue are both mature component-based technologies for building modern web interfaces, but they organize frontend thinking differently. React is primarily a UI library centered on components, JSX, and a broad ecosystem of surrounding libraries. Vue is a progressive framework with strong built-in patterns for templates, reactivity, component authoring, and application structure while still feeling relatively lightweight.',
       'The practical comparison is not only JSX versus templates or hooks versus refs and computed values. The more useful question is whether the team wants a rendering-centered library with broad architectural freedom, or a more integrated framework that provides a smoother path through many common frontend concerns while remaining less heavy than a full framework such as Angular.',
-      'The original page scope was placeholder content for React vs Vue.js, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers React vs Vue.js across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

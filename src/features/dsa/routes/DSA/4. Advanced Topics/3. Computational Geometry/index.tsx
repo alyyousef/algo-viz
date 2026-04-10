@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -303,96 +304,149 @@ const keyTakeaways = [
   'Reuse hulls and sweeps with rotating calipers and event structures to solve many tasks quickly.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'takeaways'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'takeaways', label: 'Takeaways' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'overview', label: 'Overview' },
+    { id: 'big-picture', label: 'Big picture' },
+    { id: 'history', label: 'History' },
+    { id: 'applications', label: 'Applications' },
+  ],
+  'core-concepts': [
+    { id: 'core-pillars-and-mental-hooks', label: 'Core pillars and mental hooks' },
+    { id: 'how-it-works', label: 'How it works' },
+    { id: 'complexity-reference', label: 'Complexity reference' },
+    { id: 'advanced-moves', label: 'Advanced moves' },
+  ],
+  examples: [
+    { id: 'failure-mode', label: 'Failure mode' },
+    { id: 'code-examples', label: 'Code examples' },
+  ],
+  takeaways: [
+    { id: 'pitfalls', label: 'Pitfalls' },
+    { id: 'when-to-use-what', label: 'When to use what' },
+    { id: 'key-takeaways', label: 'Key takeaways' },
+  ],
+}
+
 export default function ComputationalGeometryPage(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Computational Geometry',
+    defaultTab: 'big-picture',
+  })
+
   return (
-    <div className="win95-page">
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Computational Geometry</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">Robust spatial reasoning</div>
-              <p className="win95-text">
-                Reliable predicates, disciplined tolerances, and sweep or hull patterns turn spatial
-                problems into predictable computations. Robustness beats elegance when coordinates
-                get messy.
-              </p>
-            </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
+    <TopicPageShell
+      title="Computational Geometry"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Computational Geometry</h1>
+      <p className="bin98-doc-subtitle">Robust spatial reasoning.</p>
 
-          <fieldset className="win95-fieldset">
-            <legend>Big picture</legend>
-            <div className="win95-grid win95-grid-2">
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <div className="bin98-subheading">Robust spatial reasoning</div>
+            <p>
+              Reliable predicates, disciplined tolerances, and sweep or hull patterns turn spatial
+              problems into predictable computations. Robustness beats elegance when coordinates get
+              messy.
+            </p>
+          </section>
+
+          <section id="big-picture" className="bin98-section">
+            <h2 className="bin98-heading">Big picture</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {bigPicture.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                  <p className="win95-text">{item.note}</p>
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
+                  <p>{item.note}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>History</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="history" className="bin98-section">
+            <h2 className="bin98-heading">History</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {history.map((event) => (
-                <div key={event.title} className="win95-panel">
-                  <div className="win95-heading">{event.title}</div>
-                  <p className="win95-text">{event.detail}</p>
+                <div key={event.title} className="bin98-section">
+                  <div className="bin98-subheading">{event.title}</div>
+                  <p>{event.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core pillars and mental hooks</legend>
-            <div className="win95-row">
-              <div className="win95-stack">
+          <section id="applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {applications.map((item) => (
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars-and-mental-hooks" className="bin98-section">
+            <h2 className="bin98-heading">Core pillars and mental hooks</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-4">
                 {pillars.map((pillar) => (
-                  <div key={pillar.title} className="win95-panel">
-                    <div className="win95-heading">{pillar.title}</div>
-                    <p className="win95-text">{pillar.detail}</p>
+                  <div key={pillar.title} className="bin98-section">
+                    <div className="bin98-subheading">{pillar.title}</div>
+                    <p>{pillar.detail}</p>
                   </div>
                 ))}
               </div>
-              <div className="win95-stack">
+              <div className="space-y-4">
                 {mentalModels.map((model) => (
-                  <div key={model.title} className="win95-panel">
-                    <div className="win95-heading">{model.title}</div>
-                    <p className="win95-text">{model.detail}</p>
+                  <div key={model.title} className="bin98-section">
+                    <div className="bin98-subheading">{model.title}</div>
+                    <p>{model.detail}</p>
                   </div>
                 ))}
               </div>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="how-it-works" className="bin98-section">
+            <h2 className="bin98-heading">How it works</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {howItWorks.map((item) => (
-                <div key={item.step} className="win95-panel">
-                  <div className="win95-heading">{item.step}</div>
-                  <p className="win95-text">{item.detail}</p>
+                <div key={item.step} className="bin98-section">
+                  <div className="bin98-subheading">{item.step}</div>
+                  <p>{item.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity reference</legend>
-            <div className="win95-panel">
-              <table className="win95-table">
+          <section id="complexity-reference" className="bin98-section">
+            <h2 className="bin98-heading">Complexity reference</h2>
+            <div className="bin98-section">
+              <table className="bin98-table">
                 <thead>
                   <tr>
                     <th>Approach</th>
@@ -413,85 +467,85 @@ export default function ComputationalGeometryPage(): JSX.Element {
                 </tbody>
               </table>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {applications.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
+          <section id="advanced-moves" className="bin98-section">
+            <h2 className="bin98-heading">Advanced moves</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {advanced.map((item) => (
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
                 </div>
               ))}
             </div>
-            <div className="win95-panel win95-panel--raised">
-              <div className="win95-heading">{failureCallout.title}</div>
-              <p className="win95-text">{failureCallout.detail}</p>
-            </div>
-          </fieldset>
+          </section>
+        </>
+      )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
+      {activeTab === 'examples' && (
+        <>
+          <section id="failure-mode" className="bin98-section">
+            <h2 className="bin98-heading">Failure mode</h2>
+            <div className="bin98-section">
+              <div className="bin98-subheading">{failureCallout.title}</div>
+              <p>{failureCallout.detail}</p>
+            </div>
+          </section>
+
+          <section id="code-examples" className="bin98-section">
+            <h2 className="bin98-heading">Code examples</h2>
+            <div className="space-y-4">
+              {codeExamples.map((example) => (
+                <div key={example.title} className="bin98-section">
+                  <div className="bin98-subheading">{example.title}</div>
+                  <pre className="bin98-codebox">
+                    <code>{example.code}</code>
+                  </pre>
+                  <p>{example.explanation}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'takeaways' && (
+        <>
+          <section id="pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Pitfalls</h2>
+            <div className="bin98-section">
+              <ul className="list-disc pl-5 space-y-2">
                 {pitfalls.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use what</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
+          <section id="when-to-use-what" className="bin98-section">
+            <h2 className="bin98-heading">When to use what</h2>
+            <div className="bin98-section">
+              <ol className="list-decimal pl-5 space-y-2">
                 {whenToUse.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ol>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced moves</legend>
-            <div className="win95-grid win95-grid-2">
-              {advanced.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Code examples</legend>
-            <div className="win95-stack">
-              {codeExamples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
-                    <code>{example.code}</code>
-                  </pre>
-                  <p className="win95-text">{example.explanation}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
+          <section id="key-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key takeaways</h2>
+            <div className="bin98-section">
+              <ul className="list-disc pl-5 space-y-2">
                 {keyTakeaways.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
-          </fieldset>
-        </div>
-      </div>
-    </div>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

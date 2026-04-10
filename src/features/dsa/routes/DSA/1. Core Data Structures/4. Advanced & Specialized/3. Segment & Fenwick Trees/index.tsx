@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -251,41 +252,83 @@ const takeaways = [
   'Pick the variant that matches your aggregate and update pattern; do not overpay with 4n memory when a Fenwick suffices.',
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'takeaways'
+
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'takeaways', label: 'Takeaways' },
+]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'overview', label: 'Overview' },
+    { id: 'the-big-picture', label: 'The big picture' },
+    { id: 'historical-context', label: 'Historical context' },
+    { id: 'real-world-applications', label: 'Real-world applications' },
+  ],
+  'core-concepts': [
+    { id: 'core-concept-and-mental-models', label: 'Core concept and mental models' },
+    {
+      id: 'how-it-works-structure-and-operations',
+      label: 'How it works: structure and operations',
+    },
+    {
+      id: 'complexity-analysis-and-performance-intuition',
+      label: 'Complexity analysis and performance intuition',
+    },
+    {
+      id: 'advanced-insights-and-current-frontiers',
+      label: 'Advanced insights and current frontiers',
+    },
+  ],
+  examples: [{ id: 'practical-examples', label: 'Practical examples' }],
+  takeaways: [
+    { id: 'common-pitfalls', label: 'Common pitfalls' },
+    { id: 'when-to-use-it', label: 'When to use it' },
+    { id: 'key-takeaways', label: 'Key takeaways' },
+  ],
+}
+
 export default function SegmentFenwickPage(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Segment & Fenwick Trees',
+    defaultTab: 'big-picture',
+  })
+
   return (
-    <div className="win95-page">
-      <div className="win95-window" role="presentation">
-        <header className="win95-titlebar">
-          <span className="win95-title">Segment & Fenwick Trees</span>
-          <div className="win95-title-controls">
-            <Link to="/algoViz" className="win95-control" aria-label="Close window">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Segment & Fenwick Trees"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Segment &amp; Fenwick Trees</h1>
+      <p className="bin98-doc-subtitle">Range queries and updates with logarithmic guarantees.</p>
 
-        <div className="win95-content">
-          <div className="win95-header-row">
-            <div>
-              <div className="win95-subheading">
-                Range queries and updates with logarithmic guarantees
-              </div>
-              <p className="win95-text">
-                Segment trees and Fenwick trees are the workhorses for range queries on arrays. They
-                provide predictable O(log n) bounds even as data changes, trading modest memory for
-                versatility. This page explores how they work, when to choose one over the other,
-                and the engineering details that make them fast in practice.
-              </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <div className="bin98-subheading">
+              Range queries and updates with logarithmic guarantees
             </div>
-            <Link to="/algoViz" className="win95-button" role="button">
-              BACK TO CATALOG
-            </Link>
-          </div>
+            <p>
+              Segment trees and Fenwick trees are the workhorses for range queries on arrays. They
+              provide predictable O(log n) bounds even as data changes, trading modest memory for
+              versatility. This page explores how they work, when to choose one over the other, and
+              the engineering details that make them fast in practice.
+            </p>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>The big picture</legend>
-            <div className="win95-panel">
-              <p className="win95-text">
+          <section id="the-big-picture" className="bin98-section">
+            <h2 className="bin98-heading">The big picture</h2>
+            <div className="bin98-section">
+              <p>
                 Arrays answer random access in O(1) but struggle with dynamic range sums, mins, or
                 maxes. Recomputing from scratch is O(n); both segment and Fenwick trees organize
                 partial aggregates so every query or update touches only O(log n) nodes. The choice
@@ -293,39 +336,55 @@ export default function SegmentFenwickPage(): JSX.Element {
                 locality you can spare.
               </p>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Historical context</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="historical-context" className="bin98-section">
+            <h2 className="bin98-heading">Historical context</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {historicalMoments.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Core concept and mental models</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="real-world-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-world applications</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {realWorld.map((item) => (
+                <div key={item.context} className="bin98-section">
+                  <div className="bin98-subheading">{item.context}</div>
+                  <p>{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-concept-and-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Core concept and mental models</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {mentalModels.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>How it works: structure and operations</legend>
-            <div className="win95-grid win95-grid-3">
+          <section id="how-it-works-structure-and-operations" className="bin98-section">
+            <h2 className="bin98-heading">How it works: structure and operations</h2>
+            <div className="grid gap-4 md:grid-cols-3">
               {mechanics.map((block) => (
-                <div key={block.heading} className="win95-panel">
-                  <div className="win95-heading">{block.heading}</div>
-                  <ul className="win95-list">
+                <div key={block.heading} className="bin98-section">
+                  <div className="bin98-subheading">{block.heading}</div>
+                  <ul className="list-disc pl-5 space-y-2">
                     {block.bullets.map((point) => (
                       <li key={point}>{point}</li>
                     ))}
@@ -333,100 +392,96 @@ export default function SegmentFenwickPage(): JSX.Element {
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Complexity analysis and performance intuition</legend>
-            <div className="win95-grid win95-grid-2">
+          <section id="complexity-analysis-and-performance-intuition" className="bin98-section">
+            <h2 className="bin98-heading">Complexity analysis and performance intuition</h2>
+            <div className="grid gap-4 md:grid-cols-2">
               {complexityNotes.map((note) => (
-                <div key={note.title} className="win95-panel">
-                  <div className="win95-heading">{note.title}</div>
-                  <p className="win95-text">{note.detail}</p>
+                <div key={note.title} className="bin98-section">
+                  <div className="bin98-subheading">{note.title}</div>
+                  <p>{note.detail}</p>
                 </div>
               ))}
             </div>
-            <div className="win95-panel win95-panel--raised">
-              <p className="win95-text">
+            <div className="bin98-section">
+              <p>
                 Measure constants: in practice Fenwick trees often beat segment trees for prefix
                 sums due to tighter loops, while segment trees pay off when you need lazy range
                 updates or non-invertible merges like min with range assignment.
               </p>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Real-world applications</legend>
-            <div className="win95-grid win95-grid-2">
-              {realWorld.map((item) => (
-                <div key={item.context} className="win95-panel">
-                  <div className="win95-heading">{item.context}</div>
-                  <p className="win95-text">{item.detail}</p>
+          <section id="advanced-insights-and-current-frontiers" className="bin98-section">
+            <h2 className="bin98-heading">Advanced insights and current frontiers</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {advancedInsights.map((item) => (
+                <div key={item.title} className="bin98-section">
+                  <div className="bin98-subheading">{item.title}</div>
+                  <p>{item.detail}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
+        </>
+      )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Practical examples</legend>
-            <div className="win95-stack">
+      {activeTab === 'examples' && (
+        <>
+          <section id="practical-examples" className="bin98-section">
+            <h2 className="bin98-heading">Practical examples</h2>
+            <div className="space-y-4">
               {examples.map((example) => (
-                <div key={example.title} className="win95-panel">
-                  <div className="win95-heading">{example.title}</div>
-                  <pre className="win95-code">
+                <div key={example.title} className="bin98-section">
+                  <div className="bin98-subheading">{example.title}</div>
+                  <pre className="bin98-codebox">
                     <code>{example.code}</code>
                   </pre>
-                  <p className="win95-text">{example.explanation}</p>
+                  <p>{example.explanation}</p>
                 </div>
               ))}
             </div>
-          </fieldset>
+          </section>
+        </>
+      )}
 
-          <fieldset className="win95-fieldset">
-            <legend>Common pitfalls</legend>
-            <div className="win95-panel">
-              <ul className="win95-list">
+      {activeTab === 'takeaways' && (
+        <>
+          <section id="common-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common pitfalls</h2>
+            <div className="bin98-section">
+              <ul className="list-disc pl-5 space-y-2">
                 {pitfalls.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>When to use it</legend>
-            <div className="win95-panel">
-              <ol className="win95-list win95-list--numbered">
+          <section id="when-to-use-it" className="bin98-section">
+            <h2 className="bin98-heading">When to use it</h2>
+            <div className="bin98-section">
+              <ol className="list-decimal pl-5 space-y-2">
                 {decisionGuidance.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ol>
             </div>
-          </fieldset>
+          </section>
 
-          <fieldset className="win95-fieldset">
-            <legend>Advanced insights and current frontiers</legend>
-            <div className="win95-grid win95-grid-2">
-              {advancedInsights.map((item) => (
-                <div key={item.title} className="win95-panel">
-                  <div className="win95-heading">{item.title}</div>
-                  <p className="win95-text">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="win95-fieldset">
-            <legend>Key takeaways</legend>
-            <div className="win95-panel win95-panel--raised">
-              <ul className="win95-list">
+          <section id="key-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key takeaways</h2>
+            <div className="bin98-section">
+              <ul className="list-disc pl-5 space-y-2">
                 {takeaways.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
-          </fieldset>
-        </div>
-      </div>
-    </div>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

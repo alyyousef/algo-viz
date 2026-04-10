@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'React and Angular are both mature front-end technologies for building modern web applications, but they begin from different assumptions. React is primarily a UI library centered on components and declarative rendering. Angular is a full application framework with built-in patterns for components, templates, dependency injection, routing, forms, and broader application structure.',
       'That means the real comparison is not only JSX versus templates or Hooks versus services. The more useful question is whether the team wants a smaller rendering-centered core that composes with surrounding libraries, or a more opinionated framework that provides more of the application architecture out of the box.',
-      'The original page scope was placeholder content for React vs Angular, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers React vs Angular across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       "SwiftUI and Jetpack Compose are both declarative native UI frameworks, but they belong to different platform ecosystems. SwiftUI is Apple's declarative UI framework for building apps across Apple platforms with Swift. Jetpack Compose is Android's declarative UI toolkit for building native Android UI with Kotlin.",
       'That means the real comparison is not exactly which one is better in the abstract. They are not competing for the same platform slot. The more useful question is how each framework approaches declarative UI, state, previews, composition, and platform integration inside its own ecosystem.',
-      'The original page scope was placeholder content for SwiftUI vs Jetpack Compose, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference page.',
+      'This help-style reference covers SwiftUI vs Jetpack Compose across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'Spring Boot and Quarkus are both Java frameworks for building backend services, APIs, and cloud applications, but they optimize for slightly different defaults. Spring Boot emphasizes a massive ecosystem, familiar Spring programming models, auto-configuration, starter dependencies, and a mature enterprise development experience. Quarkus emphasizes build-time optimization, very fast startup, low memory usage, developer tooling geared toward hot reload, and strong alignment with container and native-image deployment.',
       "That means the practical question is not which framework can expose REST endpoints or talk to a database. Both can. The more useful question is whether the team benefits more from Spring Boot's ecosystem breadth and conventional enterprise familiarity or from Quarkus's build-time model, fast developer loop, and stronger native-image posture.",
-      'The original page scope was placeholder content for Spring Boot vs Quarkus, with planned notes on overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style page keeps that scope and expands it into a fuller technical reference.',
+      'This help-style reference covers Spring Boot vs Quarkus across overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {

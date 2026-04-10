@@ -36,7 +36,7 @@ const bigPictureSections: readonly DocSection[] = [
     paragraphs: [
       'RabbitMQ and Amazon SQS are both messaging technologies, but they sit in meaningfully different architectural categories. RabbitMQ is a message broker you run or consume as infrastructure and design around exchanges, queues, bindings, acknowledgements, and broker features. Amazon SQS is a fully managed AWS queueing service designed around simple queue semantics, elastic service operation, and deep AWS integration.',
       'That means the practical question is not only which one can move messages. The real question is whether the system needs a broker with flexible routing topologies and protocol-level messaging features, or a highly managed queue service that removes most broker operations and fits naturally into AWS-native architectures.',
-      'The original page scope was placeholder content for RabbitMQ vs SQS, with planned notes on overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style version keeps that scope and expands it into a fuller reference page.',
+      'This help-style reference covers RabbitMQ vs SQS across overview, key ideas, core syntax, APIs, ecosystem, architecture, use cases, and tradeoffs.',
     ],
   },
   {
