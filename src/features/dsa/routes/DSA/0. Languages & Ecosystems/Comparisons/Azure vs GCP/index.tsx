@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'Azure vs GCP'
-const pageSubtitle = 'Comparing the Microsoft-centered enterprise cloud with the Google-centered data and platform cloud.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing the Microsoft-centered enterprise cloud with the Google-centered data and platform cloud.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -284,7 +283,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-vm',
     title: 'Launch a Virtual Machine',
-    summary: 'Both clouds can create a VM quickly, but the command shape already hints at their operational worldview.',
+    summary:
+      'Both clouds can create a VM quickly, but the command shape already hints at their operational worldview.',
     azureCode: `az vm create \\
   --resource-group app-prod-rg \\
   --name web-01 \\
@@ -300,12 +300,14 @@ const examples: ExampleItem[] = [
   --subnet default \\
   --image-family debian-12 \\
   --image-project debian-cloud`,
-    explanation: 'Azure makes the resource group impossible to ignore, reflecting its lifecycle and governance model. GCP makes the project boundary explicit, reflecting how central projects are to ownership, IAM, APIs, and billing.',
+    explanation:
+      'Azure makes the resource group impossible to ignore, reflecting its lifecycle and governance model. GCP makes the project boundary explicit, reflecting how central projects are to ownership, IAM, APIs, and billing.',
   },
   {
     id: 'ex-storage',
     title: 'Upload an Object to Cloud Storage',
-    summary: 'Object storage exists on both clouds, but the surrounding account and platform patterns differ.',
+    summary:
+      'Object storage exists on both clouds, but the surrounding account and platform patterns differ.',
     azureCode: `az storage blob upload \\
   --account-name financearchive \\
   --container-name reports \\
@@ -313,12 +315,14 @@ const examples: ExampleItem[] = [
   --file ./report.csv \\
   --auth-mode login`,
     gcpCode: `gcloud storage cp ./report.csv gs://finance-archive-logs/reports/2026/report.csv`,
-    explanation: 'Azure Blob Storage often feels more explicitly tied to the storage-account and RBAC story. Cloud Storage often feels especially close to broader analytics and application-platform workflows on GCP.',
+    explanation:
+      'Azure Blob Storage often feels more explicitly tied to the storage-account and RBAC story. Cloud Storage often feels especially close to broader analytics and application-platform workflows on GCP.',
   },
   {
     id: 'ex-serverless',
     title: 'Define a Simple Serverless Endpoint',
-    summary: 'Serverless exists on both clouds, but the preferred deployment style often feels different.',
+    summary:
+      'Serverless exists on both clouds, but the preferred deployment style often feels different.',
     azureCode: `import azure.functions as func
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -333,12 +337,14 @@ app = Flask(__name__)
 @app.get('/')
 def hello():
     return {'message': 'hello from cloud run'}`,
-    explanation: 'Azure Functions usually feels like one compute mode inside a broader Microsoft application platform. On GCP, many teams increasingly think in terms of Cloud Run as a serverless container target rather than limiting the conversation to function-only deployment.',
+    explanation:
+      'Azure Functions usually feels like one compute mode inside a broader Microsoft application platform. On GCP, many teams increasingly think in terms of Cloud Run as a serverless container target rather than limiting the conversation to function-only deployment.',
   },
   {
     id: 'ex-kubernetes',
     title: 'Create a Managed Kubernetes Cluster',
-    summary: 'Both clouds can run managed Kubernetes, but the cultural weight of the product differs.',
+    summary:
+      'Both clouds can run managed Kubernetes, but the cultural weight of the product differs.',
     azureCode: `az aks create \\
   --resource-group app-prod-rg \\
   --name app-prod \\
@@ -347,62 +353,76 @@ def hello():
     gcpCode: `gcloud container clusters create-auto app-prod \\
   --project app-prod \\
   --region us-central1`,
-    explanation: 'AKS is a strong part of Azures broader app platform menu. GKE often feels closer to the center of GCPs platform identity because of Googles strong container and orchestration lineage.',
+    explanation:
+      'AKS is a strong part of Azures broader app platform menu. GKE often feels closer to the center of GCPs platform identity because of Googles strong container and orchestration lineage.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Azure subscription',
-    definition: 'A primary Azure billing and governance boundary under a tenant, often used to separate environments, teams, or business units.',
+    definition:
+      'A primary Azure billing and governance boundary under a tenant, often used to separate environments, teams, or business units.',
   },
   {
     term: 'Resource group',
-    definition: 'An Azure logical container for related resources that share lifecycle, access, and management context.',
+    definition:
+      'An Azure logical container for related resources that share lifecycle, access, and management context.',
   },
   {
     term: 'Management group',
-    definition: 'An Azure hierarchy layer above subscriptions used to apply governance and policy across larger environments.',
+    definition:
+      'An Azure hierarchy layer above subscriptions used to apply governance and policy across larger environments.',
   },
   {
     term: 'Microsoft Entra ID',
-    definition: 'Microsoft cloud identity platform used for authentication, directory management, application access, and many Azure security scenarios.',
+    definition:
+      'Microsoft cloud identity platform used for authentication, directory management, application access, and many Azure security scenarios.',
   },
   {
     term: 'GCP project',
-    definition: 'A core Google Cloud management boundary for resources, APIs, billing association, IAM application, quotas, and ownership.',
+    definition:
+      'A core Google Cloud management boundary for resources, APIs, billing association, IAM application, quotas, and ownership.',
   },
   {
     term: 'Organization resource',
-    definition: 'The top-level Google Cloud hierarchy node above folders and projects in enterprise environments.',
+    definition:
+      'The top-level Google Cloud hierarchy node above folders and projects in enterprise environments.',
   },
   {
     term: 'IAM',
-    definition: 'Identity and Access Management, the system each cloud uses to define who can do what on which resources.',
+    definition:
+      'Identity and Access Management, the system each cloud uses to define who can do what on which resources.',
   },
   {
     term: 'VNet',
-    definition: 'An Azure Virtual Network, the foundational private networking boundary for Azure resources and connected services.',
+    definition:
+      'An Azure Virtual Network, the foundational private networking boundary for Azure resources and connected services.',
   },
   {
     term: 'VPC',
-    definition: 'A private cloud network construct; on GCP the VPC itself is global and subnets are regional.',
+    definition:
+      'A private cloud network construct; on GCP the VPC itself is global and subnets are regional.',
   },
   {
     term: 'Blob Storage',
-    definition: 'Azure object storage for massive-scale unstructured data such as files, media, logs, and archives.',
+    definition:
+      'Azure object storage for massive-scale unstructured data such as files, media, logs, and archives.',
   },
   {
     term: 'Cloud Storage',
-    definition: 'Google Cloud object storage for durable, scalable unstructured data used by applications, archives, and analytics workflows.',
+    definition:
+      'Google Cloud object storage for durable, scalable unstructured data used by applications, archives, and analytics workflows.',
   },
   {
     term: 'Azure Functions',
-    definition: 'Azures event-driven serverless compute platform for HTTP triggers, timers, queues, storage events, and more.',
+    definition:
+      'Azures event-driven serverless compute platform for HTTP triggers, timers, queues, storage events, and more.',
   },
   {
     term: 'Cloud Run',
-    definition: 'Google Cloud managed serverless container platform for deploying HTTP services and other containerized workloads.',
+    definition:
+      'Google Cloud managed serverless container platform for deploying HTTP services and other containerized workloads.',
   },
   {
     term: 'AKS',
@@ -414,7 +434,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'BigQuery',
-    definition: 'Google Cloud managed analytics warehouse service that is central to many GCP data-platform decisions.',
+    definition:
+      'Google Cloud managed analytics warehouse service that is central to many GCP data-platform decisions.',
   },
 ]
 
@@ -449,400 +470,112 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.azure-gcp-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.azure-gcp-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.azure-gcp-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.azure-gcp-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.azure-gcp-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.azure-gcp-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-.azure-gcp-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.azure-gcp-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.azure-gcp-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.azure-gcp-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.azure-gcp-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.azure-gcp-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.azure-gcp-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.azure-gcp-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.azure-gcp-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.azure-gcp-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.azure-gcp-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.azure-gcp-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.azure-gcp-help-section {
-  margin: 0 0 20px;
-}
-
-.azure-gcp-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.azure-gcp-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.azure-gcp-help-content p,
-.azure-gcp-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.azure-gcp-help-content p {
-  margin: 0 0 10px;
-}
-
-.azure-gcp-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.azure-gcp-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.azure-gcp-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.azure-gcp-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .azure-gcp-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .azure-gcp-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .azure-gcp-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function AzureVsGcpPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Azure Vs Gcp Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="azure-gcp-help-page">
-      <style>{pageStyles}</style>
-      <div className="azure-gcp-help-window" role="presentation">
-        <header className="azure-gcp-help-titlebar">
-          <span className="azure-gcp-help-title">{pageTitle}</span>
-          <div className="azure-gcp-help-controls">
-            <button className="azure-gcp-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="azure-gcp-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Azure Vs Gcp Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="azure-gcp-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Azure and GCP as platform choices for real infrastructure, application,
+        and organization design. The point is not to memorize service names. The point is to
+        understand the deeper tradeoffs: management model, identity, networking, compute,
+        data-platform gravity, Kubernetes and serverless posture, procurement reality, hybrid
+        continuity, and the type of engineering organization each cloud tends to fit best.
+      </p>
 
-        <div className="azure-gcp-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`azure-gcp-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="azure-gcp-help-main">
-          <aside className="azure-gcp-help-toc" aria-label="Table of contents">
-            <h2 className="azure-gcp-help-toc-title">Contents</h2>
-            <ul className="azure-gcp-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="azure-gcp-help-content">
-            <h1 className="azure-gcp-help-doc-title">{pageTitle}</h1>
-            <p className="azure-gcp-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Azure and GCP as platform choices for real infrastructure, application, and organization design.
-              The point is not to memorize service names. The point is to understand the deeper tradeoffs: management model,
-              identity, networking, compute, data-platform gravity, Kubernetes and serverless posture, procurement reality,
-              hybrid continuity, and the type of engineering organization each cloud tends to fit best.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="azure-gcp-help-section">
-                    <h2 className="azure-gcp-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="azure-gcp-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="azure-gcp-help-section">
-                  <h2 className="azure-gcp-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="azure-gcp-help-section">
-                    <h2 className="azure-gcp-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="azure-gcp-help-section">
-                    <h2 className="azure-gcp-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="azure-gcp-help-subheading">Azure</h3>
-                    <div className="azure-gcp-help-codebox">
-                      <code>{example.azureCode.trim()}</code>
-                    </div>
-                    <h3 className="azure-gcp-help-subheading">GCP</h3>
-                    <div className="azure-gcp-help-codebox">
-                      <code>{example.gcpCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="azure-gcp-help-section">
-                <h2 className="azure-gcp-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Azure</h3>
+              <div className="bin98-codebox">
+                <code>{example.azureCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">GCP</h3>
+              <div className="bin98-codebox">
+                <code>{example.gcpCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

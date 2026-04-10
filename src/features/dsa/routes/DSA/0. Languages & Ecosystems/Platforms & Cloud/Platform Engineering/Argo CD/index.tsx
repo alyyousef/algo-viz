@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-import type { JSX, MouseEvent } from 'react'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
+
+import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
@@ -17,8 +19,6 @@ type ExampleSection = {
   code: string
   explanation: string
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const pageTitle = 'Argo CD'
 const pageSubtitle =
@@ -127,11 +127,13 @@ const fitGuide = [
   },
   {
     title: 'Need to generate many similar Applications across clusters or environments',
-    choice: 'Use ApplicationSet on top of Argo CD rather than hand-authoring every Application object.',
+    choice:
+      'Use ApplicationSet on top of Argo CD rather than hand-authoring every Application object.',
   },
   {
     title: 'Need only chart rendering or package templating',
-    choice: 'Helm alone is not the same as Argo CD. Helm packages; Argo CD reconciles desired versus live state.',
+    choice:
+      'Helm alone is not the same as Argo CD. Helm packages; Argo CD reconciles desired versus live state.',
   },
   {
     title: 'Need a lighter GitOps engine without the full Argo CD service plane',
@@ -139,7 +141,8 @@ const fitGuide = [
   },
   {
     title: 'Need to manage infrastructure well beyond Kubernetes application delivery',
-    choice: 'Combine Argo CD with infrastructure tools such as Terraform or Crossplane rather than expecting Argo CD to become a universal control plane.',
+    choice:
+      'Combine Argo CD with infrastructure tools such as Terraform or Crossplane rather than expecting Argo CD to become a universal control plane.',
   },
 ]
 const coreConceptSections: NarrativeSection[] = [
@@ -220,7 +223,7 @@ const coreConceptSections: NarrativeSection[] = [
     heading: 'ApplicationSet and Fleet Generation',
     paragraphs: [
       'ApplicationSet generates multiple Argo CD Applications from a higher-level template plus one or more generators. Common generator patterns include cluster-driven, Git-driven, list-based, matrix, merge, pull-request, and SCM-provider style generation. The result is a fleet of Applications managed from one declarative template instead of many copy-pasted resources.',
-      'This is one of Argo CD\'s most important scale features. It allows platform teams to stamp applications across clusters, environments, tenants, or repository structures while keeping the Application spec itself consistent. It is especially useful for multicluster rollout patterns and namespace-per-tenant or environment-per-folder models.',
+      "This is one of Argo CD's most important scale features. It allows platform teams to stamp applications across clusters, environments, tenants, or repository structures while keeping the Application spec itself consistent. It is especially useful for multicluster rollout patterns and namespace-per-tenant or environment-per-folder models.",
       'The tradeoff is blast radius. A generator or template mistake can affect many Applications at once. ApplicationSet is therefore powerful in exactly the way infrastructure templating is powerful: it reduces repetition, but it also amplifies bad assumptions. Review, testing, and clear boundaries matter more, not less.',
     ],
   },
@@ -537,7 +540,7 @@ const glossaryTerms = [
   {
     term: 'Health',
     definition:
-      'Argo CD\'s view of how healthy the application resources are, separate from pure sync status.',
+      "Argo CD's view of how healthy the application resources are, separate from pure sync status.",
   },
   {
     term: 'Repo server',
@@ -641,533 +644,185 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   ],
 }
 
-const argoCdHelpStyles = `
-.argo-cd-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.argo-cd-help-page .win98-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.argo-cd-help-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.argo-cd-help-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.argo-cd-help-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.argo-cd-help-page .win98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-  padding: 0;
-}
-
-.argo-cd-help-page .win98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.argo-cd-help-page .win98-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.argo-cd-help-page .win98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.argo-cd-help-page .win98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.argo-cd-help-page .win98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.argo-cd-help-page .win98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.argo-cd-help-page .win98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.argo-cd-help-page .win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.argo-cd-help-page .win98-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.argo-cd-help-page .win98-content {
-  overflow-x: auto;
-  overflow-y: scroll;
-  scrollbar-gutter: stable;
-  padding: 14px 20px 20px;
-}
-
-.argo-cd-help-page .win98-doc-title {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.argo-cd-help-page .win98-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.argo-cd-help-page .win98-section {
-  margin: 0 0 22px;
-}
-
-.argo-cd-help-page .win98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.argo-cd-help-page .win98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.argo-cd-help-page .win98-content p,
-.argo-cd-help-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.argo-cd-help-page .win98-content p {
-  margin: 0 0 10px;
-}
-
-.argo-cd-help-page .win98-content ul,
-.argo-cd-help-page .win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.argo-cd-help-page .win98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.argo-cd-help-page .win98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.argo-cd-help-page .win98-codebox code {
-  display: block;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-}
-
-.argo-cd-help-page .win98-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .argo-cd-help-page .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .argo-cd-help-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .argo-cd-help-page .win98-title-text {
-    position: static;
-    transform: none;
-    margin-left: 8px;
-    font-size: 14px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-function getTabFromSearch(search: string): TabId {
-  const tab = new URLSearchParams(search).get('tab')
-  return isTabId(tab) ? tab : 'big-picture'
-}
-
 export default function ArgoCdPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const contentRef = useRef<HTMLElement | null>(null)
-  const [activeTab, setActiveTab] = useState<TabId>(() => getTabFromSearch(location.search))
-
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const url = new URL(window.location.href)
-    const nextSearch = new URLSearchParams(url.search)
-    const shouldClearHash = url.hash.length > 0
-    if (nextSearch.get('tab') !== activeTab || shouldClearHash) {
-      nextSearch.set('tab', activeTab)
-      window.history.replaceState(window.history.state, '', `${url.pathname}?${nextSearch.toString()}`)
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel])
-
-  useEffect(() => {
-    const currentHash = window.location.hash.slice(1)
-    if (!currentHash) {
-      return
-    }
-
-    const container = contentRef.current
-    const target = document.getElementById(currentHash)
-    if (!container || !target || !container.contains(target)) {
-      return
-    }
-
-    container.scrollTo({ top: Math.max(target.offsetTop - 8, 0), left: 0, behavior: 'auto' })
-  }, [activeTab])
-
-  const handleTabChange = (tabId: TabId) => {
-    if (tabId === activeTab) {
-      return
-    }
-
-    setActiveTab(tabId)
-    contentRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-  }
-
-  const handleSectionJump = (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    event.preventDefault()
-
-    const container = contentRef.current
-    const target = document.getElementById(sectionId)
-    if (!container || !target || !container.contains(target)) {
-      return
-    }
-
-    container.scrollTo({ top: Math.max(target.offsetTop - 8, 0), left: 0, behavior: 'auto' })
-
-    const url = new URL(window.location.href)
-    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}#${sectionId}`)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Argo Cd Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="argo-cd-help-page">
-      <style>{argoCdHelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">{pageTitle}</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Argo Cd Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="bin98-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Operating Models</h2>
+            {operatingModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.summary}</p>
+                <ul>
+                  {item.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-flow" className="bin98-section">
+            <h2 className="bin98-heading">Reconciliation Flow</h2>
+            <ol>
+              {lifecycleFlow.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-fit" className="bin98-section">
+            <h2 className="bin98-heading">When to Use Argo CD</h2>
+            <ul>
+              {fitGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
           ))}
-        </div>
 
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`} onClick={(event) => handleSectionJump(event, section.id)}>
-                    {section.label}
+          <section id="core-ops" className="bin98-section">
+            <h2 className="bin98-heading">Operational Notes</h2>
+            {operationsNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossaryTerms.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
+
+          <section id="glossary-sources" className="bin98-section">
+            <h2 className="bin98-heading">Primary Sources</h2>
+            <p>
+              This page was compiled against official Argo CD documentation checked on March 15,
+              2026. Argo CD features, defaults, and workflows can change, so production decisions
+              should always be verified against the current documentation.
+            </p>
+            <ul>
+              {pageSources.map((source) => (
+                <li key={source}>
+                  <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
+                    {source}
                   </a>
                 </li>
               ))}
             </ul>
-          </aside>
-
-          <main ref={contentRef} className="win98-content">
-            <h1 className="win98-doc-title">{pageTitle}</h1>
-            <p className="win98-doc-subtitle">{pageSubtitle}</p>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="win98-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="win98-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-models" className="win98-section">
-                  <h2 className="win98-heading">Operating Models</h2>
-                  {operatingModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.summary}</p>
-                      <ul>
-                        {item.details.map((detail) => (
-                          <li key={detail}>{detail}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-flow" className="win98-section">
-                  <h2 className="win98-heading">Reconciliation Flow</h2>
-                  <ol>
-                    {lifecycleFlow.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-fit" className="win98-section">
-                  <h2 className="win98-heading">When to Use Argo CD</h2>
-                  <ul>
-                    {fitGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="win98-section">
-                    <h2 className="win98-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-ops" className="win98-section">
-                  <h2 className="win98-heading">Operational Notes</h2>
-                  {operationsNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {compareNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="win98-section">
-                    <h2 className="win98-heading">{example.title}</h2>
-                    <div className="win98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="win98-section">
-                  <h2 className="win98-heading">Glossary</h2>
-                  {glossaryTerms.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="glossary-sources" className="win98-section">
-                  <h2 className="win98-heading">Primary Sources</h2>
-                  <p>
-                    This page was compiled against official Argo CD documentation checked on March 15, 2026. Argo CD
-                    features, defaults, and workflows can change, so production decisions should always be verified
-                    against the current documentation.
-                  </p>
-                  <ul>
-                    {pageSources.map((source) => (
-                      <li key={source}>
-                        <a href={source} className="win98-inline-link" target="_blank" rel="noreferrer">
-                          {source}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -13,216 +11,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-const cloudRunHelpStyles = `
-.cloudrun-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cloudrun-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cloudrun-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudrun-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cloudrun-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cloudrun-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.cloudrun-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cloudrun-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cloudrun-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cloudrun-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.cloudrun-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.cloudrun-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cloudrun-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cloudrun-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cloudrun-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.cloudrun-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cloudrun-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cloudrun-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudrun-help-section {
-  margin: 0 0 20px;
-}
-
-.cloudrun-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cloudrun-help-content p,
-.cloudrun-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cloudrun-help-content p {
-  margin: 0 0 10px;
-}
-
-.cloudrun-help-content ul,
-.cloudrun-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cloudrun-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.cloudrun-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.cloudrun-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cloudrun-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloudrun-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cloudrun-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
 
 const bigPictureSections: Array<
   | { id: string; title: string; paragraphs: string[] }
@@ -232,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Cloud Run is Google Cloud\'s managed serverless container platform. The simplest mental model is that you provide a container that listens for HTTP requests or runs a task, and Google Cloud runs it on demand without asking you to manage servers or cluster nodes.',
+      "Cloud Run is Google Cloud's managed serverless container platform. The simplest mental model is that you provide a container that listens for HTTP requests or runs a task, and Google Cloud runs it on demand without asking you to manage servers or cluster nodes.",
       'Cloud Run supports two major workload shapes: services and jobs. Services are request-driven and usually expose an HTTP endpoint. Jobs are task-oriented and run to completion without acting as a long-lived web service.',
       'The platform is strongest when a workload fits inside a container boundary but the team still wants serverless scaling, managed revisions, IAM integration, and a simpler operational model than full Kubernetes.',
     ],
@@ -332,7 +120,7 @@ const coreSections: Array<
     title: 'Services, revisions, and traffic management',
     paragraphs: [
       'Cloud Run services create revisions on deployment. Each revision represents a specific deployable version of the container plus its runtime configuration.',
-      'Traffic management is one of Cloud Run\'s most important ideas. Teams can send traffic to the latest revision, split traffic between revisions, or roll back by shifting traffic back to a prior known-good release.',
+      "Traffic management is one of Cloud Run's most important ideas. Teams can send traffic to the latest revision, split traffic between revisions, or roll back by shifting traffic back to a prior known-good release.",
       'This gives Cloud Run a stronger release model than a simple “replace the running app” workflow. Revisions make progressive delivery and rollback much easier to reason about.',
     ],
   },
@@ -413,7 +201,7 @@ const coreSections: Array<
     title: 'Ecosystem and adjacent services',
     paragraphs: [
       'Cloud Run commonly appears beside Artifact Registry, Cloud Build, Eventarc, Pub/Sub, Secret Manager, Cloud SQL, and VPC integration features. That is because application hosting is only one part of the platform story.',
-      'This ecosystem fit is one of Cloud Run\'s main strengths. It can host HTTP services, consume events, run jobs, and integrate naturally with the rest of a managed Google Cloud stack.',
+      "This ecosystem fit is one of Cloud Run's main strengths. It can host HTTP services, consume events, run jobs, and integrate naturally with the rest of a managed Google Cloud stack.",
       'The result is a platform that is especially attractive for teams that want container flexibility with serverless operations and a strong delivery path.',
     ],
   },
@@ -536,19 +324,23 @@ const glossaryTerms = [
   },
   {
     term: 'Job',
-    definition: 'A Cloud Run resource that runs a containerized task to completion instead of serving requests continuously.',
+    definition:
+      'A Cloud Run resource that runs a containerized task to completion instead of serving requests continuously.',
   },
   {
     term: 'Revision',
-    definition: 'An immutable deployed version of a Cloud Run service and its runtime configuration.',
+    definition:
+      'An immutable deployed version of a Cloud Run service and its runtime configuration.',
   },
   {
     term: 'Traffic splitting',
-    definition: 'The ability to send percentages of traffic to different revisions of the same service.',
+    definition:
+      'The ability to send percentages of traffic to different revisions of the same service.',
   },
   {
     term: 'Container contract',
-    definition: 'The runtime expectations a container must satisfy in order to work correctly on Cloud Run.',
+    definition:
+      'The runtime expectations a container must satisfy in order to work correctly on Cloud Run.',
   },
   {
     term: 'Concurrency',
@@ -556,7 +348,8 @@ const glossaryTerms = [
   },
   {
     term: 'Min instances',
-    definition: 'A setting that keeps a baseline number of instances available to reduce cold-start latency.',
+    definition:
+      'A setting that keeps a baseline number of instances available to reduce cold-start latency.',
   },
   {
     term: 'Max instances',
@@ -614,180 +407,105 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPCloudRunPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP Cloud Run (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP Cloud Run',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP Cloud Run',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cloudrun-help-page">
-      <style>{cloudRunHelpStyles}</style>
-      <div className="cloudrun-help-window" role="presentation">
-        <header className="cloudrun-help-titlebar">
-          <span className="cloudrun-help-title">GCP Cloud Run</span>
-          <div className="cloudrun-help-controls">
-            <button className="cloudrun-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cloudrun-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP Cloud Run"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP Cloud Run</h1>
+      <p className="cloudrun-help-doc-subtitle">
+        Serverless containers for stateless services and run-to-completion jobs
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact Cloud Run manual:
+        what the platform is, how services and jobs differ, how revisions and traffic work, and
+        which design choices matter for correctness, performance, release safety, and operational
+        simplicity.
+      </p>
 
-        <div className="cloudrun-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`cloudrun-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cloudrun-help-main">
-          <aside className="cloudrun-help-toc" aria-label="Table of contents">
-            <h2 className="cloudrun-help-toc-title">Contents</h2>
-            <ul className="cloudrun-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="cloudrun-help-content">
-            <h1 className="cloudrun-help-doc-title">GCP Cloud Run</h1>
-            <p className="cloudrun-help-doc-subtitle">Serverless containers for stateless services and run-to-completion jobs</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact Cloud Run manual: what the platform is,
-              how services and jobs differ, how revisions and traffic work, and which design choices matter for correctness,
-              performance, release safety, and operational simplicity.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cloudrun-help-section">
-                    <h2 className="cloudrun-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cloudrun-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cloudrun-help-section">
-                  <h2 className="cloudrun-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cloudrun-help-section">
-                    <h2 className="cloudrun-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="cloudrun-help-section">
-                    <h2 className="cloudrun-help-heading">{example.title}</h2>
-                    <div className="cloudrun-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cloudrun-help-section">
-                <h2 className="cloudrun-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

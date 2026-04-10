@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -57,13 +57,11 @@ const lifecycle = [
   },
   {
     title: 'Conquer',
-    detail:
-      'Solve each piece recursively until a base case is small enough to solve directly.',
+    detail: 'Solve each piece recursively until a base case is small enough to solve directly.',
   },
   {
     title: 'Combine',
-    detail:
-      'As recursion unwinds, merge partial solutions into a complete result for each level.',
+    detail: 'As recursion unwinds, merge partial solutions into a complete result for each level.',
   },
 ]
 
@@ -88,8 +86,7 @@ const recurrenceToolkit = [
   },
   {
     title: 'Critical path',
-    detail:
-      'Parallel speedup is limited by the longest dependency chain, not just total work.',
+    detail: 'Parallel speedup is limited by the longest dependency chain, not just total work.',
   },
   {
     title: 'Balance sensitivity',
@@ -222,8 +219,7 @@ const memoryTradeoffs = [
 const implementationPlaybook = [
   {
     title: 'Define robust base cases',
-    detail:
-      'Base cases should return correct values immediately and prevent infinite recursion.',
+    detail: 'Base cases should return correct values immediately and prevent infinite recursion.',
   },
   {
     title: 'Use safe midpoint math',
@@ -237,8 +233,7 @@ const implementationPlaybook = [
   },
   {
     title: 'Stabilize partitioning',
-    detail:
-      'Use randomized or median-like pivots for quick sort to reduce worst-case behavior.',
+    detail: 'Use randomized or median-like pivots for quick sort to reduce worst-case behavior.',
   },
   {
     title: 'Reuse memory',
@@ -288,8 +283,7 @@ const advancedInsights = [
   },
   {
     title: 'Deterministic selection',
-    detail:
-      'Median-of-medians is a D&C selection strategy with linear worst-case guarantees.',
+    detail: 'Median-of-medians is a D&C selection strategy with linear worst-case guarantees.',
   },
   {
     title: 'Geometry strip logic',
@@ -356,8 +350,7 @@ const codeExamples = [
   }
   return -1;
 }`,
-    explanation:
-      'Only one subproblem survives each step, so the recurrence is T(n)=T(n/2)+O(1).',
+    explanation: 'Only one subproblem survives each step, so the recurrence is T(n)=T(n/2)+O(1).',
   },
   {
     title: 'Fast exponentiation (power by squaring)',
@@ -381,14 +374,32 @@ const keyTakeaways = [
 ]
 
 const glossary = [
-  { term: 'Divide and Conquer', definition: 'A paradigm that splits, solves recursively, and combines.' },
-  { term: 'Recurrence', definition: 'An equation that models algorithm cost in terms of smaller input sizes.' },
-  { term: 'Base case', definition: 'A smallest subproblem solved directly without further recursion.' },
-  { term: 'Combine step', definition: 'Logic that merges subproblem results into a higher-level solution.' },
+  {
+    term: 'Divide and Conquer',
+    definition: 'A paradigm that splits, solves recursively, and combines.',
+  },
+  {
+    term: 'Recurrence',
+    definition: 'An equation that models algorithm cost in terms of smaller input sizes.',
+  },
+  {
+    term: 'Base case',
+    definition: 'A smallest subproblem solved directly without further recursion.',
+  },
+  {
+    term: 'Combine step',
+    definition: 'Logic that merges subproblem results into a higher-level solution.',
+  },
   { term: 'Balanced split', definition: 'A partition where subproblem sizes are near equal.' },
   { term: 'Critical path', definition: 'Longest dependency chain that limits parallel speedup.' },
-  { term: 'Master Theorem', definition: 'A common method for solving many D&C recurrence relations.' },
-  { term: 'Akra-Bazzi', definition: 'A generalized method for non-uniform divide-and-conquer recurrences.' },
+  {
+    term: 'Master Theorem',
+    definition: 'A common method for solving many D&C recurrence relations.',
+  },
+  {
+    term: 'Akra-Bazzi',
+    definition: 'A generalized method for non-uniform divide-and-conquer recurrences.',
+  },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
@@ -429,520 +440,247 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const divide98Styles = `
-.divide98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.divide98-window {
-  width: 100%;
-  min-height: 100dvh;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-.divide98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.divide98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.divide98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.divide98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.divide98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.divide98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.divide98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.divide98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.divide98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.divide98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.divide98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.divide98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.divide98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.divide98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.divide98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.divide98-section {
-  margin: 0 0 20px;
-}
-
-.divide98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.divide98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.divide98-content p,
-.divide98-content li,
-.divide98-content td,
-.divide98-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.divide98-content p {
-  margin: 0 0 10px;
-}
-
-.divide98-content ul,
-.divide98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.divide98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.divide98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.divide98-table th,
-.divide98-table td {
-  border: 1px solid #a0a0a0;
-  padding: 4px 6px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.divide98-state {
-  font-family: "Courier New", Courier, monospace;
-}
-
-.divide98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.divide98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .divide98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .divide98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function DivideAndConquerPage(): JSX.Element {
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Divide and Conquer',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Divide and Conquer (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="divide98-page">
-      <style>{divide98Styles}</style>
-      <div className="divide98-window" role="presentation">
-        <header className="divide98-titlebar">
-          <span className="divide98-title">Divide and Conquer</span>
-          <div className="divide98-title-controls">
-            <button className="divide98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="divide98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="divide98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`divide98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="divide98-main">
-          <aside className="divide98-toc" aria-label="Table of contents">
-            <h2 className="divide98-toc-title">Contents</h2>
-            <ul className="divide98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Divide and Conquer"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Divide and Conquer</h1>
+      <p>
+        Divide and Conquer is one of the most important algorithm design paradigms. The central idea
+        is simple: split a hard problem into smaller instances, solve those instances recursively,
+        and combine their results. The quality of the split strategy and the cost of the combine
+        step determine most of the final runtime behavior.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">History</h2>
+            {history.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-lifecycle" className="bin98-section">
+            <h2 className="bin98-heading">Lifecycle: Divide, Conquer, Combine</h2>
+            {lifecycle.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-catalog" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Families</h2>
+            {algorithmCatalog.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="divide98-content">
-            <h1 className="divide98-doc-title">Divide and Conquer</h1>
-            <p>
-              Divide and Conquer is one of the most important algorithm design paradigms. The central idea is simple: split a hard
-              problem into smaller instances, solve those instances recursively, and combine their results. The quality of the split
-              strategy and the cost of the combine step determine most of the final runtime behavior.
-            </p>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="divide98-section">
-                  <h2 className="divide98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="divide98-divider" />
-                <section id="bp-history" className="divide98-section">
-                  <h2 className="divide98-heading">History</h2>
-                  {history.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-lifecycle" className="divide98-section">
-                  <h2 className="divide98-heading">Lifecycle: Divide, Conquer, Combine</h2>
-                  {lifecycle.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-catalog" className="divide98-section">
-                  <h2 className="divide98-heading">Algorithm Families</h2>
-                  {algorithmCatalog.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="divide98-section">
-                  <h2 className="divide98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-framing" className="divide98-section">
-                  <h2 className="divide98-heading">Framing Questions</h2>
-                  <ul>
-                    {framingQuestions.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-recurrence" className="divide98-section">
-                  <h2 className="divide98-heading">Recurrence Toolkit</h2>
-                  {recurrenceToolkit.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-master" className="divide98-section">
-                  <h2 className="divide98-heading">Master Theorem Quick Cases</h2>
-                  <table className="divide98-table">
-                    <thead>
-                      <tr>
-                        <th>Case</th>
-                        <th>Condition</th>
-                        <th>Result</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {masterTheoremCases.map((item) => (
-                        <tr key={item.title}>
-                          <td>{item.title}</td>
-                          <td>{item.condition}</td>
-                          <td>{item.result}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-correctness" className="divide98-section">
-                  <h2 className="divide98-heading">Correctness Checklist</h2>
-                  <ul>
-                    {correctnessChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-benchmarks" className="divide98-section">
-                  <h2 className="divide98-heading">Complexity Benchmarks</h2>
-                  <table className="divide98-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Recurrence</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {complexityBenchmarks.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td>
-                          <td>{row.recurrence}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-parallel" className="divide98-section">
-                  <h2 className="divide98-heading">Parallelism Notes</h2>
-                  {parallelismNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-memory" className="divide98-section">
-                  <h2 className="divide98-heading">Memory Tradeoffs</h2>
-                  {memoryTradeoffs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-playbook" className="divide98-section">
-                  <h2 className="divide98-heading">Implementation Playbook</h2>
-                  {implementationPlaybook.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="divide98-section">
-                  <h2 className="divide98-heading">Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decisions" className="divide98-section">
-                  <h2 className="divide98-heading">Decision Guide</h2>
-                  <ol>
-                    {decisionGuide.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-antipatterns" className="divide98-section">
-                  <h2 className="divide98-heading">Anti-Patterns</h2>
-                  <ul>
-                    {antiPatterns.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-advanced" className="divide98-section">
-                  <h2 className="divide98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-trace" className="divide98-section">
-                  <h2 className="divide98-heading">Worked Trace: Merge Sort</h2>
-                  <ol>
-                    {workedTrace.map((item) => (
-                      <li key={item.step}>
-                        <p><strong>{item.step}:</strong> {item.note}</p>
-                        <p className="divide98-state">{item.state}</p>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="ex-code" className="divide98-section">
-                  <h2 className="divide98-heading">Code Examples</h2>
-                  {codeExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="divide98-subheading">{example.title}</h3>
-                      <div className="divide98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="divide98-section">
-                <h2 className="divide98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-framing" className="bin98-section">
+            <h2 className="bin98-heading">Framing Questions</h2>
+            <ul>
+              {framingQuestions.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-recurrence" className="bin98-section">
+            <h2 className="bin98-heading">Recurrence Toolkit</h2>
+            {recurrenceToolkit.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-master" className="bin98-section">
+            <h2 className="bin98-heading">Master Theorem Quick Cases</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Case</th>
+                  <th>Condition</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {masterTheoremCases.map((item) => (
+                  <tr key={item.title}>
+                    <td>{item.title}</td>
+                    <td>{item.condition}</td>
+                    <td>{item.result}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Checklist</h2>
+            <ul>
+              {correctnessChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-benchmarks" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Benchmarks</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Recurrence</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {complexityBenchmarks.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.recurrence}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-parallel" className="bin98-section">
+            <h2 className="bin98-heading">Parallelism Notes</h2>
+            {parallelismNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-memory" className="bin98-section">
+            <h2 className="bin98-heading">Memory Tradeoffs</h2>
+            {memoryTradeoffs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-playbook" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Playbook</h2>
+            {implementationPlaybook.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">Decision Guide</h2>
+            <ol>
+              {decisionGuide.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-antipatterns" className="bin98-section">
+            <h2 className="bin98-heading">Anti-Patterns</h2>
+            <ul>
+              {antiPatterns.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace: Merge Sort</h2>
+            <ol>
+              {workedTrace.map((item) => (
+                <li key={item.step}>
+                  <p>
+                    <strong>{item.step}:</strong> {item.note}
+                  </p>
+                  <p className="divide98-state">{item.state}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {codeExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

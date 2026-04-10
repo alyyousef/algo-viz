@@ -1,7 +1,9 @@
-﻿import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-import type { JSX, MouseEvent } from 'react'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
+
+import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
@@ -18,13 +20,12 @@ type ExampleSection = {
   explanation: string
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const pageTitle = 'Azure App Service'
-const pageSubtitle = 'Managed PaaS hosting on Azure for web apps, APIs, background jobs, and custom containers.'
+const pageSubtitle =
+  'Managed PaaS hosting on Azure for web apps, APIs, background jobs, and custom containers.'
 
 const introParagraphs = [
-  'Azure App Service is Microsoft\'s managed platform-as-a-service offering for hosting HTTP-based applications. It is designed for teams that want to deploy web apps and APIs without directly managing operating systems, web servers, patching cycles, load balancer fleets, or most of the infrastructure mechanics that come with running application servers on raw virtual machines.',
+  "Azure App Service is Microsoft's managed platform-as-a-service offering for hosting HTTP-based applications. It is designed for teams that want to deploy web apps and APIs without directly managing operating systems, web servers, patching cycles, load balancer fleets, or most of the infrastructure mechanics that come with running application servers on raw virtual machines.",
   'The real value of App Service is not just "host my website." It is managed runtime hosting, integrated deployment workflows, built-in authentication options, deployment slots, scaling, certificates, custom domains, managed identity, private networking options, observability integration, and a much smaller day-two operations surface than self-managed IaaS or Kubernetes for a large class of web workloads.',
   'This page treats App Service as a platform-engineering topic: App Service plans, Windows and Linux hosting, code versus custom-container deployment, inbound and outbound networking, private endpoints, VNet integration, scaling models, deployment slots, authentication, backups, App Service Environment v3, cost, and the tradeoffs that determine when App Service is the right abstraction and when it is not.',
 ]
@@ -92,16 +93,19 @@ const hostingModelGuide = [
 
 const fitGuide = [
   {
-    title: 'Need managed hosting for web apps or APIs with lower operational overhead than AKS or VMs',
+    title:
+      'Need managed hosting for web apps or APIs with lower operational overhead than AKS or VMs',
     choice: 'App Service is often the right default.',
   },
   {
-    title: 'Need straightforward deployment slots, custom domains, TLS, and managed identity on a web workload',
+    title:
+      'Need straightforward deployment slots, custom domains, TLS, and managed identity on a web workload',
     choice: 'App Service is a strong fit.',
   },
   {
     title: 'Need simple container hosting but not Kubernetes complexity',
-    choice: 'App Service or Container Apps may fit; choose based on networking, scaling, and workload shape.',
+    choice:
+      'App Service or Container Apps may fit; choose based on networking, scaling, and workload shape.',
   },
   {
     title: 'Need background compute that is not fundamentally HTTP or web-hosting shaped',
@@ -109,7 +113,8 @@ const fitGuide = [
   },
   {
     title: 'Need single-tenant isolation and stronger private network placement',
-    choice: 'Evaluate App Service Environment v3 rather than assuming multitenant App Service can be stretched into the same role.',
+    choice:
+      'Evaluate App Service Environment v3 rather than assuming multitenant App Service can be stretched into the same role.',
   },
   {
     title: 'Need arbitrary host customization or low-level control over the machine',
@@ -165,7 +170,7 @@ const coreConceptSections: NarrativeSection[] = [
     id: 'core-slots',
     heading: 'Deployment Slots and Safe Releases',
     paragraphs: [
-      'Deployment slots are one of App Service\'s strongest platform features. They let you host multiple deployment environments such as production and staging inside the same app, warm a release before cutover, validate configuration, and then swap traffic using slot swap semantics instead of deploying straight into production blindly.',
+      "Deployment slots are one of App Service's strongest platform features. They let you host multiple deployment environments such as production and staging inside the same app, warm a release before cutover, validate configuration, and then swap traffic using slot swap semantics instead of deploying straight into production blindly.",
       'Slots are powerful, but they require discipline. Some settings are slot-specific and some are not. If the team does not understand which configuration values stick to a slot and which follow the swap, production changes can still go wrong even when slots exist. Slots reduce deployment risk only when the team understands their behavioral model.',
       'Operationally, slots are one of the best reasons to choose App Service over a more bare-bones hosting option for business-critical web applications. They create a practical release-safety mechanism without requiring a full custom traffic-shaping platform.',
     ],
@@ -202,7 +207,7 @@ const coreConceptSections: NarrativeSection[] = [
     heading: 'File System Behavior, Content Storage, and Statelessness',
     paragraphs: [
       'App Service is fundamentally better for stateless applications than for applications that rely heavily on local mutable file storage. The file system available to the app is not the same thing as durable, application-grade state management. Some content can be persistent depending on hosting mode and configuration, but the safe default assumption for application design is still to externalize important state.',
-      'Applications should treat App Service instances as replaceable compute nodes. Store durable business data in managed databases or storage services. Store shared files in proper external storage. Store caches in dedicated cache systems. Treat the app host as a place to run the app, not as the permanent home of the app\'s business state.',
+      "Applications should treat App Service instances as replaceable compute nodes. Store durable business data in managed databases or storage services. Store shared files in proper external storage. Store caches in dedicated cache systems. Treat the app host as a place to run the app, not as the permanent home of the app's business state.",
       'When teams violate this principle, scale-out, slot swaps, restarts, and disaster recovery all become more fragile than they should be. Statelessness is not just cloud fashion here; it is how you get the real benefits of the platform.',
     ],
   },
@@ -270,7 +275,7 @@ const designPatterns = [
   {
     title: 'Use deployment slots for important production apps',
     detail:
-      'Staging and swap-based releases are one of the platform\'s strongest operational features. Use them where downtime and release risk actually matter.',
+      "Staging and swap-based releases are one of the platform's strongest operational features. Use them where downtime and release risk actually matter.",
   },
   {
     title: 'Prefer managed identity and Key Vault references over static secrets',
@@ -421,31 +426,38 @@ az webapp create \\
 const glossaryTerms = [
   {
     term: 'App Service plan',
-    definition: 'The compute, pricing, operating system, and scale boundary that hosts one or more App Service apps.',
+    definition:
+      'The compute, pricing, operating system, and scale boundary that hosts one or more App Service apps.',
   },
   {
     term: 'Web app',
-    definition: 'An App Service application resource that hosts a web workload inside an App Service plan.',
+    definition:
+      'An App Service application resource that hosts a web workload inside an App Service plan.',
   },
   {
     term: 'Deployment slot',
-    definition: 'An alternate deployment environment such as staging that can be swapped with production for safer releases.',
+    definition:
+      'An alternate deployment environment such as staging that can be swapped with production for safer releases.',
   },
   {
     term: 'VNet integration',
-    definition: 'The App Service feature used for outbound connectivity from the app into a virtual network.',
+    definition:
+      'The App Service feature used for outbound connectivity from the app into a virtual network.',
   },
   {
     term: 'Private endpoint',
-    definition: 'The feature used to make an App Service app privately reachable inbound through Azure Private Link.',
+    definition:
+      'The feature used to make an App Service app privately reachable inbound through Azure Private Link.',
   },
   {
     term: 'Managed identity',
-    definition: 'An Azure identity assigned to the app so it can access Azure resources without storing credentials manually.',
+    definition:
+      'An Azure identity assigned to the app so it can access Azure resources without storing credentials manually.',
   },
   {
     term: 'Easy Auth',
-    definition: 'The built-in App Service authentication and authorization feature that integrates with identity providers such as Microsoft Entra ID.',
+    definition:
+      'The built-in App Service authentication and authorization feature that integrates with identity providers such as Microsoft Entra ID.',
   },
   {
     term: 'Scale out',
@@ -457,27 +469,33 @@ const glossaryTerms = [
   },
   {
     term: 'Premium V4',
-    definition: 'A newer App Service Premium tier that Microsoft documents as not providing stable outbound IP addresses.',
+    definition:
+      'A newer App Service Premium tier that Microsoft documents as not providing stable outbound IP addresses.',
   },
   {
     term: 'App Service Environment v3',
-    definition: 'The single-tenant deployment model for App Service with stronger network isolation and dedicated environment capacity.',
+    definition:
+      'The single-tenant deployment model for App Service with stronger network isolation and dedicated environment capacity.',
   },
   {
     term: 'Custom container',
-    definition: 'A deployment model where the application is packaged as a container image and run on App Service.',
+    definition:
+      'A deployment model where the application is packaged as a container image and run on App Service.',
   },
   {
     term: 'Key Vault reference',
-    definition: 'An App Service configuration mechanism that resolves app settings from Azure Key Vault rather than storing raw secret values directly.',
+    definition:
+      'An App Service configuration mechanism that resolves app settings from Azure Key Vault rather than storing raw secret values directly.',
   },
   {
     term: 'Autoscale',
-    definition: 'A scaling model that adjusts plan instance count based on schedule or metric rules.',
+    definition:
+      'A scaling model that adjusts plan instance count based on schedule or metric rules.',
   },
   {
     term: 'Automatic scaling',
-    definition: 'A more managed scaling model in which App Service can adjust instance count without the same manual autoscale-rule configuration pattern.',
+    definition:
+      'A more managed scaling model in which App Service can adjust instance count without the same manual autoscale-rule configuration pattern.',
   },
 ]
 const pageSources = [
@@ -543,525 +561,179 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   ],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-function getTabFromSearch(search: string): TabId {
-  const tab = new URLSearchParams(search).get('tab')
-  return isTabId(tab) ? tab : 'big-picture'
-}
-
-const win98HelpStyles = `
-.azure-app-service-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.azure-app-service-help-page .win98-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.azure-app-service-help-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.azure-app-service-help-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.azure-app-service-help-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.azure-app-service-help-page .win98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.azure-app-service-help-page .win98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.azure-app-service-help-page .win98-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.azure-app-service-help-page .win98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.azure-app-service-help-page .win98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.azure-app-service-help-page .win98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.azure-app-service-help-page .win98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.azure-app-service-help-page .win98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.azure-app-service-help-page .win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.azure-app-service-help-page .win98-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.azure-app-service-help-page .win98-content {
-  overflow-x: auto;
-  overflow-y: scroll;
-  scrollbar-gutter: stable;
-  padding: 14px 20px 20px;
-}
-
-.azure-app-service-help-page .win98-doc-title {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.azure-app-service-help-page .win98-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.azure-app-service-help-page .win98-section {
-  margin: 0 0 22px;
-}
-
-.azure-app-service-help-page .win98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.azure-app-service-help-page .win98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.azure-app-service-help-page .win98-content p,
-.azure-app-service-help-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.azure-app-service-help-page .win98-content p {
-  margin: 0 0 10px;
-}
-
-.azure-app-service-help-page .win98-content ul,
-.azure-app-service-help-page .win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-.azure-app-service-help-page .win98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.azure-app-service-help-page .win98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.azure-app-service-help-page .win98-codebox code {
-  display: block;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-}
-
-.azure-app-service-help-page .win98-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .azure-app-service-help-page .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .azure-app-service-help-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .azure-app-service-help-page .win98-title-text {
-    position: static;
-    transform: none;
-    margin-left: 8px;
-    font-size: 14px;
-  }
-}
-`
-
 export default function AzureAppServicePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const contentRef = useRef<HTMLElement | null>(null)
-  const [activeTab, setActiveTab] = useState<TabId>(() => getTabFromSearch(location.search))
-
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const url = new URL(window.location.href)
-    const nextSearch = new URLSearchParams(url.search)
-    const shouldClearHash = url.hash.length > 0
-    if (nextSearch.get('tab') !== activeTab || shouldClearHash) {
-      nextSearch.set('tab', activeTab)
-      window.history.replaceState(window.history.state, '', `${url.pathname}?${nextSearch.toString()}`)
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel])
-
-  useEffect(() => {
-    const currentHash = window.location.hash.slice(1)
-    if (!currentHash) {
-      return
-    }
-
-    const container = contentRef.current
-    const target = document.getElementById(currentHash)
-    if (!container || !target || !container.contains(target)) {
-      return
-    }
-
-    container.scrollTo({ top: Math.max(target.offsetTop - 8, 0), left: 0, behavior: 'auto' })
-  }, [activeTab])
-
-  const handleTabChange = (tabId: TabId) => {
-    if (tabId === activeTab) {
-      return
-    }
-
-    setActiveTab(tabId)
-    contentRef.current?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-  }
-
-  const handleSectionJump = (event: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    event.preventDefault()
-
-    const container = contentRef.current
-    const target = document.getElementById(sectionId)
-    if (!container || !target || !container.contains(target)) {
-      return
-    }
-
-    container.scrollTo({ top: Math.max(target.offsetTop - 8, 0), left: 0, behavior: 'auto' })
-
-    const url = new URL(window.location.href)
-    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}#${sectionId}`)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Azure App Service Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="azure-app-service-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">{pageTitle}</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Azure App Service Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="bin98-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
 
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
+          <hr className="bin98-divider" />
+
+          <section id="bp-model" className="bin98-section">
+            <h2 className="bin98-heading">Hosting Model</h2>
+            {hostingModelGuide.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-fit" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ul>
+              {fitGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
           ))}
-        </div>
 
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`} onClick={(event) => handleSectionJump(event, section.id)}>
-                    {section.label}
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-ops-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Operational Checklist</h2>
+            <ul>
+              {operationalChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossaryTerms.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
+
+          <section id="glossary-sources" className="bin98-section">
+            <h2 className="bin98-heading">Primary Sources</h2>
+            <p>
+              This content was compiled from official Microsoft documentation current as checked on
+              March 12, 2026. App Service features, SKU behavior, region support, and lifecycle
+              details can change, so production decisions should always be verified against the
+              current Azure documentation.
+            </p>
+            <ul>
+              {pageSources.map((source) => (
+                <li key={source}>
+                  <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
+                    {source}
                   </a>
                 </li>
               ))}
             </ul>
-          </aside>
-
-          <main ref={contentRef} className="win98-content">
-            <h1 className="win98-doc-title">{pageTitle}</h1>
-            <p className="win98-doc-subtitle">{pageSubtitle}</p>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="win98-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="win98-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-model" className="win98-section">
-                  <h2 className="win98-heading">Hosting Model</h2>
-                  {hostingModelGuide.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-fit" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ul>
-                    {fitGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="win98-section">
-                    <h2 className="win98-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-ops-checklist" className="win98-section">
-                  <h2 className="win98-heading">Operational Checklist</h2>
-                  <ul>
-                    {operationalChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {compareNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="win98-section">
-                    <h2 className="win98-heading">{example.title}</h2>
-                    <div className="win98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="win98-section">
-                  <h2 className="win98-heading">Glossary</h2>
-                  {glossaryTerms.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="glossary-sources" className="win98-section">
-                  <h2 className="win98-heading">Primary Sources</h2>
-                  <p>
-                    This content was compiled from official Microsoft documentation current as checked on March 12,
-                    2026. App Service features, SKU behavior, region support, and lifecycle details can change, so
-                    production decisions should always be verified against the current Azure documentation.
-                  </p>
-                  <ul>
-                    {pageSources.map((source) => (
-                      <li key={source}>
-                        <a href={source} className="win98-inline-link" target="_blank" rel="noreferrer">
-                          {source}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }
-
-

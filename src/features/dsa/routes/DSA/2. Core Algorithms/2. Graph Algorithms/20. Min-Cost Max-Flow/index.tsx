@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -131,8 +131,7 @@ const problemVariants = [
   },
   {
     title: 'Min-cost max-flow with penalties',
-    detail:
-      'Add edges with large costs to model penalties or soft constraints.',
+    detail: 'Add edges with large costs to model penalties or soft constraints.',
   },
 ]
 
@@ -149,8 +148,7 @@ const algorithmSteps = [
   },
   {
     title: 'Find shortest path by reduced cost',
-    detail:
-      'Use Dijkstra on reduced costs to find the cheapest s-to-t path in the residual graph.',
+    detail: 'Use Dijkstra on reduced costs to find the cheapest s-to-t path in the residual graph.',
   },
   {
     title: 'Augment along the path',
@@ -228,13 +226,11 @@ const complexityNotes = [
   },
   {
     title: 'Space cost',
-    detail:
-      'Adjacency lists with reverse edges require O(V + E) memory.',
+    detail: 'Adjacency lists with reverse edges require O(V + E) memory.',
   },
   {
     title: 'Scaling considerations',
-    detail:
-      'If costs are large or capacities huge, cost-scaling variants can improve performance.',
+    detail: 'If costs are large or capacities huge, cost-scaling variants can improve performance.',
   },
   {
     title: 'When flow is large',
@@ -246,8 +242,7 @@ const complexityNotes = [
 const algorithmVariants = [
   {
     title: 'Successive shortest augmenting path',
-    detail:
-      'The standard approach with potentials and Dijkstra. Reliable and simple to implement.',
+    detail: 'The standard approach with potentials and Dijkstra. Reliable and simple to implement.',
   },
   {
     title: 'Cycle canceling',
@@ -261,8 +256,7 @@ const algorithmVariants = [
   },
   {
     title: 'Capacity scaling',
-    detail:
-      'Augment only along edges with large residual capacity first to reduce iterations.',
+    detail: 'Augment only along edges with large residual capacity first to reduce iterations.',
   },
 ]
 
@@ -274,8 +268,7 @@ const realWorldUses = [
   },
   {
     context: 'Assignment and scheduling',
-    detail:
-      'Assign people to tasks with costs such as travel time, preference, or skill mismatch.',
+    detail: 'Assign people to tasks with costs such as travel time, preference, or skill mismatch.',
   },
   {
     context: 'Telecom routing',
@@ -289,8 +282,7 @@ const realWorldUses = [
   },
   {
     context: 'Supply chain planning',
-    detail:
-      'Balance production, transport, and storage costs with limits at each stage.',
+    detail: 'Balance production, transport, and storage costs with limits at each stage.',
   },
 ]
 
@@ -455,8 +447,7 @@ const glossaryTerms = [
   },
   {
     term: 'Augmenting path',
-    definition:
-      'An s-to-t path in the residual graph along which additional flow can be pushed.',
+    definition: 'An s-to-t path in the residual graph along which additional flow can be pushed.',
   },
   {
     term: 'Bottleneck capacity',
@@ -465,8 +456,7 @@ const glossaryTerms = [
   },
   {
     term: 'Reduced cost',
-    definition:
-      'Reweighted edge cost c(u,v) + p(u) - p(v), computed using vertex potentials.',
+    definition: 'Reweighted edge cost c(u,v) + p(u) - p(v), computed using vertex potentials.',
   },
   {
     term: 'Potentials',
@@ -496,210 +486,6 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.mcmf-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.mcmf-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.mcmf-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.mcmf-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.mcmf-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.mcmf-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.mcmf-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.mcmf-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.mcmf-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.mcmf-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.mcmf-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.mcmf-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.mcmf-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.mcmf-toc-list li {
-  margin: 0 0 8px;
-}
-
-.mcmf-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.mcmf-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.mcmf-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.mcmf-section {
-  margin: 0 0 20px;
-}
-
-.mcmf-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.mcmf-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.mcmf-content p,
-.mcmf-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.mcmf-content p {
-  margin: 0 0 10px;
-}
-
-.mcmf-content ul,
-.mcmf-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.mcmf-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.mcmf-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.mcmf-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .mcmf-main {
-    grid-template-columns: 1fr;
-  }
-
-  .mcmf-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -707,10 +493,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -738,276 +520,218 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MinCostMaxFlowPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Min-Cost Max-Flow',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Min-Cost Max-Flow (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Min-Cost Max-Flow',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="mcmf-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="mcmf-window" role="presentation">
-        <header className="mcmf-titlebar">
-          <span className="mcmf-title-text">Min-Cost Max-Flow</span>
-          <div className="mcmf-title-controls">
-            <button className="mcmf-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="mcmf-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="mcmf-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`mcmf-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="mcmf-main">
-          <aside className="mcmf-toc" aria-label="Table of contents">
-            <h2 className="mcmf-toc-title">Contents</h2>
-            <ul className="mcmf-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Min-Cost Max-Flow"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Min-Cost Max-Flow</h1>
+      <p>
+        Min-cost max-flow finds a flow of maximum value from a source to a sink while minimizing the
+        sum of edge costs. It is the workhorse for routing, assignment, and allocation problems
+        where capacity and cost matter at the same time. This page covers the theory, the residual
+        mechanics, and the standard efficient implementation.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <h3 className="bin98-subheading">
+              Send the most flow while paying the least total cost
+            </h3>
+            <p>
+              A max-flow ignores cost and only pushes as much as possible. A min-cost flow finds the
+              cheapest way to ship a specified amount. Min-cost max-flow combines both: first
+              maximize the amount of flow, then choose the cheapest configuration among all maximum
+              flows.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="mcmf-content">
-            <h1 className="mcmf-doc-title">Min-Cost Max-Flow</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-definitions" className="bin98-section">
+            <h2 className="bin98-heading">Definitions</h2>
+            {coreDefinitions.map((item) => (
+              <div key={item.heading}>
+                <h3 className="bin98-subheading">{item.heading}</h3>
+                <ul>
+                  {item.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Problem Variants and Modeling Tricks</h2>
+            {problemVariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-ssap" className="bin98-section">
+            <h2 className="bin98-heading">Successive Shortest Augmenting Path Workflow</h2>
+            <ol>
+              {algorithmSteps.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.detail}
+                </li>
+              ))}
+            </ol>
             <p>
-              Min-cost max-flow finds a flow of maximum value from a source to a sink while minimizing the sum of edge costs.
-              It is the workhorse for routing, assignment, and allocation problems where capacity and cost matter at the same
-              time. This page covers the theory, the residual mechanics, and the standard efficient implementation.
+              Correctness idea: each augmentation sends flow along the cheapest available residual
+              path. Potentials preserve non-negative reduced costs so Dijkstra finds the true
+              cheapest path in the original costs. Repeating until no path exists yields maximum
+              flow with minimum total cost.
             </p>
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Sketch</h2>
+            {correctnessSketch.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Notes</h2>
+            {implementationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Performance depends on how large the max flow is. For huge flows or very large graphs,
+              consider cost-scaling or capacity scaling variants to reduce the number of
+              augmentations.
+            </p>
+          </section>
+          <section id="core-algo-variants" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Variants and Upgrades</h2>
+            {algorithmVariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-testing" className="bin98-section">
+            <h2 className="bin98-heading">Testing and Edge Cases</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="mcmf-section">
-                  <h2 className="mcmf-heading">Overview</h2>
-                  <h3 className="mcmf-subheading">Send the most flow while paying the least total cost</h3>
-                  <p>
-                    A max-flow ignores cost and only pushes as much as possible. A min-cost flow finds the cheapest way to ship a
-                    specified amount. Min-cost max-flow combines both: first maximize the amount of flow, then choose the
-                    cheapest configuration among all maximum flows.
-                  </p>
-                </section>
-                <hr className="mcmf-divider" />
-                <section id="bp-history" className="mcmf-section">
-                  <h2 className="mcmf-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="mcmf-divider" />
-                <section id="bp-models" className="mcmf-section">
-                  <h2 className="mcmf-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="mcmf-divider" />
-                <section id="bp-applications" className="mcmf-section">
-                  <h2 className="mcmf-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="mcmf-divider" />
-                <section id="bp-takeaways" className="mcmf-section">
-                  <h2 className="mcmf-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((item) => (
+            <div key={item.title}>
+              <h3 className="bin98-subheading">{item.title}</h3>
+              <div className="bin98-codebox">
+                <code>{item.code.trim()}</code>
+              </div>
+              <p>{item.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-definitions" className="mcmf-section">
-                  <h2 className="mcmf-heading">Definitions</h2>
-                  {coreDefinitions.map((item) => (
-                    <div key={item.heading}>
-                      <h3 className="mcmf-subheading">{item.heading}</h3>
-                      <ul>
-                        {item.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-variants" className="mcmf-section">
-                  <h2 className="mcmf-heading">Problem Variants and Modeling Tricks</h2>
-                  {problemVariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-ssap" className="mcmf-section">
-                  <h2 className="mcmf-heading">Successive Shortest Augmenting Path Workflow</h2>
-                  <ol>
-                    {algorithmSteps.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.detail}
-                      </li>
-                    ))}
-                  </ol>
-                  <p>
-                    Correctness idea: each augmentation sends flow along the cheapest available residual path. Potentials
-                    preserve non-negative reduced costs so Dijkstra finds the true cheapest path in the original costs. Repeating
-                    until no path exists yields maximum flow with minimum total cost.
-                  </p>
-                </section>
-                <section id="core-correctness" className="mcmf-section">
-                  <h2 className="mcmf-heading">Correctness Sketch</h2>
-                  {correctnessSketch.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-implementation" className="mcmf-section">
-                  <h2 className="mcmf-heading">Implementation Notes</h2>
-                  {implementationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="mcmf-section">
-                  <h2 className="mcmf-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Performance depends on how large the max flow is. For huge flows or very large graphs, consider cost-scaling
-                    or capacity scaling variants to reduce the number of augmentations.
-                  </p>
-                </section>
-                <section id="core-algo-variants" className="mcmf-section">
-                  <h2 className="mcmf-heading">Algorithm Variants and Upgrades</h2>
-                  {algorithmVariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decision" className="mcmf-section">
-                  <h2 className="mcmf-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-pitfalls" className="mcmf-section">
-                  <h2 className="mcmf-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-testing" className="mcmf-section">
-                  <h2 className="mcmf-heading">Testing and Edge Cases</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-advanced" className="mcmf-section">
-                  <h2 className="mcmf-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="mcmf-section">
-                <h2 className="mcmf-heading">Practical Examples</h2>
-                {examples.map((item) => (
-                  <div key={item.title}>
-                    <h3 className="mcmf-subheading">{item.title}</h3>
-                    <div className="mcmf-codebox">
-                      <code>{item.code.trim()}</code>
-                    </div>
-                    <p>{item.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="mcmf-section">
-                <h2 className="mcmf-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

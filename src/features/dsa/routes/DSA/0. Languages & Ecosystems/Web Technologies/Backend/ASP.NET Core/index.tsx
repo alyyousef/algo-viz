@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const overviewSections = [
   {
@@ -412,540 +410,205 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'asp98-glossary', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
-const aspNetCoreHelpStyles = `
-.asp98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.asp98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.asp98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.asp98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.asp98-title-controls {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.asp98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.asp98-control:focus-visible,
-.asp98-tab:focus-visible,
-.asp98-toc-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
-.asp98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.asp98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b7b7b7;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.asp98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.asp98-main {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.asp98-toc {
-  overflow: auto;
-  padding: 12px 12px 18px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.asp98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.asp98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.asp98-toc-item + .asp98-toc-item {
-  margin-top: 8px;
-}
-
-.asp98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.asp98-content {
-  overflow: auto;
-  padding: 16px 22px 24px;
-  background: #ffffff;
-}
-
-.asp98-doc-title {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.asp98-intro {
-  margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.asp98-section {
-  margin: 0 0 22px;
-}
-
-.asp98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.asp98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.asp98-divider {
-  margin: 14px 0 16px;
-  border: 0;
-  border-top: 1px solid #d4d4d4;
-}
-
-.asp98-content p,
-.asp98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.asp98-content p {
-  margin: 0 0 10px;
-}
-
-.asp98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.asp98-content li + li {
-  margin-top: 4px;
-}
-
-.asp98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px 9px;
-  background: #f3f3f3;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.asp98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .asp98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .asp98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .asp98-title {
-    font-size: 13px;
-    max-width: calc(100% - 72px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .asp98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
 export default function AspNetCorePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const requestedTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(location.search)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `ASP.NET Core (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, location.search, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    if (tab === activeTab) {
-      return
-    }
-
-    const nextParams = new URLSearchParams(location.search)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'ASP.NET Core',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'ASP.NET Core',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="asp98-help-page">
-      <style>{aspNetCoreHelpStyles}</style>
-      <div className="asp98-window" role="presentation">
-        <header className="asp98-titlebar">
-          <span className="asp98-title">ASP.NET Core</span>
-          <div className="asp98-title-controls">
-            <button
-              className="asp98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="asp98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="ASP.NET Core"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">ASP.NET Core</h1>
+      <p className="asp98-intro">
+        This page is a detailed overview of ASP.NET Core as a backend web framework in the .NET
+        ecosystem. It covers the host model, middleware pipeline, DI system, endpoint styles,
+        runtime behavior, and the framework\'s role in modern service and API engineering.
+      </p>
 
-        <div className="asp98-tabs" role="tablist" aria-label="ASP.NET Core Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`asp98-tab ${activeTab === tab.id ? 'asp98-tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="asp98-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                <p>{section.body}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="asp98-main">
-          <aside className="asp98-toc" aria-label="Table of contents">
-            <h2 className="asp98-toc-title">Contents</h2>
-            <ul className="asp98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="asp98-toc-item">
-                  <a href={`#${section.id}`} className="asp98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="asp98-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <ul>
+              {whyItMatters.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="asp98-content">
-            <h1 className="asp98-doc-title">ASP.NET Core</h1>
-            <p className="asp98-intro">
-              This page is a detailed overview of ASP.NET Core as a backend web framework in the
-              .NET ecosystem. It covers the host model, middleware pipeline, DI system, endpoint
-              styles, runtime behavior, and the framework\'s role in modern service and API
-              engineering.
+          <hr className="bin98-divider" />
+
+          <section id="asp98-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="asp98-themes" className="bin98-section">
+            <h2 className="bin98-heading">Big Picture Themes</h2>
+            {bigPictureThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="asp98-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="asp98-signals" className="bin98-section">
+            <h2 className="bin98-heading">Topic Signals</h2>
+            {topicSignals.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {coreFoundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-features" className="bin98-section">
+            <h2 className="bin98-heading">Framework Features</h2>
+            {languageAndFrameworkFeatures.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-runtime" className="bin98-section">
+            <h2 className="bin98-heading">Runtime and Operations</h2>
+            {runtimeAndOperations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-uses" className="bin98-section">
+            <h2 className="bin98-heading">Ecosystem Uses</h2>
+            {ecosystemUses.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-failures" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="asp98-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Study Checklist</h2>
+            <ul>
+              {studyChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>
+                <strong>Area:</strong> {example.area}
+              </p>
+              <p>{example.intro}</p>
+              <p>
+                <strong>Why this example fits:</strong> {example.whyFit}
+              </p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="asp98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((entry) => (
+            <p key={entry.term}>
+              <strong>{entry.term}:</strong> {entry.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="asp98-overview" className="asp98-section">
-                  <h2 className="asp98-heading">Overview</h2>
-                  {overviewSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="asp98-subheading">{section.title}</h3>
-                      <p>{section.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="asp98-divider" />
-
-                <section id="asp98-why" className="asp98-section">
-                  <h2 className="asp98-heading">Why It Matters</h2>
-                  <ul>
-                    {whyItMatters.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="asp98-divider" />
-
-                <section id="asp98-history" className="asp98-section">
-                  <h2 className="asp98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="asp98-divider" />
-
-                <section id="asp98-themes" className="asp98-section">
-                  <h2 className="asp98-heading">Big Picture Themes</h2>
-                  {bigPictureThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="asp98-divider" />
-
-                <section id="asp98-takeaways" className="asp98-section">
-                  <h2 className="asp98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="asp98-signals" className="asp98-section">
-                  <h2 className="asp98-heading">Topic Signals</h2>
-                  {topicSignals.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-foundations" className="asp98-section">
-                  <h2 className="asp98-heading">Foundations</h2>
-                  {coreFoundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-features" className="asp98-section">
-                  <h2 className="asp98-heading">Framework Features</h2>
-                  {languageAndFrameworkFeatures.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-runtime" className="asp98-section">
-                  <h2 className="asp98-heading">Runtime and Operations</h2>
-                  {runtimeAndOperations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-uses" className="asp98-section">
-                  <h2 className="asp98-heading">Ecosystem Uses</h2>
-                  {ecosystemUses.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-compare" className="asp98-section">
-                  <h2 className="asp98-heading">Compare and Contrast</h2>
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-failures" className="asp98-section">
-                  <h2 className="asp98-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="asp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="asp98-checklist" className="asp98-section">
-                  <h2 className="asp98-heading">Study Checklist</h2>
-                  <ul>
-                    {studyChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="asp98-section">
-                    <h2 className="asp98-heading">{example.title}</h2>
-                    <p>
-                      <strong>Area:</strong> {example.area}
-                    </p>
-                    <p>{example.intro}</p>
-                    <p>
-                      <strong>Why this example fits:</strong> {example.whyFit}
-                    </p>
-                    <div className="asp98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="asp98-glossary" className="asp98-section">
-                <h2 className="asp98-heading">Glossary</h2>
-                {glossary.map((entry) => (
-                  <p key={entry.term}>
-                    <strong>{entry.term}:</strong> {entry.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

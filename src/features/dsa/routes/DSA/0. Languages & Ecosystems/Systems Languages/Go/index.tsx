@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Go\'s main strengths are simplicity, very strong tooling, fast build feedback, concurrency ergonomics for service software, deployment convenience, and code readability across teams. A Go service is often easy to build, test, package, and run in production compared with more complex language stacks.',
+      "Go's main strengths are simplicity, very strong tooling, fast build feedback, concurrency ergonomics for service software, deployment convenience, and code readability across teams. A Go service is often easy to build, test, package, and run in production compared with more complex language stacks.",
       'The language also benefits from a mature standard library in domains such as HTTP, networking, encoding, testing, and tooling. That reduces dependence on giant framework ecosystems for many common backend tasks.',
     ],
     bullets: [
@@ -121,7 +119,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Important Limits',
     paragraphs: [
       'Go has clear limitations. The type system is intentionally less expressive than some modern alternatives, error handling can feel repetitive, and the garbage-collected runtime means it is not aimed at the most constrained low-level environments. Some developers also find its minimalism frustrating when they want richer abstraction tools.',
-      'These limits are not accidents. They are consequences of the language\'s design priorities. The question is not whether Go could have more features, but whether those features would undermine the simplicity and codebase uniformity that the language is trying to protect.',
+      "These limits are not accidents. They are consequences of the language's design priorities. The question is not whether Go could have more features, but whether those features would undermine the simplicity and codebase uniformity that the language is trying to protect.",
     ],
     bullets: [
       'Less expressive abstraction tools than some newer languages.',
@@ -154,7 +152,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Runtime Model',
     paragraphs: [
       'Go compiles to native binaries, but it also includes a runtime that handles garbage collection, goroutine scheduling, stack management, and parts of concurrency coordination. That makes it different from languages whose compiled output has almost no runtime layer at all.',
-      'This hybrid model is one of Go\'s key tradeoffs. Developers get much easier concurrency and memory management than fully manual systems languages provide, but they also accept runtime behavior and GC costs as part of the platform.',
+      "This hybrid model is one of Go's key tradeoffs. Developers get much easier concurrency and memory management than fully manual systems languages provide, but they also accept runtime behavior and GC costs as part of the platform.",
     ],
   },
   {
@@ -162,7 +160,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Packages, Modules, And Project Organization',
     paragraphs: [
       'Go organizes code primarily through packages. The package model is central to how Go developers structure systems: small focused packages, clear exported names, and relatively direct dependency relationships. Modules then coordinate versioning and dependency management across repositories.',
-      'This helps reinforce Go\'s preference for modular simplicity over deep internal framework hierarchies. The shape of the codebase often matters as much as the language syntax itself.',
+      "This helps reinforce Go's preference for modular simplicity over deep internal framework hierarchies. The shape of the codebase often matters as much as the language syntax itself.",
     ],
   },
   {
@@ -186,7 +184,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Goroutines',
     paragraphs: [
       'Goroutines are lightweight concurrent execution units managed by the Go runtime. They make it much easier to express large amounts of concurrent I/O-oriented work than manually managing operating system threads in many other environments.',
-      'This is one of Go\'s signature advantages. Service software often needs to handle many requests, connections, workers, or background operations at once, and goroutines give developers a practical model for structuring that concurrency.',
+      "This is one of Go's signature advantages. Service software often needs to handle many requests, connections, workers, or background operations at once, and goroutines give developers a practical model for structuring that concurrency.",
     ],
   },
   {
@@ -209,7 +207,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-standard-library',
     title: 'Standard Library And Batteries-Included Engineering',
     paragraphs: [
-      'One of Go\'s practical advantages is its strong standard library. Common tasks such as HTTP servers, JSON handling, testing, logging foundations, file I/O, networking, and command-line work often have direct built-in support. This reduces the need to assemble a giant stack of third-party frameworks before writing useful software.',
+      "One of Go's practical advantages is its strong standard library. Common tasks such as HTTP servers, JSON handling, testing, logging foundations, file I/O, networking, and command-line work often have direct built-in support. This reduces the need to assemble a giant stack of third-party frameworks before writing useful software.",
       'That standard library culture reinforces a certain style of Go engineering: smaller external dependency sets, direct composition, and reliance on stable built-in APIs.',
     ],
   },
@@ -217,7 +215,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-tooling',
     title: 'Tooling, Formatting, And Build Experience',
     paragraphs: [
-      'Go tooling is one of the language\'s strongest selling points. Formatting, testing, dependency management, documentation generation, benchmarking, and cross-compilation all fit into a relatively coherent workflow. The language intentionally reduces arguments about style through standard formatting and narrow conventions.',
+      "Go tooling is one of the language's strongest selling points. Formatting, testing, dependency management, documentation generation, benchmarking, and cross-compilation all fit into a relatively coherent workflow. The language intentionally reduces arguments about style through standard formatting and narrow conventions.",
       'This matters because developer productivity is not only about syntax. Go often feels efficient because the surrounding workflow is predictable and low-drama, especially compared with ecosystems that require much more build and tool configuration.',
     ],
   },
@@ -233,7 +231,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-testing',
     title: 'Testing And Reliability',
     paragraphs: [
-      'Go includes first-class testing support, which encourages teams to keep unit tests, benchmarks, and package-focused validation close to the code. This fits the language\'s broader design philosophy of integrated tooling and practical engineering discipline.',
+      "Go includes first-class testing support, which encourages teams to keep unit tests, benchmarks, and package-focused validation close to the code. This fits the language's broader design philosophy of integrated tooling and practical engineering discipline.",
       'Because many Go systems sit in operationally critical paths, testing culture matters. The ecosystem generally encourages straightforward tests over ornate testing frameworks or excessive magic.',
     ],
   },
@@ -257,7 +255,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-pitfalls',
     title: 'Common Pitfalls',
     paragraphs: [
-      'A common Go mistake is assuming the language\'s simplicity means design no longer matters. Poor package boundaries, sloppy goroutine ownership, and careless interface design can still make codebases difficult to maintain. Another mistake is using concurrency primitives everywhere just because they are available.',
+      "A common Go mistake is assuming the language's simplicity means design no longer matters. Poor package boundaries, sloppy goroutine ownership, and careless interface design can still make codebases difficult to maintain. Another mistake is using concurrency primitives everywhere just because they are available.",
       'Teams can also fight the language by trying to force abstraction styles that Go intentionally does not optimize for. The strongest Go systems usually embrace directness instead of trying to turn Go into a more feature-heavy language.',
     ],
     bullets: [
@@ -306,9 +304,7 @@ const exampleSections: ExampleSection[] = [
   {
     id: 'ex-interface',
     title: 'Small Interface',
-    description: [
-      'Go interfaces are usually most effective when they stay narrow and behavioral.',
-    ],
+    description: ['Go interfaces are usually most effective when they stay narrow and behavioral.'],
     code: `type Notifier interface {
     Send(message string) error
 }`,
@@ -334,9 +330,7 @@ const exampleSections: ExampleSection[] = [
   {
     id: 'ex-channel',
     title: 'Channel Communication',
-    description: [
-      'Channels support communication between concurrent parts of a program.',
-    ],
+    description: ['Channels support communication between concurrent parts of a program.'],
     code: `messages := make(chan string)
 
 go func() {
@@ -353,7 +347,7 @@ msg := <-messages`,
     id: 'ex-http',
     title: 'Standard Library HTTP Handler',
     description: [
-      'Go\'s standard library makes basic server work possible with very little framework overhead.',
+      "Go's standard library makes basic server work possible with very little framework overhead.",
     ],
     code: `http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusOK)
@@ -366,9 +360,7 @@ msg := <-messages`,
   {
     id: 'ex-test',
     title: 'Built-In Testing Style',
-    description: [
-      'Go testing stays close to the language and standard tooling.',
-    ],
+    description: ['Go testing stays close to the language and standard tooling.'],
     code: `func TestAdd(t *testing.T) {
     if add(2, 3) != 5 {
         t.Fatal("unexpected result")
@@ -376,7 +368,7 @@ msg := <-messages`,
 }`,
     notes: [
       'Tests are ordinary Go code using standard conventions.',
-      'This fits the language\'s preference for integrated tooling over heavy framework magic.',
+      "This fits the language's preference for integrated tooling over heavy framework magic.",
     ],
   },
 ] as const
@@ -413,8 +405,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Goroutine',
-        definition:
-          'A lightweight concurrent execution unit managed by the Go runtime.',
+        definition: 'A lightweight concurrent execution unit managed by the Go runtime.',
       },
       {
         term: 'Channel',
@@ -423,8 +414,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Error value',
-        definition:
-          'An ordinary returned value representing failure information in Go.',
+        definition: 'An ordinary returned value representing failure information in Go.',
       },
     ],
   },
@@ -459,8 +449,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Race detector',
-        definition:
-          'A Go tooling feature used to help identify data races in concurrent programs.',
+        definition: 'A Go tooling feature used to help identify data races in concurrent programs.',
       },
       {
         term: 'Escape analysis',
@@ -566,224 +555,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.go98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.go98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.go98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.go98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.go98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.go98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.go98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.go98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.go98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.go98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.go98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.go98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.go98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.go98-toc-item {
-  margin: 0 0 8px;
-}
-
-.go98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.go98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.go98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.go98-section {
-  margin: 0 0 20px;
-}
-
-.go98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.go98-content p,
-.go98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.go98-content p {
-  margin: 0 0 10px;
-}
-
-.go98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.go98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.go98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.go98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .go98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .go98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .go98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="go98-section">
@@ -838,122 +609,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function GoPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Go',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Go (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Go',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="go98-help-page">
-      <style>{pageStyles}</style>
-      <div className="go98-help-window" role="presentation">
-        <header className="go98-titlebar">
-          <span className="go98-titletext">Go</span>
-          <div className="go98-controls">
-            <button className="go98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="go98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Go"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Go</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="go98-tabs" role="tablist" aria-label="Go documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`go98-tab ${activeTab === tab.id ? 'go98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="go98-main">
-          <aside className="go98-toc" aria-label="Table of contents">
-            <h2 className="go98-toc-title">Contents</h2>
-            <ul className="go98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="go98-toc-item">
-                  <a href={`#${section.id}`} className="go98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="go98-content">
-            <h1 className="go98-doc-title">Go</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

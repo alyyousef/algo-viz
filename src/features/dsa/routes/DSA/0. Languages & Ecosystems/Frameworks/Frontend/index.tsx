@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 import { slugifySegment } from '@/features/dsa/utils/slug'
 
 import type { JSX } from 'react'
@@ -22,7 +23,6 @@ type ExampleSection = {
   takeaway: string
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const FRONTEND_FRAMEWORKS_BASE_ROUTE = '/dsa/0-languages-and-ecosystems/frameworks/frontend'
 
 const frameworkDirectory = [
@@ -646,245 +646,6 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'frontend98-glossary', label: 'Glossary' }],
 }
 
-const pageStyles = `
-.frontend98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.frontend98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.frontend98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.frontend98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.frontend98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.frontend98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.frontend98-control:focus-visible,
-.frontend98-tab:focus-visible,
-.frontend98-toc-link:focus-visible,
-.frontend98-inline-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -2px;
-}
-
-.frontend98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.frontend98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  color: #000;
-  cursor: pointer;
-}
-
-.frontend98-tab-active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.frontend98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-}
-
-.frontend98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.frontend98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.frontend98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.frontend98-toc-item + .frontend98-toc-item {
-  margin-top: 6px;
-}
-
-.frontend98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.frontend98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.frontend98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.frontend98-doc-subtitle {
-  margin: 0 0 18px;
-  font-size: 12px;
-}
-
-.frontend98-section {
-  margin: 0 0 20px;
-}
-
-.frontend98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.frontend98-content p {
-  margin: 0 0 10px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.frontend98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.frontend98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.frontend98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.frontend98-inline-link {
-  color: #000;
-}
-
-.frontend98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.frontend98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .frontend98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .frontend98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .frontend98-title {
-    font-size: 13px;
-    max-width: calc(100% - 80px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .frontend98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 function toFrameworkRoute(name: string): string {
   return `${FRONTEND_FRAMEWORKS_BASE_ROUTE}/${slugifySegment(name)}`
 }
@@ -941,141 +702,61 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
 }
 
 export default function FrontendFrameworksPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Frontend Frameworks',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Frontend Frameworks (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Frontend Frameworks',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="frontend98-help-page">
-      <style>{pageStyles}</style>
-      <div className="frontend98-window" role="presentation">
-        <header className="frontend98-titlebar">
-          <span className="frontend98-title">Frontend Frameworks</span>
-          <div className="frontend98-controls">
-            <button
-              className="frontend98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="frontend98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Frontend Frameworks"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Frontend Frameworks</h1>
+      <p className="frontend98-doc-subtitle">
+        Help-style overview of browser framework architecture, rendering models, reactivity,
+        routing, performance, and the framework pages available in this subsection.
+      </p>
 
-        <div className="frontend98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`frontend98-tab ${activeTab === tab.id ? 'frontend98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="frontend98-main">
-          <aside className="frontend98-toc" aria-label="Table of contents">
-            <h2 className="frontend98-toc-title">Contents</h2>
-            <ul className="frontend98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="frontend98-toc-item">
-                  <a href={`#${section.id}`} className="frontend98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1, {
+              linkedBullets: frameworkDirectory,
+            }),
+          )
+        : null}
 
-          <main className="frontend98-content">
-            <h1 className="frontend98-doc-title">Frontend Frameworks</h1>
-            <p className="frontend98-doc-subtitle">
-              Help-style overview of browser framework architecture, rendering models, reactivity,
-              routing, performance, and the framework pages available in this subsection.
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
+
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
+
+      {activeTab === 'glossary' ? (
+        <section id="frontend98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1, {
-                    linkedBullets: frameworkDirectory,
-                  }),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary' ? (
-              <section id="frontend98-glossary" className="frontend98-section">
-                <h2 className="frontend98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            ) : null}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      ) : null}
+    </TopicPageShell>
   )
 }

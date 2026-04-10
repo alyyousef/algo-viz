@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -319,8 +318,7 @@ function push_back(vec, value):
         vec.capacity = newCap
     vec.data[vec.size] = value
     vec.size += 1`,
-    note:
-      'Doubling keeps total copies across m appends at O(m), giving amortized O(1) insertion. This is the playbook used by std::vector and ArrayList.',
+    note: 'Doubling keeps total copies across m appends at O(m), giving amortized O(1) insertion. This is the playbook used by std::vector and ArrayList.',
   },
   {
     title: 'O(1) insert after a node in a singly linked list',
@@ -328,8 +326,7 @@ function push_back(vec, value):
     newNode = Node(value)
     newNode.next = node.next
     node.next = newNode`,
-    note:
-      'Given a pointer to the node before the insertion point, no shifting is needed. The cost is independent of list size.',
+    note: 'Given a pointer to the node before the insertion point, no shifting is needed. The cost is independent of list size.',
   },
   {
     title: 'LRU cache core using a doubly linked list',
@@ -354,8 +351,7 @@ function promote(node, head) {
   head.prev = node
   return node
 }`,
-    note:
-      'Hash map gives O(1) node lookup, list gives O(1) promotion and eviction. This pattern underlies caches in browsers and databases.',
+    note: 'Hash map gives O(1) node lookup, list gives O(1) promotion and eviction. This pattern underlies caches in browsers and databases.',
   },
   {
     title: 'Fast/slow pointer to find middle of a list',
@@ -366,8 +362,7 @@ function promote(node, head) {
         slow = slow.next
         fast = fast.next.next
     return slow`,
-    note:
-      'Fast moves two steps for every one step slow. When fast hits the end, slow sits at the midpoint.',
+    note: 'Fast moves two steps for every one step slow. When fast hits the end, slow sits at the midpoint.',
   },
   {
     title: 'Array compaction to remove elements in-place',
@@ -378,8 +373,7 @@ function promote(node, head) {
             arr[write] = arr[read]
             write += 1
     return write  // new logical length`,
-    note:
-      'This pattern avoids extra allocations and keeps remaining elements contiguous.',
+    note: 'This pattern avoids extra allocations and keeps remaining elements contiguous.',
   },
 ]
 
@@ -457,8 +451,7 @@ const invariants = [
   },
   {
     title: 'Index stability',
-    detail:
-      'Array deletions shift indices. Any stored indices must be recomputed or avoided.',
+    detail: 'Array deletions shift indices. Any stored indices must be recomputed or avoided.',
   },
 ]
 
@@ -547,7 +540,8 @@ const references = [
 const glossaryTerms = [
   {
     term: 'Contiguous storage',
-    definition: 'Elements are placed back-to-back in memory, enabling direct index arithmetic and strong cache locality.',
+    definition:
+      'Elements are placed back-to-back in memory, enabling direct index arithmetic and strong cache locality.',
   },
   {
     term: 'Node handle',
@@ -555,7 +549,8 @@ const glossaryTerms = [
   },
   {
     term: 'Amortized O(1)',
-    definition: 'Average append cost over many operations in dynamic arrays despite occasional O(n) resizes.',
+    definition:
+      'Average append cost over many operations in dynamic arrays despite occasional O(n) resizes.',
   },
   {
     term: 'Capacity',
@@ -563,240 +558,42 @@ const glossaryTerms = [
   },
   {
     term: 'Spatial locality',
-    definition: 'Nearby memory addresses are likely accessed together, benefiting arrays during sequential scans.',
+    definition:
+      'Nearby memory addresses are likely accessed together, benefiting arrays during sequential scans.',
   },
   {
     term: 'Pointer chasing',
-    definition: 'Following next/prev pointers through nodes, often causing cache misses compared with array indexing.',
+    definition:
+      'Following next/prev pointers through nodes, often causing cache misses compared with array indexing.',
   },
   {
     term: 'Sentinel node',
-    definition: 'A dedicated head/tail placeholder that simplifies edge-case insert and delete logic.',
+    definition:
+      'A dedicated head/tail placeholder that simplifies edge-case insert and delete logic.',
   },
   {
     term: 'Iterator invalidation',
-    definition: 'Previously stored addresses/references become stale after structural operations such as array reallocation.',
+    definition:
+      'Previously stored addresses/references become stale after structural operations such as array reallocation.',
   },
   {
     term: 'Intrusive list',
-    definition: 'List links are embedded inside payload objects to avoid separate node allocations.',
+    definition:
+      'List links are embedded inside payload objects to avoid separate node allocations.',
   },
   {
     term: 'Ring buffer',
-    definition: 'A fixed-size circular array with head/tail indices for efficient queue operations.',
+    definition:
+      'A fixed-size circular array with head/tail indices for efficient queue operations.',
   },
   {
     term: 'Unrolled linked list',
-    definition: 'List nodes each store a small array block to improve locality and reduce pointer overhead.',
+    definition:
+      'List nodes each store a small array block to improve locality and reduce pointer overhead.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-help-page .win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-help-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-help-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-help-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-help-page .win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-help-page .win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-help-page .win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-help-page .win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-help-page .win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-help-page .win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-help-page .win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-help-page .win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-help-page .win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-help-page .win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-help-page .win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-help-page .win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-help-page .win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-help-page .win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-help-page .win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-help-page .win98-content p,
-.win98-help-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-help-page .win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-help-page .win98-content ul,
-.win98-help-page .win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-help-page .win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-help-page .win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-help-page .win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .win98-help-page .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-help-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -804,10 +601,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -841,305 +634,246 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ArraysAndListsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Arrays and Linked Lists',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Arrays and Linked Lists (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Arrays and Linked Lists',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Arrays and Linked Lists</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Arrays and Linked Lists"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Arrays and Linked Lists</h1>
+      <p>
+        Arrays deliver constant-time indexing and cache-friendly scans by storing elements
+        contiguously. Linked lists embrace pointers to make inserts and deletes O(1) given a node,
+        at the cost of locality. Understanding the mechanics, trade-offs, and real-world patterns
+        lets you pick the right spine for your data.
+      </p>
+      <p>
+        Linear sequences are the backbone of most programs. Arrays shine when the shape is stable
+        and you need fast indexing. Linked lists shine when the shape changes frequently and you can
+        navigate with node references. Modern practice blends the two: dynamic arrays, deques,
+        ropes, and unrolled lists mix contiguity and pointers to tame different workloads.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Arrays and linked lists are both linear containers, but they optimize different costs.
+              Arrays optimize access and iteration through locality; lists optimize structural
+              updates around known nodes through pointer rewiring.
+            </p>
+            <p>
+              In modern systems, cache behavior frequently dominates asymptotic intuition. This is
+              why vectors/dynamic arrays are often default, while linked lists are used selectively
+              where stable node handles and O(1) splices matter.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Performance Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              A branch misprediction is often tens of cycles; a cache miss can be hundreds. Arrays
+              avoid many branches and pack elements into few cache lines. Lists avoid shifting work
+              but pay the miss penalty on each hop unless carefully allocated.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {applications.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use Which</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Arrays and Linked Lists</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((model) => (
+              <div key={model.title}>
+                <h3 className="bin98-subheading">{model.title}</h3>
+                <p>{model.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How They Work</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
             <p>
-              Arrays deliver constant-time indexing and cache-friendly scans by storing elements contiguously. Linked lists embrace
-              pointers to make inserts and deletes O(1) given a node, at the cost of locality. Understanding the mechanics, trade-offs,
-              and real-world patterns lets you pick the right spine for your data.
+              Arrays pay a one-time resize cost but give O(1) access and traversal. Linked lists pay
+              per hop but give stable node addresses and cheap splices. Unrolled and chunked
+              variants try to capture the best of both worlds.
             </p>
-            <p>
-              Linear sequences are the backbone of most programs. Arrays shine when the shape is stable and you need fast indexing.
-              Linked lists shine when the shape changes frequently and you can navigate with node references. Modern practice blends the
-              two: dynamic arrays, deques, ropes, and unrolled lists mix contiguity and pointers to tame different workloads.
-            </p>
+          </section>
+          <section id="core-anatomy" className="bin98-section">
+            <h2 className="bin98-heading">Structural Anatomy</h2>
+            {anatomy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-operations" className="bin98-section">
+            <h2 className="bin98-heading">Operations Matrix</h2>
+            {operationsTable.map((row) => (
+              <p key={row.op}>
+                <strong>{row.op}:</strong> Array {row.array}; Dynamic Array {row.dynamicArray};
+                Singly List {row.singly}; Doubly List {row.doubly}. {row.note}
+              </p>
+            ))}
+          </section>
+          <section id="core-memory" className="bin98-section">
+            <h2 className="bin98-heading">Memory Layout and Overhead</h2>
+            {memoryFootprint.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Patterns and Techniques</h2>
+            {patterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Close Cousins</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Invariants to Keep Safe</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Variations</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    Arrays and linked lists are both linear containers, but they optimize different costs. Arrays optimize access and
-                    iteration through locality; lists optimize structural updates around known nodes through pointer rewiring.
-                  </p>
-                  <p>
-                    In modern systems, cache behavior frequently dominates asymptotic intuition. This is why vectors/dynamic arrays are
-                    often default, while linked lists are used selectively where stable node handles and O(1) splices matter.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity and Performance Intuition</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    A branch misprediction is often tens of cycles; a cache miss can be hundreds. Arrays avoid many branches and pack
-                    elements into few cache lines. Lists avoid shifting work but pay the miss penalty on each hop unless carefully
-                    allocated.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-decisions" className="win98-section">
-                  <h2 className="win98-heading">When to Use Which</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {practicalExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-checkpoints" className="bin98-section">
+            <h2 className="bin98-heading">Quick Self-Checks</h2>
+            <ul>
+              {checkpoints.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="win98-section">
-                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((model) => (
-                    <div key={model.title}>
-                      <h3 className="win98-subheading">{model.title}</h3>
-                      <p>{model.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="win98-section">
-                  <h2 className="win98-heading">How They Work</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p>
-                    Arrays pay a one-time resize cost but give O(1) access and traversal. Linked lists pay per hop but give stable node
-                    addresses and cheap splices. Unrolled and chunked variants try to capture the best of both worlds.
-                  </p>
-                </section>
-                <section id="core-anatomy" className="win98-section">
-                  <h2 className="win98-heading">Structural Anatomy</h2>
-                  {anatomy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-operations" className="win98-section">
-                  <h2 className="win98-heading">Operations Matrix</h2>
-                  {operationsTable.map((row) => (
-                    <p key={row.op}>
-                      <strong>{row.op}:</strong> Array {row.array}; Dynamic Array {row.dynamicArray}; Singly List {row.singly}; Doubly
-                      List {row.doubly}. {row.note}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-memory" className="win98-section">
-                  <h2 className="win98-heading">Memory Layout and Overhead</h2>
-                  {memoryFootprint.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Patterns and Techniques</h2>
-                  {patterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="win98-section">
-                  <h2 className="win98-heading">Variants and Close Cousins</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="win98-section">
-                  <h2 className="win98-heading">Invariants to Keep Safe</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights and Variations</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="win98-section">
-                  <h2 className="win98-heading">Practical Examples</h2>
-                  {practicalExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-checkpoints" className="win98-section">
-                  <h2 className="win98-heading">Quick Self-Checks</h2>
-                  <ul>
-                    {checkpoints.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="win98-section">
-                  <h2 className="win98-heading">Glossary</h2>
-                  {glossaryTerms.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-                <section id="glossary-references" className="win98-section">
-                  <h2 className="win98-heading">References</h2>
-                  <ul>
-                    {references.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossaryTerms.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
+          <section id="glossary-references" className="bin98-section">
+            <h2 className="bin98-heading">References</h2>
+            <ul>
+              {references.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }
-

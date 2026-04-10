@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -29,8 +29,6 @@ type GlossaryItem = {
 const pageTitle = 'Firebase vs Supabase'
 const pageSubtitle =
   'Comparing Google Firebase as an integrated app platform with Supabase as a Postgres-first backend platform.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -329,7 +327,8 @@ if (user) {
   {
     id: 'ex-realtime-chat',
     title: 'Subscribe to Realtime Messages',
-    summary: 'Both platforms support live updates, but they arrive from different architectural assumptions.',
+    summary:
+      'Both platforms support live updates, but they arrive from different architectural assumptions.',
     firebaseCode: `import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 
 const messagesQuery = query(
@@ -357,7 +356,8 @@ const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
   {
     id: 'ex-policy',
     title: 'Authorize Access to a User-Owned Record',
-    summary: 'Firebase uses service-specific rules syntax. Supabase uses SQL policies enforced by Postgres.',
+    summary:
+      'Firebase uses service-specific rules syntax. Supabase uses SQL policies enforced by Postgres.',
     firebaseCode: `rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -380,7 +380,8 @@ with check (auth.uid() = id);`,
   {
     id: 'ex-upload',
     title: 'Upload a User Avatar',
-    summary: 'Both platforms support client-side uploads, but the surrounding permission model differs.',
+    summary:
+      'Both platforms support client-side uploads, but the surrounding permission model differs.',
     firebaseCode: `import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 const avatarRef = ref(storage, \`avatars/\${user.uid}/profile.png\`)
@@ -399,7 +400,8 @@ const { data } = supabase.storage.from('avatars').getPublicUrl(path)`,
   {
     id: 'ex-server-logic',
     title: 'Expose a Small Server Endpoint',
-    summary: 'Firebase Cloud Functions and Supabase Edge Functions both solve this, but with different platform identity.',
+    summary:
+      'Firebase Cloud Functions and Supabase Edge Functions both solve this, but with different platform identity.',
     firebaseCode: `const { onRequest } = require('firebase-functions/v2/https')
 
 exports.health = onRequest((req, res) => {
@@ -416,23 +418,28 @@ exports.health = onRequest((req, res) => {
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Cloud Firestore',
-    definition: 'Firebase document database built around collections, documents, listeners, and offline persistence.',
+    definition:
+      'Firebase document database built around collections, documents, listeners, and offline persistence.',
   },
   {
     term: 'Realtime Database',
-    definition: 'Firebase JSON-tree database optimized for synchronized realtime application state.',
+    definition:
+      'Firebase JSON-tree database optimized for synchronized realtime application state.',
   },
   {
     term: 'Firebase Security Rules',
-    definition: 'Declarative rules that control access to Firestore, Realtime Database, and Cloud Storage resources.',
+    definition:
+      'Declarative rules that control access to Firestore, Realtime Database, and Cloud Storage resources.',
   },
   {
     term: 'App Check',
-    definition: 'Firebase feature that helps protect backend resources from unauthorized clients through app or device attestation.',
+    definition:
+      'Firebase feature that helps protect backend resources from unauthorized clients through app or device attestation.',
   },
   {
     term: 'Data Connect',
-    definition: 'Firebase relational database service backed by Cloud SQL for PostgreSQL with schema, query, and mutation management.',
+    definition:
+      'Firebase relational database service backed by Cloud SQL for PostgreSQL with schema, query, and mutation management.',
   },
   {
     term: 'Postgres',
@@ -440,7 +447,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Row Level Security (RLS)',
-    definition: 'Postgres feature used by Supabase to enforce per-row authorization policies directly in the database.',
+    definition:
+      'Postgres feature used by Supabase to enforce per-row authorization policies directly in the database.',
   },
   {
     term: 'PostgREST',
@@ -448,11 +456,13 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Edge Function',
-    definition: 'Supabase globally distributed server-side TypeScript function running on a Deno-compatible runtime.',
+    definition:
+      'Supabase globally distributed server-side TypeScript function running on a Deno-compatible runtime.',
   },
   {
     term: 'Presence',
-    definition: 'Supabase Realtime feature for tracking connected user state such as who is online or active.',
+    definition:
+      'Supabase Realtime feature for tracking connected user state such as who is online or active.',
   },
   {
     term: 'Broadcast',
@@ -460,7 +470,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Schemaless',
-    definition: 'A data model where records do not require one rigid relational schema definition ahead of time.',
+    definition:
+      'A data model where records do not require one rigid relational schema definition ahead of time.',
   },
 ]
 
@@ -496,412 +507,111 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const win98HelpStyles = `
-.firebase-win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.firebase-win98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.firebase-win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 22px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.firebase-win98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 16px;
-}
-
-.firebase-win98-titlecontrols {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.firebase-win98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  color: #000;
-  text-decoration: none;
-  background: #c0c0c0;
-  border: 1px solid;
-  border-color: #fff #404040 #404040 #fff;
-  font-family: inherit;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.firebase-win98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.firebase-win98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  font-family: inherit;
-  font-size: 12px;
-  color: #000;
-  cursor: pointer;
-}
-
-.firebase-win98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.firebase-win98-main {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.firebase-win98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.firebase-win98-toctitle {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.firebase-win98-toclist {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.firebase-win98-toclist li {
-  margin: 0 0 8px;
-}
-
-.firebase-win98-toclist a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.firebase-win98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.firebase-win98-doctitle {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.firebase-win98-section {
-  margin: 0 0 20px;
-}
-
-.firebase-win98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.firebase-win98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.firebase-win98-content p,
-.firebase-win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.firebase-win98-content p {
-  margin: 0 0 10px;
-}
-
-.firebase-win98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.firebase-win98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.firebase-win98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.firebase-win98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .firebase-win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .firebase-win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .firebase-win98-titletext {
-    position: static;
-    transform: none;
-    margin-right: auto;
-    font-size: 14px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function FirebaseVsSupabasePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Firebase Vs Supabase Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="firebase-win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="firebase-win98-window" role="presentation">
-        <header className="firebase-win98-titlebar">
-          <span className="firebase-win98-titletext">{pageTitle}</span>
-          <div className="firebase-win98-titlecontrols">
-            <button
-              className="firebase-win98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="firebase-win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Firebase Vs Supabase Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="firebase-win98-doctitle">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page compares Firebase and Supabase as real architectural choices rather than as trendy
+        backend brands. The goal is to make the decision boundaries explicit: data model, auth,
+        authorization, realtime behavior, offline support, storage, functions, local development,
+        pricing philosophy, portability, and the larger product ecosystem around each platform.
+      </p>
 
-        <div className="firebase-win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`firebase-win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="firebase-win98-main">
-          <aside className="firebase-win98-toc" aria-label="Table of contents">
-            <h2 className="firebase-win98-toctitle">Contents</h2>
-            <ul className="firebase-win98-toclist">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph, paragraphIndex) => (
+                <p key={`${section.id}-p-${paragraphIndex}`}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="firebase-win98-content">
-            <h1 className="firebase-win98-doctitle">{pageTitle}</h1>
-            <p className="firebase-win98-subheading">{pageSubtitle}</p>
-            <p>
-              This page compares Firebase and Supabase as real architectural choices rather than as trendy backend brands.
-              The goal is to make the decision boundaries explicit: data model, auth, authorization, realtime behavior,
-              offline support, storage, functions, local development, pricing philosophy, portability, and the larger product
-              ecosystem around each platform.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="firebase-win98-section">
-                    <h2 className="firebase-win98-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph, paragraphIndex) => (
-                      <p key={`${section.id}-p-${paragraphIndex}`}>{paragraph}</p>
-                    ))}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet, bulletIndex) => (
-                          <li key={`${section.id}-b-${bulletIndex}`}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="firebase-win98-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="firebase-win98-section">
-                  <h2 className="firebase-win98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet, bulletIndex) => (
+                    <li key={`${section.id}-b-${bulletIndex}`}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="firebase-win98-section">
-                    <h2 className="firebase-win98-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph, paragraphIndex) => (
-                      <p key={`${section.id}-p-${paragraphIndex}`}>{paragraph}</p>
-                    ))}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet, bulletIndex) => (
-                          <li key={`${section.id}-b-${bulletIndex}`}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="firebase-win98-section">
-                    <h2 className="firebase-win98-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="firebase-win98-subheading">Firebase</h3>
-                    <div className="firebase-win98-codebox">
-                      <code>{example.firebaseCode.trim()}</code>
-                    </div>
-                    <h3 className="firebase-win98-subheading">Supabase</h3>
-                    <div className="firebase-win98-codebox">
-                      <code>{example.supabaseCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph, paragraphIndex) => (
+                <p key={`${section.id}-p-${paragraphIndex}`}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet, bulletIndex) => (
+                    <li key={`${section.id}-b-${bulletIndex}`}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="firebase-win98-section">
-                <h2 className="firebase-win98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Firebase</h3>
+              <div className="bin98-codebox">
+                <code>{example.firebaseCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">Supabase</h3>
+              <div className="bin98-codebox">
+                <code>{example.supabaseCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

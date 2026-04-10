@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Ada\'s biggest strengths are strong typing, modular clarity, high-assurance culture, built-in concurrency support, real-time suitability, and a design that aligns well with verification and certification-heavy environments. Many classes of mistakes that slip easily through looser languages are harder to express casually in Ada.',
+      "Ada's biggest strengths are strong typing, modular clarity, high-assurance culture, built-in concurrency support, real-time suitability, and a design that aligns well with verification and certification-heavy environments. Many classes of mistakes that slip easily through looser languages are harder to express casually in Ada.",
       'Another major strength is maintainability. Ada code can remain understandable for years because the language encourages stable interfaces, explicit contracts, and disciplined structure rather than relying on convention alone.',
     ],
     bullets: [
@@ -121,7 +119,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Important Limits',
     paragraphs: [
       'Ada has real tradeoffs. It is more verbose than many modern languages, the ecosystem is smaller than mainstream general-purpose platforms, and some teams find its discipline-heavy style slower for exploratory or rapidly changing product work. Its adoption is also constrained by training and familiarity.',
-      'These limits are not accidental. They reflect the language\'s priorities. Ada is optimized for correctness and maintainability under serious constraints, not for maximizing developer spontaneity in casual software contexts.',
+      "These limits are not accidental. They reflect the language's priorities. Ada is optimized for correctness and maintainability under serious constraints, not for maximizing developer spontaneity in casual software contexts.",
     ],
     bullets: [
       'Smaller ecosystem and hiring pool than mainstream languages.',
@@ -146,14 +144,14 @@ const coreConceptSections: ContentSection[] = [
     title: 'Language Shape And Syntax',
     paragraphs: [
       'Ada syntax is explicit, keyword-heavy, and structured. It is designed to be readable in a large-system engineering context rather than optimized for terseness. Declarations, package boundaries, type definitions, and control flow are usually written in a way that favors clarity over compression.',
-      'This can look old-fashioned to developers used to highly compact languages, but it is consistent with Ada\'s purpose. The language wants important decisions to be visible.',
+      "This can look old-fashioned to developers used to highly compact languages, but it is consistent with Ada's purpose. The language wants important decisions to be visible.",
     ],
   },
   {
     id: 'core-strong-typing',
     title: 'Strong Typing',
     paragraphs: [
-      'Strong typing is one of Ada\'s defining ideas. Distinct types are treated seriously, and the compiler can enforce boundaries that prevent accidental mixing of values representing different concepts. This is especially important in high-assurance systems where unit confusion, range mistakes, and interface misuse can have real operational consequences.',
+      "Strong typing is one of Ada's defining ideas. Distinct types are treated seriously, and the compiler can enforce boundaries that prevent accidental mixing of values representing different concepts. This is especially important in high-assurance systems where unit confusion, range mistakes, and interface misuse can have real operational consequences.",
       'The value of this approach is not theoretical elegance alone. It is practical defect prevention. The more meaning encoded in the type system, the fewer unchecked assumptions remain hidden in runtime behavior.',
     ],
   },
@@ -218,7 +216,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Interoperability And Systems Reach',
     paragraphs: [
       'Ada can interoperate with lower-level and external systems, including C, which is important in mixed-language environments and long-lived platforms. High-assurance software often cannot afford total rewrites, so practical interoperation is essential.',
-      'This also reinforces Ada\'s role as a real systems language rather than only a theoretical safe language. It must survive in operational environments with existing ABIs, hardware interfaces, and legacy boundaries.',
+      "This also reinforces Ada's role as a real systems language rather than only a theoretical safe language. It must survive in operational environments with existing ABIs, hardware interfaces, and legacy boundaries.",
     ],
   },
   {
@@ -250,7 +248,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Common Pitfalls',
     paragraphs: [
       'A common Ada mistake is treating its explicitness as mere verbosity instead of using it to encode real design meaning. Another is assuming that because the language supports safer engineering, process discipline no longer matters. High-assurance software still depends on architecture, review, testing, and operational clarity.',
-      'Teams can also misuse Ada by forcing lightweight exploratory product habits into a language and ecosystem optimized for disciplined system design. The strongest Ada projects work with the language\'s intent rather than against it.',
+      "Teams can also misuse Ada by forcing lightweight exploratory product habits into a language and ecosystem optimized for disciplined system design. The strongest Ada projects work with the language's intent rather than against it.",
     ],
     bullets: [
       'Ignoring the value of strong types and constrained subtypes.',
@@ -271,7 +269,7 @@ const exampleSections: ExampleSection[] = [
     code: `subtype Percentage is Integer range 0 .. 100;`,
     notes: [
       'This makes invalid states harder to express casually.',
-      'Range constraints are part of Ada\'s correctness-oriented design style.',
+      "Range constraints are part of Ada's correctness-oriented design style.",
     ],
   },
   {
@@ -311,16 +309,14 @@ end Math_Utils;`,
     ],
     code: `task type Worker;`,
     notes: [
-      'Tasking is central to Ada\'s role in real-time and concurrent control systems.',
-      'This reflects the language\'s systems and assurance roots.',
+      "Tasking is central to Ada's role in real-time and concurrent control systems.",
+      "This reflects the language's systems and assurance roots.",
     ],
   },
   {
     id: 'ex-contract',
     title: 'Precondition Contract',
-    description: [
-      'Contracts help move design assumptions into executable declarations.',
-    ],
+    description: ['Contracts help move design assumptions into executable declarations.'],
     code: `function Divide (A, B : Integer) return Integer
   with Pre => B /= 0;`,
     notes: [
@@ -337,7 +333,7 @@ end Math_Utils;`,
     code: `type Altitude_Meters is new Integer;`,
     notes: [
       'This helps prevent semantic confusion across different measurement concepts.',
-      'Strong domain typing is one of Ada\'s most practical strengths.',
+      "Strong domain typing is one of Ada's most practical strengths.",
     ],
   },
   {
@@ -366,28 +362,23 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Record',
-        definition:
-          'A structured data type in Ada used to group related fields explicitly.',
+        definition: 'A structured data type in Ada used to group related fields explicitly.',
       },
       {
         term: 'Package',
-        definition:
-          'A modular Ada unit used to organize interfaces and implementations.',
+        definition: 'A modular Ada unit used to organize interfaces and implementations.',
       },
       {
         term: 'Package specification',
-        definition:
-          'The visible interface contract of an Ada package.',
+        definition: 'The visible interface contract of an Ada package.',
       },
       {
         term: 'Package body',
-        definition:
-          'The implementation portion of an Ada package that realizes the specification.',
+        definition: 'The implementation portion of an Ada package that realizes the specification.',
       },
       {
         term: 'Task',
-        definition:
-          'An Ada concurrency construct representing a concurrent unit of execution.',
+        definition: 'An Ada concurrency construct representing a concurrent unit of execution.',
       },
       {
         term: 'Contract',
@@ -458,8 +449,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Mission-critical software',
-        definition:
-          'Software whose failure would seriously compromise essential operations.',
+        definition: 'Software whose failure would seriously compromise essential operations.',
       },
       {
         term: 'Traceability',
@@ -538,224 +528,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.ada98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ada98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.ada98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.ada98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.ada98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.ada98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.ada98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.ada98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.ada98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.ada98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.ada98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.ada98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ada98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ada98-toc-item {
-  margin: 0 0 8px;
-}
-
-.ada98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ada98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.ada98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ada98-section {
-  margin: 0 0 20px;
-}
-
-.ada98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ada98-content p,
-.ada98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ada98-content p {
-  margin: 0 0 10px;
-}
-
-.ada98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ada98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.ada98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.ada98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .ada98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ada98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .ada98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="ada98-section">
@@ -810,122 +582,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function AdaPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Ada',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Ada (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Ada',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="ada98-help-page">
-      <style>{pageStyles}</style>
-      <div className="ada98-help-window" role="presentation">
-        <header className="ada98-titlebar">
-          <span className="ada98-titletext">Ada</span>
-          <div className="ada98-controls">
-            <button className="ada98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="ada98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Ada"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Ada</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="ada98-tabs" role="tablist" aria-label="Ada documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ada98-tab ${activeTab === tab.id ? 'ada98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="ada98-main">
-          <aside className="ada98-toc" aria-label="Table of contents">
-            <h2 className="ada98-toc-title">Contents</h2>
-            <ul className="ada98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="ada98-toc-item">
-                  <a href={`#${section.id}`} className="ada98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="ada98-content">
-            <h1 className="ada98-doc-title">Ada</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -56,22 +56,26 @@ const foundations = [
 const history = [
   {
     title: '1956: Davis-Putnam SAT search',
-    detail: 'Martin Davis and Hilary Putnam use recursive case splits with early contradiction checks for satisfiability.',
+    detail:
+      'Martin Davis and Hilary Putnam use recursive case splits with early contradiction checks for satisfiability.',
     note: 'Demonstrated pruning transforms an impossible enumeration into a practical solver.',
   },
   {
     title: '1965: Golomb coins "backtrack"',
-    detail: 'Solomon Golomb formalizes backtracking for combinatorial search with bounding and variable ordering.',
+    detail:
+      'Solomon Golomb formalizes backtracking for combinatorial search with bounding and variable ordering.',
     note: 'Gave the paradigm its name and emphasized heuristic ordering to cut branches.',
   },
   {
     title: '1972: Prolog mainstreams backtracking',
-    detail: 'Alain Colmerauer and Robert Kowalski ship Prolog with implicit DFS backtracking over logic rules.',
+    detail:
+      'Alain Colmerauer and Robert Kowalski ship Prolog with implicit DFS backtracking over logic rules.',
     note: 'Made undo-on-failure the default control flow in a popular language.',
   },
   {
     title: '2000: Knuth popularizes Dancing Links',
-    detail: 'Donald Knuth shows O(1) undo for exact cover, powering fast Sudoku and tiling solvers.',
+    detail:
+      'Donald Knuth shows O(1) undo for exact cover, powering fast Sudoku and tiling solvers.',
     note: 'Illustrated that engineering the undo path can dwarf algorithmic tweaks.',
   },
 ]
@@ -79,26 +83,31 @@ const history = [
 const pillars = [
   {
     title: 'Ordered branching',
-    detail: 'Choose the next variable or value to shrink branching factor (most constrained first, fail-fast).',
+    detail:
+      'Choose the next variable or value to shrink branching factor (most constrained first, fail-fast).',
   },
   {
     title: 'Pruning predicates',
-    detail: 'Quickly reject partial states that violate constraints or cannot beat the best known objective.',
+    detail:
+      'Quickly reject partial states that violate constraints or cannot beat the best known objective.',
   },
   {
     title: 'Reversible state',
-    detail: 'Every mutation pairs with an undo; shared arrays, bitmasks, and stacks keep reversals O(1).',
+    detail:
+      'Every mutation pairs with an undo; shared arrays, bitmasks, and stacks keep reversals O(1).',
   },
   {
     title: 'Clear termination',
-    detail: 'Know when to accept (full assignment) and when to abandon (dead constraint) to avoid phantom loops.',
+    detail:
+      'Know when to accept (full assignment) and when to abandon (dead constraint) to avoid phantom loops.',
   },
 ]
 
 const taxonomy = [
   {
     title: 'Pure enumeration',
-    detail: 'Explore all assignments; prune only when constraints are violated. Baseline for puzzles.',
+    detail:
+      'Explore all assignments; prune only when constraints are violated. Baseline for puzzles.',
   },
   {
     title: 'Branch and bound',
@@ -139,11 +148,13 @@ const mentalModels = [
 const howItWorks = [
   {
     title: 'Define state and moves',
-    detail: 'Represent the partial assignment compactly (arrays, bitmasks). List feasible moves from that state.',
+    detail:
+      'Represent the partial assignment compactly (arrays, bitmasks). List feasible moves from that state.',
   },
   {
     title: 'Pick the next variable',
-    detail: 'Order choices to cut branching (MRV for CSPs, highest conflict first, small domains first).',
+    detail:
+      'Order choices to cut branching (MRV for CSPs, highest conflict first, small domains first).',
   },
   {
     title: 'Apply, test, and prune',
@@ -152,11 +163,13 @@ const howItWorks = [
   },
   {
     title: 'Recurse and collect answers',
-    detail: 'Dive deeper when feasible; record solutions or update best-so-far objective as you return.',
+    detail:
+      'Dive deeper when feasible; record solutions or update best-so-far objective as you return.',
   },
   {
     title: 'Undo deterministically',
-    detail: 'Reverse in the exact opposite order of application so shared buffers remain consistent across siblings.',
+    detail:
+      'Reverse in the exact opposite order of application so shared buffers remain consistent across siblings.',
   },
 ]
 
@@ -191,7 +204,8 @@ const heuristics = [
 const pruningToolkit = [
   {
     title: 'Constraint violation checks',
-    detail: 'Reject partial assignments that already break constraints (row, col, or diagonal conflicts).',
+    detail:
+      'Reject partial assignments that already break constraints (row, col, or diagonal conflicts).',
   },
   {
     title: 'Forward checking',
@@ -270,8 +284,7 @@ const stepByStepExample = [
       'If any domain becomes empty, undo and try the next value.',
       'When all cells are filled, record the solution.',
     ],
-    note:
-      'The core speedups come from MRV and O(1) constraint checks with bitmasks.',
+    note: 'The core speedups come from MRV and O(1) constraint checks with bitmasks.',
   },
   {
     title: 'Permutation with constraints',
@@ -281,8 +294,7 @@ const stepByStepExample = [
       'Prune on violation to avoid deeper permutations.',
       'Undo the last choice and continue.',
     ],
-    note:
-      'Early constraint checks can cut factorial exploration by orders of magnitude.',
+    note: 'Early constraint checks can cut factorial exploration by orders of magnitude.',
   },
 ]
 
@@ -294,17 +306,20 @@ const applications = [
   },
   {
     title: 'SAT and SMT engines',
-    detail: 'Modern CDCL solvers descend from backtracking with learned clauses as aggressive pruning.',
+    detail:
+      'Modern CDCL solvers descend from backtracking with learned clauses as aggressive pruning.',
     note: 'Used in hardware verification and compilers (for example, superoptimizer search).',
   },
   {
     title: 'Resource allocation and rostering',
-    detail: 'Airline crew scheduling, exam timetables, and cloud placement rely on search with bounds.',
+    detail:
+      'Airline crew scheduling, exam timetables, and cloud placement rely on search with bounds.',
     note: 'Backtracking adapts as constraints change without redesigning the solver.',
   },
   {
     title: 'Parsing ambiguous grammars',
-    detail: 'Packrat parsers avoid backtracking, but PEG backtracking with memoization handles niche DSLs quickly.',
+    detail:
+      'Packrat parsers avoid backtracking, but PEG backtracking with memoization handles niche DSLs quickly.',
     note: 'Undoing tokens and scanner state is essential to keep correctness.',
   },
 ]
@@ -333,19 +348,23 @@ const comparisons = [
 const pitfalls = [
   {
     title: 'Forgetting to undo shared state',
-    detail: 'Mutating arrays or sets without perfect reversal leads to phantom conflicts later in the tree.',
+    detail:
+      'Mutating arrays or sets without perfect reversal leads to phantom conflicts later in the tree.',
   },
   {
     title: 'Weak or missing pruning',
-    detail: 'If constraints are only checked at the leaves, the search devolves into full enumeration.',
+    detail:
+      'If constraints are only checked at the leaves, the search devolves into full enumeration.',
   },
   {
     title: 'Poor branching order',
-    detail: 'Choosing wide branches first explodes the tree; reorder to test scarce resources or conflicts early.',
+    detail:
+      'Choosing wide branches first explodes the tree; reorder to test scarce resources or conflicts early.',
   },
   {
     title: 'Non-terminating cycles',
-    detail: 'Revisiting states without visited checks in graph-like searches creates infinite recursion.',
+    detail:
+      'Revisiting states without visited checks in graph-like searches creates infinite recursion.',
   },
   {
     title: 'Ignoring instrumentation',
@@ -364,7 +383,8 @@ const debuggingChecklist = [
 const whenToUse = [
   {
     title: 'Constraints define feasibility better than formulas define optima',
-    detail: 'Great when you can cheaply say "this partial state cannot work" even if the global optimum is unknown.',
+    detail:
+      'Great when you can cheaply say "this partial state cannot work" even if the global optimum is unknown.',
   },
   {
     title: 'Solution counts are small',
@@ -372,11 +392,13 @@ const whenToUse = [
   },
   {
     title: 'State is reversible and compact',
-    detail: 'If you can encode state in arrays or bitmasks and undo in O(1), backtracking stays fast.',
+    detail:
+      'If you can encode state in arrays or bitmasks and undo in O(1), backtracking stays fast.',
   },
   {
     title: 'Latency budget allows guided search',
-    detail: 'When you can spend milliseconds exploring and pruning instead of precomputing everything.',
+    detail:
+      'When you can spend milliseconds exploring and pruning instead of precomputing everything.',
   },
 ]
 
@@ -467,7 +489,8 @@ const codeExamples = [
   dfs(0)
   return res
 }`,
-    explanation: 'Bitmask-like sets keep feasibility checks O(1); every mutation is paired with an undo to keep siblings independent.',
+    explanation:
+      'Bitmask-like sets keep feasibility checks O(1); every mutation is paired with an undo to keep siblings independent.',
   },
   {
     title: 'Branch and bound knapsack',
@@ -501,7 +524,8 @@ function knapsack(items: Item[], capacity: number): number {
   dfs(0, 0, 0)
   return best
 }`,
-    explanation: 'Upper-bound estimate cuts branches that cannot beat the incumbent; sorting by density tightens the bound early.',
+    explanation:
+      'Upper-bound estimate cuts branches that cannot beat the incumbent; sorting by density tightens the bound early.',
   },
   {
     title: 'Sudoku skeleton with bitmasks',
@@ -548,18 +572,21 @@ function knapsack(items: Item[], capacity: number): number {
 
   return dfs(0)
 }`,
-    explanation: 'Bitmasks make checks O(1). Each assignment updates row, col, and box masks and is undone on backtrack.',
+    explanation:
+      'Bitmasks make checks O(1). Each assignment updates row, col, and box masks and is undone on backtrack.',
   },
 ]
 
 const keyTakeaways = [
   {
     title: 'Prune early, undo perfectly',
-    detail: 'The speed of backtracking is dominated by how quickly you reject and how safely you reverse.',
+    detail:
+      'The speed of backtracking is dominated by how quickly you reject and how safely you reverse.',
   },
   {
     title: 'Ordering is leverage',
-    detail: 'The right variable or value order often beats asymptotic tricks; measure node counts, not just runtime.',
+    detail:
+      'The right variable or value order often beats asymptotic tricks; measure node counts, not just runtime.',
   },
   {
     title: 'Bounds turn exploration into search',
@@ -567,7 +594,8 @@ const keyTakeaways = [
   },
   {
     title: 'Design for anytime results',
-    detail: 'Iterative deepening and branch-and-bound let you stop early with a valid best-so-far answer.',
+    detail:
+      'Iterative deepening and branch-and-bound let you stop early with a valid best-so-far answer.',
   },
 ]
 
@@ -616,213 +644,6 @@ const glossaryTerms = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const backtrackingHelpStyles = `
-.backtracking-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.backtracking-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.backtracking-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-}
-
-.backtracking-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.backtracking-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.backtracking-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-.backtracking-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.backtracking-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.backtracking-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.backtracking-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.backtracking-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.backtracking-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.backtracking-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.backtracking-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.backtracking-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.backtracking-help-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.backtracking-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.backtracking-help-section {
-  margin: 0 0 20px;
-}
-
-.backtracking-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.backtracking-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.backtracking-help-content p,
-.backtracking-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.backtracking-help-content p {
-  margin: 0 0 10px;
-}
-
-.backtracking-help-content ul,
-.backtracking-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.backtracking-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.backtracking-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.backtracking-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .backtracking-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .backtracking-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -862,337 +683,266 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function BacktrackingParadigmPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Backtracking Paradigm (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Backtracking Paradigm',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Backtracking Paradigm',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="backtracking-help-page">
-      <style>{backtrackingHelpStyles}</style>
-      <div className="backtracking-help-window" role="presentation">
-        <header className="backtracking-help-titlebar">
-          <span className="backtracking-help-title">Backtracking Paradigm</span>
-          <div className="backtracking-help-controls">
-            <button className="backtracking-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="backtracking-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Backtracking Paradigm"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Backtracking Paradigm</h1>
+      <p>
+        Backtracking is depth-first search with deliberate undo steps and aggressive pruning. It
+        trades exponential worst cases for practical performance by exposing early contradictions
+        and keeping state reversible.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {foundations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-big-picture" className="bin98-section">
+            <h2 className="bin98-heading">Big Picture</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-taxonomy" className="bin98-section">
+            <h2 className="bin98-heading">Backtracking Taxonomy</h2>
+            {taxonomy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">History That Shaped Backtracking</h2>
+            {history.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-        <div className="backtracking-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`backtracking-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="backtracking-help-main">
-          <aside className="backtracking-help-toc" aria-label="Table of contents">
-            <h2 className="backtracking-help-toc-title">Contents</h2>
-            <ul className="backtracking-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">Core Pillars and Mental Hooks</h2>
+            {pillars.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-how" className="bin98-section">
+            <h2 className="bin98-heading">How It Works, Step by Step</h2>
+            {howItWorks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-modeling" className="bin98-section">
+            <h2 className="bin98-heading">Modeling Checklist</h2>
+            <ul>
+              {modelingChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <section id="core-heuristics" className="bin98-section">
+            <h2 className="bin98-heading">Heuristics That Save Time</h2>
+            {heuristics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pruning" className="bin98-section">
+            <h2 className="bin98-heading">Pruning Toolkit</h2>
+            {pruningToolkit.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-state" className="bin98-section">
+            <h2 className="bin98-heading">State and Undo Management</h2>
+            {stateManagement.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity at a Glance</h2>
+            {complexityTable.map((row) => (
+              <div key={row.approach}>
+                <h3 className="bin98-subheading">{row.approach}</h3>
+                <p>
+                  <strong>Time:</strong> {row.time}
+                </p>
+                <p>
+                  <strong>Space:</strong> {row.space}
+                </p>
+                <p>
+                  <strong>Note:</strong> {row.note}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Where It Powers Real Systems</h2>
+            {applications.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+            <h3 className="bin98-subheading">Failure Mode</h3>
+            <p>{failureStory}</p>
+          </section>
+          <section id="core-comparisons" className="bin98-section">
+            <h2 className="bin98-heading">Backtracking vs Other Paradigms</h2>
+            {comparisons.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Pitfalls to Avoid</h2>
+            {pitfalls.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Checklist</h2>
+            <ul>
+              {debuggingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-use" className="bin98-section">
+            <h2 className="bin98-heading">When to Reach for Backtracking</h2>
+            {whenToUse.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-avoid" className="bin98-section">
+            <h2 className="bin98-heading">When to Avoid Backtracking</h2>
+            {whenToAvoid.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Moves</h2>
+            {advanced.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-instrumentation" className="bin98-section">
+            <h2 className="bin98-heading">Instrumentation That Pays Off</h2>
+            {instrumentation.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            {keyTakeaways.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-          <main className="backtracking-help-content">
-            <h1 className="backtracking-help-doc-title">Backtracking Paradigm</h1>
-            <p>
-              Backtracking is depth-first search with deliberate undo steps and aggressive pruning. It trades exponential worst cases for
-              practical performance by exposing early contradictions and keeping state reversible.
+      {activeTab === 'examples' && (
+        <>
+          <section id="examples-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Examples</h2>
+            {stepByStepExample.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <ol>
+                  {item.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="examples-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {codeExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-foundations" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Foundations</h2>
-                  {foundations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="backtracking-help-divider" />
-                <section id="bp-big-picture" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Big Picture</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="backtracking-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="backtracking-help-divider" />
-                <section id="bp-taxonomy" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Backtracking Taxonomy</h2>
-                  {taxonomy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="backtracking-help-divider" />
-                <section id="bp-history" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">History That Shaped Backtracking</h2>
-                  {history.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="backtracking-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pillars" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Core Pillars and Mental Hooks</h2>
-                  {pillars.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-how" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">How It Works, Step by Step</h2>
-                  {howItWorks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-modeling" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Modeling Checklist</h2>
-                  <ul>
-                    {modelingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-heuristics" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Heuristics That Save Time</h2>
-                  {heuristics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pruning" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Pruning Toolkit</h2>
-                  {pruningToolkit.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-state" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">State and Undo Management</h2>
-                  {stateManagement.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Complexity at a Glance</h2>
-                  {complexityTable.map((row) => (
-                    <div key={row.approach}>
-                      <h3 className="backtracking-help-subheading">{row.approach}</h3>
-                      <p><strong>Time:</strong> {row.time}</p>
-                      <p><strong>Space:</strong> {row.space}</p>
-                      <p><strong>Note:</strong> {row.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-applications" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Where It Powers Real Systems</h2>
-                  {applications.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="backtracking-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                  <h3 className="backtracking-help-subheading">Failure Mode</h3>
-                  <p>{failureStory}</p>
-                </section>
-                <section id="core-comparisons" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Backtracking vs Other Paradigms</h2>
-                  {comparisons.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Pitfalls to Avoid</h2>
-                  {pitfalls.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-debugging" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Debugging Checklist</h2>
-                  <ul>
-                    {debuggingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-use" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">When to Reach for Backtracking</h2>
-                  {whenToUse.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-avoid" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">When to Avoid Backtracking</h2>
-                  {whenToAvoid.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Advanced Moves</h2>
-                  {advanced.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="backtracking-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-instrumentation" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Instrumentation That Pays Off</h2>
-                  {instrumentation.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-takeaways" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Key Takeaways</h2>
-                  {keyTakeaways.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="examples-worked" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Worked Examples</h2>
-                  {stepByStepExample.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="backtracking-help-subheading">{item.title}</h3>
-                      <ol>
-                        {item.steps.map((step) => (
-                          <li key={step}>{step}</li>
-                        ))}
-                      </ol>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="examples-code" className="backtracking-help-section">
-                  <h2 className="backtracking-help-heading">Code Examples</h2>
-                  {codeExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="backtracking-help-subheading">{example.title}</h3>
-                      <div className="backtracking-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="backtracking-help-section">
-                <h2 className="backtracking-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

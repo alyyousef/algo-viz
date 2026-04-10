@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Kotlin\'s biggest strengths are readability, null-safety discipline, concise expression of common patterns, strong interoperability, and a design that scales from simple scripts to large production systems. Many teams adopt it because routine code becomes shorter and clearer without becoming obscure.',
+      "Kotlin's biggest strengths are readability, null-safety discipline, concise expression of common patterns, strong interoperability, and a design that scales from simple scripts to large production systems. Many teams adopt it because routine code becomes shorter and clearer without becoming obscure.",
       'Coroutines are another major strength. Kotlin offers a far more coherent asynchronous programming story than callback-heavy code or raw thread management, especially on Android and in services that perform I/O-bound work.',
     ],
     bullets: [
@@ -146,14 +144,14 @@ const coreConceptSections: ContentSection[] = [
     title: 'Language Shape And Syntax',
     paragraphs: [
       'Kotlin syntax is designed to reduce repetition without turning ordinary code into dense shorthand. Type inference removes a lot of redundant declarations, expression bodies shorten simple functions, named arguments clarify calls, and string templates reduce formatting noise. The result is typically less ceremony than Java-style code while still remaining readable to developers who work in mainstream application languages.',
-      'That surface concision matters because much of Kotlin\'s value is cumulative. Each individual feature looks small, but together they remove a large amount of low-signal code from everyday classes, service methods, and state modeling.',
+      "That surface concision matters because much of Kotlin's value is cumulative. Each individual feature looks small, but together they remove a large amount of low-signal code from everyday classes, service methods, and state modeling.",
     ],
   },
   {
     id: 'core-null-safety',
     title: 'Null Safety',
     paragraphs: [
-      'Null safety is one of Kotlin\'s signature ideas. Types are non-null by default, and nullable references must be marked explicitly with `?`. This forces code to acknowledge uncertainty at the type level rather than treating null-related failures as a normal surprise at runtime.',
+      "Null safety is one of Kotlin's signature ideas. Types are non-null by default, and nullable references must be marked explicitly with `?`. This forces code to acknowledge uncertainty at the type level rather than treating null-related failures as a normal surprise at runtime.",
       'The language also provides ergonomic tools for nullable data, including safe calls, the Elvis operator, `let`, and smart casts after null checks. These features do not eliminate every possible null problem, especially when interoperating with Java, but they raise the baseline substantially.',
     ],
   },
@@ -169,7 +167,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-interfaces-sealed',
     title: 'Interfaces, Sealed Types, And Hierarchy Design',
     paragraphs: [
-      'Interfaces remain central to Kotlin\'s object-oriented design. They support abstraction boundaries, polymorphism, and testable dependency graphs in the same way they do in other mainstream application languages. Kotlin also allows default interface implementations, which can reduce some categories of boilerplate.',
+      "Interfaces remain central to Kotlin's object-oriented design. They support abstraction boundaries, polymorphism, and testable dependency graphs in the same way they do in other mainstream application languages. Kotlin also allows default interface implementations, which can reduce some categories of boilerplate.",
       'Sealed classes and sealed interfaces are valuable when a hierarchy should be closed to a known set of cases. This is especially useful for UI state, domain outcomes, command results, and protocol-like modeling where exhaustive handling matters. Together, interfaces and sealed types make Kotlin particularly good at designing explicit state machines and outcome types.',
     ],
   },
@@ -193,7 +191,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-collections',
     title: 'Collections And Standard Library Style',
     paragraphs: [
-      'Kotlin\'s standard library encourages expressive list, set, and map processing through functions such as `map`, `filter`, `fold`, `associate`, and `groupBy`. These APIs often make transformation logic easier to read than index-heavy loops, especially when the code is mostly about shaping data rather than managing control flow.',
+      "Kotlin's standard library encourages expressive list, set, and map processing through functions such as `map`, `filter`, `fold`, `associate`, and `groupBy`. These APIs often make transformation logic easier to read than index-heavy loops, especially when the code is mostly about shaping data rather than managing control flow.",
       'The language also nudges developers toward clearer distinctions between read-only views and mutable collections. That does not mean all Kotlin code is fully immutable, but it does encourage more deliberate state management than many older mainstream codebases.',
     ],
   },
@@ -209,7 +207,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-coroutines',
     title: 'Coroutines And Structured Asynchrony',
     paragraphs: [
-      'Coroutines are one of Kotlin\'s most important practical features. They provide a way to express asynchronous work in code that still looks sequential, which improves readability compared with deeply nested callbacks or manually coordinated thread logic. Suspend functions, coroutine scopes, dispatchers, and structured concurrency conventions create a more coherent async model for I/O-heavy applications.',
+      "Coroutines are one of Kotlin's most important practical features. They provide a way to express asynchronous work in code that still looks sequential, which improves readability compared with deeply nested callbacks or manually coordinated thread logic. Suspend functions, coroutine scopes, dispatchers, and structured concurrency conventions create a more coherent async model for I/O-heavy applications.",
       'The important idea is not just syntax. Structured concurrency helps make task lifetimes explicit, which is especially valuable in Android UI lifecycles, service request handling, and pipeline-style backend work. It is a safer mental model than launching background work with no ownership.',
     ],
   },
@@ -274,7 +272,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Common Pitfalls',
     paragraphs: [
       'A common Kotlin mistake is assuming that concise syntax always produces clearer code. Too many scope functions, nested lambdas, and clever extension chains can make logic harder to understand than a direct imperative implementation. Another mistake is using data classes or sealed types mechanically without thinking about the actual domain model.',
-      'Interop can also hide problems. Platform types from Java can weaken Kotlin\'s null-safety guarantees, and legacy Java frameworks can pull Kotlin code back toward older design patterns. The strongest teams use Kotlin to simplify design, not just shorten files.',
+      "Interop can also hide problems. Platform types from Java can weaken Kotlin's null-safety guarantees, and legacy Java frameworks can pull Kotlin code back toward older design patterns. The strongest teams use Kotlin to simplify design, not just shorten files.",
     ],
     bullets: [
       'Overusing `let`, `run`, `apply`, and similar scope functions.',
@@ -320,7 +318,7 @@ const exampleSections: ExampleSection[] = [
     id: 'ex-extension',
     title: 'Extension Function',
     description: [
-      'Extension functions can make helper behavior read like part of the type\'s natural API without changing the original class.',
+      "Extension functions can make helper behavior read like part of the type's natural API without changing the original class.",
     ],
     code: `fun String.initials(): String =
     split(" ")
@@ -414,8 +412,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Nullable type',
-        definition:
-          'A type marked with `?` that explicitly allows the value `null`.',
+        definition: 'A type marked with `?` that explicitly allows the value `null`.',
       },
       {
         term: 'Extension function',
@@ -485,8 +482,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Gradle',
-        definition:
-          'A major build system used widely in Kotlin JVM and Android projects.',
+        definition: 'A major build system used widely in Kotlin JVM and Android projects.',
       },
       {
         term: 'Ktor',
@@ -502,7 +498,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Jetpack Compose',
         definition:
-          'A modern Android UI toolkit that fits naturally with Kotlin\'s declarative and DSL-friendly features.',
+          "A modern Android UI toolkit that fits naturally with Kotlin's declarative and DSL-friendly features.",
       },
       {
         term: 'Kotlin Multiplatform',
@@ -516,8 +512,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Interop',
-        definition:
-          'The ability for Kotlin to work directly with Java and other platform APIs.',
+        definition: 'The ability for Kotlin to work directly with Java and other platform APIs.',
       },
       {
         term: 'Dependency injection',
@@ -589,224 +584,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.kotlin98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.kotlin98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.kotlin98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.kotlin98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.kotlin98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.kotlin98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.kotlin98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.kotlin98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.kotlin98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.kotlin98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.kotlin98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.kotlin98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.kotlin98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.kotlin98-toc-item {
-  margin: 0 0 8px;
-}
-
-.kotlin98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.kotlin98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.kotlin98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.kotlin98-section {
-  margin: 0 0 20px;
-}
-
-.kotlin98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.kotlin98-content p,
-.kotlin98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.kotlin98-content p {
-  margin: 0 0 10px;
-}
-
-.kotlin98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.kotlin98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.kotlin98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.kotlin98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .kotlin98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .kotlin98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .kotlin98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="kotlin98-section">
@@ -861,122 +638,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function KotlinPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Kotlin',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Kotlin (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Kotlin',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="kotlin98-help-page">
-      <style>{pageStyles}</style>
-      <div className="kotlin98-help-window" role="presentation">
-        <header className="kotlin98-titlebar">
-          <span className="kotlin98-titletext">Kotlin</span>
-          <div className="kotlin98-controls">
-            <button className="kotlin98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="kotlin98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Kotlin"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Kotlin</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="kotlin98-tabs" role="tablist" aria-label="Kotlin documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`kotlin98-tab ${activeTab === tab.id ? 'kotlin98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="kotlin98-main">
-          <aside className="kotlin98-toc" aria-label="Table of contents">
-            <h2 className="kotlin98-toc-title">Contents</h2>
-            <ul className="kotlin98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="kotlin98-toc-item">
-                  <a href={`#${section.id}`} className="kotlin98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="kotlin98-content">
-            <h1 className="kotlin98-doc-title">Kotlin</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

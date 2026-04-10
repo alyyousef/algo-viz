@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -159,13 +159,11 @@ const combinationTechniques = [
   },
   {
     title: 'Sort and two-pointer',
-    detail:
-      'Sort both lists and sweep with two pointers to find pairs closest to a target.',
+    detail: 'Sort both lists and sweep with two pointers to find pairs closest to a target.',
   },
   {
     title: 'Compress dominated entries',
-    detail:
-      'For optimization, keep only Pareto-optimal pairs to reduce combination cost.',
+    detail: 'For optimization, keep only Pareto-optimal pairs to reduce combination cost.',
   },
   {
     title: 'Binary search for best fit',
@@ -182,8 +180,7 @@ const dataManagement = [
   },
   {
     title: 'Coordinate compression',
-    detail:
-      'Map large keys to compact indices to reduce storage and enable faster search.',
+    detail: 'Map large keys to compact indices to reduce storage and enable faster search.',
   },
   {
     title: 'Deduplicate aggressively',
@@ -229,8 +226,7 @@ const workedExamples = [
       'Enumerate sums of the right half; check if target - sum exists.',
       'If found, reconstruct using stored masks or indices.',
     ],
-    note:
-      'This is the canonical MITM example: O(2^(n/2)) time and memory with O(1) expected combine.',
+    note: 'This is the canonical MITM example: O(2^(n/2)) time and memory with O(1) expected combine.',
   },
   {
     title: 'Partition into two balanced subsets',
@@ -240,8 +236,7 @@ const workedExamples = [
       'Use two pointers to minimize |left + right - total/2|.',
       'Recover the combination that yields the balance.',
     ],
-    note:
-      'Two-pointer merge avoids O(m^2) pairing and finds the closest balance efficiently.',
+    note: 'Two-pointer merge avoids O(m^2) pairing and finds the closest balance efficiently.',
   },
 ]
 
@@ -286,13 +281,11 @@ const comparisons = [
 const applications = [
   {
     context: 'Subset sum',
-    detail:
-      'Generate all sums for each half, then search for pairs that hit the target exactly.',
+    detail: 'Generate all sums for each half, then search for pairs that hit the target exactly.',
   },
   {
     context: 'Partition and balancing',
-    detail:
-      'Use two-pointer on sorted sums to find the closest balance between halves.',
+    detail: 'Use two-pointer on sorted sums to find the closest balance between halves.',
   },
   {
     context: 'Knapsack with weights',
@@ -301,8 +294,7 @@ const applications = [
   },
   {
     context: 'Cryptography meet-in-the-middle attacks',
-    detail:
-      'Breaking double encryption by matching intermediate states generated from both ends.',
+    detail: 'Breaking double encryption by matching intermediate states generated from both ends.',
   },
 ]
 
@@ -459,214 +451,6 @@ const glossaryTerms = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const mitmHelpStyles = `
-.mitm-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.mitm-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.mitm-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-}
-
-.mitm-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.mitm-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.mitm-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.mitm-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.mitm-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.mitm-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.mitm-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.mitm-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.mitm-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.mitm-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.mitm-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.mitm-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.mitm-help-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.mitm-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.mitm-help-section {
-  margin: 0 0 20px;
-}
-
-.mitm-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.mitm-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.mitm-help-content p,
-.mitm-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.mitm-help-content p {
-  margin: 0 0 10px;
-}
-
-.mitm-help-content ul,
-.mitm-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.mitm-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.mitm-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.mitm-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .mitm-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .mitm-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -706,399 +490,322 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function MeetInTheMiddlePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Meet-in-the-Middle (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Meet-in-the-Middle',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Meet-in-the-Middle',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="mitm-help-page">
-      <style>{mitmHelpStyles}</style>
-      <div className="mitm-help-window" role="presentation">
-        <header className="mitm-help-titlebar">
-          <span className="mitm-help-title">Meet-in-the-Middle</span>
-          <div className="mitm-help-controls">
-            <button className="mitm-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="mitm-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Meet-in-the-Middle"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Meet-in-the-Middle</h1>
+      <p>
+        Meet-in-the-Middle is a divide-and-combine strategy that shrinks exponential search by
+        precomputing all partial results for each half, then merging them efficiently. It is a go-to
+        paradigm for exact subset problems at medium scale.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {foundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="mitm-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`mitm-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+          <hr className="bin98-divider" />
 
-        <div className="mitm-help-main">
-          <aside className="mitm-help-toc" aria-label="Table of contents">
-            <h2 className="mitm-help-toc-title">Contents</h2>
-            <ul className="mitm-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewPanels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-taxonomy" className="bin98-section">
+            <h2 className="bin98-heading">Taxonomy</h2>
+            {taxonomy.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-modeling" className="bin98-section">
+            <h2 className="bin98-heading">Modeling Checklist</h2>
+            <ul>
+              {modelingChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="mitm-help-content">
-            <h1 className="mitm-help-doc-title">Meet-in-the-Middle</h1>
+          <hr className="bin98-divider" />
+
+          <section id="core-loop" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Flow</h2>
+            {algorithmSteps.map((step) => (
+              <div key={step.heading}>
+                <h3 className="bin98-subheading">{step.heading}</h3>
+                <ul>
+                  {step.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Combination Patterns</h2>
+            {combinationPatterns.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-techniques" className="bin98-section">
+            <h2 className="bin98-heading">Combination Techniques</h2>
+            {combinationTechniques.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-data" className="bin98-section">
+            <h2 className="bin98-heading">Data Management and Compression</h2>
+            {dataManagement.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
             <p>
-              Meet-in-the-Middle is a divide-and-combine strategy that shrinks exponential search by precomputing all partial results
-              for each half, then merging them efficiently. It is a go-to paradigm for exact subset problems at medium scale.
+              MITM is the classic time-memory trade: it is much faster than brute force, but only if
+              you can afford to store the partial results.
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-foundations" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Foundations</h2>
-                  {foundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
+            {complexityNotes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-comparisons" className="bin98-section">
+            <h2 className="bin98-heading">Comparisons</h2>
+            {comparisonTable.map((item) => (
+              <div key={item.method}>
+                <h3 className="bin98-subheading">{item.method}</h3>
+                <p>
+                  Time: {item.time}. Memory: {item.memory}. Tradeoff: {item.tradeoff}.
+                </p>
+              </div>
+            ))}
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {applications.map((item) => (
+              <div key={item.context}>
+                <h3 className="bin98-subheading">{item.context}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-failure" className="bin98-section">
+            <h2 className="bin98-heading">Failure Mode</h2>
+            <p>{failureStory}</p>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Checklist</h2>
+            <ul>
+              {debuggingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-use" className="bin98-section">
+            <h2 className="bin98-heading">When To Use It</h2>
+            <ul>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-avoid" className="bin98-section">
+            <h2 className="bin98-heading">When To Avoid It</h2>
+            <ul>
+              {whenToAvoid.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-instrumentation" className="bin98-section">
+            <h2 className="bin98-heading">Instrumentation That Helps</h2>
+            {instrumentation.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="examples-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Examples</h2>
+            {workedExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <ol>
+                  {example.steps.map((step) => (
+                    <li key={step}>{step}</li>
                   ))}
-                </section>
+                </ol>
+                <p>{example.note}</p>
+              </div>
+            ))}
+          </section>
 
-                <hr className="mitm-help-divider" />
+          <hr className="bin98-divider" />
 
-                <section id="bp-overview" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Overview</h2>
-                  {overviewPanels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
+          <section id="examples-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-                <hr className="mitm-help-divider" />
-
-                <section id="bp-taxonomy" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Taxonomy</h2>
-                  {taxonomy.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="bp-mental" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-modeling" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Modeling Checklist</h2>
-                  <ul>
-                    {modelingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-loop" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Algorithm Flow</h2>
-                  {algorithmSteps.map((step) => (
-                    <div key={step.heading}>
-                      <h3 className="mitm-help-subheading">{step.heading}</h3>
-                      <ul>
-                        {step.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-patterns" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Combination Patterns</h2>
-                  {combinationPatterns.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-techniques" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Combination Techniques</h2>
-                  {combinationTechniques.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-data" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Data Management and Compression</h2>
-                  {dataManagement.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-complexity" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Complexity and Tradeoffs</h2>
-                  <p>
-                    MITM is the classic time-memory trade: it is much faster than brute force, but only if you can afford to store the
-                    partial results.
-                  </p>
-                  {complexityNotes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-comparisons" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Comparisons</h2>
-                  {comparisonTable.map((item) => (
-                    <div key={item.method}>
-                      <h3 className="mitm-help-subheading">{item.method}</h3>
-                      <p>
-                        Time: {item.time}. Memory: {item.memory}. Tradeoff: {item.tradeoff}.
-                      </p>
-                    </div>
-                  ))}
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-applications" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Applications</h2>
-                  {applications.map((item) => (
-                    <div key={item.context}>
-                      <h3 className="mitm-help-subheading">{item.context}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-failure" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Failure Mode</h2>
-                  <p>{failureStory}</p>
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-pitfalls" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-debugging" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Debugging Checklist</h2>
-                  <ul>
-                    {debuggingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-use" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">When To Use It</h2>
-                  <ul>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-avoid" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">When To Avoid It</h2>
-                  <ul>
-                    {whenToAvoid.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-advanced" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-instrumentation" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Instrumentation That Helps</h2>
-                  {instrumentation.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="mitm-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="core-takeaways" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="examples-worked" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Worked Examples</h2>
-                  {workedExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="mitm-help-subheading">{example.title}</h3>
-                      <ol>
-                        {example.steps.map((step) => (
-                          <li key={step}>{step}</li>
-                        ))}
-                      </ol>
-                      <p>{example.note}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="mitm-help-divider" />
-
-                <section id="examples-code" className="mitm-help-section">
-                  <h2 className="mitm-help-heading">Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="mitm-help-subheading">{example.title}</h3>
-                      <div className="mitm-help-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="mitm-help-section">
-                <h2 className="mitm-help-heading">Terms</h2>
-                {glossaryTerms.map((item) => (
-                  <div key={item.term}>
-                    <h3 className="mitm-help-subheading">{item.term}</h3>
-                    <p>{item.definition}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Terms</h2>
+          {glossaryTerms.map((item) => (
+            <div key={item.term}>
+              <h3 className="bin98-subheading">{item.term}</h3>
+              <p>{item.definition}</p>
+            </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

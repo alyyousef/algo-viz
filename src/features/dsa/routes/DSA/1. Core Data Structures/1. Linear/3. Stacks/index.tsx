@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -60,8 +59,7 @@ const mentalModels = [
   },
   {
     title: 'Undo stack of photos',
-    detail:
-      'Each edit pushes a snapshot. Undo pops back to the last known good state.',
+    detail: 'Each edit pushes a snapshot. Undo pops back to the last known good state.',
   },
   {
     title: 'Safety rail',
@@ -185,8 +183,7 @@ const memoryNotes = [
   },
   {
     title: 'Fixed vs dynamic',
-    detail:
-      'Embedded stacks are often fixed-size arrays to guarantee maximum memory usage.',
+    detail: 'Embedded stacks are often fixed-size arrays to guarantee maximum memory usage.',
   },
   {
     title: 'Stack depth risk',
@@ -283,8 +280,7 @@ const practicalExamples = [
     return this.data[this.top - 1]
   }
 }`,
-    note:
-      'JavaScript arrays resize automatically. In lower-level languages you would double capacity when full to keep push amortized O(1).',
+    note: 'JavaScript arrays resize automatically. In lower-level languages you would double capacity when full to keep push amortized O(1).',
   },
   {
     title: 'Validate parentheses with a stack',
@@ -298,8 +294,7 @@ const practicalExamples = [
             if st is empty or st.pop() != pairs[ch]:
                 return false
     return st is empty`,
-    note:
-      'Classic stack use: LIFO mirrors nested structure. Time O(n), space O(n) in the worst case.',
+    note: 'Classic stack use: LIFO mirrors nested structure. Time O(n), space O(n) in the worst case.',
   },
   {
     title: 'Monotonic stack for next greater element',
@@ -313,8 +308,7 @@ const practicalExamples = [
             ans[idx] = nums[i]
         st.push(i)
     return ans`,
-    note:
-      'Each index is pushed and popped at most once, giving O(n) time and O(n) space. Works for temperatures, stock span, and histogram problems.',
+    note: 'Each index is pushed and popped at most once, giving O(n) time and O(n) space. Works for temperatures, stock span, and histogram problems.',
   },
   {
     title: 'Evaluate postfix (RPN) expression',
@@ -328,8 +322,7 @@ const practicalExamples = [
             a = st.pop()
             st.push(apply(t, a, b))
     return st.pop()`,
-    note:
-      'Operands are pushed, operators pop the last two values. This mirrors how stack languages execute programs.',
+    note: 'Operands are pushed, operators pop the last two values. This mirrors how stack languages execute programs.',
   },
   {
     title: 'Min stack with auxiliary tracking',
@@ -351,8 +344,7 @@ const practicalExamples = [
     return this.mins[this.mins.length - 1]
   }
 }`,
-    note:
-      'Every push stores the current minimum. getMin is O(1) with O(n) extra space.',
+    note: 'Every push stores the current minimum. getMin is O(1) with O(n) extra space.',
   },
 ]
 
@@ -387,13 +379,11 @@ const patterns = [
 const variants = [
   {
     title: 'Min/Max stack',
-    detail:
-      'Auxiliary stack tracks current min or max for O(1) queries.',
+    detail: 'Auxiliary stack tracks current min or max for O(1) queries.',
   },
   {
     title: 'Persistent stack',
-    detail:
-      'Immutable nodes share tails across versions to enable cheap snapshots.',
+    detail: 'Immutable nodes share tails across versions to enable cheap snapshots.',
   },
   {
     title: 'Bounded stack',
@@ -407,8 +397,7 @@ const variants = [
   },
   {
     title: 'Deque-based stack',
-    detail:
-      'Use a deque when you need stack operations plus occasional pops from the bottom.',
+    detail: 'Use a deque when you need stack operations plus occasional pops from the bottom.',
   },
 ]
 
@@ -420,18 +409,15 @@ const invariants = [
   },
   {
     title: 'No underflow',
-    detail:
-      'Pop and peek are invalid when size is zero. Guard with checks or sentinels.',
+    detail: 'Pop and peek are invalid when size is zero. Guard with checks or sentinels.',
   },
   {
     title: 'Array bounds',
-    detail:
-      'For array-backed stacks, top must stay within 0..capacity.',
+    detail: 'For array-backed stacks, top must stay within 0..capacity.',
   },
   {
     title: 'Cleared slots',
-    detail:
-      'In managed languages, clear popped slots to avoid retaining references.',
+    detail: 'In managed languages, clear popped slots to avoid retaining references.',
   },
 ]
 
@@ -525,15 +511,18 @@ const glossaryTerms = [
   },
   {
     term: 'Activation record',
-    definition: 'A call-stack frame containing return address, locals, parameters, and saved registers.',
+    definition:
+      'A call-stack frame containing return address, locals, parameters, and saved registers.',
   },
   {
     term: 'Monotonic stack',
-    definition: 'A stack maintained in sorted order to solve next-greater/smaller style range queries in linear time.',
+    definition:
+      'A stack maintained in sorted order to solve next-greater/smaller style range queries in linear time.',
   },
   {
     term: 'Amortized O(1)',
-    definition: 'Average per-operation push cost in dynamic array stacks despite occasional O(n) resize.',
+    definition:
+      'Average per-operation push cost in dynamic array stacks despite occasional O(n) resize.',
   },
   {
     term: 'Guard page',
@@ -555,221 +544,12 @@ const glossaryTerms = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-help-page .win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-help-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-help-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-help-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-help-page .win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-help-page .win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-help-page .win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-help-page .win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-help-page .win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-help-page .win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-help-page .win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-help-page .win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-help-page .win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-help-page .win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-help-page .win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-help-page .win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-help-page .win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-help-page .win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-help-page .win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-help-page .win98-content p,
-.win98-help-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-help-page .win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-help-page .win98-content ul,
-.win98-help-page .win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-help-page .win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-help-page .win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-help-page .win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .win98-help-page .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-help-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -803,304 +583,245 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function StacksPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Stacks',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Stacks (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Stacks',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Stacks</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Stacks"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Stacks</h1>
+      <p>
+        Stacks capture recency. Whatever you push last is what you see first, making them perfect
+        for recursion, parsing, backtracking, undo, and single-pass range problems. The simplicity
+        of push and pop keeps reasoning and performance predictable.
+      </p>
+      <p>
+        Stacks thrive when the newest item matters most. They mirror how call frames, parentheses,
+        and undo steps naturally nest. By restricting access to the top, stacks make correctness
+        proofs and performance analysis straightforward: push and pop are constant-time, and the
+        order is fully determined.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              A stack is a constrained linear structure with one access boundary: the top. This
+              single constraint creates powerful behavior for nested operations and rollback flows,
+              where recent context must be processed before older context.
+            </p>
+            <p>
+              Stacks appear at every layer of systems: language runtimes, parsers, algorithmic
+              traversals, editor undo history, and memory allocators. They are simple but
+              foundational.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Performance Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Real-world intuition: a cache miss is far more expensive than the O(1) arithmetic of
+              push/pop. Favor contiguous stacks in performance-critical loops and add guards for
+              overflow/underflow in constrained environments.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {applications.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Stacks</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((model) => (
+              <div key={model.title}>
+                <h3 className="bin98-subheading">{model.title}</h3>
+                <p>{model.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
             <p>
-              Stacks capture recency. Whatever you push last is what you see first, making them perfect for recursion, parsing,
-              backtracking, undo, and single-pass range problems. The simplicity of push and pop keeps reasoning and performance
-              predictable.
+              Array stacks excel when maximum depth is known or bounded; linked stacks excel when
+              churn is high or depth is unknown. Specialized stacks (monotonic, min) adjust stored
+              metadata to answer richer queries while keeping push/pop O(1).
             </p>
-            <p>
-              Stacks thrive when the newest item matters most. They mirror how call frames, parentheses, and undo steps naturally nest.
-              By restricting access to the top, stacks make correctness proofs and performance analysis straightforward: push and pop are
-              constant-time, and the order is fully determined.
-            </p>
+          </section>
+          <section id="core-anatomy" className="bin98-section">
+            <h2 className="bin98-heading">Structural Anatomy</h2>
+            {anatomy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-operations" className="bin98-section">
+            <h2 className="bin98-heading">Operations Matrix</h2>
+            {operationsTable.map((row) => (
+              <p key={row.op}>
+                <strong>{row.op}:</strong> Array Stack {row.array}; Linked Stack {row.linked}.{' '}
+                {row.note}
+              </p>
+            ))}
+          </section>
+          <section id="core-memory" className="bin98-section">
+            <h2 className="bin98-heading">Memory Layout and Safety</h2>
+            {memoryNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Patterns and Techniques</h2>
+            {patterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Invariants to Keep Safe</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Variations</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    A stack is a constrained linear structure with one access boundary: the top. This single constraint creates powerful
-                    behavior for nested operations and rollback flows, where recent context must be processed before older context.
-                  </p>
-                  <p>
-                    Stacks appear at every layer of systems: language runtimes, parsers, algorithmic traversals, editor undo history, and
-                    memory allocators. They are simple but foundational.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity and Performance Intuition</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Real-world intuition: a cache miss is far more expensive than the O(1) arithmetic of push/pop. Favor contiguous
-                    stacks in performance-critical loops and add guards for overflow/underflow in constrained environments.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-decisions" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {practicalExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-checkpoints" className="bin98-section">
+            <h2 className="bin98-heading">Quick Self-Checks</h2>
+            <ul>
+              {checkpoints.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="win98-section">
-                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((model) => (
-                    <div key={model.title}>
-                      <h3 className="win98-subheading">{model.title}</h3>
-                      <p>{model.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="win98-section">
-                  <h2 className="win98-heading">How It Works</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p>
-                    Array stacks excel when maximum depth is known or bounded; linked stacks excel when churn is high or depth is
-                    unknown. Specialized stacks (monotonic, min) adjust stored metadata to answer richer queries while keeping push/pop
-                    O(1).
-                  </p>
-                </section>
-                <section id="core-anatomy" className="win98-section">
-                  <h2 className="win98-heading">Structural Anatomy</h2>
-                  {anatomy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-operations" className="win98-section">
-                  <h2 className="win98-heading">Operations Matrix</h2>
-                  {operationsTable.map((row) => (
-                    <p key={row.op}>
-                      <strong>{row.op}:</strong> Array Stack {row.array}; Linked Stack {row.linked}. {row.note}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-memory" className="win98-section">
-                  <h2 className="win98-heading">Memory Layout and Safety</h2>
-                  {memoryNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Patterns and Techniques</h2>
-                  {patterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="win98-section">
-                  <h2 className="win98-heading">Variants and Extensions</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="win98-section">
-                  <h2 className="win98-heading">Invariants to Keep Safe</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights and Variations</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="win98-section">
-                  <h2 className="win98-heading">Practical Examples</h2>
-                  {practicalExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-checkpoints" className="win98-section">
-                  <h2 className="win98-heading">Quick Self-Checks</h2>
-                  <ul>
-                    {checkpoints.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="win98-section">
-                  <h2 className="win98-heading">Glossary</h2>
-                  {glossaryTerms.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-                <section id="glossary-references" className="win98-section">
-                  <h2 className="win98-heading">References</h2>
-                  <ul>
-                    {references.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossaryTerms.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
+          <section id="glossary-references" className="bin98-section">
+            <h2 className="bin98-heading">References</h2>
+            <ul>
+              {references.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }
-

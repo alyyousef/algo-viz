@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -90,46 +89,38 @@ const mechanics = [
 const problemPatterns = [
   {
     title: 'Edge list ready',
-    detail:
-      'If your data already comes as a list of weighted edges, Kruskal fits naturally.',
+    detail: 'If your data already comes as a list of weighted edges, Kruskal fits naturally.',
   },
   {
     title: 'Sparse graphs',
-    detail:
-      'When E is near V, sorting is cheap and Union-Find dominates in speed.',
+    detail: 'When E is near V, sorting is cheap and Union-Find dominates in speed.',
   },
   {
     title: 'Clustering by connectivity',
-    detail:
-      'Single-linkage clustering is Kruskal plus a cutoff on the heaviest edges.',
+    detail: 'Single-linkage clustering is Kruskal plus a cutoff on the heaviest edges.',
   },
   {
     title: 'Baseline cost audits',
-    detail:
-      'MST weight gives a minimal cost benchmark before adding redundancy.',
+    detail: 'MST weight gives a minimal cost benchmark before adding redundancy.',
   },
   {
     title: 'Not for shortest paths',
-    detail:
-      'Kruskal minimizes total tree weight, not the distance between specific pairs.',
+    detail: 'Kruskal minimizes total tree weight, not the distance between specific pairs.',
   },
 ]
 
 const loopInvariants = [
   {
     title: 'Forest invariant',
-    detail:
-      'At every step, accepted edges form a forest that can be extended into some MST.',
+    detail: 'At every step, accepted edges form a forest that can be extended into some MST.',
   },
   {
     title: 'Cycle-free invariant',
-    detail:
-      'Union-Find guarantees no accepted edge creates a cycle.',
+    detail: 'Union-Find guarantees no accepted edge creates a cycle.',
   },
   {
     title: 'Cut safety invariant',
-    detail:
-      'Any accepted edge is the lightest edge crossing some cut, so it is safe to include.',
+    detail: 'Any accepted edge is the lightest edge crossing some cut, so it is safe to include.',
   },
 ]
 
@@ -187,8 +178,7 @@ const complexityNotes = [
 const inputSensitivity = [
   {
     title: 'Disconnected graphs',
-    detail:
-      'Kruskal naturally returns a minimum spanning forest.',
+    detail: 'Kruskal naturally returns a minimum spanning forest.',
   },
   {
     title: 'Duplicate weights',
@@ -197,36 +187,30 @@ const inputSensitivity = [
   },
   {
     title: 'Dense graphs',
-    detail:
-      'Sorting all edges can be expensive; Prim often wins on dense adjacency-driven graphs.',
+    detail: 'Sorting all edges can be expensive; Prim often wins on dense adjacency-driven graphs.',
   },
   {
     title: 'Small integer weights',
-    detail:
-      'Bucketed sorting drops the log factor and speeds up Kruskal substantially.',
+    detail: 'Bucketed sorting drops the log factor and speeds up Kruskal substantially.',
   },
 ]
 
 const performanceProfile = [
   {
     title: 'Sorting dominates',
-    detail:
-      'Most runtime is spent sorting edges; Union-Find is almost constant-time.',
+    detail: 'Most runtime is spent sorting edges; Union-Find is almost constant-time.',
   },
   {
     title: 'Union-Find quality',
-    detail:
-      'Path compression and union by rank are essential for near-linear behavior.',
+    detail: 'Path compression and union by rank are essential for near-linear behavior.',
   },
   {
     title: 'Memory footprint',
-    detail:
-      'Edges must be held for sorting; consider external sorting on massive graphs.',
+    detail: 'Edges must be held for sorting; consider external sorting on massive graphs.',
   },
   {
     title: 'Early termination',
-    detail:
-      'Once V - 1 edges are chosen, stop scanning to avoid heavy-edge overhead.',
+    detail: 'Once V - 1 edges are chosen, stop scanning to avoid heavy-edge overhead.',
   },
 ]
 
@@ -284,8 +268,7 @@ const realWorldUses = [
   },
   {
     context: 'Infrastructure audits',
-    detail:
-      'MSTs provide a minimal baseline before adding redundant edges for reliability.',
+    detail: 'MSTs provide a minimal baseline before adding redundant edges for reliability.',
   },
 ]
 
@@ -411,28 +394,23 @@ const decisionGuidance = [
 const implementationTips = [
   {
     title: 'Use Union-Find with compression',
-    detail:
-      'Path compression and union by rank keep find/union operations nearly constant.',
+    detail: 'Path compression and union by rank keep find/union operations nearly constant.',
   },
   {
     title: 'Early exit',
-    detail:
-      'Stop after V - 1 accepted edges to avoid scanning heavy edges.',
+    detail: 'Stop after V - 1 accepted edges to avoid scanning heavy edges.',
   },
   {
     title: 'Stable tie-breaking',
-    detail:
-      'If weights tie, sort by (w, u, v) to keep output deterministic.',
+    detail: 'If weights tie, sort by (w, u, v) to keep output deterministic.',
   },
   {
     title: 'Prefer edge lists',
-    detail:
-      'Kruskal is edge-driven; avoid adjacency matrices on sparse graphs.',
+    detail: 'Kruskal is edge-driven; avoid adjacency matrices on sparse graphs.',
   },
   {
     title: 'Handle forests',
-    detail:
-      'If connectivity is required, verify components after the run.',
+    detail: 'If connectivity is required, verify components after the run.',
   },
 ]
 
@@ -473,19 +451,35 @@ const takeaways = [
 ]
 
 const glossary = [
-  { term: 'Minimum spanning tree (MST)', definition: 'A cycle-free edge set connecting all vertices with minimum total weight.' },
+  {
+    term: 'Minimum spanning tree (MST)',
+    definition: 'A cycle-free edge set connecting all vertices with minimum total weight.',
+  },
   {
     term: 'Minimum spanning forest',
     definition: 'Kruskal output on disconnected graphs: one MST per connected component.',
   },
   {
     term: 'Union-Find (disjoint set union)',
-    definition: 'Structure that tracks connected components with near-constant amortized find/union.',
+    definition:
+      'Structure that tracks connected components with near-constant amortized find/union.',
   },
-  { term: 'Path compression', definition: 'Union-Find optimization that flattens parent chains during find.' },
-  { term: 'Union by rank', definition: 'Union-Find optimization that keeps trees shallow during union.' },
-  { term: 'Cut property', definition: 'Lightest edge crossing any cut is safe to include in some MST.' },
-  { term: 'Cycle property', definition: 'Heaviest edge in a cycle can be excluded without harming optimality.' },
+  {
+    term: 'Path compression',
+    definition: 'Union-Find optimization that flattens parent chains during find.',
+  },
+  {
+    term: 'Union by rank',
+    definition: 'Union-Find optimization that keeps trees shallow during union.',
+  },
+  {
+    term: 'Cut property',
+    definition: 'Lightest edge crossing any cut is safe to include in some MST.',
+  },
+  {
+    term: 'Cycle property',
+    definition: 'Heaviest edge in a cycle can be excluded without harming optimality.',
+  },
   { term: 'Early exit', definition: 'Stop after choosing V - 1 edges per connected component.' },
 ]
 
@@ -528,273 +522,249 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const kruskalHelpStyles = `
-.kruskal98-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.kruskal98-window{width:100%;min-height:100dvh;margin:0;display:flex;flex-direction:column;box-sizing:border-box;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040}
-.kruskal98-titlebar{position:relative;display:flex;align-items:center;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.kruskal98-title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px}
-.kruskal98-controls{display:flex;gap:2px;margin-left:auto}
-.kruskal98-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:1;cursor:pointer}
-.kruskal98-tabs{display:flex;gap:1px;padding:6px 8px 0}
-.kruskal98-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer}
-.kruskal98-tab.active{background:#fff;position:relative;top:1px}
-.kruskal98-main{border-top:1px solid #404040;background:#fff;flex:1;min-height:0;display:grid;grid-template-columns:240px 1fr}
-.kruskal98-toc{border-right:1px solid #808080;background:#f2f2f2;padding:12px;overflow:auto}
-.kruskal98-toc-title{font-size:12px;font-weight:700;margin:0 0 10px}
-.kruskal98-toc-list{list-style:none;margin:0;padding:0}
-.kruskal98-toc-list li{margin:0 0 8px}
-.kruskal98-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.kruskal98-content{padding:14px 20px 20px;overflow:auto}
-.kruskal98-doc-title{font-size:20px;font-weight:700;margin:0 0 12px}
-.kruskal98-section{margin:0 0 20px}
-.kruskal98-heading{font-size:16px;font-weight:700;margin:0 0 8px}
-.kruskal98-subheading{font-size:13px;font-weight:700;margin:0 0 6px}
-.kruskal98-content p,.kruskal98-content li,.kruskal98-content td,.kruskal98-content th{font-size:12px;line-height:1.5}
-.kruskal98-content p{margin:0 0 10px}
-.kruskal98-content ul,.kruskal98-content ol{margin:0 0 10px 20px;padding:0}
-.kruskal98-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.kruskal98-table{width:100%;border-collapse:collapse;margin:0 0 10px}
-.kruskal98-table th,.kruskal98-table td{text-align:left;border-bottom:1px solid #d0d0d0;padding:4px 6px;vertical-align:top}
-.kruskal98-codebox{background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;padding:8px;margin:6px 0 10px}
-.kruskal98-codebox code{font-family:"Courier New",Courier,monospace;font-size:12px;white-space:pre;display:block}
-@media (max-width:900px){.kruskal98-main{grid-template-columns:1fr}.kruskal98-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function KruskalsAlgorithmPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Kruskal&apos;s Algorithm',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Kruskal's Algorithm (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: "Kruskal's Algorithm",
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    let parsedTasks: Array<{ id: string }>
-    try {
-      parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    } catch {
-      parsedTasks = []
-    }
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="kruskal98-page">
-      <style>{kruskalHelpStyles}</style>
-      <div className="kruskal98-window" role="presentation">
-        <header className="kruskal98-titlebar">
-          <span className="kruskal98-title">Kruskal&apos;s Algorithm - Help</span>
-          <div className="kruskal98-controls">
-            <button className="kruskal98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="kruskal98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="kruskal98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`kruskal98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="kruskal98-main">
-          <aside className="kruskal98-toc" aria-label="Table of contents">
-            <h2 className="kruskal98-toc-title">Contents</h2>
-            <ul className="kruskal98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Kruskal's Algorithm"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Kruskal&apos;s Algorithm</h1>
+      <p>
+        Kruskal builds a minimum spanning tree by globally sorting edges and locally unioning
+        components when a light edge connects them. The cycle and cut properties justify the greedy
+        choices, while Union-Find keeps connectivity checks effectively constant time.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Kruskal is the global MST strategy: sort every edge light to heavy, then add an edge
+              if it connects two different components. Cycle edges are skipped automatically by
+              Union-Find. The process halts after V - 1 accepted edges per component, yielding an
+              MST or a spanning forest for disconnected inputs.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-mental" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-patterns" className="bin98-section">
+            <h2 className="bin98-heading">How to Think About Similar Problems</h2>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-apps" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="kruskal98-content">
-            <h1 className="kruskal98-doc-title">Kruskal&apos;s Algorithm</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Loop Invariants (Why It Is Correct)</h2>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace on a Tiny Graph</h2>
+            {stepTrace.map((item) => (
+              <p key={item.step}>
+                <strong>{item.step}:</strong> {item.state}. {item.note}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-inputs" className="bin98-section">
+            <h2 className="bin98-heading">Input Sensitivity</h2>
+            {inputSensitivity.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Best for</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.bestFor}</td>
+                    <td>{row.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            {variantsAndTweaks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-tips" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-notes" className="bin98-section">
+            <h2 className="bin98-heading">Clustering and Baseline Notes</h2>
             <p>
-              Kruskal builds a minimum spanning tree by globally sorting edges and locally unioning components when a light edge
-              connects them. The cycle and cut properties justify the greedy choices, while Union-Find keeps connectivity checks
-              effectively constant time.
+              <strong>Single-linkage clustering:</strong> run Kruskal, then cut the k - 1 largest
+              edges of the MST to form k clusters.
             </p>
+            <p>
+              <strong>Approximation baselines:</strong> MST cost bounds show up in TSP heuristics,
+              Steiner tree approximations, and redundancy audits.
+            </p>
+            <p>
+              <strong>Infrastructure audits:</strong> MSTs provide a minimal baseline before adding
+              redundant edges for reliability.
+            </p>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Overview</h2>
-                  <p>
-                    Kruskal is the global MST strategy: sort every edge light to heavy, then add an edge if it connects two different
-                    components. Cycle edges are skipped automatically by Union-Find. The process halts after V - 1 accepted edges per
-                    component, yielding an MST or a spanning forest for disconnected inputs.
-                  </p>
-                </section>
-                <hr className="kruskal98-divider" />
-                <section id="bp-history" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="bp-mental" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="bp-patterns" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">How to Think About Similar Problems</h2>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="bp-apps" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}><strong>{item.context}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Key Takeaways</h2>
-                  <ul>{takeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mechanics" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">How It Works</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="kruskal98-subheading">{block.heading}</h3>
-                      <ul>{block.bullets.map((point) => <li key={point}>{point}</li>)}</ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-invariants" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Loop Invariants (Why It Is Correct)</h2>
-                  {loopInvariants.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-                <section id="core-trace" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Worked Trace on a Tiny Graph</h2>
-                  {stepTrace.map((item) => <p key={item.step}><strong>{item.step}:</strong> {item.state}. {item.note}</p>)}
-                </section>
-                <section id="core-complexity" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Complexity Analysis and Intuition</h2>
-                  {complexityNotes.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-                <section id="core-inputs" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Input Sensitivity</h2>
-                  {inputSensitivity.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-                <section id="core-performance" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-                <section id="core-compare" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Compare and Contrast</h2>
-                  <table className="kruskal98-table">
-                    <thead>
-                      <tr><th>Algorithm</th><th>Time</th><th>Space</th><th>Best for</th><th>Notes</th></tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td><td>{row.time}</td><td>{row.space}</td><td>{row.bestFor}</td><td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-variants" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Variants and Extensions</h2>
-                  {variantsAndTweaks.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-                <section id="core-tips" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-                <section id="core-pitfalls" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Common Pitfalls</h2>
-                  <ul>{pitfalls.map((item) => <li key={item}>{item}</li>)}</ul>
-                </section>
-                <section id="core-when" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">When to Use It</h2>
-                  <ol>{decisionGuidance.map((item) => <li key={item}>{item}</li>)}</ol>
-                </section>
-                <section id="core-advanced" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>)}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="kruskal98-subheading">{example.title}</h3>
-                      <div className="kruskal98-codebox"><code>{example.code.trim()}</code></div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-notes" className="kruskal98-section">
-                  <h2 className="kruskal98-heading">Clustering and Baseline Notes</h2>
-                  <p><strong>Single-linkage clustering:</strong> run Kruskal, then cut the k - 1 largest edges of the MST to form k clusters.</p>
-                  <p><strong>Approximation baselines:</strong> MST cost bounds show up in TSP heuristics, Steiner tree approximations, and redundancy audits.</p>
-                  <p><strong>Infrastructure audits:</strong> MSTs provide a minimal baseline before adding redundant edges for reliability.</p>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="kruskal98-section">
-                <h2 className="kruskal98-heading">Glossary</h2>
-                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

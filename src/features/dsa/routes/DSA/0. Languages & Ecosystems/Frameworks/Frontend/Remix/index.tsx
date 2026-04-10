@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -114,14 +114,14 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Route Modules',
     paragraphs: [
       'A Remix route module often combines the route component with its server-side loading and mutation functions. This means route files tend to become the natural place where UI structure and request-response behavior meet.',
-      'That design is one of Remix\'s clearest strengths. It makes route boundaries matter architecturally instead of leaving teams to invent their own pattern for how page structure, data, and mutations should be connected.',
+      "That design is one of Remix's clearest strengths. It makes route boundaries matter architecturally instead of leaving teams to invent their own pattern for how page structure, data, and mutations should be connected.",
     ],
   },
   {
     id: 'core-nested-routes',
     title: 'Nested Routes and Layout Boundaries',
     paragraphs: [
-      'Nested routes are one of Remix\'s most important concepts. Parent routes define layout structure and shared boundaries, while child routes supply more specific content and data requirements.',
+      "Nested routes are one of Remix's most important concepts. Parent routes define layout structure and shared boundaries, while child routes supply more specific content and data requirements.",
       'This tends to make larger applications feel more legible because UI nesting, data loading nesting, and route ownership line up more naturally.',
     ],
   },
@@ -138,14 +138,14 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Loaders and Data Flow',
     paragraphs: [
       'Loaders define what data a route needs on the server. The framework aligns that data with the route hierarchy, which can make it easier to reason about where data comes from and which route is responsible for it.',
-      'This route-centered loading model is one of Remix\'s core architectural benefits. Instead of scattering page fetches across many client-side hooks, teams can place data requirements directly at the route boundary.',
+      "This route-centered loading model is one of Remix's core architectural benefits. Instead of scattering page fetches across many client-side hooks, teams can place data requirements directly at the route boundary.",
     ],
   },
   {
     id: 'core-revalidation',
     title: 'Revalidation and Data Freshness',
     paragraphs: [
-      'After mutations or navigation, Remix can revalidate route data so the UI stays aligned with server state. This keeps the framework\'s data model closely tied to real request-response behavior instead of encouraging stale client-side assumptions.',
+      "After mutations or navigation, Remix can revalidate route data so the UI stays aligned with server state. This keeps the framework's data model closely tied to real request-response behavior instead of encouraging stale client-side assumptions.",
       'The result is often a simpler story for many CRUD-style interfaces, though teams still need to reason carefully about cache headers, network behavior, and what should be reloaded when.',
     ],
   },
@@ -161,7 +161,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-forms',
     title: 'Forms and Progressive Enhancement',
     paragraphs: [
-      'One of Remix\'s most distinctive strengths is how naturally it handles forms. HTML forms are not treated as legacy details to be wrapped away. They remain first-class architecture elements enhanced by the framework.',
+      "One of Remix's most distinctive strengths is how naturally it handles forms. HTML forms are not treated as legacy details to be wrapped away. They remain first-class architecture elements enhanced by the framework.",
       'This gives teams a strong progressive enhancement story: applications can keep a closer relationship to standard browser behavior while still becoming richer when JavaScript is available.',
     ],
   },
@@ -284,7 +284,7 @@ export default function UsersRoute() {
     id: 'examples-action',
     title: 'Form and Action Example',
     description:
-      'One of Remix\'s clearest strengths is making writes feel like ordinary web form submissions with explicit server handling.',
+      "One of Remix's clearest strengths is making writes feel like ordinary web form submissions with explicit server handling.",
     snippets: [
       {
         label: 'routes/contact.tsx',
@@ -349,7 +349,7 @@ export default function ReportsRoute() {
       },
     ],
     takeaway:
-      'The route hierarchy is not just navigation. It is also the application\'s layout and data boundary structure.',
+      "The route hierarchy is not just navigation. It is also the application's layout and data boundary structure.",
   },
   {
     id: 'examples-pending',
@@ -394,7 +394,8 @@ Server-first data loading with route revalidation`,
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Remix',
-    definition: 'A React framework focused on nested routes, loaders, actions, and web-native full-stack application flow.',
+    definition:
+      'A React framework focused on nested routes, loaders, actions, and web-native full-stack application flow.',
   },
   {
     term: 'Loader',
@@ -406,27 +407,33 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Route module',
-    definition: 'A file that commonly defines a route component together with its loader, action, and route-specific behavior.',
+    definition:
+      'A file that commonly defines a route component together with its loader, action, and route-specific behavior.',
   },
   {
     term: 'Outlet',
-    definition: 'The Remix component used to render nested child routes within a parent layout route.',
+    definition:
+      'The Remix component used to render nested child routes within a parent layout route.',
   },
   {
     term: 'Form',
-    definition: 'A Remix component that enhances normal HTML form behavior while preserving web semantics.',
+    definition:
+      'A Remix component that enhances normal HTML form behavior while preserving web semantics.',
   },
   {
     term: 'Progressive enhancement',
-    definition: 'A design approach where the application works from standard web behavior first and enhances from there.',
+    definition:
+      'A design approach where the application works from standard web behavior first and enhances from there.',
   },
   {
     term: 'Nested routes',
-    definition: 'A routing structure where route hierarchy shapes both UI layout and data boundaries.',
+    definition:
+      'A routing structure where route hierarchy shapes both UI layout and data boundaries.',
   },
   {
     term: 'Revalidation',
-    definition: 'The framework behavior that refreshes route data after mutations or navigation when needed.',
+    definition:
+      'The framework behavior that refreshes route data after mutations or navigation when needed.',
   },
   {
     term: 'useLoaderData',
@@ -438,234 +445,19 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Request-response model',
-    definition: 'The web architecture pattern where the browser makes a request and the server returns the next application state or data.',
+    definition:
+      'The web architecture pattern where the browser makes a request and the server returns the next application state or data.',
   },
   {
     term: 'useNavigation',
-    definition: 'A Remix hook used to read current navigation and submission state for pending UI behavior.',
+    definition:
+      'A Remix hook used to read current navigation and submission state for pending UI behavior.',
   },
   {
     term: 'Nested layout',
     definition: 'A parent route UI shell that renders child routes through an outlet.',
   },
 ] as const
-
-const helpStyles = `
-.remix-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.remix-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.remix-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.remix-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.remix-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.remix-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.remix-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.remix-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.remix-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.remix-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.remix-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.remix-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.remix-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.remix-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.remix-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.remix-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.remix-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.remix-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.remix-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.remix-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.remix-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.remix-help-content p,
-.remix-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.remix-help-content p {
-  margin: 0 0 10px;
-}
-
-.remix-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.remix-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.remix-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.remix-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .remix-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .remix-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .remix-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -681,155 +473,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-export default function RemixPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+export default function UsersRoute(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Remix',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Remix (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Remix',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="remix-help-page">
-      <style>{helpStyles}</style>
-      <div className="remix-help-window" role="presentation">
-        <header className="remix-help-titlebar">
-          <span className="remix-help-titletext">Remix</span>
-          <div className="remix-help-controls">
-            <button className="remix-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="remix-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Remix"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Remix</h1>
+      <p className="remix-help-doc-subtitle">
+        Manual-style reference covering overview, route modules, loaders, actions, nested routing,
+        progressive enhancement, ecosystem shape, tradeoffs, and examples.
+      </p>
 
-        <div className="remix-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`remix-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="remix-help-main">
-          <aside className="remix-help-toc" aria-label="Table of contents">
-            <h2 className="remix-help-toc-title">Contents</h2>
-            <ul className="remix-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="remix-help-content">
-            <h1 className="remix-help-doc-title">Remix</h1>
-            <p className="remix-help-doc-subtitle">
-              Manual-style reference covering overview, route modules, loaders, actions, nested routing, progressive enhancement,
-              ecosystem shape, tradeoffs, and examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="remix-help-section">
-                    <h2 className="remix-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="remix-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="remix-help-section">
-                  <h2 className="remix-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="remix-help-section">
-                  <h2 className="remix-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="remix-help-subheading">{snippet.label}</h3>
-                      <div className="remix-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="remix-help-section">
-                <h2 className="remix-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const rangeQueryPatterns = [
   {
@@ -63,51 +62,42 @@ const mentalModels = [
 const terminology = [
   {
     term: 'Segment',
-    detail:
-      'A contiguous interval [l, r] represented by a node.',
+    detail: 'A contiguous interval [l, r] represented by a node.',
   },
   {
     term: 'Merge function',
-    detail:
-      'Associative function combining two child summaries into a parent.',
+    detail: 'Associative function combining two child summaries into a parent.',
   },
   {
     term: 'Identity element',
-    detail:
-      'Neutral value for merge (0 for sum, +inf for min, -inf for max).',
+    detail: 'Neutral value for merge (0 for sum, +inf for min, -inf for max).',
   },
   {
     term: 'Lazy tag',
-    detail:
-      'Deferred update stored at a node to be pushed when needed.',
+    detail: 'Deferred update stored at a node to be pushed when needed.',
   },
   {
     term: 'Query cover',
-    detail:
-      'A range query decomposes into a minimal set of fully covered nodes.',
+    detail: 'A range query decomposes into a minimal set of fully covered nodes.',
   },
 ]
 
 const invariants = [
   {
     title: 'Correct summaries',
-    detail:
-      'Every node must reflect the merge of its children or the base value at a leaf.',
+    detail: 'Every node must reflect the merge of its children or the base value at a leaf.',
   },
   {
     title: 'Lazy consistency',
-    detail:
-      'Pending updates must be applied or propagated before using child data.',
+    detail: 'Pending updates must be applied or propagated before using child data.',
   },
   {
     title: 'Associativity',
-    detail:
-      'Merge order should not change results; otherwise queries can break.',
+    detail: 'Merge order should not change results; otherwise queries can break.',
   },
   {
     title: 'Range boundaries',
-    detail:
-      'All nodes respect inclusive boundaries and align with input indices.',
+    detail: 'All nodes respect inclusive boundaries and align with input indices.',
   },
 ]
 
@@ -159,64 +149,53 @@ const queryTypes = [
 const updateTypes = [
   {
     title: 'Point update',
-    detail:
-      'Change a single value and recompute along the root path.',
+    detail: 'Change a single value and recompute along the root path.',
   },
   {
     title: 'Range add',
-    detail:
-      'Add delta to all values in [l, r] with lazy propagation.',
+    detail: 'Add delta to all values in [l, r] with lazy propagation.',
   },
   {
     title: 'Range assign',
-    detail:
-      'Overwrite a range with a fixed value; needs assignment lazy tags.',
+    detail: 'Overwrite a range with a fixed value; needs assignment lazy tags.',
   },
   {
     title: 'Range min/max chmin/chmax',
-    detail:
-      'Segment tree beats support conditional range updates efficiently.',
+    detail: 'Segment tree beats support conditional range updates efficiently.',
   },
 ]
 
 const buildOptions = [
   {
     title: 'Recursive build',
-    detail:
-      'Build with divide-and-conquer; easy to reason about.',
+    detail: 'Build with divide-and-conquer; easy to reason about.',
   },
   {
     title: 'Iterative build',
-    detail:
-      'Store leaves at n..2n and build parents downward; cache-friendly.',
+    detail: 'Store leaves at n..2n and build parents downward; cache-friendly.',
   },
   {
     title: 'Lazy initialization',
-    detail:
-      'Create nodes on demand for sparse arrays to save memory.',
+    detail: 'Create nodes on demand for sparse arrays to save memory.',
   },
 ]
 
 const lazyPropagationNotes = [
   {
     title: 'Push down',
-    detail:
-      'Before visiting children, apply pending updates to them.',
+    detail: 'Before visiting children, apply pending updates to them.',
   },
   {
     title: 'Compose tags',
-    detail:
-      'Range add and range assign tags must combine in the correct order.',
+    detail: 'Range add and range assign tags must combine in the correct order.',
   },
   {
     title: 'Query correctness',
-    detail:
-      'If a node is fully covered, you can return its summary without exploring children.',
+    detail: 'If a node is fully covered, you can return its summary without exploring children.',
   },
   {
     title: 'Multiple lazy types',
-    detail:
-      'Complex updates require storing more metadata per node.',
+    detail: 'Complex updates require storing more metadata per node.',
   },
 ]
 
@@ -233,8 +212,7 @@ const buildAndQueryNotes = [
   },
   {
     title: 'Point update',
-    detail:
-      'Update one leaf, then recompute each ancestor. Complexity stays O(log n).',
+    detail: 'Update one leaf, then recompute each ancestor. Complexity stays O(log n).',
   },
   {
     title: 'Lazy range update',
@@ -269,46 +247,38 @@ const complexityNotes = [
 const performanceNotes = [
   {
     title: 'Constants matter',
-    detail:
-      'Segment trees are heavier than Fenwick; iterative versions reduce overhead.',
+    detail: 'Segment trees are heavier than Fenwick; iterative versions reduce overhead.',
   },
   {
     title: 'Cache locality',
-    detail:
-      'Array-based trees improve locality versus pointer-based nodes.',
+    detail: 'Array-based trees improve locality versus pointer-based nodes.',
   },
   {
     title: 'Recursion depth',
-    detail:
-      'Deep recursion can overflow on large n; iterative implementations avoid this.',
+    detail: 'Deep recursion can overflow on large n; iterative implementations avoid this.',
   },
   {
     title: 'Memory usage',
-    detail:
-      'Storing multiple metrics or lazy tags can double memory footprint.',
+    detail: 'Storing multiple metrics or lazy tags can double memory footprint.',
   },
 ]
 
 const realWorldPatterns = [
   {
     title: 'Time series dashboards',
-    detail:
-      'Range sums and maxes over dynamic windows for operational metrics.',
+    detail: 'Range sums and maxes over dynamic windows for operational metrics.',
   },
   {
     title: 'Game and simulation maps',
-    detail:
-      'Range buffs, damage fields, and resource totals in map slices.',
+    detail: 'Range buffs, damage fields, and resource totals in map slices.',
   },
   {
     title: 'Financial analytics',
-    detail:
-      'Rolling highs/lows, volatility bands, and live range queries on prices.',
+    detail: 'Rolling highs/lows, volatility bands, and live range queries on prices.',
   },
   {
     title: 'Scheduling capacity',
-    detail:
-      'Check capacity and assign work across time slots using range queries.',
+    detail: 'Check capacity and assign work across time slots using range queries.',
   },
 ]
 
@@ -343,8 +313,7 @@ query(l, r): // inclusive
   pushDown(node)
   recurse children
   node.sum = left.sum + right.sum`,
-    explanation:
-      'Range assign requires overwriting pending adds; ordering of lazy tags matters.',
+    explanation: 'Range assign requires overwriting pending adds; ordering of lazy tags matters.',
   },
   {
     title: 'Max subarray sum node',
@@ -369,8 +338,7 @@ const useCaseGallery = [
   },
   {
     context: 'Game simulations',
-    detail:
-      'Apply damage buffs to map regions and query max health or total resources in a zone.',
+    detail: 'Apply damage buffs to map regions and query max health or total resources in a zone.',
   },
   {
     context: 'Finance and trading',
@@ -483,8 +451,7 @@ const advancedInsights = [
   },
   {
     title: 'Hybrid segment + Fenwick',
-    detail:
-      'Use Fenwick for prefix sums and segment trees for min/max when both are needed.',
+    detail: 'Use Fenwick for prefix sums and segment trees for min/max when both are needed.',
   },
 ]
 
@@ -496,228 +463,6 @@ const takeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const segment98HelpStyles = `
-.segment98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.segment98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.segment98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.segment98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.segment98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.segment98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.segment98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.segment98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.segment98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.segment98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.segment98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.segment98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.segment98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.segment98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.segment98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.segment98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.segment98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.segment98-section {
-  margin: 0 0 20px;
-}
-
-.segment98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.segment98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.segment98-content p,
-.segment98-content li,
-.segment98-content th,
-.segment98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.segment98-content p {
-  margin: 0 0 10px;
-}
-
-.segment98-content ul,
-.segment98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.segment98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 8px 0 10px;
-}
-
-.segment98-table th,
-.segment98-table td {
-  border: 1px solid #b8b8b8;
-  text-align: left;
-  padding: 4px 6px;
-  vertical-align: top;
-}
-
-.segment98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.segment98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.segment98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .segment98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .segment98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -725,10 +470,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -762,328 +503,266 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Segment Tree Use Cases (Range Queries)',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Segment Tree Use Cases (Range Queries) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Segment Tree Use Cases (Range Queries)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="segment98-help-page">
-      <style>{segment98HelpStyles}</style>
-      <div className="segment98-window" role="presentation">
-        <header className="segment98-titlebar">
-          <span className="segment98-title-text">Segment Tree Use Cases (Range Queries)</span>
-          <div className="segment98-title-controls">
-            <button className="segment98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="segment98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="segment98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`segment98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="segment98-main">
-          <aside className="segment98-toc" aria-label="Table of contents">
-            <h2 className="segment98-toc-title">Contents</h2>
-            <ul className="segment98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Segment Tree Use Cases (Range Queries)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Segment Tree Use Cases (Range Queries)</h1>
+      <p>
+        Segment trees answer range queries quickly while data changes. They organize an array into
+        interval summaries, so any [l, r] query and most updates stay logarithmic.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Range queries ask for aggregates over contiguous intervals: sums, mins, maxes, xor,
+              counts, and more. Segment trees keep these summaries dynamic when prefix tables are no
+              longer sufficient.
+            </p>
+          </section>
+          <section id="bp-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Common Range Query Patterns</h2>
+            {rangeQueryPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-uses" className="bin98-section">
+            <h2 className="bin98-heading">Use Cases in Practice</h2>
+            {realWorldPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            {useCaseGallery.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="segment98-content">
-            <h1 className="segment98-doc-title">Segment Tree Use Cases (Range Queries)</h1>
-            <p>
-              Segment trees answer range queries quickly while data changes. They organize an array into interval summaries, so any [l, r]
-              query and most updates stay logarithmic.
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-terms" className="bin98-section">
+            <h2 className="bin98-heading">Terminology</h2>
+            {terminology.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Invariants</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-query-types" className="bin98-section">
+            <h2 className="bin98-heading">Query Types Segment Trees Excel At</h2>
+            {queryTypes.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-update-types" className="bin98-section">
+            <h2 className="bin98-heading">Update Types</h2>
+            {updateTypes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-lazy" className="bin98-section">
+            <h2 className="bin98-heading">Lazy Propagation Notes</h2>
+            {lazyPropagationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-build" className="bin98-section">
+            <h2 className="bin98-heading">Build Options</h2>
+            {buildOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Build, Query, Update</h2>
+            {buildAndQueryNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Notes</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-expanded" className="bin98-section">
+            <h2 className="bin98-heading">Expanded Examples</h2>
+            {examplesExpanded.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-compare" className="bin98-section">
+            <h2 className="bin98-heading">Segment Tree vs Fenwick Tree</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Segment tree</th>
+                  <th>Fenwick tree</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Operations</td>
+                  <td>Any associative merge, range updates with lazy</td>
+                  <td>Primarily sums (or invertible operations)</td>
+                </tr>
+                <tr>
+                  <td>Query range</td>
+                  <td>Direct range query in O(log n)</td>
+                  <td>Range sum via prefix differences</td>
+                </tr>
+                <tr>
+                  <td>Code complexity</td>
+                  <td>Higher, more moving parts</td>
+                  <td>Simpler and compact</td>
+                </tr>
+                <tr>
+                  <td>Memory</td>
+                  <td>~4n (recursive) or 2n (iterative)</td>
+                  <td>n</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section id="ex-tests" className="bin98-section">
+            <h2 className="bin98-heading">Testing Checklist</h2>
+            <ul>
+              <li>Compare segment tree queries with brute-force arrays for random tests.</li>
+              <li>Test boundary ranges: [1,1], [n,n], and full range.</li>
+              <li>Validate lazy propagation by mixing range updates with queries.</li>
+              <li>Ensure identity values are correct for empty and partial overlaps.</li>
+              <li>Verify iterative and recursive builds match for the same input.</li>
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {terminology.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.detail}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="segment98-section">
-                  <h2 className="segment98-heading">Overview</h2>
-                  <p>
-                    Range queries ask for aggregates over contiguous intervals: sums, mins, maxes, xor, counts, and more. Segment trees keep
-                    these summaries dynamic when prefix tables are no longer sufficient.
-                  </p>
-                </section>
-                <section id="bp-patterns" className="segment98-section">
-                  <h2 className="segment98-heading">Common Range Query Patterns</h2>
-                  {rangeQueryPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="segment98-section">
-                  <h2 className="segment98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-uses" className="segment98-section">
-                  <h2 className="segment98-heading">Use Cases in Practice</h2>
-                  {realWorldPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  {useCaseGallery.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="segment98-section">
-                  <h2 className="segment98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-terms" className="segment98-section">
-                  <h2 className="segment98-heading">Terminology</h2>
-                  {terminology.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="segment98-section">
-                  <h2 className="segment98-heading">Invariants</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-query-types" className="segment98-section">
-                  <h2 className="segment98-heading">Query Types Segment Trees Excel At</h2>
-                  {queryTypes.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="segment98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-update-types" className="segment98-section">
-                  <h2 className="segment98-heading">Update Types</h2>
-                  {updateTypes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-lazy" className="segment98-section">
-                  <h2 className="segment98-heading">Lazy Propagation Notes</h2>
-                  {lazyPropagationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-build" className="segment98-section">
-                  <h2 className="segment98-heading">Build Options</h2>
-                  {buildOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="segment98-section">
-                  <h2 className="segment98-heading">How It Works: Build, Query, Update</h2>
-                  {buildAndQueryNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="segment98-section">
-                  <h2 className="segment98-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="segment98-section">
-                  <h2 className="segment98-heading">Performance Notes</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decision" className="segment98-section">
-                  <h2 className="segment98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="segment98-section">
-                  <h2 className="segment98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="segment98-section">
-                  <h2 className="segment98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="segment98-section">
-                  <h2 className="segment98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="segment98-subheading">{example.title}</h3>
-                      <div className="segment98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-expanded" className="segment98-section">
-                  <h2 className="segment98-heading">Expanded Examples</h2>
-                  {examplesExpanded.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="segment98-subheading">{example.title}</h3>
-                      <div className="segment98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-compare" className="segment98-section">
-                  <h2 className="segment98-heading">Segment Tree vs Fenwick Tree</h2>
-                  <table className="segment98-table">
-                    <thead>
-                      <tr>
-                        <th>Dimension</th>
-                        <th>Segment tree</th>
-                        <th>Fenwick tree</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Operations</td>
-                        <td>Any associative merge, range updates with lazy</td>
-                        <td>Primarily sums (or invertible operations)</td>
-                      </tr>
-                      <tr>
-                        <td>Query range</td>
-                        <td>Direct range query in O(log n)</td>
-                        <td>Range sum via prefix differences</td>
-                      </tr>
-                      <tr>
-                        <td>Code complexity</td>
-                        <td>Higher, more moving parts</td>
-                        <td>Simpler and compact</td>
-                      </tr>
-                      <tr>
-                        <td>Memory</td>
-                        <td>~4n (recursive) or 2n (iterative)</td>
-                        <td>n</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </section>
-                <section id="ex-tests" className="segment98-section">
-                  <h2 className="segment98-heading">Testing Checklist</h2>
-                  <ul>
-                    <li>Compare segment tree queries with brute-force arrays for random tests.</li>
-                    <li>Test boundary ranges: [1,1], [n,n], and full range.</li>
-                    <li>Validate lazy propagation by mixing range updates with queries.</li>
-                    <li>Ensure identity values are correct for empty and partial overlaps.</li>
-                    <li>Verify iterative and recursive builds match for the same input.</li>
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="segment98-section">
-                <h2 className="segment98-heading">Glossary</h2>
-                {terminology.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.detail}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

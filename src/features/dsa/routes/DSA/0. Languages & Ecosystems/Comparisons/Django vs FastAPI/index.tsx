@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'Django vs FastAPI'
-const pageSubtitle = 'Comparing a batteries-included Python web framework with a modern API-first Python framework.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing a batteries-included Python web framework with a modern API-first Python framework.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -261,7 +260,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-basic',
     title: 'Basic JSON Endpoint',
-    summary: 'Both frameworks can return JSON easily, but the surrounding platform assumptions differ.',
+    summary:
+      'Both frameworks can return JSON easily, but the surrounding platform assumptions differ.',
     djangoCode: `from django.http import JsonResponse
 from django.urls import path
 
@@ -278,12 +278,14 @@ app = FastAPI()
 @app.get('/health')
 async def health():
     return {'status': 'ok'}`,
-    explanation: 'FastAPI presents the endpoint directly as the main abstraction. Django can do the same endpoint cleanly, but the framework still assumes a larger application platform around it.',
+    explanation:
+      'FastAPI presents the endpoint directly as the main abstraction. Django can do the same endpoint cleanly, but the framework still assumes a larger application platform around it.',
   },
   {
     id: 'ex-validation',
     title: 'Validate Structured Input',
-    summary: 'Validation exists in both worlds, but FastAPI makes schema-driven API contracts especially central.',
+    summary:
+      'Validation exists in both worlds, but FastAPI makes schema-driven API contracts especially central.',
     djangoCode: `from django import forms
 
 class CreateUserForm(forms.Form):
@@ -294,19 +296,22 @@ class CreateUserForm(forms.Form):
 class CreateUserRequest(BaseModel):
     email: str
     name: str`,
-    explanation: 'Django has mature validation tools, but FastAPI makes typed request models the main path for API contracts, validation, and docs all at once.',
+    explanation:
+      'Django has mature validation tools, but FastAPI makes typed request models the main path for API contracts, validation, and docs all at once.',
   },
   {
     id: 'ex-admin',
     title: 'Register a Model for Management',
-    summary: 'This is one of the clearest places where Django gives built-in leverage FastAPI does not try to replicate.',
+    summary:
+      'This is one of the clearest places where Django gives built-in leverage FastAPI does not try to replicate.',
     djangoCode: `from django.contrib import admin
 from .models import Customer
 
 admin.site.register(Customer)`,
     fastapiCode: `# FastAPI has no built-in equivalent admin site.
 # Teams usually build internal tooling separately or adopt another package.`,
-    explanation: 'Djangos admin can turn a model into an internal management interface almost immediately. FastAPI stays focused on APIs and leaves that problem to surrounding tooling or custom development.',
+    explanation:
+      'Djangos admin can turn a model into an internal management interface almost immediately. FastAPI stays focused on APIs and leaves that problem to surrounding tooling or custom development.',
   },
   {
     id: 'ex-dependency',
@@ -328,30 +333,36 @@ def get_clock() -> Clock:
 @app.get('/time')
 async def get_time(clock: Clock = Depends(get_clock)):
     return {'now': clock.utc_now()}`,
-    explanation: 'FastAPI makes request-scoped dependency declaration a visible part of the endpoint signature. Django usually relies more on framework structure and application conventions than on one explicit DI mechanism.',
+    explanation:
+      'FastAPI makes request-scoped dependency declaration a visible part of the endpoint signature. Django usually relies more on framework structure and application conventions than on one explicit DI mechanism.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Batteries included',
-    definition: 'A framework style where many common features are built in and designed to work together out of the box.',
+    definition:
+      'A framework style where many common features are built in and designed to work together out of the box.',
   },
   {
     term: 'Django admin',
-    definition: 'Djangos built-in site for trusted administrators to manage models and application data.',
+    definition:
+      'Djangos built-in site for trusted administrators to manage models and application data.',
   },
   {
     term: 'ORM',
-    definition: 'Object-relational mapping layer used to map Python objects to relational database tables and queries.',
+    definition:
+      'Object-relational mapping layer used to map Python objects to relational database tables and queries.',
   },
   {
     term: 'ASGI',
-    definition: 'Asynchronous Server Gateway Interface, the Python standard used by FastAPI and other modern async frameworks.',
+    definition:
+      'Asynchronous Server Gateway Interface, the Python standard used by FastAPI and other modern async frameworks.',
   },
   {
     term: 'Pydantic model',
-    definition: 'A typed Python data model used by FastAPI for parsing, validation, and schema generation.',
+    definition:
+      'A typed Python data model used by FastAPI for parsing, validation, and schema generation.',
   },
   {
     term: 'Depends',
@@ -363,7 +374,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Middleware',
-    definition: 'A request and response processing layer that can inspect or modify traffic before it reaches the view or endpoint.',
+    definition:
+      'A request and response processing layer that can inspect or modify traffic before it reaches the view or endpoint.',
   },
   {
     term: 'OpenAPI',
@@ -371,7 +383,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Class-based view',
-    definition: 'A Django view pattern that organizes request handling behavior into classes instead of simple functions.',
+    definition:
+      'A Django view pattern that organizes request handling behavior into classes instead of simple functions.',
   },
 ]
 
@@ -404,400 +417,111 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.django-fastapi-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.django-fastapi-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.django-fastapi-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.django-fastapi-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.django-fastapi-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.django-fastapi-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.django-fastapi-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.django-fastapi-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.django-fastapi-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.django-fastapi-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.django-fastapi-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.django-fastapi-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.django-fastapi-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.django-fastapi-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.django-fastapi-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.django-fastapi-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.django-fastapi-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.django-fastapi-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.django-fastapi-help-section {
-  margin: 0 0 20px;
-}
-
-.django-fastapi-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.django-fastapi-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.django-fastapi-help-content p,
-.django-fastapi-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.django-fastapi-help-content p {
-  margin: 0 0 10px;
-}
-
-.django-fastapi-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.django-fastapi-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.django-fastapi-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.django-fastapi-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .django-fastapi-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .django-fastapi-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .django-fastapi-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function DjangoVsFastApiPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Django Vs Fast Api Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="django-fastapi-help-page">
-      <style>{pageStyles}</style>
-      <div className="django-fastapi-help-window" role="presentation">
-        <header className="django-fastapi-help-titlebar">
-          <span className="django-fastapi-help-title">{pageTitle}</span>
-          <div className="django-fastapi-help-controls">
-            <button className="django-fastapi-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="django-fastapi-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Django Vs Fast Api Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="django-fastapi-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Django and FastAPI as real backend engineering choices rather than as
+        Python brand labels. The goal is to make the practical tradeoffs explicit: framework
+        breadth, ORM and admin leverage, async behavior, API validation ergonomics, deployment
+        shape, ecosystem fit, and where each framework is the stronger long-term bet.
+      </p>
 
-        <div className="django-fastapi-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`django-fastapi-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="django-fastapi-help-main">
-          <aside className="django-fastapi-help-toc" aria-label="Table of contents">
-            <h2 className="django-fastapi-help-toc-title">Contents</h2>
-            <ul className="django-fastapi-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="django-fastapi-help-content">
-            <h1 className="django-fastapi-help-doc-title">{pageTitle}</h1>
-            <p className="django-fastapi-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Django and FastAPI as real backend engineering choices rather than as Python brand labels.
-              The goal is to make the practical tradeoffs explicit: framework breadth, ORM and admin leverage, async behavior,
-              API validation ergonomics, deployment shape, ecosystem fit, and where each framework is the stronger long-term bet.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="django-fastapi-help-section">
-                    <h2 className="django-fastapi-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="django-fastapi-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="django-fastapi-help-section">
-                  <h2 className="django-fastapi-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="django-fastapi-help-section">
-                    <h2 className="django-fastapi-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="django-fastapi-help-section">
-                    <h2 className="django-fastapi-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="django-fastapi-help-subheading">Django</h3>
-                    <div className="django-fastapi-help-codebox">
-                      <code>{example.djangoCode.trim()}</code>
-                    </div>
-                    <h3 className="django-fastapi-help-subheading">FastAPI</h3>
-                    <div className="django-fastapi-help-codebox">
-                      <code>{example.fastapiCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="django-fastapi-help-section">
-                <h2 className="django-fastapi-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Django</h3>
+              <div className="bin98-codebox">
+                <code>{example.djangoCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">FastAPI</h3>
+              <div className="bin98-codebox">
+                <code>{example.fastapiCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

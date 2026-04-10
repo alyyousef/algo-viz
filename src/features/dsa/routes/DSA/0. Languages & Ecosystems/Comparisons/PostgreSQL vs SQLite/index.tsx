@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -288,240 +290,65 @@ and zero-admin local durability is the goal:
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'Embedded Database', definition: 'A database engine linked into an application rather than run as a separate service.' },
-  { term: 'Client-Server Database', definition: 'A database system that runs as its own service and accepts connections from separate client processes.' },
-  { term: 'WAL', definition: 'Write-ahead logging, a durability and concurrency mechanism used in different ways by database engines.' },
-  { term: 'System of Record', definition: 'The authoritative database where important application data is maintained over time.' },
-  { term: 'Connection Pool', definition: 'A managed pool of reusable database connections typically used with server databases such as PostgreSQL.' },
-  { term: 'Local-First', definition: 'An application design where data is stored and usable locally before or even without server synchronization.' },
-  { term: 'Durability', definition: 'The guarantee that committed data survives crashes or restarts according to the systems design.' },
-  { term: 'Concurrent Writers', definition: 'Multiple independent clients or sessions writing to the same database at roughly the same time.' },
-  { term: 'Replica', definition: 'A secondary copy of a database used for availability, recovery, or read scaling.' },
-  { term: 'PRAGMA', definition: 'A SQLite command used to configure engine behaviors and database settings.' },
-  { term: 'TIMESTAMPTZ', definition: 'A PostgreSQL timestamp type that stores timezone-aware values.' },
-  { term: 'Offline Sync', definition: 'A pattern where local data changes are later synchronized with a central system.' },
+  {
+    term: 'Embedded Database',
+    definition:
+      'A database engine linked into an application rather than run as a separate service.',
+  },
+  {
+    term: 'Client-Server Database',
+    definition:
+      'A database system that runs as its own service and accepts connections from separate client processes.',
+  },
+  {
+    term: 'WAL',
+    definition:
+      'Write-ahead logging, a durability and concurrency mechanism used in different ways by database engines.',
+  },
+  {
+    term: 'System of Record',
+    definition:
+      'The authoritative database where important application data is maintained over time.',
+  },
+  {
+    term: 'Connection Pool',
+    definition:
+      'A managed pool of reusable database connections typically used with server databases such as PostgreSQL.',
+  },
+  {
+    term: 'Local-First',
+    definition:
+      'An application design where data is stored and usable locally before or even without server synchronization.',
+  },
+  {
+    term: 'Durability',
+    definition:
+      'The guarantee that committed data survives crashes or restarts according to the systems design.',
+  },
+  {
+    term: 'Concurrent Writers',
+    definition:
+      'Multiple independent clients or sessions writing to the same database at roughly the same time.',
+  },
+  {
+    term: 'Replica',
+    definition: 'A secondary copy of a database used for availability, recovery, or read scaling.',
+  },
+  {
+    term: 'PRAGMA',
+    definition: 'A SQLite command used to configure engine behaviors and database settings.',
+  },
+  {
+    term: 'TIMESTAMPTZ',
+    definition: 'A PostgreSQL timestamp type that stores timezone-aware values.',
+  },
+  {
+    term: 'Offline Sync',
+    definition: 'A pattern where local data changes are later synchronized with a central system.',
+  },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.pg-sqlite-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.pg-sqlite-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.pg-sqlite-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.pg-sqlite-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.pg-sqlite-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.pg-sqlite-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.pg-sqlite-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.pg-sqlite-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.pg-sqlite-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.pg-sqlite-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.pg-sqlite-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.pg-sqlite-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.pg-sqlite-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.pg-sqlite-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.pg-sqlite-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.pg-sqlite-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.pg-sqlite-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.pg-sqlite-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.pg-sqlite-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.pg-sqlite-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.pg-sqlite-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.pg-sqlite-help-content p,
-.pg-sqlite-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.pg-sqlite-help-content p {
-  margin: 0 0 10px;
-}
-
-.pg-sqlite-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.pg-sqlite-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.pg-sqlite-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.pg-sqlite-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .pg-sqlite-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .pg-sqlite-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .pg-sqlite-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -537,154 +364,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function PostgreSqlVsSqlitePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'PostgreSQL vs SQLite',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `PostgreSQL vs SQLite (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'PostgreSQL vs SQLite',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="pg-sqlite-help-page">
-      <style>{helpStyles}</style>
-      <div className="pg-sqlite-help-window" role="presentation">
-        <header className="pg-sqlite-help-titlebar">
-          <span className="pg-sqlite-help-titletext">PostgreSQL vs SQLite</span>
-          <div className="pg-sqlite-help-controls">
-            <button className="pg-sqlite-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="pg-sqlite-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="PostgreSQL vs SQLite"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">PostgreSQL vs SQLite</h1>
+      <p className="pg-sqlite-help-doc-subtitle">
+        Manual-style comparison of architecture, deployment model, concurrency, and long-term
+        tradeoffs.
+      </p>
 
-        <div className="pg-sqlite-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`pg-sqlite-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="pg-sqlite-help-main">
-          <aside className="pg-sqlite-help-toc" aria-label="Table of contents">
-            <h2 className="pg-sqlite-help-toc-title">Contents</h2>
-            <ul className="pg-sqlite-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="pg-sqlite-help-content">
-            <h1 className="pg-sqlite-help-doc-title">PostgreSQL vs SQLite</h1>
-            <p className="pg-sqlite-help-doc-subtitle">
-              Manual-style comparison of architecture, deployment model, concurrency, and long-term tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="pg-sqlite-help-section">
-                    <h2 className="pg-sqlite-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="pg-sqlite-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="pg-sqlite-help-section">
-                  <h2 className="pg-sqlite-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="pg-sqlite-help-section">
-                  <h2 className="pg-sqlite-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="pg-sqlite-help-subheading">{snippet.label}</h3>
-                      <div className="pg-sqlite-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="pg-sqlite-help-section">
-                <h2 className="pg-sqlite-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

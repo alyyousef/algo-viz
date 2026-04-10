@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -242,8 +242,7 @@ const variantsAndTweaks = [
   },
   {
     title: 'Min-heap for descending',
-    detail:
-      'Using a min-heap produces descending order; max-heap yields ascending order.',
+    detail: 'Using a min-heap produces descending order; max-heap yields ascending order.',
   },
   {
     title: 'D-ary heaps',
@@ -375,8 +374,7 @@ const advancedInsights = [
 const implementationTips = [
   {
     title: 'Keep sift-down tight',
-    detail:
-      'Use iterative loops and hoist bounds checks to reduce overhead in inner loops.',
+    detail: 'Use iterative loops and hoist bounds checks to reduce overhead in inner loops.',
   },
   {
     title: 'Choose max-heap for ascending',
@@ -385,13 +383,11 @@ const implementationTips = [
   },
   {
     title: 'Minimize swaps',
-    detail:
-      'Use a temporary root value and move children up until the correct spot is found.',
+    detail: 'Use a temporary root value and move children up until the correct spot is found.',
   },
   {
     title: 'Prefer Floyd heapify',
-    detail:
-      'Bottom-up heap construction is linear time; repeated inserts are not.',
+    detail: 'Bottom-up heap construction is linear time; repeated inserts are not.',
   },
 ]
 
@@ -403,210 +399,6 @@ const takeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -614,10 +406,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -646,290 +434,243 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 const glossary = [
-  { term: 'Max-heap', definition: 'Heap where every parent is greater than or equal to its children.' },
-  { term: 'Sift-down', definition: 'Operation that restores heap order by pushing a violating root downward.' },
-  { term: 'Heapify', definition: 'Build a valid heap from an array, typically in linear time with Floyd’s method.' },
+  {
+    term: 'Max-heap',
+    definition: 'Heap where every parent is greater than or equal to its children.',
+  },
+  {
+    term: 'Sift-down',
+    definition: 'Operation that restores heap order by pushing a violating root downward.',
+  },
+  {
+    term: 'Heapify',
+    definition: 'Build a valid heap from an array, typically in linear time with Floyd’s method.',
+  },
   { term: 'Heap boundary', definition: 'Active unsorted prefix currently treated as the heap.' },
-  { term: 'Introsort', definition: 'Hybrid sort that switches to heapsort to guarantee O(n log n) worst-case.' },
+  {
+    term: 'Introsort',
+    definition: 'Hybrid sort that switches to heapsort to guarantee O(n log n) worst-case.',
+  },
 ]
 
 export default function HeapSortPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const activeTabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(activeTabParam) ? activeTabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Heap Sort (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Heap Sort',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Heap Sort',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Heap Sort</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setSearchParams((prev) => {
-                const nextParams = new URLSearchParams(prev)
-                nextParams.set('tab', tab.id)
-                return nextParams
-              })}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Heap Sort"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Heap Sort</h1>
+      <p>
+        Heap sort converts the array into a max-heap, then repeatedly swaps the root to the end and
+        restores the heap. It offers O(n log n) worst-case time and O(1) extra space, making it a
+        predictable safety net when inputs can be adversarial.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Heapsort trades a bit of cache friendliness for reliability. It never needs extra
+              buffers, never degrades beyond O(n log n), and uses the same sift primitives that
+              power priority queues. That predictability is why introsort falls back to it when
+              quicksort faces bad pivots.
+            </p>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Heap Sort</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
             <p>
-              Heap sort converts the array into a max-heap, then repeatedly swaps the root to the end and restores the heap. It offers
-              O(n log n) worst-case time and O(1) extra space, making it a predictable safety net when inputs can be adversarial.
+              The core operation is sift-down: compare a node to its children, swap with the larger
+              child if the heap property fails, and continue until the path ends. Each swap reduces
+              the height of the violation, so sift-down is O(log n). Building from the bottom
+              amortizes that cost to O(n) overall during heapify.
             </p>
+          </section>
+          <section id="core-heap-properties" className="bin98-section">
+            <h2 className="bin98-heading">Heap Properties</h2>
+            {heapProperties.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Loop Invariants (Why It Is Correct)</h2>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace on a Tiny Array</h2>
+            {stepTrace.map((item) => (
+              <div key={item.step}>
+                <h3 className="bin98-subheading">{item.step}</h3>
+                <p>
+                  <strong>State:</strong> <code>{item.state}</code>
+                </p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisonTable.map((row) => (
+              <p key={row.algorithm}>
+                <strong>{row.algorithm}:</strong> Time: {row.time}. Space: {row.space}. Stable:{' '}
+                {row.stable}. {row.notes}
+              </p>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Performance Tweaks</h2>
+            {variantsAndTweaks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-when-to-use" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Variations</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    Heapsort trades a bit of cache friendliness for reliability. It never needs extra buffers, never degrades beyond
-                    O(n log n), and uses the same sift primitives that power priority queues. That predictability is why introsort falls
-                    back to it when quicksort faces bad pivots.
-                  </p>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Code Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="win98-section">
-                  <h2 className="win98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="win98-section">
-                  <h2 className="win98-heading">How It Works</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p>
-                    The core operation is sift-down: compare a node to its children, swap with the larger child if the heap property
-                    fails, and continue until the path ends. Each swap reduces the height of the violation, so sift-down is O(log n).
-                    Building from the bottom amortizes that cost to O(n) overall during heapify.
-                  </p>
-                </section>
-                <section id="core-heap-properties" className="win98-section">
-                  <h2 className="win98-heading">Heap Properties</h2>
-                  {heapProperties.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="win98-section">
-                  <h2 className="win98-heading">Loop Invariants (Why It Is Correct)</h2>
-                  {loopInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-trace" className="win98-section">
-                  <h2 className="win98-heading">Worked Trace on a Tiny Array</h2>
-                  {stepTrace.map((item) => (
-                    <div key={item.step}>
-                      <h3 className="win98-subheading">{item.step}</h3>
-                      <p><strong>State:</strong> <code>{item.state}</code></p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity Analysis</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="win98-section">
-                  <h2 className="win98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {comparisonTable.map((row) => (
-                    <p key={row.algorithm}>
-                      <strong>{row.algorithm}:</strong> Time: {row.time}. Space: {row.space}. Stable: {row.stable}. {row.notes}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="win98-section">
-                  <h2 className="win98-heading">Variants and Performance Tweaks</h2>
-                  {variantsAndTweaks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-implementation" className="win98-section">
-                  <h2 className="win98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-when-to-use" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights and Variations</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="win98-section">
-                <h2 className="win98-heading">Code Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="win98-subheading">{example.title}</h3>
-                    <div className="win98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

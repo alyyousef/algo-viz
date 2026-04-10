@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -300,15 +302,18 @@ Stateful search cluster: containers`,
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Serverless',
-    definition: 'A cloud operating model where the platform manages more of the infrastructure, scaling, and capacity behavior for the application team.',
+    definition:
+      'A cloud operating model where the platform manages more of the infrastructure, scaling, and capacity behavior for the application team.',
   },
   {
     term: 'Container',
-    definition: 'A packaged runtime unit containing an application and its dependencies so it can run consistently across environments.',
+    definition:
+      'A packaged runtime unit containing an application and its dependencies so it can run consistently across environments.',
   },
   {
     term: 'Cold Start',
-    definition: 'Startup delay that occurs when a serverless platform must create or initialize a new execution environment before handling work.',
+    definition:
+      'Startup delay that occurs when a serverless platform must create or initialize a new execution environment before handling work.',
   },
   {
     term: 'Invocation',
@@ -316,11 +321,13 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Pod',
-    definition: 'The smallest deployable compute unit in Kubernetes, which runs one or more tightly coupled containers.',
+    definition:
+      'The smallest deployable compute unit in Kubernetes, which runs one or more tightly coupled containers.',
   },
   {
     term: 'Deployment',
-    definition: 'A Kubernetes resource that manages replicas and rollout behavior for stateless application Pods.',
+    definition:
+      'A Kubernetes resource that manages replicas and rollout behavior for stateless application Pods.',
   },
   {
     term: 'Autoscaling',
@@ -332,242 +339,27 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Ephemeral Compute',
-    definition: 'Compute instances that are expected to be short-lived and replaceable rather than long-lived pets.',
+    definition:
+      'Compute instances that are expected to be short-lived and replaceable rather than long-lived pets.',
   },
   {
     term: 'Sidecar',
-    definition: 'A supporting container that runs alongside a primary application container to provide auxiliary behavior such as logging or proxying.',
+    definition:
+      'A supporting container that runs alongside a primary application container to provide auxiliary behavior such as logging or proxying.',
   },
   {
     term: 'Managed Container Platform',
-    definition: 'A service that runs containers for you while abstracting away some or most of the underlying cluster operations.',
+    definition:
+      'A service that runs containers for you while abstracting away some or most of the underlying cluster operations.',
   },
   {
     term: 'Stateless',
-    definition: 'A workload design where durable state is kept outside the compute instance so any instance can handle requests interchangeably.',
+    definition:
+      'A workload design where durable state is kept outside the compute instance so any instance can handle requests interchangeably.',
   },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.serverless-containers-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.serverless-containers-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.serverless-containers-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.serverless-containers-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.serverless-containers-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.serverless-containers-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.serverless-containers-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.serverless-containers-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.serverless-containers-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.serverless-containers-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.serverless-containers-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.serverless-containers-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.serverless-containers-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.serverless-containers-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.serverless-containers-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.serverless-containers-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.serverless-containers-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.serverless-containers-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.serverless-containers-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.serverless-containers-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.serverless-containers-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.serverless-containers-help-content p,
-.serverless-containers-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.serverless-containers-help-content p {
-  margin: 0 0 10px;
-}
-
-.serverless-containers-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.serverless-containers-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.serverless-containers-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.serverless-containers-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .serverless-containers-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .serverless-containers-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .serverless-containers-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -583,154 +375,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ServerlessVsContainersPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Serverless vs Containers',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Serverless vs Containers (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Serverless vs Containers',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="serverless-containers-help-page">
-      <style>{helpStyles}</style>
-      <div className="serverless-containers-help-window" role="presentation">
-        <header className="serverless-containers-help-titlebar">
-          <span className="serverless-containers-help-titletext">Serverless vs Containers</span>
-          <div className="serverless-containers-help-controls">
-            <button className="serverless-containers-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="serverless-containers-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Serverless vs Containers"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Serverless vs Containers</h1>
+      <p className="serverless-containers-help-doc-subtitle">
+        Manual-style comparison of operational ownership, runtime control, scaling behavior,
+        portability, and cloud-platform tradeoffs.
+      </p>
 
-        <div className="serverless-containers-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`serverless-containers-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="serverless-containers-help-main">
-          <aside className="serverless-containers-help-toc" aria-label="Table of contents">
-            <h2 className="serverless-containers-help-toc-title">Contents</h2>
-            <ul className="serverless-containers-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="serverless-containers-help-content">
-            <h1 className="serverless-containers-help-doc-title">Serverless vs Containers</h1>
-            <p className="serverless-containers-help-doc-subtitle">
-              Manual-style comparison of operational ownership, runtime control, scaling behavior, portability, and cloud-platform tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="serverless-containers-help-section">
-                    <h2 className="serverless-containers-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="serverless-containers-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="serverless-containers-help-section">
-                  <h2 className="serverless-containers-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="serverless-containers-help-section">
-                  <h2 className="serverless-containers-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="serverless-containers-help-subheading">{snippet.label}</h3>
-                      <div className="serverless-containers-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="serverless-containers-help-section">
-                <h2 className="serverless-containers-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -13,216 +11,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-const computeHelpStyles = `
-.compute-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.compute-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.compute-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.compute-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.compute-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.compute-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.compute-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.compute-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.compute-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.compute-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.compute-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.compute-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.compute-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.compute-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.compute-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.compute-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.compute-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.compute-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.compute-help-section {
-  margin: 0 0 20px;
-}
-
-.compute-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.compute-help-content p,
-.compute-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.compute-help-content p {
-  margin: 0 0 10px;
-}
-
-.compute-help-content ul,
-.compute-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.compute-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.compute-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.compute-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .compute-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .compute-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .compute-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
 
 const bigPictureSections: Array<
   | { id: string; title: string; paragraphs: string[] }
@@ -232,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Compute Engine is Google Cloud\'s infrastructure-as-a-service virtual machine platform. The simplest mental model is that it gives you cloud VMs, disks, images, and networking primitives while still leaving the operating system and a large share of runtime management in your hands.',
+      "Compute Engine is Google Cloud's infrastructure-as-a-service virtual machine platform. The simplest mental model is that it gives you cloud VMs, disks, images, and networking primitives while still leaving the operating system and a large share of runtime management in your hands.",
       'It is designed for workloads that need VM-level control: custom operating system behavior, legacy software, self-managed services, specialized runtimes, stateful systems, or infrastructure patterns that do not fit naturally into higher-level serverless or managed container platforms.',
       'Adopting Compute Engine means accepting more operational responsibility than Cloud Run or Cloud Functions. In return, you get more control over the machine, the operating system, attached storage, instance lifecycle, and workload placement.',
     ],
@@ -342,7 +130,7 @@ const coreSections: Array<
     paragraphs: [
       'Compute Engine instances rely on disk design choices that affect both performance and recovery. Boot disks define the operating system baseline, while additional persistent disks can separate application data from the OS lifecycle.',
       'Snapshots and disk images are recovery and reproducibility tools, not only convenience features. They matter for backup posture, cloning, disaster recovery, and migration workflows.',
-      'The important lesson is that disk design is part of workload architecture. Ephemeral assumptions, persistent data paths, and snapshot strategy all need to match the application\'s risk profile.',
+      "The important lesson is that disk design is part of workload architecture. Ephemeral assumptions, persistent data paths, and snapshot strategy all need to match the application's risk profile.",
     ],
   },
   {
@@ -515,7 +303,8 @@ const examples = [
 const glossaryTerms = [
   {
     term: 'Instance',
-    definition: 'A Compute Engine virtual machine resource with its own machine type, disks, image, metadata, networking, and identity.',
+    definition:
+      'A Compute Engine virtual machine resource with its own machine type, disks, image, metadata, networking, and identity.',
   },
   {
     term: 'Machine type',
@@ -527,7 +316,8 @@ const glossaryTerms = [
   },
   {
     term: 'Custom image',
-    definition: 'An internally prepared image used to standardize operating system and application baseline state.',
+    definition:
+      'An internally prepared image used to standardize operating system and application baseline state.',
   },
   {
     term: 'Persistent disk',
@@ -539,11 +329,13 @@ const glossaryTerms = [
   },
   {
     term: 'Managed instance group',
-    definition: 'A fleet-management resource that creates and operates multiple instances from an instance template.',
+    definition:
+      'A fleet-management resource that creates and operates multiple instances from an instance template.',
   },
   {
     term: 'Instance template',
-    definition: 'A reusable definition of VM configuration used to create consistent instances or fleets.',
+    definition:
+      'A reusable definition of VM configuration used to create consistent instances or fleets.',
   },
   {
     term: 'Startup script',
@@ -559,7 +351,8 @@ const glossaryTerms = [
   },
   {
     term: 'Service account',
-    definition: 'The Google Cloud identity attached to a VM for access to other platform resources.',
+    definition:
+      'The Google Cloud identity attached to a VM for access to other platform resources.',
   },
 ]
 
@@ -596,180 +389,105 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPComputeEnginePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP Compute Engine (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP Compute Engine',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP Compute Engine',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="compute-help-page">
-      <style>{computeHelpStyles}</style>
-      <div className="compute-help-window" role="presentation">
-        <header className="compute-help-titlebar">
-          <span className="compute-help-title">GCP Compute Engine</span>
-          <div className="compute-help-controls">
-            <button className="compute-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="compute-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP Compute Engine"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP Compute Engine</h1>
+      <p className="compute-help-doc-subtitle">
+        Managed cloud virtual machines for workloads that need OS and VM-level control
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact Compute Engine
+        manual: what the platform is, when VM semantics are the right choice, and which design
+        choices matter for machine sizing, fleet management, storage, networking, cost, and
+        operational ownership.
+      </p>
 
-        <div className="compute-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`compute-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="compute-help-main">
-          <aside className="compute-help-toc" aria-label="Table of contents">
-            <h2 className="compute-help-toc-title">Contents</h2>
-            <ul className="compute-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="compute-help-content">
-            <h1 className="compute-help-doc-title">GCP Compute Engine</h1>
-            <p className="compute-help-doc-subtitle">Managed cloud virtual machines for workloads that need OS and VM-level control</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact Compute Engine manual: what the platform is,
-              when VM semantics are the right choice, and which design choices matter for machine sizing, fleet management,
-              storage, networking, cost, and operational ownership.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="compute-help-section">
-                    <h2 className="compute-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="compute-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="compute-help-section">
-                  <h2 className="compute-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="compute-help-section">
-                    <h2 className="compute-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="compute-help-section">
-                    <h2 className="compute-help-heading">{example.title}</h2>
-                    <div className="compute-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="compute-help-section">
-                <h2 className="compute-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -114,7 +112,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'PHP\'s biggest strength is practical productivity in web business software. It has mature frameworks, a huge talent pool, broad deployment familiarity, rich CMS and ecommerce ecosystems, and a language/runtime story that many hosting and operations teams already understand well.',
+      "PHP's biggest strength is practical productivity in web business software. It has mature frameworks, a huge talent pool, broad deployment familiarity, rich CMS and ecommerce ecosystems, and a language/runtime story that many hosting and operations teams already understand well.",
       'It also benefits from a very large installed base. That means libraries, tools, platform integrations, tutorials, and production knowledge are abundant. For many organizations, that operational familiarity is more valuable than using a language with a cleaner theoretical pedigree.',
     ],
     bullets: [
@@ -161,7 +159,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-runtime-model',
     title: 'Request-Response Runtime Model',
     paragraphs: [
-      'Classic PHP execution is tied closely to the web request lifecycle. A request arrives, code runs, dependencies are resolved, business logic executes, a response is produced, and the process state is effectively discarded from the application\'s point of view. This made PHP simple to host and reason about operationally for many kinds of web software.',
+      "Classic PHP execution is tied closely to the web request lifecycle. A request arrives, code runs, dependencies are resolved, business logic executes, a response is produced, and the process state is effectively discarded from the application's point of view. This made PHP simple to host and reason about operationally for many kinds of web software.",
       'That model matters because it changes how state, caching, and architecture feel. PHP often leans on external stores such as databases, caches, and queues rather than on long-lived in-process memory assumptions.',
     ],
   },
@@ -185,7 +183,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-traits',
     title: 'Traits',
     paragraphs: [
-      'Traits are a major feature of PHP\'s composition model. They allow reusable method sets to be included in classes without depending only on classical inheritance. This makes them useful for cross-cutting behavior, framework helpers, common utility behavior, or shared logic that does not belong in a rigid parent class.',
+      "Traits are a major feature of PHP's composition model. They allow reusable method sets to be included in classes without depending only on classical inheritance. This makes them useful for cross-cutting behavior, framework helpers, common utility behavior, or shared logic that does not belong in a rigid parent class.",
       'As with all mixin-style tools, traits are best used carefully. They can improve reuse and clarity, but excessive trait layering can make effective behavior harder to track.',
     ],
   },
@@ -234,7 +232,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Testing And Quality Practices',
     paragraphs: [
       'Because PHP code often sits at the heart of user-facing business workflows, testing matters a great deal. PHPUnit, Pest, framework testing helpers, static analysis tools such as PHPStan or Psalm, and coding standard tools all contribute to keeping modern PHP projects maintainable.',
-      'This is another place where the modern PHP story differs from its older reputation. Serious PHP teams increasingly use tests and static analysis aggressively to offset the language\'s dynamic heritage.',
+      "This is another place where the modern PHP story differs from its older reputation. Serious PHP teams increasingly use tests and static analysis aggressively to offset the language's dynamic heritage.",
     ],
   },
   {
@@ -250,7 +248,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Concurrency And Scaling',
     paragraphs: [
       'PHP traditionally scales through process-level parallelism, horizontal web scaling, caching, reverse proxies, background workers, and external services rather than through deeply shared in-process concurrency models. This aligns naturally with stateless web architecture.',
-      'That model can be very effective for the kinds of systems PHP commonly powers. The key is to understand that PHP\'s scaling story is architectural and operational rather than centered on elegant in-language parallel abstractions.',
+      "That model can be very effective for the kinds of systems PHP commonly powers. The key is to understand that PHP's scaling story is architectural and operational rather than centered on elegant in-language parallel abstractions.",
     ],
   },
   {
@@ -447,8 +445,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Typed property',
-        definition:
-          'A class property declared with an explicit type in modern PHP.',
+        definition: 'A class property declared with an explicit type in modern PHP.',
       },
       {
         term: 'Attribute',
@@ -483,8 +480,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Composer',
-        definition:
-          'The dependency manager and package ecosystem hub for modern PHP.',
+        definition: 'The dependency manager and package ecosystem hub for modern PHP.',
       },
       {
         term: 'PHP-FPM',
@@ -498,8 +494,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'PHPUnit',
-        definition:
-          'The long-established unit testing framework used widely in PHP projects.',
+        definition: 'The long-established unit testing framework used widely in PHP projects.',
       },
       {
         term: 'Pest',
@@ -508,8 +503,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'PHPStan',
-        definition:
-          'A static analysis tool used to increase correctness in modern PHP codebases.',
+        definition: 'A static analysis tool used to increase correctness in modern PHP codebases.',
       },
       {
         term: 'Psalm',
@@ -539,18 +533,15 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Doctrine',
-        definition:
-          'A commonly used PHP ORM and database abstraction ecosystem.',
+        definition: 'A commonly used PHP ORM and database abstraction ecosystem.',
       },
       {
         term: 'Eloquent',
-        definition:
-          'Laravel\'s ORM, used to map database records to PHP models and relations.',
+        definition: "Laravel's ORM, used to map database records to PHP models and relations.",
       },
       {
         term: 'Blade',
-        definition:
-          'Laravel\'s templating system for server-rendered views.',
+        definition: "Laravel's templating system for server-rendered views.",
       },
       {
         term: 'Middleware',
@@ -560,7 +551,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Artisan',
         definition:
-          'Laravel\'s command-line tool for running framework tasks and project automation.',
+          "Laravel's command-line tool for running framework tasks and project automation.",
       },
       {
         term: 'Monolith',
@@ -617,224 +608,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.php98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.php98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.php98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.php98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.php98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.php98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.php98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.php98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.php98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.php98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.php98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.php98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.php98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.php98-toc-item {
-  margin: 0 0 8px;
-}
-
-.php98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.php98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.php98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.php98-section {
-  margin: 0 0 20px;
-}
-
-.php98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.php98-content p,
-.php98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.php98-content p {
-  margin: 0 0 10px;
-}
-
-.php98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.php98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.php98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.php98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .php98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .php98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .php98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="php98-section">
@@ -889,122 +662,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function PHPPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'PHP',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `PHP (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'PHP',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="php98-help-page">
-      <style>{pageStyles}</style>
-      <div className="php98-help-window" role="presentation">
-        <header className="php98-titlebar">
-          <span className="php98-titletext">PHP</span>
-          <div className="php98-controls">
-            <button className="php98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="php98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="PHP"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">PHP</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="php98-tabs" role="tablist" aria-label="PHP documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`php98-tab ${activeTab === tab.id ? 'php98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="php98-main">
-          <aside className="php98-toc" aria-label="Table of contents">
-            <h2 className="php98-toc-title">Contents</h2>
-            <ul className="php98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="php98-toc-item">
-                  <a href={`#${section.id}`} className="php98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="php98-content">
-            <h1 className="php98-doc-title">PHP</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

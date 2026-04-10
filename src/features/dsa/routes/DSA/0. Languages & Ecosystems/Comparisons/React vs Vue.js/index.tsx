@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -42,7 +44,7 @@ const bigPictureSections: readonly DocSection[] = [
     title: 'When React Fits Better',
     paragraphs: [
       'React is often the stronger fit when the team wants maximum ecosystem range, a component-library-first model, and freedom to choose routing, data fetching, state management, and surrounding architecture independently. It is especially attractive in organizations already deep in JavaScript or TypeScript frontend tooling and product UI work.',
-      'It also fits well when the application ecosystem matters as much as the rendering model. React\'s large surrounding landscape means teams can compose highly custom stacks, adopt different frameworks built on React, and align with a large talent pool and rich third-party library surface.',
+      "It also fits well when the application ecosystem matters as much as the rendering model. React's large surrounding landscape means teams can compose highly custom stacks, adopt different frameworks built on React, and align with a large talent pool and rich third-party library surface.",
     ],
   },
   {
@@ -274,8 +276,7 @@ and smoother official ecosystem guidance:
   {
     id: 'examples-team',
     title: 'Team Fit Prompt',
-    description:
-      'The organizational question is often more important than syntax taste.',
+    description: 'The organizational question is often more important than syntax taste.',
     snippets: [
       {
         label: 'Ask This First',
@@ -296,240 +297,64 @@ with explicit reactive primitives?`,
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'JSX', definition: 'A JavaScript or TypeScript syntax extension commonly used in React to describe UI structure inside component code.' },
-  { term: 'Hook', definition: 'A React function such as useState or useEffect that lets function components access React features.' },
-  { term: 'Single-File Component', definition: 'A `.vue` file that colocates template, script, and style for a Vue component.' },
-  { term: 'Composition API', definition: 'Vue\'s modern API style for organizing logic through functions such as ref, reactive, computed, and lifecycle hooks.' },
-  { term: 'ref', definition: 'A Vue reactive primitive for holding a value that notifies dependents when it changes.' },
-  { term: 'computed', definition: 'A Vue reactive primitive for deriving cached values from other reactive state.' },
-  { term: 'Watcher', definition: 'A Vue mechanism for running logic in response to reactive state changes.' },
-  { term: 'Context', definition: 'A React feature for passing data through the component tree without manual prop drilling.' },
-  { term: 'Reactivity System', definition: 'The mechanism a framework uses to track state dependencies and trigger UI updates.' },
-  { term: 'Template Binding', definition: 'Vue template syntax that connects data and behavior to rendered HTML.' },
-  { term: 'Component Tree', definition: 'The hierarchy of UI components that make up an application interface.' },
-  { term: 'Progressive Framework', definition: 'A framework that can be adopted incrementally but also supports larger integrated application patterns.' },
+  {
+    term: 'JSX',
+    definition:
+      'A JavaScript or TypeScript syntax extension commonly used in React to describe UI structure inside component code.',
+  },
+  {
+    term: 'Hook',
+    definition:
+      'A React function such as useState or useEffect that lets function components access React features.',
+  },
+  {
+    term: 'Single-File Component',
+    definition: 'A `.vue` file that colocates template, script, and style for a Vue component.',
+  },
+  {
+    term: 'Composition API',
+    definition:
+      "Vue's modern API style for organizing logic through functions such as ref, reactive, computed, and lifecycle hooks.",
+  },
+  {
+    term: 'ref',
+    definition:
+      'A Vue reactive primitive for holding a value that notifies dependents when it changes.',
+  },
+  {
+    term: 'computed',
+    definition: 'A Vue reactive primitive for deriving cached values from other reactive state.',
+  },
+  {
+    term: 'Watcher',
+    definition: 'A Vue mechanism for running logic in response to reactive state changes.',
+  },
+  {
+    term: 'Context',
+    definition:
+      'A React feature for passing data through the component tree without manual prop drilling.',
+  },
+  {
+    term: 'Reactivity System',
+    definition:
+      'The mechanism a framework uses to track state dependencies and trigger UI updates.',
+  },
+  {
+    term: 'Template Binding',
+    definition: 'Vue template syntax that connects data and behavior to rendered HTML.',
+  },
+  {
+    term: 'Component Tree',
+    definition: 'The hierarchy of UI components that make up an application interface.',
+  },
+  {
+    term: 'Progressive Framework',
+    definition:
+      'A framework that can be adopted incrementally but also supports larger integrated application patterns.',
+  },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.react-vue-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.react-vue-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.react-vue-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.react-vue-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.react-vue-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.react-vue-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.react-vue-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.react-vue-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.react-vue-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.react-vue-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.react-vue-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.react-vue-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.react-vue-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.react-vue-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.react-vue-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.react-vue-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.react-vue-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.react-vue-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.react-vue-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.react-vue-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.react-vue-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.react-vue-help-content p,
-.react-vue-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.react-vue-help-content p {
-  margin: 0 0 10px;
-}
-
-.react-vue-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.react-vue-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.react-vue-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.react-vue-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .react-vue-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .react-vue-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .react-vue-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -545,154 +370,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-export default function ReactVsVueJsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+export default function Counter(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'React vs Vue.js',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `React vs Vue.js (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'React vs Vue.js',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="react-vue-help-page">
-      <style>{helpStyles}</style>
-      <div className="react-vue-help-window" role="presentation">
-        <header className="react-vue-help-titlebar">
-          <span className="react-vue-help-titletext">React vs Vue.js</span>
-          <div className="react-vue-help-controls">
-            <button className="react-vue-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="react-vue-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="React vs Vue.js"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">React vs Vue.js</h1>
+      <p className="react-vue-help-doc-subtitle">
+        Manual-style comparison of framework scope, reactivity, component ergonomics, and long-term
+        frontend tradeoffs.
+      </p>
 
-        <div className="react-vue-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`react-vue-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="react-vue-help-main">
-          <aside className="react-vue-help-toc" aria-label="Table of contents">
-            <h2 className="react-vue-help-toc-title">Contents</h2>
-            <ul className="react-vue-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="react-vue-help-content">
-            <h1 className="react-vue-help-doc-title">React vs Vue.js</h1>
-            <p className="react-vue-help-doc-subtitle">
-              Manual-style comparison of framework scope, reactivity, component ergonomics, and long-term frontend tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="react-vue-help-section">
-                    <h2 className="react-vue-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="react-vue-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="react-vue-help-section">
-                  <h2 className="react-vue-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="react-vue-help-section">
-                  <h2 className="react-vue-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="react-vue-help-subheading">{snippet.label}</h3>
-                      <div className="react-vue-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="react-vue-help-section">
-                <h2 className="react-vue-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

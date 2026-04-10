@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -113,7 +113,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-components',
     title: 'Component Model',
     paragraphs: [
-      'Qwik components are authored through `component$`, which marks component code for the framework and compiler-aware tooling. The `$` suffix is not stylistic decoration. It signals that the code participates in Qwik\'s lazy and serializable execution model.',
+      "Qwik components are authored through `component$`, which marks component code for the framework and compiler-aware tooling. The `$` suffix is not stylistic decoration. It signals that the code participates in Qwik's lazy and serializable execution model.",
       'That model makes component authoring feel related to JSX-based frameworks while still imposing its own rules about what should be serializable, lazy-loadable, and resumable.',
     ],
   },
@@ -121,7 +121,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-signals',
     title: 'Signals and State',
     paragraphs: [
-      'Qwik uses signals and stores to model reactive state. `useSignal` is commonly used for small reactive values, while `useStore` is used for structured state objects that need to participate in the framework\'s reactivity and serialization flow.',
+      "Qwik uses signals and stores to model reactive state. `useSignal` is commonly used for small reactive values, while `useStore` is used for structured state objects that need to participate in the framework's reactivity and serialization flow.",
       'Signals are an important part of how Qwik keeps updates focused without requiring broad rerender work. They also fit naturally with a framework that wants to minimize resumed and executed code.',
     ],
   },
@@ -129,7 +129,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-qrls',
     title: 'QRLs and Lazy References',
     paragraphs: [
-      'QRLs are one of Qwik\'s defining ideas. A QRL is a reference that points to lazily loadable code so the framework can defer downloading and executing logic until it is actually needed.',
+      "QRLs are one of Qwik's defining ideas. A QRL is a reference that points to lazily loadable code so the framework can defer downloading and executing logic until it is actually needed.",
       'This matters because resumability depends on more than state. It also depends on being able to reconnect event handlers and logic without forcing the whole application bundle to execute immediately.',
     ],
   },
@@ -137,7 +137,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-dollar-boundaries',
     title: '`$` Boundaries',
     paragraphs: [
-      'In Qwik, the `$` suffix on APIs such as `component$`, `useTask$`, or event handlers such as `onClick$` indicates that the code participates in the framework\'s special lazy and serializable behavior.',
+      "In Qwik, the `$` suffix on APIs such as `component$`, `useTask$`, or event handlers such as `onClick$` indicates that the code participates in the framework's special lazy and serializable behavior.",
       'This is one of the most important style and architecture differences in the framework. The boundary markers are part of how Qwik knows what can be split, resumed, and loaded on demand.',
     ],
   },
@@ -145,8 +145,8 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-tasks',
     title: 'Tasks and Lifecycle-Like Behavior',
     paragraphs: [
-      'Qwik provides task-style APIs such as `useTask$` and related hooks for work that depends on reactive state or environment transitions. These are not just clones of hooks from other frameworks; they fit into Qwik\'s execution and serialization model.',
-      'The important engineering question is not only when code runs, but whether that code is compatible with the framework\'s lazy and resumable assumptions.',
+      "Qwik provides task-style APIs such as `useTask$` and related hooks for work that depends on reactive state or environment transitions. These are not just clones of hooks from other frameworks; they fit into Qwik's execution and serialization model.",
+      "The important engineering question is not only when code runs, but whether that code is compatible with the framework's lazy and resumable assumptions.",
     ],
   },
   {
@@ -170,7 +170,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Rendering and Execution Model',
     paragraphs: [
       'Qwik is optimized around delaying client-side execution until user interaction or other real need forces it. The rendered output arrives from the server, and the browser then resumes specific work rather than replaying broad initialization logic.',
-      'This execution model is one of the framework\'s strongest architectural differentiators. It changes how teams think about startup cost, event binding, and what “interactive” means during page boot.',
+      "This execution model is one of the framework's strongest architectural differentiators. It changes how teams think about startup cost, event binding, and what “interactive” means during page boot.",
     ],
   },
   {
@@ -326,13 +326,13 @@ export default component$(() => {
       },
     ],
     takeaway:
-      'Use `useSignal` for small values and `useStore` for grouped data. Both reinforce Qwik\'s fine-grained reactive model instead of a broad rerender-first mindset.',
+      "Use `useSignal` for small values and `useStore` for grouped data. Both reinforce Qwik's fine-grained reactive model instead of a broad rerender-first mindset.",
   },
   {
     id: 'examples-task',
     title: 'Reactive Work With useTask$',
     description:
-      '`useTask$` is used for logic that reacts to tracked values. It is part of Qwik\'s own reactive workflow and should be understood through the framework\'s resumability model rather than as a direct clone of another framework\'s effect API.',
+      "`useTask$` is used for logic that reacts to tracked values. It is part of Qwik's own reactive workflow and should be understood through the framework's resumability model rather than as a direct clone of another framework's effect API.",
     snippets: [
       {
         label: 'SearchPreview.tsx',
@@ -425,7 +425,7 @@ export default component$(() => {
     id: 'examples-lazy-handlers',
     title: 'Lazy Event Boundaries',
     description:
-      'Dollar-suffixed event props are one of the clearest windows into Qwik\'s architecture. These handlers are not just callbacks attached to JSX. They are lazy boundaries that can be loaded when the event occurs.',
+      "Dollar-suffixed event props are one of the clearest windows into Qwik's architecture. These handlers are not just callbacks attached to JSX. They are lazy boundaries that can be loaded when the event occurs.",
     snippets: [
       {
         label: 'ProfileActions.tsx',
@@ -489,7 +489,7 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'component$',
     definition:
-      'The API used to define a Qwik component. The `$` suffix indicates the component participates in the framework\'s lazy and serializable execution model.',
+      "The API used to define a Qwik component. The `$` suffix indicates the component participates in the framework's lazy and serializable execution model.",
   },
   {
     term: 'onClick$',
@@ -509,7 +509,7 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'useTask$',
     definition:
-      'A Qwik API for reactive work based on tracked values. It belongs to Qwik\'s own execution model rather than copying another framework\'s lifecycle rules directly.',
+      "A Qwik API for reactive work based on tracked values. It belongs to Qwik's own execution model rather than copying another framework's lifecycle rules directly.",
   },
   {
     term: 'Serialization',
@@ -533,51 +533,18 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'routeLoader$',
-    definition:
-      'A Qwik City API used to load route data, usually with server-aware execution.',
+    definition: 'A Qwik City API used to load route data, usually with server-aware execution.',
   },
   {
     term: 'routeAction$',
-    definition:
-      'A Qwik City API used to handle route-scoped mutations or form submissions.',
+    definition: 'A Qwik City API used to handle route-scoped mutations or form submissions.',
   },
   {
     term: 'Optimizer',
     definition:
-      'The Qwik build-time analysis and transformation layer that creates split points and supports the framework\'s resumability strategy.',
+      "The Qwik build-time analysis and transformation layer that creates split points and supports the framework's resumability strategy.",
   },
 ] as const
-
-const helpStyles = `
-.qwik-help-page { min-height: 100dvh; background: #c0c0c0; padding: 0; color: #000; font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif; }
-.qwik-help-window { width: 100%; min-height: 100dvh; display: flex; flex-direction: column; box-sizing: border-box; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
-.qwik-help-titlebar { position: relative; display: flex; align-items: center; padding: 2px 4px; background: linear-gradient(90deg, #000080 0%, #1084d0 100%); color: #fff; font-size: 13px; font-weight: 700; }
-.qwik-help-titletext { position: absolute; left: 50%; transform: translateX(-50%); font-size: 16px; white-space: nowrap; }
-.qwik-help-controls { display: flex; gap: 2px; margin-left: auto; }
-.qwik-help-control { width: 18px; height: 16px; display: inline-flex; align-items: center; justify-content: center; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; background: #c0c0c0; color: #000; font-size: 11px; line-height: 1; text-decoration: none; }
-.qwik-help-tabs { display: flex; gap: 1px; padding: 6px 8px 0; background: #c0c0c0; }
-.qwik-help-tab { border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: none; background: #b6b6b6; padding: 5px 10px 4px; font-size: 12px; cursor: pointer; }
-.qwik-help-tab.is-active { position: relative; top: 1px; background: #fff; }
-.qwik-help-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 240px 1fr; border-top: 1px solid #404040; background: #fff; }
-.qwik-help-toc { overflow: auto; padding: 12px; background: #f2f2f2; border-right: 1px solid #808080; }
-.qwik-help-toc-title { margin: 0 0 10px; font-size: 12px; font-weight: 700; }
-.qwik-help-toc-list { margin: 0; padding: 0; list-style: none; }
-.qwik-help-toc-list li { margin: 0 0 8px; }
-.qwik-help-toc-list a { color: #000; font-size: 12px; text-decoration: none; }
-.qwik-help-content { overflow: auto; padding: 14px 20px 20px; }
-.qwik-help-doc-title { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
-.qwik-help-doc-subtitle { margin: 0 0 12px; font-size: 12px; }
-.qwik-help-section { margin: 0 0 20px; scroll-margin-top: 12px; }
-.qwik-help-heading { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-.qwik-help-subheading { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-.qwik-help-content p, .qwik-help-content li { font-size: 12px; line-height: 1.5; }
-.qwik-help-content p { margin: 0 0 10px; }
-.qwik-help-content ul { margin: 0 0 10px 20px; padding: 0; }
-.qwik-help-divider { margin: 14px 0; border: 0; border-top: 1px solid #d0d0d0; }
-.qwik-help-codebox { margin: 6px 0 10px; padding: 8px; background: #f4f4f4; border-top: 2px solid #808080; border-left: 2px solid #808080; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
-.qwik-help-codebox code { display: block; white-space: pre-wrap; font-family: "Courier New", Courier, monospace; font-size: 12px; }
-@media (max-width: 900px) { .qwik-help-main { grid-template-columns: 1fr; } .qwik-help-toc { border-right: none; border-bottom: 1px solid #808080; } .qwik-help-titletext { position: static; transform: none; margin: 0 auto 0 0; padding-left: 4px; white-space: normal; } }
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -593,155 +560,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function QwikPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Qwik',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Qwik (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Qwik',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="qwik-help-page">
-      <style>{helpStyles}</style>
-      <div className="qwik-help-window" role="presentation">
-        <header className="qwik-help-titlebar">
-          <span className="qwik-help-titletext">Qwik</span>
-          <div className="qwik-help-controls">
-            <button className="qwik-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="qwik-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Qwik"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Qwik</h1>
+      <p className="qwik-help-doc-subtitle">
+        Manual-style reference covering overview, resumability, signals, QRLs, dollar boundaries,
+        Qwik City, SSR strategy, tradeoffs, and practical examples.
+      </p>
 
-        <div className="qwik-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`qwik-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="qwik-help-main">
-          <aside className="qwik-help-toc" aria-label="Table of contents">
-            <h2 className="qwik-help-toc-title">Contents</h2>
-            <ul className="qwik-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="qwik-help-content">
-            <h1 className="qwik-help-doc-title">Qwik</h1>
-            <p className="qwik-help-doc-subtitle">
-              Manual-style reference covering overview, resumability, signals, QRLs, dollar boundaries, Qwik City,
-              SSR strategy, tradeoffs, and practical examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="qwik-help-section">
-                    <h2 className="qwik-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="qwik-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="qwik-help-section">
-                  <h2 className="qwik-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="qwik-help-section">
-                  <h2 className="qwik-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="qwik-help-subheading">{snippet.label}</h3>
-                      <div className="qwik-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="qwik-help-section">
-                <h2 className="qwik-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

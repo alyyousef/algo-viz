@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -7,13 +9,11 @@ type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'AWS ECS'
 const pageSubtitle = 'AWS container orchestration for tasks and services on Fargate or EC2.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const bigPictureSections = [
   {
     title: 'What it is',
     paragraphs: [
-      'Amazon Elastic Container Service, or ECS, is AWS\'s managed container orchestrator. It runs containers as tasks, maintains services at the desired count, and integrates directly with IAM, VPC networking, load balancing, and CloudWatch.',
+      "Amazon Elastic Container Service, or ECS, is AWS's managed container orchestrator. It runs containers as tasks, maintains services at the desired count, and integrates directly with IAM, VPC networking, load balancing, and CloudWatch.",
       'ECS gives you the container scheduling model without asking you to run your own orchestrator control plane. It is usually the simplest AWS-native answer when a workload genuinely benefits from containers but does not require Kubernetes.',
     ],
   },
@@ -360,8 +360,7 @@ task role:
 const glossaryTerms = [
   {
     term: 'Cluster',
-    definition:
-      'The logical ECS boundary where tasks and services are grouped and scheduled.',
+    definition: 'The logical ECS boundary where tasks and services are grouped and scheduled.',
   },
   {
     term: 'Task definition',
@@ -370,8 +369,7 @@ const glossaryTerms = [
   },
   {
     term: 'Task',
-    definition:
-      'One running instantiation of a task definition.',
+    definition: 'One running instantiation of a task definition.',
   },
   {
     term: 'Service',
@@ -390,8 +388,7 @@ const glossaryTerms = [
   },
   {
     term: 'Task role',
-    definition:
-      'The IAM role assumed by the application code inside the running task.',
+    definition: 'The IAM role assumed by the application code inside the running task.',
   },
   {
     term: '`awsvpc`',
@@ -468,445 +465,163 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const ecsHelpStyles = `
-.ecs-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ecs-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.ecs-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ecs-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.ecs-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.ecs-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.ecs-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.ecs-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.ecs-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.ecs-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.ecs-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.ecs-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ecs-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ecs-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.ecs-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ecs-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.ecs-help-title-main {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ecs-help-section {
-  margin: 0 0 20px;
-}
-
-.ecs-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ecs-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ecs-help-content p,
-.ecs-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ecs-help-content p {
-  margin: 0 0 10px;
-}
-
-.ecs-help-content ul,
-.ecs-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ecs-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.ecs-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.ecs-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-.ecs-help-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .ecs-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ecs-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function AwsEcsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Aws Ecs Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="ecs-help-page">
-      <style>{ecsHelpStyles}</style>
-      <div className="ecs-help-window" role="presentation">
-        <header className="ecs-help-titlebar">
-          <span className="ecs-help-title">{pageTitle}</span>
-          <div className="ecs-help-controls">
-            <button className="ecs-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="ecs-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Aws Ecs Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="ecs-help-title-main">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page focuses on the actual operating model of ECS: how workloads are described, where
+        they run, how services maintain desired state, where IAM boundaries live, and which design
+        choices tend to determine whether an ECS system feels clean and boring or fragile and
+        confusing.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="ecs-help-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="ecs-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ecs-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="ecs-help-main">
-          <aside className="ecs-help-toc" aria-label="Table of contents">
-            <h2 className="ecs-help-toc-title">Contents</h2>
-            <ul className="ecs-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-compute" className="bin98-section">
+            <h2 className="bin98-heading">Compute Choices</h2>
+            {computeChoices.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.summary}</p>
+                <ul>
+                  {item.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-flow" className="bin98-section">
+            <h2 className="bin98-heading">Lifecycle Flow</h2>
+            <ol>
+              {lifecycleFlow.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-fit" className="bin98-section">
+            <h2 className="bin98-heading">When to Choose ECS</h2>
+            <ul>
+              {fitGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="ecs-help-content">
-            <h1 className="ecs-help-title-main">{pageTitle}</h1>
-            <p className="ecs-help-subheading">{pageSubtitle}</p>
-            <p>
-              This page focuses on the actual operating model of ECS: how workloads are described, where they run, how services
-              maintain desired state, where IAM boundaries live, and which design choices tend to determine whether an ECS system
-              feels clean and boring or fragile and confusing.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-ops" className="bin98-section">
+            <h2 className="bin98-heading">Operational Notes</h2>
+            {operationsNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="ecs-help-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="ecs-help-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-                <hr className="ecs-help-divider" />
-                <section id="bp-compute" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">Compute Choices</h2>
-                  {computeChoices.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="ecs-help-subheading">{item.title}</h3>
-                      <p>{item.summary}</p>
-                      <ul>
-                        {item.details.map((detail) => (
-                          <li key={detail}>{detail}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <hr className="ecs-help-divider" />
-                <section id="bp-flow" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">Lifecycle Flow</h2>
-                  <ol>
-                    {lifecycleFlow.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-                <hr className="ecs-help-divider" />
-                <section id="bp-fit" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">When to Choose ECS</h2>
-                  <ul>
-                    {fitGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="ecs-help-section">
-                    <h2 className="ecs-help-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-ops" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">Operational Notes</h2>
-                  {operationsNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-patterns" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="ecs-help-section">
-                  <h2 className="ecs-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="ecs-help-section">
-                    <h2 className="ecs-help-heading">{example.title}</h2>
-                    <div className="ecs-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="ecs-help-section">
-                <h2 className="ecs-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="ecs-help-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="ecs-help-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a href={source} className="ecs-help-inline-link" target="_blank" rel="noreferrer">
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

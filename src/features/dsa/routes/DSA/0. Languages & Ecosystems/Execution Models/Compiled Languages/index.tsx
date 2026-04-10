@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -21,8 +21,7 @@ const milestones = [
   },
   {
     title: 'Link-time and whole-program optimization',
-    detail:
-      'LTO merged IR across modules, enabling global inlining and dead-code elimination.',
+    detail: 'LTO merged IR across modules, enabling global inlining and dead-code elimination.',
   },
   {
     title: 'Modern safe systems languages',
@@ -31,8 +30,7 @@ const milestones = [
   },
   {
     title: 'Multi-target toolchains',
-    detail:
-      'LLVM and GCC matured cross-compilation, enabling one host to build for many targets.',
+    detail: 'LLVM and GCC matured cross-compilation, enabling one host to build for many targets.',
   },
 ]
 
@@ -94,8 +92,7 @@ const pipelineStages = [
 const buildArtifacts = [
   {
     title: 'Object files',
-    detail:
-      'Per-translation-unit machine code plus relocation info, later stitched by the linker.',
+    detail: 'Per-translation-unit machine code plus relocation info, later stitched by the linker.',
   },
   {
     title: 'Static libraries',
@@ -104,56 +101,46 @@ const buildArtifacts = [
   },
   {
     title: 'Shared libraries',
-    detail:
-      'Dynamic linking reduces binary size but adds runtime dependency management.',
+    detail: 'Dynamic linking reduces binary size but adds runtime dependency management.',
   },
   {
     title: 'Debug symbols',
-    detail:
-      'Mappings from machine addresses to source lines for debugging and profiling.',
+    detail: 'Mappings from machine addresses to source lines for debugging and profiling.',
   },
   {
     title: 'Stripped binaries',
-    detail:
-      'Remove symbols to reduce size; keep separate debug artifacts for production.',
+    detail: 'Remove symbols to reduce size; keep separate debug artifacts for production.',
   },
   {
     title: 'PDB/DWARF metadata',
-    detail:
-      'Platform-specific debug formats used by profilers and debuggers.',
+    detail: 'Platform-specific debug formats used by profilers and debuggers.',
   },
 ]
 
 const optimizationLevels = [
   {
     title: '-O0 / Debug',
-    detail:
-      'Fast compile, maximal debug info, minimal optimization. Good for iteration.',
+    detail: 'Fast compile, maximal debug info, minimal optimization. Good for iteration.',
   },
   {
     title: '-O1',
-    detail:
-      'Light optimizations without long compile times; useful for development builds.',
+    detail: 'Light optimizations without long compile times; useful for development builds.',
   },
   {
     title: '-O2',
-    detail:
-      'Balanced optimization; default for release builds in many projects.',
+    detail: 'Balanced optimization; default for release builds in many projects.',
   },
   {
     title: '-O3',
-    detail:
-      'Aggressive inlining and vectorization; can bloat code or hurt cache.',
+    detail: 'Aggressive inlining and vectorization; can bloat code or hurt cache.',
   },
   {
     title: 'PGO',
-    detail:
-      'Profile-guided optimization uses real workloads to guide hot paths.',
+    detail: 'Profile-guided optimization uses real workloads to guide hot paths.',
   },
   {
     title: 'LTO',
-    detail:
-      'Whole-program optimization across translation units; improves inlining and DCE.',
+    detail: 'Whole-program optimization across translation units; improves inlining and DCE.',
   },
 ]
 
@@ -170,13 +157,11 @@ const complexityNotes = [
   },
   {
     title: 'Binary size vs performance',
-    detail:
-      'Inlining and static linking boost speed but can inflate binary size and hurt i-cache.',
+    detail: 'Inlining and static linking boost speed but can inflate binary size and hurt i-cache.',
   },
   {
     title: 'CPU target matters',
-    detail:
-      'Targeting AVX2 or NEON can speed hot loops but reduces portability.',
+    detail: 'Targeting AVX2 or NEON can speed hot loops but reduces portability.',
   },
   {
     title: 'Determinism vs flexibility',
@@ -198,8 +183,7 @@ const applications = [
   },
   {
     context: 'Tooling and infrastructure',
-    detail:
-      'Compilers, build systems, and CLI tools need fast startup and low overhead.',
+    detail: 'Compilers, build systems, and CLI tools need fast startup and low overhead.',
   },
   {
     context: 'Game engines and real-time graphics',
@@ -208,8 +192,7 @@ const applications = [
   },
   {
     context: 'Embedded systems',
-    detail:
-      'Small binaries and predictable timing make compiled languages ideal for firmware.',
+    detail: 'Small binaries and predictable timing make compiled languages ideal for firmware.',
   },
 ]
 
@@ -242,8 +225,7 @@ int add(int a, int b) { return a + b; }
 // main.cpp
 extern int add(int, int);
 int main() { return add(2, 3); }`,
-    explanation:
-      'With LTO, add can be inlined into main even across translation units.',
+    explanation: 'With LTO, add can be inlined into main even across translation units.',
   },
 ]
 
@@ -266,33 +248,27 @@ const decisionPoints = [
 const advancedInsights = [
   {
     title: 'Profile-guided optimization',
-    detail:
-      'PGO reorders branches and inlines hot functions based on real usage patterns.',
+    detail: 'PGO reorders branches and inlines hot functions based on real usage patterns.',
   },
   {
     title: 'Cache-aware code generation',
-    detail:
-      'Data layout and hints like restrict or alignment pragmas influence vectorization.',
+    detail: 'Data layout and hints like restrict or alignment pragmas influence vectorization.',
   },
   {
     title: 'Deterministic builds',
-    detail:
-      'Pinned toolchains and hermetic builds reduce drift across environments.',
+    detail: 'Pinned toolchains and hermetic builds reduce drift across environments.',
   },
   {
     title: 'Cross-compilation',
-    detail:
-      'One host can build for many targets; CI pipelines often produce multi-arch binaries.',
+    detail: 'One host can build for many targets; CI pipelines often produce multi-arch binaries.',
   },
   {
     title: 'Security hardening',
-    detail:
-      'Stack canaries, PIE, and ASLR-friendly binaries reduce exploitability.',
+    detail: 'Stack canaries, PIE, and ASLR-friendly binaries reduce exploitability.',
   },
   {
     title: 'ABI compatibility',
-    detail:
-      'Stable ABI and symbol versioning matter for shared libraries and plugin ecosystems.',
+    detail: 'Stable ABI and symbol versioning matter for shared libraries and plugin ecosystems.',
   },
 ]
 
@@ -339,210 +315,6 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -550,10 +322,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -572,244 +340,180 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
     { id: 'core-decisions', label: 'When to Use It' },
     { id: 'core-advanced', label: 'Advanced Insights' },
   ],
-  examples: [
-    { id: 'ex-practical', label: 'Practical Examples' },
-  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
 export default function CompiledLanguagesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Compiled Languages',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Compiled Languages (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Compiled Languages',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Compiled Languages</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Compiled Languages"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Compiled Languages</h1>
+      <p>
+        Compiled languages transform source code into native binaries before execution. They
+        emphasize predictable runtime behavior, explicit hardware control, and minimal dependencies
+        at deployment time.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              The compiler front-loads work: parsing, type checks, optimization, and layout are
+              completed before the program runs. The result is a self-contained binary with
+              predictable performance and explicit control over calling conventions, memory layout,
+              and runtime dependencies.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {milestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Compiled Languages</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pipeline" className="bin98-section">
+            <h2 className="bin98-heading">Compilation Pipeline</h2>
+            {pipelineStages.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-artifacts" className="bin98-section">
+            <h2 className="bin98-heading">Build Artifacts and Linking</h2>
+            {buildArtifacts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-optimizations" className="bin98-section">
+            <h2 className="bin98-heading">Optimization Levels and Knobs</h2>
+            {optimizationLevels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Compiled languages transform source code into native binaries before execution. They emphasize predictable runtime
-              behavior, explicit hardware control, and minimal dependencies at deployment time.
+              Build-time tuning is part of performance engineering. Use fast builds for iteration
+              and selective PGO/LTO for critical release paths.
             </p>
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Performance Intuition</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {applications.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionPoints.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Frontiers</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    The compiler front-loads work: parsing, type checks, optimization, and layout are completed before the program
-                    runs. The result is a self-contained binary with predictable performance and explicit control over calling
-                    conventions, memory layout, and runtime dependencies.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {milestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-models" className="win98-section">
-                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pipeline" className="win98-section">
-                  <h2 className="win98-heading">Compilation Pipeline</h2>
-                  {pipelineStages.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-artifacts" className="win98-section">
-                  <h2 className="win98-heading">Build Artifacts and Linking</h2>
-                  {buildArtifacts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-optimizations" className="win98-section">
-                  <h2 className="win98-heading">Optimization Levels and Knobs</h2>
-                  {optimizationLevels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Build-time tuning is part of performance engineering. Use fast builds for iteration and selective PGO/LTO for
-                    critical release paths.
-                  </p>
-                </section>
-                <section id="core-performance" className="win98-section">
-                  <h2 className="win98-heading">Complexity Analysis and Performance Intuition</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decisions" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionPoints.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights and Frontiers</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="win98-section">
-                <h2 className="win98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="win98-subheading">{example.title}</h3>
-                    <div className="win98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <div key={item.term}>
-                    <h3 className="win98-subheading">{item.term}</h3>
-                    <p>{item.definition}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <div key={item.term}>
+              <h3 className="bin98-subheading">{item.term}</h3>
+              <p>{item.definition}</p>
+            </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

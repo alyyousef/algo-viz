@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -279,8 +278,7 @@ const practicalExamples = [
     newNode = Node(value)
     newNode.next = node.next
     node.next = newNode`,
-    note:
-      'Given a handle to the predecessor, insertion is O(1) with two pointer writes. No shifting required.',
+    note: 'Given a handle to the predecessor, insertion is O(1) with two pointer writes. No shifting required.',
   },
   {
     title: 'Reverse a singly linked list iteratively',
@@ -293,8 +291,7 @@ const practicalExamples = [
         prev = curr
         curr = next
     return prev`,
-    note:
-      'Rewires next pointers in one pass. This is a common interview exercise because it tests pointer discipline.',
+    note: 'Rewires next pointers in one pass. This is a common interview exercise because it tests pointer discipline.',
   },
   {
     title: "Detect a cycle with Floyd's algorithm",
@@ -307,8 +304,7 @@ const practicalExamples = [
         if slow == fast:
             return true
     return false`,
-    note:
-      'Two pointers moving at different speeds will meet if a cycle exists. O(n) time, O(1) space.',
+    note: 'Two pointers moving at different speeds will meet if a cycle exists. O(n) time, O(1) space.',
   },
   {
     title: 'Doubly linked list remove in O(1)',
@@ -319,8 +315,7 @@ const practicalExamples = [
         node.next.prev = node.prev
     node.next = null
     node.prev = null`,
-    note:
-      'Having prev removes the need to search for the predecessor. Clearing links helps GC and prevents accidental reuse.',
+    note: 'Having prev removes the need to search for the predecessor. Clearing links helps GC and prevents accidental reuse.',
   },
   {
     title: 'Merge two sorted lists',
@@ -337,8 +332,7 @@ const practicalExamples = [
         tail = tail.next
     tail.next = a if a != null else b
     return dummy.next`,
-    note:
-      'Reuses existing nodes to build a merged list in O(n) time and O(1) extra space.',
+    note: 'Reuses existing nodes to build a merged list in O(n) time and O(1) extra space.',
   },
   {
     title: 'Remove Nth node from end (two pointers)',
@@ -354,8 +348,7 @@ const practicalExamples = [
         slow = slow.next
     slow.next = slow.next.next
     return dummy.next`,
-    note:
-      'Fast pointer advances n steps ahead; slow then lands before the target.',
+    note: 'Fast pointer advances n steps ahead; slow then lands before the target.',
   },
 ]
 
@@ -382,8 +375,7 @@ const patterns = [
   },
   {
     title: 'Free-list recycling',
-    detail:
-      'Reuse node objects by linking freed nodes into a pool, reducing allocator churn.',
+    detail: 'Reuse node objects by linking freed nodes into a pool, reducing allocator churn.',
   },
 ]
 
@@ -395,13 +387,11 @@ const variants = [
   },
   {
     title: 'Unrolled list',
-    detail:
-      'Each node stores a small array to reduce pointer overhead and improve locality.',
+    detail: 'Each node stores a small array to reduce pointer overhead and improve locality.',
   },
   {
     title: 'Circular doubly list',
-    detail:
-      'Head and tail wrap into a ring, making rotation and round-robin traversal trivial.',
+    detail: 'Head and tail wrap into a ring, making rotation and round-robin traversal trivial.',
   },
   {
     title: 'Skip list',
@@ -418,13 +408,11 @@ const variants = [
 const invariants = [
   {
     title: 'Head/tail correctness',
-    detail:
-      'On insert or delete, update both head and tail when size crosses 0 or 1.',
+    detail: 'On insert or delete, update both head and tail when size crosses 0 or 1.',
   },
   {
     title: 'Next/prev symmetry',
-    detail:
-      'In doubly lists, next.prev and prev.next must agree after every change.',
+    detail: 'In doubly lists, next.prev and prev.next must agree after every change.',
   },
   {
     title: 'No accidental cycles',
@@ -433,8 +421,7 @@ const invariants = [
   },
   {
     title: 'Size accounting',
-    detail:
-      'If you track size, update it in every mutation path and guard against underflow.',
+    detail: 'If you track size, update it in every mutation path and guard against underflow.',
   },
 ]
 
@@ -518,31 +505,38 @@ const references = [
 const glossaryTerms = [
   {
     term: 'Node handle',
-    definition: 'A direct pointer/reference/iterator to a node that enables local O(1) splice operations.',
+    definition:
+      'A direct pointer/reference/iterator to a node that enables local O(1) splice operations.',
   },
   {
     term: 'Intrusive list',
-    definition: 'A list where link fields are embedded inside payload objects, avoiding separate node allocations.',
+    definition:
+      'A list where link fields are embedded inside payload objects, avoiding separate node allocations.',
   },
   {
     term: 'Sentinel node',
-    definition: 'A dummy boundary node used to simplify insert/delete logic and reduce null edge cases.',
+    definition:
+      'A dummy boundary node used to simplify insert/delete logic and reduce null edge cases.',
   },
   {
     term: 'Pointer chasing',
-    definition: 'Traversal pattern of repeatedly following next/prev pointers, often causing cache misses.',
+    definition:
+      'Traversal pattern of repeatedly following next/prev pointers, often causing cache misses.',
   },
   {
     term: 'Tail pointer',
-    definition: 'A pointer to the final node that makes append O(1) in singly or doubly linked lists.',
+    definition:
+      'A pointer to the final node that makes append O(1) in singly or doubly linked lists.',
   },
   {
     term: 'Circular list',
-    definition: 'A linked list where the tail links back to the head or sentinel for wraparound traversal.',
+    definition:
+      'A linked list where the tail links back to the head or sentinel for wraparound traversal.',
   },
   {
     term: 'Skip list',
-    definition: 'Layered linked lists with probabilistic forward pointers for expected O(log n) search and update.',
+    definition:
+      'Layered linked lists with probabilistic forward pointers for expected O(log n) search and update.',
   },
   {
     term: 'Stable handle',
@@ -554,216 +548,12 @@ const glossaryTerms = [
   },
   {
     term: 'ABA problem',
-    definition: 'Concurrent hazard where a pointer appears unchanged (A->B->A) and misleads CAS-based logic.',
+    definition:
+      'Concurrent hazard where a pointer appears unchanged (A->B->A) and misleads CAS-based logic.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-help-page .win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-help-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-help-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-help-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-help-page .win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-help-page .win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-help-page .win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-help-page .win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-help-page .win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-help-page .win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-help-page .win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-help-page .win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-help-page .win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-help-page .win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-help-page .win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-help-page .win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-help-page .win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-help-page .win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-help-page .win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-help-page .win98-content p,
-.win98-help-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-help-page .win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-help-page .win98-content ul,
-.win98-help-page .win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-help-page .win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-help-page .win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-help-page .win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .win98-help-page .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-help-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -771,10 +561,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -808,305 +594,245 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function LinkedListsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Linked Lists',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Linked Lists (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Linked Lists',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Linked Lists</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Linked Lists"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Linked Lists</h1>
+      <p>
+        Linked lists store nodes connected by pointers instead of contiguous memory. They excel when
+        you already hold a handle to the insertion or removal point, making structural changes O(1),
+        while accepting O(n) searches and less cache-friendly traversal.
+      </p>
+      <p>
+        Linked lists trade arithmetic indexing for handle-driven updates. When you own a pointer to
+        a node, insertion and deletion touch only a couple of links, independent of list length. The
+        cost is linear search and weaker cache locality because nodes may be scattered across
+        memory.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Linked lists prioritize structural flexibility: local insertions, deletions, and
+              splices can be constant time when neighboring handles are known. They are less
+              suitable for indexed access and dense scans, where contiguous storage is generally
+              faster.
+            </p>
+            <p>
+              The key trade-off is stable node handles versus locality. This makes lists strong in
+              LRU-style update patterns, queue internals, and allocator free lists, but weaker in
+              random-access or SIMD-heavy workloads.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Performance Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Real-world effect: a cache miss can cost around 100 cycles, dwarfing the O(1) pointer
+              updates. Pooling nodes or using unrolled lists often yields bigger speedups than
+              micro-optimizing pointer assignments.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {applications.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Linked Lists</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((model) => (
+              <div key={model.title}>
+                <h3 className="bin98-subheading">{model.title}</h3>
+                <p>{model.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
             <p>
-              Linked lists store nodes connected by pointers instead of contiguous memory. They excel when you already hold a handle to
-              the insertion or removal point, making structural changes O(1), while accepting O(n) searches and less cache-friendly
-              traversal.
+              Sentinel nodes and tail pointers simplify edge cases. Most bugs arise at the
+              boundaries: empty lists, single-element lists, and updates at head or tail.
             </p>
-            <p>
-              Linked lists trade arithmetic indexing for handle-driven updates. When you own a pointer to a node, insertion and deletion
-              touch only a couple of links, independent of list length. The cost is linear search and weaker cache locality because
-              nodes may be scattered across memory.
-            </p>
+          </section>
+          <section id="core-anatomy" className="bin98-section">
+            <h2 className="bin98-heading">Structural Anatomy</h2>
+            {anatomy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-operations" className="bin98-section">
+            <h2 className="bin98-heading">Operations Matrix</h2>
+            {operationsTable.map((row) => (
+              <p key={row.op}>
+                <strong>{row.op}:</strong> Singly {row.singly}; Doubly {row.doubly}; Circular{' '}
+                {row.circular}; Skip {row.skip}. {row.note}
+              </p>
+            ))}
+          </section>
+          <section id="core-memory" className="bin98-section">
+            <h2 className="bin98-heading">Memory Layout and Overhead</h2>
+            {memoryNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Patterns and Techniques</h2>
+            {patterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Close Cousins</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Invariants to Keep Safe</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Variations</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    Linked lists prioritize structural flexibility: local insertions, deletions, and splices can be constant time when
-                    neighboring handles are known. They are less suitable for indexed access and dense scans, where contiguous storage
-                    is generally faster.
-                  </p>
-                  <p>
-                    The key trade-off is stable node handles versus locality. This makes lists strong in LRU-style update patterns,
-                    queue internals, and allocator free lists, but weaker in random-access or SIMD-heavy workloads.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity and Performance Intuition</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Real-world effect: a cache miss can cost around 100 cycles, dwarfing the O(1) pointer updates. Pooling nodes or
-                    using unrolled lists often yields bigger speedups than micro-optimizing pointer assignments.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-decisions" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {practicalExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-checkpoints" className="bin98-section">
+            <h2 className="bin98-heading">Quick Self-Checks</h2>
+            <ul>
+              {checkpoints.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="win98-section">
-                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((model) => (
-                    <div key={model.title}>
-                      <h3 className="win98-subheading">{model.title}</h3>
-                      <p>{model.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="win98-section">
-                  <h2 className="win98-heading">How It Works</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p>
-                    Sentinel nodes and tail pointers simplify edge cases. Most bugs arise at the boundaries: empty lists, single-element
-                    lists, and updates at head or tail.
-                  </p>
-                </section>
-                <section id="core-anatomy" className="win98-section">
-                  <h2 className="win98-heading">Structural Anatomy</h2>
-                  {anatomy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-operations" className="win98-section">
-                  <h2 className="win98-heading">Operations Matrix</h2>
-                  {operationsTable.map((row) => (
-                    <p key={row.op}>
-                      <strong>{row.op}:</strong> Singly {row.singly}; Doubly {row.doubly}; Circular {row.circular}; Skip {row.skip}.{' '}
-                      {row.note}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-memory" className="win98-section">
-                  <h2 className="win98-heading">Memory Layout and Overhead</h2>
-                  {memoryNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Patterns and Techniques</h2>
-                  {patterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="win98-section">
-                  <h2 className="win98-heading">Variants and Close Cousins</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="win98-section">
-                  <h2 className="win98-heading">Invariants to Keep Safe</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights and Variations</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="win98-section">
-                  <h2 className="win98-heading">Practical Examples</h2>
-                  {practicalExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-checkpoints" className="win98-section">
-                  <h2 className="win98-heading">Quick Self-Checks</h2>
-                  <ul>
-                    {checkpoints.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="win98-section">
-                  <h2 className="win98-heading">Glossary</h2>
-                  {glossaryTerms.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-                <section id="glossary-references" className="win98-section">
-                  <h2 className="win98-heading">References</h2>
-                  <ul>
-                    {references.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossaryTerms.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
+          <section id="glossary-references" className="bin98-section">
+            <h2 className="bin98-heading">References</h2>
+            <ul>
+              {references.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }
-

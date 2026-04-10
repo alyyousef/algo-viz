@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -50,7 +52,7 @@ const bigPictureSections: readonly DocSection[] = [
     title: 'When Angular Fits Better',
     paragraphs: [
       'Angular is often the stronger fit when the team wants a more integrated framework with official answers for many core application concerns. It is especially attractive in organizations that value explicit structure, dependency injection, strong conventions, CLI-driven workflows, and a more batteries-included model for large applications.',
-      'It can also be a better fit when the team wants architectural consistency across many engineers and many codebases. Angular\'s stronger conventions often reduce the number of framework-level decisions each project must invent for itself.',
+      "It can also be a better fit when the team wants architectural consistency across many engineers and many codebases. Angular's stronger conventions often reduce the number of framework-level decisions each project must invent for itself.",
     ],
   },
   {
@@ -102,7 +104,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Component Model',
     paragraphs: [
       'React components are ordinary JavaScript or TypeScript functions in modern usage. JSX combines rendering logic with component code, and Hooks provide access to state and lifecycle-like behavior inside functional components.',
-      'Angular components are classes annotated with metadata. Templates, selectors, styles, and imported dependencies are declared through Angular\'s component model, and the framework compiles and coordinates those pieces within its larger application system.',
+      "Angular components are classes annotated with metadata. Templates, selectors, styles, and imported dependencies are declared through Angular's component model, and the framework compiles and coordinates those pieces within its larger application system.",
     ],
   },
   {
@@ -290,8 +292,7 @@ and more built-in application structure:
   {
     id: 'examples-team',
     title: 'Team Fit Prompt',
-    description:
-      'The organizational question is often more decisive than the syntax question.',
+    description: 'The organizational question is often more decisive than the syntax question.',
     snippets: [
       {
         label: 'Ask This First',
@@ -313,240 +314,66 @@ across many engineers and many projects?`,
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'JSX', definition: 'A JavaScript or TypeScript syntax extension commonly used in React to describe UI structure inside component code.' },
-  { term: 'Hook', definition: 'A React function such as useState or useEffect that lets function components access React features.' },
-  { term: 'Signal', definition: 'An Angular reactive primitive that tracks where state is read and updates consumers when it changes.' },
-  { term: 'Dependency Injection', definition: 'A pattern, central in Angular, for supplying services and dependencies to application code through framework-managed injection.' },
-  { term: 'Standalone Component', definition: 'A modern Angular component style that can be imported directly without requiring NgModule-based structure for new code.' },
-  { term: 'NgModule', definition: 'An older Angular organizational mechanism that the Angular team now recommends avoiding for new code in favor of standalone components.' },
-  { term: 'Context', definition: 'A React feature for passing data through the component tree without manual prop drilling.' },
-  { term: 'Template Binding', definition: 'Angular syntax that connects component data and logic to HTML templates.' },
-  { term: 'Controlled Input', definition: 'A React form pattern where input state is driven directly from component state.' },
-  { term: 'RxJS', definition: 'A reactive programming library historically important in Angular applications for observable-based flows.' },
-  { term: 'Component Tree', definition: 'The hierarchy of UI components that make up an application interface.' },
-  { term: 'Convention', definition: 'A recommended structural pattern that teams use to keep architecture predictable across projects.' },
+  {
+    term: 'JSX',
+    definition:
+      'A JavaScript or TypeScript syntax extension commonly used in React to describe UI structure inside component code.',
+  },
+  {
+    term: 'Hook',
+    definition:
+      'A React function such as useState or useEffect that lets function components access React features.',
+  },
+  {
+    term: 'Signal',
+    definition:
+      'An Angular reactive primitive that tracks where state is read and updates consumers when it changes.',
+  },
+  {
+    term: 'Dependency Injection',
+    definition:
+      'A pattern, central in Angular, for supplying services and dependencies to application code through framework-managed injection.',
+  },
+  {
+    term: 'Standalone Component',
+    definition:
+      'A modern Angular component style that can be imported directly without requiring NgModule-based structure for new code.',
+  },
+  {
+    term: 'NgModule',
+    definition:
+      'An older Angular organizational mechanism that the Angular team now recommends avoiding for new code in favor of standalone components.',
+  },
+  {
+    term: 'Context',
+    definition:
+      'A React feature for passing data through the component tree without manual prop drilling.',
+  },
+  {
+    term: 'Template Binding',
+    definition: 'Angular syntax that connects component data and logic to HTML templates.',
+  },
+  {
+    term: 'Controlled Input',
+    definition: 'A React form pattern where input state is driven directly from component state.',
+  },
+  {
+    term: 'RxJS',
+    definition:
+      'A reactive programming library historically important in Angular applications for observable-based flows.',
+  },
+  {
+    term: 'Component Tree',
+    definition: 'The hierarchy of UI components that make up an application interface.',
+  },
+  {
+    term: 'Convention',
+    definition:
+      'A recommended structural pattern that teams use to keep architecture predictable across projects.',
+  },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.react-angular-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.react-angular-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.react-angular-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.react-angular-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.react-angular-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.react-angular-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.react-angular-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.react-angular-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.react-angular-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.react-angular-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.react-angular-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.react-angular-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.react-angular-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.react-angular-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.react-angular-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.react-angular-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.react-angular-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.react-angular-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.react-angular-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.react-angular-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.react-angular-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.react-angular-help-content p,
-.react-angular-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.react-angular-help-content p {
-  margin: 0 0 10px;
-}
-
-.react-angular-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.react-angular-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.react-angular-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.react-angular-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .react-angular-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .react-angular-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .react-angular-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -562,154 +389,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-export default function ReactVsAngularPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+export default function Counter(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'React vs Angular',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `React vs Angular (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'React vs Angular',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="react-angular-help-page">
-      <style>{helpStyles}</style>
-      <div className="react-angular-help-window" role="presentation">
-        <header className="react-angular-help-titlebar">
-          <span className="react-angular-help-titletext">React vs Angular</span>
-          <div className="react-angular-help-controls">
-            <button className="react-angular-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="react-angular-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="React vs Angular"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">React vs Angular</h1>
+      <p className="react-angular-help-doc-subtitle">
+        Manual-style comparison of framework scope, state model, ecosystem shape, and long-term
+        front-end tradeoffs.
+      </p>
 
-        <div className="react-angular-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`react-angular-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="react-angular-help-main">
-          <aside className="react-angular-help-toc" aria-label="Table of contents">
-            <h2 className="react-angular-help-toc-title">Contents</h2>
-            <ul className="react-angular-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="react-angular-help-content">
-            <h1 className="react-angular-help-doc-title">React vs Angular</h1>
-            <p className="react-angular-help-doc-subtitle">
-              Manual-style comparison of framework scope, state model, ecosystem shape, and long-term front-end tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="react-angular-help-section">
-                    <h2 className="react-angular-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="react-angular-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="react-angular-help-section">
-                  <h2 className="react-angular-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="react-angular-help-section">
-                  <h2 className="react-angular-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="react-angular-help-subheading">{snippet.label}</h3>
-                      <div className="react-angular-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="react-angular-help-section">
-                <h2 className="react-angular-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

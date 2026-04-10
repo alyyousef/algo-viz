@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -13,216 +11,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-const cloudBuildHelpStyles = `
-.cloudbuild-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cloudbuild-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cloudbuild-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudbuild-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cloudbuild-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cloudbuild-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.cloudbuild-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cloudbuild-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cloudbuild-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cloudbuild-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.cloudbuild-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.cloudbuild-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cloudbuild-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cloudbuild-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cloudbuild-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.cloudbuild-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cloudbuild-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cloudbuild-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudbuild-help-section {
-  margin: 0 0 20px;
-}
-
-.cloudbuild-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cloudbuild-help-content p,
-.cloudbuild-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cloudbuild-help-content p {
-  margin: 0 0 10px;
-}
-
-.cloudbuild-help-content ul,
-.cloudbuild-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cloudbuild-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.cloudbuild-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.cloudbuild-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cloudbuild-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloudbuild-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cloudbuild-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
 
 const bigPictureSections: Array<
   | { id: string; title: string; paragraphs: string[] }
@@ -232,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Cloud Build is Google Cloud\'s managed build and CI service. The simplest mental model is that it executes a build as a sequence of containerized steps, records the job as a managed build, and integrates that work with the rest of a GCP delivery pipeline.',
+      "Cloud Build is Google Cloud's managed build and CI service. The simplest mental model is that it executes a build as a sequence of containerized steps, records the job as a managed build, and integrates that work with the rest of a GCP delivery pipeline.",
       'It is used for continuous integration, image builds, test execution, packaging, artifact publishing, and deployment orchestration. Teams can start builds manually, from source repository triggers, from automation, or from other platform events.',
       'Adopting Cloud Build usually means standardizing how software moves from source to artifact. The center of gravity shifts away from self-hosted CI runners and toward build configs, triggers, service accounts, artifact destinations, logs, and delivery governance.',
     ],
@@ -323,7 +111,7 @@ const coreSections: Array<
     title: 'Build configs, steps, and syntax',
     paragraphs: [
       'Cloud Build build definitions are usually written in `cloudbuild.yaml`, though JSON is also supported. The file describes steps, images, commands, substitutions, artifacts, timeout behavior, and other build-level settings.',
-      'A build step is just a container invocation. That means teams can use Google-provided builders, official language tooling images, or custom images that encapsulate internal tooling. This is one of the service\'s biggest strengths: the pipeline environment is explicit and reproducible.',
+      "A build step is just a container invocation. That means teams can use Google-provided builders, official language tooling images, or custom images that encapsulate internal tooling. This is one of the service's biggest strengths: the pipeline environment is explicit and reproducible.",
       'Build configs should be treated as delivery source code. If the pipeline controls what gets built and deployed, then the config deserves versioning, review, testing, and ownership just like application code.',
     ],
   },
@@ -405,7 +193,7 @@ const coreSections: Array<
     paragraphs: [
       'Cloud Build rarely stands alone. It is commonly paired with Artifact Registry for image and package storage, Cloud Run or GKE for deployment targets, Secret Manager for credentials, and source repositories or GitHub connections for event-driven automation.',
       'It also works well as a shared platform primitive. Internal tooling, platform teams, and repository templates can all standardize on Cloud Build as the execution backend for delivery tasks.',
-      'That ecosystem fit is one of the service\'s strengths. The value comes not only from step execution, but from how naturally it fits into a larger delivery platform on Google Cloud.',
+      "That ecosystem fit is one of the service's strengths. The value comes not only from step execution, but from how naturally it fits into a larger delivery platform on Google Cloud.",
     ],
   },
   {
@@ -550,7 +338,8 @@ artifacts:
 const glossaryTerms = [
   {
     term: 'Build',
-    definition: 'A managed Cloud Build job that executes ordered steps and records logs, status, identity, and outputs.',
+    definition:
+      'A managed Cloud Build job that executes ordered steps and records logs, status, identity, and outputs.',
   },
   {
     term: 'Build step',
@@ -562,15 +351,18 @@ const glossaryTerms = [
   },
   {
     term: 'Trigger',
-    definition: 'A rule that starts a build in response to a source event or other configured input.',
+    definition:
+      'A rule that starts a build in response to a source event or other configured input.',
   },
   {
     term: 'Substitution',
-    definition: 'A variable value injected into a build so one config can be reused across multiple contexts.',
+    definition:
+      'A variable value injected into a build so one config can be reused across multiple contexts.',
   },
   {
     term: 'Artifact',
-    definition: 'A build output such as a container image, package, binary, or generated release bundle.',
+    definition:
+      'A build output such as a container image, package, binary, or generated release bundle.',
   },
   {
     term: 'Artifact Registry',
@@ -578,23 +370,28 @@ const glossaryTerms = [
   },
   {
     term: 'Private pool',
-    definition: 'A more controlled Cloud Build execution environment used for stronger isolation or networking requirements.',
+    definition:
+      'A more controlled Cloud Build execution environment used for stronger isolation or networking requirements.',
   },
   {
     term: 'Service account',
-    definition: 'The identity a build uses to access resources, push artifacts, or perform deployments.',
+    definition:
+      'The identity a build uses to access resources, push artifacts, or perform deployments.',
   },
   {
     term: 'Approval gate',
-    definition: 'A control that requires explicit approval before a build proceeds to sensitive stages.',
+    definition:
+      'A control that requires explicit approval before a build proceeds to sensitive stages.',
   },
   {
     term: 'Builder image',
-    definition: 'The container image used to run a build step, whether Google-provided, third-party, or custom.',
+    definition:
+      'The container image used to run a build step, whether Google-provided, third-party, or custom.',
   },
   {
     term: 'Build logs',
-    definition: 'The execution record of a build, used for troubleshooting, auditing, and operational visibility.',
+    definition:
+      'The execution record of a build, used for troubleshooting, auditing, and operational visibility.',
   },
 ]
 
@@ -631,180 +428,105 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPCloudBuildPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP Cloud Build (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP Cloud Build',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP Cloud Build',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cloudbuild-help-page">
-      <style>{cloudBuildHelpStyles}</style>
-      <div className="cloudbuild-help-window" role="presentation">
-        <header className="cloudbuild-help-titlebar">
-          <span className="cloudbuild-help-title">GCP Cloud Build</span>
-          <div className="cloudbuild-help-controls">
-            <button className="cloudbuild-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cloudbuild-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP Cloud Build"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP Cloud Build</h1>
+      <p className="cloudbuild-help-doc-subtitle">
+        Managed CI and build automation built around containerized pipeline steps
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact Cloud Build manual:
+        what the service is, how builds are modeled, how triggers and identities work, how teams
+        produce and promote artifacts, and which design choices matter for secure and maintainable
+        delivery pipelines.
+      </p>
 
-        <div className="cloudbuild-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`cloudbuild-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cloudbuild-help-main">
-          <aside className="cloudbuild-help-toc" aria-label="Table of contents">
-            <h2 className="cloudbuild-help-toc-title">Contents</h2>
-            <ul className="cloudbuild-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="cloudbuild-help-content">
-            <h1 className="cloudbuild-help-doc-title">GCP Cloud Build</h1>
-            <p className="cloudbuild-help-doc-subtitle">Managed CI and build automation built around containerized pipeline steps</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact Cloud Build manual: what the service is,
-              how builds are modeled, how triggers and identities work, how teams produce and promote artifacts, and which design
-              choices matter for secure and maintainable delivery pipelines.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cloudbuild-help-section">
-                    <h2 className="cloudbuild-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cloudbuild-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cloudbuild-help-section">
-                  <h2 className="cloudbuild-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cloudbuild-help-section">
-                    <h2 className="cloudbuild-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="cloudbuild-help-section">
-                    <h2 className="cloudbuild-help-heading">{example.title}</h2>
-                    <div className="cloudbuild-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cloudbuild-help-section">
-                <h2 className="cloudbuild-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

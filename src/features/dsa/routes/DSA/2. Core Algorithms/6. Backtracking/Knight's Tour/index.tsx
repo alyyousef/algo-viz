@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -39,8 +39,7 @@ const mentalModels = [
   },
   {
     title: 'Degree-first strategy',
-    detail:
-      "Warnsdorff's heuristic chooses the most constrained next square, reducing dead ends.",
+    detail: "Warnsdorff's heuristic chooses the most constrained next square, reducing dead ends.",
   },
 ]
 
@@ -79,8 +78,7 @@ const algorithmSteps = [
 const dataStructures = [
   {
     title: 'Board matrix',
-    detail:
-      'A 2D array stores the move index for each square. -1 denotes unvisited.',
+    detail: 'A 2D array stores the move index for each square. -1 denotes unvisited.',
   },
   {
     title: 'Move list',
@@ -89,13 +87,11 @@ const dataStructures = [
   },
   {
     title: 'Validity checker',
-    detail:
-      'A helper ensures row/col are in bounds and the target square is unvisited.',
+    detail: 'A helper ensures row/col are in bounds and the target square is unvisited.',
   },
   {
     title: 'Heuristic ordering',
-    detail:
-      'Compute onward degree for each candidate to implement Warnsdorff ordering.',
+    detail: 'Compute onward degree for each candidate to implement Warnsdorff ordering.',
   },
 ]
 
@@ -112,49 +108,41 @@ const correctnessNotes = [
   },
   {
     title: 'Soundness',
-    detail:
-      'Every accepted solution is a valid tour because only legal knight moves are allowed.',
+    detail: 'Every accepted solution is a valid tour because only legal knight moves are allowed.',
   },
   {
     title: 'Heuristic safety',
-    detail:
-      'Warnsdorff ordering does not prune solutions; it only changes the search order.',
+    detail: 'Warnsdorff ordering does not prune solutions; it only changes the search order.',
   },
 ]
 
 const complexityNotes = [
   {
     title: 'Worst-case time',
-    detail:
-      'Exponential in n^2. The branching factor is up to 8, and the depth is n^2.',
+    detail: 'Exponential in n^2. The branching factor is up to 8, and the depth is n^2.',
   },
   {
     title: 'Space complexity',
-    detail:
-      'O(n^2) for the board plus recursion stack up to depth n^2.',
+    detail: 'O(n^2) for the board plus recursion stack up to depth n^2.',
   },
   {
     title: 'Heuristic effect',
-    detail:
-      "Warnsdorff's rule drastically cuts the search space in practice on standard boards.",
+    detail: "Warnsdorff's rule drastically cuts the search space in practice on standard boards.",
   },
   {
     title: 'Scalability',
-    detail:
-      'Large boards may still be expensive; heuristic or randomized strategies help.',
+    detail: 'Large boards may still be expensive; heuristic or randomized strategies help.',
   },
 ]
 
 const edgeCases = [
   {
     title: 'Small boards',
-    detail:
-      'Tours do not exist for 2x2, 3x3, or 4x4 boards. 1x1 is a trivial open tour.',
+    detail: 'Tours do not exist for 2x2, 3x3, or 4x4 boards. 1x1 is a trivial open tour.',
   },
   {
     title: 'Starting position',
-    detail:
-      'Some starting squares make search harder; symmetry can reduce redundant work.',
+    detail: 'Some starting squares make search harder; symmetry can reduce redundant work.',
   },
   {
     title: 'Closed tour requirement',
@@ -176,8 +164,7 @@ const realWorldUses = [
   },
   {
     context: 'Constraint programming',
-    detail:
-      'It models constraint satisfaction with backtracking and heuristics.',
+    detail: 'It models constraint satisfaction with backtracking and heuristics.',
   },
   {
     context: 'Robotics path planning',
@@ -186,13 +173,11 @@ const realWorldUses = [
   },
   {
     context: 'Puzzle generation',
-    detail:
-      'Used to create grid-based puzzles and games with unique traversal solutions.',
+    detail: 'Used to create grid-based puzzles and games with unique traversal solutions.',
   },
   {
     context: 'Algorithm visualization',
-    detail:
-      'Perfect for demonstrating recursion, backtracking, and heuristic ordering.',
+    detail: 'Perfect for demonstrating recursion, backtracking, and heuristic ordering.',
   },
 ]
 
@@ -228,8 +213,7 @@ const examples = [
     title: 'Closed tour check',
     code: `if moveIndex == n*n:
     return isKnightMove(x, y, startX, startY)`,
-    explanation:
-      'A closed tour requires the last square to connect back to the start.',
+    explanation: 'A closed tour requires the last square to connect back to the start.',
   },
 ]
 
@@ -254,13 +238,11 @@ const variants = [
   },
   {
     title: 'Obstacles and shapes',
-    detail:
-      'Tours on boards with holes or irregular shapes become graph traversal problems.',
+    detail: 'Tours on boards with holes or irregular shapes become graph traversal problems.',
   },
   {
     title: 'Randomized search',
-    detail:
-      'Randomized move ordering can find tours quickly and generate diverse solutions.',
+    detail: 'Randomized move ordering can find tours quickly and generate diverse solutions.',
   },
 ]
 
@@ -295,211 +277,6 @@ const quickGlossary = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const knightsHelpStyles = `
-.knights-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.knights-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  box-sizing: border-box;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.knights-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.knights-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.knights-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.knights-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.knights-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.knights-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.knights-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.knights-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.knights-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.knights-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.knights-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.knights-toc-list li {
-  margin: 0 0 8px;
-}
-
-.knights-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.knights-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.knights-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.knights-section {
-  margin: 0 0 20px;
-}
-
-.knights-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.knights-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.knights-content p,
-.knights-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.knights-content p {
-  margin: 0 0 10px;
-}
-
-.knights-content ul,
-.knights-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.knights-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.knights-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.knights-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .knights-main {
-    grid-template-columns: 1fr;
-  }
-
-  .knights-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -507,10 +284,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -535,238 +308,174 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function KnightsTourPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Knight&apos;s Tour',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Knight's Tour (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: "Knight's Tour",
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="knights-help-page">
-      <style>{knightsHelpStyles}</style>
-      <div className="knights-window" role="presentation">
-        <header className="knights-titlebar">
-          <span className="knights-title">Knight&apos;s Tour</span>
-          <div className="knights-controls">
-            <button className="knights-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="knights-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Knight's Tour"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Knight&apos;s Tour</h1>
+      <p>
+        Backtracking across the chessboard without revisits. The knight&apos;s tour asks for a
+        sequence of knight moves that visits every square exactly once. It is a classic backtracking
+        puzzle that highlights recursion, constraint checks, and the power of heuristics such as
+        Warnsdorff&apos;s rule.
+      </p>
 
-        <div className="knights-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`knights-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="knights-main">
-          <aside className="knights-toc" aria-label="Table of contents">
-            <h2 className="knights-toc-title">Contents</h2>
-            <ul className="knights-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Model the board as a graph where each square connects to its knight moves. The goal is
+              a Hamiltonian path that visits every vertex exactly once. Backtracking explores the
+              path while pruning illegal revisits.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="knights-content">
-            <h1 className="knights-doc-title">Knight&apos;s Tour</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-ideas" className="bin98-section">
+            <h2 className="bin98-heading">What the Algorithm Does</h2>
+            {coreIdeas.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-steps" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Process</h2>
+            <ol>
+              {algorithmSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-structures" className="bin98-section">
+            <h2 className="bin98-heading">Data Structures Used</h2>
+            {dataStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Why the Backtracking Works</h2>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Backtracking across the chessboard without revisits. The knight&apos;s tour asks for a sequence of knight moves that
-              visits every square exactly once. It is a classic backtracking puzzle that highlights recursion, constraint checks, and
-              the power of heuristics such as Warnsdorff&apos;s rule.
+              The search explores all legal move sequences, so it is complete. Heuristics only
+              change ordering, not correctness.
             </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-edge-cases" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases and Conventions</h2>
+            {edgeCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="knights-section">
-                  <h2 className="knights-heading">Overview</h2>
-                  <p>
-                    Model the board as a graph where each square connects to its knight moves. The goal is a Hamiltonian path that
-                    visits every vertex exactly once. Backtracking explores the path while pruning illegal revisits.
-                  </p>
-                </section>
-                <hr className="knights-divider" />
-                <section id="bp-history" className="knights-section">
-                  <h2 className="knights-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="knights-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="knights-section">
-                  <h2 className="knights-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-applications" className="knights-section">
-                  <h2 className="knights-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="knights-section">
-                  <h2 className="knights-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-ideas" className="knights-section">
-                  <h2 className="knights-heading">What the Algorithm Does</h2>
-                  {coreIdeas.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-steps" className="knights-section">
-                  <h2 className="knights-heading">Step-by-Step Process</h2>
-                  <ol>
-                    {algorithmSteps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-structures" className="knights-section">
-                  <h2 className="knights-heading">Data Structures Used</h2>
-                  {dataStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="knights-section">
-                  <h2 className="knights-heading">Why the Backtracking Works</h2>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The search explores all legal move sequences, so it is complete. Heuristics only change ordering, not correctness.
-                  </p>
-                </section>
-                <section id="core-complexity" className="knights-section">
-                  <h2 className="knights-heading">Complexity Analysis</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-edge-cases" className="knights-section">
-                  <h2 className="knights-heading">Edge Cases and Conventions</h2>
-                  {edgeCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="knights-section">
-                  <h2 className="knights-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-variants" className="knights-section">
-                  <h2 className="knights-heading">Variants and Extensions</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="knights-section">
-                <h2 className="knights-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="knights-subheading">{example.title}</h3>
-                    <div className="knights-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="knights-section">
-                <h2 className="knights-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

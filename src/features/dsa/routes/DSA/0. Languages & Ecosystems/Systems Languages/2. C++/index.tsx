@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -55,31 +54,26 @@ const mentalModels = [
   },
   {
     title: 'Pay for what you use',
-    detail:
-      'Virtual dispatch, exceptions, and RTTI are optional and can be avoided in hot paths.',
+    detail: 'Virtual dispatch, exceptions, and RTTI are optional and can be avoided in hot paths.',
   },
 ]
 
 const languageFundamentals = [
   {
     title: 'Compiled to native code',
-    detail:
-      'C++ produces platform-specific binaries with minimal runtime overhead.',
+    detail: 'C++ produces platform-specific binaries with minimal runtime overhead.',
   },
   {
     title: 'Multi-paradigm',
-    detail:
-      'OOP, generic, and functional patterns coexist in one language.',
+    detail: 'OOP, generic, and functional patterns coexist in one language.',
   },
   {
     title: 'Static typing',
-    detail:
-      'Strong static typing enables optimization and early errors.',
+    detail: 'Strong static typing enables optimization and early errors.',
   },
   {
     title: 'Deterministic lifetimes',
-    detail:
-      'Objects are destroyed predictably, enabling safe resource management.',
+    detail: 'Objects are destroyed predictably, enabling safe resource management.',
   },
 ]
 
@@ -105,23 +99,19 @@ const compilationPipeline = [
 const standardLibraryHighlights = [
   {
     title: 'Containers',
-    detail:
-      'vector, array, map, unordered_map, and span cover core data structures.',
+    detail: 'vector, array, map, unordered_map, and span cover core data structures.',
   },
   {
     title: 'Algorithms and ranges',
-    detail:
-      'Algorithms and ranges enable composable data pipelines.',
+    detail: 'Algorithms and ranges enable composable data pipelines.',
   },
   {
     title: 'Concurrency',
-    detail:
-      'Threads, atomics, and futures provide portable parallelism.',
+    detail: 'Threads, atomics, and futures provide portable parallelism.',
   },
   {
     title: 'Memory utilities',
-    detail:
-      'unique_ptr, shared_ptr, and allocator support manage ownership.',
+    detail: 'unique_ptr, shared_ptr, and allocator support manage ownership.',
   },
 ]
 
@@ -187,8 +177,7 @@ const languageNotes = [
   },
   {
     title: 'Object lifetime and moves',
-    detail:
-      'Move semantics enable zero-copy transfers and reduce heap churn.',
+    detail: 'Move semantics enable zero-copy transfers and reduce heap churn.',
   },
 ]
 
@@ -200,8 +189,7 @@ const performanceTradeoffs = [
   },
   {
     title: 'Abstraction penalties are optional',
-    detail:
-      'Abstractions like virtual dispatch have costs, but you choose when to use them.',
+    detail: 'Abstractions like virtual dispatch have costs, but you choose when to use them.',
   },
   {
     title: 'Memory locality matters',
@@ -215,8 +203,7 @@ const performanceTradeoffs = [
   },
   {
     title: 'Build complexity',
-    detail:
-      'Large codebases require careful dependency and header management.',
+    detail: 'Large codebases require careful dependency and header management.',
   },
 ]
 
@@ -228,13 +215,11 @@ const realWorldUses = [
   },
   {
     context: 'High-frequency trading',
-    detail:
-      'Low latency and deterministic memory control make C++ a default for trading systems.',
+    detail: 'Low latency and deterministic memory control make C++ a default for trading systems.',
   },
   {
     context: 'Browsers and compilers',
-    detail:
-      'Performance-critical software like Chrome and LLVM rely on C++ for speed and control.',
+    detail: 'Performance-critical software like Chrome and LLVM rely on C++ for speed and control.',
   },
   {
     context: 'Embedded and robotics',
@@ -243,13 +228,11 @@ const realWorldUses = [
   },
   {
     context: 'HPC and simulation',
-    detail:
-      'C++ underpins simulation codes, solvers, and scientific kernels.',
+    detail: 'C++ underpins simulation codes, solvers, and scientific kernels.',
   },
   {
     context: 'Graphics and media',
-    detail:
-      'Renderers and codecs rely on C++ for throughput and control.',
+    detail: 'Renderers and codecs rely on C++ for throughput and control.',
   },
 ]
 
@@ -298,8 +281,7 @@ struct Node {
 };
 
 auto head = std::make_unique<Node>();`,
-    explanation:
-      'unique_ptr expresses single ownership and prevents accidental leaks.',
+    explanation: 'unique_ptr expresses single ownership and prevents accidental leaks.',
   },
   {
     title: 'constexpr computation',
@@ -308,8 +290,7 @@ auto head = std::make_unique<Node>();`,
 }
 
 constexpr int value = fib(10);`,
-    explanation:
-      'constexpr moves work to compile time when inputs are known.',
+    explanation: 'constexpr moves work to compile time when inputs are known.',
   },
 ]
 
@@ -340,8 +321,7 @@ const advancedInsights = [
   },
   {
     title: 'Allocator-aware design',
-    detail:
-      'Custom allocators tune memory usage for arenas, pools, and realtime systems.',
+    detail: 'Custom allocators tune memory usage for arenas, pools, and realtime systems.',
   },
   {
     title: 'Type erasure patterns',
@@ -355,8 +335,7 @@ const advancedInsights = [
   },
   {
     title: 'Sanitizers and fuzzing',
-    detail:
-      'ASan, UBSan, and fuzzers catch memory bugs early in development.',
+    detail: 'ASan, UBSan, and fuzzers catch memory bugs early in development.',
   },
 ]
 
@@ -371,92 +350,76 @@ const takeaways = [
 const toolingWorkflow = [
   {
     title: 'Build systems',
-    detail:
-      'CMake, Meson, and Bazel manage large cross-platform builds.',
+    detail: 'CMake, Meson, and Bazel manage large cross-platform builds.',
   },
   {
     title: 'Package managers',
-    detail:
-      'vcpkg and Conan standardize third-party dependencies.',
+    detail: 'vcpkg and Conan standardize third-party dependencies.',
   },
   {
     title: 'Static analysis',
-    detail:
-      'clang-tidy and cppcheck catch common defects early.',
+    detail: 'clang-tidy and cppcheck catch common defects early.',
   },
   {
     title: 'Profiling',
-    detail:
-      'perf, VTune, and Tracy identify CPU and memory bottlenecks.',
+    detail: 'perf, VTune, and Tracy identify CPU and memory bottlenecks.',
   },
 ]
 
 const concurrencyOptions = [
   {
     title: 'Threads and futures',
-    detail:
-      'std::thread, std::async, and futures support parallel work.',
+    detail: 'std::thread, std::async, and futures support parallel work.',
   },
   {
     title: 'Atomics and lock-free',
-    detail:
-      'std::atomic enables high-performance synchronization.',
+    detail: 'std::atomic enables high-performance synchronization.',
   },
   {
     title: 'Coroutines',
-    detail:
-      'C++20 coroutines enable async IO and lazy generators.',
+    detail: 'C++20 coroutines enable async IO and lazy generators.',
   },
   {
     title: 'Parallel algorithms',
-    detail:
-      'Parallel STL can speed up data processing workloads.',
+    detail: 'Parallel STL can speed up data processing workloads.',
   },
 ]
 
 const interopOptions = [
   {
     title: 'C ABI compatibility',
-    detail:
-      'Expose C APIs for stable cross-language boundaries.',
+    detail: 'Expose C APIs for stable cross-language boundaries.',
   },
   {
     title: 'Python bindings',
-    detail:
-      'pybind11 and Cython bridge C++ and Python.',
+    detail: 'pybind11 and Cython bridge C++ and Python.',
   },
   {
     title: 'Rust and Zig',
-    detail:
-      'FFI via C ABI provides safe interop with newer languages.',
+    detail: 'FFI via C ABI provides safe interop with newer languages.',
   },
   {
     title: 'Managed runtimes',
-    detail:
-      'JNI and C++/CLI integrate with Java and .NET.',
+    detail: 'JNI and C++/CLI integrate with Java and .NET.',
   },
 ]
 
 const deploymentOptions = [
   {
     title: 'Static libraries',
-    detail:
-      'Ship .a files for embedded or performance-critical builds.',
+    detail: 'Ship .a files for embedded or performance-critical builds.',
   },
   {
     title: 'Shared libraries',
-    detail:
-      '.so/.dll distribution for plugins and SDKs.',
+    detail: '.so/.dll distribution for plugins and SDKs.',
   },
   {
     title: 'Native executables',
-    detail:
-      'Standalone binaries for tools and services.',
+    detail: 'Standalone binaries for tools and services.',
   },
   {
     title: 'Cross-compilation',
-    detail:
-      'Toolchains target embedded and custom OS environments.',
+    detail: 'Toolchains target embedded and custom OS environments.',
   },
 ]
 
@@ -468,284 +431,86 @@ const comparisonNotes = [
   },
   {
     title: 'Compared to Rust',
-    detail:
-      'Rust enforces memory safety at compile time; C++ relies on discipline and tooling.',
+    detail: 'Rust enforces memory safety at compile time; C++ relies on discipline and tooling.',
   },
   {
     title: 'Compared to Go',
-    detail:
-      'C++ is faster for hot paths; Go simplifies concurrency and deployment.',
+    detail: 'C++ is faster for hot paths; Go simplifies concurrency and deployment.',
   },
   {
     title: 'Compared to Java',
-    detail:
-      'C++ offers lower-level control; Java provides GC and JVM portability.',
+    detail: 'C++ offers lower-level control; Java provides GC and JVM portability.',
   },
 ]
 
 const learningPath = [
   {
     title: 'Core syntax and RAII',
-    detail:
-      'Learn ownership, constructors, destructors, and move semantics.',
+    detail: 'Learn ownership, constructors, destructors, and move semantics.',
   },
   {
     title: 'STL mastery',
-    detail:
-      'Use containers, algorithms, and ranges idiomatically.',
+    detail: 'Use containers, algorithms, and ranges idiomatically.',
   },
   {
     title: 'Modern C++ features',
-    detail:
-      'Practice constexpr, concepts, and smart pointers.',
+    detail: 'Practice constexpr, concepts, and smart pointers.',
   },
   {
     title: 'Performance and debugging',
-    detail:
-      'Use sanitizers, profilers, and careful measurement.',
+    detail: 'Use sanitizers, profilers, and careful measurement.',
   },
   {
     title: 'Concurrency',
-    detail:
-      'Learn atomics, threads, and memory ordering.',
+    detail: 'Learn atomics, threads, and memory ordering.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const glossary = [
-  { term: 'RAII', definition: 'Resource management pattern where constructors acquire and destructors release resources.' },
-  { term: 'Move Semantics', definition: 'Transfer ownership/resources without deep copy to improve performance.' },
-  { term: 'ODR', definition: 'One Definition Rule governing definitions across translation units.' },
-  { term: 'Template Instantiation', definition: 'Compiler-generated specialization of template code for concrete types.' },
-  { term: 'constexpr', definition: 'Compile-time evaluable functions/objects under constant-expression rules.' },
-  { term: 'Concepts', definition: 'Template constraints that improve diagnostics and API contracts.' },
-  { term: 'ABI', definition: 'Binary-level compatibility contract for function calls, layouts, and symbols.' },
-  { term: 'Undefined Behavior', definition: 'Operations with no guaranteed meaning in the standard, enabling optimization freedom.' },
-  { term: 'Iterator Invalidation', definition: 'When operations on containers make existing iterators/references invalid.' },
-  { term: 'Sanitizer', definition: 'Instrumentation tooling like ASan/UBSan used to catch memory and UB defects.' },
+  {
+    term: 'RAII',
+    definition:
+      'Resource management pattern where constructors acquire and destructors release resources.',
+  },
+  {
+    term: 'Move Semantics',
+    definition: 'Transfer ownership/resources without deep copy to improve performance.',
+  },
+  {
+    term: 'ODR',
+    definition: 'One Definition Rule governing definitions across translation units.',
+  },
+  {
+    term: 'Template Instantiation',
+    definition: 'Compiler-generated specialization of template code for concrete types.',
+  },
+  {
+    term: 'constexpr',
+    definition: 'Compile-time evaluable functions/objects under constant-expression rules.',
+  },
+  {
+    term: 'Concepts',
+    definition: 'Template constraints that improve diagnostics and API contracts.',
+  },
+  {
+    term: 'ABI',
+    definition: 'Binary-level compatibility contract for function calls, layouts, and symbols.',
+  },
+  {
+    term: 'Undefined Behavior',
+    definition:
+      'Operations with no guaranteed meaning in the standard, enabling optimization freedom.',
+  },
+  {
+    term: 'Iterator Invalidation',
+    definition: 'When operations on containers make existing iterators/references invalid.',
+  },
+  {
+    term: 'Sanitizer',
+    definition: 'Instrumentation tooling like ASan/UBSan used to catch memory and UB defects.',
+  },
 ]
-
-const cppHelpStyles = `
-.cpp98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  margin: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cpp98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cpp98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 4px;
-  color: #fff;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-}
-
-.cpp98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.1;
-  pointer-events: none;
-}
-
-.cpp98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.cpp98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.cpp98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cpp98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cpp98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.cpp98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-}
-
-.cpp98-toc {
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  overflow: auto;
-}
-
-.cpp98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cpp98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.cpp98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cpp98-toc-list a {
-  font-size: 12px;
-  color: #000;
-  text-decoration: none;
-}
-
-.cpp98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.cpp98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cpp98-section {
-  margin: 0 0 22px;
-}
-
-.cpp98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cpp98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cpp98-content p,
-.cpp98-content li,
-.cpp98-content th,
-.cpp98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cpp98-content p {
-  margin: 0 0 10px;
-}
-
-.cpp98-content ul,
-.cpp98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cpp98-content table {
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.cpp98-content th,
-.cpp98-content td {
-  padding: 2px 8px 2px 0;
-  vertical-align: top;
-}
-
-.cpp98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.cpp98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.cpp98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cpp98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cpp98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -753,10 +518,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -787,307 +548,244 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function CppSystemsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'C++',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `C++ (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'C++',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="cpp98-help-page">
-      <style>{cppHelpStyles}</style>
-      <div className="cpp98-window" role="presentation">
-        <header className="cpp98-titlebar">
-          <span className="cpp98-title-text">C++</span>
-          <div className="cpp98-title-controls">
-            <button className="cpp98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="cpp98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="cpp98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`cpp98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="cpp98-main">
-          <aside className="cpp98-toc" aria-label="Table of contents">
-            <h2 className="cpp98-toc-title">Contents</h2>
-            <ul className="cpp98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="C++"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">C++</h1>
+      <p>
+        C++ builds on C with classes, templates, and modern libraries while preserving direct
+        control over memory and performance. It enables high-level design without sacrificing
+        low-level efficiency, making it a foundation for large, performance-critical systems.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              C++ is about control without overhead. You can use high-level abstractions when they
+              help, but still drop down to raw memory when required. This flexibility is powerful,
+              but demands strong conventions and disciplined design.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="cpp98-content">
-            <h1 className="cpp98-doc-title">C++</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-fundamentals" className="bin98-section">
+            <h2 className="bin98-heading">Language Fundamentals</h2>
+            {languageFundamentals.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pipeline" className="bin98-section">
+            <h2 className="bin98-heading">Compilation Pipeline</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>What happens</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compilationPipeline.map((item) => (
+                  <tr key={item.stage}>
+                    <td>{item.stage}</td>
+                    <td>{item.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-library" className="bin98-section">
+            <h2 className="bin98-heading">Standard Library Highlights</h2>
+            {standardLibraryHighlights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-cpp-fundamentals" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: C++ Fundamentals</h2>
+            {coreConcepts.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">Tooling and Workflow</h2>
+            {toolingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Language Mechanics</h2>
+            {languageNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-concurrency" className="bin98-section">
+            <h2 className="bin98-heading">Concurrency and Parallelism</h2>
+            {concurrencyOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {performanceTradeoffs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              C++ builds on C with classes, templates, and modern libraries while preserving direct control over memory and
-              performance. It enables high-level design without sacrificing low-level efficiency, making it a foundation for
-              large, performance-critical systems.
+              C++ performance comes from controlling abstraction costs. Modern features help safety
+              and expressiveness, but they also demand build and API discipline to keep complexity
+              manageable.
             </p>
+          </section>
+          <section id="core-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-interop" className="bin98-section">
+            <h2 className="bin98-heading">Interoperability and Deployment</h2>
+            <h3 className="bin98-subheading">Interoperability</h3>
+            {interopOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Deployment</h3>
+            {deploymentOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Comparisons and Tradeoffs</h2>
+            {comparisonNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-learning" className="bin98-section">
+            <h2 className="bin98-heading">Learning Path</h2>
+            {learningPath.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="cpp98-section">
-                  <h2 className="cpp98-heading">Overview</h2>
-                  <p>
-                    C++ is about control without overhead. You can use high-level abstractions when they help, but still drop
-                    down to raw memory when required. This flexibility is powerful, but demands strong conventions and disciplined
-                    design.
-                  </p>
-                </section>
-                <hr className="cpp98-divider" />
-                <section id="bp-history" className="cpp98-section">
-                  <h2 className="cpp98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="cpp98-section">
-                  <h2 className="cpp98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="cpp98-section">
-                  <h2 className="cpp98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-fundamentals" className="cpp98-section">
-                  <h2 className="cpp98-heading">Language Fundamentals</h2>
-                  {languageFundamentals.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pipeline" className="cpp98-section">
-                  <h2 className="cpp98-heading">Compilation Pipeline</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Stage</th>
-                        <th>What happens</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {compilationPipeline.map((item) => (
-                        <tr key={item.stage}>
-                          <td>{item.stage}</td>
-                          <td>{item.description}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-library" className="cpp98-section">
-                  <h2 className="cpp98-heading">Standard Library Highlights</h2>
-                  {standardLibraryHighlights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-cpp-fundamentals" className="cpp98-section">
-                  <h2 className="cpp98-heading">How It Works: C++ Fundamentals</h2>
-                  {coreConcepts.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="cpp98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-workflow" className="cpp98-section">
-                  <h2 className="cpp98-heading">Tooling and Workflow</h2>
-                  {toolingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="cpp98-section">
-                  <h2 className="cpp98-heading">How It Works: Language Mechanics</h2>
-                  {languageNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-concurrency" className="cpp98-section">
-                  <h2 className="cpp98-heading">Concurrency and Parallelism</h2>
-                  {concurrencyOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="cpp98-section">
-                  <h2 className="cpp98-heading">Complexity Analysis and Tradeoffs</h2>
-                  {performanceTradeoffs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    C++ performance comes from controlling abstraction costs. Modern features help safety and expressiveness, but
-                    they also demand build and API discipline to keep complexity manageable.
-                  </p>
-                </section>
-                <section id="core-uses" className="cpp98-section">
-                  <h2 className="cpp98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-interop" className="cpp98-section">
-                  <h2 className="cpp98-heading">Interoperability and Deployment</h2>
-                  <h3 className="cpp98-subheading">Interoperability</h3>
-                  {interopOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="cpp98-subheading">Deployment</h3>
-                  {deploymentOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="cpp98-section">
-                  <h2 className="cpp98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-compare" className="cpp98-section">
-                  <h2 className="cpp98-heading">Comparisons and Tradeoffs</h2>
-                  {comparisonNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-when" className="cpp98-section">
-                  <h2 className="cpp98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-learning" className="cpp98-section">
-                  <h2 className="cpp98-heading">Learning Path</h2>
-                  {learningPath.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="cpp98-section">
-                  <h2 className="cpp98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="cpp98-section">
-                <h2 className="cpp98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="cpp98-subheading">{example.title}</h3>
-                    <div className="cpp98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cpp98-section">
-                <h2 className="cpp98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

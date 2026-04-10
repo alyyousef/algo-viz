@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -219,8 +221,7 @@ const examples: readonly ExampleSection[] = [
   {
     id: 'examples-native',
     title: 'Native Capability Boundary',
-    description:
-      'Both approaches can use native APIs, but the integration point feels different.',
+    description: 'Both approaches can use native APIs, but the integration point feels different.',
     snippets: [
       {
         label: 'React Native',
@@ -267,8 +268,7 @@ and flexible platform ownership:
   {
     id: 'examples-decision',
     title: 'Architectural Prompt',
-    description:
-      'A short prompt keeps the comparison anchored in what is actually being shared.',
+    description: 'A short prompt keeps the comparison anchored in what is actually being shared.',
     snippets: [
       {
         label: 'Ask This First',
@@ -294,240 +294,64 @@ That answer usually reveals the better fit.`,
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'Shared UI', definition: 'A cross-platform approach where the same user interface layer is reused across multiple platforms.' },
-  { term: 'Shared Business Logic', definition: 'Cross-platform reuse of domain logic, networking, state handling, validation, and other non-UI code.' },
-  { term: 'Native Module', definition: 'A platform-native capability exposed to React Native JavaScript or TypeScript code.' },
-  { term: 'Fabric', definition: 'React Native\'s newer rendering system in the New Architecture.' },
-  { term: 'Turbo Module', definition: 'A newer native module system in React Native\'s New Architecture.' },
-  { term: 'JSI', definition: 'The JavaScript interface used by modern React Native architecture to enable more direct native and JavaScript interaction.' },
-  { term: 'Source Set', definition: 'A Kotlin Multiplatform grouping of code and dependencies for shared or platform-specific targets.' },
-  { term: 'expect/actual', definition: 'A Kotlin Multiplatform mechanism for declaring common APIs with platform-specific implementations.' },
-  { term: 'Compose Multiplatform', definition: 'JetBrains\' Compose-based UI toolkit that can be used with Kotlin Multiplatform for shared UI.' },
-  { term: 'Native UI', definition: 'Platform-specific user interface code written with platform-native frameworks such as SwiftUI or Jetpack Compose.' },
-  { term: 'Interop', definition: 'The ability for one stack or language layer to call into another platform or runtime layer.' },
-  { term: 'Platform Ownership', definition: 'How much autonomy Android and iOS teams retain over their own code, UI, and architecture.' },
+  {
+    term: 'Shared UI',
+    definition:
+      'A cross-platform approach where the same user interface layer is reused across multiple platforms.',
+  },
+  {
+    term: 'Shared Business Logic',
+    definition:
+      'Cross-platform reuse of domain logic, networking, state handling, validation, and other non-UI code.',
+  },
+  {
+    term: 'Native Module',
+    definition:
+      'A platform-native capability exposed to React Native JavaScript or TypeScript code.',
+  },
+  { term: 'Fabric', definition: "React Native's newer rendering system in the New Architecture." },
+  {
+    term: 'Turbo Module',
+    definition: "A newer native module system in React Native's New Architecture.",
+  },
+  {
+    term: 'JSI',
+    definition:
+      'The JavaScript interface used by modern React Native architecture to enable more direct native and JavaScript interaction.',
+  },
+  {
+    term: 'Source Set',
+    definition:
+      'A Kotlin Multiplatform grouping of code and dependencies for shared or platform-specific targets.',
+  },
+  {
+    term: 'expect/actual',
+    definition:
+      'A Kotlin Multiplatform mechanism for declaring common APIs with platform-specific implementations.',
+  },
+  {
+    term: 'Compose Multiplatform',
+    definition:
+      "JetBrains' Compose-based UI toolkit that can be used with Kotlin Multiplatform for shared UI.",
+  },
+  {
+    term: 'Native UI',
+    definition:
+      'Platform-specific user interface code written with platform-native frameworks such as SwiftUI or Jetpack Compose.',
+  },
+  {
+    term: 'Interop',
+    definition:
+      'The ability for one stack or language layer to call into another platform or runtime layer.',
+  },
+  {
+    term: 'Platform Ownership',
+    definition:
+      'How much autonomy Android and iOS teams retain over their own code, UI, and architecture.',
+  },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.rn-kmp-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.rn-kmp-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.rn-kmp-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.rn-kmp-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.rn-kmp-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.rn-kmp-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.rn-kmp-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.rn-kmp-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.rn-kmp-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.rn-kmp-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.rn-kmp-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.rn-kmp-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.rn-kmp-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.rn-kmp-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.rn-kmp-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.rn-kmp-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.rn-kmp-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.rn-kmp-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.rn-kmp-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.rn-kmp-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.rn-kmp-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.rn-kmp-help-content p,
-.rn-kmp-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.rn-kmp-help-content p {
-  margin: 0 0 10px;
-}
-
-.rn-kmp-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.rn-kmp-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.rn-kmp-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.rn-kmp-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .rn-kmp-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .rn-kmp-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .rn-kmp-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -543,154 +367,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ReactNativeVsKotlinMultiplatformPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'React Native vs Kotlin Multiplatform',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `React Native vs Kotlin Multiplatform (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'React Native vs Kotlin Multiplatform',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="rn-kmp-help-page">
-      <style>{helpStyles}</style>
-      <div className="rn-kmp-help-window" role="presentation">
-        <header className="rn-kmp-help-titlebar">
-          <span className="rn-kmp-help-titletext">React Native vs Kotlin Multiplatform</span>
-          <div className="rn-kmp-help-controls">
-            <button className="rn-kmp-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="rn-kmp-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="React Native vs Kotlin Multiplatform"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">React Native vs Kotlin Multiplatform</h1>
+      <p className="rn-kmp-help-doc-subtitle">
+        Manual-style comparison of shared UI, shared logic, platform ownership, and long-term mobile
+        architecture tradeoffs.
+      </p>
 
-        <div className="rn-kmp-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`rn-kmp-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="rn-kmp-help-main">
-          <aside className="rn-kmp-help-toc" aria-label="Table of contents">
-            <h2 className="rn-kmp-help-toc-title">Contents</h2>
-            <ul className="rn-kmp-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="rn-kmp-help-content">
-            <h1 className="rn-kmp-help-doc-title">React Native vs Kotlin Multiplatform</h1>
-            <p className="rn-kmp-help-doc-subtitle">
-              Manual-style comparison of shared UI, shared logic, platform ownership, and long-term mobile architecture tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="rn-kmp-help-section">
-                    <h2 className="rn-kmp-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="rn-kmp-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="rn-kmp-help-section">
-                  <h2 className="rn-kmp-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="rn-kmp-help-section">
-                  <h2 className="rn-kmp-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="rn-kmp-help-subheading">{snippet.label}</h3>
-                      <div className="rn-kmp-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="rn-kmp-help-section">
-                <h2 className="rn-kmp-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

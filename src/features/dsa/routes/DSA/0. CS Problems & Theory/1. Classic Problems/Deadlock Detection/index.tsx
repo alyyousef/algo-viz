@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -380,233 +380,6 @@ const keyTakeaways = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const deadlockHelpStyles = `
-.dd-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.dd-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.dd-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.dd-help-title {
-  position: absolute;
-  inset: 0 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.dd-help-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.dd-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.dd-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.dd-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  color: #000;
-  padding: 5px 10px 4px;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.dd-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.dd-help-main {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.dd-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.dd-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.dd-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.dd-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.dd-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.dd-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.dd-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.dd-help-section {
-  margin: 0 0 20px;
-}
-
-.dd-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.dd-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.dd-help-content p,
-.dd-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.dd-help-content p {
-  margin: 0 0 10px;
-}
-
-.dd-help-content ul,
-.dd-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.dd-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.dd-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  overflow: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.dd-help-codebox code {
-  display: block;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-}
-
-@media (max-width: 900px) {
-  .dd-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .dd-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 560px) {
-  .dd-help-title {
-    inset: 0 44px;
-    font-size: 13px;
-  }
-
-  .dd-help-content {
-    padding: 12px 14px 16px;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -641,339 +414,249 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 export default function DeadlockDetectionPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Deadlock Detection (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Deadlock Detection',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Deadlock Detection',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="dd-help-page">
-      <style>{deadlockHelpStyles}</style>
-      <div className="dd-help-window" role="presentation">
-        <header className="dd-help-titlebar">
-          <span className="dd-help-title">Deadlock Detection</span>
-          <div className="dd-help-controls">
-            <button
-              className="dd-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="dd-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Deadlock Detection"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Deadlock Detection</h1>
+      <p>
+        Deadlock detection is the pragmatic alternative to deadlock avoidance. Instead of preventing
+        unsafe allocations, the system permits them and periodically checks whether processes are
+        stuck in a circular wait. If so, it chooses a recovery strategy to break the deadlock.
+      </p>
 
-        <div className="dd-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`dd-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="dd-help-main">
-          <aside className="dd-help-toc" aria-label="Table of contents">
-            <h2 className="dd-help-toc-title">Contents</h2>
-            <ul className="dd-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+          <hr className="bin98-divider" />
+
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {history.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {coreConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-graphs" className="bin98-section">
+            <h2 className="bin98-heading">Graph Models</h2>
+            {resourceGraphs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-thinking" className="bin98-section">
+            <h2 className="bin98-heading">How To Think About It</h2>
+            {howToThink.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">Detection Workflow</h2>
+            {detectionWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-algorithms" className="bin98-section">
+            <h2 className="bin98-heading">Detection Algorithms</h2>
+            {algorithms.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Notes</h2>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-recovery" className="bin98-section">
+            <h2 className="bin98-heading">Recovery Strategies</h2>
+            {recoveryStrategies.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+            <h3 className="bin98-subheading">Victim Selection Criteria</h3>
+            {victimSelection.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-policy" className="bin98-section">
+            <h2 className="bin98-heading">Policy and Trade-offs</h2>
+            <h3 className="bin98-subheading">Detection Policy</h3>
+            {detectionPolicy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Compare and Contrast</h3>
+            {comparisons.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Trade-offs</h3>
+            {tradeoffs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-evaluation" className="bin98-section">
+            <h2 className="bin98-heading">How To Evaluate a Detector</h2>
+            {evaluationChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((pitfall) => (
+                <li key={pitfall.mistake}>
+                  <strong>{pitfall.mistake}:</strong> {pitfall.description}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="dd-help-content">
-            <h1 className="dd-help-doc-title">Deadlock Detection</h1>
-            <p>
-              Deadlock detection is the pragmatic alternative to deadlock avoidance. Instead of
-              preventing unsafe allocations, the system permits them and periodically checks whether
-              processes are stuck in a circular wait. If so, it chooses a recovery strategy to break
-              the deadlock.
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-steps" className="bin98-section">
+            <h2 className="bin98-heading">Matrix-Based Detection Steps</h2>
+            <ol>
+              {detectionSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+
+          <section id="ex-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Examples</h2>
+            {workedExample.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <pre className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </pre>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="ex-snippets" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Sketches</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <pre className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </pre>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="ex-real-world" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Use</h2>
+            <h3 className="bin98-subheading">Patterns</h3>
+            {realWorldPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Connections</h3>
+            {realWorld.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="dd-help-section">
-                  <h2 className="dd-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="dd-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="dd-help-divider" />
-
-                <section id="bp-history" className="dd-help-section">
-                  <h2 className="dd-help-heading">Historical Context</h2>
-                  {history.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="dd-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="dd-help-divider" />
-
-                <section id="bp-takeaways" className="dd-help-section">
-                  <h2 className="dd-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-foundations" className="dd-help-section">
-                  <h2 className="dd-help-heading">Foundations</h2>
-                  {coreConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-graphs" className="dd-help-section">
-                  <h2 className="dd-help-heading">Graph Models</h2>
-                  {resourceGraphs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-thinking" className="dd-help-section">
-                  <h2 className="dd-help-heading">How To Think About It</h2>
-                  {howToThink.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-workflow" className="dd-help-section">
-                  <h2 className="dd-help-heading">Detection Workflow</h2>
-                  {detectionWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-algorithms" className="dd-help-section">
-                  <h2 className="dd-help-heading">Detection Algorithms</h2>
-                  {algorithms.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-correctness" className="dd-help-section">
-                  <h2 className="dd-help-heading">Correctness Notes</h2>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-recovery" className="dd-help-section">
-                  <h2 className="dd-help-heading">Recovery Strategies</h2>
-                  {recoveryStrategies.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="dd-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                  <h3 className="dd-help-subheading">Victim Selection Criteria</h3>
-                  {victimSelection.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-policy" className="dd-help-section">
-                  <h2 className="dd-help-heading">Policy and Trade-offs</h2>
-                  <h3 className="dd-help-subheading">Detection Policy</h3>
-                  {detectionPolicy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="dd-help-subheading">Compare and Contrast</h3>
-                  {comparisons.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="dd-help-subheading">Trade-offs</h3>
-                  {tradeoffs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-evaluation" className="dd-help-section">
-                  <h2 className="dd-help-heading">How To Evaluate a Detector</h2>
-                  {evaluationChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="dd-help-section">
-                  <h2 className="dd-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((pitfall) => (
-                      <li key={pitfall.mistake}>
-                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-steps" className="dd-help-section">
-                  <h2 className="dd-help-heading">Matrix-Based Detection Steps</h2>
-                  <ol>
-                    {detectionSteps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-
-                <section id="ex-worked" className="dd-help-section">
-                  <h2 className="dd-help-heading">Worked Examples</h2>
-                  {workedExample.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="dd-help-subheading">{example.title}</h3>
-                      <pre className="dd-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </pre>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="ex-snippets" className="dd-help-section">
-                  <h2 className="dd-help-heading">Algorithm Sketches</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="dd-help-subheading">{example.title}</h3>
-                      <pre className="dd-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </pre>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="ex-real-world" className="dd-help-section">
-                  <h2 className="dd-help-heading">Real-World Use</h2>
-                  <h3 className="dd-help-subheading">Patterns</h3>
-                  {realWorldPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="dd-help-subheading">Connections</h3>
-                  {realWorld.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="dd-help-section">
-                <h2 className="dd-help-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

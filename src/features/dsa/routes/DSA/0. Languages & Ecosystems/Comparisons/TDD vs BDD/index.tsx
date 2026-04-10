@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -34,8 +34,6 @@ type GlossarySection = {
   }>
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -45,7 +43,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 
 const introParagraphs = [
   'TDD and BDD are related but not interchangeable practices. Test-Driven Development focuses on driving implementation through small failing tests and the red-green-refactor cycle. Behavior-Driven Development grew from TDD but shifts emphasis toward shared understanding of behavior, examples, and business-readable specifications. The serious comparison is not which one is more advanced. It is what level of behavior the team is trying to drive, who participates in the conversation, and whether the tests are serving design or communication or both.',
-  'TDD is usually centered on the programmer\'s feedback loop. Write a failing test, make it pass, then refactor. BDD broadens that loop by making examples and expected behavior more visible to product, QA, and business stakeholders, often through scenario language such as Given, When, Then. This does not mean BDD replaces TDD. In many mature teams, BDD helps decide what should happen and TDD helps drive how it is implemented safely at a lower level.',
+  "TDD is usually centered on the programmer's feedback loop. Write a failing test, make it pass, then refactor. BDD broadens that loop by making examples and expected behavior more visible to product, QA, and business stakeholders, often through scenario language such as Given, When, Then. This does not mean BDD replaces TDD. In many mature teams, BDD helps decide what should happen and TDD helps drive how it is implemented safely at a lower level.",
   'This page is intentionally comprehensive. It covers red-green-refactor, discovery and formulation, executable specifications, scenario language, test levels, collaboration patterns, anti-patterns, tooling misconceptions, and how teams often combine TDD and BDD rather than choosing one as an ideology.',
 ]
 
@@ -63,7 +61,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-core-difference',
     title: 'The Core Difference',
     paragraphs: [
-      'TDD usually starts from the developer\'s perspective: what small failing test will drive the next slice of implementation. It tends to live close to code design, unit-level behavior, API shape, and refactoring confidence. The conversation is often technical and immediate.',
+      "TDD usually starts from the developer's perspective: what small failing test will drive the next slice of implementation. It tends to live close to code design, unit-level behavior, API shape, and refactoring confidence. The conversation is often technical and immediate.",
       'BDD usually starts from expected behavior and examples: what should the system do for a user, role, or business process, and how can that expectation be expressed in a shared language. It tends to live closer to acceptance criteria, domain understanding, and communication across disciplines.',
     ],
     bullets: [
@@ -91,7 +89,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-when-bdd-fits',
     title: 'When BDD Is Usually the Better Fit',
     paragraphs: [
-      'BDD is usually the better fit when misunderstanding requirements is a major source of waste, when product and QA need a stronger shared language with engineering, or when the system\'s value is best clarified through concrete examples and scenarios. It is especially useful in product-heavy systems where the distinction between correct implementation and correct behavior is operationally important.',
+      "BDD is usually the better fit when misunderstanding requirements is a major source of waste, when product and QA need a stronger shared language with engineering, or when the system's value is best clarified through concrete examples and scenarios. It is especially useful in product-heavy systems where the distinction between correct implementation and correct behavior is operationally important.",
       'BDD is also a strong fit when teams want executable specifications that connect acceptance expectations to automation. The key word is specification, not merely test. The scenarios are meant to express intended behavior in a way the whole team can discuss.',
     ],
     bullets: [
@@ -278,9 +276,7 @@ Scenario: Registered user requests a reset link
   {
     id: 'examples-combined',
     title: 'How They Combine',
-    description: [
-      'A mature team often uses both practices at different levels.',
-    ],
+    description: ['A mature team often uses both practices at different levels.'],
     code: `BDD:
   agree on example
   define expected business behavior
@@ -318,9 +314,7 @@ Fake BDD:
   {
     id: 'examples-selection',
     title: 'Selection Heuristic',
-    description: [
-      'These short rules are usually more useful than arguing over terminology.',
-    ],
+    description: ['These short rules are usually more useful than arguing over terminology.'],
     code: `Choose TDD emphasis when:
   code design quality is the main pain
   refactoring confidence is low
@@ -365,8 +359,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Red',
-        definition:
-          'The stage where a new test fails because the behavior is not implemented yet.',
+        definition: 'The stage where a new test fails because the behavior is not implemented yet.',
       },
       {
         term: 'Green',
@@ -375,8 +368,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Refactor',
-        definition:
-          'Improving code and test design while keeping the tests passing.',
+        definition: 'Improving code and test design while keeping the tests passing.',
       },
       {
         term: 'Unit Test',
@@ -411,8 +403,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Ubiquitous Language',
-        definition:
-          'A shared vocabulary used across roles to describe behavior consistently.',
+        definition: 'A shared vocabulary used across roles to describe behavior consistently.',
       },
       {
         term: 'Discovery',
@@ -447,8 +438,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Specification',
-        definition:
-          'A clear statement of expected system behavior or constraints.',
+        definition: 'A clear statement of expected system behavior or constraints.',
       },
     ],
   },
@@ -491,240 +481,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
     { id: 'glossary-bdd', label: 'BDD Terms' },
     { id: 'glossary-shared', label: 'Shared Terms' },
   ],
-}
-
-const pageStyles = `
-.tdd-bdd-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.tdd-bdd-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.tdd-bdd-help-titlebar {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.tdd-bdd-help-titletext {
-  grid-column: 2;
-  justify-self: center;
-  font-size: 15px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.tdd-bdd-help-controls {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  gap: 2px;
-}
-
-.tdd-bdd-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.tdd-bdd-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.tdd-bdd-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.tdd-bdd-help-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.tdd-bdd-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.tdd-bdd-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.tdd-bdd-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.tdd-bdd-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tdd-bdd-help-toc-item {
-  margin: 0 0 8px;
-}
-
-.tdd-bdd-help-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.tdd-bdd-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.tdd-bdd-help-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.tdd-bdd-help-section {
-  margin: 0 0 20px;
-}
-
-.tdd-bdd-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.tdd-bdd-help-content p,
-.tdd-bdd-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.tdd-bdd-help-content p {
-  margin: 0 0 10px;
-}
-
-.tdd-bdd-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.tdd-bdd-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.tdd-bdd-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.tdd-bdd-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .tdd-bdd-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .tdd-bdd-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .tdd-bdd-help-window {
-    min-height: auto;
-  }
-
-  .tdd-bdd-help-titlebar {
-    grid-template-columns: 1fr auto;
-    row-gap: 4px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .tdd-bdd-help-titletext {
-    grid-column: 1 / span 2;
-    grid-row: 1;
-    white-space: normal;
-    padding: 0 28px;
-  }
-
-  .tdd-bdd-help-controls {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -781,128 +537,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function TddVsBddPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'TDD vs BDD',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `TDD vs BDD (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'TDD vs BDD',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="tdd-bdd-help-page">
-      <style>{pageStyles}</style>
-      <div className="tdd-bdd-help-window" role="presentation">
-        <header className="tdd-bdd-help-titlebar">
-          <span className="tdd-bdd-help-titletext">TDD vs BDD</span>
-          <div className="tdd-bdd-help-controls">
-            <button
-              className="tdd-bdd-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="tdd-bdd-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="TDD vs BDD"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">TDD vs BDD</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="tdd-bdd-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`tdd-bdd-help-tab ${activeTab === tab.id ? 'tdd-bdd-help-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="tdd-bdd-help-main">
-          <aside className="tdd-bdd-help-toc" aria-label="Table of contents">
-            <h2 className="tdd-bdd-help-toc-title">Contents</h2>
-            <ul className="tdd-bdd-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="tdd-bdd-help-toc-item">
-                  <a href={`#${section.id}`} className="tdd-bdd-help-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="tdd-bdd-help-content">
-            <h1 className="tdd-bdd-help-doc-title">TDD vs BDD</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

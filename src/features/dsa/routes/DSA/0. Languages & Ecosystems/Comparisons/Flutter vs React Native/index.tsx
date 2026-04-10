@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -98,7 +96,7 @@ const conceptSections = [
     title: 'Language and Developer Experience',
     paragraphs: [
       'Flutter uses Dart, a strongly typed language with an object-oriented flavor and syntax designed to support productive UI composition. Teams working in Flutter typically spend most of their time inside one coherent language and framework surface, which can make the development experience feel focused once the team is fully onboarded.',
-      'React Native uses JavaScript or TypeScript with React. For many organizations, this is a major advantage because the language, tooling patterns, and conceptual model may already be familiar from web frontend work. The ability to hire from the broader JavaScript ecosystem and share engineering habits with web teams is often one of React Native\'s strongest non-technical advantages.',
+      "React Native uses JavaScript or TypeScript with React. For many organizations, this is a major advantage because the language, tooling patterns, and conceptual model may already be familiar from web frontend work. The ability to hire from the broader JavaScript ecosystem and share engineering habits with web teams is often one of React Native's strongest non-technical advantages.",
       'The tradeoff is straightforward. Flutter asks for a larger shift up front but can repay that shift with a more integrated UI stack. React Native lowers the language barrier for React teams, but the surrounding architecture may involve more package selection, more runtime boundaries, and more framework-to-native coordination.',
     ],
   },
@@ -106,7 +104,7 @@ const conceptSections = [
     id: 'core-ui',
     title: 'UI Composition and Styling',
     paragraphs: [
-      'Flutter expresses the interface as nested widgets. Layout, typography, animation, and composition are all built inside the same widget-driven model, which makes the framework particularly good at creating custom design systems and highly tailored user flows. The cost is that teams must learn Flutter\'s own vocabulary for layout and composition rather than relying on HTML, CSS, or native platform metaphors.',
+      "Flutter expresses the interface as nested widgets. Layout, typography, animation, and composition are all built inside the same widget-driven model, which makes the framework particularly good at creating custom design systems and highly tailored user flows. The cost is that teams must learn Flutter's own vocabulary for layout and composition rather than relying on HTML, CSS, or native platform metaphors.",
       'React Native expresses the interface through React components backed by native elements such as View, Text, ScrollView, and platform modules. Styling follows a JavaScript object model rather than traditional CSS, and the component structure feels familiar to React developers. This can make everyday UI work productive for teams already comfortable with React, especially if they do not need a radically custom rendering approach.',
       'In practice, Flutter often wins when the design system is ambitious and highly bespoke. React Native often wins when the team wants the ergonomics of React plus a UI layer that remains closer to native idioms. The question is not just how you write the screen, but how often the product needs to depart from standard platform behavior and how much that matters to the brand.',
     ],
@@ -125,7 +123,7 @@ const conceptSections = [
     title: 'Native Interop and Platform APIs',
     paragraphs: [
       'Both frameworks eventually rely on native code for platform-specific behavior, hardware access, or integration with vendor SDKs. The practical question is not whether native code disappears, because it does not. The question is how cleanly each framework lets the team cross that boundary and how often that boundary becomes part of normal delivery work.',
-      'Flutter uses platform channels and plugin conventions to bridge into iOS and Android code. This works well, but it keeps the native interaction inside Flutter\'s own architecture and patterns. Teams that want a single dominant framework surface often like that consistency.',
+      "Flutter uses platform channels and plugin conventions to bridge into iOS and Android code. This works well, but it keeps the native interaction inside Flutter's own architecture and patterns. Teams that want a single dominant framework surface often like that consistency.",
       'React Native exposes native interop in a way that often feels closer to the host platforms and to JavaScript module conventions. For teams already comfortable with native mobile integration patterns or already expecting to mix significant native code into the app, React Native may feel more natural because the hybrid boundary is more explicit from the start.',
     ],
   },
@@ -271,456 +269,148 @@ const glossary = [
   },
 ]
 
-const win98HelpStyles = `
-.frn98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.frn98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.frn98-titlebar {
-  position: relative;
-  min-height: 24px;
-  padding: 2px 4px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.frn98-title {
-  position: absolute;
-  inset: 0 52px 0 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
-}
-
-.frn98-title-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.frn98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  text-decoration: none;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.frn98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.frn98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  color: #000000;
-  padding: 5px 10px 4px;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.frn98-tab[aria-selected="true"] {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.frn98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.frn98-toc {
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-  overflow: auto;
-}
-
-.frn98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.frn98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.frn98-toc-item + .frn98-toc-item {
-  margin-top: 8px;
-}
-
-.frn98-toc-link {
-  color: #000000;
-  font-size: 12px;
-  line-height: 1.4;
-  text-decoration: none;
-}
-
-.frn98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.frn98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1.15;
-}
-
-.frn98-intro {
-  margin: 0 0 14px;
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.frn98-section {
-  margin: 0 0 22px;
-}
-
-.frn98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.frn98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.frn98-content p,
-.frn98-content li {
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.frn98-content p {
-  margin: 0 0 10px;
-}
-
-.frn98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.frn98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.frn98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.frn98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .frn98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .frn98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .frn98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function FlutterVsReactNativePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const rawTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(rawTab) ? rawTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-  const currentSections = sectionLinks[activeTab]
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-
-    document.title = `Flutter vs React Native (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Flutter vs React Native',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Flutter vs React Native',
+    defaultTab: 'big-picture',
+  })
   return (
-    <div className="frn98-page">
-      <style>{win98HelpStyles}</style>
-      <div className="frn98-window" role="presentation">
-        <header className="frn98-titlebar">
-          <span className="frn98-title">Flutter vs React Native</span>
-          <div className="frn98-title-controls">
-            <button className="frn98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link className="frn98-control" to="/algoViz" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Flutter vs React Native"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Flutter vs React Native</h1>
+      <p className="frn98-intro">
+        This page compares two major cross-platform mobile frameworks in the dimensions that usually
+        matter in real engineering decisions: architecture, rendering, syntax and APIs, ecosystem,
+        native integration, performance, staffing, use cases, tradeoffs, and the kinds of teams that
+        benefit most from each approach.
+      </p>
 
-        <div className="frn98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              className="frn98-tab"
-              aria-selected={activeTab === tab.id}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections[0]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-when-flutter-fits" className="bin98-section">
+            <h2 className="bin98-heading">When Flutter Fits Better</h2>
+            {bigPictureSections[1]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-when-rn-fits" className="bin98-section">
+            <h2 className="bin98-heading">When React Native Fits Better</h2>
+            {bigPictureSections[2]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-tradeoffs" className="bin98-section">
+            <h2 className="bin98-heading">Tradeoffs and Decision Drivers</h2>
+            {bigPictureSections[3]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          {conceptSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {index < conceptSections.length - 1 ? <hr className="bin98-divider" /> : null}
+            </section>
           ))}
-        </div>
+        </>
+      )}
 
-        <div className="frn98-main">
-          <aside className="frn98-toc" aria-label="Table of contents">
-            <h2 className="frn98-toc-title">Contents</h2>
-            <ul className="frn98-toc-list">
-              {currentSections.map((section) => (
-                <li key={section.id} className="frn98-toc-item">
-                  <a className="frn98-toc-link" href={`#${section.id}`}>
-                    {section.label}
-                  </a>
-                </li>
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-ui" className="bin98-section">
+            <h2 className="bin98-heading">{examples.ui.title}</h2>
+            <p>{examples.ui.intro}</p>
+            <h3 className="bin98-subheading">Flutter</h3>
+            <div className="bin98-codebox">
+              <code>{examples.ui.flutterCode}</code>
+            </div>
+            <h3 className="bin98-subheading">React Native</h3>
+            <div className="bin98-codebox">
+              <code>{examples.ui.reactNativeCode}</code>
+            </div>
+            <ul>
+              {examples.ui.notes.map((note) => (
+                <li key={note}>{note}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="frn98-content">
-            <h1 className="frn98-doc-title">Flutter vs React Native</h1>
-            <p className="frn98-intro">
-              This page compares two major cross-platform mobile frameworks in the dimensions that usually matter in real
-              engineering decisions: architecture, rendering, syntax and APIs, ecosystem, native integration, performance,
-              staffing, use cases, tradeoffs, and the kinds of teams that benefit most from each approach.
+          <hr className="bin98-divider" />
+
+          <section id="ex-platform" className="bin98-section">
+            <h2 className="bin98-heading">{examples.platform.title}</h2>
+            <p>{examples.platform.intro}</p>
+            <h3 className="bin98-subheading">Flutter</h3>
+            <div className="bin98-codebox">
+              <code>{examples.platform.flutterCode}</code>
+            </div>
+            <h3 className="bin98-subheading">React Native</h3>
+            <div className="bin98-codebox">
+              <code>{examples.platform.reactNativeCode}</code>
+            </div>
+            <ul>
+              {examples.platform.notes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="ex-reference" className="bin98-section">
+            <h2 className="bin98-heading">Decision Reference</h2>
+            <p>
+              Use this summary when the framework comparison needs to become a practical decision
+              for a real mobile team.
             </p>
+            <ul>
+              {decisionReference.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="frn98-section">
-                  <h2 className="frn98-heading">Overview</h2>
-                  {bigPictureSections[0]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-
-                <hr className="frn98-divider" />
-
-                <section id="bp-when-flutter-fits" className="frn98-section">
-                  <h2 className="frn98-heading">When Flutter Fits Better</h2>
-                  {bigPictureSections[1]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-
-                <hr className="frn98-divider" />
-
-                <section id="bp-when-rn-fits" className="frn98-section">
-                  <h2 className="frn98-heading">When React Native Fits Better</h2>
-                  {bigPictureSections[2]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-
-                <hr className="frn98-divider" />
-
-                <section id="bp-tradeoffs" className="frn98-section">
-                  <h2 className="frn98-heading">Tradeoffs and Decision Drivers</h2>
-                  {bigPictureSections[3]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {conceptSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="frn98-section">
-                    <h2 className="frn98-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                    {index < conceptSections.length - 1 ? <hr className="frn98-divider" /> : null}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-ui" className="frn98-section">
-                  <h2 className="frn98-heading">{examples.ui.title}</h2>
-                  <p>{examples.ui.intro}</p>
-                  <h3 className="frn98-subheading">Flutter</h3>
-                  <div className="frn98-codebox">
-                    <code>{examples.ui.flutterCode}</code>
-                  </div>
-                  <h3 className="frn98-subheading">React Native</h3>
-                  <div className="frn98-codebox">
-                    <code>{examples.ui.reactNativeCode}</code>
-                  </div>
-                  <ul>
-                    {examples.ui.notes.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="frn98-divider" />
-
-                <section id="ex-platform" className="frn98-section">
-                  <h2 className="frn98-heading">{examples.platform.title}</h2>
-                  <p>{examples.platform.intro}</p>
-                  <h3 className="frn98-subheading">Flutter</h3>
-                  <div className="frn98-codebox">
-                    <code>{examples.platform.flutterCode}</code>
-                  </div>
-                  <h3 className="frn98-subheading">React Native</h3>
-                  <div className="frn98-codebox">
-                    <code>{examples.platform.reactNativeCode}</code>
-                  </div>
-                  <ul>
-                    {examples.platform.notes.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="frn98-divider" />
-
-                <section id="ex-reference" className="frn98-section">
-                  <h2 className="frn98-heading">Decision Reference</h2>
-                  <p>
-                    Use this summary when the framework comparison needs to become a practical decision for a real mobile team.
-                  </p>
-                  <ul>
-                    {decisionReference.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="frn98-section">
-                <h2 className="frn98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const overviewSections = [
   {
@@ -414,541 +412,206 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'lar98-glossary', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
-const laravelHelpStyles = `
-.lar98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.lar98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.lar98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.lar98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.lar98-title-controls {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.lar98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.lar98-control:focus-visible,
-.lar98-tab:focus-visible,
-.lar98-toc-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
-.lar98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.lar98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b7b7b7;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.lar98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.lar98-main {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.lar98-toc {
-  overflow: auto;
-  padding: 12px 12px 18px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.lar98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.lar98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.lar98-toc-item + .lar98-toc-item {
-  margin-top: 8px;
-}
-
-.lar98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.lar98-content {
-  overflow: auto;
-  padding: 16px 22px 24px;
-  background: #ffffff;
-}
-
-.lar98-doc-title {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.lar98-intro {
-  margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.lar98-section {
-  margin: 0 0 22px;
-}
-
-.lar98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.lar98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.lar98-divider {
-  margin: 14px 0 16px;
-  border: 0;
-  border-top: 1px solid #d4d4d4;
-}
-
-.lar98-content p,
-.lar98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.lar98-content p {
-  margin: 0 0 10px;
-}
-
-.lar98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.lar98-content li + li {
-  margin-top: 4px;
-}
-
-.lar98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px 9px;
-  background: #f3f3f3;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.lar98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .lar98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .lar98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .lar98-title {
-    font-size: 13px;
-    max-width: calc(100% - 72px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .lar98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
 export default function LaravelPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const requestedTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(location.search)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Laravel (Backend) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, location.search, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    if (tab === activeTab) {
-      return
-    }
-
-    const nextParams = new URLSearchParams(location.search)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Laravel (Backend)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Laravel (Backend)',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="lar98-help-page">
-      <style>{laravelHelpStyles}</style>
-      <div className="lar98-window" role="presentation">
-        <header className="lar98-titlebar">
-          <span className="lar98-title">Laravel (Backend)</span>
-          <div className="lar98-title-controls">
-            <button
-              className="lar98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="lar98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Laravel (Backend)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Laravel (Backend)</h1>
+      <p className="lar98-intro">
+        This page is a backend-focused overview of Laravel as a full-featured PHP application
+        framework. It explains Laravel's routing and middleware model, Eloquent ORM, service
+        container, Blade and full-stack support, queue and job workflows, operational tradeoffs, and
+        the architectural discipline needed to keep Laravel systems maintainable as they grow.
+      </p>
 
-        <div className="lar98-tabs" role="tablist" aria-label="Laravel Backend Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`lar98-tab ${activeTab === tab.id ? 'lar98-tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="lar98-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                <p>{section.body}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="lar98-main">
-          <aside className="lar98-toc" aria-label="Table of contents">
-            <h2 className="lar98-toc-title">Contents</h2>
-            <ul className="lar98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="lar98-toc-item">
-                  <a href={`#${section.id}`} className="lar98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="lar98-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <ul>
+              {whyItMatters.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="lar98-content">
-            <h1 className="lar98-doc-title">Laravel (Backend)</h1>
-            <p className="lar98-intro">
-              This page is a backend-focused overview of Laravel as a full-featured PHP application
-              framework. It explains Laravel's routing and middleware model, Eloquent ORM, service
-              container, Blade and full-stack support, queue and job workflows, operational
-              tradeoffs, and the architectural discipline needed to keep Laravel systems
-              maintainable as they grow.
+          <hr className="bin98-divider" />
+
+          <section id="lar98-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="lar98-themes" className="bin98-section">
+            <h2 className="bin98-heading">Big Picture Themes</h2>
+            {bigPictureThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="lar98-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="lar98-signals" className="bin98-section">
+            <h2 className="bin98-heading">Topic Signals</h2>
+            {topicSignals.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {coreFoundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-features" className="bin98-section">
+            <h2 className="bin98-heading">Framework Features</h2>
+            {frameworkFeatures.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-runtime" className="bin98-section">
+            <h2 className="bin98-heading">Runtime and Operations</h2>
+            {runtimeAndOperations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-uses" className="bin98-section">
+            <h2 className="bin98-heading">Ecosystem Uses</h2>
+            {ecosystemUses.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-failures" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="lar98-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Study Checklist</h2>
+            <ul>
+              {studyChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>
+                <strong>Area:</strong> {example.area}
+              </p>
+              <p>{example.intro}</p>
+              <p>
+                <strong>Why this example fits:</strong> {example.whyFit}
+              </p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="lar98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((entry) => (
+            <p key={entry.term}>
+              <strong>{entry.term}:</strong> {entry.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="lar98-overview" className="lar98-section">
-                  <h2 className="lar98-heading">Overview</h2>
-                  {overviewSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="lar98-subheading">{section.title}</h3>
-                      <p>{section.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="lar98-divider" />
-
-                <section id="lar98-why" className="lar98-section">
-                  <h2 className="lar98-heading">Why It Matters</h2>
-                  <ul>
-                    {whyItMatters.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="lar98-divider" />
-
-                <section id="lar98-history" className="lar98-section">
-                  <h2 className="lar98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="lar98-divider" />
-
-                <section id="lar98-themes" className="lar98-section">
-                  <h2 className="lar98-heading">Big Picture Themes</h2>
-                  {bigPictureThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="lar98-divider" />
-
-                <section id="lar98-takeaways" className="lar98-section">
-                  <h2 className="lar98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="lar98-signals" className="lar98-section">
-                  <h2 className="lar98-heading">Topic Signals</h2>
-                  {topicSignals.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-foundations" className="lar98-section">
-                  <h2 className="lar98-heading">Foundations</h2>
-                  {coreFoundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-features" className="lar98-section">
-                  <h2 className="lar98-heading">Framework Features</h2>
-                  {frameworkFeatures.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-runtime" className="lar98-section">
-                  <h2 className="lar98-heading">Runtime and Operations</h2>
-                  {runtimeAndOperations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-uses" className="lar98-section">
-                  <h2 className="lar98-heading">Ecosystem Uses</h2>
-                  {ecosystemUses.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-compare" className="lar98-section">
-                  <h2 className="lar98-heading">Compare and Contrast</h2>
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-failures" className="lar98-section">
-                  <h2 className="lar98-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lar98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="lar98-checklist" className="lar98-section">
-                  <h2 className="lar98-heading">Study Checklist</h2>
-                  <ul>
-                    {studyChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="lar98-section">
-                    <h2 className="lar98-heading">{example.title}</h2>
-                    <p>
-                      <strong>Area:</strong> {example.area}
-                    </p>
-                    <p>{example.intro}</p>
-                    <p>
-                      <strong>Why this example fits:</strong> {example.whyFit}
-                    </p>
-                    <div className="lar98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="lar98-glossary" className="lar98-section">
-                <h2 className="lar98-heading">Glossary</h2>
-                {glossary.map((entry) => (
-                  <p key={entry.term}>
-                    <strong>{entry.term}:</strong> {entry.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

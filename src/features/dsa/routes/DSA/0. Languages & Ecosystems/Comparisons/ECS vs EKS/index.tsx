@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'ECS vs EKS'
-const pageSubtitle = 'Choosing between AWS-native container orchestration and AWS-managed Kubernetes.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Choosing between AWS-native container orchestration and AWS-managed Kubernetes.'
 const bigPictureSections = [
   {
     title: 'Same problem space',
@@ -20,7 +21,7 @@ const bigPictureSections = [
   {
     title: 'Primary difference',
     paragraphs: [
-      'ECS is AWS\'s own container orchestrator. It gives you tasks, services, capacity providers, IAM roles, and AWS-native integrations without asking the team to operate Kubernetes concepts such as pods, deployments, ingress controllers, admission policy, and cluster add-on compatibility.',
+      "ECS is AWS's own container orchestrator. It gives you tasks, services, capacity providers, IAM roles, and AWS-native integrations without asking the team to operate Kubernetes concepts such as pods, deployments, ingress controllers, admission policy, and cluster add-on compatibility.",
       'EKS is managed Kubernetes on AWS. AWS manages the Kubernetes control plane, but the team still owns node strategy, add-ons, workload identity, ingress patterns, upgrade planning, policy, observability, and the broader cluster operating model.',
     ],
   },
@@ -60,7 +61,8 @@ const decisionGuide = [
     choice: 'Prefer ECS, often starting with Fargate.',
   },
   {
-    title: 'Need Kubernetes-native tooling, CRDs, operators, or strong Kubernetes alignment across teams',
+    title:
+      'Need Kubernetes-native tooling, CRDs, operators, or strong Kubernetes alignment across teams',
     choice: 'Prefer EKS.',
   },
   {
@@ -73,10 +75,12 @@ const decisionGuide = [
   },
   {
     title: 'Need only simple event-driven compute rather than a container platform',
-    choice: 'Neither may be the best default; Lambda or another higher-level service may fit better.',
+    choice:
+      'Neither may be the best default; Lambda or another higher-level service may fit better.',
   },
   {
-    title: 'Need fast onboarding for teams that mostly think in AWS services rather than Kubernetes resources',
+    title:
+      'Need fast onboarding for teams that mostly think in AWS services rather than Kubernetes resources',
     choice: 'Prefer ECS.',
   },
   {
@@ -88,11 +92,13 @@ const decisionGuide = [
     choice: 'Prefer EKS unless those requirements are actually negotiable.',
   },
   {
-    title: 'Need predictable AWS-native least-privilege patterns with less cluster-level governance work',
+    title:
+      'Need predictable AWS-native least-privilege patterns with less cluster-level governance work',
     choice: 'ECS is usually easier to keep disciplined.',
   },
   {
-    title: 'Need broad portability of deployment concepts across cloud or on-prem Kubernetes environments',
+    title:
+      'Need broad portability of deployment concepts across cloud or on-prem Kubernetes environments',
     choice: 'Prefer EKS.',
   },
 ]
@@ -479,7 +485,7 @@ const glossaryTerms = [
   {
     term: 'ECS',
     definition:
-      'Amazon Elastic Container Service, AWS\'s native container orchestrator built around tasks, services, and AWS-integrated operations.',
+      "Amazon Elastic Container Service, AWS's native container orchestrator built around tasks, services, and AWS-integrated operations.",
   },
   {
     term: 'EKS',
@@ -503,8 +509,7 @@ const glossaryTerms = [
   },
   {
     term: 'Managed node group',
-    definition:
-      'An EKS-managed worker-node lifecycle model for EC2-backed Kubernetes nodes.',
+    definition: 'An EKS-managed worker-node lifecycle model for EC2-backed Kubernetes nodes.',
   },
   {
     term: 'IRSA',
@@ -616,453 +621,161 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const ecsVsEksHelpStyles = `
-.ecs-vs-eks-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ecs-vs-eks-help-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.ecs-vs-eks-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ecs-vs-eks-help-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.ecs-vs-eks-help-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.ecs-vs-eks-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.ecs-vs-eks-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.ecs-vs-eks-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.ecs-vs-eks-help-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.ecs-vs-eks-help-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.ecs-vs-eks-help-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.ecs-vs-eks-help-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.ecs-vs-eks-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ecs-vs-eks-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.ecs-vs-eks-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ecs-vs-eks-help-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.ecs-vs-eks-help-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.ecs-vs-eks-help-section {
-  margin: 0 0 20px;
-}
-
-.ecs-vs-eks-help-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.ecs-vs-eks-help-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.ecs-vs-eks-help-content p,
-.ecs-vs-eks-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ecs-vs-eks-help-content p {
-  margin: 0 0 10px;
-}
-
-.ecs-vs-eks-help-content ul,
-.ecs-vs-eks-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ecs-vs-eks-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.ecs-vs-eks-help-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.ecs-vs-eks-help-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.ecs-vs-eks-help-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .ecs-vs-eks-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ecs-vs-eks-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .ecs-vs-eks-help-title-text {
-    position: static;
-    transform: none;
-    margin-left: 8px;
-    font-size: 14px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function EcsVsEksPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Ecs Vs Eks Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="ecs-vs-eks-help-page">
-      <style>{ecsVsEksHelpStyles}</style>
-      <div className="ecs-vs-eks-help-window" role="presentation">
-        <header className="ecs-vs-eks-help-titlebar">
-          <span className="ecs-vs-eks-help-title-text">{pageTitle}</span>
-          <div className="ecs-vs-eks-help-title-controls">
-            <button
-              className="ecs-vs-eks-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="ecs-vs-eks-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Ecs Vs Eks Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page compares ECS and EKS as platform choices rather than as marketing labels. The key
+        question is whether the team wants the smaller ECS operating model or wants Kubernetes
+        itself to be the application platform on AWS.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="ecs-vs-eks-help-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="ecs-vs-eks-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ecs-vs-eks-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="ecs-vs-eks-help-main">
-          <aside className="ecs-vs-eks-help-toc" aria-label="Table of contents">
-            <h2 className="ecs-vs-eks-help-toc-title">Contents</h2>
-            <ul className="ecs-vs-eks-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-decision" className="bin98-section">
+            <h2 className="bin98-heading">Decision Guide</h2>
+            <ul>
+              {decisionGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-lifecycle" className="bin98-section">
+            <h2 className="bin98-heading">Lifecycle Comparison</h2>
+            <ul>
+              {lifecycleComparison.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-questions" className="bin98-section">
+            <h2 className="bin98-heading">Decision Questions</h2>
+            <ul>
+              {decisionQuestions.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-          <main className="ecs-vs-eks-help-content">
-            <h1 className="ecs-vs-eks-help-doc-title">{pageTitle}</h1>
-            <p className="ecs-vs-eks-help-subheading">{pageSubtitle}</p>
-            <p>
-              This page compares ECS and EKS as platform choices rather than as marketing labels. The key question is whether the
-              team wants the smaller ECS operating model or wants Kubernetes itself to be the application platform on AWS.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-notes" className="bin98-section">
+            <h2 className="bin98-heading">Operating Notes</h2>
+            {operatingNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-workload-fit" className="bin98-section">
+            <h2 className="bin98-heading">Workload Fit by Scenario</h2>
+            {workloadFitCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="ecs-vs-eks-help-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="ecs-vs-eks-help-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-                <hr className="ecs-vs-eks-help-divider" />
-                <section id="bp-decision" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Decision Guide</h2>
-                  <ul>
-                    {decisionGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="ecs-vs-eks-help-divider" />
-                <section id="bp-lifecycle" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Lifecycle Comparison</h2>
-                  <ul>
-                    {lifecycleComparison.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="ecs-vs-eks-help-divider" />
-                <section id="bp-questions" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Decision Questions</h2>
-                  <ul>
-                    {decisionQuestions.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="ecs-vs-eks-help-section">
-                    <h2 className="ecs-vs-eks-help-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-notes" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Operating Notes</h2>
-                  {operatingNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-workload-fit" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Workload Fit by Scenario</h2>
-                  {workloadFitCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="ecs-vs-eks-help-section">
-                  <h2 className="ecs-vs-eks-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="ecs-vs-eks-help-section">
-                    <h2 className="ecs-vs-eks-help-heading">{example.title}</h2>
-                    <div className="ecs-vs-eks-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="ecs-vs-eks-help-section">
-                <h2 className="ecs-vs-eks-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="ecs-vs-eks-help-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="ecs-vs-eks-help-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a
+                  href={source}
+                  className="ecs-vs-eks-help-inline-link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

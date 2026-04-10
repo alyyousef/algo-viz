@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'TensorFlow'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -508,8 +506,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Operation',
-        definition:
-          'A computation that consumes tensors and produces tensors.',
+        definition: 'A computation that consumes tensors and produces tensors.',
       },
       {
         term: 'Eager execution',
@@ -564,8 +561,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Loss function',
-        definition:
-          'The scalar objective minimized during training.',
+        definition: 'The scalar objective minimized during training.',
       },
       {
         term: 'Metric',
@@ -579,8 +575,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'tf.data',
-        definition:
-          'The TensorFlow API for building scalable and composable input pipelines.',
+        definition: 'The TensorFlow API for building scalable and composable input pipelines.',
       },
       {
         term: 'Retracing',
@@ -656,230 +651,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   })),
 }
 
-const tensorflowHelpStyles = `
-.tensorflow-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.tensorflow-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.tensorflow-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.tensorflow-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.tensorflow-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.tensorflow-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.tensorflow-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.tensorflow-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.tensorflow-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.tensorflow-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.tensorflow-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.tensorflow-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.tensorflow-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tensorflow-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.tensorflow-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.tensorflow-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.tensorflow-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.tensorflow-help98-section {
-  margin: 0 0 20px;
-}
-
-.tensorflow-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.tensorflow-help98-content p,
-.tensorflow-help98-content li,
-.tensorflow-help98-content dd,
-.tensorflow-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.tensorflow-help98-content p,
-.tensorflow-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.tensorflow-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.tensorflow-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.tensorflow-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.tensorflow-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.tensorflow-help98-glossary {
-  margin: 0;
-}
-
-.tensorflow-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .tensorflow-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .tensorflow-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .tensorflow-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="tensorflow-help98-section">
@@ -937,128 +708,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function TensorFlowPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Tensor Flow Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="tensorflow-help98-page">
-      <style>{tensorflowHelpStyles}</style>
-      <div className="tensorflow-help98-window" role="presentation">
-        <header className="tensorflow-help98-titlebar">
-          <span className="tensorflow-help98-title">{PAGE_TITLE}</span>
-          <div className="tensorflow-help98-controls">
-            <button
-              className="tensorflow-help98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="tensorflow-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Tensor Flow Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="tensorflow-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`tensorflow-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="tensorflow-help98-main">
-          <aside className="tensorflow-help98-toc" aria-label="Table of contents">
-            <h2 className="tensorflow-help98-toc-title">Contents</h2>
-            <ul className="tensorflow-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="tensorflow-help98-content">
-            <h1 className="tensorflow-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="tensorflow-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) => renderExampleSection(section, index === exampleSections.length - 1))
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

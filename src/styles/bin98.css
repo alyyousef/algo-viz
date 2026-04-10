@@ -215,6 +215,95 @@
   text-align: left;
 }
 
+/* Interactive widget classes (buttons, step controls, inline helpers) */
+
+.bin98-doc-subtitle {
+  font-size: 12px;
+  color: #444;
+  margin: -4px 0 8px;
+}
+
+.bin98-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  min-width: 60px;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.bin98-button:active {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+/* Alias: some pages use win98-push as a synonym for a small toolbar button */
+.bin98-push {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 8px;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  background: #c0c0c0;
+  color: #000;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.bin98-push:active {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+.bin98-button-row,
+.bin98-inline-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+.bin98-inline-link {
+  color: #000080;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.bin98-inline-link:hover {
+  color: #0000cc;
+}
+
+.bin98-step-box {
+  border: 1px solid #808080;
+  background: #fff;
+  padding: 6px 8px;
+  font-size: 12px;
+  margin: 4px 0;
+  min-height: 36px;
+}
+
+.bin98-step-controls {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
 /* Responsive breakpoints */
 
 @media (max-width: 900px) {

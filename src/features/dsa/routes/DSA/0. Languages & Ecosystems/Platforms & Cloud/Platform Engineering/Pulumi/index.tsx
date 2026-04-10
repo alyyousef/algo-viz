@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -8,8 +8,6 @@ type SectionNote = { title: string; details: string; notes: string }
 type NarrativeSection = { id: string; title: string; paragraphs: string[] }
 type ExampleSection = { id: string; title: string; code: string; explanation: string }
 type GlossaryTerm = { term: string; definition: string }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
   'Pulumi is infrastructure as code built around general-purpose programming languages rather than only a domain-specific configuration language. Teams define infrastructure with TypeScript, Python, Go, C#, or Java and let Pulumi evaluate, diff, and deploy the resulting resource graph.',
@@ -72,14 +70,14 @@ const coreSections: NarrativeSection[] = [
     paragraphs: [
       'Pulumi resources represent desired infrastructure objects from a provider. Inputs describe what a resource needs. Outputs represent values that are not known until deployment time, such as generated identifiers, endpoints, or ARNs.',
       'Understanding outputs is central to Pulumi. Values often flow asynchronously from one resource to another, and code must respect that deployment-time dataflow instead of pretending every value is immediately available.',
-      'This is one of Pulumi\'s biggest conceptual differences from plain application code. The syntax looks ordinary, but many values are deployment-time promises shaped by the resource graph.',
+      "This is one of Pulumi's biggest conceptual differences from plain application code. The syntax looks ordinary, but many values are deployment-time promises shaped by the resource graph.",
     ],
   },
   {
     id: 'core-stacks',
     title: 'Stacks, state, preview, and refresh',
     paragraphs: [
-      'A stack is Pulumi\'s unit of isolated state and configuration. Teams usually map stacks to environments, tenants, or regions. Good stack design keeps related resources together without creating giant all-or-nothing blast-radius domains.',
+      "A stack is Pulumi's unit of isolated state and configuration. Teams usually map stacks to environments, tenants, or regions. Good stack design keeps related resources together without creating giant all-or-nothing blast-radius domains.",
       'Pulumi records state so it can calculate diffs between the program and the last known deployed world. Preview shows expected operations. Update applies them. Refresh re-reads live infrastructure so state can be reconciled with reality.',
       'State is not just storage plumbing. It is part of the operational contract. The team needs to know where it lives, how it is protected, how concurrency is handled, and how recovery works after partial failures or manual drift.',
     ],
@@ -97,7 +95,7 @@ const coreSections: NarrativeSection[] = [
     id: 'core-components',
     title: 'Components and internal platform APIs',
     paragraphs: [
-      'One of Pulumi\'s strongest features is ComponentResource. Components let a platform team package several low-level resources into a higher-level typed abstraction such as a service network, managed database bundle, or standard application environment.',
+      "One of Pulumi's strongest features is ComponentResource. Components let a platform team package several low-level resources into a higher-level typed abstraction such as a service network, managed database bundle, or standard application environment.",
       'This is where Pulumi becomes more than infrastructure scripting. The platform can publish internal packages that encode defaults, policy assumptions, naming rules, and best practices behind a stable API.',
       'The best Pulumi platforms use components to create clear internal products. The weaker ones expose raw provider objects everywhere and then wonder why the codebase feels verbose but not actually simpler.',
     ],
@@ -211,16 +209,54 @@ await stack.up();`,
 ]
 
 const glossary: GlossaryTerm[] = [
-  { term: 'Pulumi', definition: 'An infrastructure as code platform that uses general-purpose languages to define and deploy cloud and platform resources.' },
-  { term: 'Stack', definition: 'Pulumi\'s unit of isolated state and configuration, often mapped to an environment, tenant, or region.' },
-  { term: 'State', definition: 'The recorded deployment model Pulumi uses to calculate diffs, previews, and updates against real infrastructure.' },
-  { term: 'Preview', definition: 'A planned view of changes Pulumi expects to make before an update is applied.' },
-  { term: 'Refresh', definition: 'An operation that re-reads live infrastructure so recorded state can be reconciled with the real world.' },
-  { term: 'Input', definition: 'A value supplied to a Pulumi resource when declaring desired infrastructure.' },
-  { term: 'Output', definition: 'A deployment-time value produced by a resource, often used as an input to another resource.' },
-  { term: 'ComponentResource', definition: 'A reusable higher-level abstraction that groups several resources behind a typed Pulumi API.' },
-  { term: 'Provider', definition: 'A Pulumi package that knows how to manage a specific cloud, service, or infrastructure domain.' },
-  { term: 'Automation API', definition: 'A Pulumi interface for embedding stack creation, preview, and update workflows inside another application or service.' },
+  {
+    term: 'Pulumi',
+    definition:
+      'An infrastructure as code platform that uses general-purpose languages to define and deploy cloud and platform resources.',
+  },
+  {
+    term: 'Stack',
+    definition:
+      "Pulumi's unit of isolated state and configuration, often mapped to an environment, tenant, or region.",
+  },
+  {
+    term: 'State',
+    definition:
+      'The recorded deployment model Pulumi uses to calculate diffs, previews, and updates against real infrastructure.',
+  },
+  {
+    term: 'Preview',
+    definition: 'A planned view of changes Pulumi expects to make before an update is applied.',
+  },
+  {
+    term: 'Refresh',
+    definition:
+      'An operation that re-reads live infrastructure so recorded state can be reconciled with the real world.',
+  },
+  {
+    term: 'Input',
+    definition: 'A value supplied to a Pulumi resource when declaring desired infrastructure.',
+  },
+  {
+    term: 'Output',
+    definition:
+      'A deployment-time value produced by a resource, often used as an input to another resource.',
+  },
+  {
+    term: 'ComponentResource',
+    definition:
+      'A reusable higher-level abstraction that groups several resources behind a typed Pulumi API.',
+  },
+  {
+    term: 'Provider',
+    definition:
+      'A Pulumi package that knows how to manage a specific cloud, service, or infrastructure domain.',
+  },
+  {
+    term: 'Automation API',
+    definition:
+      'A Pulumi interface for embedding stack creation, preview, and update workflows inside another application or service.',
+  },
 ]
 
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -250,158 +286,108 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const pageStyles = `
-.pulumi-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.pulumi-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box}
-.pulumi-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.pulumi-title-text{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px}
-.pulumi-title-controls{display:flex;gap:2px;margin-left:auto}
-.pulumi-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer;padding:0}
-.pulumi-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0}
-.pulumi-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer}
-.pulumi-tab.active{position:relative;top:1px;background:#fff}
-.pulumi-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff}
-.pulumi-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080}
-.pulumi-toc-title{margin:0 0 10px;font-size:12px;font-weight:700}
-.pulumi-toc-list{margin:0;padding:0;list-style:none}
-.pulumi-toc-list li{margin:0 0 8px}
-.pulumi-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.pulumi-toc-list a:hover{text-decoration:underline}
-.pulumi-content{overflow:auto;padding:14px 20px 20px}
-.pulumi-doc-title{margin:0 0 12px;font-size:20px;font-weight:700}
-.pulumi-section{margin:0 0 20px}
-.pulumi-heading{margin:0 0 8px;font-size:16px;font-weight:700}
-.pulumi-subheading{margin:0 0 6px;font-size:13px;font-weight:700}
-.pulumi-content p,.pulumi-content li{font-size:12px;line-height:1.5}
-.pulumi-content p{margin:0 0 10px}
-.pulumi-content ul{margin:0 0 10px 20px;padding:0}
-.pulumi-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.pulumi-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff}
-.pulumi-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px}
-@media (max-width:900px){.pulumi-main{grid-template-columns:1fr}.pulumi-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function PulumiPlatformEngineeringPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Pulumi',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Pulumi (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Pulumi',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="pulumi-help-page">
-      <style>{pageStyles}</style>
-      <div className="pulumi-window" role="presentation">
-        <header className="pulumi-titlebar">
-          <span className="pulumi-title-text">Pulumi</span>
-          <div className="pulumi-title-controls">
-            <button className="pulumi-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="pulumi-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="pulumi-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button key={tab.id} type="button" className={`pulumi-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)} role="tab" aria-selected={activeTab === tab.id}>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="pulumi-main">
-          <aside className="pulumi-toc" aria-label="Table of contents">
-            <h2 className="pulumi-toc-title">Contents</h2>
-            <ul className="pulumi-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}><a href={`#${section.id}`}>{section.label}</a></li>
+    <TopicPageShell
+      title="Pulumi"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Pulumi</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <p>
+              Platform engineering often needs abstractions that are more expressive than plain
+              templates but still safer than hand-written cloud SDK automation. Pulumi matters
+              because it gives teams a real infrastructure management model with previews, state,
+              providers, and dependency tracking while still letting them author that model in
+              normal programming languages.
+            </p>
+            <p>
+              It also changes reuse economics. A platform team can ship internal component
+              libraries, typed APIs, and shared deployment logic using the same packaging systems
+              and code review practices they already apply to software.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="pulumi-content">
-            <h1 className="pulumi-doc-title">Pulumi</h1>
-            {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {activeTab === 'big-picture' && <>
-              <section id="bp-overview" className="pulumi-section">
-                <h2 className="pulumi-heading">Overview</h2>
-                {bigPicture.map((item) => <div key={item.title}><h3 className="pulumi-subheading">{item.title}</h3><p>{item.details}</p><p>{item.notes}</p></div>)}
-              </section>
-              <hr className="pulumi-divider" />
-              <section id="bp-why" className="pulumi-section">
-                <h2 className="pulumi-heading">Why It Matters</h2>
-                <p>Platform engineering often needs abstractions that are more expressive than plain templates but still safer than hand-written cloud SDK automation. Pulumi matters because it gives teams a real infrastructure management model with previews, state, providers, and dependency tracking while still letting them author that model in normal programming languages.</p>
-                <p>It also changes reuse economics. A platform team can ship internal component libraries, typed APIs, and shared deployment logic using the same packaging systems and code review practices they already apply to software.</p>
-              </section>
-              <hr className="pulumi-divider" />
-              <section id="bp-takeaways" className="pulumi-section">
-                <h2 className="pulumi-heading">Key Takeaways</h2>
-                <ul>{keyTakeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'core-concepts' && <>
-              {coreSections.map((section) => (
-                <section key={section.id} id={section.id} className="pulumi-section">
-                  <h2 className="pulumi-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => <p key={`${section.id}-${paragraph}`}>{paragraph}</p>)}
-                </section>
+          </section>
+        </>
+      )}
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
               ))}
-              <section id="core-checklist" className="pulumi-section">
-                <h2 className="pulumi-heading">Design Checklist</h2>
-                <ul>{designChecklist.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'examples' && <>
-              {examples.map((example) => (
-                <section key={example.id} id={example.id} className="pulumi-section">
-                  <h2 className="pulumi-heading">{example.title}</h2>
-                  <div className="pulumi-codebox"><code>{example.code.trim()}</code></div>
-                  <p>{example.explanation}</p>
-                </section>
+            </section>
+          ))}
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Design Checklist</h2>
+            <ul>
+              {designChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </>}
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="pulumi-section">
-                <h2 className="pulumi-heading">Glossary</h2>
-                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            </ul>
+          </section>
+        </>
+      )}
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

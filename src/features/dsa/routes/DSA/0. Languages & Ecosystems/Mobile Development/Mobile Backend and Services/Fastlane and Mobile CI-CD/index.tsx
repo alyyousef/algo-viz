@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Fastlane and Mobile CI-CD'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -321,15 +319,18 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Fastlane',
-        definition: 'An automation toolkit for mobile development and release workflows, often used inside broader CI-CD systems.',
+        definition:
+          'An automation toolkit for mobile development and release workflows, often used inside broader CI-CD systems.',
       },
       {
         term: 'Lane',
-        definition: 'A named Fastlane workflow that bundles mobile automation steps into a meaningful release action.',
+        definition:
+          'A named Fastlane workflow that bundles mobile automation steps into a meaningful release action.',
       },
       {
         term: 'match',
-        definition: 'A Fastlane tool commonly used to centralize and synchronize iOS signing certificates and provisioning profiles.',
+        definition:
+          'A Fastlane tool commonly used to centralize and synchronize iOS signing certificates and provisioning profiles.',
       },
       {
         term: 'gym',
@@ -337,11 +338,13 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'pilot',
-        definition: 'A Fastlane tool commonly used to upload and manage TestFlight beta distribution workflows.',
+        definition:
+          'A Fastlane tool commonly used to upload and manage TestFlight beta distribution workflows.',
       },
       {
         term: 'deliver',
-        definition: 'A Fastlane tool commonly used to upload App Store metadata and submission-related assets.',
+        definition:
+          'A Fastlane tool commonly used to upload App Store metadata and submission-related assets.',
       },
     ],
   },
@@ -351,27 +354,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'CI',
-        definition: 'Continuous integration, the practice of automatically validating code changes through builds and tests as changes are integrated.',
+        definition:
+          'Continuous integration, the practice of automatically validating code changes through builds and tests as changes are integrated.',
       },
       {
         term: 'CD',
-        definition: 'Continuous delivery or deployment, the practice of automating artifact distribution and release workflows beyond basic validation.',
+        definition:
+          'Continuous delivery or deployment, the practice of automating artifact distribution and release workflows beyond basic validation.',
       },
       {
         term: 'Runner',
-        definition: 'The CI execution environment where pipeline jobs run, such as a macOS or Linux build machine.',
+        definition:
+          'The CI execution environment where pipeline jobs run, such as a macOS or Linux build machine.',
       },
       {
         term: 'Artifact',
-        definition: 'A build output or related file retained by the pipeline, such as an IPA, AAB, dSYM, log bundle, or test report.',
+        definition:
+          'A build output or related file retained by the pipeline, such as an IPA, AAB, dSYM, log bundle, or test report.',
       },
       {
         term: 'Release candidate',
-        definition: 'A build believed to be production-worthy and pushed through higher-confidence validation or approval steps.',
+        definition:
+          'A build believed to be production-worthy and pushed through higher-confidence validation or approval steps.',
       },
       {
         term: 'Approval gate',
-        definition: 'A manual or policy-based checkpoint that must be satisfied before a sensitive release action proceeds.',
+        definition:
+          'A manual or policy-based checkpoint that must be satisfied before a sensitive release action proceeds.',
       },
     ],
   },
@@ -381,7 +390,8 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Provisioning profile',
-        definition: 'An Apple signing artifact that ties app identity, certificates, and device or distribution authorization together.',
+        definition:
+          'An Apple signing artifact that ties app identity, certificates, and device or distribution authorization together.',
       },
       {
         term: 'Keystore',
@@ -389,19 +399,23 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Reproducible build',
-        definition: 'A build produced from controlled inputs so that results are consistent and explainable across environments.',
+        definition:
+          'A build produced from controlled inputs so that results are consistent and explainable across environments.',
       },
       {
         term: 'Environment drift',
-        definition: 'The divergence between expected and actual toolchain or configuration state across developer machines and CI.',
+        definition:
+          'The divergence between expected and actual toolchain or configuration state across developer machines and CI.',
       },
       {
         term: 'Beta distribution',
-        definition: 'The controlled release of pre-production builds to internal teams or external testers through channels like TestFlight or Play internal tracks.',
+        definition:
+          'The controlled release of pre-production builds to internal teams or external testers through channels like TestFlight or Play internal tracks.',
       },
       {
         term: 'Secrets management',
-        definition: 'The controlled storage and injection of credentials, signing material, and tokens needed by the release pipeline.',
+        definition:
+          'The controlled storage and injection of credentials, signing material, and tokens needed by the release pipeline.',
       },
     ],
   },
@@ -412,230 +426,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const fastlaneHelpStyles = `
-.fastlane-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.fastlane-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.fastlane-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.fastlane-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.fastlane-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.fastlane-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.fastlane-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.fastlane-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.fastlane-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.fastlane-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.fastlane-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-.fastlane-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.fastlane-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.fastlane-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.fastlane-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.fastlane-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.fastlane-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.fastlane-help98-section {
-  margin: 0 0 20px;
-}
-
-.fastlane-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.fastlane-help98-content p,
-.fastlane-help98-content li,
-.fastlane-help98-content dd,
-.fastlane-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.fastlane-help98-content p,
-.fastlane-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.fastlane-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.fastlane-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.fastlane-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.fastlane-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.fastlane-help98-glossary {
-  margin: 0;
-}
-
-.fastlane-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .fastlane-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .fastlane-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .fastlane-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -695,125 +485,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function FastlaneAndMobileCiCdPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Fastlane And Mobile Ci Cd Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="fastlane-help98-page">
-      <style>{fastlaneHelpStyles}</style>
-      <div className="fastlane-help98-window" role="presentation">
-        <header className="fastlane-help98-titlebar">
-          <span className="fastlane-help98-title">{PAGE_TITLE}</span>
-          <div className="fastlane-help98-controls">
-            <button className="fastlane-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="fastlane-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Fastlane And Mobile Ci Cd Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="fastlane-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`fastlane-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="fastlane-help98-main">
-          <aside className="fastlane-help98-toc" aria-label="Table of contents">
-            <h2 className="fastlane-help98-toc-title">Contents</h2>
-            <ul className="fastlane-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="fastlane-help98-content">
-            <h1 className="fastlane-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="fastlane-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

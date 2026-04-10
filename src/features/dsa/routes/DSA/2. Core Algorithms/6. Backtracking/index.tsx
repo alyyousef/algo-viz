@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -467,196 +469,6 @@ const compareContrast = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.btwin98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-.btwin98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-.btwin98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-.btwin98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-.btwin98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-.btwin98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-.btwin98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-.btwin98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-.btwin98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-.btwin98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-.btwin98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-.btwin98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-.btwin98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.btwin98-toc-list li {
-  margin: 0 0 8px;
-}
-.btwin98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-.btwin98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-.btwin98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-.btwin98-section {
-  margin: 0 0 20px;
-}
-.btwin98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-.btwin98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-.btwin98-content p,
-.btwin98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-.btwin98-content p {
-  margin: 0 0 10px;
-}
-.btwin98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-.btwin98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-.btwin98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-.btwin98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-.btwin98-inline-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-.btwin98-push {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  font-size: 12px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-@media (max-width: 900px) {
-  .btwin98-main { grid-template-columns: 1fr; }
-  .btwin98-toc { border-right: none; border-bottom: 1px solid #808080; }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -664,15 +476,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -694,257 +497,186 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function BacktrackingPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Backtracking',
+    defaultTab: 'big-picture',
+  })
+
   const defaultExample = codeExamples[0] ?? {
     title: 'No examples configured',
     code: 'No code available.',
     explanation: 'No explanation available.',
   }
   const [selectedExampleTitle, setSelectedExampleTitle] = useState(defaultExample.title)
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
-  })
 
   const selectedExample =
     codeExamples.find((ex) => ex.title === selectedExampleTitle) ?? defaultExample
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Backtracking (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Backtracking',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="btwin98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="btwin98-window" role="presentation">
-        <header className="btwin98-titlebar">
-          <span className="btwin98-title-text">Backtracking</span>
-          <div className="btwin98-title-controls">
-            <button
-              className="btwin98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="btwin98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="btwin98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`btwin98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="btwin98-main">
-          <aside className="btwin98-toc" aria-label="Table of contents">
-            <h2 className="btwin98-toc-title">Contents</h2>
-            <ul className="btwin98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+    <TopicPageShell
+      title="Backtracking"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Backtracking</h1>
+      <p>
+        Backtracking is structured brute force. It explores a search space by building partial
+        solutions incrementally and abandoning any branch the moment a constraint is violated. The
+        template is always the same: choose a candidate extension, recurse, then undo the choice.
+        Pruning is what separates a practical algorithm from an intractable one.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why This Matters</h2>
+            <p>
+              Many problems in combinatorics, logic, and constraint satisfaction have no known
+              polynomial-time solution. For these, backtracking is often the only exact method
+              available. Understanding its structure — the state space tree, the
+              choose/explore/unchoose pattern, and the role of pruning — is the foundation for
+              implementing correct and efficient solvers.
+            </p>
+            <p>
+              Even when an approximate or heuristic solution is acceptable in production, being able
+              to write an exact backtracking solution first is the standard way to validate
+              correctness and understand the problem structure.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-model" className="bin98-section">
+            <h2 className="bin98-heading">Core Mental Model</h2>
+            {mentalModel.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-problems" className="bin98-section">
+            <h2 className="bin98-heading">Classic Problems</h2>
+            {classicProblems.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>
+                  <strong>Problem:</strong> {item.description}
+                </p>
+                <p>
+                  <strong>Approach:</strong> {item.approach}
+                </p>
+                <p>
+                  <strong>Complexity:</strong> {item.complexity}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="core-pruning" className="bin98-section">
+            <h2 className="bin98-heading">Pruning Techniques</h2>
+            {pruningTechniques.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-languages" className="bin98-section">
+            <h2 className="bin98-heading">Language Mapping</h2>
+            {languageMapping.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareContrast.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item.mistake}>
+                  <strong>{item.mistake}:</strong> {item.description}
                 </li>
               ))}
             </ul>
-          </aside>
-          <main className="btwin98-content">
-            <h1 className="btwin98-doc-title">Backtracking</h1>
-            <p>
-              Backtracking is structured brute force. It explores a search space by building partial
-              solutions incrementally and abandoning any branch the moment a constraint is violated.
-              The template is always the same: choose a candidate extension, recurse, then undo the
-              choice. Pruning is what separates a practical algorithm from an intractable one.
+          </section>
+          <section id="core-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Code Examples</h2>
+          <p>Select a problem to view an annotated implementation.</p>
+          <div className="btbin98-inline-buttons">
+            {codeExamples.map((ex) => (
+              <button
+                key={ex.title}
+                type="button"
+                className="btbin98-push"
+                onClick={() => setSelectedExampleTitle(ex.title)}
+              >
+                {ex.title}
+              </button>
+            ))}
+          </div>
+          <h3 className="bin98-subheading">{selectedExample.title}</h3>
+          <div className="bin98-codebox">
+            <code>{selectedExample.code.trim()}</code>
+          </div>
+          <p>{selectedExample.explanation}</p>
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="btwin98-section">
-                  <h2 className="btwin98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="btwin98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="btwin98-divider" />
-                <section id="bp-why" className="btwin98-section">
-                  <h2 className="btwin98-heading">Why This Matters</h2>
-                  <p>
-                    Many problems in combinatorics, logic, and constraint satisfaction have no known
-                    polynomial-time solution. For these, backtracking is often the only exact method
-                    available. Understanding its structure — the state space tree, the
-                    choose/explore/unchoose pattern, and the role of pruning — is the foundation for
-                    implementing correct and efficient solvers.
-                  </p>
-                  <p>
-                    Even when an approximate or heuristic solution is acceptable in production,
-                    being able to write an exact backtracking solution first is the standard way to
-                    validate correctness and understand the problem structure.
-                  </p>
-                </section>
-                <hr className="btwin98-divider" />
-                <section id="bp-takeaways" className="btwin98-section">
-                  <h2 className="btwin98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-model" className="btwin98-section">
-                  <h2 className="btwin98-heading">Core Mental Model</h2>
-                  {mentalModel.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="btwin98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-problems" className="btwin98-section">
-                  <h2 className="btwin98-heading">Classic Problems</h2>
-                  {classicProblems.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="btwin98-subheading">{item.title}</h3>
-                      <p>
-                        <strong>Problem:</strong> {item.description}
-                      </p>
-                      <p>
-                        <strong>Approach:</strong> {item.approach}
-                      </p>
-                      <p>
-                        <strong>Complexity:</strong> {item.complexity}
-                      </p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-pruning" className="btwin98-section">
-                  <h2 className="btwin98-heading">Pruning Techniques</h2>
-                  {pruningTechniques.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-languages" className="btwin98-section">
-                  <h2 className="btwin98-heading">Language Mapping</h2>
-                  {languageMapping.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="btwin98-section">
-                  <h2 className="btwin98-heading">Compare and Contrast</h2>
-                  {compareContrast.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="btwin98-section">
-                  <h2 className="btwin98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item.mistake}>
-                        <strong>{item.mistake}:</strong> {item.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-takeaways" className="btwin98-section">
-                  <h2 className="btwin98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="btwin98-section">
-                <h2 className="btwin98-heading">Code Examples</h2>
-                <p>Select a problem to view an annotated implementation.</p>
-                <div className="btwin98-inline-buttons">
-                  {codeExamples.map((ex) => (
-                    <button
-                      key={ex.title}
-                      type="button"
-                      className="btwin98-push"
-                      onClick={() => setSelectedExampleTitle(ex.title)}
-                    >
-                      {ex.title}
-                    </button>
-                  ))}
-                </div>
-                <h3 className="btwin98-subheading">{selectedExample.title}</h3>
-                <div className="btwin98-codebox">
-                  <code>{selectedExample.code.trim()}</code>
-                </div>
-                <p>{selectedExample.explanation}</p>
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="btwin98-section">
-                <h2 className="btwin98-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

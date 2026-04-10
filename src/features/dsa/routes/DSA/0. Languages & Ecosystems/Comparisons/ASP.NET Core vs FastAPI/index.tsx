@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'ASP.NET Core vs FastAPI'
-const pageSubtitle = 'Comparing a high-performance .NET web framework with a Python-first API framework.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing a high-performance .NET web framework with a Python-first API framework.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -247,7 +246,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-basic',
     title: 'Basic Endpoint',
-    summary: 'Both frameworks make a simple JSON endpoint easy, but the hosting model around it feels different.',
+    summary:
+      'Both frameworks make a simple JSON endpoint easy, but the hosting model around it feels different.',
     aspnetCode: `var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -261,12 +261,14 @@ app = FastAPI()
 @app.get("/health")
 async def health():
     return {"status": "ok"}`,
-    explanation: 'ASP.NET Core minimal APIs are concise, but they still sit inside a larger hosting and middleware platform. FastAPI route handlers feel immediately direct and Pythonic.',
+    explanation:
+      'ASP.NET Core minimal APIs are concise, but they still sit inside a larger hosting and middleware platform. FastAPI route handlers feel immediately direct and Pythonic.',
   },
   {
     id: 'ex-validation',
     title: 'Request Validation',
-    summary: 'Both frameworks can validate structured input, but FastAPI makes the schema model feel especially central.',
+    summary:
+      'Both frameworks can validate structured input, but FastAPI makes the schema model feel especially central.',
     aspnetCode: `public record CreateUserRequest(string Email, string Name);
 
 app.MapPost("/users", (CreateUserRequest request) =>
@@ -285,7 +287,8 @@ app = FastAPI()
 @app.post("/users")
 async def create_user(request: CreateUserRequest):
     return request`,
-    explanation: 'FastAPI turns the typed model into validation and docs very naturally. ASP.NET Core also supports strong model binding, but the framework identity is not as singularly centered on this flow.',
+    explanation:
+      'FastAPI turns the typed model into validation and docs very naturally. ASP.NET Core also supports strong model binding, but the framework identity is not as singularly centered on this flow.',
   },
   {
     id: 'ex-di',
@@ -311,42 +314,51 @@ def get_clock() -> Clock:
 @app.get("/time")
 async def get_time(clock: Clock = Depends(get_clock)):
     return {"now": clock.utc_now()}`,
-    explanation: 'ASP.NET Core DI feels container-first and infrastructural. FastAPI DI feels endpoint-first and signature-driven.',
+    explanation:
+      'ASP.NET Core DI feels container-first and infrastructural. FastAPI DI feels endpoint-first and signature-driven.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Minimal API',
-    definition: 'An ASP.NET Core style for defining HTTP endpoints directly with concise route mapping code.',
+    definition:
+      'An ASP.NET Core style for defining HTTP endpoints directly with concise route mapping code.',
   },
   {
     term: 'Middleware',
-    definition: 'An ASP.NET Core request pipeline component that can inspect, transform, or short-circuit requests and responses.',
+    definition:
+      'An ASP.NET Core request pipeline component that can inspect, transform, or short-circuit requests and responses.',
   },
   {
     term: 'Model binding',
-    definition: 'The ASP.NET Core process that maps request data into typed parameters or objects for handlers and controllers.',
+    definition:
+      'The ASP.NET Core process that maps request data into typed parameters or objects for handlers and controllers.',
   },
   {
     term: 'Pydantic model',
-    definition: 'A Python data model used by FastAPI for validation, parsing, and schema generation.',
+    definition:
+      'A Python data model used by FastAPI for validation, parsing, and schema generation.',
   },
   {
     term: 'Depends',
-    definition: 'FastAPIs dependency injection mechanism for declaring per-request dependencies in endpoint signatures.',
+    definition:
+      'FastAPIs dependency injection mechanism for declaring per-request dependencies in endpoint signatures.',
   },
   {
     term: 'ASGI',
-    definition: 'The asynchronous server interface commonly used by Python web frameworks such as FastAPI.',
+    definition:
+      'The asynchronous server interface commonly used by Python web frameworks such as FastAPI.',
   },
   {
     term: 'OpenAPI',
-    definition: 'A machine-readable API description format used for documentation, tooling, and schema-driven workflows.',
+    definition:
+      'A machine-readable API description format used for documentation, tooling, and schema-driven workflows.',
   },
   {
     term: '.NET hosting model',
-    definition: 'The broader runtime, configuration, logging, and application startup model around ASP.NET Core services.',
+    definition:
+      'The broader runtime, configuration, logging, and application startup model around ASP.NET Core services.',
   },
 ]
 
@@ -378,401 +390,112 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.aspnet-fastapi-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.aspnet-fastapi-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.aspnet-fastapi-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aspnet-fastapi-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.aspnet-fastapi-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.aspnet-fastapi-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.aspnet-fastapi-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.aspnet-fastapi-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.aspnet-fastapi-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.aspnet-fastapi-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.aspnet-fastapi-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.aspnet-fastapi-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.aspnet-fastapi-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.aspnet-fastapi-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.aspnet-fastapi-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.aspnet-fastapi-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.aspnet-fastapi-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.aspnet-fastapi-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aspnet-fastapi-help-section {
-  margin: 0 0 20px;
-}
-
-.aspnet-fastapi-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.aspnet-fastapi-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aspnet-fastapi-help-content p,
-.aspnet-fastapi-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aspnet-fastapi-help-content p {
-  margin: 0 0 10px;
-}
-
-.aspnet-fastapi-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.aspnet-fastapi-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.aspnet-fastapi-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.aspnet-fastapi-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .aspnet-fastapi-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .aspnet-fastapi-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .aspnet-fastapi-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function AspNetCoreVsFastApiPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Asp Net Core Vs Fast Api Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="aspnet-fastapi-help-page">
-      <style>{pageStyles}</style>
-      <div className="aspnet-fastapi-help-window" role="presentation">
-        <header className="aspnet-fastapi-help-titlebar">
-          <span className="aspnet-fastapi-help-title">{pageTitle}</span>
-          <div className="aspnet-fastapi-help-controls">
-            <button className="aspnet-fastapi-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="aspnet-fastapi-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Asp Net Core Vs Fast Api Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="aspnet-fastapi-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares ASP.NET Core and FastAPI as real backend engineering choices rather than
+        as language fandom. The goal is to make the practical tradeoffs explicit: platform breadth,
+        runtime consequences, routing model, validation ergonomics, dependency injection,
+        throughput, deployment, ecosystem fit, and where each framework is the safer long-term
+        choice.
+      </p>
 
-        <div className="aspnet-fastapi-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`aspnet-fastapi-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="aspnet-fastapi-help-main">
-          <aside className="aspnet-fastapi-help-toc" aria-label="Table of contents">
-            <h2 className="aspnet-fastapi-help-toc-title">Contents</h2>
-            <ul className="aspnet-fastapi-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="aspnet-fastapi-help-content">
-            <h1 className="aspnet-fastapi-help-doc-title">{pageTitle}</h1>
-            <p className="aspnet-fastapi-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares ASP.NET Core and FastAPI as real backend engineering choices rather than as language fandom.
-              The goal is to make the practical tradeoffs explicit: platform breadth, runtime consequences, routing model,
-              validation ergonomics, dependency injection, throughput, deployment, ecosystem fit, and where each framework is the
-              safer long-term choice.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="aspnet-fastapi-help-section">
-                    <h2 className="aspnet-fastapi-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="aspnet-fastapi-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="aspnet-fastapi-help-section">
-                  <h2 className="aspnet-fastapi-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="aspnet-fastapi-help-section">
-                    <h2 className="aspnet-fastapi-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="aspnet-fastapi-help-section">
-                    <h2 className="aspnet-fastapi-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="aspnet-fastapi-help-subheading">ASP.NET Core</h3>
-                    <div className="aspnet-fastapi-help-codebox">
-                      <code>{example.aspnetCode.trim()}</code>
-                    </div>
-                    <h3 className="aspnet-fastapi-help-subheading">FastAPI</h3>
-                    <div className="aspnet-fastapi-help-codebox">
-                      <code>{example.fastapiCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="aspnet-fastapi-help-section">
-                <h2 className="aspnet-fastapi-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">ASP.NET Core</h3>
+              <div className="bin98-codebox">
+                <code>{example.aspnetCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">FastAPI</h3>
+              <div className="bin98-codebox">
+                <code>{example.fastapiCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

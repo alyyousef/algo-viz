@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'C++ vs Rust'
-const pageSubtitle = 'Comparing the long-established systems programming language with the ownership-first systems language focused on memory safety.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing the long-established systems programming language with the ownership-first systems language focused on memory safety.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -248,7 +247,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-ownership',
     title: 'Ownership and Move Semantics',
-    summary: 'Both languages care about ownership transfer, but one treats it as a library and convention pattern while the other treats it as the core language model.',
+    summary:
+      'Both languages care about ownership transfer, but one treats it as a library and convention pattern while the other treats it as the core language model.',
     cppCode: `#include <string>
 #include <utility>
 
@@ -273,12 +273,14 @@ fn main() {
     let name = make_name();
     use_name(name);
 }`,
-    explanation: 'C++ has move semantics, but the language still permits many lifetime mistakes elsewhere. Rust ownership transfer is the default rule of the language, so moved values become unusable unless explicitly borrowed or cloned.',
+    explanation:
+      'C++ has move semantics, but the language still permits many lifetime mistakes elsewhere. Rust ownership transfer is the default rule of the language, so moved values become unusable unless explicitly borrowed or cloned.',
   },
   {
     id: 'ex-errors',
     title: 'Error Handling Shape',
-    summary: 'The languages can express failure cleanly, but they push teams toward different defaults.',
+    summary:
+      'The languages can express failure cleanly, but they push teams toward different defaults.',
     cppCode: `#include <expected>
 #include <string>
 
@@ -295,12 +297,14 @@ std::expected<int, std::string> parse_port(const std::string& text) {
         Err(String::from("invalid port"))
     }
 }`,
-    explanation: 'Modern C++ can express explicit result-based error handling, but the ecosystem still contains multiple competing idioms. Rust makes Result central enough that fallibility tends to stay more uniform across APIs.',
+    explanation:
+      'Modern C++ can express explicit result-based error handling, but the ecosystem still contains multiple competing idioms. Rust makes Result central enough that fallibility tends to stay more uniform across APIs.',
   },
   {
     id: 'ex-concurrency',
     title: 'Shared State Across Threads',
-    summary: 'Both languages can share state across threads, but Rust pushes thread-safety reasoning into the type system more aggressively.',
+    summary:
+      'Both languages can share state across threads, but Rust pushes thread-safety reasoning into the type system more aggressively.',
     cppCode: `#include <mutex>
 #include <thread>
 #include <vector>
@@ -340,12 +344,14 @@ fn main() {
         handle.join().unwrap();
     }
 }`,
-    explanation: 'C++ gives you the primitives and trusts you to use them correctly. Rust still needs synchronization primitives too, but its ownership and trait rules reject more invalid sharing patterns before the code ever runs.',
+    explanation:
+      'C++ gives you the primitives and trusts you to use them correctly. Rust still needs synchronization primitives too, but its ownership and trait rules reject more invalid sharing patterns before the code ever runs.',
   },
   {
     id: 'ex-resource',
     title: 'Resource Cleanup and RAII Style',
-    summary: 'Both languages support deterministic cleanup, but Rust makes the no-null, no-use-after-free style more central.',
+    summary:
+      'Both languages support deterministic cleanup, but Rust makes the no-null, no-use-after-free style more central.',
     cppCode: `#include <fstream>
 
 int main() {
@@ -359,22 +365,26 @@ fn main() {
     let mut file = File::create("log.txt").unwrap();
     writeln!(file, "hello").unwrap();
 }`,
-    explanation: 'Both rely on deterministic cleanup at scope end. The difference is that Rust builds more of its safety story around ownership and borrowing on top of that cleanup model, while C++ still permits more ways to outsmart yourself elsewhere in the program.',
+    explanation:
+      'Both rely on deterministic cleanup at scope end. The difference is that Rust builds more of its safety story around ownership and borrowing on top of that cleanup model, while C++ still permits more ways to outsmart yourself elsewhere in the program.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'RAII',
-    definition: 'Resource Acquisition Is Initialization, the C++ technique of binding resource lifetime to object lifetime and destructors.',
+    definition:
+      'Resource Acquisition Is Initialization, the C++ technique of binding resource lifetime to object lifetime and destructors.',
   },
   {
     term: 'Move semantics',
-    definition: 'A C++ mechanism for transferring resource ownership from one object to another without copying.',
+    definition:
+      'A C++ mechanism for transferring resource ownership from one object to another without copying.',
   },
   {
     term: 'Undefined behavior',
-    definition: 'Program behavior for which a language imposes no requirements, allowing serious bugs and aggressive compiler assumptions.',
+    definition:
+      'Program behavior for which a language imposes no requirements, allowing serious bugs and aggressive compiler assumptions.',
   },
   {
     term: 'Ownership',
@@ -382,35 +392,43 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Borrowing',
-    definition: 'Rusts mechanism for temporarily accessing data without taking ownership, subject to strict aliasing rules.',
+    definition:
+      'Rusts mechanism for temporarily accessing data without taking ownership, subject to strict aliasing rules.',
   },
   {
     term: 'Lifetime',
-    definition: 'A Rust concept used by the compiler to reason about how long references remain valid.',
+    definition:
+      'A Rust concept used by the compiler to reason about how long references remain valid.',
   },
   {
     term: 'Trait',
-    definition: 'A Rust abstraction for shared behavior, roughly comparable to constrained interfaces plus generic bounds.',
+    definition:
+      'A Rust abstraction for shared behavior, roughly comparable to constrained interfaces plus generic bounds.',
   },
   {
     term: 'Template',
-    definition: 'A C++ compile-time generic programming mechanism used to parameterize code over types and values.',
+    definition:
+      'A C++ compile-time generic programming mechanism used to parameterize code over types and values.',
   },
   {
     term: 'Unsafe Rust',
-    definition: 'Rust code that may perform operations the compiler cannot verify as safe, requiring explicit programmer responsibility.',
+    definition:
+      'Rust code that may perform operations the compiler cannot verify as safe, requiring explicit programmer responsibility.',
   },
   {
     term: 'Cargo',
-    definition: 'Rusts package manager and build tool used to fetch dependencies, compile packages, run tests, and publish crates.',
+    definition:
+      'Rusts package manager and build tool used to fetch dependencies, compile packages, run tests, and publish crates.',
   },
   {
     term: 'Crate',
-    definition: 'A Rust package or compilation unit managed through Cargo and the wider crates.io ecosystem.',
+    definition:
+      'A Rust package or compilation unit managed through Cargo and the wider crates.io ecosystem.',
   },
   {
     term: 'Concept',
-    definition: 'A C++ language feature for constraining template parameters with clearer compile-time requirements.',
+    definition:
+      'A C++ language feature for constraining template parameters with clearer compile-time requirements.',
   },
 ]
 
@@ -441,400 +459,111 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.cpp-rust-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cpp-rust-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cpp-rust-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cpp-rust-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cpp-rust-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cpp-rust-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.cpp-rust-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.cpp-rust-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.cpp-rust-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cpp-rust-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.cpp-rust-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.cpp-rust-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cpp-rust-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cpp-rust-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cpp-rust-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.cpp-rust-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cpp-rust-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cpp-rust-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cpp-rust-help-section {
-  margin: 0 0 20px;
-}
-
-.cpp-rust-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cpp-rust-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cpp-rust-help-content p,
-.cpp-rust-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cpp-rust-help-content p {
-  margin: 0 0 10px;
-}
-
-.cpp-rust-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cpp-rust-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.cpp-rust-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.cpp-rust-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cpp-rust-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cpp-rust-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cpp-rust-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function CppVsRustPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Cpp Vs Rust Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cpp-rust-help-page">
-      <style>{pageStyles}</style>
-      <div className="cpp-rust-help-window" role="presentation">
-        <header className="cpp-rust-help-titlebar">
-          <span className="cpp-rust-help-title">{pageTitle}</span>
-          <div className="cpp-rust-help-controls">
-            <button className="cpp-rust-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cpp-rust-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Cpp Vs Rust Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="cpp-rust-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares C++ and Rust as real systems-language choices rather than as community
+        slogans. The point is to make the tradeoffs explicit: ownership, undefined behavior,
+        generics, concurrency, tooling, interoperability, ecosystem gravity, and where each language
+        is the safer long-term fit for a native codebase.
+      </p>
 
-        <div className="cpp-rust-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`cpp-rust-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cpp-rust-help-main">
-          <aside className="cpp-rust-help-toc" aria-label="Table of contents">
-            <h2 className="cpp-rust-help-toc-title">Contents</h2>
-            <ul className="cpp-rust-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="cpp-rust-help-content">
-            <h1 className="cpp-rust-help-doc-title">{pageTitle}</h1>
-            <p className="cpp-rust-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares C++ and Rust as real systems-language choices rather than as community slogans.
-              The point is to make the tradeoffs explicit: ownership, undefined behavior, generics, concurrency, tooling,
-              interoperability, ecosystem gravity, and where each language is the safer long-term fit for a native codebase.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cpp-rust-help-section">
-                    <h2 className="cpp-rust-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cpp-rust-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cpp-rust-help-section">
-                  <h2 className="cpp-rust-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cpp-rust-help-section">
-                    <h2 className="cpp-rust-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="cpp-rust-help-section">
-                    <h2 className="cpp-rust-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="cpp-rust-help-subheading">C++</h3>
-                    <div className="cpp-rust-help-codebox">
-                      <code>{example.cppCode.trim()}</code>
-                    </div>
-                    <h3 className="cpp-rust-help-subheading">Rust</h3>
-                    <div className="cpp-rust-help-codebox">
-                      <code>{example.rustCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cpp-rust-help-section">
-                <h2 className="cpp-rust-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">C++</h3>
+              <div className="bin98-codebox">
+                <code>{example.cppCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">Rust</h3>
+              <div className="bin98-codebox">
+                <code>{example.rustCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

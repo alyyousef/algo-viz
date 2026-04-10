@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -179,7 +179,8 @@ const advanced = [
     title: 'Meet-in-the-Middle',
     detail:
       'Divide the problem into two halves. Brute force all possibilities for the first half and store the results in a hash table. Then, brute force the second half and look for a "match" in the hash table.',
-    rationale: 'Turns an O(2^N) problem into two O(2^(N/2)) problems, which is a massive improvement.',
+    rationale:
+      'Turns an O(2^N) problem into two O(2^(N/2)) problems, which is a massive improvement.',
   },
   {
     title: 'Memoization / Dynamic Programming',
@@ -265,23 +266,19 @@ const searchSpaceTypes = [
   },
   {
     title: 'Permutations (n!)',
-    detail:
-      'Order all items. Appears in TSP, assignment, and scheduling problems.',
+    detail: 'Order all items. Appears in TSP, assignment, and scheduling problems.',
   },
   {
     title: 'Cartesian products',
-    detail:
-      'Choose one option from each of k categories. Example: parameter grid search.',
+    detail: 'Choose one option from each of k categories. Example: parameter grid search.',
   },
   {
     title: 'Strings / sequences',
-    detail:
-      'All strings of length L over an alphabet of size C gives C^L possibilities.',
+    detail: 'All strings of length L over an alphabet of size C gives C^L possibilities.',
   },
   {
     title: 'Graphs and paths',
-    detail:
-      'Enumerate paths, subgraphs, or cuts; search space often explodes combinatorially.',
+    detail: 'Enumerate paths, subgraphs, or cuts; search space often explodes combinatorially.',
   },
 ]
 
@@ -348,7 +345,8 @@ const whenNotToUse = [
 const keyTakeaways = [
   {
     title: 'Simple and Reliable',
-    detail: 'Brute force is often easy to implement and guaranteed to be correct if designed properly.',
+    detail:
+      'Brute force is often easy to implement and guaranteed to be correct if designed properly.',
   },
   {
     title: 'Performance is the Enemy',
@@ -373,8 +371,7 @@ const glossaryTerms = [
   },
   {
     term: 'Search space',
-    definition:
-      'The full set of all candidates the algorithm may need to consider.',
+    definition: 'The full set of all candidates the algorithm may need to consider.',
   },
   {
     term: 'Candidate generator',
@@ -410,213 +407,6 @@ const glossaryTerms = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const bruteForceHelpStyles = `
-.brute-force-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.brute-force-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.brute-force-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-}
-
-.brute-force-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.brute-force-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.brute-force-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.brute-force-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.brute-force-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.brute-force-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.brute-force-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.brute-force-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.brute-force-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.brute-force-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.brute-force-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.brute-force-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-.brute-force-help-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.brute-force-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.brute-force-help-section {
-  margin: 0 0 20px;
-}
-
-.brute-force-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.brute-force-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.brute-force-help-content p,
-.brute-force-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.brute-force-help-content p {
-  margin: 0 0 10px;
-}
-
-.brute-force-help-content ul,
-.brute-force-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.brute-force-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.brute-force-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.brute-force-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .brute-force-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .brute-force-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -651,300 +441,232 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function BruteForcePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Brute Force (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Brute Force',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Brute Force',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="brute-force-help-page">
-      <style>{bruteForceHelpStyles}</style>
-      <div className="brute-force-help-window" role="presentation">
-        <header className="brute-force-help-titlebar">
-          <span className="brute-force-help-title">Brute Force</span>
-          <div className="brute-force-help-controls">
-            <button className="brute-force-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="brute-force-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Brute Force"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Brute Force</h1>
+      <p>
+        Brute force is the straightforward strategy of trying every single possibility to find a
+        solution. It&apos;s the ultimate &quot;no stone unturned&quot; approach: simple to design,
+        guaranteed to work, but often computationally expensive.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {history.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {applications.map((app) => (
+              <p key={app.title}>
+                <strong>{app.title}:</strong> {app.detail} <strong>{app.company}</strong>
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Failure Callout: The Knight&apos;s Tour</h3>
+            <p>
+              A classic problem is finding a sequence of moves for a knight on a chessboard to visit
+              every square exactly once. A naive brute-force approach that explores every possible
+              sequence of 63 moves is computationally impossible. The number of paths is
+              astronomical (approx. 10^52). This problem illustrates that pure brute force is
+              infeasible without clever pruning (backtracking) to eliminate dead-end paths early.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            {keyTakeaways.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-        <div className="brute-force-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`brute-force-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="brute-force-help-main">
-          <aside className="brute-force-help-toc" aria-label="Table of contents">
-            <h2 className="brute-force-help-toc-title">Contents</h2>
-            <ul className="brute-force-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">Pillars and Mental Models</h2>
+            {pillars.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-framing" className="bin98-section">
+            <h2 className="bin98-heading">Problem Framing</h2>
+            {problemFraming.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-space" className="bin98-section">
+            <h2 className="bin98-heading">Search Space Taxonomy</h2>
+            {searchSpaceTypes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-how" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {howItWorks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-verify" className="bin98-section">
+            <h2 className="bin98-heading">Verification Checklist</h2>
+            <ol>
+              {verificationChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity</h2>
+            {complexityTable.map((row) => (
+              <div key={row.approach}>
+                <h3 className="bin98-subheading">{row.approach}</h3>
+                <p>
+                  <strong>Time:</strong> {row.time}
+                </p>
+                <p>
+                  <strong>Space:</strong> {row.space}
+                </p>
+                <p>
+                  <strong>Note:</strong> {row.note}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="core-use" className="bin98-section">
+            <h2 className="bin98-heading">When To Use It</h2>
+            <ul>
+              {whenToUse.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <section id="core-avoid" className="bin98-section">
+            <h2 className="bin98-heading">When Not To Use It</h2>
+            <ul>
+              {whenNotToUse.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-optimization" className="bin98-section">
+            <h2 className="bin98-heading">Optimization Levers</h2>
+            {optimizationLevers.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Variants</h2>
+            {advanced.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.rationale}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-          <main className="brute-force-help-content">
-            <h1 className="brute-force-help-doc-title">Brute Force</h1>
+      {activeTab === 'examples' && (
+        <>
+          <section id="examples-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Example</h2>
+            <h3 className="bin98-subheading">{workedExample.title}</h3>
             <p>
-              Brute force is the straightforward strategy of trying every single possibility to find a solution. It&apos;s the ultimate
-              &quot;no stone unturned&quot; approach: simple to design, guaranteed to work, but often computationally expensive.
+              <strong>Input:</strong> {workedExample.input}
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="brute-force-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="brute-force-help-divider" />
-                <section id="bp-history" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Historical Context</h2>
-                  {history.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="brute-force-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="brute-force-help-divider" />
-                <section id="bp-applications" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Applications</h2>
-                  {applications.map((app) => (
-                    <p key={app.title}>
-                      <strong>{app.title}:</strong> {app.detail} <strong>{app.company}</strong>
-                    </p>
-                  ))}
-                  <h3 className="brute-force-help-subheading">Failure Callout: The Knight&apos;s Tour</h3>
-                  <p>
-                    A classic problem is finding a sequence of moves for a knight on a chessboard to visit every square exactly once.
-                    A naive brute-force approach that explores every possible sequence of 63 moves is computationally impossible. The
-                    number of paths is astronomical (approx. 10^52). This problem illustrates that pure brute force is infeasible
-                    without clever pruning (backtracking) to eliminate dead-end paths early.
-                  </p>
-                </section>
-                <hr className="brute-force-help-divider" />
-                <section id="bp-takeaways" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Key Takeaways</h2>
-                  {keyTakeaways.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
+            <ul>
+              {workedExample.candidates.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+            <p>{workedExample.note}</p>
+          </section>
+          <section id="examples-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {codeExamples.map((example) => (
+              <div key={example.title ?? example.code}>
+                {example.title && <h3 className="bin98-subheading">{example.title}</h3>}
+                {!example.title && <h3 className="bin98-subheading">Linear Search</h3>}
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pillars" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Pillars and Mental Models</h2>
-                  {pillars.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="brute-force-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-framing" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Problem Framing</h2>
-                  {problemFraming.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-space" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Search Space Taxonomy</h2>
-                  {searchSpaceTypes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-how" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">How It Works</h2>
-                  {howItWorks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-verify" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Verification Checklist</h2>
-                  <ol>
-                    {verificationChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-complexity" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Complexity</h2>
-                  {complexityTable.map((row) => (
-                    <div key={row.approach}>
-                      <h3 className="brute-force-help-subheading">{row.approach}</h3>
-                      <p><strong>Time:</strong> {row.time}</p>
-                      <p><strong>Space:</strong> {row.space}</p>
-                      <p><strong>Note:</strong> {row.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-use" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">When To Use It</h2>
-                  <ul>
-                    {whenToUse.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-avoid" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">When Not To Use It</h2>
-                  <ul>
-                    {whenNotToUse.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-pitfalls" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-optimization" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Optimization Levers</h2>
-                  {optimizationLevers.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Advanced Variants</h2>
-                  {advanced.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="brute-force-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.rationale}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="examples-worked" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Worked Example</h2>
-                  <h3 className="brute-force-help-subheading">{workedExample.title}</h3>
-                  <p><strong>Input:</strong> {workedExample.input}</p>
-                  <ul>
-                    {workedExample.candidates.map((line) => (
-                      <li key={line}>{line}</li>
-                    ))}
-                  </ul>
-                  <p>{workedExample.note}</p>
-                </section>
-                <section id="examples-code" className="brute-force-help-section">
-                  <h2 className="brute-force-help-heading">Code Examples</h2>
-                  {codeExamples.map((example) => (
-                    <div key={example.title ?? example.code}>
-                      {example.title && <h3 className="brute-force-help-subheading">{example.title}</h3>}
-                      {!example.title && <h3 className="brute-force-help-subheading">Linear Search</h3>}
-                      <div className="brute-force-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="brute-force-help-section">
-                <h2 className="brute-force-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

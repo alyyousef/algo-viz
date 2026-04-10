@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -35,8 +34,7 @@ const mentalModels = [
   },
   {
     title: 'Dynamic components',
-    detail:
-      'Think of union-find as maintaining connected components while edges arrive online.',
+    detail: 'Think of union-find as maintaining connected components while edges arrive online.',
   },
   {
     title: 'Name tags',
@@ -45,8 +43,7 @@ const mentalModels = [
   },
   {
     title: 'Islands merging',
-    detail:
-      'Each new edge or land cell can merge islands into a larger component.',
+    detail: 'Each new edge or land cell can merge islands into a larger component.',
   },
 ]
 
@@ -163,33 +160,27 @@ const coreConcepts = [
 const modelingPatterns = [
   {
     title: 'Map objects to ids',
-    detail:
-      'Use a map from strings or objects to integer ids to feed DSU arrays.',
+    detail: 'Use a map from strings or objects to integer ids to feed DSU arrays.',
   },
   {
     title: 'Online edge arrival',
-    detail:
-      'Union endpoints as edges arrive to keep components current.',
+    detail: 'Union endpoints as edges arrive to keep components current.',
   },
   {
     title: 'Offline threshold queries',
-    detail:
-      'Sort edges and queries by threshold; union edges as you advance.',
+    detail: 'Sort edges and queries by threshold; union edges as you advance.',
   },
   {
     title: 'Grid to graph',
-    detail:
-      'Flatten (r, c) into id = r * cols + c, union neighbors that are active.',
+    detail: 'Flatten (r, c) into id = r * cols + c, union neighbors that are active.',
   },
   {
     title: 'Equivalence constraints',
-    detail:
-      'Use DSU to merge items known to be equal, then verify inequalities.',
+    detail: 'Use DSU to merge items known to be equal, then verify inequalities.',
   },
   {
     title: 'Parity constraints',
-    detail:
-      'Store parity to parent to model bipartite constraints and detect conflicts.',
+    detail: 'Store parity to parent to model bipartite constraints and detect conflicts.',
   },
 ]
 
@@ -201,18 +192,15 @@ const complexityNotes = [
   },
   {
     title: 'Amortized vs worst case',
-    detail:
-      'Single operations can still be longer, but the average over many operations is tiny.',
+    detail: 'Single operations can still be longer, but the average over many operations is tiny.',
   },
   {
     title: 'Space cost',
-    detail:
-      'O(n) storage for parent and rank/size arrays.',
+    detail: 'O(n) storage for parent and rank/size arrays.',
   },
   {
     title: 'Build cost',
-    detail:
-      'Initialization is O(n). Unions are very fast once data is seeded.',
+    detail: 'Initialization is O(n). Unions are very fast once data is seeded.',
   },
   {
     title: 'Limitations',
@@ -224,8 +212,7 @@ const complexityNotes = [
 const realWorldUses = [
   {
     context: 'Minimum spanning trees',
-    detail:
-      'Kruskal\'s algorithm uses union-find to quickly detect cycles while adding edges.',
+    detail: "Kruskal's algorithm uses union-find to quickly detect cycles while adding edges.",
   },
   {
     context: 'Dynamic connectivity',
@@ -239,33 +226,27 @@ const realWorldUses = [
   },
   {
     context: 'Image segmentation',
-    detail:
-      'Union adjacent pixels by color or intensity to label connected components.',
+    detail: 'Union adjacent pixels by color or intensity to label connected components.',
   },
   {
     context: 'Percolation and physics',
-    detail:
-      'Track connected regions in lattice simulations to detect phase transitions.',
+    detail: 'Track connected regions in lattice simulations to detect phase transitions.',
   },
   {
     context: 'Account merging',
-    detail:
-      'Merge user accounts or profiles that share identifiers (emails, phone numbers).',
+    detail: 'Merge user accounts or profiles that share identifiers (emails, phone numbers).',
   },
   {
     context: 'Constraint solving',
-    detail:
-      'Merge equal variables or types, then check inequality constraints for contradictions.',
+    detail: 'Merge equal variables or types, then check inequality constraints for contradictions.',
   },
   {
     context: 'Online island counting',
-    detail:
-      'Track how many islands exist as land cells are activated over time.',
+    detail: 'Track how many islands exist as land cells are activated over time.',
   },
   {
     context: 'Social graph grouping',
-    detail:
-      'Union friendships to maintain community groups or connected friend circles.',
+    detail: 'Union friendships to maintain community groups or connected friend circles.',
   },
 ]
 
@@ -315,8 +296,7 @@ for (u, v, w) in edges:
     for each email in account:
         union(accountId, emailOwner[email])
         emailOwner[email] = accountId`,
-    explanation:
-      'Union accounts that share an identifier, then group by find(root) to merge.',
+    explanation: 'Union accounts that share an identifier, then group by find(root) to merge.',
   },
   {
     title: 'Offline threshold connectivity',
@@ -407,23 +387,19 @@ const advancedInsights = [
   },
   {
     title: 'DSU with parity',
-    detail:
-      'Track parity to the root to support bipartite constraints and detect odd cycles.',
+    detail: 'Track parity to the root to support bipartite constraints and detect odd cycles.',
   },
   {
     title: 'Disjoint set union on tree edges',
-    detail:
-      'DSU-on-tree techniques reuse union-find ideas to process subtree queries efficiently.',
+    detail: 'DSU-on-tree techniques reuse union-find ideas to process subtree queries efficiently.',
   },
   {
     title: 'Parallel unions',
-    detail:
-      'Batch unions and compress in stages for parallel processing on large graphs.',
+    detail: 'Batch unions and compress in stages for parallel processing on large graphs.',
   },
   {
     title: 'Temporal connectivity',
-    detail:
-      'Combine offline sorting with DSU rollback to answer queries over time windows.',
+    detail: 'Combine offline sorting with DSU rollback to answer queries over time windows.',
   },
 ]
 
@@ -444,18 +420,15 @@ const glossaryTerms = [
   },
   {
     term: 'Representative (root)',
-    definition:
-      'The leader element of a component; all members eventually point to this root.',
+    definition: 'The leader element of a component; all members eventually point to this root.',
   },
   {
     term: 'Find',
-    definition:
-      'Operation that returns the root of an element, used for connectivity checks.',
+    definition: 'Operation that returns the root of an element, used for connectivity checks.',
   },
   {
     term: 'Union',
-    definition:
-      'Operation that merges two components when their roots are different.',
+    definition: 'Operation that merges two components when their roots are different.',
   },
   {
     term: 'Path compression',
@@ -469,8 +442,7 @@ const glossaryTerms = [
   },
   {
     term: 'Connected component',
-    definition:
-      'A set of vertices where each pair is connected through some undirected path.',
+    definition: 'A set of vertices where each pair is connected through some undirected path.',
   },
   {
     term: 'Cycle detection',
@@ -479,8 +451,7 @@ const glossaryTerms = [
   },
   {
     term: 'Component metadata',
-    definition:
-      'Extra root-level values such as size, min/max id, or aggregate statistics.',
+    definition: 'Extra root-level values such as size, min/max id, or aggregate statistics.',
   },
   {
     term: 'Offline query',
@@ -494,235 +465,11 @@ const glossaryTerms = [
   },
   {
     term: 'DSU limitation',
-    definition:
-      'Standard DSU cannot efficiently delete edges or split existing components.',
+    definition: 'Standard DSU cannot efficiently delete edges or split existing components.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.ufapp-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ufapp-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.ufapp-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ufapp-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.ufapp-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.ufapp-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.ufapp-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.ufapp-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.ufapp-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.ufapp-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.ufapp-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.ufapp-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.ufapp-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ufapp-toc-list li {
-  margin: 0 0 8px;
-}
-
-.ufapp-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ufapp-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.ufapp-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.ufapp-section {
-  margin: 0 0 20px;
-}
-
-.ufapp-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.ufapp-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.ufapp-content p,
-.ufapp-content li,
-.ufapp-content td,
-.ufapp-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ufapp-content p {
-  margin: 0 0 10px;
-}
-
-.ufapp-content ul,
-.ufapp-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ufapp-content table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0 0 10px;
-}
-
-.ufapp-content th,
-.ufapp-content td {
-  border: 1px solid #b8b8b8;
-  text-align: left;
-  padding: 5px 6px;
-}
-
-.ufapp-content th {
-  background: #efefef;
-}
-
-.ufapp-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.ufapp-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.ufapp-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .ufapp-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ufapp-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -730,10 +477,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -760,299 +503,238 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function UnionFindApplicationsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Union-Find Applications',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Union-Find Applications (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Union-Find Applications',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="ufapp-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="ufapp-window" role="presentation">
-        <header className="ufapp-titlebar">
-          <span className="ufapp-title-text">Union-Find Applications</span>
-          <div className="ufapp-title-controls">
-            <button className="ufapp-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="ufapp-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="ufapp-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ufapp-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="ufapp-main">
-          <aside className="ufapp-toc" aria-label="Table of contents">
-            <h2 className="ufapp-toc-title">Contents</h2>
-            <ul className="ufapp-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Union-Find Applications"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Union-Find Applications</h1>
+      <p>
+        Union-find is a tiny data structure with enormous impact. It tracks connected components as
+        edges appear, enabling fast cycle checks, clustering, region labeling, and offline
+        connectivity queries without repeated full graph traversals.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <h3 className="bin98-subheading">
+              Practical uses of disjoint set union for connectivity problems
+            </h3>
+            <p>
+              Union-find maintains a forest of sets. Each union merges two sets, and each find
+              returns the leader of a set. With path compression and union by rank, the structure
+              becomes almost constant time, making it ideal for large connectivity workloads where
+              links only appear and rarely disappear. It powers MSTs, clustering, grid labeling,
+              constraint grouping, and dynamic island counts with a minimal, reliable API.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="ufapp-content">
-            <h1 className="ufapp-doc-title">Union-Find Applications</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-fundamentals" className="bin98-section">
+            <h2 className="bin98-heading">DSU Fundamentals and Operations</h2>
+            {dsuFundamentals.map((item) => (
+              <div key={item.heading}>
+                <h3 className="bin98-subheading">{item.heading}</h3>
+                <ul>
+                  {item.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Common Applications</h2>
+            {coreConcepts.map((item) => (
+              <div key={item.heading}>
+                <h3 className="bin98-subheading">{item.heading}</h3>
+                <ul>
+                  {item.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-modeling" className="bin98-section">
+            <h2 className="bin98-heading">Modeling Patterns and Recipes</h2>
+            {modelingPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Union-find is a tiny data structure with enormous impact. It tracks connected components as edges appear, enabling
-              fast cycle checks, clustering, region labeling, and offline connectivity queries without repeated full graph
-              traversals.
+              Union-find excels when connectivity only grows. If you need to delete edges or split
+              sets, you must use more advanced dynamic connectivity structures or rebuild
+              periodically.
             </p>
+          </section>
+          <section id="core-ops" className="bin98-section">
+            <h2 className="bin98-heading">Operation Summary</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Operation</th>
+                  <th>Time</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Make-set (init)</td>
+                  <td>O(n)</td>
+                  <td>Each node starts as its own parent.</td>
+                </tr>
+                <tr>
+                  <td>Find</td>
+                  <td>~O(1)</td>
+                  <td>Inverse Ackermann with path compression.</td>
+                </tr>
+                <tr>
+                  <td>Union</td>
+                  <td>~O(1)</td>
+                  <td>Union by rank or size keeps trees flat.</td>
+                </tr>
+                <tr>
+                  <td>Connectivity check</td>
+                  <td>~O(1)</td>
+                  <td>Compare find(u) and find(v).</td>
+                </tr>
+                <tr>
+                  <td>Component size</td>
+                  <td>~O(1)</td>
+                  <td>Read size at the root after find.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-solving" className="bin98-section">
+            <h2 className="bin98-heading">DSU Problem-Solving Checklist</h2>
+            <ul>
+              {solvingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-testing" className="bin98-section">
+            <h2 className="bin98-heading">Testing and Edge Cases</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="ufapp-section">
-                  <h2 className="ufapp-heading">Overview</h2>
-                  <h3 className="ufapp-subheading">Practical uses of disjoint set union for connectivity problems</h3>
-                  <p>
-                    Union-find maintains a forest of sets. Each union merges two sets, and each find returns the leader of a set.
-                    With path compression and union by rank, the structure becomes almost constant time, making it ideal for large
-                    connectivity workloads where links only appear and rarely disappear. It powers MSTs, clustering, grid
-                    labeling, constraint grouping, and dynamic island counts with a minimal, reliable API.
-                  </p>
-                </section>
-                <hr className="ufapp-divider" />
-                <section id="bp-history" className="ufapp-section">
-                  <h2 className="ufapp-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="ufapp-divider" />
-                <section id="bp-models" className="ufapp-section">
-                  <h2 className="ufapp-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="ufapp-divider" />
-                <section id="bp-applications" className="ufapp-section">
-                  <h2 className="ufapp-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="ufapp-divider" />
-                <section id="bp-takeaways" className="ufapp-section">
-                  <h2 className="ufapp-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((item) => (
+            <div key={item.title}>
+              <h3 className="bin98-subheading">{item.title}</h3>
+              <div className="bin98-codebox">
+                <code>{item.code.trim()}</code>
+              </div>
+              <p>{item.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-fundamentals" className="ufapp-section">
-                  <h2 className="ufapp-heading">DSU Fundamentals and Operations</h2>
-                  {dsuFundamentals.map((item) => (
-                    <div key={item.heading}>
-                      <h3 className="ufapp-subheading">{item.heading}</h3>
-                      <ul>
-                        {item.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-applications" className="ufapp-section">
-                  <h2 className="ufapp-heading">How It Works: Common Applications</h2>
-                  {coreConcepts.map((item) => (
-                    <div key={item.heading}>
-                      <h3 className="ufapp-subheading">{item.heading}</h3>
-                      <ul>
-                        {item.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-modeling" className="ufapp-section">
-                  <h2 className="ufapp-heading">Modeling Patterns and Recipes</h2>
-                  {modelingPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="ufapp-section">
-                  <h2 className="ufapp-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Union-find excels when connectivity only grows. If you need to delete edges or split sets, you must use more
-                    advanced dynamic connectivity structures or rebuild periodically.
-                  </p>
-                </section>
-                <section id="core-ops" className="ufapp-section">
-                  <h2 className="ufapp-heading">Operation Summary</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Operation</th>
-                        <th>Time</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Make-set (init)</td>
-                        <td>O(n)</td>
-                        <td>Each node starts as its own parent.</td>
-                      </tr>
-                      <tr>
-                        <td>Find</td>
-                        <td>~O(1)</td>
-                        <td>Inverse Ackermann with path compression.</td>
-                      </tr>
-                      <tr>
-                        <td>Union</td>
-                        <td>~O(1)</td>
-                        <td>Union by rank or size keeps trees flat.</td>
-                      </tr>
-                      <tr>
-                        <td>Connectivity check</td>
-                        <td>~O(1)</td>
-                        <td>Compare find(u) and find(v).</td>
-                      </tr>
-                      <tr>
-                        <td>Component size</td>
-                        <td>~O(1)</td>
-                        <td>Read size at the root after find.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-pitfalls" className="ufapp-section">
-                  <h2 className="ufapp-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-solving" className="ufapp-section">
-                  <h2 className="ufapp-heading">DSU Problem-Solving Checklist</h2>
-                  <ul>
-                    {solvingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-testing" className="ufapp-section">
-                  <h2 className="ufapp-heading">Testing and Edge Cases</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decision" className="ufapp-section">
-                  <h2 className="ufapp-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="ufapp-section">
-                  <h2 className="ufapp-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="ufapp-section">
-                <h2 className="ufapp-heading">Practical Examples</h2>
-                {examples.map((item) => (
-                  <div key={item.title}>
-                    <h3 className="ufapp-subheading">{item.title}</h3>
-                    <div className="ufapp-codebox">
-                      <code>{item.code.trim()}</code>
-                    </div>
-                    <p>{item.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="ufapp-section">
-                <h2 className="ufapp-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

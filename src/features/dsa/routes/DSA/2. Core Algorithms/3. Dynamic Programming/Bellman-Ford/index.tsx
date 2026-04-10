@@ -1,23 +1,20 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 const mentalModels = [
   {
     title: 'Edge budget DP',
-    detail:
-      'After k rounds, you have the shortest paths that use at most k edges.',
+    detail: 'After k rounds, you have the shortest paths that use at most k edges.',
   },
   {
     title: 'Wave of relaxations',
-    detail:
-      'Each pass pushes improved distances across all edges like a global wave.',
+    detail: 'Each pass pushes improved distances across all edges like a global wave.',
   },
   {
     title: 'Negative cycle alarm',
-    detail:
-      'If a distance improves on the V-th pass, costs can drop forever.',
+    detail: 'If a distance improves on the V-th pass, costs can drop forever.',
   },
 ]
 
@@ -86,51 +83,42 @@ const mechanics = [
 const workflowSteps = [
   {
     title: 'Model the graph',
-    detail:
-      'Use a directed edge list (u, v, w). For undirected edges, add both directions.',
+    detail: 'Use a directed edge list (u, v, w). For undirected edges, add both directions.',
   },
   {
     title: 'Initialize distances',
-    detail:
-      'Set dist[source] = 0 and dist[others] = INF, with parents unset.',
+    detail: 'Set dist[source] = 0 and dist[others] = INF, with parents unset.',
   },
   {
     title: 'Run V - 1 relaxations',
-    detail:
-      'Iterate over edges, updating distances. Optionally stop early if no change.',
+    detail: 'Iterate over edges, updating distances. Optionally stop early if no change.',
   },
   {
     title: 'Detect negative cycles',
-    detail:
-      'Run one more pass; any improvement indicates a reachable negative cycle.',
+    detail: 'Run one more pass; any improvement indicates a reachable negative cycle.',
   },
   {
     title: 'Reconstruct paths',
-    detail:
-      'Use parent pointers to recover shortest paths or extract a negative cycle.',
+    detail: 'Use parent pointers to recover shortest paths or extract a negative cycle.',
   },
 ]
 
 const variantCatalog = [
   {
     title: 'Bellman-Ford + early stop',
-    detail:
-      'Break when a pass makes no updates. Same correctness, often faster.',
+    detail: 'Break when a pass makes no updates. Same correctness, often faster.',
   },
   {
     title: 'SPFA (queue-based)',
-    detail:
-      'Relax only vertices whose distance changed; fast on many inputs, same worst-case.',
+    detail: 'Relax only vertices whose distance changed; fast on many inputs, same worst-case.',
   },
   {
     title: 'Multi-source Bellman-Ford',
-    detail:
-      'Add a super-source with 0 edges to all nodes to handle multiple sources.',
+    detail: 'Add a super-source with 0 edges to all nodes to handle multiple sources.',
   },
   {
     title: 'Johnson reweighting',
-    detail:
-      'Run Bellman-Ford once to compute potentials and remove negative edges.',
+    detail: 'Run Bellman-Ford once to compute potentials and remove negative edges.',
   },
 ]
 
@@ -175,26 +163,22 @@ const realWorldUses = [
   },
   {
     context: 'Risk-aware planning',
-    detail:
-      'Negative edges can represent discounts or rebates in cost models.',
+    detail: 'Negative edges can represent discounts or rebates in cost models.',
   },
   {
     context: 'Network policy checks',
-    detail:
-      'Detect inconsistent routing metrics or policy loops with negative cycles.',
+    detail: 'Detect inconsistent routing metrics or policy loops with negative cycles.',
   },
 ]
 
 const correctnessSketch = [
   {
     title: 'DP invariant',
-    detail:
-      'After k passes, dist[v] is the shortest path using at most k edges.',
+    detail: 'After k passes, dist[v] is the shortest path using at most k edges.',
   },
   {
     title: 'Why V - 1 passes',
-    detail:
-      'Any simple shortest path has at most V - 1 edges.',
+    detail: 'Any simple shortest path has at most V - 1 edges.',
   },
   {
     title: 'Negative cycle test',
@@ -203,8 +187,7 @@ const correctnessSketch = [
   },
   {
     title: 'Parent pointers',
-    detail:
-      'Each update preserves a valid shortest path tree over the processed edge budget.',
+    detail: 'Each update preserves a valid shortest path tree over the processed edge budget.',
   },
 ]
 
@@ -256,8 +239,7 @@ const examples = [
 Add edge u -> v with weight w
 Add super-source s* with 0 edges to all nodes
 Run Bellman-Ford from s*`,
-    explanation:
-      'If a negative cycle exists, the constraints are inconsistent.',
+    explanation: 'If a negative cycle exists, the constraints are inconsistent.',
   },
   {
     title: 'Early stop optimization',
@@ -268,8 +250,7 @@ Run Bellman-Ford from s*`,
             dist[v] = dist[u] + w
             changed = true
     if not changed: break`,
-    explanation:
-      'Stop when a full pass makes no improvements.',
+    explanation: 'Stop when a full pass makes no improvements.',
   },
 ]
 
@@ -323,7 +304,8 @@ const glossaryTerms = [
   },
   {
     term: 'Super-source',
-    definition: 'An added node with 0-weight edges to all nodes for multi-source or feasibility checks.',
+    definition:
+      'An added node with 0-weight edges to all nodes for multi-source or feasibility checks.',
   },
   {
     term: 'Difference constraints',
@@ -341,222 +323,12 @@ const glossaryTerms = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const bellmanHelpStyles = `
-.bellman-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.bellman-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.bellman-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bellman-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.bellman-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.bellman-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.bellman-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.bellman-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.bellman-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.bellman-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.bellman-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.bellman-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.bellman-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bellman-toc-list li {
-  margin: 0 0 8px;
-}
-
-.bellman-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.bellman-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.bellman-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.bellman-section {
-  margin: 0 0 20px;
-}
-
-.bellman-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.bellman-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.bellman-content p,
-.bellman-content li,
-.bellman-content td,
-.bellman-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.bellman-content p {
-  margin: 0 0 10px;
-}
-
-.bellman-content ul,
-.bellman-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.bellman-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.bellman-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.bellman-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .bellman-main {
-    grid-template-columns: 1fr;
-  }
-
-  .bellman-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -581,254 +353,189 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function BellmanFordPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Bellman-Ford',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Bellman-Ford (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Bellman-Ford',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="bellman-help-page">
-      <style>{bellmanHelpStyles}</style>
-      <div className="bellman-window" role="presentation">
-        <header className="bellman-titlebar">
-          <span className="bellman-title-text">Bellman-Ford</span>
-          <div className="bellman-title-controls">
-            <button className="bellman-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="bellman-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Bellman-Ford"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Bellman-Ford</h1>
+      <p>
+        Bellman-Ford relaxes every edge in rounds, allowing paths to gain at most one edge per
+        round. It handles negative weights gracefully and signals negative cycles, making it the
+        safer choice when Dijkstra&apos;s non-negative assumption is broken. It also powers
+        constraint systems, distance-vector routing, and Johnson reweighting.
+      </p>
 
-        <div className="bellman-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`bellman-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              This algorithm trades speed for generality: O(VE) time and O(V) space, but it works
+              whenever edges may be negative. Its synchronous relaxation rounds map well to
+              distributed updates and provide a built-in mechanism to flag reachable negative
+              cycles.
+            </p>
+            <p>
+              The dynamic programming view makes correctness intuitive: each pass extends shortest
+              paths by one edge, so after V - 1 passes you have all shortest simple paths.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Performance</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Sketch</h2>
+            {correctnessSketch.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-        <div className="bellman-main">
-          <aside className="bellman-toc" aria-label="Table of contents">
-            <h2 className="bellman-toc-title">Contents</h2>
-            <ul className="bellman-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-definitions" className="bin98-section">
+            <h2 className="bin98-heading">Definitions That Matter</h2>
+            {keyDefinitions.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">End-to-End Workflow</h2>
+            <ol>
+              {workflowSteps.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.detail}
                 </li>
               ))}
+            </ol>
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variant Catalog</h2>
+            {variantCatalog.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
-          </aside>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Checklist</h2>
+            <ul>
+              {implementationChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-testing" className="bin98-section">
+            <h2 className="bin98-heading">Testing and Edge Cases</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When To Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+        </>
+      )}
 
-          <main className="bellman-content">
-            <h1 className="bellman-doc-title">Bellman-Ford</h1>
-            <p>
-              Bellman-Ford relaxes every edge in rounds, allowing paths to gain at most one edge per round. It handles negative
-              weights gracefully and signals negative cycles, making it the safer choice when Dijkstra&apos;s non-negative assumption
-              is broken. It also powers constraint systems, distance-vector routing, and Johnson reweighting.
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="bellman-section">
-                  <h2 className="bellman-heading">Overview</h2>
-                  <p>
-                    This algorithm trades speed for generality: O(VE) time and O(V) space, but it works whenever edges may be
-                    negative. Its synchronous relaxation rounds map well to distributed updates and provide a built-in mechanism to
-                    flag reachable negative cycles.
-                  </p>
-                  <p>
-                    The dynamic programming view makes correctness intuitive: each pass extends shortest paths by one edge, so after
-                    V - 1 passes you have all shortest simple paths.
-                  </p>
-                </section>
-                <hr className="bellman-divider" />
-                <section id="bp-models" className="bellman-section">
-                  <h2 className="bellman-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="bellman-divider" />
-                <section id="bp-complexity" className="bellman-section">
-                  <h2 className="bellman-heading">Complexity and Performance</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="bellman-divider" />
-                <section id="bp-applications" className="bellman-section">
-                  <h2 className="bellman-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="bellman-divider" />
-                <section id="bp-correctness" className="bellman-section">
-                  <h2 className="bellman-heading">Correctness Sketch</h2>
-                  {correctnessSketch.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-definitions" className="bellman-section">
-                  <h2 className="bellman-heading">Definitions That Matter</h2>
-                  {keyDefinitions.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="bellman-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="bellman-section">
-                  <h2 className="bellman-heading">How It Works</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="bellman-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-workflow" className="bellman-section">
-                  <h2 className="bellman-heading">End-to-End Workflow</h2>
-                  <ol>
-                    {workflowSteps.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.detail}
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-variants" className="bellman-section">
-                  <h2 className="bellman-heading">Variant Catalog</h2>
-                  {variantCatalog.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="bellman-section">
-                  <h2 className="bellman-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-implementation" className="bellman-section">
-                  <h2 className="bellman-heading">Implementation Checklist</h2>
-                  <ul>
-                    {implementationChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-testing" className="bellman-section">
-                  <h2 className="bellman-heading">Testing and Edge Cases</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decision" className="bellman-section">
-                  <h2 className="bellman-heading">When To Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="bellman-section">
-                <h2 className="bellman-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="bellman-subheading">{example.title}</h3>
-                    <div className="bellman-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="bellman-section">
-                <h2 className="bellman-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

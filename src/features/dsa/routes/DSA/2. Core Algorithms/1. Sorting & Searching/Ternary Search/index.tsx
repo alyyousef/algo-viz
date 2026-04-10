@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -68,8 +67,7 @@ const workflowSteps = [
   },
   {
     title: 'Repeat until small',
-    detail:
-      'Stop when the range is small enough, then finish with a linear scan or direct check.',
+    detail: 'Stop when the range is small enough, then finish with a linear scan or direct check.',
   },
   {
     title: 'Finalize precisely',
@@ -86,23 +84,19 @@ const problemPatterns = [
   },
   {
     title: 'Discrete peak finding',
-    detail:
-      'Find the peak of a unimodal array when gradients are noisy or unavailable.',
+    detail: 'Find the peak of a unimodal array when gradients are noisy or unavailable.',
   },
   {
     title: 'Parameter tuning',
-    detail:
-      'Tune a scalar hyperparameter where performance rises to a peak and then falls.',
+    detail: 'Tune a scalar hyperparameter where performance rises to a peak and then falls.',
   },
   {
     title: 'Not for arbitrary arrays',
-    detail:
-      'If data is not unimodal or sorted, ternary search can converge to the wrong answer.',
+    detail: 'If data is not unimodal or sorted, ternary search can converge to the wrong answer.',
   },
   {
     title: 'Precision-bounded search',
-    detail:
-      'Use when you can accept an approximate argmax/argmin within a tolerance.',
+    detail: 'Use when you can accept an approximate argmax/argmin within a tolerance.',
   },
 ]
 
@@ -146,7 +140,10 @@ const complexityRows = [
   { label: 'Sorted array time', value: 'O(log n), but with more comparisons than binary search.' },
   { label: 'Unimodal function time', value: 'O(log n) iterations, two evaluations per step.' },
   { label: 'Extra space', value: 'O(1) iterative; O(log n) recursive stack.' },
-  { label: 'Evaluations per step', value: '2 evaluations for functions; 2 to 4 comparisons for arrays.' },
+  {
+    label: 'Evaluations per step',
+    value: '2 evaluations for functions; 2 to 4 comparisons for arrays.',
+  },
 ]
 
 const comparisonNotes = [
@@ -234,8 +231,7 @@ function peakIndex(arr):
         if arr[m1] < arr[m2]: left = m1
         else: right = m2
     return indexOfMax(arr, left, right)`,
-    explanation:
-      'When the interval is small, a final scan is cheaper than more splits.',
+    explanation: 'When the interval is small, a final scan is cheaper than more splits.',
   },
   {
     title: 'Minimizing a convex function',
@@ -246,8 +242,7 @@ function peakIndex(arr):
         if f(m1) > f(m2): left = m1
         else: right = m2
     return (left + right) / 2`,
-    explanation:
-      'Flip the comparison to find a minimum on a convex curve.',
+    explanation: 'Flip the comparison to find a minimum on a convex curve.',
   },
 ]
 
@@ -264,8 +259,7 @@ const realWorldUses = [
   },
   {
     context: 'Signal processing',
-    detail:
-      'Find the peak frequency or best window size when the response curve is unimodal.',
+    detail: 'Find the peak frequency or best window size when the response curve is unimodal.',
   },
   {
     context: 'Game design balancing',
@@ -274,8 +268,7 @@ const realWorldUses = [
   },
   {
     context: 'Operations research',
-    detail:
-      'Select batch sizes or thresholds that minimize cost in unimodal cost curves.',
+    detail: 'Select batch sizes or thresholds that minimize cost in unimodal cost curves.',
   },
 ]
 
@@ -292,13 +285,11 @@ const inputSensitivity = [
   },
   {
     title: 'Noisy evaluations',
-    detail:
-      'Noise can mislead comparisons; smoothing or averaging evaluations improves stability.',
+    detail: 'Noise can mislead comparisons; smoothing or averaging evaluations improves stability.',
   },
   {
     title: 'Sorted arrays',
-    detail:
-      'Works, but binary search is usually faster due to fewer comparisons.',
+    detail: 'Works, but binary search is usually faster due to fewer comparisons.',
   },
 ]
 
@@ -315,13 +306,11 @@ const performanceProfile = [
   },
   {
     title: 'Precision control',
-    detail:
-      'Choose steps based on desired error: more steps yield tighter intervals.',
+    detail: 'Choose steps based on desired error: more steps yield tighter intervals.',
   },
   {
     title: 'Deterministic control flow',
-    detail:
-      'Simple loop structure makes it easy to reason about and test.',
+    detail: 'Simple loop structure makes it easy to reason about and test.',
   },
 ]
 
@@ -359,23 +348,19 @@ const comparisonTable = [
 const variantsAndTweaks = [
   {
     title: 'Discrete finish scan',
-    detail:
-      'Stop once the range is smaller than a threshold and scan for the exact best index.',
+    detail: 'Stop once the range is smaller than a threshold and scan for the exact best index.',
   },
   {
     title: 'Fixed-iteration search',
-    detail:
-      'For real numbers, run a fixed number of iterations to guarantee precision.',
+    detail: 'For real numbers, run a fixed number of iterations to guarantee precision.',
   },
   {
     title: 'Caching evaluations',
-    detail:
-      'Store f(m1) and f(m2) when possible to avoid redundant work in expensive functions.',
+    detail: 'Store f(m1) and f(m2) when possible to avoid redundant work in expensive functions.',
   },
   {
     title: 'Hybrid with golden section',
-    detail:
-      'Switch to golden section for expensive functions to reduce evaluation count.',
+    detail: 'Switch to golden section for expensive functions to reduce evaluation count.',
   },
 ]
 
@@ -399,28 +384,23 @@ const decisionGuidance = [
 const implementationTips = [
   {
     title: 'Handle equal values',
-    detail:
-      'If f(m1) == f(m2), move both bounds inward to guarantee progress.',
+    detail: 'If f(m1) == f(m2), move both bounds inward to guarantee progress.',
   },
   {
     title: 'Choose a stopping rule',
-    detail:
-      'For floats, stop after N iterations or when right-left is below epsilon.',
+    detail: 'For floats, stop after N iterations or when right-left is below epsilon.',
   },
   {
     title: 'Avoid overflow',
-    detail:
-      'Compute m1 and m2 from low and high using differences, not (low+high)/3.',
+    detail: 'Compute m1 and m2 from low and high using differences, not (low+high)/3.',
   },
   {
     title: 'Scan small ranges',
-    detail:
-      'For integers, finish with a scan when the range is under 3-5 elements.',
+    detail: 'For integers, finish with a scan when the range is under 3-5 elements.',
   },
   {
     title: 'Memoize f(x)',
-    detail:
-      'When f(x) is expensive, cache evaluations to avoid recomputation.',
+    detail: 'When f(x) is expensive, cache evaluations to avoid recomputation.',
   },
 ]
 
@@ -503,8 +483,7 @@ const glossary = [
   },
   {
     term: 'Argmax / Argmin',
-    definition:
-      'The input value where a function reaches its maximum or minimum.',
+    definition: 'The input value where a function reaches its maximum or minimum.',
   },
   {
     term: 'Sorted-array ternary lookup',
@@ -553,539 +532,270 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const ternary98Styles = `
-.ternary98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ternary98-window {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.ternary98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ternary98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.ternary98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.ternary98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 11px;
-}
-
-.ternary98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.ternary98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  padding: 5px 10px 4px;
-  cursor: pointer;
-}
-
-.ternary98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.ternary98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.ternary98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.ternary98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ternary98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.ternary98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.ternary98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ternary98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.ternary98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ternary98-section {
-  margin: 0 0 20px;
-}
-
-.ternary98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ternary98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ternary98-content p,
-.ternary98-content li,
-.ternary98-content td,
-.ternary98-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ternary98-content p {
-  margin: 0 0 10px;
-}
-
-.ternary98-content ul,
-.ternary98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ternary98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.ternary98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.ternary98-table th,
-.ternary98-table td {
-  border: 1px solid #a0a0a0;
-  padding: 4px 6px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.ternary98-state {
-  font-family: "Courier New", Courier, monospace;
-}
-
-.ternary98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.ternary98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .ternary98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ternary98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function TernarySearchPage(): JSX.Element {
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Ternary Search',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Ternary Search (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="ternary98-page">
-      <style>{ternary98Styles}</style>
-      <div className="ternary98-window" role="presentation">
-        <header className="ternary98-titlebar">
-          <span className="ternary98-title">Ternary Search</span>
-          <div className="ternary98-title-controls">
-            <button className="ternary98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="ternary98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="ternary98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ternary98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="ternary98-main">
-          <aside className="ternary98-toc" aria-label="Table of contents">
-            <h2 className="ternary98-toc-title">Contents</h2>
-            <ul className="ternary98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Ternary Search"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Ternary Search</h1>
+      <p>
+        Ternary search splits a range into three segments using two midpoints and removes the
+        segment that cannot contain the answer. It is most valuable when searching for the maximum
+        or minimum of a unimodal function, where it converges quickly to the peak without requiring
+        derivatives.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Binary search asks one question and cuts the range in half. Ternary search asks two
+              questions, keeps two thirds, and repeats. That tradeoff usually makes it worse for
+              plain sorted arrays, but it shines for unimodal optimization, where comparisons are
+              replaced by function evaluations.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Problem Patterns</h2>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-where" className="bin98-section">
+            <h2 className="bin98-heading">Where It Applies</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="ternary98-content">
-            <h1 className="ternary98-doc-title">Ternary Search</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: The Ternary Loop</h2>
+            {workflowSteps.map((step) => (
+              <p key={step.title}>
+                <strong>{step.title}:</strong> {step.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Loop Invariants (Why It Is Correct)</h2>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityRows.map((row) => (
+              <p key={row.label}>
+                <strong>{row.label}:</strong> {row.value}
+              </p>
+            ))}
             <p>
-              Ternary search splits a range into three segments using two midpoints and removes the segment that cannot contain the
-              answer. It is most valuable when searching for the maximum or minimum of a unimodal function, where it converges quickly
-              to the peak without requiring derivatives.
+              On sorted arrays, binary search is almost always better. Ternary search is a clean
+              tool for unimodal optimization, where the cost is dominated by function evaluations
+              rather than comparisons.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="ternary98-section">
-                  <h2 className="ternary98-heading">Overview</h2>
-                  <p>
-                    Binary search asks one question and cuts the range in half. Ternary search asks two questions, keeps two thirds,
-                    and repeats. That tradeoff usually makes it worse for plain sorted arrays, but it shines for unimodal optimization,
-                    where comparisons are replaced by function evaluations.
-                  </p>
-                </section>
-                <hr className="ternary98-divider" />
-                <section id="bp-history" className="ternary98-section">
-                  <h2 className="ternary98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="ternary98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="ternary98-section">
-                  <h2 className="ternary98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-patterns" className="ternary98-section">
-                  <h2 className="ternary98-heading">Problem Patterns</h2>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-where" className="ternary98-section">
-                  <h2 className="ternary98-heading">Where It Applies</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="ternary98-section">
-                  <h2 className="ternary98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-workflow" className="ternary98-section">
-                  <h2 className="ternary98-heading">How It Works: The Ternary Loop</h2>
-                  {workflowSteps.map((step) => (
-                    <p key={step.title}>
-                      <strong>{step.title}:</strong> {step.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="ternary98-section">
-                  <h2 className="ternary98-heading">Loop Invariants (Why It Is Correct)</h2>
-                  {loopInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="ternary98-section">
-                  <h2 className="ternary98-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityRows.map((row) => (
-                    <p key={row.label}>
-                      <strong>{row.label}:</strong> {row.value}
-                    </p>
-                  ))}
-                  <p>
-                    On sorted arrays, binary search is almost always better. Ternary search is a clean tool for unimodal optimization,
-                    where the cost is dominated by function evaluations rather than comparisons.
-                  </p>
-                </section>
-                <section id="core-binary-ternary" className="ternary98-section">
-                  <h2 className="ternary98-heading">Binary vs Ternary at a Glance</h2>
-                  <table className="ternary98-table">
-                    <thead>
-                      <tr>
-                        <th>Metric</th>
-                        <th>Binary</th>
-                        <th>Ternary</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonNotes.map((row) => (
-                        <tr key={row.metric}>
-                          <td>{row.metric}</td>
-                          <td>{row.binary}</td>
-                          <td>{row.ternary}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-sensitivity" className="ternary98-section">
-                  <h2 className="ternary98-heading">Input Sensitivity</h2>
-                  {inputSensitivity.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-profile" className="ternary98-section">
-                  <h2 className="ternary98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="ternary98-section">
-                  <h2 className="ternary98-heading">Compare and Contrast</h2>
-                  <table className="ternary98-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Best for</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.bestFor}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-uses" className="ternary98-section">
-                  <h2 className="ternary98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="ternary98-section">
-                  <h2 className="ternary98-heading">Variants and Performance Tweaks</h2>
-                  {variantsAndTweaks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="ternary98-section">
-                  <h2 className="ternary98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-tips" className="ternary98-section">
-                  <h2 className="ternary98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decisions" className="ternary98-section">
-                  <h2 className="ternary98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="ternary98-section">
-                  <h2 className="ternary98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-trace" className="ternary98-section">
-                  <h2 className="ternary98-heading">Worked Trace on a Tiny Example</h2>
-                  <ol>
-                    {stepTrace.map((item) => (
-                      <li key={item.step}>
-                        <p><strong>{item.step}:</strong> {item.note}</p>
-                        <p className="ternary98-state">{item.state}</p>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="ex-code" className="ternary98-section">
-                  <h2 className="ternary98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="ternary98-subheading">{example.title}</h3>
-                      <div className="ternary98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="ternary98-section">
-                <h2 className="ternary98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
+          </section>
+          <section id="core-binary-ternary" className="bin98-section">
+            <h2 className="bin98-heading">Binary vs Ternary at a Glance</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Binary</th>
+                  <th>Ternary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonNotes.map((row) => (
+                  <tr key={row.metric}>
+                    <td>{row.metric}</td>
+                    <td>{row.binary}</td>
+                    <td>{row.ternary}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-sensitivity" className="bin98-section">
+            <h2 className="bin98-heading">Input Sensitivity</h2>
+            {inputSensitivity.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-profile" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Best for</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.bestFor}</td>
+                    <td>{row.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Performance Tweaks</h2>
+            {variantsAndTweaks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-tips" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace on a Tiny Example</h2>
+            <ol>
+              {stepTrace.map((item) => (
+                <li key={item.step}>
+                  <p>
+                    <strong>{item.step}:</strong> {item.note}
+                  </p>
+                  <p className="ternary98-state">{item.state}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

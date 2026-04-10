@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'Angular vs Svelte'
-const pageSubtitle = 'Comparing a batteries-included application framework with a compiler-first UI framework.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing a batteries-included application framework with a compiler-first UI framework.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -238,7 +237,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-counter',
     title: 'Reactive Counter',
-    summary: 'Both frameworks can express a simple counter cleanly, but the mental model looks different.',
+    summary:
+      'Both frameworks can express a simple counter cleanly, but the mental model looks different.',
     angularCode: `import { Component, computed, signal } from '@angular/core';
 
 @Component({
@@ -264,12 +264,14 @@ export class CounterComponent {
 {#if isEven}
   <p>Count is even</p>
 {/if}`,
-    explanation: 'Angular expresses reactivity inside its component framework model, while Svelte keeps the code very close to direct component scripting. Both are clear, but Svelte is usually terser.',
+    explanation:
+      'Angular expresses reactivity inside its component framework model, while Svelte keeps the code very close to direct component scripting. Both are clear, but Svelte is usually terser.',
   },
   {
     id: 'ex-fetch',
     title: 'Data Loading Shape',
-    summary: 'The Angular pattern usually lives inside component or service structure. The SvelteKit pattern usually lives at the route level.',
+    summary:
+      'The Angular pattern usually lives inside component or service structure. The SvelteKit pattern usually lives at the route level.',
     angularCode: `import { Component, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -301,12 +303,14 @@ export async function load({ fetch }) {
 {#each data.users as user}
   <li>{user.name}</li>
 {/each}`,
-    explanation: 'Angular keeps the request inside the application framework and component lifecycle. SvelteKit makes route-level loading a first-class part of the framework, which often feels more direct for page data.',
+    explanation:
+      'Angular keeps the request inside the application framework and component lifecycle. SvelteKit makes route-level loading a first-class part of the framework, which often feels more direct for page data.',
   },
   {
     id: 'ex-form',
     title: 'Form Workflow',
-    summary: 'Angular has a larger official form system. SvelteKit keeps the server interaction path especially direct.',
+    summary:
+      'Angular has a larger official form system. SvelteKit keeps the server interaction path especially direct.',
     angularCode: `form = new FormGroup({
   email: new FormControl('', { nonNullable: true }),
   password: new FormControl('', { nonNullable: true })
@@ -331,30 +335,36 @@ export const actions = {
     // validate and authenticate
   }
 };`,
-    explanation: 'Angular is stronger when the form itself is the big abstraction. SvelteKit is very compelling when the form is part of a broader web request workflow and progressive enhancement story.',
+    explanation:
+      'Angular is stronger when the form itself is the big abstraction. SvelteKit is very compelling when the form is part of a broader web request workflow and progressive enhancement story.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Standalone component',
-    definition: 'A modern Angular component model that reduces reliance on NgModule-based setup for many use cases.',
+    definition:
+      'A modern Angular component model that reduces reliance on NgModule-based setup for many use cases.',
   },
   {
     term: 'Signal',
-    definition: 'An Angular reactive primitive representing a tracked value that can be read, computed from, and reacted to.',
+    definition:
+      'An Angular reactive primitive representing a tracked value that can be read, computed from, and reacted to.',
   },
   {
     term: 'Dependency injection',
-    definition: 'Angulars built-in system for providing and consuming shared services and application dependencies.',
+    definition:
+      'Angulars built-in system for providing and consuming shared services and application dependencies.',
   },
   {
     term: 'Rune',
-    definition: 'A Svelte 5 reactive primitive such as $state, $derived, or $effect used to express state and reactivity explicitly.',
+    definition:
+      'A Svelte 5 reactive primitive such as $state, $derived, or $effect used to express state and reactivity explicitly.',
   },
   {
     term: 'SvelteKit',
-    definition: 'The official application framework around Svelte that provides routing, data loading, form actions, SSR, and deployment patterns.',
+    definition:
+      'The official application framework around Svelte that provides routing, data loading, form actions, SSR, and deployment patterns.',
   },
   {
     term: 'Hydration',
@@ -366,7 +376,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Compiler-first framework',
-    definition: 'A framework that performs substantial optimization at build time so less generic runtime logic is shipped to the browser.',
+    definition:
+      'A framework that performs substantial optimization at build time so less generic runtime logic is shipped to the browser.',
   },
 ]
 
@@ -397,400 +408,111 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.angular-svelte-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.angular-svelte-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.angular-svelte-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.angular-svelte-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.angular-svelte-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.angular-svelte-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.angular-svelte-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.angular-svelte-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.angular-svelte-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.angular-svelte-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.angular-svelte-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.angular-svelte-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.angular-svelte-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.angular-svelte-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.angular-svelte-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.angular-svelte-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.angular-svelte-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.angular-svelte-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.angular-svelte-help-section {
-  margin: 0 0 20px;
-}
-
-.angular-svelte-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.angular-svelte-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.angular-svelte-help-content p,
-.angular-svelte-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.angular-svelte-help-content p {
-  margin: 0 0 10px;
-}
-
-.angular-svelte-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.angular-svelte-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.angular-svelte-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.angular-svelte-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .angular-svelte-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .angular-svelte-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .angular-svelte-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function AngularVsSveltePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Angular Vs Svelte Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="angular-svelte-help-page">
-      <style>{pageStyles}</style>
-      <div className="angular-svelte-help-window" role="presentation">
-        <header className="angular-svelte-help-titlebar">
-          <span className="angular-svelte-help-title">{pageTitle}</span>
-          <div className="angular-svelte-help-controls">
-            <button className="angular-svelte-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="angular-svelte-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Angular Vs Svelte Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="angular-svelte-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Angular and Svelte as real engineering choices rather than as
+        slogan-level framework brands. The goal is to make the tradeoffs explicit: architecture
+        model, reactivity, template ergonomics, routing and SSR, forms, performance, large-team
+        maintainability, and where each framework is the safer long-term fit.
+      </p>
 
-        <div className="angular-svelte-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`angular-svelte-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="angular-svelte-help-main">
-          <aside className="angular-svelte-help-toc" aria-label="Table of contents">
-            <h2 className="angular-svelte-help-toc-title">Contents</h2>
-            <ul className="angular-svelte-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="angular-svelte-help-content">
-            <h1 className="angular-svelte-help-doc-title">{pageTitle}</h1>
-            <p className="angular-svelte-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Angular and Svelte as real engineering choices rather than as slogan-level framework brands.
-              The goal is to make the tradeoffs explicit: architecture model, reactivity, template ergonomics, routing and SSR,
-              forms, performance, large-team maintainability, and where each framework is the safer long-term fit.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="angular-svelte-help-section">
-                    <h2 className="angular-svelte-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="angular-svelte-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="angular-svelte-help-section">
-                  <h2 className="angular-svelte-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="angular-svelte-help-section">
-                    <h2 className="angular-svelte-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="angular-svelte-help-section">
-                    <h2 className="angular-svelte-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="angular-svelte-help-subheading">Angular</h3>
-                    <div className="angular-svelte-help-codebox">
-                      <code>{example.angularCode.trim()}</code>
-                    </div>
-                    <h3 className="angular-svelte-help-subheading">Svelte</h3>
-                    <div className="angular-svelte-help-codebox">
-                      <code>{example.svelteCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="angular-svelte-help-section">
-                <h2 className="angular-svelte-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Angular</h3>
+              <div className="bin98-codebox">
+                <code>{example.angularCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">Svelte</h3>
+              <div className="bin98-codebox">
+                <code>{example.svelteCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -300,8 +298,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Fabric',
-        definition:
-          'The rendering system associated with the React Native New Architecture.',
+        definition: 'The rendering system associated with the React Native New Architecture.',
       },
     ],
   },
@@ -321,8 +318,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Native Component',
-        definition:
-          'A platform-native UI component exposed to React Native applications.',
+        definition: 'A platform-native UI component exposed to React Native applications.',
       },
       {
         term: 'Bridge',
@@ -342,13 +338,11 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Bundle',
-        definition:
-          'The packaged JavaScript output that the React Native runtime loads.',
+        definition: 'The packaged JavaScript output that the React Native runtime loads.',
       },
       {
         term: 'Simulator or emulator',
-        definition:
-          'A virtual device environment for running and testing a mobile application.',
+        definition: 'A virtual device environment for running and testing a mobile application.',
       },
       {
         term: 'Signing',
@@ -400,218 +394,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
     { id: 'glossary-architecture', label: 'Architecture Terms' },
     { id: 'glossary-operations', label: 'Workflow Terms' },
   ],
-}
-
-const pageStyles = `
-.react-native-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.react-native-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.react-native-help-titlebar {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.react-native-help-titletext {
-  grid-column: 2;
-  justify-self: center;
-  font-size: 15px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.react-native-help-controls {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  gap: 2px;
-}
-
-.react-native-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.react-native-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.react-native-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.react-native-help-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.react-native-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.react-native-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.react-native-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.react-native-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.react-native-help-toc-item {
-  margin: 0 0 8px;
-}
-
-.react-native-help-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.react-native-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.react-native-help-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.react-native-help-section {
-  margin: 0 0 20px;
-}
-
-.react-native-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.react-native-help-content p,
-.react-native-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.react-native-help-content p {
-  margin: 0 0 10px;
-}
-
-.react-native-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.react-native-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.react-native-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.react-native-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .react-native-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .react-native-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -668,128 +450,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function ReactNativePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'React Native',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `React Native (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'React Native',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="react-native-help-page">
-      <style>{pageStyles}</style>
-      <div className="react-native-help-window" role="presentation">
-        <header className="react-native-help-titlebar">
-          <span className="react-native-help-titletext">React Native</span>
-          <div className="react-native-help-controls">
-            <button
-              className="react-native-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="react-native-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="React Native"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">React Native</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="react-native-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`react-native-help-tab ${activeTab === tab.id ? 'react-native-help-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="react-native-help-main">
-          <aside className="react-native-help-toc" aria-label="Table of contents">
-            <h2 className="react-native-help-toc-title">Contents</h2>
-            <ul className="react-native-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="react-native-help-toc-item">
-                  <a href={`#${section.id}`} className="react-native-help-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="react-native-help-content">
-            <h1 className="react-native-help-doc-title">React Native</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

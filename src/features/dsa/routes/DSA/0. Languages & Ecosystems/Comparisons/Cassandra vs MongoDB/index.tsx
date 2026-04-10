@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'Cassandra vs MongoDB'
-const pageSubtitle = 'Comparing a wide-column distributed database optimized for scale and availability with a document database optimized for flexible data models and broad application ergonomics.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing a wide-column distributed database optimized for scale and availability with a document database optimized for flexible data models and broad application ergonomics.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -243,7 +242,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-model',
     title: 'Model a User Activity Feed',
-    summary: 'The same product feature gets modeled very differently because the databases optimize for different retrieval assumptions.',
+    summary:
+      'The same product feature gets modeled very differently because the databases optimize for different retrieval assumptions.',
     cassandraCode: `CREATE TABLE user_activity_by_user (
   user_id uuid,
   occurred_at timestamp,
@@ -260,12 +260,14 @@ const examples: ExampleItem[] = [
 })
 
 db.userActivity.createIndex({ userId: 1, occurredAt: -1 })`,
-    explanation: 'The Cassandra table is explicitly designed for a very specific query: recent activity by user. The MongoDB version stays closer to a natural document model and relies on indexing to support the query efficiently.',
+    explanation:
+      'The Cassandra table is explicitly designed for a very specific query: recent activity by user. The MongoDB version stays closer to a natural document model and relies on indexing to support the query efficiently.',
   },
   {
     id: 'ex-query',
     title: 'Fetch Recent Records for One Entity',
-    summary: 'Both databases can answer entity-scoped timeline queries, but one expects that path to have shaped the schema in advance.',
+    summary:
+      'Both databases can answer entity-scoped timeline queries, but one expects that path to have shaped the schema in advance.',
     cassandraCode: `SELECT occurred_at, kind, payload
 FROM user_activity_by_user
 WHERE user_id = 2d931510-d99f-494a-8c67-87feb05e1594
@@ -274,12 +276,14 @@ LIMIT 20;`,
   .find({ userId: ObjectId('...') })
   .sort({ occurredAt: -1 })
   .limit(20)`,
-    explanation: 'In Cassandra, that query works well because the partition key and clustering order were designed for it. In MongoDB, the same query works through the document model plus an appropriate index, with more freedom to add nearby queries later.',
+    explanation:
+      'In Cassandra, that query works well because the partition key and clustering order were designed for it. In MongoDB, the same query works through the document model plus an appropriate index, with more freedom to add nearby queries later.',
   },
   {
     id: 'ex-transaction',
     title: 'Coordinate a Multi-Record Update',
-    summary: 'This is one of the places where the systems reveal their different center of gravity most clearly.',
+    summary:
+      'This is one of the places where the systems reveal their different center of gravity most clearly.',
     cassandraCode: `BEGIN BATCH
   INSERT INTO orders_by_id (order_id, status) VALUES (123, 'paid');
   INSERT INTO order_events_by_id (order_id, occurred_at, kind)
@@ -299,12 +303,14 @@ await db.collection('orderEvents').insertOne(
 )
 
 await session.commitTransaction()`,
-    explanation: 'The MongoDB example reflects an application-facing transactional workflow. The Cassandra example shows batched writes, but Cassandra is not generally chosen because teams want broad relational-style transactional semantics.',
+    explanation:
+      'The MongoDB example reflects an application-facing transactional workflow. The Cassandra example shows batched writes, but Cassandra is not generally chosen because teams want broad relational-style transactional semantics.',
   },
   {
     id: 'ex-scale',
     title: 'Think About Horizontal Scale',
-    summary: 'The syntax is less important here than the operational mindset, but the examples make the difference concrete.',
+    summary:
+      'The syntax is less important here than the operational mindset, but the examples make the difference concrete.',
     cassandraCode: `CREATE KEYSPACE telemetry
 WITH replication = {
   'class': 'NetworkTopologyStrategy',
@@ -313,14 +319,16 @@ WITH replication = {
 };`,
     mongoCode: `sh.enableSharding('appdb')
 sh.shardCollection('appdb.userActivity', { userId: 'hashed' })`,
-    explanation: 'Cassandra surfaces replication strategy and datacenter thinking as part of ordinary database design. MongoDB surfaces sharding as a scaling mechanism layered onto a document database that may have started life as a replica set-backed operational store.',
+    explanation:
+      'Cassandra surfaces replication strategy and datacenter thinking as part of ordinary database design. MongoDB surfaces sharding as a scaling mechanism layered onto a document database that may have started life as a replica set-backed operational store.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Partition key',
-    definition: 'A Cassandra key component that determines how data is distributed across the cluster.',
+    definition:
+      'A Cassandra key component that determines how data is distributed across the cluster.',
   },
   {
     term: 'Clustering column',
@@ -328,31 +336,38 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Replication factor',
-    definition: 'The number of Cassandra replicas maintained for a given dataset or keyspace configuration.',
+    definition:
+      'The number of Cassandra replicas maintained for a given dataset or keyspace configuration.',
   },
   {
     term: 'Consistency level',
-    definition: 'A Cassandra read or write setting that determines how many replicas must acknowledge an operation.',
+    definition:
+      'A Cassandra read or write setting that determines how many replicas must acknowledge an operation.',
   },
   {
     term: 'Lightweight transaction',
-    definition: 'A Cassandra transaction mechanism used for narrower compare-and-set style guarantees with stronger consistency semantics.',
+    definition:
+      'A Cassandra transaction mechanism used for narrower compare-and-set style guarantees with stronger consistency semantics.',
   },
   {
     term: 'Document',
-    definition: 'A MongoDB record made of field and value pairs, potentially containing nested documents and arrays.',
+    definition:
+      'A MongoDB record made of field and value pairs, potentially containing nested documents and arrays.',
   },
   {
     term: 'Collection',
-    definition: 'A MongoDB grouping of documents, roughly analogous to a table in casual conversation though not relational in the same sense.',
+    definition:
+      'A MongoDB grouping of documents, roughly analogous to a table in casual conversation though not relational in the same sense.',
   },
   {
     term: 'Replica set',
-    definition: 'A MongoDB high-availability deployment model with automatic failover and replicated data across members.',
+    definition:
+      'A MongoDB high-availability deployment model with automatic failover and replicated data across members.',
   },
   {
     term: 'Sharding',
-    definition: 'A MongoDB horizontal scaling technique that distributes data across shards based on a shard key.',
+    definition:
+      'A MongoDB horizontal scaling technique that distributes data across shards based on a shard key.',
   },
   {
     term: 'Embedding',
@@ -360,15 +375,18 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Referencing',
-    definition: 'A MongoDB modeling strategy that stores relationships between separate documents rather than nesting all data together.',
+    definition:
+      'A MongoDB modeling strategy that stores relationships between separate documents rather than nesting all data together.',
   },
   {
     term: 'Tombstone',
-    definition: 'A Cassandra deletion marker that persists until compaction and can affect read behavior if overused.',
+    definition:
+      'A Cassandra deletion marker that persists until compaction and can affect read behavior if overused.',
   },
   {
     term: 'Repair',
-    definition: 'A Cassandra maintenance process used to synchronize replicas and ensure eventual consistency convergence.',
+    definition:
+      'A Cassandra maintenance process used to synchronize replicas and ensure eventual consistency convergence.',
   },
 ]
 
@@ -399,399 +417,111 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.cassandra-mongo-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cassandra-mongo-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cassandra-mongo-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cassandra-mongo-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cassandra-mongo-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cassandra-mongo-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.cassandra-mongo-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.cassandra-mongo-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.cassandra-mongo-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-.cassandra-mongo-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.cassandra-mongo-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.cassandra-mongo-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cassandra-mongo-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cassandra-mongo-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cassandra-mongo-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.cassandra-mongo-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cassandra-mongo-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cassandra-mongo-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cassandra-mongo-help-section {
-  margin: 0 0 20px;
-}
-
-.cassandra-mongo-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cassandra-mongo-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cassandra-mongo-help-content p,
-.cassandra-mongo-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cassandra-mongo-help-content p {
-  margin: 0 0 10px;
-}
-
-.cassandra-mongo-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cassandra-mongo-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.cassandra-mongo-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.cassandra-mongo-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cassandra-mongo-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cassandra-mongo-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cassandra-mongo-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function CassandraVsMongoPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Cassandra Vs Mongo Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cassandra-mongo-help-page">
-      <style>{pageStyles}</style>
-      <div className="cassandra-mongo-help-window" role="presentation">
-        <header className="cassandra-mongo-help-titlebar">
-          <span className="cassandra-mongo-help-title">{pageTitle}</span>
-          <div className="cassandra-mongo-help-controls">
-            <button className="cassandra-mongo-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cassandra-mongo-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Cassandra Vs Mongo Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="cassandra-mongo-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Cassandra and MongoDB as real database architecture choices rather than
+        as generic NoSQL labels. The point is to make the tradeoffs explicit: data model, query
+        shape, consistency model, replication, scaling, indexing, transactions, and the types of
+        workloads each database is actually optimized to serve.
+      </p>
 
-        <div className="cassandra-mongo-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`cassandra-mongo-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cassandra-mongo-help-main">
-          <aside className="cassandra-mongo-help-toc" aria-label="Table of contents">
-            <h2 className="cassandra-mongo-help-toc-title">Contents</h2>
-            <ul className="cassandra-mongo-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="cassandra-mongo-help-content">
-            <h1 className="cassandra-mongo-help-doc-title">{pageTitle}</h1>
-            <p className="cassandra-mongo-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Cassandra and MongoDB as real database architecture choices rather than as generic NoSQL labels.
-              The point is to make the tradeoffs explicit: data model, query shape, consistency model, replication, scaling,
-              indexing, transactions, and the types of workloads each database is actually optimized to serve.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cassandra-mongo-help-section">
-                    <h2 className="cassandra-mongo-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cassandra-mongo-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cassandra-mongo-help-section">
-                  <h2 className="cassandra-mongo-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cassandra-mongo-help-section">
-                    <h2 className="cassandra-mongo-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="cassandra-mongo-help-section">
-                    <h2 className="cassandra-mongo-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="cassandra-mongo-help-subheading">Cassandra</h3>
-                    <div className="cassandra-mongo-help-codebox">
-                      <code>{example.cassandraCode.trim()}</code>
-                    </div>
-                    <h3 className="cassandra-mongo-help-subheading">MongoDB</h3>
-                    <div className="cassandra-mongo-help-codebox">
-                      <code>{example.mongoCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cassandra-mongo-help-section">
-                <h2 className="cassandra-mongo-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Cassandra</h3>
+              <div className="bin98-codebox">
+                <code>{example.cassandraCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">MongoDB</h3>
+              <div className="bin98-codebox">
+                <code>{example.mongoCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

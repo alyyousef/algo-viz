@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -34,8 +34,6 @@ type GlossarySection = {
   }>
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -56,7 +54,7 @@ const bigPictureSections: ContentSection[] = [
     paragraphs: [
       'Terraform is the most established mainstream infrastructure-as-code tool built around HCL, providers, modules, a plan or apply workflow, and explicit state management. Its strongest identity is that infrastructure is described in a domain-specific language that is intentionally narrower than a full programming language. This encourages predictability, shared conventions, and a planning model that many platform teams consider operationally clear.',
       'Pulumi is an infrastructure-as-code platform that uses general-purpose languages to define cloud resources. Instead of learning a dedicated configuration language, developers express infrastructure through familiar language constructs while still using Pulumi-specific concepts such as stacks, resources, inputs, outputs, and providers. The strongest advantage is developer ergonomics for teams already comfortable in mainstream programming languages.',
-      'Both tools are serious choices for production infrastructure. The real question is whether the organization benefits more from Terraform\'s intentionally constrained declarative model or Pulumi\'s richer programming-language model.',
+      "Both tools are serious choices for production infrastructure. The real question is whether the organization benefits more from Terraform's intentionally constrained declarative model or Pulumi's richer programming-language model.",
     ],
   },
   {
@@ -113,8 +111,8 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-production-reality',
     title: 'Production Reality',
     paragraphs: [
-      'Terraform\'s declarative model does not guarantee good infrastructure architecture. Teams can still create module sprawl, variable confusion, weak naming standards, poor state boundaries, and brittle workflows. The tool encourages certain kinds of discipline, but the organization still has to supply the discipline.',
-      'Pulumi\'s language flexibility does not automatically make infrastructure code elegant. It can just as easily invite over-engineering, hidden control flow, too much abstraction, and libraries that are clever but difficult for operations teams to review. The tool increases expressive power; it also increases the cost of poor engineering judgment.',
+      "Terraform's declarative model does not guarantee good infrastructure architecture. Teams can still create module sprawl, variable confusion, weak naming standards, poor state boundaries, and brittle workflows. The tool encourages certain kinds of discipline, but the organization still has to supply the discipline.",
+      "Pulumi's language flexibility does not automatically make infrastructure code elegant. It can just as easily invite over-engineering, hidden control flow, too much abstraction, and libraries that are clever but difficult for operations teams to review. The tool increases expressive power; it also increases the cost of poor engineering judgment.",
       'In other words, both tools work best when the team understands where to stop. Terraform needs restraint in module design. Pulumi needs restraint in abstraction design.',
     ],
   },
@@ -157,7 +155,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-plan-preview',
     title: 'Plan Versus Preview Workflow',
     paragraphs: [
-      'Terraform is famous for its explicit `plan` and `apply` model. This becomes part of team culture quickly. Infrastructure changes are usually reasoned about through a textual or structured plan that reviewers inspect before changes are applied. This workflow is one of Terraform\'s biggest strengths because it trains organizations to think in explicit infrastructure diffs.',
+      "Terraform is famous for its explicit `plan` and `apply` model. This becomes part of team culture quickly. Infrastructure changes are usually reasoned about through a textual or structured plan that reviewers inspect before changes are applied. This workflow is one of Terraform's biggest strengths because it trains organizations to think in explicit infrastructure diffs.",
       'Pulumi also supports previews before updates, but the culture often feels more like running a normal developer tool in a language ecosystem rather than operating inside a dedicated infrastructure configuration language. The capability is there, but the surrounding ergonomics feel different because the source code is embedded in a full programming model.',
       'If your organization cares deeply about the ritual of plan-first review as an operations practice, Terraform often feels more native. If preview is important but not culturally central, Pulumi may still fit well.',
     ],
@@ -167,7 +165,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Providers and Ecosystem Reach',
     paragraphs: [
       'Terraform has a very broad provider ecosystem and deep industry familiarity. Many cloud, SaaS, and infrastructure vendors document their Terraform support first or most visibly. This matters in practice because ecosystem familiarity reduces onboarding friction and often shortens the time between deciding to automate something and having a reliable pattern to start from.',
-      'Pulumi also supports major providers and has a strong multi-cloud story. A particularly relevant capability is Pulumi\'s support for Any Terraform Provider, which means Pulumi can often bridge into Terraform provider ecosystems rather than forcing a strict either-or decision at the provider layer. This reduces one of the obvious objections to Pulumi in ecosystems dominated by Terraform providers.',
+      "Pulumi also supports major providers and has a strong multi-cloud story. A particularly relevant capability is Pulumi's support for Any Terraform Provider, which means Pulumi can often bridge into Terraform provider ecosystems rather than forcing a strict either-or decision at the provider layer. This reduces one of the obvious objections to Pulumi in ecosystems dominated by Terraform providers.",
       'Even so, Terraform remains the default reference point in many infrastructure communities. That maturity and documentation gravity still matter.',
     ],
   },
@@ -185,7 +183,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Dataflow, References, Inputs, and Outputs',
     paragraphs: [
       'Terraform uses expressions, interpolation, resource references, variables, locals, and outputs to model dependencies and dataflow through the infrastructure graph. This is consistent and learnable once the team understands how Terraform builds and evaluates resource relationships.',
-      'Pulumi uses concepts such as Inputs and Outputs to represent values that may only be known as resources are provisioned. This is one of the biggest conceptual hurdles for developers new to Pulumi. Although the language is familiar, infrastructure values are still asynchronous and graph-dependent, so teams must learn Pulumi\'s resource dataflow semantics instead of assuming ordinary synchronous variable behavior.',
+      "Pulumi uses concepts such as Inputs and Outputs to represent values that may only be known as resources are provisioned. This is one of the biggest conceptual hurdles for developers new to Pulumi. Although the language is familiar, infrastructure values are still asynchronous and graph-dependent, so teams must learn Pulumi's resource dataflow semantics instead of assuming ordinary synchronous variable behavior.",
       'This is an important subtlety. Pulumi feels like normal code until infrastructure dependency timing reminds you that it is still infrastructure orchestration.',
     ],
   },
@@ -220,7 +218,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Drift, Refresh, and Operational Discipline',
     paragraphs: [
       'Neither Terraform nor Pulumi removes the operational problem of infrastructure drift. Manual changes, partial failures, external automation, and provider-side surprises can still create divergence between desired and actual state. Teams still need practices for review, refresh or preview discipline, and ownership boundaries.',
-      'Terraform\'s long operational history means many teams already know how to talk about drift in Terraform terms. Pulumi handles the same fundamental problem but may require a bit more conceptual onboarding for teams used to Terraform\'s exact workflow language.',
+      "Terraform's long operational history means many teams already know how to talk about drift in Terraform terms. Pulumi handles the same fundamental problem but may require a bit more conceptual onboarding for teams used to Terraform's exact workflow language.",
     ],
   },
   {
@@ -244,7 +242,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Team Fit and Organizational Structure',
     paragraphs: [
       'Terraform often fits organizations with distinct platform or infrastructure teams, strong ops review culture, and a desire for a common declarative IaC standard across business units. Its ecosystem maturity and shared vocabulary make it a safe organizational default.',
-      'Pulumi often fits developer-platform teams, full-stack teams, internal platform builders, and organizations where application engineers are expected to author or package infrastructure alongside application logic. It can be especially compelling when the same people writing services also provision the services\' infrastructure.',
+      "Pulumi often fits developer-platform teams, full-stack teams, internal platform builders, and organizations where application engineers are expected to author or package infrastructure alongside application logic. It can be especially compelling when the same people writing services also provision the services' infrastructure.",
     ],
   },
   {
@@ -323,7 +321,7 @@ Pulumi mindset:
     id: 'examples-dataflow',
     title: 'Dataflow and Dependency Handling',
     description: [
-      'Both tools manage dependency graphs, but Pulumi\'s full-language model can hide that from new users until Inputs and Outputs become unavoidable.',
+      "Both tools manage dependency graphs, but Pulumi's full-language model can hide that from new users until Inputs and Outputs become unavoidable.",
     ],
     code: `Terraform:
   resource references and outputs
@@ -403,23 +401,20 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Module',
-        definition:
-          'A reusable package of Terraform configuration with variables and outputs.',
+        definition: 'A reusable package of Terraform configuration with variables and outputs.',
       },
       {
         term: 'State',
         definition:
-          'Terraform\'s record of managed resources and their last known attributes, used for planning and updates.',
+          "Terraform's record of managed resources and their last known attributes, used for planning and updates.",
       },
       {
         term: 'Plan',
-        definition:
-          'A preview of the proposed infrastructure changes before apply.',
+        definition: 'A preview of the proposed infrastructure changes before apply.',
       },
       {
         term: 'Backend',
-        definition:
-          'The storage mechanism for Terraform state, such as local or remote backends.',
+        definition: 'The storage mechanism for Terraform state, such as local or remote backends.',
       },
       {
         term: 'Workspace',
@@ -444,8 +439,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Resource',
-        definition:
-          'A managed infrastructure object declared in Pulumi code.',
+        definition: 'A managed infrastructure object declared in Pulumi code.',
       },
       {
         term: 'Input',
@@ -464,8 +458,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Preview',
-        definition:
-          'Pulumi\'s change preview before an update is executed.',
+        definition: "Pulumi's change preview before an update is executed.",
       },
       {
         term: 'Automation API',
@@ -474,8 +467,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Any Terraform Provider',
-        definition:
-          'Pulumi support for using Terraform providers within Pulumi workflows.',
+        definition: 'Pulumi support for using Terraform providers within Pulumi workflows.',
       },
     ],
   },
@@ -495,8 +487,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Desired State',
-        definition:
-          'The target infrastructure shape the tool is trying to converge toward.',
+        definition: 'The target infrastructure shape the tool is trying to converge toward.',
       },
       {
         term: 'Policy as Code',
@@ -558,240 +549,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.tf-pulumi-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.tf-pulumi-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.tf-pulumi-help-titlebar {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.tf-pulumi-help-titletext {
-  grid-column: 2;
-  justify-self: center;
-  font-size: 15px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.tf-pulumi-help-controls {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  gap: 2px;
-}
-
-.tf-pulumi-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.tf-pulumi-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.tf-pulumi-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.tf-pulumi-help-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.tf-pulumi-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.tf-pulumi-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.tf-pulumi-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.tf-pulumi-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tf-pulumi-help-toc-item {
-  margin: 0 0 8px;
-}
-
-.tf-pulumi-help-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.tf-pulumi-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.tf-pulumi-help-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.tf-pulumi-help-section {
-  margin: 0 0 20px;
-}
-
-.tf-pulumi-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.tf-pulumi-help-content p,
-.tf-pulumi-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.tf-pulumi-help-content p {
-  margin: 0 0 10px;
-}
-
-.tf-pulumi-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.tf-pulumi-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.tf-pulumi-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.tf-pulumi-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .tf-pulumi-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .tf-pulumi-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .tf-pulumi-help-window {
-    min-height: auto;
-  }
-
-  .tf-pulumi-help-titlebar {
-    grid-template-columns: 1fr auto;
-    row-gap: 4px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .tf-pulumi-help-titletext {
-    grid-column: 1 / span 2;
-    grid-row: 1;
-    white-space: normal;
-    padding: 0 28px;
-  }
-
-  .tf-pulumi-help-controls {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="tf-pulumi-help-section">
@@ -846,128 +603,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function TerraformVsPulumiPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Terraform vs Pulumi',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Terraform vs Pulumi (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Terraform vs Pulumi',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="tf-pulumi-help-page">
-      <style>{pageStyles}</style>
-      <div className="tf-pulumi-help-window" role="presentation">
-        <header className="tf-pulumi-help-titlebar">
-          <span className="tf-pulumi-help-titletext">Terraform vs Pulumi</span>
-          <div className="tf-pulumi-help-controls">
-            <button
-              className="tf-pulumi-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="tf-pulumi-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Terraform vs Pulumi"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Terraform vs Pulumi</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="tf-pulumi-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`tf-pulumi-help-tab ${activeTab === tab.id ? 'tf-pulumi-help-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="tf-pulumi-help-main">
-          <aside className="tf-pulumi-help-toc" aria-label="Table of contents">
-            <h2 className="tf-pulumi-help-toc-title">Contents</h2>
-            <ul className="tf-pulumi-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="tf-pulumi-help-toc-item">
-                  <a href={`#${section.id}`} className="tf-pulumi-help-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="tf-pulumi-help-content">
-            <h1 className="tf-pulumi-help-doc-title">Terraform vs Pulumi</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

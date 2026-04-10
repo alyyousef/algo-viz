@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'Deno vs Node.js'
-const pageSubtitle = 'Comparing a modern secure-by-default JavaScript runtime with the long-established standard server-side JavaScript runtime.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing a modern secure-by-default JavaScript runtime with the long-established standard server-side JavaScript runtime.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -261,10 +260,12 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-run-ts',
     title: 'Run a TypeScript Script',
-    summary: 'Both runtimes can execute TypeScript-oriented workflows, but one treats it as a built-in expectation.',
+    summary:
+      'Both runtimes can execute TypeScript-oriented workflows, but one treats it as a built-in expectation.',
     denoCode: `deno run ./src/script.ts`,
     nodeCode: `node --import tsx ./src/script.ts`,
-    explanation: 'Deno treats direct TypeScript execution as a normal part of the runtime experience. Node usually reaches the same outcome through an additional tool such as tsx or a build step.',
+    explanation:
+      'Deno treats direct TypeScript execution as a normal part of the runtime experience. Node usually reaches the same outcome through an additional tool such as tsx or a build step.',
   },
   {
     id: 'ex-permissions',
@@ -272,15 +273,18 @@ const examples: ExampleItem[] = [
     summary: 'The security model becomes obvious the moment code needs sensitive capabilities.',
     denoCode: `deno run --allow-read=./config.json app.ts`,
     nodeCode: `node app.js`,
-    explanation: 'Deno requires explicit permission to read the file. A normal Node process inherits ambient authority from the environment unless external sandboxing is applied.',
+    explanation:
+      'Deno requires explicit permission to read the file. A normal Node process inherits ambient authority from the environment unless external sandboxing is applied.',
   },
   {
     id: 'ex-test',
     title: 'Run Tests',
-    summary: 'Both runtimes have built-in test commands, but their surrounding ecosystem culture is still different.',
+    summary:
+      'Both runtimes have built-in test commands, but their surrounding ecosystem culture is still different.',
     denoCode: `deno test`,
     nodeCode: `node --test`,
-    explanation: 'Deno test is part of a broader integrated workflow with linting and formatting nearby. Node has a built-in test runner too, but many teams still standardize on separate tools such as Jest or Vitest.',
+    explanation:
+      'Deno test is part of a broader integrated workflow with linting and formatting nearby. Node has a built-in test runner too, but many teams still standardize on separate tools such as Jest or Vitest.',
   },
   {
     id: 'ex-server',
@@ -293,26 +297,31 @@ http.createServer((_req, res) => {
   res.writeHead(200, { 'content-type': 'text/plain' })
   res.end('hello from node')
 }).listen(3000)`,
-    explanation: 'Deno leans toward web-standard request and response primitives. Node exposes mature server-side primitives and expects many apps to use a preferred framework or abstraction on top.',
+    explanation:
+      'Deno leans toward web-standard request and response primitives. Node exposes mature server-side primitives and expects many apps to use a preferred framework or abstraction on top.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Secure by default',
-    definition: 'A runtime model where sensitive capabilities are denied unless explicitly granted.',
+    definition:
+      'A runtime model where sensitive capabilities are denied unless explicitly granted.',
   },
   {
     term: 'Permission flag',
-    definition: 'A Deno command-line option such as `--allow-read` or `--allow-net` used to grant specific capabilities.',
+    definition:
+      'A Deno command-line option such as `--allow-read` or `--allow-net` used to grant specific capabilities.',
   },
   {
     term: 'npm compatibility',
-    definition: 'The extent to which a runtime can use packages and conventions from the npm ecosystem.',
+    definition:
+      'The extent to which a runtime can use packages and conventions from the npm ecosystem.',
   },
   {
     term: 'Node compatibility',
-    definition: 'The extent to which a runtime behaves like Node.js for APIs, packages, and ecosystem expectations.',
+    definition:
+      'The extent to which a runtime behaves like Node.js for APIs, packages, and ecosystem expectations.',
   },
   {
     term: 'CommonJS',
@@ -324,7 +333,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Ambient authority',
-    definition: 'A security situation where a process automatically has the full permissions of its executing environment.',
+    definition:
+      'A security situation where a process automatically has the full permissions of its executing environment.',
   },
   {
     term: 'deno test',
@@ -344,7 +354,8 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Web-standard APIs',
-    definition: 'Browser-like APIs such as `fetch`, `Request`, and `Response` used consistently across environments.',
+    definition:
+      'Browser-like APIs such as `fetch`, `Request`, and `Response` used consistently across environments.',
   },
 ]
 
@@ -377,401 +388,112 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.deno-node-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.deno-node-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.deno-node-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.deno-node-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.deno-node-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.deno-node-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.deno-node-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.deno-node-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.deno-node-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.deno-node-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.deno-node-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.deno-node-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.deno-node-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.deno-node-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.deno-node-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.deno-node-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.deno-node-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.deno-node-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.deno-node-help-section {
-  margin: 0 0 20px;
-}
-
-.deno-node-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.deno-node-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.deno-node-help-content p,
-.deno-node-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.deno-node-help-content p {
-  margin: 0 0 10px;
-}
-
-.deno-node-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.deno-node-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.deno-node-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.deno-node-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .deno-node-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .deno-node-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .deno-node-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function DenoVsNodePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Deno Vs Node Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="deno-node-help-page">
-      <style>{pageStyles}</style>
-      <div className="deno-node-help-window" role="presentation">
-        <header className="deno-node-help-titlebar">
-          <span className="deno-node-help-title">{pageTitle}</span>
-          <div className="deno-node-help-controls">
-            <button className="deno-node-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="deno-node-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Deno Vs Node Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="deno-node-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Deno and Node.js as real runtime choices rather than as branding
+        opposites. The point is to make the practical tradeoffs explicit: security model, module
+        semantics, TypeScript ergonomics, npm compatibility, built-in tooling, deployment
+        assumptions, ecosystem trust, and where Deno is genuinely higher leverage versus where
+        Node.js remains the safer long-term default.
+      </p>
 
-        <div className="deno-node-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`deno-node-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="deno-node-help-main">
-          <aside className="deno-node-help-toc" aria-label="Table of contents">
-            <h2 className="deno-node-help-toc-title">Contents</h2>
-            <ul className="deno-node-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="deno-node-help-content">
-            <h1 className="deno-node-help-doc-title">{pageTitle}</h1>
-            <p className="deno-node-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Deno and Node.js as real runtime choices rather than as branding opposites.
-              The point is to make the practical tradeoffs explicit: security model, module semantics, TypeScript ergonomics,
-              npm compatibility, built-in tooling, deployment assumptions, ecosystem trust, and where Deno is genuinely higher
-              leverage versus where Node.js remains the safer long-term default.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="deno-node-help-section">
-                    <h2 className="deno-node-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="deno-node-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="deno-node-help-section">
-                  <h2 className="deno-node-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="deno-node-help-section">
-                    <h2 className="deno-node-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="deno-node-help-section">
-                    <h2 className="deno-node-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="deno-node-help-subheading">Deno</h3>
-                    <div className="deno-node-help-codebox">
-                      <code>{example.denoCode.trim()}</code>
-                    </div>
-                    <h3 className="deno-node-help-subheading">Node.js</h3>
-                    <div className="deno-node-help-codebox">
-                      <code>{example.nodeCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="deno-node-help-section">
-                <h2 className="deno-node-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Deno</h3>
+              <div className="bin98-codebox">
+                <code>{example.denoCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">Node.js</h3>
+              <div className="bin98-codebox">
+                <code>{example.nodeCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

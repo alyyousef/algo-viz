@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -49,7 +51,7 @@ const bigPictureSections: readonly DocSection[] = [
     id: 'bp-zustand',
     title: 'When Zustand Fits Better',
     paragraphs: [
-      'Zustand is often the stronger fit when the application wants a lightweight global-state solution without adopting the full conceptual surface of Redux. It is especially attractive for product codebases that need shared state, actions, selectors, persistence, or devtools integration, but do not need Redux\'s full event-driven architecture.',
+      "Zustand is often the stronger fit when the application wants a lightweight global-state solution without adopting the full conceptual surface of Redux. It is especially attractive for product codebases that need shared state, actions, selectors, persistence, or devtools integration, but do not need Redux's full event-driven architecture.",
       'It is also a good fit when the team wants stores to feel simple and local in spirit even when they are shared globally. In many applications, Zustand feels like the minimum useful abstraction for global React state.',
     ],
   },
@@ -109,7 +111,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-predictability',
     title: 'Predictability and Explicitness',
     paragraphs: [
-      'Redux\'s strongest argument is not that it stores state, but that it makes state transitions explicit and traceable. Actions, reducers, middleware, and selector patterns create a very legible application state model when the team follows modern Redux guidance.',
+      "Redux's strongest argument is not that it stores state, but that it makes state transitions explicit and traceable. Actions, reducers, middleware, and selector patterns create a very legible application state model when the team follows modern Redux guidance.",
       'Zustand can also be clear, but it does not impose the same event-driven discipline by default. This can be a strength when the app is simpler, and a weakness when teams need stronger guarantees about how state evolves across a large codebase.',
     ],
   },
@@ -142,7 +144,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Devtools and Debugging',
     paragraphs: [
       'Redux has an especially strong debugging and inspection story. Devtools, action history, middleware inspection, selector discipline, and serializable-state conventions all contribute to a system that is very understandable when something goes wrong.',
-      'Zustand can integrate with devtools and can be easy to inspect in smaller systems, but it generally does not carry the same out-of-the-box architectural traceability as Redux\'s action-and-reducer model.',
+      "Zustand can integrate with devtools and can be easy to inspect in smaller systems, but it generally does not carry the same out-of-the-box architectural traceability as Redux's action-and-reducer model.",
     ],
   },
   {
@@ -176,8 +178,7 @@ const examples: readonly ExampleSection[] = [
   {
     id: 'examples-store',
     title: 'Basic Counter Store',
-    description:
-      'The difference shows up immediately in how much structure each tool asks for.',
+    description: 'The difference shows up immediately in how much structure each tool asks for.',
     snippets: [
       {
         label: 'Redux Toolkit',
@@ -290,240 +291,60 @@ and no extra architecture tax:
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'Slice', definition: 'A feature-focused piece of Redux state and reducer logic, commonly created with Redux Toolkit.' },
-  { term: 'Reducer', definition: 'A function that calculates new state from the current state and an action.' },
-  { term: 'Action', definition: 'A Redux event object describing what happened in the application.' },
-  { term: 'Middleware', definition: 'A layer that can intercept and extend store behavior, especially important in Redux.' },
+  {
+    term: 'Slice',
+    definition:
+      'A feature-focused piece of Redux state and reducer logic, commonly created with Redux Toolkit.',
+  },
+  {
+    term: 'Reducer',
+    definition: 'A function that calculates new state from the current state and an action.',
+  },
+  {
+    term: 'Action',
+    definition: 'A Redux event object describing what happened in the application.',
+  },
+  {
+    term: 'Middleware',
+    definition:
+      'A layer that can intercept and extend store behavior, especially important in Redux.',
+  },
   { term: 'Selector', definition: 'A function that reads or derives data from the store state.' },
-  { term: 'Serializable State', definition: 'State made of plain data structures that can be logged, inspected, and replayed reliably.' },
-  { term: 'Devtools', definition: 'Inspection and debugging tooling used to understand store state changes and application behavior.' },
-  { term: 'Store', definition: 'The container that holds shared application state and exposes update behavior.' },
-  { term: 'Persist Middleware', definition: 'A Zustand middleware for persisting and rehydrating store state from storage.' },
-  { term: 'Immutable Update', definition: 'Updating state by producing a new value instead of mutating the previous value directly.' },
-  { term: 'RTK', definition: 'Redux Toolkit, the official recommended way to write modern Redux logic.' },
-  { term: 'Global State', definition: 'Application state shared across multiple components or screens rather than owned by one local component.' },
+  {
+    term: 'Serializable State',
+    definition:
+      'State made of plain data structures that can be logged, inspected, and replayed reliably.',
+  },
+  {
+    term: 'Devtools',
+    definition:
+      'Inspection and debugging tooling used to understand store state changes and application behavior.',
+  },
+  {
+    term: 'Store',
+    definition: 'The container that holds shared application state and exposes update behavior.',
+  },
+  {
+    term: 'Persist Middleware',
+    definition: 'A Zustand middleware for persisting and rehydrating store state from storage.',
+  },
+  {
+    term: 'Immutable Update',
+    definition:
+      'Updating state by producing a new value instead of mutating the previous value directly.',
+  },
+  {
+    term: 'RTK',
+    definition: 'Redux Toolkit, the official recommended way to write modern Redux logic.',
+  },
+  {
+    term: 'Global State',
+    definition:
+      'Application state shared across multiple components or screens rather than owned by one local component.',
+  },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.redux-zustand-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.redux-zustand-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.redux-zustand-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.redux-zustand-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.redux-zustand-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.redux-zustand-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.redux-zustand-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.redux-zustand-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.redux-zustand-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.redux-zustand-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.redux-zustand-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.redux-zustand-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.redux-zustand-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.redux-zustand-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.redux-zustand-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.redux-zustand-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.redux-zustand-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.redux-zustand-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.redux-zustand-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.redux-zustand-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.redux-zustand-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.redux-zustand-help-content p,
-.redux-zustand-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.redux-zustand-help-content p {
-  margin: 0 0 10px;
-}
-
-.redux-zustand-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.redux-zustand-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.redux-zustand-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.redux-zustand-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .redux-zustand-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .redux-zustand-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .redux-zustand-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -539,154 +360,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ReduxVsZustandPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Redux vs Zustand',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Redux vs Zustand (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Redux vs Zustand',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="redux-zustand-help-page">
-      <style>{helpStyles}</style>
-      <div className="redux-zustand-help-window" role="presentation">
-        <header className="redux-zustand-help-titlebar">
-          <span className="redux-zustand-help-titletext">Redux vs Zustand</span>
-          <div className="redux-zustand-help-controls">
-            <button className="redux-zustand-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="redux-zustand-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Redux vs Zustand"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Redux vs Zustand</h1>
+      <p className="redux-zustand-help-doc-subtitle">
+        Manual-style comparison of global state architecture, middleware, devtools, and pragmatic
+        React-state tradeoffs.
+      </p>
 
-        <div className="redux-zustand-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`redux-zustand-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="redux-zustand-help-main">
-          <aside className="redux-zustand-help-toc" aria-label="Table of contents">
-            <h2 className="redux-zustand-help-toc-title">Contents</h2>
-            <ul className="redux-zustand-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="redux-zustand-help-content">
-            <h1 className="redux-zustand-help-doc-title">Redux vs Zustand</h1>
-            <p className="redux-zustand-help-doc-subtitle">
-              Manual-style comparison of global state architecture, middleware, devtools, and pragmatic React-state tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="redux-zustand-help-section">
-                    <h2 className="redux-zustand-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="redux-zustand-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="redux-zustand-help-section">
-                  <h2 className="redux-zustand-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="redux-zustand-help-section">
-                  <h2 className="redux-zustand-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="redux-zustand-help-subheading">{snippet.label}</h3>
-                      <div className="redux-zustand-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="redux-zustand-help-section">
-                <h2 className="redux-zustand-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

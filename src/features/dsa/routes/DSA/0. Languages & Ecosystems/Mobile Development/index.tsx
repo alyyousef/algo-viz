@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 import { slugifySegment } from '@/features/dsa/utils/slug'
 
 import type { JSX } from 'react'
@@ -22,7 +23,6 @@ type ExampleSection = {
   takeaway: string
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const MOBILE_DEVELOPMENT_BASE_ROUTE = '/dsa/0-languages-and-ecosystems/mobile-development'
 
 const categoryDirectory = [
@@ -559,245 +559,6 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'mobdev98-glossary', label: 'Glossary' }],
 }
 
-const pageStyles = `
-.mobdev98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.mobdev98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.mobdev98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.mobdev98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.mobdev98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.mobdev98-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.mobdev98-control:focus-visible,
-.mobdev98-tab:focus-visible,
-.mobdev98-toc-link:focus-visible,
-.mobdev98-inline-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -2px;
-}
-
-.mobdev98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.mobdev98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  color: #000;
-  cursor: pointer;
-}
-
-.mobdev98-tab-active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.mobdev98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-}
-
-.mobdev98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.mobdev98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.mobdev98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.mobdev98-toc-item + .mobdev98-toc-item {
-  margin-top: 6px;
-}
-
-.mobdev98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.mobdev98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.mobdev98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-.mobdev98-doc-subtitle {
-  margin: 0 0 18px;
-  font-size: 12px;
-}
-
-.mobdev98-section {
-  margin: 0 0 20px;
-}
-
-.mobdev98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.mobdev98-content p {
-  margin: 0 0 10px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.mobdev98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.mobdev98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.mobdev98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.mobdev98-inline-link {
-  color: #000;
-}
-
-.mobdev98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.mobdev98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .mobdev98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .mobdev98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .mobdev98-title {
-    font-size: 13px;
-    max-width: calc(100% - 80px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mobdev98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 function toSectionRoute(name: string): string {
   return `${MOBILE_DEVELOPMENT_BASE_ROUTE}/${slugifySegment(name)}`
 }
@@ -854,142 +615,61 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
 }
 
 export default function MobileDevelopmentPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Mobile Development',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Mobile Development (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Mobile Development',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="mobdev98-help-page">
-      <style>{pageStyles}</style>
-      <div className="mobdev98-window" role="presentation">
-        <header className="mobdev98-titlebar">
-          <span className="mobdev98-title">Mobile Development</span>
-          <div className="mobdev98-controls">
-            <button
-              className="mobdev98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="mobdev98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Mobile Development"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Mobile Development</h1>
+      <p className="mobdev98-doc-subtitle">
+        Help-style overview of native and cross-platform mobile work, device integration, backend
+        services, release engineering, and the subsection pages available in this ecosystem.
+      </p>
 
-        <div className="mobdev98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`mobdev98-tab ${activeTab === tab.id ? 'mobdev98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="mobdev98-main">
-          <aside className="mobdev98-toc" aria-label="Table of contents">
-            <h2 className="mobdev98-toc-title">Contents</h2>
-            <ul className="mobdev98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="mobdev98-toc-item">
-                  <a href={`#${section.id}`} className="mobdev98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1, {
+              linkedBullets: categoryDirectory,
+            }),
+          )
+        : null}
 
-          <main className="mobdev98-content">
-            <h1 className="mobdev98-doc-title">Mobile Development</h1>
-            <p className="mobdev98-doc-subtitle">
-              Help-style overview of native and cross-platform mobile work, device integration,
-              backend services, release engineering, and the subsection pages available in this
-              ecosystem.
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
+
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
+
+      {activeTab === 'glossary' ? (
+        <section id="mobdev98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1, {
-                    linkedBullets: categoryDirectory,
-                  }),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary' ? (
-              <section id="mobdev98-glossary" className="mobdev98-section">
-                <h2 className="mobdev98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            ) : null}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      ) : null}
+    </TopicPageShell>
   )
 }

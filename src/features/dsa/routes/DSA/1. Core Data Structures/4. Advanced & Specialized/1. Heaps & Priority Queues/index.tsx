@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -285,8 +285,7 @@ const quickGlossary = [
   },
   {
     term: 'Heapify',
-    definition:
-      'The process of restoring heap order, often by bubbling down from a node.',
+    definition: 'The process of restoring heap order, often by bubbling down from a node.',
   },
   {
     term: 'Decrease-key',
@@ -299,8 +298,7 @@ const quickGlossary = [
   },
   {
     term: 'Stale entry',
-    definition:
-      'An outdated queue entry left intentionally in a heap and ignored when popped.',
+    definition: 'An outdated queue entry left intentionally in a heap and ignored when popped.',
   },
   {
     term: 'd-ary heap',
@@ -309,14 +307,11 @@ const quickGlossary = [
   },
   {
     term: 'Amortized complexity',
-    definition:
-      'Average cost per operation over a sequence, allowing occasional expensive steps.',
+    definition: 'Average cost per operation over a sequence, allowing occasional expensive steps.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -344,447 +339,174 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const heapsHelpStyles = `
-.heap98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.heap98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.heap98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.heap98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.heap98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.heap98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.heap98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.heap98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.heap98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.heap98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.heap98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.heap98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.heap98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.heap98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.heap98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.heap98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.heap98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.heap98-section {
-  margin: 0 0 20px;
-}
-
-.heap98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.heap98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.heap98-content p,
-.heap98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.heap98-content p {
-  margin: 0 0 10px;
-}
-
-.heap98-content ul,
-.heap98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.heap98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.heap98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-  overflow-x: auto;
-}
-
-.heap98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .heap98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .heap98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 export default function HeapsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Heaps &amp; Priority Queues',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Heaps & Priority Queues (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Heaps & Priority Queues',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="heap98-help-page">
-      <style>{heapsHelpStyles}</style>
-      <div className="heap98-window" role="presentation">
-        <header className="heap98-titlebar">
-          <span className="heap98-title-text">Heaps &amp; Priority Queues</span>
-          <div className="heap98-title-controls">
-            <button className="heap98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="heap98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Heaps &amp; Priority Queues"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Heaps &amp; Priority Queues</h1>
+      <p>
+        Heaps maintain a partial order so the best element surfaces immediately while everything
+        else stays loosely organized. Priority queues built on heaps power schedulers, graph
+        algorithms, streaming analytics, and in-place sorting.
+      </p>
 
-        <div className="heap98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`heap98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              A heap enforces just enough order to give O(1) access to the best element and O(log n)
+              updates. The shape constraint keeps the structure compact (often an array), while the
+              order constraint guarantees parents dominate children.
+            </p>
+            <p>
+              Priority queues expose this with push, pop, and peek operations, trading full sorting
+              for speed and locality. The array-based binary heap remains the workhorse because of
+              implementation simplicity and cache efficiency.
+            </p>
+          </section>
 
-        <div className="heap98-main">
-          <aside className="heap98-toc" aria-label="Table of contents">
-            <h2 className="heap98-toc-title">Contents</h2>
-            <ul className="heap98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMoments.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="heap98-content">
-            <h1 className="heap98-doc-title">Heaps &amp; Priority Queues</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">Operations and API</h2>
+            {mechanics.map((item) => (
+              <div key={item.heading}>
+                <h3 className="bin98-subheading">{item.heading}</h3>
+                <ul>
+                  {item.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Performance Intuition</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
             <p>
-              Heaps maintain a partial order so the best element surfaces immediately while everything else stays loosely
-              organized. Priority queues built on heaps power schedulers, graph algorithms, streaming analytics, and in-place
-              sorting.
+              Big-O captures height, but constants and memory locality drive latency. d-ary heaps
+              reduce height but increase per-level comparisons. Fibonacci heaps lower amortized cost
+              for decrease-key at the expense of code complexity and cache behavior; pairing heaps
+              often win in practice with simpler code.
             </p>
+          </section>
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="heap98-section">
-                  <h2 className="heap98-heading">Overview</h2>
-                  <p>
-                    A heap enforces just enough order to give O(1) access to the best element and O(log n) updates. The shape
-                    constraint keeps the structure compact (often an array), while the order constraint guarantees parents
-                    dominate children.
-                  </p>
-                  <p>
-                    Priority queues expose this with push, pop, and peek operations, trading full sorting for speed and locality.
-                    The array-based binary heap remains the workhorse because of implementation simplicity and cache efficiency.
-                  </p>
-                </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorld.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <hr className="heap98-divider" />
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
 
-                <section id="bp-history" className="heap98-section">
-                  <h2 className="heap98-heading">Historical Context</h2>
-                  {historicalMoments.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="heap98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
+          <section id="core-usage" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
 
-                <hr className="heap98-divider" />
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Current Frontiers</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-                <section id="bp-takeaways" className="heap98-section">
-                  <h2 className="heap98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="heap98-section">
-                  <h2 className="heap98-heading">Core Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="heap98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="core-mechanics" className="heap98-section">
-                  <h2 className="heap98-heading">Operations and API</h2>
-                  {mechanics.map((item) => (
-                    <div key={item.heading}>
-                      <h3 className="heap98-subheading">{item.heading}</h3>
-                      <ul>
-                        {item.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="core-complexity" className="heap98-section">
-                  <h2 className="heap98-heading">Complexity and Performance Intuition</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Big-O captures height, but constants and memory locality drive latency. d-ary heaps reduce height but
-                    increase per-level comparisons. Fibonacci heaps lower amortized cost for decrease-key at the expense of code
-                    complexity and cache behavior; pairing heaps often win in practice with simpler code.
-                  </p>
-                </section>
-
-                <section id="core-applications" className="heap98-section">
-                  <h2 className="heap98-heading">Real-World Applications</h2>
-                  {realWorld.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="heap98-section">
-                  <h2 className="heap98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-usage" className="heap98-section">
-                  <h2 className="heap98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-
-                <section id="core-advanced" className="heap98-section">
-                  <h2 className="heap98-heading">Advanced Insights and Current Frontiers</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="heap98-section">
-                <h2 className="heap98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="heap98-subheading">{example.title}</h3>
-                    <div className="heap98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="heap98-section">
-                <h2 className="heap98-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

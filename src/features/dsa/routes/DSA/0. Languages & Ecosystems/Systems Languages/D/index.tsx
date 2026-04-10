@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'D\'s biggest strengths are native performance, expressive compile-time programming, strong template capabilities, direct C interoperability, and the ability to mix higher-level convenience with low-level access. Developers who like D often value how much power it offers without feeling as syntactically or conceptually overloaded as large C++ codebases.',
+      "D's biggest strengths are native performance, expressive compile-time programming, strong template capabilities, direct C interoperability, and the ability to mix higher-level convenience with low-level access. Developers who like D often value how much power it offers without feeling as syntactically or conceptually overloaded as large C++ codebases.",
       'Another strength is that the language can let teams move faster on certain categories of native software because it includes more built-in expressive tools than minimalist systems languages.',
     ],
     bullets: [
@@ -135,7 +133,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Practical Mental Model',
     paragraphs: [
       'The best mental model is that D is a pragmatic native language for engineers who want both power and productivity. It tries to let you stay close to the machine when necessary without forcing every part of the program to look like low-level ceremony.',
-      'Good D code uses the language\'s flexibility carefully. It is explicit about performance-sensitive paths, disciplined about memory behavior, and restrained enough that metaprogramming improves the code instead of obscuring it.',
+      "Good D code uses the language's flexibility carefully. It is explicit about performance-sensitive paths, disciplined about memory behavior, and restrained enough that metaprogramming improves the code instead of obscuring it.",
     ],
   },
 ] as const
@@ -185,7 +183,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-templates',
     title: 'Templates And Generic Programming',
     paragraphs: [
-      'Templates are one of D\'s defining features. They support generic programming, type-driven specialization, compile-time constraints, and reusable abstractions in a style that is often more expressive than older C++ template workflows. For many D developers, this is one of the language\'s strongest reasons to exist.',
+      "Templates are one of D's defining features. They support generic programming, type-driven specialization, compile-time constraints, and reusable abstractions in a style that is often more expressive than older C++ template workflows. For many D developers, this is one of the language's strongest reasons to exist.",
       'The power of templates can make libraries elegant and reusable, but template-heavy code still requires restraint. Overly clever generic machinery can damage maintainability in any language, including D.',
     ],
   },
@@ -225,8 +223,8 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-c-interop',
     title: 'C Interoperability',
     paragraphs: [
-      'C interoperability is central to D\'s practicality. Native ecosystems are full of existing libraries, OS interfaces, embedded APIs, and long-lived C-facing contracts. D can interoperate with those systems, which makes gradual adoption far more realistic than an all-or-nothing rewrite strategy.',
-      'This also helps explain D\'s niche value. Even when a team does not want to rewrite an entire platform, D can still be used for selected native components if the interop boundary is clear.',
+      "C interoperability is central to D's practicality. Native ecosystems are full of existing libraries, OS interfaces, embedded APIs, and long-lived C-facing contracts. D can interoperate with those systems, which makes gradual adoption far more realistic than an all-or-nothing rewrite strategy.",
+      "This also helps explain D's niche value. Even when a team does not want to rewrite an entire platform, D can still be used for selected native components if the interop boundary is clear.",
     ],
   },
   {
@@ -242,7 +240,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Performance Characteristics',
     paragraphs: [
       'D is capable of strong native performance, especially when code is written with clear attention to allocation behavior, data layout, and algorithm choice. Its higher-level features do not prevent it from being used in serious performance-aware workloads.',
-      'Still, the language\'s flexibility means performance outcomes depend heavily on how it is used. GC use, abstraction patterns, range design, and compile-time code generation can all improve or harm results depending on the workload.',
+      "Still, the language's flexibility means performance outcomes depend heavily on how it is used. GC use, abstraction patterns, range design, and compile-time code generation can all improve or harm results depending on the workload.",
     ],
   },
   {
@@ -304,14 +302,12 @@ const exampleSections: ExampleSection[] = [
   {
     id: 'ex-template',
     title: 'Template Generic Function',
-    description: [
-      'Templates are a central part of reusable and specialized D code.',
-    ],
+    description: ['Templates are a central part of reusable and specialized D code.'],
     code: `T first(T)(T[] items) {
     return items[0];
 }`,
     notes: [
-      'This shows D\'s template-based generic style.',
+      "This shows D's template-based generic style.",
       'Template power is one of the main reasons some engineers choose D.',
     ],
   },
@@ -348,9 +344,7 @@ enum sixteen = square(4);`,
   {
     id: 'ex-error',
     title: 'Direct Return-Based Failure',
-    description: [
-      'Not every D program needs exceptions for ordinary failure paths.',
-    ],
+    description: ['Not every D program needs exceptions for ordinary failure paths.'],
     code: `bool tryParseInt(string text, out int value) {
     // simplified example
     value = 0;
@@ -364,9 +358,7 @@ enum sixteen = square(4);`,
   {
     id: 'ex-c-interop',
     title: 'C Interop Declaration',
-    description: [
-      'D can bind to C functions directly, which is important for native adoption.',
-    ],
+    description: ['D can bind to C functions directly, which is important for native adoption.'],
     code: `extern(C) int puts(const char* s);`,
     notes: [
       'Interop keeps existing native APIs usable.',
@@ -392,13 +384,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Template',
-        definition:
-          'A compile-time generic mechanism used to write reusable and specialized code.',
+        definition: 'A compile-time generic mechanism used to write reusable and specialized code.',
       },
       {
         term: 'Range',
-        definition:
-          'A composable sequence abstraction used heavily in D\'s algorithm style.',
+        definition: "A composable sequence abstraction used heavily in D's algorithm style.",
       },
       {
         term: 'Compile-time function execution',
@@ -417,8 +407,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Module',
-        definition:
-          'A source-level organization unit used to structure D programs and libraries.',
+        definition: 'A source-level organization unit used to structure D programs and libraries.',
       },
     ],
   },
@@ -560,224 +549,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.d98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.d98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.d98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.d98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.d98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.d98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.d98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.d98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.d98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.d98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.d98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.d98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.d98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.d98-toc-item {
-  margin: 0 0 8px;
-}
-
-.d98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.d98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.d98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.d98-section {
-  margin: 0 0 20px;
-}
-
-.d98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.d98-content p,
-.d98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.d98-content p {
-  margin: 0 0 10px;
-}
-
-.d98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.d98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.d98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.d98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .d98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .d98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .d98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="d98-section">
@@ -832,122 +603,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function DPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'D',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `D (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'D',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="d98-help-page">
-      <style>{pageStyles}</style>
-      <div className="d98-help-window" role="presentation">
-        <header className="d98-titlebar">
-          <span className="d98-titletext">D</span>
-          <div className="d98-controls">
-            <button className="d98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="d98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="D"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">D</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="d98-tabs" role="tablist" aria-label="D documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`d98-tab ${activeTab === tab.id ? 'd98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="d98-main">
-          <aside className="d98-toc" aria-label="Table of contents">
-            <h2 className="d98-toc-title">Contents</h2>
-            <ul className="d98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="d98-toc-item">
-                  <a href={`#${section.id}`} className="d98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="d98-content">
-            <h1 className="d98-doc-title">D</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

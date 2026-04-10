@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -596,249 +598,6 @@ const compareContrast = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.cawin98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cawin98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.cawin98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cawin98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cawin98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.cawin98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.cawin98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cawin98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cawin98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.cawin98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.cawin98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.cawin98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.cawin98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cawin98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cawin98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.cawin98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.cawin98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.cawin98-section {
-  margin: 0 0 20px;
-}
-
-.cawin98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.cawin98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.cawin98-content p,
-.cawin98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cawin98-content p {
-  margin: 0 0 10px;
-}
-
-.cawin98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cawin98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.cawin98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.cawin98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.cawin98-table {
-  border-collapse: collapse;
-  font-size: 12px;
-  margin: 0 0 14px;
-  width: 100%;
-}
-
-.cawin98-table th,
-.cawin98-table td {
-  border: 1px solid #808080;
-  padding: 4px 8px;
-  text-align: left;
-}
-
-.cawin98-table th {
-  background: #e0e0e0;
-  font-weight: 700;
-}
-
-.cawin98-inline-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-
-.cawin98-push {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  font-size: 12px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-@media (max-width: 900px) {
-  .cawin98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cawin98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -846,15 +605,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -879,314 +629,243 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function CoreAlgorithmsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Core Algorithms',
+    defaultTab: 'big-picture',
+  })
+
   const defaultExample = codeExamples[0] ?? {
     title: 'No examples configured',
     code: 'No code available.',
     explanation: 'No explanation available.',
   }
   const [selectedExampleTitle, setSelectedExampleTitle] = useState(defaultExample.title)
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
-  })
 
   const selectedExample =
     codeExamples.find((ex) => ex.title === selectedExampleTitle) ?? defaultExample
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Core Algorithms (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Core Algorithms',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="cawin98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="cawin98-window" role="presentation">
-        <header className="cawin98-titlebar">
-          <span className="cawin98-title-text">Core Algorithms</span>
-          <div className="cawin98-title-controls">
-            <button
-              className="cawin98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="cawin98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="cawin98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`cawin98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="cawin98-main">
-          <aside className="cawin98-toc" aria-label="Table of contents">
-            <h2 className="cawin98-toc-title">Contents</h2>
-            <ul className="cawin98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+    <TopicPageShell
+      title="Core Algorithms"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Core Algorithms</h1>
+      <p>
+        Core algorithms are the named, transferable techniques that form the toolbox of every
+        software engineer. Sorting, searching, graph traversal, dynamic programming, greedy methods,
+        divide and conquer, and backtracking each solve an entire class of problems. Recognizing
+        which family a problem belongs to is often the hardest and most important step in solving
+        it.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why This Matters</h2>
+            <p>
+              Without a working knowledge of core algorithms, every problem looks novel. With it,
+              most problems reduce to a known pattern with known complexity bounds. This is not
+              about memorizing code — it is about recognizing structure.
+            </p>
+            <p>
+              The difference between a correct O(n²) solution and an O(n log n) one is often just
+              recognizing that the problem is a sorting or searching problem in disguise. The
+              difference between an exponential and a polynomial solution is recognizing that
+              subproblems overlap, enabling dynamic programming.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-model" className="bin98-section">
+            <h2 className="bin98-heading">Core Mental Model</h2>
+            {mentalModel.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-families" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Families</h2>
+            {algorithmFamilies.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>
+                  <strong>Examples:</strong> {item.examples}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="core-sorting" className="bin98-section">
+            <h2 className="bin98-heading">Sorting Comparison</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Best</th>
+                  <th>Average</th>
+                  <th>Worst</th>
+                  <th>Space</th>
+                  <th>Stable</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortingComparison.map((row) => (
+                  <tr key={row.name}>
+                    <td>{row.name}</td>
+                    <td>{row.best}</td>
+                    <td>{row.average}</td>
+                    <td>{row.worst}</td>
+                    <td>{row.space}</td>
+                    <td>{row.stable}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-shortest" className="bin98-section">
+            <h2 className="bin98-heading">Shortest Path Comparison</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Complexity</th>
+                  <th>Weighted</th>
+                  <th>Negative Edges</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shortestPathComparison.map((row) => (
+                  <tr key={row.name}>
+                    <td>{row.name}</td>
+                    <td>{row.complexity}</td>
+                    <td>{row.weighted}</td>
+                    <td>{row.negativeEdges}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-dp" className="bin98-section">
+            <h2 className="bin98-heading">DP Patterns</h2>
+            {dpPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Common Techniques</h2>
+            {commonPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-languages" className="bin98-section">
+            <h2 className="bin98-heading">Language Mapping</h2>
+            {languageMapping.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareContrast.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((pitfall) => (
+                <li key={pitfall.mistake}>
+                  <strong>{pitfall.mistake}:</strong> {pitfall.description}
                 </li>
               ))}
             </ul>
-          </aside>
-          <main className="cawin98-content">
-            <h1 className="cawin98-doc-title">Core Algorithms</h1>
-            <p>
-              Core algorithms are the named, transferable techniques that form the toolbox of every
-              software engineer. Sorting, searching, graph traversal, dynamic programming, greedy
-              methods, divide and conquer, and backtracking each solve an entire class of problems.
-              Recognizing which family a problem belongs to is often the hardest and most important
-              step in solving it.
+          </section>
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Choice Checklist</h2>
+            <ul>
+              {choiceChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Code Examples</h2>
+          <p>Select a scenario to view an annotated code sample.</p>
+          <div className="cabin98-inline-buttons">
+            {codeExamples.map((ex) => (
+              <button
+                key={ex.title}
+                type="button"
+                className="cabin98-push"
+                onClick={() => setSelectedExampleTitle(ex.title)}
+              >
+                {ex.title}
+              </button>
+            ))}
+          </div>
+          <h3 className="bin98-subheading">{selectedExample.title}</h3>
+          <div className="bin98-codebox">
+            <code>{selectedExample.code.trim()}</code>
+          </div>
+          <p>{selectedExample.explanation}</p>
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="cawin98-section">
-                  <h2 className="cawin98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cawin98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="cawin98-divider" />
-                <section id="bp-why" className="cawin98-section">
-                  <h2 className="cawin98-heading">Why This Matters</h2>
-                  <p>
-                    Without a working knowledge of core algorithms, every problem looks novel. With
-                    it, most problems reduce to a known pattern with known complexity bounds. This
-                    is not about memorizing code — it is about recognizing structure.
-                  </p>
-                  <p>
-                    The difference between a correct O(n²) solution and an O(n log n) one is often
-                    just recognizing that the problem is a sorting or searching problem in disguise.
-                    The difference between an exponential and a polynomial solution is recognizing
-                    that subproblems overlap, enabling dynamic programming.
-                  </p>
-                </section>
-                <hr className="cawin98-divider" />
-                <section id="bp-takeaways" className="cawin98-section">
-                  <h2 className="cawin98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-model" className="cawin98-section">
-                  <h2 className="cawin98-heading">Core Mental Model</h2>
-                  {mentalModel.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cawin98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-families" className="cawin98-section">
-                  <h2 className="cawin98-heading">Algorithm Families</h2>
-                  {algorithmFamilies.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cawin98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>
-                        <strong>Examples:</strong> {item.examples}
-                      </p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-sorting" className="cawin98-section">
-                  <h2 className="cawin98-heading">Sorting Comparison</h2>
-                  <table className="cawin98-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Best</th>
-                        <th>Average</th>
-                        <th>Worst</th>
-                        <th>Space</th>
-                        <th>Stable</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortingComparison.map((row) => (
-                        <tr key={row.name}>
-                          <td>{row.name}</td>
-                          <td>{row.best}</td>
-                          <td>{row.average}</td>
-                          <td>{row.worst}</td>
-                          <td>{row.space}</td>
-                          <td>{row.stable}</td>
-                          <td>{row.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-shortest" className="cawin98-section">
-                  <h2 className="cawin98-heading">Shortest Path Comparison</h2>
-                  <table className="cawin98-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Complexity</th>
-                        <th>Weighted</th>
-                        <th>Negative Edges</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {shortestPathComparison.map((row) => (
-                        <tr key={row.name}>
-                          <td>{row.name}</td>
-                          <td>{row.complexity}</td>
-                          <td>{row.weighted}</td>
-                          <td>{row.negativeEdges}</td>
-                          <td>{row.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-dp" className="cawin98-section">
-                  <h2 className="cawin98-heading">DP Patterns</h2>
-                  {dpPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-patterns" className="cawin98-section">
-                  <h2 className="cawin98-heading">Common Techniques</h2>
-                  {commonPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-languages" className="cawin98-section">
-                  <h2 className="cawin98-heading">Language Mapping</h2>
-                  {languageMapping.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="cawin98-section">
-                  <h2 className="cawin98-heading">Compare and Contrast</h2>
-                  {compareContrast.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="cawin98-section">
-                  <h2 className="cawin98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((pitfall) => (
-                      <li key={pitfall.mistake}>
-                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-checklist" className="cawin98-section">
-                  <h2 className="cawin98-heading">Choice Checklist</h2>
-                  <ul>
-                    {choiceChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="cawin98-section">
-                <h2 className="cawin98-heading">Code Examples</h2>
-                <p>Select a scenario to view an annotated code sample.</p>
-                <div className="cawin98-inline-buttons">
-                  {codeExamples.map((ex) => (
-                    <button
-                      key={ex.title}
-                      type="button"
-                      className="cawin98-push"
-                      onClick={() => setSelectedExampleTitle(ex.title)}
-                    >
-                      {ex.title}
-                    </button>
-                  ))}
-                </div>
-                <h3 className="cawin98-subheading">{selectedExample.title}</h3>
-                <div className="cawin98-codebox">
-                  <code>{selectedExample.code.trim()}</code>
-                </div>
-                <p>{selectedExample.explanation}</p>
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cawin98-section">
-                <h2 className="cawin98-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

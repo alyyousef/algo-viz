@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'Bun vs Node.js'
-const pageSubtitle = 'Comparing an all-in-one modern JavaScript runtime with the long-established standard server-side JavaScript runtime.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing an all-in-one modern JavaScript runtime with the long-established standard server-side JavaScript runtime.'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -252,31 +251,38 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-run-ts',
     title: 'Run a TypeScript Script',
-    summary: 'Both runtimes can execute TypeScript-oriented workflows, but the surrounding experience is not equally integrated.',
+    summary:
+      'Both runtimes can execute TypeScript-oriented workflows, but the surrounding experience is not equally integrated.',
     bunCode: `bun run ./src/script.ts`,
     nodeCode: `node --import tsx ./src/script.ts`,
-    explanation: 'Bun treats TypeScript execution as part of the normal toolkit experience. Node typically reaches the same outcome through an additional tool such as tsx or a compile step, which is flexible but less integrated.',
+    explanation:
+      'Bun treats TypeScript execution as part of the normal toolkit experience. Node typically reaches the same outcome through an additional tool such as tsx or a compile step, which is flexible but less integrated.',
   },
   {
     id: 'ex-install',
     title: 'Install Dependencies',
-    summary: 'Dependency installation is routine in both worlds, but Bun treats the package manager as a first-class built-in tool.',
+    summary:
+      'Dependency installation is routine in both worlds, but Bun treats the package manager as a first-class built-in tool.',
     bunCode: `bun install`,
     nodeCode: `npm install`,
-    explanation: 'Node projects usually treat the package manager as adjacent to the runtime even if npm is the default norm. Bun explicitly makes package installation part of the same all-in-one product identity as the runtime.',
+    explanation:
+      'Node projects usually treat the package manager as adjacent to the runtime even if npm is the default norm. Bun explicitly makes package installation part of the same all-in-one product identity as the runtime.',
   },
   {
     id: 'ex-test',
     title: 'Run Tests',
-    summary: 'Both runtimes now have built-in test stories, but the ecosystem context still differs.',
+    summary:
+      'Both runtimes now have built-in test stories, but the ecosystem context still differs.',
     bunCode: `bun test`,
     nodeCode: `node --test`,
-    explanation: 'The command shapes look similarly simple, but the practical difference is ecosystem center of gravity. Node projects may still standardize on Jest or Vitest. Bun tries to make the built-in test runner feel like the obvious default inside the same integrated toolkit.',
+    explanation:
+      'The command shapes look similarly simple, but the practical difference is ecosystem center of gravity. Node projects may still standardize on Jest or Vitest. Bun tries to make the built-in test runner feel like the obvious default inside the same integrated toolkit.',
   },
   {
     id: 'ex-server',
     title: 'Start a Tiny HTTP Server',
-    summary: 'Both can expose an HTTP endpoint with very little code, but the runtime feel is different.',
+    summary:
+      'Both can expose an HTTP endpoint with very little code, but the runtime feel is different.',
     bunCode: `Bun.serve({
   port: 3000,
   fetch() {
@@ -289,18 +295,21 @@ http.createServer((_req, res) => {
   res.writeHead(200, { 'content-type': 'text/plain' })
   res.end('hello from node')
 }).listen(3000)`,
-    explanation: 'Bun exposes a modern fetch-style server primitive directly. Node exposes mature low-level HTTP primitives and expects many apps to use a framework or a preferred abstraction on top.',
+    explanation:
+      'Bun exposes a modern fetch-style server primitive directly. Node exposes mature low-level HTTP primitives and expects many apps to use a framework or a preferred abstraction on top.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Node compatibility',
-    definition: 'The extent to which a runtime behaves like Node.js with respect to APIs, module resolution, package behavior, and ecosystem assumptions.',
+    definition:
+      'The extent to which a runtime behaves like Node.js with respect to APIs, module resolution, package behavior, and ecosystem assumptions.',
   },
   {
     term: 'All-in-one toolkit',
-    definition: 'A platform that combines runtime, package manager, test runner, bundler, and related developer tooling into one integrated product.',
+    definition:
+      'A platform that combines runtime, package manager, test runner, bundler, and related developer tooling into one integrated product.',
   },
   {
     term: 'CommonJS',
@@ -312,15 +321,18 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'npm ecosystem',
-    definition: 'The large universe of JavaScript packages and surrounding conventions historically centered on Node.js.',
+    definition:
+      'The large universe of JavaScript packages and surrounding conventions historically centered on Node.js.',
   },
   {
     term: 'bun install',
-    definition: 'Buns built-in dependency installation command, used as part of its integrated package-manager workflow.',
+    definition:
+      'Buns built-in dependency installation command, used as part of its integrated package-manager workflow.',
   },
   {
     term: 'bun test',
-    definition: 'Buns built-in test runner command for executing tests without requiring a separate test framework by default.',
+    definition:
+      'Buns built-in test runner command for executing tests without requiring a separate test framework by default.',
   },
   {
     term: 'node --test',
@@ -328,19 +340,23 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Worker thread',
-    definition: 'A Node.js concurrency primitive for running JavaScript on additional threads within one process.',
+    definition:
+      'A Node.js concurrency primitive for running JavaScript on additional threads within one process.',
   },
   {
     term: 'Transpilation',
-    definition: 'The transformation of source code such as TypeScript or JSX into executable JavaScript.',
+    definition:
+      'The transformation of source code such as TypeScript or JSX into executable JavaScript.',
   },
   {
     term: 'Toolchain sprawl',
-    definition: 'The tendency of a project to accumulate many separate development tools for tasks such as install, test, run, and build.',
+    definition:
+      'The tendency of a project to accumulate many separate development tools for tasks such as install, test, run, and build.',
   },
   {
     term: 'Runtime novelty',
-    definition: 'The operational and compatibility risk that comes from adopting a newer execution environment with less historical ecosystem validation.',
+    definition:
+      'The operational and compatibility risk that comes from adopting a newer execution environment with less historical ecosystem validation.',
   },
 ]
 
@@ -372,400 +388,112 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.bun-node-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.bun-node-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.bun-node-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bun-node-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-.bun-node-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.bun-node-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.bun-node-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.bun-node-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.bun-node-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.bun-node-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.bun-node-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.bun-node-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.bun-node-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bun-node-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.bun-node-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.bun-node-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.bun-node-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.bun-node-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bun-node-help-section {
-  margin: 0 0 20px;
-}
-
-.bun-node-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.bun-node-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bun-node-help-content p,
-.bun-node-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.bun-node-help-content p {
-  margin: 0 0 10px;
-}
-
-.bun-node-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.bun-node-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.bun-node-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.bun-node-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .bun-node-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .bun-node-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .bun-node-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function BunVsNodePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Bun Vs Node Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="bun-node-help-page">
-      <style>{pageStyles}</style>
-      <div className="bun-node-help-window" role="presentation">
-        <header className="bun-node-help-titlebar">
-          <span className="bun-node-help-title">{pageTitle}</span>
-          <div className="bun-node-help-controls">
-            <button className="bun-node-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="bun-node-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Bun Vs Node Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bun-node-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Bun and Node.js as real runtime choices rather than as benchmark slogans.
+        The point is to make the practical tradeoffs explicit: compatibility, module semantics,
+        TypeScript ergonomics, package management, testing, performance, deployment, ecosystem
+        trust, and where Bun is genuinely higher leverage versus where Node.js remains the safer
+        long-term default.
+      </p>
 
-        <div className="bun-node-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`bun-node-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="bun-node-help-main">
-          <aside className="bun-node-help-toc" aria-label="Table of contents">
-            <h2 className="bun-node-help-toc-title">Contents</h2>
-            <ul className="bun-node-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="bun-node-help-content">
-            <h1 className="bun-node-help-doc-title">{pageTitle}</h1>
-            <p className="bun-node-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Bun and Node.js as real runtime choices rather than as benchmark slogans.
-              The point is to make the practical tradeoffs explicit: compatibility, module semantics, TypeScript ergonomics,
-              package management, testing, performance, deployment, ecosystem trust, and where Bun is genuinely higher leverage
-              versus where Node.js remains the safer long-term default.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="bun-node-help-section">
-                    <h2 className="bun-node-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="bun-node-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="bun-node-help-section">
-                  <h2 className="bun-node-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="bun-node-help-section">
-                    <h2 className="bun-node-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="bun-node-help-section">
-                    <h2 className="bun-node-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="bun-node-help-subheading">Bun</h3>
-                    <div className="bun-node-help-codebox">
-                      <code>{example.bunCode.trim()}</code>
-                    </div>
-                    <h3 className="bun-node-help-subheading">Node.js</h3>
-                    <div className="bun-node-help-codebox">
-                      <code>{example.nodeCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="bun-node-help-section">
-                <h2 className="bun-node-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Bun</h3>
+              <div className="bin98-codebox">
+                <code>{example.bunCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">Node.js</h3>
+              <div className="bin98-codebox">
+                <code>{example.nodeCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

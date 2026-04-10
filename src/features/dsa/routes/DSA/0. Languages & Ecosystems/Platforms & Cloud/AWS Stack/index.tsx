@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -9,8 +9,6 @@ type TopicLink = {
   id: string
   label: string
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -422,327 +420,199 @@ const glossary = [
   },
 ]
 
-const awsStackHelpStyles = `
-.aws-stack-help-page { min-height: 100dvh; background: #c0c0c0; color: #000; font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif; }
-.aws-stack-help-window { min-height: 100dvh; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; display: flex; flex-direction: column; box-sizing: border-box; }
-.aws-stack-help-titlebar { position: relative; display: flex; align-items: center; min-height: 24px; padding: 2px 4px; background: linear-gradient(90deg, #000080 0%, #1084d0 100%); color: #fff; font-size: 13px; font-weight: 700; }
-.aws-stack-help-title { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 14px; }
-.aws-stack-help-controls { display: flex; gap: 2px; margin-left: auto; }
-.aws-stack-help-control { width: 18px; height: 16px; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; background: #c0c0c0; color: #000; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1; cursor: pointer; }
-.aws-stack-help-tabs { display: flex; flex-wrap: wrap; gap: 1px; padding: 6px 8px 0; background: #c0c0c0; }
-.aws-stack-help-tab { border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: none; background: #b6b6b6; padding: 5px 10px 4px; color: #000; font: inherit; font-size: 12px; cursor: pointer; }
-.aws-stack-help-tab.is-active { position: relative; top: 1px; background: #fff; }
-.aws-stack-help-main { display: grid; grid-template-columns: 232px minmax(0, 1fr); flex: 1; min-height: 0; border-top: 1px solid #404040; background: #fff; }
-.aws-stack-help-toc { overflow: auto; border-right: 1px solid #808080; background: #efefef; padding: 12px; }
-.aws-stack-help-toc-title { margin: 0 0 10px; font-size: 12px; font-weight: 700; }
-.aws-stack-help-toc-list { list-style: none; margin: 0; padding: 0; }
-.aws-stack-help-toc-list li { margin: 0 0 8px; }
-.aws-stack-help-toc-list a { color: #000; text-decoration: none; font-size: 12px; }
-.aws-stack-help-content { overflow: auto; padding: 16px 20px 22px; }
-.aws-stack-help-doc-title { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
-.aws-stack-help-intro { margin: 0 0 16px; font-size: 12px; line-height: 1.5; }
-.aws-stack-help-section { margin: 0 0 22px; }
-.aws-stack-help-heading { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-.aws-stack-help-subheading { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-.aws-stack-help-content p, .aws-stack-help-content li { font-size: 12px; line-height: 1.5; }
-.aws-stack-help-content p { margin: 0 0 10px; }
-.aws-stack-help-content ul { margin: 0 0 10px 18px; padding: 0; }
-.aws-stack-help-divider { margin: 14px 0; border: 0; border-top: 1px solid #d0d0d0; }
-.aws-stack-help-codebox { margin: 6px 0 10px; padding: 8px; background: #f4f4f4; border-top: 2px solid #808080; border-left: 2px solid #808080; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
-.aws-stack-help-codebox code { display: block; font-family: "Courier New", Courier, monospace; font-size: 12px; white-space: pre-wrap; }
-@media (max-width: 900px) { .aws-stack-help-main { grid-template-columns: 1fr; } .aws-stack-help-toc { border-right: none; border-bottom: 1px solid #808080; } }
-`
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 export default function AwsStackPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const currentTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(currentTab) ? currentTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-  const tocSections = sectionLinks[activeTab]
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-
-    document.title = `AWS Stack (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'AWS Stack',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-
-    let parsedTasks: Array<{ id: string }> = []
-
-    try {
-      const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-      parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    } catch {
-      parsedTasks = []
-    }
-
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'AWS Stack',
+    defaultTab: 'big-picture',
+  })
   return (
-    <div className="aws-stack-help-page">
-      <style>{awsStackHelpStyles}</style>
-      <div className="aws-stack-help-window" role="presentation">
-        <header className="aws-stack-help-titlebar">
-          <span className="aws-stack-help-title">AWS Stack - Help</span>
-          <div className="aws-stack-help-controls">
-            <button
-              className="aws-stack-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="aws-stack-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="aws-stack-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`aws-stack-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => {
-                const nextParams = new URLSearchParams(searchParams)
-                nextParams.set('tab', tab.id)
-                setSearchParams(nextParams, { replace: true })
-              }}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="aws-stack-help-main">
-          <aside className="aws-stack-help-toc" aria-label="Table of contents">
-            <h2 className="aws-stack-help-toc-title">Contents</h2>
-            <ul className="aws-stack-help-toc-list">
-              {tocSections.map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="AWS Stack"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">AWS Stack</h1>
+      <p className="aws-stack-help-intro">
+        AWS is broad enough that "the AWS stack" can mean a serverless app, a fleet of EC2
+        instances, a container platform, an analytics pipeline, or an enterprise landing zone. This
+        page treats AWS as a platform model: how its major layers fit together, why teams choose
+        different services for the same responsibility, and what architecture decisions matter most
+        when building on it.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-service-map" className="bin98-section">
+            <h2 className="bin98-heading">Service Map</h2>
+            {serviceMap.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-mental-model" className="bin98-section">
+            <h2 className="bin98-heading">Architectural Mindset</h2>
+            {architecturalMindset.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
               ))}
             </ul>
-          </aside>
-          <main className="aws-stack-help-content">
-            <h1 className="aws-stack-help-doc-title">AWS Stack</h1>
-            <p className="aws-stack-help-intro">
-              AWS is broad enough that "the AWS stack" can mean a serverless app, a fleet of EC2
-              instances, a container platform, an analytics pipeline, or an enterprise landing zone.
-              This page treats AWS as a platform model: how its major layers fit together, why teams
-              choose different services for the same responsibility, and what architecture decisions
-              matter most when building on it.
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-governance" className="bin98-section">
+            <h2 className="bin98-heading">Accounts and Governance</h2>
+            {governanceConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-infrastructure" className="bin98-section">
+            <h2 className="bin98-heading">Global Infrastructure</h2>
+            {infrastructureConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-security" className="bin98-section">
+            <h2 className="bin98-heading">Identity and Security</h2>
+            {securityConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-networking" className="bin98-section">
+            <h2 className="bin98-heading">Networking and Delivery</h2>
+            {networkingConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compute" className="bin98-section">
+            <h2 className="bin98-heading">Compute Layer</h2>
+            {computeConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-storage" className="bin98-section">
+            <h2 className="bin98-heading">Storage Layer</h2>
+            {storageConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-data" className="bin98-section">
+            <h2 className="bin98-heading">Databases and Analytics</h2>
+            {dataConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-integration" className="bin98-section">
+            <h2 className="bin98-heading">Integration and Orchestration</h2>
+            {integrationConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-operations" className="bin98-section">
+            <h2 className="bin98-heading">Operations and Observability</h2>
+            {operationsConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-cost" className="bin98-section">
+            <h2 className="bin98-heading">Cost, Reliability, and Tradeoffs</h2>
+            {costAndTradeoffs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Design Checklist</h2>
+            <ul>
+              {designChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.intro}</p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="aws-stack-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="aws-stack-help-divider" />
-
-                <section id="bp-service-map" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Service Map</h2>
-                  {serviceMap.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="aws-stack-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="aws-stack-help-divider" />
-
-                <section id="bp-mental-model" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Architectural Mindset</h2>
-                  {architecturalMindset.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="aws-stack-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="aws-stack-help-divider" />
-
-                <section id="bp-takeaways" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-governance" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Accounts and Governance</h2>
-                  {governanceConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-infrastructure" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Global Infrastructure</h2>
-                  {infrastructureConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-security" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Identity and Security</h2>
-                  {securityConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-networking" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Networking and Delivery</h2>
-                  {networkingConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compute" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Compute Layer</h2>
-                  {computeConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-storage" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Storage Layer</h2>
-                  {storageConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-data" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Databases and Analytics</h2>
-                  {dataConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-integration" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Integration and Orchestration</h2>
-                  {integrationConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-operations" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Operations and Observability</h2>
-                  {operationsConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-cost" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Cost, Reliability, and Tradeoffs</h2>
-                  {costAndTradeoffs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-checklist" className="aws-stack-help-section">
-                  <h2 className="aws-stack-help-heading">Design Checklist</h2>
-                  <ul>
-                    {designChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="aws-stack-help-section">
-                    <h2 className="aws-stack-help-heading">{example.title}</h2>
-                    <p>{example.intro}</p>
-                    <div className="aws-stack-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="aws-stack-help-section">
-                <h2 className="aws-stack-help-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

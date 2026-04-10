@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -13,216 +11,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-const cloudFunctionsHelpStyles = `
-.cloudfunctions-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cloudfunctions-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cloudfunctions-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudfunctions-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cloudfunctions-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cloudfunctions-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.cloudfunctions-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cloudfunctions-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cloudfunctions-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cloudfunctions-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.cloudfunctions-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.cloudfunctions-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cloudfunctions-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cloudfunctions-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cloudfunctions-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.cloudfunctions-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cloudfunctions-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cloudfunctions-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudfunctions-help-section {
-  margin: 0 0 20px;
-}
-
-.cloudfunctions-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cloudfunctions-help-content p,
-.cloudfunctions-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cloudfunctions-help-content p {
-  margin: 0 0 10px;
-}
-
-.cloudfunctions-help-content ul,
-.cloudfunctions-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cloudfunctions-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.cloudfunctions-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.cloudfunctions-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cloudfunctions-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloudfunctions-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cloudfunctions-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
 
 const bigPictureSections: Array<
   | { id: string; title: string; paragraphs: string[] }
@@ -232,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Cloud Functions is Google Cloud\'s event-driven serverless function platform. In current Google Cloud documentation, the modern model is closely tied to Cloud Run functions, so the service inherits more of the Cloud Run serverless execution model than older first-generation functions did.',
+      "Cloud Functions is Google Cloud's event-driven serverless function platform. In current Google Cloud documentation, the modern model is closely tied to Cloud Run functions, so the service inherits more of the Cloud Run serverless execution model than older first-generation functions did.",
       'The simplest mental model is this: write a small focused function, define the HTTP or event trigger that should invoke it, and let the platform provision runtime instances on demand.',
       'The service is commonly used for webhook endpoints, file-processing automation, Pub/Sub consumers, scheduled jobs, lightweight APIs, and integration logic between managed cloud services.',
     ],
@@ -413,7 +201,7 @@ const coreSections: Array<
     title: 'Ecosystem and common service pairings',
     paragraphs: [
       'Cloud Functions commonly appears beside Cloud Storage, Pub/Sub, Eventarc, Firestore, Secret Manager, Cloud Scheduler, and Cloud Build. This is because functions are often used as glue between managed services.',
-      'That ecosystem fit is one of the platform\'s main advantages. Teams can compose workflows quickly without standing up a larger backend for every integration point.',
+      "That ecosystem fit is one of the platform's main advantages. Teams can compose workflows quickly without standing up a larger backend for every integration point.",
       'The tradeoff is architectural sprawl. Many small functions across many triggers can become hard to govern unless ownership, naming, logging, and deployment standards stay clear.',
     ],
   },
@@ -539,43 +327,53 @@ export const listBucket = async (req, res) => {
 const glossaryTerms = [
   {
     term: 'Function',
-    definition: 'A small deployable unit of serverless code that runs in response to an HTTP request or event trigger.',
+    definition:
+      'A small deployable unit of serverless code that runs in response to an HTTP request or event trigger.',
   },
   {
     term: 'HTTP trigger',
-    definition: 'An invocation model where the function is called directly through an HTTP request.',
+    definition:
+      'An invocation model where the function is called directly through an HTTP request.',
   },
   {
     term: 'Event trigger',
-    definition: 'An invocation model where the function runs in response to a cloud event such as a file upload or message.',
+    definition:
+      'An invocation model where the function runs in response to a cloud event such as a file upload or message.',
   },
   {
     term: 'CloudEvent',
-    definition: 'A standard event envelope used to describe metadata and payload for event-driven functions.',
+    definition:
+      'A standard event envelope used to describe metadata and payload for event-driven functions.',
   },
   {
     term: 'Cold start',
-    definition: 'The extra startup latency that occurs when the platform creates a fresh instance to handle an invocation.',
+    definition:
+      'The extra startup latency that occurs when the platform creates a fresh instance to handle an invocation.',
   },
   {
     term: 'Warm instance',
-    definition: 'A reused function instance that can handle another invocation without full cold-start initialization.',
+    definition:
+      'A reused function instance that can handle another invocation without full cold-start initialization.',
   },
   {
     term: 'Idempotency',
-    definition: 'The property that lets repeated processing of the same invocation or event avoid duplicate side effects.',
+    definition:
+      'The property that lets repeated processing of the same invocation or event avoid duplicate side effects.',
   },
   {
     term: 'Entry point',
-    definition: 'The exported function handler that the platform invokes inside the deployed source package.',
+    definition:
+      'The exported function handler that the platform invokes inside the deployed source package.',
   },
   {
     term: 'Generation 2',
-    definition: 'The newer Cloud Functions model aligned more closely with Cloud Run serverless infrastructure and capabilities.',
+    definition:
+      'The newer Cloud Functions model aligned more closely with Cloud Run serverless infrastructure and capabilities.',
   },
   {
     term: 'Concurrency',
-    definition: 'The amount of simultaneous work an instance can handle, depending on runtime model and configuration.',
+    definition:
+      'The amount of simultaneous work an instance can handle, depending on runtime model and configuration.',
   },
   {
     term: 'Max instances',
@@ -621,180 +419,105 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPCloudFunctionsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP Cloud Functions (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP Cloud Functions',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP Cloud Functions',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cloudfunctions-help-page">
-      <style>{cloudFunctionsHelpStyles}</style>
-      <div className="cloudfunctions-help-window" role="presentation">
-        <header className="cloudfunctions-help-titlebar">
-          <span className="cloudfunctions-help-title">GCP Cloud Functions</span>
-          <div className="cloudfunctions-help-controls">
-            <button className="cloudfunctions-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cloudfunctions-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP Cloud Functions"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP Cloud Functions</h1>
+      <p className="cloudfunctions-help-doc-subtitle">
+        Event-driven serverless functions for small focused backend logic
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact Cloud Functions
+        manual: what the service is, how modern Cloud Functions relates to Cloud Run functions, how
+        triggers and runtime behavior work, and which design choices matter for correctness,
+        reliability, and maintainability.
+      </p>
 
-        <div className="cloudfunctions-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`cloudfunctions-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cloudfunctions-help-main">
-          <aside className="cloudfunctions-help-toc" aria-label="Table of contents">
-            <h2 className="cloudfunctions-help-toc-title">Contents</h2>
-            <ul className="cloudfunctions-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="cloudfunctions-help-content">
-            <h1 className="cloudfunctions-help-doc-title">GCP Cloud Functions</h1>
-            <p className="cloudfunctions-help-doc-subtitle">Event-driven serverless functions for small focused backend logic</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact Cloud Functions manual: what the service is,
-              how modern Cloud Functions relates to Cloud Run functions, how triggers and runtime behavior work, and which design
-              choices matter for correctness, reliability, and maintainability.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cloudfunctions-help-section">
-                    <h2 className="cloudfunctions-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cloudfunctions-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cloudfunctions-help-section">
-                  <h2 className="cloudfunctions-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cloudfunctions-help-section">
-                    <h2 className="cloudfunctions-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="cloudfunctions-help-section">
-                    <h2 className="cloudfunctions-help-heading">{example.title}</h2>
-                    <div className="cloudfunctions-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cloudfunctions-help-section">
-                <h2 className="cloudfunctions-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

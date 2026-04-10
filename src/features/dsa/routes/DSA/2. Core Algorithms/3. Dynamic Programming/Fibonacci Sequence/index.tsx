@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -23,13 +23,11 @@ const formalDefinition = [
   },
   {
     title: 'Characteristic roots',
-    detail:
-      'Solve x^2 = x + 1. The roots are phi = (1 + sqrt(5)) / 2 and psi = (1 - sqrt(5)) / 2.',
+    detail: 'Solve x^2 = x + 1. The roots are phi = (1 + sqrt(5)) / 2 and psi = (1 - sqrt(5)) / 2.',
   },
   {
     title: 'Asymptotic growth',
-    detail:
-      'F(n) grows like phi^n / sqrt(5). psi^n is tiny in magnitude and vanishes for large n.',
+    detail: 'F(n) grows like phi^n / sqrt(5). psi^n is tiny in magnitude and vanishes for large n.',
   },
 ]
 
@@ -63,8 +61,7 @@ const mechanics = [
 const recurrenceBreakdown = [
   {
     title: 'Base cases anchor the sequence',
-    detail:
-      'F(0) and F(1) pin down every future term. Changing seeds shifts the entire series.',
+    detail: 'F(0) and F(1) pin down every future term. Changing seeds shifts the entire series.',
   },
   {
     title: 'One-step recurrence',
@@ -85,13 +82,11 @@ const workedExample = [
   },
   {
     title: 'Tabulation table',
-    detail:
-      'Index: 0 1 2 3 4 5 6 7\nValue: 0 1 1 2 3 5 8 13',
+    detail: 'Index: 0 1 2 3 4 5 6 7\nValue: 0 1 1 2 3 5 8 13',
   },
   {
     title: 'Rolling variables',
-    detail:
-      'Start (prev2, prev1) = (0, 1). Update 5 times to reach (8, 13). The answer is 13.',
+    detail: 'Start (prev2, prev1) = (0, 1). Update 5 times to reach (8, 13). The answer is 13.',
   },
 ]
 
@@ -145,8 +140,7 @@ const fastDoublingIdentities = [
 const matrixView = [
   {
     title: 'Companion matrix',
-    detail:
-      'M = [[1, 1], [1, 0]]. Then M^n = [[F(n+1), F(n)], [F(n), F(n-1)]].',
+    detail: 'M = [[1, 1], [1, 0]]. Then M^n = [[F(n+1), F(n)], [F(n), F(n-1)]].',
   },
   {
     title: 'Binary exponentiation',
@@ -301,13 +295,11 @@ const glossary = [
   },
   {
     term: 'Overlapping subproblems',
-    definition:
-      'The same smaller Fibonacci values are recomputed many times in naive recursion.',
+    definition: 'The same smaller Fibonacci values are recomputed many times in naive recursion.',
   },
   {
     term: 'Memoization',
-    definition:
-      'Top-down caching that stores computed F(k) values and reuses them later.',
+    definition: 'Top-down caching that stores computed F(k) values and reuses them later.',
   },
   {
     term: 'Tabulation',
@@ -321,237 +313,23 @@ const glossary = [
   },
   {
     term: 'Companion matrix',
-    definition:
-      'The 2x2 matrix [[1,1],[1,0]] whose powers encode Fibonacci values.',
+    definition: 'The 2x2 matrix [[1,1],[1,0]] whose powers encode Fibonacci values.',
   },
   {
     term: 'Binet formula',
-    definition:
-      'Closed-form expression for Fibonacci numbers using the roots phi and psi.',
+    definition: 'Closed-form expression for Fibonacci numbers using the roots phi and psi.',
   },
   {
     term: 'Pisano period',
-    definition:
-      'The repeating cycle length of Fibonacci numbers under modulo arithmetic.',
+    definition: 'The repeating cycle length of Fibonacci numbers under modulo arithmetic.',
   },
   {
     term: 'Zeckendorf representation',
-    definition:
-      'Unique decomposition of a positive integer into nonconsecutive Fibonacci numbers.',
+    definition: 'Unique decomposition of a positive integer into nonconsecutive Fibonacci numbers.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const fib98HelpStyles = `
-.fib98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.fib98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.fib98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.fib98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.fib98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.fib98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.fib98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.fib98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.fib98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.fib98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.fib98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.fib98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.fib98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.fib98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.fib98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.fib98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.fib98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.fib98-section {
-  margin: 0 0 20px;
-}
-
-.fib98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.fib98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 12px 0 6px;
-}
-
-.fib98-content p,
-.fib98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.fib98-content p {
-  margin: 0 0 10px;
-}
-
-.fib98-content ul,
-.fib98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.fib98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.fib98-preline {
-  white-space: pre-line;
-}
-
-.fib98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.fib98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .fib98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .fib98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -559,10 +337,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -594,299 +368,235 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function FibonacciSequencePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Fibonacci Sequence',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Fibonacci Sequence (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Fibonacci Sequence',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="fib98-help-page">
-      <style>{fib98HelpStyles}</style>
-      <div className="fib98-window" role="presentation">
-        <header className="fib98-titlebar">
-          <span className="fib98-title-text">Fibonacci Sequence</span>
-          <div className="fib98-title-controls">
-            <button className="fib98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="fib98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Fibonacci Sequence"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Fibonacci Sequence</h1>
+      <p>
+        Dynamic programming starts here: the smallest overlapping-subproblem recurrence that still
+        teaches every core trick. Fibonacci numbers expose how recursion explodes, how caching tames
+        it, and how algebra unlocks logarithmic speed.
+      </p>
+      <p>
+        This page keeps the full concept map: formal recurrence, historical context, algorithmic
+        choices, worked examples, fast-doubling identities, matrix interpretation, and practical
+        trade-offs for real systems.
+      </p>
 
-        <div className="fib98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`fib98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Fibonacci is a compact demonstration of dynamic programming. Start with naive
+              recursion (exponential), add memoization (linear), then switch to tabulation (linear
+              with lower overhead). For very large n, use fast doubling or matrix exponentiation
+              (logarithmic time).
+            </p>
+            <p>
+              The same reasoning pattern appears in tree balance proofs, heap analysis, hashing
+              heuristics, and recurrence-based system models.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
 
-        <div className="fib98-main">
-          <aside className="fib98-toc" aria-label="Table of contents">
-            <h2 className="fib98-toc-title">Contents</h2>
-            <ul className="fib98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            <ul>
+              {history.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
 
-          <main className="fib98-content">
-            <h1 className="fib98-doc-title">Fibonacci Sequence</h1>
-            <p>
-              Dynamic programming starts here: the smallest overlapping-subproblem recurrence that still teaches every core trick.
-              Fibonacci numbers expose how recursion explodes, how caching tames it, and how algebra unlocks logarithmic speed.
-            </p>
-            <p>
-              This page keeps the full concept map: formal recurrence, historical context, algorithmic choices, worked examples,
-              fast-doubling identities, matrix interpretation, and practical trade-offs for real systems.
-            </p>
+          <section id="bp-definition" className="bin98-section">
+            <h2 className="bin98-heading">Formal Definition</h2>
+            {formalDefinition.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="fib98-section">
-                  <h2 className="fib98-heading">Overview</h2>
-                  <p>
-                    Fibonacci is a compact demonstration of dynamic programming. Start with naive recursion (exponential), add
-                    memoization (linear), then switch to tabulation (linear with lower overhead). For very large n, use fast
-                    doubling or matrix exponentiation (logarithmic time).
-                  </p>
-                  <p>
-                    The same reasoning pattern appears in tree balance proofs, heap analysis, hashing heuristics, and recurrence-based
-                    system models.
-                  </p>
-                </section>
-                <hr className="fib98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why This Matters</h2>
+            <ul>
+              {applications.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
 
-                <section id="bp-history" className="fib98-section">
-                  <h2 className="fib98-heading">Historical Context</h2>
-                  <ul>
-                    {history.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="fib98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-                <section id="bp-definition" className="fib98-section">
-                  <h2 className="fib98-heading">Formal Definition</h2>
-                  {formalDefinition.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
                   ))}
-                </section>
-                <hr className="fib98-divider" />
+                </ul>
+              </div>
+            ))}
+          </section>
 
-                <section id="bp-why" className="fib98-section">
-                  <h2 className="fib98-heading">Why This Matters</h2>
-                  <ul>
-                    {applications.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="fib98-divider" />
+          <section id="core-breakdown" className="bin98-section">
+            <h2 className="bin98-heading">Recurrence Breakdown</h2>
+            {recurrenceBreakdown.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <section id="bp-takeaways" className="fib98-section">
-                  <h2 className="fib98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mechanics" className="fib98-section">
-                  <h2 className="fib98-heading">How It Works</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="fib98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
+          <section id="core-algorithms" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Comparison</h2>
+            {algorithmComparison.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
                   ))}
-                </section>
+                </ul>
+              </div>
+            ))}
+          </section>
 
-                <section id="core-breakdown" className="fib98-section">
-                  <h2 className="fib98-heading">Recurrence Breakdown</h2>
-                  {recurrenceBreakdown.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
+          <section id="core-doubling" className="bin98-section">
+            <h2 className="bin98-heading">Fast Doubling Identities</h2>
+            {fastDoublingIdentities.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <section id="core-algorithms" className="fib98-section">
-                  <h2 className="fib98-heading">Algorithm Comparison</h2>
-                  {algorithmComparison.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="fib98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
+          <section id="core-matrix" className="bin98-section">
+            <h2 className="bin98-heading">Matrix View</h2>
+            {matrixView.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <section id="core-doubling" className="fib98-section">
-                  <h2 className="fib98-heading">Fast Doubling Identities</h2>
-                  {fastDoublingIdentities.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Trade-offs</h2>
+            <ul>
+              {complexityTradeoffs.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
 
-                <section id="core-matrix" className="fib98-section">
-                  <h2 className="fib98-heading">Matrix View</h2>
-                  {matrixView.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
 
-                <section id="core-complexity" className="fib98-section">
-                  <h2 className="fib98-heading">Complexity and Trade-offs</h2>
-                  <ul>
-                    {complexityTradeoffs.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When To Use What</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
 
-                <section id="core-pitfalls" className="fib98-section">
-                  <h2 className="fib98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            <ul>
+              {advancedInsights.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-                <section id="core-decisions" className="fib98-section">
-                  <h2 className="fib98-heading">When To Use What</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Example (n = 7)</h2>
+            {workedExample.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p className="fib98-preline">{item.detail}</p>
+              </div>
+            ))}
+          </section>
 
-                <section id="core-advanced" className="fib98-section">
-                  <h2 className="fib98-heading">Advanced Insights</h2>
-                  <ul>
-                    {advancedInsights.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Practical Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-worked" className="fib98-section">
-                  <h2 className="fib98-heading">Worked Example (n = 7)</h2>
-                  {workedExample.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fib98-subheading">{item.title}</h3>
-                      <p className="fib98-preline">{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossary.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
 
-                <section id="ex-code" className="fib98-section">
-                  <h2 className="fib98-heading">Practical Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="fib98-subheading">{example.title}</h3>
-                      <div className="fib98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="fib98-section">
-                  <h2 className="fib98-heading">Glossary</h2>
-                  {glossary.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="glossary-faq" className="fib98-section">
-                  <h2 className="fib98-heading">Quick FAQ</h2>
-                  {miniFaq.map((item) => (
-                    <div key={item.question}>
-                      <h3 className="fib98-subheading">{item.question}</h3>
-                      <p>{item.answer}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          <section id="glossary-faq" className="bin98-section">
+            <h2 className="bin98-heading">Quick FAQ</h2>
+            {miniFaq.map((item) => (
+              <div key={item.question}>
+                <h3 className="bin98-subheading">{item.question}</h3>
+                <p>{item.answer}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

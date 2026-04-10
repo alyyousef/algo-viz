@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -191,7 +189,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-narrowing',
     title: 'Type Narrowing',
     paragraphs: [
-      'One of TypeScript\'s most practical features is control-flow-based narrowing. A value may begin as a union such as `string | undefined` or a discriminated union representing several states. After a runtime check, the compiler can narrow the type within that branch.',
+      "One of TypeScript's most practical features is control-flow-based narrowing. A value may begin as a union such as `string | undefined` or a discriminated union representing several states. After a runtime check, the compiler can narrow the type within that branch.",
       'This matters because it connects runtime logic to static reasoning. The code that checks a condition also teaches the compiler what is safe afterward, which reduces the gap between real program flow and type declarations.',
     ],
   },
@@ -321,7 +319,7 @@ const coreConceptSections: ContentSection[] = [
     bullets: [
       'Confusing compile-time claims with runtime truth.',
       'Using `any` as a shortcut instead of modeling uncertainty honestly.',
-      'Overcomplicating types beyond the team\'s ability to maintain them.',
+      "Overcomplicating types beyond the team's ability to maintain them.",
       'Ignoring JavaScript runtime behavior because the code is typed.',
     ],
   },
@@ -353,7 +351,7 @@ function labelUser(user: UserProfile): string {
     id: 'ex-union-state',
     title: 'Discriminated Union For Application State',
     description: [
-      'Union-based state modeling is one of TypeScript\'s strongest patterns. It describes legal states directly instead of relying on loosely related booleans and nullable fields.',
+      "Union-based state modeling is one of TypeScript's strongest patterns. It describes legal states directly instead of relying on loosely related booleans and nullable fields.",
     ],
     code: `type LoadState =
   | { kind: "idle" }
@@ -504,17 +502,15 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Type inference',
         definition:
-          'The compiler\'s ability to derive types from code without requiring every type to be written explicitly.',
+          "The compiler's ability to derive types from code without requiring every type to be written explicitly.",
       },
       {
         term: 'Union type',
-        definition:
-          'A type that allows a value to be one of several listed alternatives.',
+        definition: 'A type that allows a value to be one of several listed alternatives.',
       },
       {
         term: 'Intersection type',
-        definition:
-          'A type that combines multiple contracts so a value must satisfy all of them.',
+        definition: 'A type that combines multiple contracts so a value must satisfy all of them.',
       },
       {
         term: 'Generic',
@@ -528,8 +524,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Tuple',
-        definition:
-          'An array-like type with a fixed positional shape and known element types.',
+        definition: 'An array-like type with a fixed positional shape and known element types.',
       },
     ],
   },
@@ -595,8 +590,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Emit',
-        definition:
-          'The JavaScript or declaration output produced by compilation.',
+        definition: 'The JavaScript or declaration output produced by compilation.',
       },
       {
         term: 'Transpile',
@@ -676,224 +670,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.ts98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ts98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.ts98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.ts98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.ts98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.ts98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.ts98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.ts98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.ts98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.ts98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.ts98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.ts98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ts98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ts98-toc-item {
-  margin: 0 0 8px;
-}
-
-.ts98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ts98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.ts98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ts98-section {
-  margin: 0 0 20px;
-}
-
-.ts98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ts98-content p,
-.ts98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ts98-content p {
-  margin: 0 0 10px;
-}
-
-.ts98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ts98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.ts98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.ts98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .ts98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ts98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .ts98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="ts98-section">
@@ -948,122 +724,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function TypeScriptPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'TypeScript',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `TypeScript (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'TypeScript',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="ts98-help-page">
-      <style>{pageStyles}</style>
-      <div className="ts98-help-window" role="presentation">
-        <header className="ts98-titlebar">
-          <span className="ts98-titletext">TypeScript</span>
-          <div className="ts98-controls">
-            <button className="ts98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="ts98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="TypeScript"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">TypeScript</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="ts98-tabs" role="tablist" aria-label="TypeScript documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ts98-tab ${activeTab === tab.id ? 'ts98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="ts98-main">
-          <aside className="ts98-toc" aria-label="Table of contents">
-            <h2 className="ts98-toc-title">Contents</h2>
-            <ul className="ts98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="ts98-toc-item">
-                  <a href={`#${section.id}`} className="ts98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="ts98-content">
-            <h1 className="ts98-doc-title">TypeScript</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

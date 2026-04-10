@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -81,18 +80,15 @@ const workflowSteps = [
 const problemPatterns = [
   {
     title: 'Order statistics',
-    detail:
-      'Find the kth smallest, median, or percentile without sorting everything.',
+    detail: 'Find the kth smallest, median, or percentile without sorting everything.',
   },
   {
     title: 'Top-k thresholding',
-    detail:
-      'Find a cutoff value so you can filter the largest k items in one extra scan.',
+    detail: 'Find a cutoff value so you can filter the largest k items in one extra scan.',
   },
   {
     title: 'Large arrays, single query',
-    detail:
-      'When you only need one rank, O(n log n) sorting is wasted work.',
+    detail: 'When you only need one rank, O(n log n) sorting is wasted work.',
   },
   {
     title: 'Memory-sensitive pipelines',
@@ -101,8 +97,7 @@ const problemPatterns = [
   },
   {
     title: 'Not stable ordering',
-    detail:
-      'If you need stable or fully sorted output, quickselect is the wrong tool.',
+    detail: 'If you need stable or fully sorted output, quickselect is the wrong tool.',
   },
 ]
 
@@ -150,8 +145,14 @@ const partitionSchemes = [
 const complexityRows = [
   { label: 'Expected time', value: 'O(n) with a randomized or good pivot strategy.' },
   { label: 'Worst-case time', value: 'O(n^2) if pivots are consistently poor.' },
-  { label: 'Extra space', value: 'O(1) in-place; O(log n) recursion stack on average (or O(1) iterative).' },
-  { label: 'Comparisons (avg)', value: 'About 2n comparisons on average with random pivots, less than sorting.' },
+  {
+    label: 'Extra space',
+    value: 'O(1) in-place; O(log n) recursion stack on average (or O(1) iterative).',
+  },
+  {
+    label: 'Comparisons (avg)',
+    value: 'About 2n comparisons on average with random pivots, less than sorting.',
+  },
 ]
 
 const pivotStrategies = [
@@ -242,8 +243,7 @@ topK = values.filter(v => v >= threshold)`,
     code: `// kth largest => convert to index for kth smallest
 index = values.length - 1 - (k - 1)
 kthLargest = quickselect(values, index)`,
-    explanation:
-      'Converting kth largest to a smallest-index avoids rewriting the algorithm.',
+    explanation: 'Converting kth largest to a smallest-index avoids rewriting the algorithm.',
   },
   {
     title: 'Multi-select (reuse partitions)',
@@ -311,13 +311,11 @@ const inputSensitivity = [
   },
   {
     title: 'Reverse sorted input',
-    detail:
-      'Same pathology as sorted data; use randomized or sampled pivots.',
+    detail: 'Same pathology as sorted data; use randomized or sampled pivots.',
   },
   {
     title: 'Many duplicates',
-    detail:
-      'Two-way partitioning can stall. Three-way partitioning shrinks the problem quickly.',
+    detail: 'Two-way partitioning can stall. Three-way partitioning shrinks the problem quickly.',
   },
   {
     title: 'Adversarial inputs',
@@ -344,8 +342,7 @@ const performanceProfile = [
   },
   {
     title: 'Mutation cost',
-    detail:
-      'In-place partitioning scrambles order. Copy if you need to preserve input order.',
+    detail: 'In-place partitioning scrambles order. Copy if you need to preserve input order.',
   },
 ]
 
@@ -383,18 +380,15 @@ const comparisonTable = [
 const variantsAndTweaks = [
   {
     title: 'Three-way quickselect',
-    detail:
-      'Partition into <, =, > pivot so duplicates collapse into one band, reducing work.',
+    detail: 'Partition into <, =, > pivot so duplicates collapse into one band, reducing work.',
   },
   {
     title: 'Iterative implementation',
-    detail:
-      'Replace recursion with a loop for predictable stack usage and easy instrumentation.',
+    detail: 'Replace recursion with a loop for predictable stack usage and easy instrumentation.',
   },
   {
     title: 'Introselect hybrid',
-    detail:
-      'Randomized selection with a depth limit that falls back to deterministic selection.',
+    detail: 'Randomized selection with a depth limit that falls back to deterministic selection.',
   },
   {
     title: 'Parallel selection (advanced)',
@@ -406,28 +400,23 @@ const variantsAndTweaks = [
 const implementationTips = [
   {
     title: 'Define k clearly',
-    detail:
-      'Decide 0-based vs 1-based and stick to it. Document the conversion for kth largest.',
+    detail: 'Decide 0-based vs 1-based and stick to it. Document the conversion for kth largest.',
   },
   {
     title: 'Use a robust pivot',
-    detail:
-      'Random or median-of-three pivots prevent bad behavior on ordered inputs.',
+    detail: 'Random or median-of-three pivots prevent bad behavior on ordered inputs.',
   },
   {
     title: 'Prefer three-way partition with duplicates',
-    detail:
-      'If many equal keys are expected, a Dutch-flag partition reduces recursion.',
+    detail: 'If many equal keys are expected, a Dutch-flag partition reduces recursion.',
   },
   {
     title: 'Avoid recursion overflow',
-    detail:
-      'Iterative quickselect is simple and avoids call stack limits.',
+    detail: 'Iterative quickselect is simple and avoids call stack limits.',
   },
   {
     title: 'Preserve input when needed',
-    detail:
-      'Quickselect mutates the array. Clone first if you need the original order intact.',
+    detail: 'Quickselect mutates the array. Clone first if you need the original order intact.',
   },
 ]
 
@@ -474,19 +463,23 @@ const quickselectGlossary = [
   },
   {
     term: 'Quickselect',
-    definition: 'A partition-based selection algorithm that finds one rank without fully sorting the array.',
+    definition:
+      'A partition-based selection algorithm that finds one rank without fully sorting the array.',
   },
   {
     term: 'Pivot',
-    definition: 'A selected value used to split elements into lower and higher regions during partitioning.',
+    definition:
+      'A selected value used to split elements into lower and higher regions during partitioning.',
   },
   {
     term: 'Partition',
-    definition: 'Rearrangement step that places values relative to a pivot and fixes the pivot rank.',
+    definition:
+      'Rearrangement step that places values relative to a pivot and fixes the pivot rank.',
   },
   {
     term: 'Introselect',
-    definition: 'Hybrid quickselect that falls back to deterministic selection when recursion gets too deep.',
+    definition:
+      'Hybrid quickselect that falls back to deterministic selection when recursion gets too deep.',
   },
   {
     term: 'Median of medians',
@@ -494,7 +487,8 @@ const quickselectGlossary = [
   },
   {
     term: 'Three-way partition',
-    definition: 'Partitioning into less-than, equal-to, and greater-than pivot regions for duplicate-heavy input.',
+    definition:
+      'Partitioning into less-than, equal-to, and greater-than pivot regions for duplicate-heavy input.',
   },
   {
     term: 'Kth largest conversion',
@@ -504,18 +498,12 @@ const quickselectGlossary = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -548,533 +536,253 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const qselect98HelpStyles = `
-.qselect98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.qselect98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.qselect98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.qselect98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.qselect98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.qselect98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.qselect98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.qselect98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.qselect98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.qselect98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.qselect98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.qselect98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.qselect98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.qselect98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.qselect98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.qselect98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.qselect98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.qselect98-section {
-  margin: 0 0 20px;
-}
-
-.qselect98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.qselect98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.qselect98-content p,
-.qselect98-content li,
-.qselect98-content td,
-.qselect98-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.qselect98-content p {
-  margin: 0 0 10px;
-}
-
-.qselect98-content ul,
-.qselect98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.qselect98-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.qselect98-content th,
-.qselect98-content td {
-  border: 1px solid #808080;
-  padding: 4px 6px;
-  text-align: left;
-}
-
-.qselect98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.qselect98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.qselect98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .qselect98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .qselect98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 export default function QuickselectPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Quickselect',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Quickselect (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Quickselect',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="qselect98-page">
-      <style>{qselect98HelpStyles}</style>
-      <div className="qselect98-window" role="presentation">
-        <header className="qselect98-titlebar">
-          <span className="qselect98-title-text">Quickselect - Help</span>
-          <div className="qselect98-title-controls">
-            <button className="qselect98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="qselect98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="qselect98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`qselect98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="qselect98-main">
-          <aside className="qselect98-toc" aria-label="Table of contents">
-            <h2 className="qselect98-toc-title">Contents</h2>
-            <ul className="qselect98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Quickselect"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Quickselect</h1>
+      <p>
+        Quickselect is the selection sibling of quicksort. It finds the kth smallest element by
+        partitioning the array and discarding the half that cannot contain the answer. The result is
+        an expected linear-time algorithm that is in-place and ideal when you only need one rank,
+        not a fully sorted list.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Sorting gives you every element in order, but selection only needs one. Quickselect
+              uses the quicksort partition step to place a pivot at its final rank, then recurses
+              into just the side that contains the target. On average it touches each element only a
+              constant number of times, yielding O(n) expected time.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Problem Patterns</h2>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="qselect98-content">
-            <h1 className="qselect98-doc-title">Quickselect</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">Selection Workflow</h2>
+            {workflowSteps.map((step) => (
+              <p key={step.title}>
+                <strong>{step.title}:</strong> {step.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Loop Invariants</h2>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-partition" className="bin98-section">
+            <h2 className="bin98-heading">Partition Strategies</h2>
+            {partitionSchemes.map((scheme) => (
+              <p key={scheme.title}>
+                <strong>{scheme.title}:</strong> {scheme.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
+            {complexityRows.map((row) => (
+              <p key={row.label}>
+                <strong>{row.label}:</strong> {row.value}
+              </p>
+            ))}
             <p>
-              Quickselect is the selection sibling of quicksort. It finds the kth smallest element by partitioning the array and
-              discarding the half that cannot contain the answer. The result is an expected linear-time algorithm that is in-place
-              and ideal when you only need one rank, not a fully sorted list.
+              Quickselect is faster than sorting when you only need one rank. It gives you the
+              element at position k and a loose partition around it, which is often exactly what
+              analytics and filtering tasks need.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="qselect98-section">
-                  <h2 className="qselect98-heading">Overview</h2>
-                  <p>
-                    Sorting gives you every element in order, but selection only needs one. Quickselect uses the quicksort partition
-                    step to place a pivot at its final rank, then recurses into just the side that contains the target. On average
-                    it touches each element only a constant number of times, yielding O(n) expected time.
-                  </p>
-                </section>
-                <hr className="qselect98-divider" />
-                <section id="bp-history" className="qselect98-section">
-                  <h2 className="qselect98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-mental-models" className="qselect98-section">
-                  <h2 className="qselect98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-patterns" className="qselect98-section">
-                  <h2 className="qselect98-heading">Problem Patterns</h2>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="qselect98-section">
-                  <h2 className="qselect98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-workflow" className="qselect98-section">
-                  <h2 className="qselect98-heading">Selection Workflow</h2>
-                  {workflowSteps.map((step) => (
-                    <p key={step.title}>
-                      <strong>{step.title}:</strong> {step.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="qselect98-section">
-                  <h2 className="qselect98-heading">Loop Invariants</h2>
-                  {loopInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-partition" className="qselect98-section">
-                  <h2 className="qselect98-heading">Partition Strategies</h2>
-                  {partitionSchemes.map((scheme) => (
-                    <p key={scheme.title}>
-                      <strong>{scheme.title}:</strong> {scheme.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="qselect98-section">
-                  <h2 className="qselect98-heading">Complexity and Tradeoffs</h2>
-                  {complexityRows.map((row) => (
-                    <p key={row.label}>
-                      <strong>{row.label}:</strong> {row.value}
-                    </p>
-                  ))}
-                  <p>
-                    Quickselect is faster than sorting when you only need one rank. It gives you the element at position k and a
-                    loose partition around it, which is often exactly what analytics and filtering tasks need.
-                  </p>
-                </section>
-                <section id="core-pivots" className="qselect98-section">
-                  <h2 className="qselect98-heading">Pivot Strategies</h2>
-                  {pivotStrategies.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-sensitivity" className="qselect98-section">
-                  <h2 className="qselect98-heading">Input Sensitivity</h2>
-                  {inputSensitivity.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="qselect98-section">
-                  <h2 className="qselect98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="qselect98-section">
-                  <h2 className="qselect98-heading">Compare and Contrast</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Stable?</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.stable}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-applications" className="qselect98-section">
-                  <h2 className="qselect98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="qselect98-section">
-                  <h2 className="qselect98-heading">Variants and Tweaks</h2>
-                  {variantsAndTweaks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="qselect98-section">
-                  <h2 className="qselect98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-implementation" className="qselect98-section">
-                  <h2 className="qselect98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decisions" className="qselect98-section">
-                  <h2 className="qselect98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="qselect98-section">
-                  <h2 className="qselect98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-trace" className="qselect98-section">
-                  <h2 className="qselect98-heading">Walkthrough Example</h2>
-                  {stepTrace.map((item) => (
-                    <div key={item.step}>
-                      <h3 className="qselect98-subheading">{item.step}</h3>
-                      <p>{item.state}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-code" className="qselect98-section">
-                  <h2 className="qselect98-heading">Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="qselect98-subheading">{example.title}</h3>
-                      <div className="qselect98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="qselect98-section">
-                <h2 className="qselect98-heading">Glossary</h2>
-                {quickselectGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
+          </section>
+          <section id="core-pivots" className="bin98-section">
+            <h2 className="bin98-heading">Pivot Strategies</h2>
+            {pivotStrategies.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-sensitivity" className="bin98-section">
+            <h2 className="bin98-heading">Input Sensitivity</h2>
+            {inputSensitivity.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Stable?</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.stable}</td>
+                    <td>{row.notes}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Tweaks</h2>
+            {variantsAndTweaks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-trace" className="bin98-section">
+            <h2 className="bin98-heading">Walkthrough Example</h2>
+            {stepTrace.map((item) => (
+              <div key={item.step}>
+                <h3 className="bin98-subheading">{item.step}</h3>
+                <p>{item.state}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickselectGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

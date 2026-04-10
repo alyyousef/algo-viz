@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -287,36 +287,30 @@ const problemFraming = [
 const recursionAnatomy = [
   {
     title: 'Base case',
-    detail:
-      'Stop when the subproblem is trivial (size 0 or 1, or a known direct formula).',
+    detail: 'Stop when the subproblem is trivial (size 0 or 1, or a known direct formula).',
   },
   {
     title: 'Divide step',
-    detail:
-      'Split the input into smaller parts and define how to recurse on them.',
+    detail: 'Split the input into smaller parts and define how to recurse on them.',
   },
   {
     title: 'Conquer step',
-    detail:
-      'Solve each subproblem recursively and return a structured result.',
+    detail: 'Solve each subproblem recursively and return a structured result.',
   },
   {
     title: 'Combine step',
-    detail:
-      'Merge sub-results into the final answer. This is often the cost bottleneck.',
+    detail: 'Merge sub-results into the final answer. This is often the cost bottleneck.',
   },
 ]
 
 const masterTheoremCases = [
   {
     title: 'Case 1: f(n) smaller',
-    detail:
-      'If f(n) = O(n^{log_b a - epsilon}), then T(n) = Theta(n^{log_b a}).',
+    detail: 'If f(n) = O(n^{log_b a - epsilon}), then T(n) = Theta(n^{log_b a}).',
   },
   {
     title: 'Case 2: f(n) equal',
-    detail:
-      'If f(n) = Theta(n^{log_b a} log^k n), then T(n) = Theta(n^{log_b a} log^{k+1} n).',
+    detail: 'If f(n) = Theta(n^{log_b a} log^k n), then T(n) = Theta(n^{log_b a} log^{k+1} n).',
   },
   {
     title: 'Case 3: f(n) larger',
@@ -350,23 +344,19 @@ const optimizationLevers = [
   },
   {
     title: 'Tail recursion elimination',
-    detail:
-      'Convert certain recursive calls into loops to reduce stack usage.',
+    detail: 'Convert certain recursive calls into loops to reduce stack usage.',
   },
   {
     title: 'Cache friendliness',
-    detail:
-      'Work in contiguous chunks to exploit locality, especially in divide steps.',
+    detail: 'Work in contiguous chunks to exploit locality, especially in divide steps.',
   },
   {
     title: 'Parallelism',
-    detail:
-      'Run subproblems concurrently; the paradigm naturally exposes parallel work.',
+    detail: 'Run subproblems concurrently; the paradigm naturally exposes parallel work.',
   },
   {
     title: 'Avoid repeated merges',
-    detail:
-      'Re-use buffers or do in-place merges where possible to cut memory traffic.',
+    detail: 'Re-use buffers or do in-place merges where possible to cut memory traffic.',
   },
 ]
 
@@ -380,19 +370,23 @@ const whenNotToUse = [
 const keyTakeaways = [
   {
     title: 'Think Recursively',
-    detail: 'Divide and Conquer is inherently recursive. You solve a problem by assuming you can solve a smaller version of it.',
+    detail:
+      'Divide and Conquer is inherently recursive. You solve a problem by assuming you can solve a smaller version of it.',
   },
   {
     title: 'The Combine Step is Crucial',
-    detail: 'The efficiency of many D&C algorithms is determined by how efficiently you can merge the results of subproblems.',
+    detail:
+      'The efficiency of many D&C algorithms is determined by how efficiently you can merge the results of subproblems.',
   },
   {
     title: 'Logarithms are your Friend',
-    detail: 'The power of D&C often comes from turning O(N) problems into O(log N) operations, leading to O(N log N) overall.',
+    detail:
+      'The power of D&C often comes from turning O(N) problems into O(log N) operations, leading to O(N log N) overall.',
   },
   {
     title: 'Not a Silver Bullet',
-    detail: 'It is not always the best approach, especially if subproblems overlap heavily (use DP) or if the combine step is too complex.',
+    detail:
+      'It is not always the best approach, especially if subproblems overlap heavily (use DP) or if the combine step is too complex.',
   },
 ]
 
@@ -404,28 +398,23 @@ const glossaryTerms = [
   },
   {
     term: 'Base case',
-    definition:
-      'The smallest subproblem that can be solved directly without more recursion.',
+    definition: 'The smallest subproblem that can be solved directly without more recursion.',
   },
   {
     term: 'Combine step',
-    definition:
-      'The phase that merges subproblem results into a solution for the larger problem.',
+    definition: 'The phase that merges subproblem results into a solution for the larger problem.',
   },
   {
     term: 'Recurrence',
-    definition:
-      'An equation such as T(n) = aT(n/b) + f(n) that describes recursive running time.',
+    definition: 'An equation such as T(n) = aT(n/b) + f(n) that describes recursive running time.',
   },
   {
     term: 'Master Theorem',
-    definition:
-      'A standard tool for analyzing many divide-and-conquer recurrences.',
+    definition: 'A standard tool for analyzing many divide-and-conquer recurrences.',
   },
   {
     term: 'Balanced split',
-    definition:
-      'A near-even partition of the input that keeps recursion depth logarithmic.',
+    definition: 'A near-even partition of the input that keeps recursion depth logarithmic.',
   },
   {
     term: 'Overlapping subproblems',
@@ -434,219 +423,11 @@ const glossaryTerms = [
   },
   {
     term: 'Parallelism',
-    definition:
-      'Executing independent subproblems at the same time on multiple cores or machines.',
+    definition: 'Executing independent subproblems at the same time on multiple cores or machines.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const divideConquerHelpStyles = `
-.divide-conquer-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.divide-conquer-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.divide-conquer-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-}
-
-.divide-conquer-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.divide-conquer-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.divide-conquer-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.divide-conquer-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.divide-conquer-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.divide-conquer-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.divide-conquer-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.divide-conquer-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.divide-conquer-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.divide-conquer-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.divide-conquer-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.divide-conquer-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-.divide-conquer-help-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.divide-conquer-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.divide-conquer-help-section {
-  margin: 0 0 20px;
-}
-
-.divide-conquer-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.divide-conquer-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.divide-conquer-help-content p,
-.divide-conquer-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.divide-conquer-help-content p {
-  margin: 0 0 10px;
-}
-
-.divide-conquer-help-content ul,
-.divide-conquer-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.divide-conquer-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.divide-conquer-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.divide-conquer-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .divide-conquer-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .divide-conquer-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -683,305 +464,236 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function DivideAndConquerPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Divide & Conquer (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Divide & Conquer',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Divide &amp; Conquer',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="divide-conquer-help-page">
-      <style>{divideConquerHelpStyles}</style>
-      <div className="divide-conquer-help-window" role="presentation">
-        <header className="divide-conquer-help-titlebar">
-          <span className="divide-conquer-help-title">Divide &amp; Conquer</span>
-          <div className="divide-conquer-help-controls">
-            <button className="divide-conquer-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="divide-conquer-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Divide &amp; Conquer"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Divide &amp; Conquer</h1>
+      <p>
+        Divide and Conquer is a powerful algorithmic strategy that tackles complex problems by
+        breaking them into smaller, self-similar subproblems, solving them recursively, and then
+        combining their solutions to solve the original puzzle.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {history.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {applications.map((app) => (
+              <p key={app.title}>
+                <strong>{app.title}:</strong> {app.detail} <strong>{app.company}</strong>
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Failure Callout: Fibonacci Sequence</h3>
+            <p>
+              A naive recursive function to calculate Fibonacci numbers, fib(n) = fib(n-1) +
+              fib(n-2), is a classic example where divide and conquer fails spectacularly. The
+              subproblems (fib(n-1) and fib(n-2)) overlap heavily, leading to an exponential number
+              of redundant calculations. The same value, like fib(5), is calculated over and over
+              again. This is the canonical problem that demonstrates the need for Dynamic
+              Programming or Memoization to store and reuse subproblem solutions.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            {keyTakeaways.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-        <div className="divide-conquer-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`divide-conquer-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="divide-conquer-help-main">
-          <aside className="divide-conquer-help-toc" aria-label="Table of contents">
-            <h2 className="divide-conquer-help-toc-title">Contents</h2>
-            <ul className="divide-conquer-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">Pillars and Mental Models</h2>
+            {pillars.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-framing" className="bin98-section">
+            <h2 className="bin98-heading">Problem Framing</h2>
+            {problemFraming.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-anatomy" className="bin98-section">
+            <h2 className="bin98-heading">Recursion Anatomy</h2>
+            {recursionAnatomy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-how" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {howItWorks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-master" className="bin98-section">
+            <h2 className="bin98-heading">Master Theorem Quick Cases</h2>
+            {masterTheoremCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity</h2>
+            {complexityTable.map((row) => (
+              <div key={row.approach}>
+                <h3 className="bin98-subheading">{row.approach}</h3>
+                <p>
+                  <strong>Time:</strong> {row.time}
+                </p>
+                <p>
+                  <strong>Space:</strong> {row.space}
+                </p>
+                <p>
+                  <strong>Note:</strong> {row.note}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Decision Checklist</h2>
+            <ol>
+              {decisionChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-use" className="bin98-section">
+            <h2 className="bin98-heading">When To Use It</h2>
+            <ul>
+              {whenToUse.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <section id="core-avoid" className="bin98-section">
+            <h2 className="bin98-heading">When Not To Use It</h2>
+            <ul>
+              {whenNotToUse.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-optimization" className="bin98-section">
+            <h2 className="bin98-heading">Optimization Levers</h2>
+            {optimizationLevers.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Variants</h2>
+            {advanced.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.rationale}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-          <main className="divide-conquer-help-content">
-            <h1 className="divide-conquer-help-doc-title">Divide &amp; Conquer</h1>
-            <p>
-              Divide and Conquer is a powerful algorithmic strategy that tackles complex problems by breaking them into smaller,
-              self-similar subproblems, solving them recursively, and then combining their solutions to solve the original puzzle.
+      {activeTab === 'examples' && (
+        <>
+          <section id="examples-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Example</h2>
+            <h3 className="bin98-subheading">{workedExample.title}</h3>
+            <ol>
+              {workedExample.steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="examples-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {codeExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="divide-conquer-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="divide-conquer-help-divider" />
-                <section id="bp-history" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Historical Context</h2>
-                  {history.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="divide-conquer-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="divide-conquer-help-divider" />
-                <section id="bp-applications" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Applications</h2>
-                  {applications.map((app) => (
-                    <p key={app.title}>
-                      <strong>{app.title}:</strong> {app.detail} <strong>{app.company}</strong>
-                    </p>
-                  ))}
-                  <h3 className="divide-conquer-help-subheading">Failure Callout: Fibonacci Sequence</h3>
-                  <p>
-                    A naive recursive function to calculate Fibonacci numbers, fib(n) = fib(n-1) + fib(n-2), is a classic example where
-                    divide and conquer fails spectacularly. The subproblems (fib(n-1) and fib(n-2)) overlap heavily, leading to an exponential
-                    number of redundant calculations. The same value, like fib(5), is calculated over and over again. This is the canonical
-                    problem that demonstrates the need for Dynamic Programming or Memoization to store and reuse subproblem solutions.
-                  </p>
-                </section>
-                <hr className="divide-conquer-help-divider" />
-                <section id="bp-takeaways" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Key Takeaways</h2>
-                  {keyTakeaways.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pillars" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Pillars and Mental Models</h2>
-                  {pillars.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="divide-conquer-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-framing" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Problem Framing</h2>
-                  {problemFraming.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-anatomy" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Recursion Anatomy</h2>
-                  {recursionAnatomy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-how" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">How It Works</h2>
-                  {howItWorks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-master" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Master Theorem Quick Cases</h2>
-                  {masterTheoremCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Complexity</h2>
-                  {complexityTable.map((row) => (
-                    <div key={row.approach}>
-                      <h3 className="divide-conquer-help-subheading">{row.approach}</h3>
-                      <p><strong>Time:</strong> {row.time}</p>
-                      <p><strong>Space:</strong> {row.space}</p>
-                      <p><strong>Note:</strong> {row.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-checklist" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Decision Checklist</h2>
-                  <ol>
-                    {decisionChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-use" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">When To Use It</h2>
-                  <ul>
-                    {whenToUse.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-avoid" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">When Not To Use It</h2>
-                  <ul>
-                    {whenNotToUse.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-pitfalls" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-optimization" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Optimization Levers</h2>
-                  {optimizationLevers.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Advanced Variants</h2>
-                  {advanced.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="divide-conquer-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.rationale}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="examples-worked" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Worked Example</h2>
-                  <h3 className="divide-conquer-help-subheading">{workedExample.title}</h3>
-                  <ol>
-                    {workedExample.steps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="examples-code" className="divide-conquer-help-section">
-                  <h2 className="divide-conquer-help-heading">Code Examples</h2>
-                  {codeExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="divide-conquer-help-subheading">{example.title}</h3>
-                      <div className="divide-conquer-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="divide-conquer-help-section">
-                <h2 className="divide-conquer-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

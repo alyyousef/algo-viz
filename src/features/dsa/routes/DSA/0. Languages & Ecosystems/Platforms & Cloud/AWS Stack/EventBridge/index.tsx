@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -7,13 +9,11 @@ type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'AWS EventBridge'
 const pageSubtitle = 'Event routing, integration, scheduling, and event-driven coordination on AWS.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const bigPictureSections = [
   {
     title: 'What it is',
     paragraphs: [
-      'Amazon EventBridge is AWS\'s event routing and event integration service. It receives events from AWS services, custom applications, SaaS partners, schedulers, and pipes, matches them against event patterns, and routes them to targets such as Lambda, Step Functions, SQS, API destinations, or other event buses.',
+      "Amazon EventBridge is AWS's event routing and event integration service. It receives events from AWS services, custom applications, SaaS partners, schedulers, and pipes, matches them against event patterns, and routes them to targets such as Lambda, Step Functions, SQS, API destinations, or other event buses.",
       'The key idea is decoupling by event contract. Producers publish events. Consumers subscribe through rules and targets. The event bus becomes the policy and routing layer rather than every producer needing to know every consumer directly.',
     ],
   },
@@ -313,8 +313,7 @@ Use when:
 const glossaryTerms = [
   {
     term: 'Event bus',
-    definition:
-      'The EventBridge boundary where events are received and rules are evaluated.',
+    definition: 'The EventBridge boundary where events are received and rules are evaluated.',
   },
   {
     term: 'Rule',
@@ -323,8 +322,7 @@ const glossaryTerms = [
   },
   {
     term: 'Target',
-    definition:
-      'A downstream service or endpoint that EventBridge invokes after a rule match.',
+    definition: 'A downstream service or endpoint that EventBridge invokes after a rule match.',
   },
   {
     term: 'Event pattern',
@@ -338,13 +336,11 @@ const glossaryTerms = [
   },
   {
     term: 'Pipe',
-    definition:
-      'A source-to-target integration path with optional filtering and enrichment.',
+    definition: 'A source-to-target integration path with optional filtering and enrichment.',
   },
   {
     term: 'Archive',
-    definition:
-      'An EventBridge feature that stores events from a bus for later replay.',
+    definition: 'An EventBridge feature that stores events from a bus for later replay.',
   },
   {
     term: 'Replay',
@@ -416,445 +412,168 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const eventBridgeHelpStyles = `
-.eventbridge-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.eventbridge-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.eventbridge-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.eventbridge-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.eventbridge-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.eventbridge-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.eventbridge-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.eventbridge-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.eventbridge-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.eventbridge-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.eventbridge-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.eventbridge-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.eventbridge-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.eventbridge-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.eventbridge-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.eventbridge-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.eventbridge-help-title-main {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.eventbridge-help-section {
-  margin: 0 0 20px;
-}
-
-.eventbridge-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.eventbridge-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.eventbridge-help-content p,
-.eventbridge-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.eventbridge-help-content p {
-  margin: 0 0 10px;
-}
-
-.eventbridge-help-content ul,
-.eventbridge-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.eventbridge-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.eventbridge-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.eventbridge-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-.eventbridge-help-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .eventbridge-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .eventbridge-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function AwsEventBridgePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Aws Event Bridge Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="eventbridge-help-page">
-      <style>{eventBridgeHelpStyles}</style>
-      <div className="eventbridge-help-window" role="presentation">
-        <header className="eventbridge-help-titlebar">
-          <span className="eventbridge-help-title">{pageTitle}</span>
-          <div className="eventbridge-help-controls">
-            <button className="eventbridge-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="eventbridge-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Aws Event Bridge Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="eventbridge-help-title-main">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page treats EventBridge as an event platform rather than as a single AWS checkbox. The
+        important questions are event contract quality, rule and target ownership, delivery
+        semantics, cross-account governance, and whether the service is actually being used for the
+        right event-driven job.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="eventbridge-help-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="eventbridge-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`eventbridge-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="eventbridge-help-main">
-          <aside className="eventbridge-help-toc" aria-label="Table of contents">
-            <h2 className="eventbridge-help-toc-title">Contents</h2>
-            <ul className="eventbridge-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-capabilities" className="bin98-section">
+            <h2 className="bin98-heading">Capabilities</h2>
+            {capabilityGuide.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.summary}</p>
+                <ul>
+                  {item.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-flow" className="bin98-section">
+            <h2 className="bin98-heading">Lifecycle Flow</h2>
+            <ol>
+              {lifecycleFlow.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-fit" className="bin98-section">
+            <h2 className="bin98-heading">When to Choose EventBridge</h2>
+            <ul>
+              {fitGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="eventbridge-help-content">
-            <h1 className="eventbridge-help-title-main">{pageTitle}</h1>
-            <p className="eventbridge-help-subheading">{pageSubtitle}</p>
-            <p>
-              This page treats EventBridge as an event platform rather than as a single AWS checkbox. The important questions are
-              event contract quality, rule and target ownership, delivery semantics, cross-account governance, and whether the
-              service is actually being used for the right event-driven job.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-ops" className="bin98-section">
+            <h2 className="bin98-heading">Operational Notes</h2>
+            {operationsNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="eventbridge-help-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="eventbridge-help-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-                <hr className="eventbridge-help-divider" />
-                <section id="bp-capabilities" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">Capabilities</h2>
-                  {capabilityGuide.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="eventbridge-help-subheading">{item.title}</h3>
-                      <p>{item.summary}</p>
-                      <ul>
-                        {item.details.map((detail) => (
-                          <li key={detail}>{detail}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <hr className="eventbridge-help-divider" />
-                <section id="bp-flow" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">Lifecycle Flow</h2>
-                  <ol>
-                    {lifecycleFlow.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-                <hr className="eventbridge-help-divider" />
-                <section id="bp-fit" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">When to Choose EventBridge</h2>
-                  <ul>
-                    {fitGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="eventbridge-help-section">
-                    <h2 className="eventbridge-help-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-ops" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">Operational Notes</h2>
-                  {operationsNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-patterns" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="eventbridge-help-section">
-                  <h2 className="eventbridge-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="eventbridge-help-section">
-                    <h2 className="eventbridge-help-heading">{example.title}</h2>
-                    <div className="eventbridge-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="eventbridge-help-section">
-                <h2 className="eventbridge-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="eventbridge-help-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="eventbridge-help-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a
+                  href={source}
+                  className="eventbridge-help-inline-link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

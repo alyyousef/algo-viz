@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -77,7 +75,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Systems Programming Context',
     paragraphs: [
       'Assembly is the lowest routinely written software layer in many systems environments. It appears in boot code, firmware, kernel transitions, interrupt vectors, hardware bring-up, embedded startup logic, context switches, runtime stubs, JIT engines, and selected performance-critical inner loops.',
-      'Most large systems are not written entirely in assembly anymore because the productivity cost is enormous. But assembly remains part of the systems programmer\'s mental toolkit because higher-level native code ultimately compiles down to architecture-specific instructions and ABI rules.',
+      "Most large systems are not written entirely in assembly anymore because the productivity cost is enormous. But assembly remains part of the systems programmer's mental toolkit because higher-level native code ultimately compiles down to architecture-specific instructions and ABI rules.",
     ],
   },
   {
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Assembly\'s greatest strengths are precision, transparency, and control. A programmer can choose the exact instructions, exact data movement, exact calling sequence, exact register usage, and often exact layout decisions that the processor will see. This makes it uniquely powerful for hardware-facing and performance-sensitive tasks.',
+      "Assembly's greatest strengths are precision, transparency, and control. A programmer can choose the exact instructions, exact data movement, exact calling sequence, exact register usage, and often exact layout decisions that the processor will see. This makes it uniquely powerful for hardware-facing and performance-sensitive tasks.",
       'It is also unmatched as a learning tool for understanding computer architecture, ABIs, calling conventions, stack frames, and how compilers translate higher-level constructs into executable instructions.',
     ],
     bullets: [
@@ -270,9 +268,7 @@ add eax, 3`,
   {
     id: 'ex-compare-jump',
     title: 'Compare And Conditional Jump',
-    description: [
-      'High-level branching becomes explicit compare-and-jump sequences in assembly.',
-    ],
+    description: ['High-level branching becomes explicit compare-and-jump sequences in assembly.'],
     code: `cmp eax, ebx
 je equal_label`,
     notes: [
@@ -376,13 +372,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Operand',
-        definition:
-          'A value, register, address, or immediate used by an instruction.',
+        definition: 'A value, register, address, or immediate used by an instruction.',
       },
       {
         term: 'Immediate value',
-        definition:
-          'A constant encoded directly in an instruction rather than loaded from memory.',
+        definition: 'A constant encoded directly in an instruction rather than loaded from memory.',
       },
       {
         term: 'Flag',
@@ -408,7 +402,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Frame pointer',
         definition:
-          'A register sometimes used to anchor a function\'s stack frame for locals and debugging.',
+          "A register sometimes used to anchor a function's stack frame for locals and debugging.",
       },
       {
         term: 'Calling convention',
@@ -448,8 +442,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Assembler',
-        definition:
-          'The tool that translates assembly source into machine code or object files.',
+        definition: 'The tool that translates assembly source into machine code or object files.',
       },
       {
         term: 'Linker',
@@ -532,224 +525,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.asm98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.asm98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.asm98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.asm98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.asm98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.asm98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.asm98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.asm98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.asm98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.asm98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.asm98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.asm98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.asm98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.asm98-toc-item {
-  margin: 0 0 8px;
-}
-
-.asm98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.asm98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.asm98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.asm98-section {
-  margin: 0 0 20px;
-}
-
-.asm98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.asm98-content p,
-.asm98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.asm98-content p {
-  margin: 0 0 10px;
-}
-
-.asm98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.asm98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.asm98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.asm98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .asm98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .asm98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .asm98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="asm98-section">
@@ -804,122 +579,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function AssemblyPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Assembly',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Assembly (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Assembly',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="asm98-help-page">
-      <style>{pageStyles}</style>
-      <div className="asm98-help-window" role="presentation">
-        <header className="asm98-titlebar">
-          <span className="asm98-titletext">Assembly</span>
-          <div className="asm98-controls">
-            <button className="asm98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="asm98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Assembly"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Assembly</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="asm98-tabs" role="tablist" aria-label="Assembly documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`asm98-tab ${activeTab === tab.id ? 'asm98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="asm98-main">
-          <aside className="asm98-toc" aria-label="Table of contents">
-            <h2 className="asm98-toc-title">Contents</h2>
-            <ul className="asm98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="asm98-toc-item">
-                  <a href={`#${section.id}`} className="asm98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="asm98-content">
-            <h1 className="asm98-doc-title">Assembly</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

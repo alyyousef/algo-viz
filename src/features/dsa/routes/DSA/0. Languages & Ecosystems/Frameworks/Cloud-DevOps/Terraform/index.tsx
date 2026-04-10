@@ -1,15 +1,18 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 type Section = { id: string; title: string; paragraphs: string[]; bullets?: string[] }
 type Example = { id: string; title: string; description: string[]; code: string; notes: string[] }
-type GlossarySection = { id: string; title: string; terms: Array<{ term: string; definition: string }> }
+type GlossarySection = {
+  id: string
+  title: string
+  terms: Array<{ term: string; definition: string }>
+}
 
 const PAGE_TITLE = 'Terraform'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -300,36 +303,81 @@ const glossarySections: GlossarySection[] = [
     id: 'glossary-foundations',
     title: 'Foundational Terms',
     terms: [
-      { term: 'HCL', definition: 'HashiCorp Configuration Language, the declarative language Terraform uses for configuration.' },
-      { term: 'Provider', definition: 'A plugin that lets Terraform interact with an external API and exposes resource types and data sources.' },
-      { term: 'Resource', definition: 'A managed object declared in configuration and tracked over time in state.' },
-      { term: 'Data source', definition: 'A read-only lookup that fetches information without claiming lifecycle ownership.' },
-      { term: 'Desired state', definition: 'The intended end condition of infrastructure described by configuration.' },
-      { term: 'Module', definition: 'A reusable package of Terraform files with inputs and outputs.' },
+      {
+        term: 'HCL',
+        definition:
+          'HashiCorp Configuration Language, the declarative language Terraform uses for configuration.',
+      },
+      {
+        term: 'Provider',
+        definition:
+          'A plugin that lets Terraform interact with an external API and exposes resource types and data sources.',
+      },
+      {
+        term: 'Resource',
+        definition: 'A managed object declared in configuration and tracked over time in state.',
+      },
+      {
+        term: 'Data source',
+        definition:
+          'A read-only lookup that fetches information without claiming lifecycle ownership.',
+      },
+      {
+        term: 'Desired state',
+        definition: 'The intended end condition of infrastructure described by configuration.',
+      },
+      {
+        term: 'Module',
+        definition: 'A reusable package of Terraform files with inputs and outputs.',
+      },
     ],
   },
   {
     id: 'glossary-workflow',
     title: 'Workflow Terms',
     terms: [
-      { term: 'Plan', definition: 'The preview of actions Terraform intends to take to reach the declared state.' },
+      {
+        term: 'Plan',
+        definition: 'The preview of actions Terraform intends to take to reach the declared state.',
+      },
       { term: 'Apply', definition: 'The execution step that performs the planned changes.' },
       { term: 'Destroy', definition: 'The lifecycle operation that removes managed resources.' },
       { term: 'Variable', definition: 'An input value accepted by a root module or child module.' },
-      { term: 'Local value', definition: 'A named internal expression used to simplify configuration logic.' },
-      { term: 'Output', definition: 'A published value exposed from a module to users, parent modules, or automation.' },
+      {
+        term: 'Local value',
+        definition: 'A named internal expression used to simplify configuration logic.',
+      },
+      {
+        term: 'Output',
+        definition:
+          'A published value exposed from a module to users, parent modules, or automation.',
+      },
     ],
   },
   {
     id: 'glossary-state',
     title: 'State and Operations Terms',
     terms: [
-      { term: 'State', definition: 'The mapping between Terraform configuration objects and real infrastructure instances.' },
+      {
+        term: 'State',
+        definition:
+          'The mapping between Terraform configuration objects and real infrastructure instances.',
+      },
       { term: 'Backend', definition: 'The mechanism Terraform uses to store and access state.' },
-      { term: 'Locking', definition: 'Protection against concurrent state writes that could corrupt infrastructure tracking.' },
-      { term: 'Drift', definition: 'A difference between recorded or desired state and the actual remote system.' },
+      {
+        term: 'Locking',
+        definition:
+          'Protection against concurrent state writes that could corrupt infrastructure tracking.',
+      },
+      {
+        term: 'Drift',
+        definition: 'A difference between recorded or desired state and the actual remote system.',
+      },
       { term: 'Workspace', definition: 'A separate state instance for the same configuration.' },
-      { term: 'Import', definition: 'The process of bringing an existing object under Terraform state management.' },
+      {
+        term: 'Import',
+        definition: 'The process of bringing an existing object under Terraform state management.',
+      },
     ],
   },
 ]
@@ -341,41 +389,6 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
 }
 
-const terraformHelpStyles = `
-.terraform-help98-page{min-height:100dvh;background:#c0c0c0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
-.terraform-help98-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box;}
-.terraform-help98-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
-.terraform-help98-title{position:absolute;left:50%;transform:translateX(-50%);font-size:14px;white-space:nowrap;}
-.terraform-help98-controls{display:flex;gap:2px;margin-left:auto;}
-.terraform-help98-control{width:18px;height:16px;display:inline-flex;align-items:center;justify-content:center;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;font:inherit;font-size:11px;line-height:1;text-decoration:none;cursor:pointer;}
-.terraform-help98-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0;background:#c0c0c0;}
-.terraform-help98-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;color:#000;font:inherit;font-size:12px;cursor:pointer;}
-.terraform-help98-tab.active{position:relative;top:1px;background:#fff;}
-.terraform-help98-main{display:grid;grid-template-columns:240px minmax(0,1fr);flex:1;min-height:0;border-top:1px solid #404040;background:#fff;}
-.terraform-help98-toc{overflow:auto;padding:12px;background:#f2f2f2;border-right:1px solid #808080;}
-.terraform-help98-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
-.terraform-help98-toc-list{margin:0;padding:0;list-style:none;}
-.terraform-help98-toc-list li{margin:0 0 8px;}
-.terraform-help98-toc-list a{color:#000;font-size:12px;text-decoration:none;}
-.terraform-help98-content{overflow:auto;padding:14px 20px 24px;}
-.terraform-help98-doc-title{margin:0 0 12px;font-size:20px;font-weight:700;}
-.terraform-help98-section{margin:0 0 20px;}
-.terraform-help98-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
-.terraform-help98-content p,.terraform-help98-content li,.terraform-help98-content dd,.terraform-help98-content dt{font-size:12px;line-height:1.5;}
-.terraform-help98-content p,.terraform-help98-content dd{margin:0 0 10px;}
-.terraform-help98-content ul{margin:0 0 10px 18px;padding:0;}
-.terraform-help98-divider{margin:14px 0;border:0;border-top:1px solid #d0d0d0;}
-.terraform-help98-codebox{margin:8px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;}
-.terraform-help98-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;line-height:1.45;}
-.terraform-help98-glossary{margin:0;}
-.terraform-help98-glossary dt{margin:0 0 2px;font-weight:700;}
-@media (max-width:900px){.terraform-help98-main{grid-template-columns:1fr;}.terraform-help98-toc{border-right:none;border-bottom:1px solid #808080;}.terraform-help98-content{padding:14px 14px 20px;}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderSection(section: Section, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="terraform-help98-section">
@@ -383,7 +396,13 @@ function renderSection(section: Section, isLast: boolean): JSX.Element {
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      {section.bullets ? <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+      {section.bullets ? (
+        <ul>
+          {section.bullets.map((bullet) => (
+            <li key={bullet}>{bullet}</li>
+          ))}
+        </ul>
+      ) : null}
       {!isLast ? <hr className="terraform-help98-divider" /> : null}
     </section>
   )
@@ -399,7 +418,11 @@ function renderExample(section: Example, isLast: boolean): JSX.Element {
       <div className="terraform-help98-codebox">
         <code>{section.code.trim()}</code>
       </div>
-      <ul>{section.notes.map((note) => <li key={note}>{note}</li>)}</ul>
+      <ul>
+        {section.notes.map((note) => (
+          <li key={note}>{note}</li>
+        ))}
+      </ul>
       {!isLast ? <hr className="terraform-help98-divider" /> : null}
     </section>
   )
@@ -423,114 +446,47 @@ function renderGlossary(section: GlossarySection, isLast: boolean): JSX.Element 
 }
 
 export default function TerraformPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Terraform Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="terraform-help98-page">
-      <style>{terraformHelpStyles}</style>
-      <div className="terraform-help98-window" role="presentation">
-        <header className="terraform-help98-titlebar">
-          <span className="terraform-help98-title">{PAGE_TITLE}</span>
-          <div className="terraform-help98-controls">
-            <button className="terraform-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="terraform-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Terraform Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="terraform-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`terraform-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="terraform-help98-main">
-          <aside className="terraform-help98-toc" aria-label="Table of contents">
-            <h2 className="terraform-help98-toc-title">Contents</h2>
-            <ul className="terraform-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="terraform-help98-content">
-            <h1 className="terraform-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="terraform-help98-divider" />
-
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) => renderSection(section, index === bigPictureSections.length - 1))
-              : null}
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) => renderSection(section, index === coreConceptSections.length - 1))
-              : null}
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) => renderExample(section, index === exampleSections.length - 1))
-              : null}
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) => renderGlossary(section, index === glossarySections.length - 1))
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExample(section, index === exampleSections.length - 1),
+          )
+        : null}
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossary(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -8,8 +8,6 @@ type SectionNote = { title: string; details: string; notes: string }
 type NarrativeSection = { id: string; title: string; paragraphs: string[] }
 type ExampleSection = { id: string; title: string; code: string; explanation: string }
 type GlossaryTerm = { term: string; definition: string }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
   'Multi-cloud strategy is not just "use more than one cloud." It is the organizational, architectural, and operational decision about why multiple clouds are involved, which workloads belong where, what portability is actually required, and how the platform manages the resulting complexity.',
@@ -212,16 +210,55 @@ const examples: ExampleSection[] = [
 ]
 
 const glossary: GlossaryTerm[] = [
-  { term: 'Multi-cloud', definition: 'A deliberate strategy for using more than one cloud provider with defined placement, operational, and governance rules.' },
-  { term: 'Portability', definition: 'The extent to which workloads, interfaces, or platform patterns can move across providers without major redesign.' },
-  { term: 'Data gravity', definition: 'The tendency for applications and services to stay close to large or operationally expensive-to-move datasets.' },
-  { term: 'Concentration risk', definition: 'Business or operational exposure caused by heavy dependence on a single provider.' },
-  { term: 'Placement rule', definition: 'A policy or design constraint that determines where a workload or service is allowed to run.' },
-  { term: 'Provider-specific service', definition: 'A managed capability whose interface or operating model is tied closely to one cloud provider.' },
-  { term: 'Hybrid cloud', definition: 'An operating model that spans cloud environments and on-prem systems, distinct from public-cloud-to-public-cloud multi-cloud.' },
-  { term: 'Control plane', definition: 'The tooling and processes that define, deploy, and govern infrastructure and application behavior across clouds.' },
-  { term: 'Residency', definition: 'A legal or policy requirement about where data or workloads may be stored or processed.' },
-  { term: 'Abstraction honesty', definition: 'The practice of acknowledging where provider differences remain real instead of hiding them behind misleading common interfaces.' },
+  {
+    term: 'Multi-cloud',
+    definition:
+      'A deliberate strategy for using more than one cloud provider with defined placement, operational, and governance rules.',
+  },
+  {
+    term: 'Portability',
+    definition:
+      'The extent to which workloads, interfaces, or platform patterns can move across providers without major redesign.',
+  },
+  {
+    term: 'Data gravity',
+    definition:
+      'The tendency for applications and services to stay close to large or operationally expensive-to-move datasets.',
+  },
+  {
+    term: 'Concentration risk',
+    definition: 'Business or operational exposure caused by heavy dependence on a single provider.',
+  },
+  {
+    term: 'Placement rule',
+    definition:
+      'A policy or design constraint that determines where a workload or service is allowed to run.',
+  },
+  {
+    term: 'Provider-specific service',
+    definition:
+      'A managed capability whose interface or operating model is tied closely to one cloud provider.',
+  },
+  {
+    term: 'Hybrid cloud',
+    definition:
+      'An operating model that spans cloud environments and on-prem systems, distinct from public-cloud-to-public-cloud multi-cloud.',
+  },
+  {
+    term: 'Control plane',
+    definition:
+      'The tooling and processes that define, deploy, and govern infrastructure and application behavior across clouds.',
+  },
+  {
+    term: 'Residency',
+    definition:
+      'A legal or policy requirement about where data or workloads may be stored or processed.',
+  },
+  {
+    term: 'Abstraction honesty',
+    definition:
+      'The practice of acknowledging where provider differences remain real instead of hiding them behind misleading common interfaces.',
+  },
 ]
 
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -253,158 +290,107 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const pageStyles = `
-.multicloud-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.multicloud-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box}
-.multicloud-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.multicloud-title-text{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px}
-.multicloud-title-controls{display:flex;gap:2px;margin-left:auto}
-.multicloud-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer;padding:0}
-.multicloud-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0}
-.multicloud-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer}
-.multicloud-tab.active{position:relative;top:1px;background:#fff}
-.multicloud-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff}
-.multicloud-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080}
-.multicloud-toc-title{margin:0 0 10px;font-size:12px;font-weight:700}
-.multicloud-toc-list{margin:0;padding:0;list-style:none}
-.multicloud-toc-list li{margin:0 0 8px}
-.multicloud-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.multicloud-toc-list a:hover{text-decoration:underline}
-.multicloud-content{overflow:auto;padding:14px 20px 20px}
-.multicloud-doc-title{margin:0 0 12px;font-size:20px;font-weight:700}
-.multicloud-section{margin:0 0 20px}
-.multicloud-heading{margin:0 0 8px;font-size:16px;font-weight:700}
-.multicloud-subheading{margin:0 0 6px;font-size:13px;font-weight:700}
-.multicloud-content p,.multicloud-content li{font-size:12px;line-height:1.5}
-.multicloud-content p{margin:0 0 10px}
-.multicloud-content ul{margin:0 0 10px 20px;padding:0}
-.multicloud-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.multicloud-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff}
-.multicloud-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px}
-@media (max-width:900px){.multicloud-main{grid-template-columns:1fr}.multicloud-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function MultiCloudStrategyPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Multi-Cloud Strategy',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Multi-Cloud Strategy (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Multi-Cloud Strategy',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="multicloud-help-page">
-      <style>{pageStyles}</style>
-      <div className="multicloud-window" role="presentation">
-        <header className="multicloud-titlebar">
-          <span className="multicloud-title-text">Multi-Cloud Strategy</span>
-          <div className="multicloud-title-controls">
-            <button className="multicloud-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="multicloud-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="multicloud-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button key={tab.id} type="button" className={`multicloud-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)} role="tab" aria-selected={activeTab === tab.id}>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="multicloud-main">
-          <aside className="multicloud-toc" aria-label="Table of contents">
-            <h2 className="multicloud-toc-title">Contents</h2>
-            <ul className="multicloud-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}><a href={`#${section.id}`}>{section.label}</a></li>
+    <TopicPageShell
+      title="Multi-Cloud Strategy"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Multi-Cloud Strategy</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <p>
+              Cloud strategy is ultimately a business and platform operating decision. Multi-cloud
+              matters because some organizations genuinely need provider diversity, workload
+              placement flexibility, or regulatory separation, but they only benefit if those needs
+              are translated into clear technical boundaries and ownership rules.
+            </p>
+            <p>
+              Without that discipline, multi-cloud becomes a source of duplicated effort and hidden
+              cost. The platform has to know where common layers help, where provider specificity is
+              acceptable, and which outcomes justify the extra operational burden.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="multicloud-content">
-            <h1 className="multicloud-doc-title">Multi-Cloud Strategy</h1>
-            {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {activeTab === 'big-picture' && <>
-              <section id="bp-overview" className="multicloud-section">
-                <h2 className="multicloud-heading">Overview</h2>
-                {bigPicture.map((item) => <div key={item.title}><h3 className="multicloud-subheading">{item.title}</h3><p>{item.details}</p><p>{item.notes}</p></div>)}
-              </section>
-              <hr className="multicloud-divider" />
-              <section id="bp-why" className="multicloud-section">
-                <h2 className="multicloud-heading">Why It Matters</h2>
-                <p>Cloud strategy is ultimately a business and platform operating decision. Multi-cloud matters because some organizations genuinely need provider diversity, workload placement flexibility, or regulatory separation, but they only benefit if those needs are translated into clear technical boundaries and ownership rules.</p>
-                <p>Without that discipline, multi-cloud becomes a source of duplicated effort and hidden cost. The platform has to know where common layers help, where provider specificity is acceptable, and which outcomes justify the extra operational burden.</p>
-              </section>
-              <hr className="multicloud-divider" />
-              <section id="bp-takeaways" className="multicloud-section">
-                <h2 className="multicloud-heading">Key Takeaways</h2>
-                <ul>{keyTakeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'core-concepts' && <>
-              {coreSections.map((section) => (
-                <section key={section.id} id={section.id} className="multicloud-section">
-                  <h2 className="multicloud-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => <p key={`${section.id}-${paragraph}`}>{paragraph}</p>)}
-                </section>
+          </section>
+        </>
+      )}
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
               ))}
-              <section id="core-checklist" className="multicloud-section">
-                <h2 className="multicloud-heading">Design Checklist</h2>
-                <ul>{designChecklist.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'examples' && <>
-              {examples.map((example) => (
-                <section key={example.id} id={example.id} className="multicloud-section">
-                  <h2 className="multicloud-heading">{example.title}</h2>
-                  <div className="multicloud-codebox"><code>{example.code.trim()}</code></div>
-                  <p>{example.explanation}</p>
-                </section>
+            </section>
+          ))}
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Design Checklist</h2>
+            <ul>
+              {designChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </>}
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="multicloud-section">
-                <h2 className="multicloud-heading">Glossary</h2>
-                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            </ul>
+          </section>
+        </>
+      )}
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

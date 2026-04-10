@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -521,249 +523,6 @@ const compareContrast = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.nlwin98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.nlwin98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.nlwin98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.nlwin98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.nlwin98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.nlwin98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.nlwin98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.nlwin98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.nlwin98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.nlwin98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.nlwin98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.nlwin98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.nlwin98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nlwin98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.nlwin98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.nlwin98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.nlwin98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.nlwin98-section {
-  margin: 0 0 20px;
-}
-
-.nlwin98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.nlwin98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.nlwin98-content p,
-.nlwin98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.nlwin98-content p {
-  margin: 0 0 10px;
-}
-
-.nlwin98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.nlwin98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.nlwin98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.nlwin98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.nlwin98-table {
-  border-collapse: collapse;
-  font-size: 12px;
-  margin: 0 0 14px;
-  width: 100%;
-}
-
-.nlwin98-table th,
-.nlwin98-table td {
-  border: 1px solid #808080;
-  padding: 4px 8px;
-  text-align: left;
-}
-
-.nlwin98-table th {
-  background: #e0e0e0;
-  font-weight: 700;
-}
-
-.nlwin98-inline-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-
-.nlwin98-push {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  font-size: 12px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-@media (max-width: 900px) {
-  .nlwin98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .nlwin98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -771,15 +530,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -802,280 +552,209 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function NonLinearStructuresPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Non-Linear Structures',
+    defaultTab: 'big-picture',
+  })
+
   const defaultExample = codeExamples[0] ?? {
     title: 'No examples configured',
     code: 'No code available.',
     explanation: 'No explanation available.',
   }
   const [selectedExampleTitle, setSelectedExampleTitle] = useState(defaultExample.title)
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
-  })
 
   const selectedExample =
     codeExamples.find((ex) => ex.title === selectedExampleTitle) ?? defaultExample
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Non-Linear Structures (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Non-Linear Structures',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="nlwin98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="nlwin98-window" role="presentation">
-        <header className="nlwin98-titlebar">
-          <span className="nlwin98-title-text">Non-Linear Structures</span>
-          <div className="nlwin98-title-controls">
-            <button
-              className="nlwin98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="nlwin98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="nlwin98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`nlwin98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="nlwin98-main">
-          <aside className="nlwin98-toc" aria-label="Table of contents">
-            <h2 className="nlwin98-toc-title">Contents</h2>
-            <ul className="nlwin98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+    <TopicPageShell
+      title="Non-Linear Structures"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Non-Linear Structures</h1>
+      <p>
+        Non-linear structures organize elements in hierarchies and networks rather than sequences.
+        Trees, graphs, heaps, and tries each impose a different set of constraints on edges,
+        enabling efficient algorithms that are impossible on flat arrays. Choosing the right
+        non-linear structure is often the difference between an O(n²) solution and an O(n log n) or
+        O(n) one.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why This Matters</h2>
+            <p>
+              Real-world data is rarely a flat list. Code has a call graph. Dependencies form a DAG.
+              Network nodes form a graph. Text prefixes form a trie. Modeling these relationships
+              with a linear structure forces repeated O(n) scans where O(log n) or better is
+              available.
+            </p>
+            <p>
+              Non-linear structures encode relationships structurally, so the algorithm can exploit
+              shape rather than scanning. A balanced BST encodes sorted order in its topology; a
+              heap encodes priority in the parent-child relationship; a trie encodes shared prefixes
+              in shared paths.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-model" className="bin98-section">
+            <h2 className="bin98-heading">Core Mental Model</h2>
+            {mentalModel.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-structures" className="bin98-section">
+            <h2 className="bin98-heading">The Structures</h2>
+            {structures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Overview</h2>
+            <p>
+              V = vertices, E = edges, k = key length, α = inverse Ackermann function
+              (near-constant).
+            </p>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Structure</th>
+                  <th>Search</th>
+                  <th>Insert</th>
+                  <th>Delete</th>
+                  <th>Space</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {complexityTable.map((row) => (
+                  <tr key={row.structure}>
+                    <td>{row.structure}</td>
+                    <td>{row.search}</td>
+                    <td>{row.insert}</td>
+                    <td>{row.delete}</td>
+                    <td>{row.space}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Common Patterns</h2>
+            {commonPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-languages" className="bin98-section">
+            <h2 className="bin98-heading">Language Mapping</h2>
+            {languageMapping.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareContrast.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((pitfall) => (
+                <li key={pitfall.mistake}>
+                  <strong>{pitfall.mistake}:</strong> {pitfall.description}
                 </li>
               ))}
             </ul>
-          </aside>
-          <main className="nlwin98-content">
-            <h1 className="nlwin98-doc-title">Non-Linear Structures</h1>
-            <p>
-              Non-linear structures organize elements in hierarchies and networks rather than
-              sequences. Trees, graphs, heaps, and tries each impose a different set of constraints
-              on edges, enabling efficient algorithms that are impossible on flat arrays. Choosing
-              the right non-linear structure is often the difference between an O(n²) solution and
-              an O(n log n) or O(n) one.
+          </section>
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Choice Checklist</h2>
+            <ul>
+              {choiceChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Code Examples</h2>
+          <p>Select a scenario to view an annotated code sample.</p>
+          <div className="nlbin98-inline-buttons">
+            {codeExamples.map((ex) => (
+              <button
+                key={ex.title}
+                type="button"
+                className="nlbin98-push"
+                onClick={() => setSelectedExampleTitle(ex.title)}
+              >
+                {ex.title}
+              </button>
+            ))}
+          </div>
+          <h3 className="bin98-subheading">{selectedExample.title}</h3>
+          <div className="bin98-codebox">
+            <code>{selectedExample.code.trim()}</code>
+          </div>
+          <p>{selectedExample.explanation}</p>
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="nlwin98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="nlwin98-divider" />
-                <section id="bp-why" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Why This Matters</h2>
-                  <p>
-                    Real-world data is rarely a flat list. Code has a call graph. Dependencies form
-                    a DAG. Network nodes form a graph. Text prefixes form a trie. Modeling these
-                    relationships with a linear structure forces repeated O(n) scans where O(log n)
-                    or better is available.
-                  </p>
-                  <p>
-                    Non-linear structures encode relationships structurally, so the algorithm can
-                    exploit shape rather than scanning. A balanced BST encodes sorted order in its
-                    topology; a heap encodes priority in the parent-child relationship; a trie
-                    encodes shared prefixes in shared paths.
-                  </p>
-                </section>
-                <hr className="nlwin98-divider" />
-                <section id="bp-takeaways" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-model" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Core Mental Model</h2>
-                  {mentalModel.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="nlwin98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-structures" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">The Structures</h2>
-                  {structures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Complexity Overview</h2>
-                  <p>
-                    V = vertices, E = edges, k = key length, α = inverse Ackermann function
-                    (near-constant).
-                  </p>
-                  <table className="nlwin98-table">
-                    <thead>
-                      <tr>
-                        <th>Structure</th>
-                        <th>Search</th>
-                        <th>Insert</th>
-                        <th>Delete</th>
-                        <th>Space</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {complexityTable.map((row) => (
-                        <tr key={row.structure}>
-                          <td>{row.structure}</td>
-                          <td>{row.search}</td>
-                          <td>{row.insert}</td>
-                          <td>{row.delete}</td>
-                          <td>{row.space}</td>
-                          <td>{row.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-patterns" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Common Patterns</h2>
-                  {commonPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-languages" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Language Mapping</h2>
-                  {languageMapping.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Compare and Contrast</h2>
-                  {compareContrast.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((pitfall) => (
-                      <li key={pitfall.mistake}>
-                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-checklist" className="nlwin98-section">
-                  <h2 className="nlwin98-heading">Choice Checklist</h2>
-                  <ul>
-                    {choiceChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="nlwin98-section">
-                <h2 className="nlwin98-heading">Code Examples</h2>
-                <p>Select a scenario to view an annotated code sample.</p>
-                <div className="nlwin98-inline-buttons">
-                  {codeExamples.map((ex) => (
-                    <button
-                      key={ex.title}
-                      type="button"
-                      className="nlwin98-push"
-                      onClick={() => setSelectedExampleTitle(ex.title)}
-                    >
-                      {ex.title}
-                    </button>
-                  ))}
-                </div>
-                <h3 className="nlwin98-subheading">{selectedExample.title}</h3>
-                <div className="nlwin98-codebox">
-                  <code>{selectedExample.code.trim()}</code>
-                </div>
-                <p>{selectedExample.explanation}</p>
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="nlwin98-section">
-                <h2 className="nlwin98-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

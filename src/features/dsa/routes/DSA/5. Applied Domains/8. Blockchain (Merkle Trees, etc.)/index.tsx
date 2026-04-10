@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,15 +33,18 @@ const bigPicture = [
 const history = [
   {
     title: '2008: Bitcoin whitepaper',
-    detail: 'Nakamoto combined PoW, longest-chain, and Merkle trees for censorship-resistant money.',
+    detail:
+      'Nakamoto combined PoW, longest-chain, and Merkle trees for censorship-resistant money.',
   },
   {
     title: '2015: Ethereum launch',
-    detail: 'Account model and EVM enabled on-chain programmable state; gas introduced economic metering.',
+    detail:
+      'Account model and EVM enabled on-chain programmable state; gas introduced economic metering.',
   },
   {
     title: '2016-2019: BFT PoS chains',
-    detail: 'Tendermint, HotStuff, and Cosmos/Polkadot popularized fast-finality PoS with slashing.',
+    detail:
+      'Tendermint, HotStuff, and Cosmos/Polkadot popularized fast-finality PoS with slashing.',
   },
   {
     title: '2021: Rollups and EIP-1559',
@@ -49,7 +52,8 @@ const history = [
   },
   {
     title: '2023+: Verkle/Proto-Danksharding',
-    detail: 'Data-availability sampling and vector commitments aim to lower costs for proofs and scaling.',
+    detail:
+      'Data-availability sampling and vector commitments aim to lower costs for proofs and scaling.',
   },
 ]
 
@@ -60,19 +64,23 @@ const pillars = [
   },
   {
     title: 'Commitment correctness',
-    detail: 'Roots in headers must bind state, txs, receipts; proofs must be canonical and collision-resistant.',
+    detail:
+      'Roots in headers must bind state, txs, receipts; proofs must be canonical and collision-resistant.',
   },
   {
     title: 'Consensus safety and liveness',
-    detail: 'Protocols must avoid conflicting finalized states and keep producing blocks under network bounds.',
+    detail:
+      'Protocols must avoid conflicting finalized states and keep producing blocks under network bounds.',
   },
   {
     title: 'Data availability',
-    detail: 'Participants must be able to reconstruct block data; otherwise proofs cannot be verified.',
+    detail:
+      'Participants must be able to reconstruct block data; otherwise proofs cannot be verified.',
   },
   {
     title: 'Key and upgrade hygiene',
-    detail: 'Operator keys, governance controls, and upgrade paths must avoid single points of failure.',
+    detail:
+      'Operator keys, governance controls, and upgrade paths must avoid single points of failure.',
   },
 ]
 
@@ -84,7 +92,8 @@ const mentalModels = [
   },
   {
     title: 'Consensus as committee voting',
-    detail: 'Validators are a rotating committee that sign the same block; 2/3 weight agrees for safety in BFT models.',
+    detail:
+      'Validators are a rotating committee that sign the same block; 2/3 weight agrees for safety in BFT models.',
   },
   {
     title: 'State root as checksum',
@@ -93,14 +102,16 @@ const mentalModels = [
   },
   {
     title: 'Latency as fee market',
-    detail: 'Demand for block space sets fees; high congestion raises costs and latency, similar to surge pricing for bandwidth.',
+    detail:
+      'Demand for block space sets fees; high congestion raises costs and latency, similar to surge pricing for bandwidth.',
   },
 ]
 
 const howItWorks = [
   {
     step: '1. Model state and transactions',
-    detail: 'Choose UTXO or account model; define transition rules, gas metering, and validity constraints.',
+    detail:
+      'Choose UTXO or account model; define transition rules, gas metering, and validity constraints.',
   },
   {
     step: '2. Build blocks with commitments',
@@ -109,7 +120,8 @@ const howItWorks = [
   },
   {
     step: '3. Run consensus',
-    detail: 'PoW/PoS longest-chain or BFT commit decides the next block. Weight or signatures prove participation.',
+    detail:
+      'PoW/PoS longest-chain or BFT commit decides the next block. Weight or signatures prove participation.',
   },
   {
     step: '4. Execute state transition',
@@ -118,7 +130,8 @@ const howItWorks = [
   },
   {
     step: '5. Verify and propagate',
-    detail: 'Peers check signatures, proofs, and roots before gossiping; reject malformed or invalid blocks/txs early.',
+    detail:
+      'Peers check signatures, proofs, and roots before gossiping; reject malformed or invalid blocks/txs early.',
   },
   {
     step: '6. Handle reorgs and finality',
@@ -163,7 +176,8 @@ const complexityTable = [
 const applications = [
   {
     title: 'Digital cash and payments',
-    detail: 'UTXO/account chains let untrusted parties settle value with public verification and predictable finality targets.',
+    detail:
+      'UTXO/account chains let untrusted parties settle value with public verification and predictable finality targets.',
   },
   {
     title: 'Smart contract platforms',
@@ -177,7 +191,8 @@ const applications = [
   },
   {
     title: 'Rollups and L2 scaling',
-    detail: 'Off-chain execution with on-chain data and proofs keeps security while lowering per-tx costs.',
+    detail:
+      'Off-chain execution with on-chain data and proofs keeps security while lowering per-tx costs.',
   },
   {
     title: 'Cross-chain bridges',
@@ -219,15 +234,18 @@ const advanced = [
   },
   {
     title: 'Data-availability sampling',
-    detail: 'Light clients sample erasure-coded chunks to detect withheld data without downloading full blocks.',
+    detail:
+      'Light clients sample erasure-coded chunks to detect withheld data without downloading full blocks.',
   },
   {
     title: 'Succinct proofs (SNARK/STARK)',
-    detail: 'Compress execution traces into small proofs; enables zk-rollups and verifiable off-chain compute.',
+    detail:
+      'Compress execution traces into small proofs; enables zk-rollups and verifiable off-chain compute.',
   },
   {
     title: 'MEV-aware mempools',
-    detail: 'Encrypted or private mempools reduce frontrunning; auctions internalize MEV into protocol revenue.',
+    detail:
+      'Encrypted or private mempools reduce frontrunning; auctions internalize MEV into protocol revenue.',
   },
 ]
 
@@ -245,10 +263,10 @@ function verifyMerkle(leaf: string, root: string, proof: ProofStep[]) {
 }
 
 function hashPair(a: string, b: string) {
-  return sha256(a + b) // placeholder; use domain separation in practice
+  return sha256(a + b)
 }`,
     explanation:
-      'Builds the path hash bottom-up and checks it matches the committed root. Real systems domain-separate and validate proof ordering.',
+      'Builds the path hash bottom-up and checks it matches the committed root. Real systems also domain-separate internal nodes and validate proof ordering.',
   },
   {
     title: 'Header validation sketch',
@@ -280,7 +298,8 @@ const glossary = [
   },
   {
     term: 'Merkle proof',
-    definition: 'A sibling-hash path that lets a verifier reconstruct the committed root for one leaf.',
+    definition:
+      'A sibling-hash path that lets a verifier reconstruct the committed root for one leaf.',
   },
   {
     term: 'State root',
@@ -292,49 +311,57 @@ const glossary = [
   },
   {
     term: 'Receipts root',
-    definition: 'A commitment to execution results, logs, and outcomes derived from block transactions.',
+    definition:
+      'A commitment to execution results, logs, and outcomes derived from block transactions.',
   },
   {
     term: 'UTXO model',
-    definition: 'A transaction model that spends prior outputs and creates new outputs instead of mutating accounts in place.',
+    definition:
+      'A transaction model that spends prior outputs and creates new outputs instead of mutating accounts in place.',
   },
   {
     term: 'Account model',
-    definition: 'A state model that tracks balances, nonces, and contract storage for named accounts.',
+    definition:
+      'A state model that tracks balances, nonces, and contract storage for named accounts.',
   },
   {
     term: 'BFT consensus',
-    definition: 'A protocol family that targets safety and fast finality when less than one-third of validator weight is faulty.',
+    definition:
+      'A protocol family that targets safety and fast finality when less than one-third of validator weight is faulty.',
   },
   {
     term: 'Finality',
-    definition: 'The point at which reverting a block becomes impossible or economically infeasible under the protocol assumptions.',
+    definition:
+      'The point at which reverting a block becomes impossible or economically infeasible under the protocol assumptions.',
   },
   {
     term: 'Data availability',
-    definition: 'The guarantee that block data can actually be reconstructed and checked by verifiers.',
+    definition:
+      'The guarantee that block data can actually be reconstructed and checked by verifiers.',
   },
   {
     term: 'Rollup',
-    definition: 'A scaling design that executes mostly off-chain while posting data or proofs back to an L1 chain.',
+    definition:
+      'A scaling design that executes mostly off-chain while posting data or proofs back to an L1 chain.',
   },
   {
     term: 'SNARK/STARK',
-    definition: 'Succinct proof systems that compress execution into small proofs that are cheap to verify.',
+    definition:
+      'Succinct proof systems that compress execution into small proofs that are cheap to verify.',
   },
   {
     term: 'PBS',
-    definition: 'Proposer-builder separation, which splits block construction from final proposal to manage MEV and centralization.',
+    definition:
+      'Proposer-builder separation, which splits block construction from final proposal to manage MEV and centralization.',
   },
   {
     term: 'MEV',
-    definition: 'Maximal extractable value, or the profit available from transaction ordering, insertion, or exclusion.',
+    definition:
+      'Maximal extractable value, or the profit available from transaction ordering, insertion, or exclusion.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -358,478 +385,176 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
     { id: 'core-pitfalls', label: 'Pitfalls' },
     { id: 'core-advanced', label: 'Advanced Moves' },
   ],
-  examples: [
-    { id: 'examples-code', label: 'Code Examples' },
-  ],
+  examples: [{ id: 'examples-code', label: 'Code Examples' }],
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const blockchainHelpStyles = `
-.blockchain-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.blockchain-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-.blockchain-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.blockchain-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.blockchain-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.blockchain-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.blockchain-help-control:active {
-  border-top: 1px solid #404040;
-  border-left: 1px solid #404040;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
-}
-
-.blockchain-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.blockchain-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.blockchain-help-tab.is-active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.blockchain-help-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.blockchain-help-toc {
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-  overflow: auto;
-}
-
-.blockchain-help-toc h2 {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.blockchain-help-toc ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.blockchain-help-toc li {
-  margin: 0 0 8px;
-}
-
-.blockchain-help-toc a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.blockchain-help-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.blockchain-help-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.blockchain-help-intro {
-  margin: 0 0 14px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.blockchain-help-section {
-  margin: 0 0 20px;
-}
-
-.blockchain-help-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.blockchain-help-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.blockchain-help-content p,
-.blockchain-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.blockchain-help-content p {
-  margin: 0 0 10px;
-}
-
-.blockchain-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.blockchain-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.blockchain-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  overflow-x: auto;
-}
-
-.blockchain-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .blockchain-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .blockchain-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .blockchain-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 6px;
-    font-size: 13px;
-    white-space: normal;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function BlockchainPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Blockchain (Merkle Trees, etc.)',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Blockchain (Merkle Trees, etc.) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Blockchain (Merkle Trees, etc.)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="blockchain-help-page">
-      <style>{blockchainHelpStyles}</style>
-      <div className="blockchain-help-window" role="presentation">
-        <header className="blockchain-help-titlebar">
-          <span className="blockchain-help-titletext">Blockchain (Merkle Trees, etc.)</span>
-          <div className="blockchain-help-controls">
-            <button className="blockchain-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="blockchain-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Blockchain (Merkle Trees, etc.)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Blockchain (Merkle Trees, etc.)</h1>
+      <p className="blockchain-help-intro">
+        Blockchains combine hash commitments, deterministic execution, consensus, and data
+        availability into a ledger that strangers can verify. This page keeps the original material
+        intact, but presents it as a Windows-style help document: a manual focused on how the pieces
+        fit, where they fail, and how Merkle-style commitments support cheap verification.
+      </p>
 
-        <div className="blockchain-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`blockchain-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="blockchain-help-main">
-          <aside className="blockchain-help-toc" aria-label="Table of contents">
-            <h2>Contents</h2>
+          <hr className="bin98-divider" />
+
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">History</h2>
+            {history.map((event) => (
+              <p key={event.title}>
+                <strong>{event.title}:</strong> {event.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications and Operational Context</h2>
+            {applications.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">{failureCallout.title}</h3>
+            <p>{failureCallout.detail}</p>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
             <ul>
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="blockchain-help-content">
-            <h1 className="blockchain-help-doc-title">Blockchain (Merkle Trees, etc.)</h1>
-            <p className="blockchain-help-intro">
-              Blockchains combine hash commitments, deterministic execution, consensus, and data availability into a ledger that
-              strangers can verify. This page keeps the original material intact, but presents it as a Windows-style help
-              document: a manual focused on how the pieces fit, where they fail, and how Merkle-style commitments support cheap
-              verification.
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">Core Pillars</h2>
+            {pillars.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {howItWorks.map((item) => (
+              <p key={item.step}>
+                <strong>{item.step}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Reference</h2>
+            {complexityTable.map((item) => (
+              <p key={item.approach}>
+                <strong>{item.approach}:</strong> time {item.time}, space {item.space}. {item.note}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-choices" className="bin98-section">
+            <h2 className="bin98-heading">When to Use What</h2>
+            <ul>
+              {whenToUse.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Moves</h2>
+            {advanced.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="examples-code" className="bin98-section">
+          <h2 className="bin98-heading">Examples</h2>
+          {codeExamples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <pre className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </pre>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="blockchain-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="blockchain-help-divider" />
-
-                <section id="bp-history" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">History</h2>
-                  {history.map((event) => (
-                    <p key={event.title}>
-                      <strong>{event.title}:</strong> {event.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <hr className="blockchain-help-divider" />
-
-                <section id="bp-applications" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Applications and Operational Context</h2>
-                  {applications.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="blockchain-help-subheading">{failureCallout.title}</h3>
-                  <p>{failureCallout.detail}</p>
-                </section>
-
-                <hr className="blockchain-help-divider" />
-
-                <section id="bp-takeaways" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pillars" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Core Pillars</h2>
-                  {pillars.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-models" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-workflow" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">How It Works</h2>
-                  {howItWorks.map((item) => (
-                    <p key={item.step}>
-                      <strong>{item.step}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-complexity" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Complexity Reference</h2>
-                  {complexityTable.map((item) => (
-                    <p key={item.approach}>
-                      <strong>{item.approach}:</strong> time {item.time}, space {item.space}. {item.note}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-choices" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">When to Use What</h2>
-                  <ul>
-                    {whenToUse.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-pitfalls" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-advanced" className="blockchain-help-section">
-                  <h2 className="blockchain-help-heading">Advanced Moves</h2>
-                  {advanced.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="examples-code" className="blockchain-help-section">
-                <h2 className="blockchain-help-heading">Examples</h2>
-                {codeExamples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="blockchain-help-subheading">{example.title}</h3>
-                    <pre className="blockchain-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </pre>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="blockchain-help-section">
-                <h2 className="blockchain-help-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

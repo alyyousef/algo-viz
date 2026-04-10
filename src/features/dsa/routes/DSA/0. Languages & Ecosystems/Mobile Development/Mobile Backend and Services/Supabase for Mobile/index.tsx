@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Supabase for Mobile'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -275,11 +273,14 @@ console.log(data, error)`,
       'Realtime subscriptions are useful when the app truly benefits from live updates. This example shows the shape of a channel listening for changes on a filtered table.',
       'In production, the team should still think about channel lifetime, filtering, and whether the feature really needs push-style updates.',
     ],
-    code: `const channel = supabase
+    code:
+      `const channel = supabase
   .channel('room-messages')
   .on(
     'postgres_changes',
-    { event: '*', schema: 'public', table: 'messages', filter: ` + "`room_id=eq.${roomId}`" + ` },
+    { event: '*', schema: 'public', table: 'messages', filter: ` +
+      '`room_id=eq.${roomId}`' +
+      ` },
     (payload) => {
       console.log(payload)
     }
@@ -298,7 +299,10 @@ console.log(data, error)`,
       'Storage uploads are a typical mobile use case. The upload path usually reflects ownership rules, and bucket policy should align with the product access model rather than being decided ad hoc.',
       'This example shows the shape of an authenticated upload.',
     ],
-    code: `const path = ` + "`${user.id}/profile.png`" + `
+    code:
+      `const path = ` +
+      '`${user.id}/profile.png`' +
+      `
 
 const { error } = await supabase.storage
   .from('avatars')
@@ -338,7 +342,8 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Supabase',
-        definition: 'A backend platform built around PostgreSQL with integrated auth, storage, realtime, edge functions, and generated APIs.',
+        definition:
+          'A backend platform built around PostgreSQL with integrated auth, storage, realtime, edge functions, and generated APIs.',
       },
       {
         term: 'Postgres',
@@ -346,19 +351,23 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'RLS',
-        definition: 'Row Level Security, the Postgres mechanism used to enforce per-row authorization policies.',
+        definition:
+          'Row Level Security, the Postgres mechanism used to enforce per-row authorization policies.',
       },
       {
         term: 'Supabase Auth',
-        definition: 'The authentication service that manages user identity, sessions, and JWT-backed access for Supabase projects.',
+        definition:
+          'The authentication service that manages user identity, sessions, and JWT-backed access for Supabase projects.',
       },
       {
         term: 'Supabase Storage',
-        definition: 'The file storage system integrated with auth and policy-based access patterns in a Supabase project.',
+        definition:
+          'The file storage system integrated with auth and policy-based access patterns in a Supabase project.',
       },
       {
         term: 'Edge Function',
-        definition: 'A Supabase server-side function used for trusted logic, integrations, and operations that should not run directly in the client.',
+        definition:
+          'A Supabase server-side function used for trusted logic, integrations, and operations that should not run directly in the client.',
       },
     ],
   },
@@ -368,27 +377,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Migration',
-        definition: 'A versioned schema change that evolves the database structure over time in a controlled way.',
+        definition:
+          'A versioned schema change that evolves the database structure over time in a controlled way.',
       },
       {
         term: 'Generated API',
-        definition: 'The database-backed API surface Supabase exposes so clients can query or mutate data without custom CRUD endpoints for every table.',
+        definition:
+          'The database-backed API surface Supabase exposes so clients can query or mutate data without custom CRUD endpoints for every table.',
       },
       {
         term: 'Policy',
-        definition: 'A database rule that determines which rows a role can read or modify under RLS.',
+        definition:
+          'A database rule that determines which rows a role can read or modify under RLS.',
       },
       {
         term: 'JWT',
-        definition: 'A token format commonly used by Supabase Auth to carry authenticated identity and claims for access decisions.',
+        definition:
+          'A token format commonly used by Supabase Auth to carry authenticated identity and claims for access decisions.',
       },
       {
         term: 'Channel',
-        definition: 'A realtime communication context used for subscriptions such as Postgres changes, broadcast, or presence.',
+        definition:
+          'A realtime communication context used for subscriptions such as Postgres changes, broadcast, or presence.',
       },
       {
         term: 'Presence',
-        definition: 'A realtime pattern for tracking connected-user state such as who is currently online or active.',
+        definition:
+          'A realtime pattern for tracking connected-user state such as who is currently online or active.',
       },
     ],
   },
@@ -398,27 +413,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Offline queue',
-        definition: 'A local mechanism for storing intended mutations until the device regains connectivity.',
+        definition:
+          'A local mechanism for storing intended mutations until the device regains connectivity.',
       },
       {
         term: 'Conflict resolution',
-        definition: 'The application logic that decides what happens when local and remote changes disagree after reconnect or concurrent edits.',
+        definition:
+          'The application logic that decides what happens when local and remote changes disagree after reconnect or concurrent edits.',
       },
       {
         term: 'Trust boundary',
-        definition: 'The line between what the mobile client is allowed to do directly and what must be handled by trusted backend logic.',
+        definition:
+          'The line between what the mobile client is allowed to do directly and what must be handled by trusted backend logic.',
       },
       {
         term: 'Repository boundary',
-        definition: 'An application-layer abstraction that prevents raw backend SDK calls from spreading throughout the UI codebase.',
+        definition:
+          'An application-layer abstraction that prevents raw backend SDK calls from spreading throughout the UI codebase.',
       },
       {
         term: 'Realtime subscription',
-        definition: 'An ongoing client connection that receives updates as relevant backend changes occur.',
+        definition:
+          'An ongoing client connection that receives updates as relevant backend changes occur.',
       },
       {
         term: 'Schema drift',
-        definition: 'The divergence between the intended backend schema and the actual schema or client assumptions over time.',
+        definition:
+          'The divergence between the intended backend schema and the actual schema or client assumptions over time.',
       },
     ],
   },
@@ -429,230 +450,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const supabaseHelpStyles = `
-.supabase-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.supabase-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.supabase-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.supabase-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.supabase-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.supabase-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.supabase-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.supabase-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.supabase-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.supabase-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.supabase-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-.supabase-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.supabase-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.supabase-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.supabase-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.supabase-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.supabase-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.supabase-help98-section {
-  margin: 0 0 20px;
-}
-
-.supabase-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.supabase-help98-content p,
-.supabase-help98-content li,
-.supabase-help98-content dd,
-.supabase-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.supabase-help98-content p,
-.supabase-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.supabase-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.supabase-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.supabase-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.supabase-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.supabase-help98-glossary {
-  margin: 0;
-}
-
-.supabase-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .supabase-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .supabase-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .supabase-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -712,125 +509,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function SupabaseForMobilePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Supabase For Mobile Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="supabase-help98-page">
-      <style>{supabaseHelpStyles}</style>
-      <div className="supabase-help98-window" role="presentation">
-        <header className="supabase-help98-titlebar">
-          <span className="supabase-help98-title">{PAGE_TITLE}</span>
-          <div className="supabase-help98-controls">
-            <button className="supabase-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="supabase-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Supabase For Mobile Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="supabase-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`supabase-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="supabase-help98-main">
-          <aside className="supabase-help98-toc" aria-label="Table of contents">
-            <h2 className="supabase-help98-toc-title">Contents</h2>
-            <ul className="supabase-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="supabase-help98-content">
-            <h1 className="supabase-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="supabase-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

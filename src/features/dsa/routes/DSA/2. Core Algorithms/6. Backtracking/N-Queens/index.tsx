@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -79,18 +79,15 @@ const algorithmSteps = [
   },
   {
     title: 'Try columns',
-    detail:
-      'For each column, check whether column and diagonals are safe. If so, place the queen.',
+    detail: 'For each column, check whether column and diagonals are safe. If so, place the queen.',
   },
   {
     title: 'Recurse',
-    detail:
-      'Move to the next row. If all rows are placed, record a solution.',
+    detail: 'Move to the next row. If all rows are placed, record a solution.',
   },
   {
     title: 'Backtrack',
-    detail:
-      'Remove the queen and unmark constraints before trying the next column.',
+    detail: 'Remove the queen and unmark constraints before trying the next column.',
   },
 ]
 
@@ -102,18 +99,15 @@ const pruningHeuristics = [
   },
   {
     title: 'Bitset constraints',
-    detail:
-      'Use bit masks for columns and diagonals to check conflicts with fast bit operations.',
+    detail: 'Use bit masks for columns and diagonals to check conflicts with fast bit operations.',
   },
   {
     title: 'Ordering choices',
-    detail:
-      'Try columns that keep diagonals flexible first; fail-fast helps prune early.',
+    detail: 'Try columns that keep diagonals flexible first; fail-fast helps prune early.',
   },
   {
     title: 'Early impossibility',
-    detail:
-      'If remaining rows cannot fit into remaining columns, backtrack immediately.',
+    detail: 'If remaining rows cannot fit into remaining columns, backtrack immediately.',
   },
 ]
 
@@ -138,23 +132,19 @@ const complexityNotes = [
 const realWorldUses = [
   {
     context: 'Scheduling and assignment',
-    detail:
-      'The one-per-row constraint maps to assigning tasks to slots without conflicts.',
+    detail: 'The one-per-row constraint maps to assigning tasks to slots without conflicts.',
   },
   {
     context: 'Constraint programming demos',
-    detail:
-      'N-Queens is a standard example for teaching CSPs and pruning strategies.',
+    detail: 'N-Queens is a standard example for teaching CSPs and pruning strategies.',
   },
   {
     context: 'Search optimization',
-    detail:
-      'Benchmarks highlight how pruning, symmetry, and bitsets transform performance.',
+    detail: 'Benchmarks highlight how pruning, symmetry, and bitsets transform performance.',
   },
   {
     context: 'Board game AI',
-    detail:
-      'Techniques resemble move generation and pruning used in chess and puzzle solvers.',
+    detail: 'Techniques resemble move generation and pruning used in chess and puzzle solvers.',
   },
 ]
 
@@ -169,8 +159,7 @@ Board:
   . . . Q
   Q . . .
   . . Q .`,
-    explanation:
-      'Each queen is placed in a unique row and column, and no diagonals collide.',
+    explanation: 'Each queen is placed in a unique row and column, and no diagonals collide.',
   },
   {
     title: 'Backtracking pseudocode',
@@ -218,13 +207,11 @@ const decisionGuidance = [
 const advancedInsights = [
   {
     title: 'Diagonal indexing',
-    detail:
-      'Store (row - col + N - 1) and (row + col) to map diagonals into array indices.',
+    detail: 'Store (row - col + N - 1) and (row + col) to map diagonals into array indices.',
   },
   {
     title: 'Branch and bound',
-    detail:
-      'You can prune if the number of remaining rows exceeds remaining columns.',
+    detail: 'You can prune if the number of remaining rows exceeds remaining columns.',
   },
   {
     title: 'Symmetry counts',
@@ -233,8 +220,7 @@ const advancedInsights = [
   },
   {
     title: 'Parallel search',
-    detail:
-      'Split on the first row and solve branches in parallel to scale across cores.',
+    detail: 'Split on the first row and solve branches in parallel to scale across cores.',
   },
 ]
 
@@ -269,211 +255,6 @@ const quickGlossary = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const nQueensHelpStyles = `
-.nq-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.nq-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  box-sizing: border-box;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.nq-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.nq-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.nq-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.nq-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.nq-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.nq-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.nq-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.nq-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.nq-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.nq-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.nq-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nq-toc-list li {
-  margin: 0 0 8px;
-}
-
-.nq-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.nq-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.nq-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.nq-section {
-  margin: 0 0 20px;
-}
-
-.nq-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.nq-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.nq-content p,
-.nq-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.nq-content p {
-  margin: 0 0 10px;
-}
-
-.nq-content ul,
-.nq-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.nq-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.nq-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.nq-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .nq-main {
-    grid-template-columns: 1fr;
-  }
-
-  .nq-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -481,10 +262,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -509,251 +286,194 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function NQueensPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'N-Queens',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `N-Queens (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'N-Queens',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="nq-help-page">
-      <style>{nQueensHelpStyles}</style>
-      <div className="nq-window" role="presentation">
-        <header className="nq-titlebar">
-          <span className="nq-title">N-Queens</span>
-          <div className="nq-controls">
-            <button className="nq-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="nq-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="N-Queens"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">N-Queens</h1>
+      <p>
+        Backtracking through a classic chessboard constraint puzzle. The N-Queens problem asks you
+        to place N queens on an N x N chessboard so that none attack each other. It is a canonical
+        backtracking and constraint satisfaction example, perfect for illustrating pruning,
+        symmetry, and state management in recursive search.
+      </p>
 
-        <div className="nq-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`nq-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="nq-main">
-          <aside className="nq-toc" aria-label="Table of contents">
-            <h2 className="nq-toc-title">Contents</h2>
-            <ul className="nq-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              N-Queens is about conflict-free placement. Each queen blocks its row, column, and
+              diagonals, forcing you to build a solution that respects all constraints
+              simultaneously. Backtracking tries a choice, explores, and undoes it when it fails.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="nq-content">
-            <h1 className="nq-doc-title">N-Queens</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-backtracking" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: The Backtracking Approach</h2>
+            {coreConcepts.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-steps" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Steps</h2>
+            {algorithmSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Backtracking through a classic chessboard constraint puzzle. The N-Queens problem asks you to place N queens on an N x
-              N chessboard so that none attack each other. It is a canonical backtracking and constraint satisfaction example,
-              perfect for illustrating pruning, symmetry, and state management in recursive search.
+              The invariant: exactly one queen per row, and no two queens share a column or
+              diagonal. Track constraints to enforce this quickly.
             </p>
+          </section>
+          <section id="core-pruning" className="bin98-section">
+            <h2 className="bin98-heading">Pruning and Heuristics</h2>
+            {pruningHeuristics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Symmetry reduction and bitsets are the most impactful optimizations. Together, they
+              enable larger N without changing the core algorithm.
+            </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              N-Queens is exponential in the worst case, but strong pruning makes it practical for
+              moderate N. For very large boards, approximate or heuristic solvers are often used.
+            </p>
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">N-Queens vs N-Rooks (Quick Intuition)</h2>
+            <p>
+              <strong>Constraints:</strong> N-Queens uses rows, columns, and diagonals. N-Rooks uses
+              rows and columns only.
+            </p>
+            <p>
+              <strong>Complexity:</strong> N-Queens is harder and has fewer solutions. N-Rooks is
+              equivalent to permutations.
+            </p>
+            <p>
+              <strong>Typical method:</strong> N-Queens uses backtracking plus pruning. N-Rooks can
+              be directly counted by N!.
+            </p>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-guidance" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="nq-section">
-                  <h2 className="nq-heading">Overview</h2>
-                  <p>
-                    N-Queens is about conflict-free placement. Each queen blocks its row, column, and diagonals, forcing you to build
-                    a solution that respects all constraints simultaneously. Backtracking tries a choice, explores, and undoes it when
-                    it fails.
-                  </p>
-                </section>
-                <hr className="nq-divider" />
-                <section id="bp-history" className="nq-section">
-                  <h2 className="nq-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="nq-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="nq-section">
-                  <h2 className="nq-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-applications" className="nq-section">
-                  <h2 className="nq-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="nq-section">
-                  <h2 className="nq-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-backtracking" className="nq-section">
-                  <h2 className="nq-heading">How It Works: The Backtracking Approach</h2>
-                  {coreConcepts.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="nq-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-steps" className="nq-section">
-                  <h2 className="nq-heading">Algorithm Steps</h2>
-                  {algorithmSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The invariant: exactly one queen per row, and no two queens share a column or diagonal. Track constraints to
-                    enforce this quickly.
-                  </p>
-                </section>
-                <section id="core-pruning" className="nq-section">
-                  <h2 className="nq-heading">Pruning and Heuristics</h2>
-                  {pruningHeuristics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Symmetry reduction and bitsets are the most impactful optimizations. Together, they enable larger N without
-                    changing the core algorithm.
-                  </p>
-                </section>
-                <section id="core-complexity" className="nq-section">
-                  <h2 className="nq-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    N-Queens is exponential in the worst case, but strong pruning makes it practical for moderate N. For very large
-                    boards, approximate or heuristic solvers are often used.
-                  </p>
-                </section>
-                <section id="core-compare" className="nq-section">
-                  <h2 className="nq-heading">N-Queens vs N-Rooks (Quick Intuition)</h2>
-                  <p><strong>Constraints:</strong> N-Queens uses rows, columns, and diagonals. N-Rooks uses rows and columns only.</p>
-                  <p><strong>Complexity:</strong> N-Queens is harder and has fewer solutions. N-Rooks is equivalent to permutations.</p>
-                  <p><strong>Typical method:</strong> N-Queens uses backtracking plus pruning. N-Rooks can be directly counted by N!.</p>
-                </section>
-                <section id="core-pitfalls" className="nq-section">
-                  <h2 className="nq-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-guidance" className="nq-section">
-                  <h2 className="nq-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="nq-section">
-                  <h2 className="nq-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="nq-section">
-                <h2 className="nq-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="nq-subheading">{example.title}</h3>
-                    <div className="nq-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="nq-section">
-                <h2 className="nq-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

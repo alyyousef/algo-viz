@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Core Data'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -45,7 +43,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ]
 
 const introParagraphs = [
-  'Core Data is Apple\'s object graph management and persistence framework. On iOS, teams use it to model structured application data, load and save that data efficiently, track changes over time, and coordinate in-memory objects with a persistent store such as SQLite. It is not just a database wrapper, and treating it as one leads to weak designs.',
+  "Core Data is Apple's object graph management and persistence framework. On iOS, teams use it to model structured application data, load and save that data efficiently, track changes over time, and coordinate in-memory objects with a persistent store such as SQLite. It is not just a database wrapper, and treating it as one leads to weak designs.",
   'The right mental model is that Core Data manages an object graph with lifecycle, identity, change tracking, validation, fetching, faulting, undo integration, and context-based concurrency rules. Persistence is one part of the system, but the framework is really about managing rich structured data inside an application while syncing that data to durable storage.',
   'This page focuses on Core Data in practical iOS engineering. It covers where Core Data fits in the Apple stack, the model and store architecture, contexts and concurrency, fetches and faults, migrations, background work, Swift integration patterns, examples, and the terms that matter when debugging or designing a production Core Data feature.',
 ] as const
@@ -55,7 +53,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Core Data is Apple\'s framework for modeling, managing, and persisting object graphs. Developers define entities, attributes, and relationships in a managed object model, and Core Data handles the runtime machinery for turning those models into live objects, tracking changes, validating data, fetching records, and saving state to one or more persistent stores.',
+      "Core Data is Apple's framework for modeling, managing, and persisting object graphs. Developers define entities, attributes, and relationships in a managed object model, and Core Data handles the runtime machinery for turning those models into live objects, tracking changes, validating data, fetching records, and saving state to one or more persistent stores.",
       'Its importance on iOS is not limited to apps with large databases. It is useful whenever the app has structured local data that benefits from identity, relationship traversal, incremental fetching, and change management. That includes offline-first features, caches with relational structure, user-created content, history views, and complex local state that outgrows ad hoc JSON files or unstructured key-value storage.',
     ],
   },
@@ -63,7 +61,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-what-it-is-not',
     title: 'What Core Data Is Not',
     paragraphs: [
-      'Core Data is not simply SQLite with nicer syntax. SQLite is often the default backing store, but Core Data sits at a higher abstraction level. It manages managed object contexts, object identity, relationships, faults, validation, and unit-of-work style saves. A team that only thinks in SQL tables misses most of the framework\'s actual behavior.',
+      "Core Data is not simply SQLite with nicer syntax. SQLite is often the default backing store, but Core Data sits at a higher abstraction level. It manages managed object contexts, object identity, relationships, faults, validation, and unit-of-work style saves. A team that only thinks in SQL tables misses most of the framework's actual behavior.",
       'It is also not automatically the right persistence tool for every iOS feature. Small preference-style data may fit UserDefaults. Ephemeral caches may be better in memory. Heavily SQL-centric analytics or cross-platform persistence layers may call for something else. Core Data is strongest when the application actually benefits from object graph management rather than needing only raw record storage.',
     ],
     bullets: [
@@ -100,7 +98,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Where Core Data Fits Best',
     paragraphs: [
       'Core Data fits best when the app has structured entities with relationships, evolving local state, repeated queries, background imports, or data that should be displayed incrementally without materializing the entire dataset manually. It is especially strong when the app benefits from Apple-native persistence patterns and the team is willing to learn the framework instead of flattening everything into improvised dictionaries.',
-      'It is weaker when the domain is tiny, the data is mostly transient, the persistence needs are fundamentally not object-graph shaped, or the team will refuse to respect Core Data\'s context and threading rules. In those cases, the framework can feel heavy because the problem itself does not justify the machinery.',
+      "It is weaker when the domain is tiny, the data is mostly transient, the persistence needs are fundamentally not object-graph shaped, or the team will refuse to respect Core Data's context and threading rules. In those cases, the framework can feel heavy because the problem itself does not justify the machinery.",
     ],
     bullets: [
       'Structured local entities and relationships.',
@@ -130,7 +128,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-model',
     title: 'Managed Object Model',
     paragraphs: [
-      'The managed object model defines the schema of the Core Data world: entities, attributes, relationships, fetched properties, constraints, and configuration. This model is the contract between the app\'s runtime objects and the persistent stores that back them.',
+      "The managed object model defines the schema of the Core Data world: entities, attributes, relationships, fetched properties, constraints, and configuration. This model is the contract between the app's runtime objects and the persistent stores that back them.",
       'Good model design matters more than many teams realize. Naming, optionality, relationship cardinality, delete rules, uniqueness constraints, and normalization decisions all shape future migrations, fetch complexity, and data integrity. A weak model leaks pain into every fetch, save, and sync path later.',
     ],
     bullets: [
@@ -145,7 +143,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Persistent Container and Stores',
     paragraphs: [
       'Most modern iOS apps use NSPersistentContainer to assemble the Core Data stack. It loads the model, configures the persistent store coordinator, attaches stores, and provides convenience contexts such as the viewContext. This reduces boilerplate but does not remove the need to understand the underlying pieces.',
-      'The persistent store is where data becomes durable. SQLite is the common default, but the store should still be treated as an implementation detail behind Core Data\'s managed object and context APIs. Debugging performance or migration issues often requires understanding the store, but day-to-day feature code should still respect the Core Data abstraction.',
+      "The persistent store is where data becomes durable. SQLite is the common default, but the store should still be treated as an implementation detail behind Core Data's managed object and context APIs. Debugging performance or migration issues often requires understanding the store, but day-to-day feature code should still respect the Core Data abstraction.",
     ],
     bullets: [
       'NSPersistentContainer is the standard entry point for most app stacks.',
@@ -424,27 +422,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Core Data',
-        definition: 'Apple\'s object graph management and persistence framework used to model, fetch, track, and store structured data in Apple-platform apps.',
+        definition:
+          "Apple's object graph management and persistence framework used to model, fetch, track, and store structured data in Apple-platform apps.",
       },
       {
         term: 'NSManagedObject',
-        definition: 'A runtime object type managed by Core Data that represents an entity instance inside a managed object context.',
+        definition:
+          'A runtime object type managed by Core Data that represents an entity instance inside a managed object context.',
       },
       {
         term: 'NSManagedObjectModel',
-        definition: 'The schema definition describing entities, attributes, relationships, constraints, and related metadata for the Core Data stack.',
+        definition:
+          'The schema definition describing entities, attributes, relationships, constraints, and related metadata for the Core Data stack.',
       },
       {
         term: 'NSPersistentStore',
-        definition: 'The backing store where Core Data persists durable data, commonly implemented with SQLite in iOS apps.',
+        definition:
+          'The backing store where Core Data persists durable data, commonly implemented with SQLite in iOS apps.',
       },
       {
         term: 'NSPersistentContainer',
-        definition: 'The modern convenience object that assembles the Core Data stack and provides configured contexts.',
+        definition:
+          'The modern convenience object that assembles the Core Data stack and provides configured contexts.',
       },
       {
         term: 'NSManagedObjectContext',
-        definition: 'The unit-of-work object that tracks managed objects, staged changes, fetches, and saves within a specific queue confinement model.',
+        definition:
+          'The unit-of-work object that tracks managed objects, staged changes, fetches, and saves within a specific queue confinement model.',
       },
     ],
   },
@@ -454,27 +458,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'NSFetchRequest',
-        definition: 'A description of what managed objects to retrieve, including filtering, sorting, batching, and relationship loading behavior.',
+        definition:
+          'A description of what managed objects to retrieve, including filtering, sorting, batching, and relationship loading behavior.',
       },
       {
         term: 'Predicate',
-        definition: 'A filter expression used by Core Data fetches to limit which objects are returned.',
+        definition:
+          'A filter expression used by Core Data fetches to limit which objects are returned.',
       },
       {
         term: 'Fault',
-        definition: 'A lightweight placeholder managed object whose property data is loaded lazily when needed.',
+        definition:
+          'A lightweight placeholder managed object whose property data is loaded lazily when needed.',
       },
       {
         term: 'Relationship',
-        definition: 'A connection between entities in the Core Data object graph, with cardinality and inverse behavior.',
+        definition:
+          'A connection between entities in the Core Data object graph, with cardinality and inverse behavior.',
       },
       {
         term: 'Delete rule',
-        definition: 'The policy that determines what happens to related objects when a relationship source object is deleted.',
+        definition:
+          'The policy that determines what happens to related objects when a relationship source object is deleted.',
       },
       {
         term: 'NSManagedObjectID',
-        definition: 'A stable identifier used to refer to a managed object safely across contexts and over time.',
+        definition:
+          'A stable identifier used to refer to a managed object safely across contexts and over time.',
       },
     ],
   },
@@ -484,27 +494,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Merge policy',
-        definition: 'The rule used by Core Data to decide how conflicts are resolved when multiple changes compete for the same data.',
+        definition:
+          'The rule used by Core Data to decide how conflicts are resolved when multiple changes compete for the same data.',
       },
       {
         term: 'Lightweight migration',
-        definition: 'Core Data\'s automatic migration capability for a subset of model changes that it can infer without custom mapping.',
+        definition:
+          "Core Data's automatic migration capability for a subset of model changes that it can infer without custom mapping.",
       },
       {
         term: 'Fetched results controller',
-        definition: 'A UIKit-oriented helper that tracks fetch results and notifies the UI about underlying data changes.',
+        definition:
+          'A UIKit-oriented helper that tracks fetch results and notifies the UI about underlying data changes.',
       },
       {
         term: 'performBackgroundTask',
-        definition: 'An NSPersistentContainer convenience API that creates a background context and executes a closure on its queue.',
+        definition:
+          'An NSPersistentContainer convenience API that creates a background context and executes a closure on its queue.',
       },
       {
         term: 'viewContext',
-        definition: 'The main context commonly used for UI-facing work in a persistent container-based Core Data stack.',
+        definition:
+          'The main context commonly used for UI-facing work in a persistent container-based Core Data stack.',
       },
       {
         term: 'In-memory store',
-        definition: 'A non-durable Core Data store configuration commonly used for tests, previews, or disposable runtime scenarios.',
+        definition:
+          'A non-durable Core Data store configuration commonly used for tests, previews, or disposable runtime scenarios.',
       },
     ],
   },
@@ -515,230 +531,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const coreDataHelpStyles = `
-.core-data-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.core-data-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.core-data-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.core-data-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.core-data-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.core-data-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.core-data-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.core-data-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.core-data-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.core-data-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.core-data-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.core-data-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.core-data-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.core-data-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.core-data-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.core-data-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.core-data-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.core-data-help98-section {
-  margin: 0 0 20px;
-}
-
-.core-data-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.core-data-help98-content p,
-.core-data-help98-content li,
-.core-data-help98-content dd,
-.core-data-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.core-data-help98-content p,
-.core-data-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.core-data-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.core-data-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.core-data-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.core-data-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.core-data-help98-glossary {
-  margin: 0;
-}
-
-.core-data-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .core-data-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .core-data-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .core-data-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -798,125 +590,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function CoreDataPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Core Data Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="core-data-help98-page">
-      <style>{coreDataHelpStyles}</style>
-      <div className="core-data-help98-window" role="presentation">
-        <header className="core-data-help98-titlebar">
-          <span className="core-data-help98-title">{PAGE_TITLE}</span>
-          <div className="core-data-help98-controls">
-            <button className="core-data-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="core-data-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Core Data Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="core-data-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`core-data-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="core-data-help98-main">
-          <aside className="core-data-help98-toc" aria-label="Table of contents">
-            <h2 className="core-data-help98-toc-title">Contents</h2>
-            <ul className="core-data-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="core-data-help98-content">
-            <h1 className="core-data-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="core-data-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

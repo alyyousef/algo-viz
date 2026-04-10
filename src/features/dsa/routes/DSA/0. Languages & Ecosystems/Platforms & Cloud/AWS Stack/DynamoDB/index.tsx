@@ -1,18 +1,21 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'AWS DynamoDB'
-const pageSubtitle = 'AWS managed key-value and document database for predictable low-latency at scale.'
+const pageSubtitle =
+  'AWS managed key-value and document database for predictable low-latency at scale.'
 
 const bigPictureSections = [
   {
     title: 'What it is',
     paragraphs: [
-      'Amazon DynamoDB is AWS\'s fully managed NoSQL database service for key-value and document data. It is designed for very low-latency lookups at high scale, with automatic partition management, built-in replication features, and tight integration with the rest of AWS.',
+      "Amazon DynamoDB is AWS's fully managed NoSQL database service for key-value and document data. It is designed for very low-latency lookups at high scale, with automatic partition management, built-in replication features, and tight integration with the rest of AWS.",
       'The core DynamoDB promise is not relational flexibility. It is predictable performance for well-chosen access patterns. The service rewards designs where the primary key and index strategy are planned around the queries the application actually needs to run.',
     ],
   },
@@ -99,7 +102,7 @@ const coreConceptSections = [
     heading: 'Secondary Indexes: GSI and LSI',
     paragraphs: [
       'Global secondary indexes let you query the same data through an alternate key structure. They are the standard tool when the main table key supports one access path and the application needs another.',
-      'Local secondary indexes share the table partition key but use a different sort key. They are more constrained and tied to the base table\'s item collection behavior. In practice, many teams reach for GSIs more often because they are more flexible.',
+      "Local secondary indexes share the table partition key but use a different sort key. They are more constrained and tied to the base table's item collection behavior. In practice, many teams reach for GSIs more often because they are more flexible.",
       'Indexes are not free. They consume capacity, increase write cost, and require design discipline. A good index exists to serve a specific query path, not to imitate the general-purpose flexibility of secondary indexes in relational databases.',
     ],
   },
@@ -117,7 +120,7 @@ const coreConceptSections = [
     heading: 'Expressions and Conditional Logic',
     paragraphs: [
       'DynamoDB uses expressions for filtering, projection, conditions, and updates. Condition expressions are especially important because they let you enforce write expectations such as "only create this item if it does not already exist" or "only update if the version matches."',
-      'That conditional model is one of the service\'s strongest correctness tools. It is how many teams implement optimistic locking, uniqueness guards, idempotency records, state-machine transitions, and inventory protections.',
+      "That conditional model is one of the service's strongest correctness tools. It is how many teams implement optimistic locking, uniqueness guards, idempotency records, state-machine transitions, and inventory protections.",
       'Update expressions let you increment counters, set nested attributes, append to lists, or remove fields without rewriting the whole item.',
     ],
   },
@@ -154,7 +157,7 @@ const coreConceptSections = [
     paragraphs: [
       'DynamoDB Streams capture item-level changes and make them available for downstream processing. This is commonly paired with AWS Lambda for projections, denormalized views, notifications, search indexing, or audit flows.',
       'Streams are one of the reasons DynamoDB fits event-driven architectures well. The table becomes both the operational state store and the producer of change events for downstream systems.',
-      'A stream consumer should be idempotent and resilient. Change processors are part of the system\'s durability story, not just a convenience hook.',
+      "A stream consumer should be idempotent and resilient. Change processors are part of the system's durability story, not just a convenience hook.",
     ],
   },
   {
@@ -327,8 +330,7 @@ TTL attribute configured:
 const glossaryTerms = [
   {
     term: 'Partition key',
-    definition:
-      'The primary key attribute DynamoDB uses to distribute data and route lookups.',
+    definition: 'The primary key attribute DynamoDB uses to distribute data and route lookups.',
   },
   {
     term: 'Sort key',
@@ -337,13 +339,11 @@ const glossaryTerms = [
   },
   {
     term: 'Item collection',
-    definition:
-      'The set of items that share the same partition key value.',
+    definition: 'The set of items that share the same partition key value.',
   },
   {
     term: 'GSI',
-    definition:
-      'A global secondary index that provides an alternate key path across the table.',
+    definition: 'A global secondary index that provides an alternate key path across the table.',
   },
   {
     term: 'LSI',
@@ -362,8 +362,7 @@ const glossaryTerms = [
   },
   {
     term: 'Condition expression',
-    definition:
-      'A write guard that allows a mutation only if the specified item state is true.',
+    definition: 'A write guard that allows a mutation only if the specified item state is true.',
   },
   {
     term: 'Update expression',
@@ -456,415 +455,134 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const dynamoHelpStyles = `
-.dynamo-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.dynamo-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-}
-
-.dynamo-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.dynamo-help98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.dynamo-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.dynamo-help98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.dynamo-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.dynamo-help98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.dynamo-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.dynamo-help98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.dynamo-help98-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.dynamo-help98-toctitle {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.dynamo-help98-toclist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.dynamo-help98-toclist li {
-  margin: 0 0 8px;
-}
-
-.dynamo-help98-toclist a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.dynamo-help98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.dynamo-help98-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.dynamo-help98-section {
-  margin: 0 0 20px;
-}
-
-.dynamo-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.dynamo-help98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.dynamo-help98-content p,
-.dynamo-help98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.dynamo-help98-content p {
-  margin: 0 0 10px;
-}
-
-.dynamo-help98-content ul,
-.dynamo-help98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.dynamo-help98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.dynamo-help98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.dynamo-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-.dynamo-help98-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .dynamo-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .dynamo-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function AwsDynamoDbPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Aws Dynamo Db Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="dynamo-help98-page">
-      <style>{dynamoHelpStyles}</style>
-      <div className="dynamo-help98-window" role="presentation">
-        <header className="dynamo-help98-titlebar">
-          <span className="dynamo-help98-titletext">{pageTitle}</span>
-          <div className="dynamo-help98-controls">
-            <button className="dynamo-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="dynamo-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Aws Dynamo Db Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="dynamo-help98-title">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page is intentionally practical. DynamoDB looks simple at the API surface, but most of
+        the real engineering work is in choosing keys, indexes, and write conditions that fit the
+        application\'s traffic and correctness requirements.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="dynamo-help98-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="dynamo-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`dynamo-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="dynamo-help98-main">
-          <aside className="dynamo-help98-toc" aria-label="Table of contents">
-            <h2 className="dynamo-help98-toctitle">Contents</h2>
-            <ul className="dynamo-help98-toclist">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ul>
+              {decisionGuidance.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="dynamo-help98-content">
-            <h1 className="dynamo-help98-title">{pageTitle}</h1>
-            <p className="dynamo-help98-subheading">{pageSubtitle}</p>
-            <p>
-              This page is intentionally practical. DynamoDB looks simple at the API surface, but most of the real engineering work
-              is in choosing keys, indexes, and write conditions that fit the application\'s traffic and correctness requirements.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="dynamo-help98-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="dynamo-help98-section">
-                  <h2 className="dynamo-help98-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="dynamo-help98-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-                <hr className="dynamo-help98-divider" />
-                <section id="bp-when" className="dynamo-help98-section">
-                  <h2 className="dynamo-help98-heading">When to Use It</h2>
-                  <ul>
-                    {decisionGuidance.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="dynamo-help98-section">
-                    <h2 className="dynamo-help98-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-patterns" className="dynamo-help98-section">
-                  <h2 className="dynamo-help98-heading">Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="dynamo-help98-section">
-                  <h2 className="dynamo-help98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="dynamo-help98-section">
-                    <h2 className="dynamo-help98-heading">{example.title}</h2>
-                    <div className="dynamo-help98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="dynamo-help98-section">
-                <h2 className="dynamo-help98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="dynamo-help98-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="dynamo-help98-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a
+                  href={source}
+                  className="dynamo-help98-inline-link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

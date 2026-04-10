@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Combine'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -45,7 +43,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ]
 
 const introParagraphs = [
-  'Combine is Apple\'s reactive programming framework for composing asynchronous events over time. On iOS, it is used to model value streams such as text changes, network responses, timers, notifications, app lifecycle events, and state updates, then transform, combine, throttle, debounce, or observe those streams with explicit operators and cancellation behavior.',
+  "Combine is Apple's reactive programming framework for composing asynchronous events over time. On iOS, it is used to model value streams such as text changes, network responses, timers, notifications, app lifecycle events, and state updates, then transform, combine, throttle, debounce, or observe those streams with explicit operators and cancellation behavior.",
   'The right mental model is that Combine is not about one-off callbacks. It is about pipelines. A publisher emits values and completion events, operators transform or coordinate those emissions, and subscribers consume them while respecting demand, scheduling, and lifetime. This makes Combine especially useful when a feature is defined by how events flow rather than by a single request-response call.',
   'This page focuses on Combine in practical iOS development. It covers where Combine fits in Apple apps, publishers and subscribers, subjects, operators, errors and completion, scheduling, cancellation, UI integration, testing patterns, examples, and the vocabulary that matters when maintaining or debugging Combine-heavy code.',
 ] as const
@@ -55,7 +53,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Combine is Apple\'s framework for declaratively handling asynchronous streams of values. It lets developers create pipelines that receive input over time, transform that input through operators, and deliver the result to downstream consumers. This is a better fit than nested callbacks when a feature depends on ongoing event coordination rather than a single future value.',
+      "Combine is Apple's framework for declaratively handling asynchronous streams of values. It lets developers create pipelines that receive input over time, transform that input through operators, and deliver the result to downstream consumers. This is a better fit than nested callbacks when a feature depends on ongoing event coordination rather than a single future value.",
       'On iOS, that event coordination shows up everywhere: form validation, live search, UI bindings, notifications, repeated polling, timers, network chains, and state propagation between services and screens. Combine provides a common vocabulary for those flows instead of forcing every feature to invent its own callback orchestration style.',
     ],
   },
@@ -412,15 +410,18 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Publisher',
-        definition: 'A Combine type that emits values over time and may eventually complete successfully or with failure.',
+        definition:
+          'A Combine type that emits values over time and may eventually complete successfully or with failure.',
       },
       {
         term: 'Subscriber',
-        definition: 'A consumer that receives values, completion, and demand interactions from a publisher.',
+        definition:
+          'A consumer that receives values, completion, and demand interactions from a publisher.',
       },
       {
         term: 'Subscription',
-        definition: 'The connection between a publisher and subscriber that governs delivery and cancellation.',
+        definition:
+          'The connection between a publisher and subscriber that governs delivery and cancellation.',
       },
       {
         term: 'Output',
@@ -428,11 +429,13 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Failure',
-        definition: 'The error type a publisher can emit on terminal failure, or Never when failure cannot occur.',
+        definition:
+          'The error type a publisher can emit on terminal failure, or Never when failure cannot occur.',
       },
       {
         term: 'AnyCancellable',
-        definition: 'A type-erased cancellable token commonly retained to keep a Combine subscription alive.',
+        definition:
+          'A type-erased cancellable token commonly retained to keep a Combine subscription alive.',
       },
     ],
   },
@@ -442,27 +445,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Operator',
-        definition: 'A transformation or coordination step that takes an upstream publisher and returns a new publisher.',
+        definition:
+          'A transformation or coordination step that takes an upstream publisher and returns a new publisher.',
       },
       {
         term: 'debounce',
-        definition: 'An operator that waits for a quiet interval before emitting the most recent value.',
+        definition:
+          'An operator that waits for a quiet interval before emitting the most recent value.',
       },
       {
         term: 'flatMap',
-        definition: 'An operator that transforms each upstream value into a new publisher and flattens the resulting streams.',
+        definition:
+          'An operator that transforms each upstream value into a new publisher and flattens the resulting streams.',
       },
       {
         term: 'combineLatest',
-        definition: 'An operator that emits tuples built from the most recent value of each upstream publisher.',
+        definition:
+          'An operator that emits tuples built from the most recent value of each upstream publisher.',
       },
       {
         term: 'eraseToAnyPublisher',
-        definition: 'Type erasure that hides the concrete publisher chain behind a stable AnyPublisher API surface.',
+        definition:
+          'Type erasure that hides the concrete publisher chain behind a stable AnyPublisher API surface.',
       },
       {
         term: 'Completion',
-        definition: 'The terminal event indicating either finished or failed for a publisher stream.',
+        definition:
+          'The terminal event indicating either finished or failed for a publisher stream.',
       },
     ],
   },
@@ -472,19 +481,23 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'PassthroughSubject',
-        definition: 'A subject that forwards values to current subscribers without storing a latest value.',
+        definition:
+          'A subject that forwards values to current subscribers without storing a latest value.',
       },
       {
         term: 'CurrentValueSubject',
-        definition: 'A subject that stores the current value and immediately replays it to new subscribers.',
+        definition:
+          'A subject that stores the current value and immediately replays it to new subscribers.',
       },
       {
         term: 'Scheduler',
-        definition: 'The execution context used by Combine to control where work is performed or delivered.',
+        definition:
+          'The execution context used by Combine to control where work is performed or delivered.',
       },
       {
         term: 'receive(on:)',
-        definition: 'An operator that changes the downstream delivery scheduler for emitted values and completion.',
+        definition:
+          'An operator that changes the downstream delivery scheduler for emitted values and completion.',
       },
       {
         term: 'subscribe(on:)',
@@ -492,7 +505,8 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Hot stream',
-        definition: 'A stream whose activity or value production is not recreated independently for every subscriber.',
+        definition:
+          'A stream whose activity or value production is not recreated independently for every subscriber.',
       },
     ],
   },
@@ -503,230 +517,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const combineHelpStyles = `
-.combine-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.combine-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.combine-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.combine-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.combine-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.combine-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.combine-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.combine-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.combine-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.combine-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.combine-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.combine-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.combine-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.combine-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.combine-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.combine-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.combine-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.combine-help98-section {
-  margin: 0 0 20px;
-}
-
-.combine-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.combine-help98-content p,
-.combine-help98-content li,
-.combine-help98-content dd,
-.combine-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.combine-help98-content p,
-.combine-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.combine-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.combine-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.combine-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.combine-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.combine-help98-glossary {
-  margin: 0;
-}
-
-.combine-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .combine-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .combine-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .combine-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -786,125 +576,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function CombinePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Combine Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="combine-help98-page">
-      <style>{combineHelpStyles}</style>
-      <div className="combine-help98-window" role="presentation">
-        <header className="combine-help98-titlebar">
-          <span className="combine-help98-title">{PAGE_TITLE}</span>
-          <div className="combine-help98-controls">
-            <button className="combine-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="combine-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Combine Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="combine-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`combine-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="combine-help98-main">
-          <aside className="combine-help98-toc" aria-label="Table of contents">
-            <h2 className="combine-help98-toc-title">Contents</h2>
-            <ul className="combine-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="combine-help98-content">
-            <h1 className="combine-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="combine-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

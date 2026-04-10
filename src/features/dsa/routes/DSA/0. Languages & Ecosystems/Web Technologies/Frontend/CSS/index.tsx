@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -27,8 +26,7 @@ const historicalMilestones = [
   },
   {
     title: 'Flexbox and Grid become standard (2013-2017)',
-    detail:
-      'Modern layout systems make responsive design far less dependent on floats and hacks.',
+    detail: 'Modern layout systems make responsive design far less dependent on floats and hacks.',
   },
   {
     title: 'Custom properties and layers (2016+)',
@@ -206,8 +204,7 @@ const unitsAndSizing = [
   },
   {
     title: 'Sizing functions',
-    detail:
-      'min(), max(), and clamp() let you define adaptable ranges without media queries.',
+    detail: 'min(), max(), and clamp() let you define adaptable ranges without media queries.',
   },
   {
     title: 'Character and line units',
@@ -239,13 +236,11 @@ const responsivePatterns = [
   },
   {
     title: 'Responsive media',
-    detail:
-      'Use max-width: 100% and aspect-ratio to keep images and videos fluid.',
+    detail: 'Use max-width: 100% and aspect-ratio to keep images and videos fluid.',
   },
   {
     title: 'Fluid spacing',
-    detail:
-      'Define spacing tokens with clamp so layouts breathe across device sizes.',
+    detail: 'Define spacing tokens with clamp so layouts breathe across device sizes.',
   },
 ]
 
@@ -267,13 +262,11 @@ const accessibilityNotes = [
   },
   {
     title: 'Hit targets',
-    detail:
-      'Ensure interactive elements are large enough to tap comfortably on touch devices.',
+    detail: 'Ensure interactive elements are large enough to tap comfortably on touch devices.',
   },
   {
     title: 'Focus visibility',
-    detail:
-      'Use :focus-visible to show focus when it is useful without distracting mouse users.',
+    detail: 'Use :focus-visible to show focus when it is useful without distracting mouse users.',
   },
 ]
 
@@ -300,8 +293,7 @@ const performanceNotes = [
   },
   {
     title: 'Font loading',
-    detail:
-      'Use font-display and preload to reduce layout shifts and improve first render.',
+    detail: 'Use font-display and preload to reduce layout shifts and improve first render.',
   },
 ]
 
@@ -400,8 +392,7 @@ const examples = [
 .nav { grid-area: nav; }
 .side { grid-area: side; }
 .main { grid-area: main; }`,
-    explanation:
-      'Named areas make complex layouts easier to read and maintain.',
+    explanation: 'Named areas make complex layouts easier to read and maintain.',
   },
   {
     title: 'Motion with reduced-motion support',
@@ -465,8 +456,7 @@ const advancedInsights = [
   },
   {
     title: 'Scoping strategies',
-    detail:
-      'Scope global styles narrowly and use utility or module patterns to prevent leakage.',
+    detail: 'Scope global styles narrowly and use utility or module patterns to prevent leakage.',
   },
 ]
 
@@ -482,92 +472,76 @@ const takeaways = [
 const renderingPipeline = [
   {
     title: 'Style calculation',
-    detail:
-      'The browser resolves CSS rules to computed styles for each element.',
+    detail: 'The browser resolves CSS rules to computed styles for each element.',
   },
   {
     title: 'Layout',
-    detail:
-      'Element geometry is computed from the box model and layout constraints.',
+    detail: 'Element geometry is computed from the box model and layout constraints.',
   },
   {
     title: 'Paint',
-    detail:
-      'Pixels are drawn for backgrounds, borders, text, and shadows.',
+    detail: 'Pixels are drawn for backgrounds, borders, text, and shadows.',
   },
   {
     title: 'Composite',
-    detail:
-      'Layers are combined on the GPU; transforms and opacity can update here.',
+    detail: 'Layers are combined on the GPU; transforms and opacity can update here.',
   },
 ]
 
 const designSystemNotes = [
   {
     title: 'Token scales',
-    detail:
-      'Define color, spacing, and typography scales once and reuse everywhere.',
+    detail: 'Define color, spacing, and typography scales once and reuse everywhere.',
   },
   {
     title: 'Component boundaries',
-    detail:
-      'Scope styles to components to avoid unintended cross-page effects.',
+    detail: 'Scope styles to components to avoid unintended cross-page effects.',
   },
   {
     title: 'States and variants',
-    detail:
-      'Design consistent hover, focus, active, and disabled states across UI.',
+    detail: 'Design consistent hover, focus, active, and disabled states across UI.',
   },
   {
     title: 'Theming',
-    detail:
-      'Use CSS variables to swap themes without rewriting components.',
+    detail: 'Use CSS variables to swap themes without rewriting components.',
   },
 ]
 
 const debuggingWorkflow = [
   {
     title: 'Use DevTools',
-    detail:
-      'Inspect computed styles and see which rules win in the cascade.',
+    detail: 'Inspect computed styles and see which rules win in the cascade.',
   },
   {
     title: 'Outline layout',
-    detail:
-      'Temporary outlines on containers make spacing and flow issues visible.',
+    detail: 'Temporary outlines on containers make spacing and flow issues visible.',
   },
   {
     title: 'Toggle constraints',
-    detail:
-      'Disable or isolate styles to pinpoint which rule causes a bug.',
+    detail: 'Disable or isolate styles to pinpoint which rule causes a bug.',
   },
   {
     title: 'Test responsive states',
-    detail:
-      'Resize and emulate devices to validate breakpoints and container queries.',
+    detail: 'Resize and emulate devices to validate breakpoints and container queries.',
   },
 ]
 
 const productionChecklist = [
   {
     title: 'Consistency',
-    detail:
-      'Use tokens, scales, and shared utilities to keep styling uniform.',
+    detail: 'Use tokens, scales, and shared utilities to keep styling uniform.',
   },
   {
     title: 'Accessibility',
-    detail:
-      'Verify focus states, contrast, and reduced-motion behavior.',
+    detail: 'Verify focus states, contrast, and reduced-motion behavior.',
   },
   {
     title: 'Performance',
-    detail:
-      'Remove unused CSS and avoid heavy effects on scroll or hover.',
+    detail: 'Remove unused CSS and avoid heavy effects on scroll or hover.',
   },
   {
     title: 'Maintainability',
-    detail:
-      'Limit specificity and document global rules to prevent collisions.',
+    detail: 'Limit specificity and document global rules to prevent collisions.',
   },
 ]
 
@@ -591,240 +565,49 @@ const learningPath = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const glossary = [
-  { term: 'Cascade', definition: 'Rule conflict resolution based on origin, importance, specificity, and order.' },
-  { term: 'Specificity', definition: 'Selector weighting system that decides which rule wins among matching selectors.' },
-  { term: 'Box Model', definition: 'Content, padding, border, and margin layers defining element dimensions.' },
-  { term: 'Flexbox', definition: 'One-dimensional layout model for distributing and aligning items in rows or columns.' },
-  { term: 'Grid', definition: 'Two-dimensional layout system with explicit row and column tracks.' },
-  { term: 'Container Query', definition: 'Conditional styling based on a component container size, not viewport size.' },
-  { term: 'Custom Property', definition: 'CSS variable that can cascade and be overridden for theming and tokens.' },
-  { term: 'Rendering Pipeline', definition: 'Browser stages: style, layout, paint, and composite.' },
-  { term: 'Reflow', definition: 'Layout recalculation triggered by geometry-affecting style or DOM changes.' },
-  { term: 'Compositing', definition: 'GPU layer composition stage where transform/opacity animations are efficient.' },
+  {
+    term: 'Cascade',
+    definition: 'Rule conflict resolution based on origin, importance, specificity, and order.',
+  },
+  {
+    term: 'Specificity',
+    definition: 'Selector weighting system that decides which rule wins among matching selectors.',
+  },
+  {
+    term: 'Box Model',
+    definition: 'Content, padding, border, and margin layers defining element dimensions.',
+  },
+  {
+    term: 'Flexbox',
+    definition:
+      'One-dimensional layout model for distributing and aligning items in rows or columns.',
+  },
+  {
+    term: 'Grid',
+    definition: 'Two-dimensional layout system with explicit row and column tracks.',
+  },
+  {
+    term: 'Container Query',
+    definition: 'Conditional styling based on a component container size, not viewport size.',
+  },
+  {
+    term: 'Custom Property',
+    definition: 'CSS variable that can cascade and be overridden for theming and tokens.',
+  },
+  {
+    term: 'Rendering Pipeline',
+    definition: 'Browser stages: style, layout, paint, and composite.',
+  },
+  {
+    term: 'Reflow',
+    definition: 'Layout recalculation triggered by geometry-affecting style or DOM changes.',
+  },
+  {
+    term: 'Compositing',
+    definition: 'GPU layer composition stage where transform/opacity animations are efficient.',
+  },
 ]
-
-const cssHelpStyles = `
-.css98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  margin: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.css98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.css98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 4px;
-  color: #fff;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-}
-
-.css98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.1;
-  pointer-events: none;
-}
-
-.css98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.css98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.css98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.css98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.css98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.css98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-}
-
-.css98-toc {
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  overflow: auto;
-}
-
-.css98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.css98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.css98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.css98-toc-list a {
-  font-size: 12px;
-  color: #000;
-  text-decoration: none;
-}
-
-.css98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.css98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.css98-section {
-  margin: 0 0 22px;
-}
-
-.css98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.css98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.css98-content p,
-.css98-content li,
-.css98-content th,
-.css98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.css98-content p {
-  margin: 0 0 10px;
-}
-
-.css98-content ul,
-.css98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.css98-content table {
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.css98-content th,
-.css98-content td {
-  padding: 2px 8px 2px 0;
-  vertical-align: top;
-}
-
-.css98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.css98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.css98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .css98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .css98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -832,10 +615,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -867,297 +646,234 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function CssPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'CSS',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `CSS (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'CSS',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="css98-help-page">
-      <style>{cssHelpStyles}</style>
-      <div className="css98-window" role="presentation">
-        <header className="css98-titlebar">
-          <span className="css98-title-text">CSS</span>
-          <div className="css98-title-controls">
-            <button className="css98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="css98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="css98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`css98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="css98-main">
-          <aside className="css98-toc" aria-label="Table of contents">
-            <h2 className="css98-toc-title">Contents</h2>
-            <ul className="css98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="CSS"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">CSS</h1>
+      <p>
+        CSS (Cascading Style Sheets) defines how web documents look and behave. It controls
+        typography, spacing, color, layout, responsiveness, and animation. The core challenge is
+        mastering the cascade, choosing the right layout system, and keeping styles predictable as
+        projects grow.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              CSS is a declarative rule engine. You describe what elements should look like, and the
+              browser resolves conflicts using the cascade. A good CSS system is layered and
+              intentional, so changes are easy and side effects are rare.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="css98-content">
-            <h1 className="css98-doc-title">CSS</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">Core Pillars of CSS</h2>
+            {cssPillars.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-cascade" className="bin98-section">
+            <h2 className="bin98-heading">How the Cascade Decides</h2>
+            {cascadeRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              CSS (Cascading Style Sheets) defines how web documents look and behave. It controls typography, spacing, color,
-              layout, responsiveness, and animation. The core challenge is mastering the cascade, choosing the right layout
-              system, and keeping styles predictable as projects grow.
+              The cascade is predictable once you internalize the priority ladder. Prefer layering
+              and specificity control over `!important` whenever possible.
             </p>
+          </section>
+          <section id="core-layout" className="bin98-section">
+            <h2 className="bin98-heading">Layout Systems</h2>
+            {layoutSystems.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-sizing" className="bin98-section">
+            <h2 className="bin98-heading">Units and Sizing</h2>
+            {unitsAndSizing.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-responsive" className="bin98-section">
+            <h2 className="bin98-heading">Responsive Design Patterns</h2>
+            {responsivePatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-accessibility" className="bin98-section">
+            <h2 className="bin98-heading">Accessibility Considerations</h2>
+            {accessibilityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance and Rendering</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pipeline" className="bin98-section">
+            <h2 className="bin98-heading">Rendering Pipeline</h2>
+            {renderingPipeline.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-tooling" className="bin98-section">
+            <h2 className="bin98-heading">Tooling and Workflows</h2>
+            {toolingStack.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-design-system" className="bin98-section">
+            <h2 className="bin98-heading">Design System Practices</h2>
+            {designSystemNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Workflow</h2>
+            {debuggingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-production" className="bin98-section">
+            <h2 className="bin98-heading">Production Checklist</h2>
+            {productionChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use What</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-learning" className="bin98-section">
+            <h2 className="bin98-heading">Learning Path</h2>
+            {learningPath.map((item) => (
+              <p key={item.step}>
+                <strong>{item.step}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="css98-section">
-                  <h2 className="css98-heading">Overview</h2>
-                  <p>
-                    CSS is a declarative rule engine. You describe what elements should look like, and the browser resolves
-                    conflicts using the cascade. A good CSS system is layered and intentional, so changes are easy and side
-                    effects are rare.
-                  </p>
-                </section>
-                <hr className="css98-divider" />
-                <section id="bp-history" className="css98-section">
-                  <h2 className="css98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="css98-section">
-                  <h2 className="css98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="css98-section">
-                  <h2 className="css98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pillars" className="css98-section">
-                  <h2 className="css98-heading">Core Pillars of CSS</h2>
-                  {cssPillars.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="css98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-cascade" className="css98-section">
-                  <h2 className="css98-heading">How the Cascade Decides</h2>
-                  {cascadeRules.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The cascade is predictable once you internalize the priority ladder. Prefer layering and specificity control
-                    over `!important` whenever possible.
-                  </p>
-                </section>
-                <section id="core-layout" className="css98-section">
-                  <h2 className="css98-heading">Layout Systems</h2>
-                  {layoutSystems.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-sizing" className="css98-section">
-                  <h2 className="css98-heading">Units and Sizing</h2>
-                  {unitsAndSizing.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-responsive" className="css98-section">
-                  <h2 className="css98-heading">Responsive Design Patterns</h2>
-                  {responsivePatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-accessibility" className="css98-section">
-                  <h2 className="css98-heading">Accessibility Considerations</h2>
-                  {accessibilityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="css98-section">
-                  <h2 className="css98-heading">Performance and Rendering</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pipeline" className="css98-section">
-                  <h2 className="css98-heading">Rendering Pipeline</h2>
-                  {renderingPipeline.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-tooling" className="css98-section">
-                  <h2 className="css98-heading">Tooling and Workflows</h2>
-                  {toolingStack.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-design-system" className="css98-section">
-                  <h2 className="css98-heading">Design System Practices</h2>
-                  {designSystemNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-debugging" className="css98-section">
-                  <h2 className="css98-heading">Debugging Workflow</h2>
-                  {debuggingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="css98-section">
-                  <h2 className="css98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-production" className="css98-section">
-                  <h2 className="css98-heading">Production Checklist</h2>
-                  {productionChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-when" className="css98-section">
-                  <h2 className="css98-heading">When to Use What</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="css98-section">
-                  <h2 className="css98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-learning" className="css98-section">
-                  <h2 className="css98-heading">Learning Path</h2>
-                  {learningPath.map((item) => (
-                    <p key={item.step}>
-                      <strong>{item.step}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="css98-section">
-                <h2 className="css98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="css98-subheading">{example.title}</h3>
-                    <div className="css98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="css98-section">
-                <h2 className="css98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

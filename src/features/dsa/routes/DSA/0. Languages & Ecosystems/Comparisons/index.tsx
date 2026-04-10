@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 import { slugifySegment } from '@/features/dsa/utils/slug'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const COMPARISONS_BASE_ROUTE = '/dsa/0-languages-and-ecosystems/comparisons'
 
 const overviewSections = [
@@ -470,553 +470,212 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'cmp98-glossary', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 function toComparisonRoute(name: string): string {
   return `${COMPARISONS_BASE_ROUTE}/${slugifySegment(name)}`
 }
 
-const comparisonsHelpStyles = `
-.cmp98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cmp98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cmp98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cmp98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.cmp98-title-controls {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.cmp98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.cmp98-control:focus-visible,
-.cmp98-tab:focus-visible,
-.cmp98-toc-link:focus-visible,
-.cmp98-inline-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
-.cmp98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.cmp98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b7b7b7;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.cmp98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.cmp98-main {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.cmp98-toc {
-  overflow: auto;
-  padding: 12px 12px 18px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.cmp98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cmp98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.cmp98-toc-item + .cmp98-toc-item {
-  margin-top: 8px;
-}
-
-.cmp98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.cmp98-content {
-  overflow: auto;
-  padding: 16px 22px 24px;
-  background: #ffffff;
-}
-
-.cmp98-doc-title {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.cmp98-intro {
-  margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cmp98-section {
-  margin: 0 0 22px;
-}
-
-.cmp98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cmp98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cmp98-divider {
-  margin: 14px 0 16px;
-  border: 0;
-  border-top: 1px solid #d4d4d4;
-}
-
-.cmp98-content p,
-.cmp98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cmp98-content p {
-  margin: 0 0 10px;
-}
-
-.cmp98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.cmp98-content li + li {
-  margin-top: 4px;
-}
-
-.cmp98-inline-link {
-  color: #000080;
-  text-decoration: underline;
-}
-
-.cmp98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px 9px;
-  background: #f3f3f3;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.cmp98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .cmp98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cmp98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .cmp98-title {
-    font-size: 13px;
-    max-width: calc(100% - 72px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .cmp98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
 export default function ComparisonsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const requestedTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(location.search)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Comparisons (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, location.search, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    if (tab === activeTab) {
-      return
-    }
-
-    const nextParams = new URLSearchParams(location.search)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Comparisons',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Comparisons',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cmp98-help-page">
-      <style>{comparisonsHelpStyles}</style>
-      <div className="cmp98-window" role="presentation">
-        <header className="cmp98-titlebar">
-          <span className="cmp98-title">Comparisons</span>
-          <div className="cmp98-title-controls">
-            <button
-              className="cmp98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="cmp98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Comparisons"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Comparisons</h1>
+      <p className="cmp98-intro">
+        This page is the overview for the Comparisons subsection inside Languages &amp; Ecosystems.
+        It explains how to evaluate competing tools, platforms, frameworks, languages, and
+        architectural choices without collapsing into hype-driven rankings or context-free advice.
+      </p>
 
-        <div className="cmp98-tabs" role="tablist" aria-label="Comparisons Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`cmp98-tab ${activeTab === tab.id ? 'cmp98-tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="cmp98-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                <p>{section.body}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="cmp98-main">
-          <aside className="cmp98-toc" aria-label="Table of contents">
-            <h2 className="cmp98-toc-title">Contents</h2>
-            <ul className="cmp98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="cmp98-toc-item">
-                  <a href={`#${section.id}`} className="cmp98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="cmp98-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <ul>
+              {whyItMatters.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="cmp98-content">
-            <h1 className="cmp98-doc-title">Comparisons</h1>
-            <p className="cmp98-intro">
-              This page is the overview for the Comparisons subsection inside Languages &amp;
-              Ecosystems. It explains how to evaluate competing tools, platforms, frameworks,
-              languages, and architectural choices without collapsing into hype-driven rankings or
-              context-free advice.
+          <hr className="bin98-divider" />
+
+          <section id="cmp98-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="cmp98-directory" className="bin98-section">
+            <h2 className="bin98-heading">Comparison Directory</h2>
+            <p>
+              The pages below are the concrete comparison entries in this subsection. Read them as
+              decision frameworks, not as permanent rankings. Each one becomes useful only when
+              matched to a real workload and team.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="cmp98-overview" className="cmp98-section">
-                  <h2 className="cmp98-heading">Overview</h2>
-                  {overviewSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="cmp98-subheading">{section.title}</h3>
-                      <p>{section.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="cmp98-divider" />
-
-                <section id="cmp98-why" className="cmp98-section">
-                  <h2 className="cmp98-heading">Why It Matters</h2>
-                  <ul>
-                    {whyItMatters.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="cmp98-divider" />
-
-                <section id="cmp98-history" className="cmp98-section">
-                  <h2 className="cmp98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="cmp98-divider" />
-
-                <section id="cmp98-directory" className="cmp98-section">
-                  <h2 className="cmp98-heading">Comparison Directory</h2>
-                  <p>
-                    The pages below are the concrete comparison entries in this subsection. Read
-                    them as decision frameworks, not as permanent rankings. Each one becomes useful
-                    only when matched to a real workload and team.
-                  </p>
-                  {comparisonDirectory.map((group) => (
-                    <div key={group.heading}>
-                      <h3 className="cmp98-subheading">{group.heading}</h3>
-                      {group.items.map((item) => (
-                        <p key={item}>
-                          <Link to={toComparisonRoute(item)} className="cmp98-inline-link">
-                            {item}
-                          </Link>
-                        </p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="cmp98-divider" />
-
-                <section id="cmp98-themes" className="cmp98-section">
-                  <h2 className="cmp98-heading">Comparison Themes</h2>
-                  {comparisonThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="cmp98-divider" />
-
-                <section id="cmp98-takeaways" className="cmp98-section">
-                  <h2 className="cmp98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="cmp98-signals" className="cmp98-section">
-                  <h2 className="cmp98-heading">Topic Signals</h2>
-                  {topicSignals.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="cmp98-criteria" className="cmp98-section">
-                  <h2 className="cmp98-heading">Evaluation Criteria</h2>
-                  {evaluationCriteria.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="cmp98-patterns" className="cmp98-section">
-                  <h2 className="cmp98-heading">Comparison Patterns</h2>
-                  {comparisonPatterns.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="cmp98-proofs" className="cmp98-section">
-                  <h2 className="cmp98-heading">Decision Obligations</h2>
-                  {proofObligations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="cmp98-failures" className="cmp98-section">
-                  <h2 className="cmp98-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cmp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="cmp98-checklist" className="cmp98-section">
-                  <h2 className="cmp98-heading">Study Checklist</h2>
-                  <ul>
-                    {studyChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="cmp98-section">
-                    <h2 className="cmp98-heading">{example.title}</h2>
-                    <p>
-                      <strong>Area:</strong> {example.area}
-                    </p>
-                    <p>{example.intro}</p>
-                    <p>
-                      <strong>Why this example fits:</strong> {example.whyFit}
-                    </p>
-                    <div className="cmp98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="cmp98-glossary" className="cmp98-section">
-                <h2 className="cmp98-heading">Glossary</h2>
-                {glossary.map((entry) => (
-                  <p key={entry.term}>
-                    <strong>{entry.term}:</strong> {entry.definition}
+            {comparisonDirectory.map((group) => (
+              <div key={group.heading}>
+                <h3 className="bin98-subheading">{group.heading}</h3>
+                {group.items.map((item) => (
+                  <p key={item}>
+                    <Link to={toComparisonRoute(item)} className="cmp98-inline-link">
+                      {item}
+                    </Link>
                   </p>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="cmp98-themes" className="bin98-section">
+            <h2 className="bin98-heading">Comparison Themes</h2>
+            {comparisonThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="cmp98-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="cmp98-signals" className="bin98-section">
+            <h2 className="bin98-heading">Topic Signals</h2>
+            {topicSignals.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="cmp98-criteria" className="bin98-section">
+            <h2 className="bin98-heading">Evaluation Criteria</h2>
+            {evaluationCriteria.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="cmp98-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Comparison Patterns</h2>
+            {comparisonPatterns.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="cmp98-proofs" className="bin98-section">
+            <h2 className="bin98-heading">Decision Obligations</h2>
+            {proofObligations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="cmp98-failures" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="cmp98-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Study Checklist</h2>
+            <ul>
+              {studyChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>
+                <strong>Area:</strong> {example.area}
+              </p>
+              <p>{example.intro}</p>
+              <p>
+                <strong>Why this example fits:</strong> {example.whyFit}
+              </p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="cmp98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((entry) => (
+            <p key={entry.term}>
+              <strong>{entry.term}:</strong> {entry.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

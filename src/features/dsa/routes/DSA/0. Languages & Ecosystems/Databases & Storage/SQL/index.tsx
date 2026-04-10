@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -99,8 +99,7 @@ const coreBuildingBlocks = [
 const queryPatterns = [
   {
     title: 'Point lookups',
-    detail:
-      'Use primary keys or unique indexes for O(log n) access with minimal IO.',
+    detail: 'Use primary keys or unique indexes for O(log n) access with minimal IO.',
   },
   {
     title: 'Range scans',
@@ -109,8 +108,7 @@ const queryPatterns = [
   },
   {
     title: 'Joins on selective keys',
-    detail:
-      'Filter early with WHERE clauses and selective join keys to reduce row explosion.',
+    detail: 'Filter early with WHERE clauses and selective join keys to reduce row explosion.',
   },
   {
     title: 'Aggregation workloads',
@@ -119,97 +117,80 @@ const queryPatterns = [
   },
   {
     title: 'Pagination',
-    detail:
-      'Keyset pagination avoids OFFSET scan costs; use WHERE (id, created_at) > last_seen.',
+    detail: 'Keyset pagination avoids OFFSET scan costs; use WHERE (id, created_at) > last_seen.',
   },
   {
     title: 'Analytical scans',
-    detail:
-      'Columnar or partitioned tables improve large scans and reduce IO.',
+    detail: 'Columnar or partitioned tables improve large scans and reduce IO.',
   },
 ]
 
 const indexingStrategies = [
   {
     title: 'Single-column indexes',
-    detail:
-      'Best for simple filters; keep them on high-selectivity columns.',
+    detail: 'Best for simple filters; keep them on high-selectivity columns.',
   },
   {
     title: 'Composite indexes',
-    detail:
-      'Order matters: index (a, b) supports filters on a and ranges on b.',
+    detail: 'Order matters: index (a, b) supports filters on a and ranges on b.',
   },
   {
     title: 'Covering indexes',
-    detail:
-      'Include all columns needed by the query to avoid table lookups.',
+    detail: 'Include all columns needed by the query to avoid table lookups.',
   },
   {
     title: 'Partial indexes',
-    detail:
-      'Index a subset of rows to reduce size and improve selectivity.',
+    detail: 'Index a subset of rows to reduce size and improve selectivity.',
   },
   {
     title: 'Functional indexes',
-    detail:
-      'Index expressions (lower(email), date(created_at)) to accelerate derived filters.',
+    detail: 'Index expressions (lower(email), date(created_at)) to accelerate derived filters.',
   },
   {
     title: 'Index maintenance cost',
-    detail:
-      'Every index adds write overhead; measure before adding more.',
+    detail: 'Every index adds write overhead; measure before adding more.',
   },
 ]
 
 const executionPlans = [
   {
     title: 'Sequential scan',
-    detail:
-      'Reads all rows; acceptable for small tables or very low selectivity.',
+    detail: 'Reads all rows; acceptable for small tables or very low selectivity.',
   },
   {
     title: 'Index scan',
-    detail:
-      'Uses B-tree to find matching rows quickly, then fetches table pages.',
+    detail: 'Uses B-tree to find matching rows quickly, then fetches table pages.',
   },
   {
     title: 'Index-only scan',
-    detail:
-      'Serves query entirely from index when all columns are covered.',
+    detail: 'Serves query entirely from index when all columns are covered.',
   },
   {
     title: 'Hash join',
-    detail:
-      'Builds a hash table of one input, then probes it; good for large joins.',
+    detail: 'Builds a hash table of one input, then probes it; good for large joins.',
   },
   {
     title: 'Merge join',
-    detail:
-      'Requires sorted inputs; efficient for range joins and large datasets.',
+    detail: 'Requires sorted inputs; efficient for range joins and large datasets.',
   },
   {
     title: 'Nested loop join',
-    detail:
-      'Good for small inputs or highly selective lookups; can be slow otherwise.',
+    detail: 'Good for small inputs or highly selective lookups; can be slow otherwise.',
   },
 ]
 
 const transactionPatterns = [
   {
     title: 'Optimistic concurrency',
-    detail:
-      'Use version columns and compare-and-swap updates to avoid lost updates.',
+    detail: 'Use version columns and compare-and-swap updates to avoid lost updates.',
   },
   {
     title: 'Pessimistic locking',
-    detail:
-      'SELECT ... FOR UPDATE prevents concurrent changes but can reduce throughput.',
+    detail: 'SELECT ... FOR UPDATE prevents concurrent changes but can reduce throughput.',
   },
   {
     title: 'Idempotent writes',
-    detail:
-      'Design operations so retries do not duplicate effects (e.g., unique constraints).',
+    detail: 'Design operations so retries do not duplicate effects (e.g., unique constraints).',
   },
   {
     title: 'Saga workflows',
@@ -221,33 +202,27 @@ const transactionPatterns = [
 const operationalNotes = [
   {
     title: 'Backups and recovery',
-    detail:
-      'Use point-in-time recovery with WAL or binlog to restore to exact moments.',
+    detail: 'Use point-in-time recovery with WAL or binlog to restore to exact moments.',
   },
   {
     title: 'Replication',
-    detail:
-      'Read replicas scale reads; async replication can lag, affecting read consistency.',
+    detail: 'Read replicas scale reads; async replication can lag, affecting read consistency.',
   },
   {
     title: 'Partitioning',
-    detail:
-      'Range or hash partitioning splits large tables for maintenance and performance.',
+    detail: 'Range or hash partitioning splits large tables for maintenance and performance.',
   },
   {
     title: 'Vacuum and bloat',
-    detail:
-      'MVCC systems require vacuuming; bloat hurts performance if ignored.',
+    detail: 'MVCC systems require vacuuming; bloat hurts performance if ignored.',
   },
   {
     title: 'Connection pooling',
-    detail:
-      'Pools reduce connection overhead and protect databases from bursts.',
+    detail: 'Pools reduce connection overhead and protect databases from bursts.',
   },
   {
     title: 'Monitoring',
-    detail:
-      'Track slow queries, lock contention, and buffer cache hit rates.',
+    detail: 'Track slow queries, lock contention, and buffer cache hit rates.',
   },
 ]
 
@@ -342,23 +317,19 @@ const isolationMatrix = [
 const normalizationNotes = [
   {
     title: '1NF: atomic values',
-    detail:
-      'Each column holds a single value. No repeating groups or lists inside cells.',
+    detail: 'Each column holds a single value. No repeating groups or lists inside cells.',
   },
   {
     title: '2NF: eliminate partial dependency',
-    detail:
-      'Non-key columns depend on the whole primary key, not just part of it.',
+    detail: 'Non-key columns depend on the whole primary key, not just part of it.',
   },
   {
     title: '3NF: eliminate transitive dependency',
-    detail:
-      'Non-key columns depend only on the key, not on other non-key columns.',
+    detail: 'Non-key columns depend only on the key, not on other non-key columns.',
   },
   {
     title: 'Denormalization for speed',
-    detail:
-      'Duplicate data to reduce joins when read latency matters more than update cost.',
+    detail: 'Duplicate data to reduce joins when read latency matters more than update cost.',
   },
 ]
 
@@ -375,8 +346,7 @@ const realWorldUses = [
   },
   {
     context: 'Inventory and ordering',
-    detail:
-      'Constraints and transactions prevent overselling and preserve accurate counts.',
+    detail: 'Constraints and transactions prevent overselling and preserve accurate counts.',
   },
   {
     context: 'SaaS platforms',
@@ -483,7 +453,8 @@ const takeaways = [
 const glossaryTerms = [
   {
     term: 'ACID',
-    definition: 'Atomicity, Consistency, Isolation, Durability: the core transactional guarantees of SQL databases.',
+    definition:
+      'Atomicity, Consistency, Isolation, Durability: the core transactional guarantees of SQL databases.',
   },
   {
     term: 'Primary key',
@@ -495,7 +466,8 @@ const glossaryTerms = [
   },
   {
     term: 'Index',
-    definition: 'An auxiliary data structure that speeds queries at the cost of extra storage and write overhead.',
+    definition:
+      'An auxiliary data structure that speeds queries at the cost of extra storage and write overhead.',
   },
   {
     term: 'Execution plan',
@@ -507,238 +479,17 @@ const glossaryTerms = [
   },
   {
     term: 'Normalization',
-    definition: 'Schema design technique that reduces duplication by organizing data into related tables.',
+    definition:
+      'Schema design technique that reduces duplication by organizing data into related tables.',
   },
   {
     term: 'Materialized view',
-    definition: 'A precomputed query stored for fast reads, refreshed periodically or incrementally.',
+    definition:
+      'A precomputed query stored for fast reads, refreshed periodically or incrementally.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.win98-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin: 6px 0 12px;
-}
-
-.win98-table th,
-.win98-table td {
-  border: 1px solid #c0c0c0;
-  padding: 4px 6px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.win98-table th {
-  background: #e6e6e6;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -746,10 +497,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -775,326 +522,263 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
     { id: 'core-decisions', label: 'When to Use It' },
     { id: 'core-advanced', label: 'Advanced Insights' },
   ],
-  examples: [
-    { id: 'ex-practical', label: 'Practical Examples' },
-  ],
+  examples: [{ id: 'ex-practical', label: 'Practical Examples' }],
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
+
 export default function SqlDatabasePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'SQL',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `SQL (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'SQL',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">SQL</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="SQL"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">SQL</h1>
+      <p>
+        SQL is the language of relational databases. It lets you describe what data you want instead
+        of how to retrieve it, while the database optimizer figures out the fastest execution plan.
+        This page covers the relational model, ACID guarantees, and the design patterns that make
+        SQL reliable at scale.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              SQL systems organize data into related tables with enforced constraints. They excel at
+              complex joins, transactional updates, and consistent reporting. The tradeoff is more
+              rigid schemas and more deliberate data modeling compared to NoSQL alternatives.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">SQL</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-blocks" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Core Building Blocks</h2>
+            {coreBuildingBlocks.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-query" className="bin98-section">
+            <h2 className="bin98-heading">Query Patterns and Access Design</h2>
+            {queryPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-indexing" className="bin98-section">
+            <h2 className="bin98-heading">Indexing Strategies</h2>
+            {indexingStrategies.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-lifecycle" className="bin98-section">
+            <h2 className="bin98-heading">Query Lifecycle</h2>
+            {queryLifecycle.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-plans" className="bin98-section">
+            <h2 className="bin98-heading">Execution Plan Building Blocks</h2>
+            {executionPlans.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-isolation" className="bin98-section">
+            <h2 className="bin98-heading">Isolation Levels</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Behavior</th>
+                  <th>Best fit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isolationMatrix.map((row) => (
+                  <tr key={row.level}>
+                    <td>{row.level}</td>
+                    <td>{row.behavior}</td>
+                    <td>{row.useCase}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
             <p>
-              SQL is the language of relational databases. It lets you describe what data you want instead of how to retrieve it,
-              while the database optimizer figures out the fastest execution plan. This page covers the relational model, ACID
-              guarantees, and the design patterns that make SQL reliable at scale.
+              Higher isolation means fewer concurrency anomalies but more locking or versioning
+              overhead. Pick the lowest level that still preserves correctness for your business
+              rules.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    SQL systems organize data into related tables with enforced constraints. They excel at complex joins,
-                    transactional updates, and consistent reporting. The tradeoff is more rigid schemas and more deliberate data
-                    modeling compared to NoSQL alternatives.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-models" className="win98-section">
-                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-blocks" className="win98-section">
-                  <h2 className="win98-heading">How It Works: Core Building Blocks</h2>
-                  {coreBuildingBlocks.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-query" className="win98-section">
-                  <h2 className="win98-heading">Query Patterns and Access Design</h2>
-                  {queryPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-indexing" className="win98-section">
-                  <h2 className="win98-heading">Indexing Strategies</h2>
-                  {indexingStrategies.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-lifecycle" className="win98-section">
-                  <h2 className="win98-heading">Query Lifecycle</h2>
-                  {queryLifecycle.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-plans" className="win98-section">
-                  <h2 className="win98-heading">Execution Plan Building Blocks</h2>
-                  {executionPlans.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-isolation" className="win98-section">
-                  <h2 className="win98-heading">Isolation Levels</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Level</th>
-                        <th>Behavior</th>
-                        <th>Best fit</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {isolationMatrix.map((row) => (
-                        <tr key={row.level}>
-                          <td>{row.level}</td>
-                          <td>{row.behavior}</td>
-                          <td>{row.useCase}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <p>
-                    Higher isolation means fewer concurrency anomalies but more locking or versioning overhead. Pick the lowest
-                    level that still preserves correctness for your business rules.
-                  </p>
-                </section>
-                <section id="core-transactions" className="win98-section">
-                  <h2 className="win98-heading">Transaction Patterns</h2>
-                  {transactionPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-normalization" className="win98-section">
-                  <h2 className="win98-heading">Normalization and Schema Design</h2>
-                  {normalizationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-operations" className="win98-section">
-                  <h2 className="win98-heading">Operations Checklist</h2>
-                  {operationalNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">SQL vs NoSQL Comparison</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Dimension</th>
-                        <th>SQL</th>
-                        <th>NoSQL</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sqlVsNosql.map((row) => (
-                        <tr key={row.dimension}>
-                          <td>{row.dimension}</td>
-                          <td>{row.sql}</td>
-                          <td>{row.nosql}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-antipatterns" className="win98-section">
-                  <h2 className="win98-heading">Anti-Patterns to Avoid</h2>
-                  <ul>
-                    {antiPatterns.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decisions" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="win98-section">
-                <h2 className="win98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="win98-subheading">{example.title}</h3>
-                    <div className="win98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
+          </section>
+          <section id="core-transactions" className="bin98-section">
+            <h2 className="bin98-heading">Transaction Patterns</h2>
+            {transactionPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-normalization" className="bin98-section">
+            <h2 className="bin98-heading">Normalization and Schema Design</h2>
+            {normalizationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-operations" className="bin98-section">
+            <h2 className="bin98-heading">Operations Checklist</h2>
+            {operationalNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">SQL vs NoSQL Comparison</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>SQL</th>
+                  <th>NoSQL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sqlVsNosql.map((row) => (
+                  <tr key={row.dimension}>
+                    <td>{row.dimension}</td>
+                    <td>{row.sql}</td>
+                    <td>{row.nosql}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-antipatterns" className="bin98-section">
+            <h2 className="bin98-heading">Anti-Patterns to Avoid</h2>
+            <ul>
+              {antiPatterns.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <div key={item.term}>
-                    <h3 className="win98-subheading">{item.term}</h3>
-                    <p>{item.definition}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <div key={item.term}>
+              <h3 className="bin98-subheading">{item.term}</h3>
+              <p>{item.definition}</p>
+            </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

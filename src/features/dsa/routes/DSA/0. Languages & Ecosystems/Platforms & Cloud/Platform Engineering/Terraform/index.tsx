@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -8,8 +8,6 @@ type SectionNote = { title: string; details: string; notes: string }
 type NarrativeSection = { id: string; title: string; paragraphs: string[] }
 type ExampleSection = { id: string; title: string; code: string; explanation: string }
 type GlossaryTerm = { term: string; definition: string }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
   'Terraform is infrastructure as code built around a declarative configuration language, providers, modules, plans, and state. It lets teams describe desired infrastructure, compare that description with the last known deployed world, and apply a controlled change plan to reach the target result.',
@@ -62,7 +60,7 @@ const coreSections: NarrativeSection[] = [
     title: 'Resource model, providers, and dependency graph',
     paragraphs: [
       'Terraform resources represent desired infrastructure objects managed by providers. Providers define the schemas, operations, and authentication paths for clouds, SaaS systems, and other infrastructure domains.',
-      'Dependencies are inferred from references between resources, and the execution plan is built from that graph. This is one of Terraform\'s main strengths: teams can describe desired relationships declaratively and let Terraform work out safe ordering for create, update, and destroy operations.',
+      "Dependencies are inferred from references between resources, and the execution plan is built from that graph. This is one of Terraform's main strengths: teams can describe desired relationships declaratively and let Terraform work out safe ordering for create, update, and destroy operations.",
       'That said, the graph is only as understandable as the configuration. Hidden dependencies, overuse of dynamic patterns, or unclear resource ownership can make a plan difficult to reason about even when Terraform can technically execute it.',
     ],
   },
@@ -79,7 +77,7 @@ const coreSections: NarrativeSection[] = [
     id: 'core-modules',
     title: 'Modules as platform abstractions',
     paragraphs: [
-      'Modules are Terraform\'s main abstraction mechanism. They allow a platform team to package repeated infrastructure patterns such as service networks, cluster foundations, IAM bundles, or database setups behind a stable interface.',
+      "Modules are Terraform's main abstraction mechanism. They allow a platform team to package repeated infrastructure patterns such as service networks, cluster foundations, IAM bundles, or database setups behind a stable interface.",
       'A good module does not simply wrap resources. It encodes defaults, naming conventions, policy assumptions, and supported configuration choices in a way that makes consumer behavior safer and more consistent.',
       'A weak module becomes a thin wrapper with dozens of variables mirroring every underlying provider field. That creates indirection without real platform value. The hard part is choosing which knobs belong in the public interface and which should remain internal implementation details.',
     ],
@@ -97,7 +95,7 @@ const coreSections: NarrativeSection[] = [
     id: 'core-workflow',
     title: 'Plan, apply, import, and lifecycle workflow',
     paragraphs: [
-      'Terraform\'s workflow revolves around plan and apply. Plan is the reviewable contract that shows intended infrastructure changes before mutation. Apply executes that plan. Import brings pre-existing resources into Terraform management, while lifecycle rules influence how changes and replacements are handled.',
+      "Terraform's workflow revolves around plan and apply. Plan is the reviewable contract that shows intended infrastructure changes before mutation. Apply executes that plan. Import brings pre-existing resources into Terraform management, while lifecycle rules influence how changes and replacements are handled.",
       'This is operationally powerful because infrastructure changes can be discussed before they happen. The plan is one of the clearest interfaces between human review and infrastructure automation.',
       'The tradeoff is that the workflow requires discipline. If teams apply unreviewed plans, mix ad hoc local state with shared environments, or import resources carelessly, Terraform quickly becomes risky even though the tool itself is designed for controlled changes.',
     ],
@@ -205,16 +203,54 @@ terraform apply tfplan`,
 ]
 
 const glossary: GlossaryTerm[] = [
-  { term: 'Terraform', definition: 'An infrastructure as code tool that uses declarative configuration, providers, and state to manage infrastructure through plan-and-apply workflows.' },
-  { term: 'Provider', definition: 'A plugin that defines how Terraform manages resources for a cloud, platform, or service.' },
-  { term: 'State', definition: 'Terraform’s recorded model of managed infrastructure used to calculate diffs and drive updates.' },
-  { term: 'Backend', definition: 'The storage and coordination mechanism used for Terraform state, often including locking support.' },
-  { term: 'Module', definition: 'A reusable Terraform package that groups resources and exposes inputs and outputs through a stable interface.' },
-  { term: 'Plan', definition: 'A preview of the actions Terraform intends to take before infrastructure is modified.' },
-  { term: 'Apply', definition: 'The step that executes a Terraform plan against real infrastructure.' },
-  { term: 'Refresh', definition: 'The process of reconciling recorded state with the current real infrastructure state.' },
-  { term: 'Data source', definition: 'A Terraform object used to read existing infrastructure data without directly creating that resource.' },
-  { term: 'Import', definition: 'The process of bringing an existing resource under Terraform state management.' },
+  {
+    term: 'Terraform',
+    definition:
+      'An infrastructure as code tool that uses declarative configuration, providers, and state to manage infrastructure through plan-and-apply workflows.',
+  },
+  {
+    term: 'Provider',
+    definition:
+      'A plugin that defines how Terraform manages resources for a cloud, platform, or service.',
+  },
+  {
+    term: 'State',
+    definition:
+      'Terraform’s recorded model of managed infrastructure used to calculate diffs and drive updates.',
+  },
+  {
+    term: 'Backend',
+    definition:
+      'The storage and coordination mechanism used for Terraform state, often including locking support.',
+  },
+  {
+    term: 'Module',
+    definition:
+      'A reusable Terraform package that groups resources and exposes inputs and outputs through a stable interface.',
+  },
+  {
+    term: 'Plan',
+    definition:
+      'A preview of the actions Terraform intends to take before infrastructure is modified.',
+  },
+  {
+    term: 'Apply',
+    definition: 'The step that executes a Terraform plan against real infrastructure.',
+  },
+  {
+    term: 'Refresh',
+    definition:
+      'The process of reconciling recorded state with the current real infrastructure state.',
+  },
+  {
+    term: 'Data source',
+    definition:
+      'A Terraform object used to read existing infrastructure data without directly creating that resource.',
+  },
+  {
+    term: 'Import',
+    definition: 'The process of bringing an existing resource under Terraform state management.',
+  },
 ]
 
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -244,158 +280,107 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const pageStyles = `
-.terraform-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.terraform-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box}
-.terraform-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.terraform-title-text{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px}
-.terraform-title-controls{display:flex;gap:2px;margin-left:auto}
-.terraform-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer;padding:0}
-.terraform-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0}
-.terraform-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer}
-.terraform-tab.active{position:relative;top:1px;background:#fff}
-.terraform-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff}
-.terraform-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080}
-.terraform-toc-title{margin:0 0 10px;font-size:12px;font-weight:700}
-.terraform-toc-list{margin:0;padding:0;list-style:none}
-.terraform-toc-list li{margin:0 0 8px}
-.terraform-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.terraform-toc-list a:hover{text-decoration:underline}
-.terraform-content{overflow:auto;padding:14px 20px 20px}
-.terraform-doc-title{margin:0 0 12px;font-size:20px;font-weight:700}
-.terraform-section{margin:0 0 20px}
-.terraform-heading{margin:0 0 8px;font-size:16px;font-weight:700}
-.terraform-subheading{margin:0 0 6px;font-size:13px;font-weight:700}
-.terraform-content p,.terraform-content li{font-size:12px;line-height:1.5}
-.terraform-content p{margin:0 0 10px}
-.terraform-content ul{margin:0 0 10px 20px;padding:0}
-.terraform-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.terraform-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff}
-.terraform-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px}
-@media (max-width:900px){.terraform-main{grid-template-columns:1fr}.terraform-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function TerraformPlatformEngineeringPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Terraform',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Terraform (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Terraform',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="terraform-help-page">
-      <style>{pageStyles}</style>
-      <div className="terraform-window" role="presentation">
-        <header className="terraform-titlebar">
-          <span className="terraform-title-text">Terraform</span>
-          <div className="terraform-title-controls">
-            <button className="terraform-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="terraform-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="terraform-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button key={tab.id} type="button" className={`terraform-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)} role="tab" aria-selected={activeTab === tab.id}>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="terraform-main">
-          <aside className="terraform-toc" aria-label="Table of contents">
-            <h2 className="terraform-toc-title">Contents</h2>
-            <ul className="terraform-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}><a href={`#${section.id}`}>{section.label}</a></li>
+    <TopicPageShell
+      title="Terraform"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Terraform</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <p>
+              Platform engineering needs infrastructure changes that are reviewable, repeatable, and
+              understandable across teams. Terraform matters because it gives organizations a common
+              plan-and-apply model for infrastructure changes instead of relying on ad hoc scripts
+              or manual cloud-console workflows.
+            </p>
+            <p>
+              It also provides a common abstraction and governance layer. A platform team can
+              publish modules, define state boundaries, standardize workflows, and make
+              infrastructure change control more consistent across environments and services.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="terraform-content">
-            <h1 className="terraform-doc-title">Terraform</h1>
-            {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {activeTab === 'big-picture' && <>
-              <section id="bp-overview" className="terraform-section">
-                <h2 className="terraform-heading">Overview</h2>
-                {bigPicture.map((item) => <div key={item.title}><h3 className="terraform-subheading">{item.title}</h3><p>{item.details}</p><p>{item.notes}</p></div>)}
-              </section>
-              <hr className="terraform-divider" />
-              <section id="bp-why" className="terraform-section">
-                <h2 className="terraform-heading">Why It Matters</h2>
-                <p>Platform engineering needs infrastructure changes that are reviewable, repeatable, and understandable across teams. Terraform matters because it gives organizations a common plan-and-apply model for infrastructure changes instead of relying on ad hoc scripts or manual cloud-console workflows.</p>
-                <p>It also provides a common abstraction and governance layer. A platform team can publish modules, define state boundaries, standardize workflows, and make infrastructure change control more consistent across environments and services.</p>
-              </section>
-              <hr className="terraform-divider" />
-              <section id="bp-takeaways" className="terraform-section">
-                <h2 className="terraform-heading">Key Takeaways</h2>
-                <ul>{keyTakeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'core-concepts' && <>
-              {coreSections.map((section) => (
-                <section key={section.id} id={section.id} className="terraform-section">
-                  <h2 className="terraform-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => <p key={`${section.id}-${paragraph}`}>{paragraph}</p>)}
-                </section>
+          </section>
+        </>
+      )}
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
               ))}
-              <section id="core-checklist" className="terraform-section">
-                <h2 className="terraform-heading">Design Checklist</h2>
-                <ul>{designChecklist.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'examples' && <>
-              {examples.map((example) => (
-                <section key={example.id} id={example.id} className="terraform-section">
-                  <h2 className="terraform-heading">{example.title}</h2>
-                  <div className="terraform-codebox"><code>{example.code.trim()}</code></div>
-                  <p>{example.explanation}</p>
-                </section>
+            </section>
+          ))}
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Design Checklist</h2>
+            <ul>
+              {designChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </>}
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="terraform-section">
-                <h2 className="terraform-heading">Glossary</h2>
-                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            </ul>
+          </section>
+        </>
+      )}
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

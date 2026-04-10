@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Keras'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -324,7 +322,7 @@ history = model.fit(
     validation_data=(X_valid, y_valid),
     epochs=50,
     batch_size=256,
-)` ,
+)`,
     notes: [
       'Use callbacks for early stopping and checkpointing once the baseline path is correct.',
       'The simplest high-level workflow is often the right place to start.',
@@ -347,7 +345,7 @@ x = keras.layers.Concatenate()([x_num, profile])
 x = keras.layers.Dense(128, activation="relu")(x)
 score = keras.layers.Dense(1, activation="sigmoid", name="score")(x)
 
-model = keras.Model(inputs=[numeric, profile], outputs=score)` ,
+model = keras.Model(inputs=[numeric, profile], outputs=score)`,
     notes: [
       'Use named inputs and outputs when model interfaces matter downstream.',
       'Functional models are often the best balance between simplicity and expressive power.',
@@ -372,7 +370,7 @@ class ResidualDenseBlock(keras.layers.Layer):
     def call(self, inputs):
         skip = self.proj(inputs)
         x = self.hidden(skip)
-        return ops.relu(x + skip)` ,
+        return ops.relu(x + skip)`,
     notes: [
       'Keep custom layers small and testable.',
       'Reach for custom reusable blocks when built-in layers stop fitting the problem cleanly.',
@@ -397,7 +395,7 @@ class CustomModel(keras.Model):
         gradients = tape.gradient(loss, self.trainable_variables)
         self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
         self.compute_metrics(x, y, y_pred)
-        return {metric.name: metric.result() for metric in self.metrics}` ,
+        return {metric.name: metric.result() for metric in self.metrics}`,
     notes: [
       'Override only the step that truly needs custom behavior.',
       'The more custom the training path becomes, the more explicit the tests should be.',
@@ -414,7 +412,7 @@ class CustomModel(keras.Model):
 
 model.save("artifacts/churn_model.keras")
 reloaded = keras.models.load_model("artifacts/churn_model.keras")
-pred = reloaded.predict(X_batch)` ,
+pred = reloaded.predict(X_batch)`,
     notes: [
       'Validate reload behavior before calling a model production-ready.',
       'Persist preprocessing assumptions and input contracts alongside the model file.',
@@ -427,38 +425,111 @@ const glossarySections: GlossarySection[] = [
     id: 'glossary-foundations',
     title: 'Foundations',
     terms: [
-      { term: 'Layer', definition: 'A reusable computation block that transforms inputs into outputs and may contain trainable weights.' },
-      { term: 'Model', definition: 'A trainable composition of layers with a defined forward path and lifecycle.' },
-      { term: 'Sequential', definition: 'A simple stack-based model API for architectures that flow directly from one layer to the next.' },
-      { term: 'Functional API', definition: 'A graph-oriented API for models with multiple inputs, outputs, or internal branching.' },
-      { term: 'Subclassing', definition: 'A customization style where user-defined classes implement specialized layer or model behavior.' },
-      { term: 'Compile', definition: 'The step that binds optimizer, loss, and metrics to a model before standard training.' },
-      { term: 'Fit', definition: 'The high-level training entry point that handles epochs, batches, validation, callbacks, and metrics.' },
+      {
+        term: 'Layer',
+        definition:
+          'A reusable computation block that transforms inputs into outputs and may contain trainable weights.',
+      },
+      {
+        term: 'Model',
+        definition: 'A trainable composition of layers with a defined forward path and lifecycle.',
+      },
+      {
+        term: 'Sequential',
+        definition:
+          'A simple stack-based model API for architectures that flow directly from one layer to the next.',
+      },
+      {
+        term: 'Functional API',
+        definition:
+          'A graph-oriented API for models with multiple inputs, outputs, or internal branching.',
+      },
+      {
+        term: 'Subclassing',
+        definition:
+          'A customization style where user-defined classes implement specialized layer or model behavior.',
+      },
+      {
+        term: 'Compile',
+        definition:
+          'The step that binds optimizer, loss, and metrics to a model before standard training.',
+      },
+      {
+        term: 'Fit',
+        definition:
+          'The high-level training entry point that handles epochs, batches, validation, callbacks, and metrics.',
+      },
     ],
   },
   {
     id: 'glossary-training',
     title: 'Training and Evaluation',
     terms: [
-      { term: 'Loss function', definition: 'The optimization target the model tries to minimize during learning.' },
-      { term: 'Metric', definition: 'An evaluation quantity used to describe model behavior during training or validation.' },
-      { term: 'Optimizer', definition: 'The algorithm that converts gradients into parameter updates.' },
-      { term: 'Callback', definition: 'A hook object that reacts to training events such as metric improvement or epoch completion.' },
-      { term: 'Early stopping', definition: 'A callback strategy that halts training when validation behavior stops improving usefully.' },
-      { term: 'Checkpoint', definition: 'A saved model state used for recovery, comparison, or deployment.' },
-      { term: 'Batch size', definition: 'The number of examples processed together in one update step.' },
+      {
+        term: 'Loss function',
+        definition: 'The optimization target the model tries to minimize during learning.',
+      },
+      {
+        term: 'Metric',
+        definition:
+          'An evaluation quantity used to describe model behavior during training or validation.',
+      },
+      {
+        term: 'Optimizer',
+        definition: 'The algorithm that converts gradients into parameter updates.',
+      },
+      {
+        term: 'Callback',
+        definition:
+          'A hook object that reacts to training events such as metric improvement or epoch completion.',
+      },
+      {
+        term: 'Early stopping',
+        definition:
+          'A callback strategy that halts training when validation behavior stops improving usefully.',
+      },
+      {
+        term: 'Checkpoint',
+        definition: 'A saved model state used for recovery, comparison, or deployment.',
+      },
+      {
+        term: 'Batch size',
+        definition: 'The number of examples processed together in one update step.',
+      },
     ],
   },
   {
     id: 'glossary-deployment',
     title: 'Saving and Deployment',
     terms: [
-      { term: 'Serialization', definition: 'Saving a model artifact so it can be restored and reused later.' },
-      { term: 'Inference contract', definition: 'The full expectation around model inputs, outputs, preprocessing, and runtime behavior needed for correct prediction.' },
-      { term: 'History object', definition: 'The record returned by fit that contains per-epoch metric traces.' },
-      { term: 'Trainable variables', definition: 'The parameters in a model that receive gradient-based updates during training.' },
-      { term: 'Custom train_step', definition: 'An overridden model method that defines how a single training step should behave while preserving much of the fit workflow.' },
-      { term: 'Regularization', definition: 'Any strategy that helps control overfitting, such as dropout, penalties, or early stopping.' },
+      {
+        term: 'Serialization',
+        definition: 'Saving a model artifact so it can be restored and reused later.',
+      },
+      {
+        term: 'Inference contract',
+        definition:
+          'The full expectation around model inputs, outputs, preprocessing, and runtime behavior needed for correct prediction.',
+      },
+      {
+        term: 'History object',
+        definition: 'The record returned by fit that contains per-epoch metric traces.',
+      },
+      {
+        term: 'Trainable variables',
+        definition:
+          'The parameters in a model that receive gradient-based updates during training.',
+      },
+      {
+        term: 'Custom train_step',
+        definition:
+          'An overridden model method that defines how a single training step should behave while preserving much of the fit workflow.',
+      },
+      {
+        term: 'Regularization',
+        definition:
+          'Any strategy that helps control overfitting, such as dropout, penalties, or early stopping.',
+      },
     ],
   },
 ]
@@ -467,230 +538,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const kerasHelpStyles = `
-.keras-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.keras-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.keras-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.keras-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.keras-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.keras-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.keras-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.keras-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.keras-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.keras-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.keras-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.keras-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.keras-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.keras-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.keras-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.keras-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.keras-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.keras-help98-section {
-  margin: 0 0 20px;
-}
-
-.keras-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.keras-help98-content p,
-.keras-help98-content li,
-.keras-help98-content dd,
-.keras-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.keras-help98-content p,
-.keras-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.keras-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.keras-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.keras-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.keras-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.keras-help98-glossary {
-  margin: 0;
-}
-
-.keras-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .keras-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .keras-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .keras-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -748,122 +595,52 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
     </section>
   )
 }
+
 export default function KerasPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Keras Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="keras-help98-page">
-      <style>{kerasHelpStyles}</style>
-      <div className="keras-help98-window" role="presentation">
-        <header className="keras-help98-titlebar">
-          <span className="keras-help98-title">{PAGE_TITLE}</span>
-          <div className="keras-help98-controls">
-            <button className="keras-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="keras-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Keras Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="keras-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`keras-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="keras-help98-main">
-          <aside className="keras-help98-toc" aria-label="Table of contents">
-            <h2 className="keras-help98-toc-title">Contents</h2>
-            <ul className="keras-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="keras-help98-content">
-            <h1 className="keras-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="keras-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) => renderContentSection(section, index === bigPictureSections.length - 1))
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) => renderExampleSection(section, index === exampleSections.length - 1))
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

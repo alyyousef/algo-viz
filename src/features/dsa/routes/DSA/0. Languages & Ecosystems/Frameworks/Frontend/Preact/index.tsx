@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -137,8 +137,8 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-events',
     title: 'Event Model',
     paragraphs: [
-      'One of the most important differences from React is that Preact core does not implement a synthetic event system. It uses the browser\'s native event model through standard event listeners.',
-      'This means event names and behavior are often closer to plain DOM expectations. For example, in core Preact, form input handling commonly uses `onInput` instead of React\'s `onChange`, and some event naming details differ unless `preact/compat` is used.',
+      "One of the most important differences from React is that Preact core does not implement a synthetic event system. It uses the browser's native event model through standard event listeners.",
+      "This means event names and behavior are often closer to plain DOM expectations. For example, in core Preact, form input handling commonly uses `onInput` instead of React's `onChange`, and some event naming details differ unless `preact/compat` is used.",
     ],
   },
   {
@@ -169,15 +169,15 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-compat',
     title: '`preact/compat`',
     paragraphs: [
-      '`preact/compat` is Preact\'s compatibility layer for React and ReactDOM style APIs. It exists so that existing React code and many React libraries can run on Preact with minimal or no source changes once bundler aliases are configured.',
-      'Compat is one of Preact\'s most strategically important pieces. It allows teams to use Preact not only as a fresh-start choice, but also as a migration path or optimization layer for React-oriented codebases.',
+      "`preact/compat` is Preact's compatibility layer for React and ReactDOM style APIs. It exists so that existing React code and many React libraries can run on Preact with minimal or no source changes once bundler aliases are configured.",
+      "Compat is one of Preact's most strategically important pieces. It allows teams to use Preact not only as a fresh-start choice, but also as a migration path or optimization layer for React-oriented codebases.",
     ],
   },
   {
     id: 'core-ecosystem',
     title: 'Ecosystem Shape',
     paragraphs: [
-      'Preact has a healthy ecosystem, but it is smaller than React\'s. That means there are fewer default answers, fewer niche packages, and a smaller volume of community examples. In exchange, the core tends to stay focused and light.',
+      "Preact has a healthy ecosystem, but it is smaller than React's. That means there are fewer default answers, fewer niche packages, and a smaller volume of community examples. In exchange, the core tends to stay focused and light.",
       'For many teams the real ecosystem question is not only "Does Preact have enough native packages?" but "Can we reach the React ecosystem safely through compat where needed?"',
     ],
   },
@@ -193,7 +193,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-embed',
     title: 'Embeddability and Incremental Use',
     paragraphs: [
-      'One of Preact\'s strongest practical advantages is that it embeds well into existing pages and mixed technology stacks. Its small footprint makes it well suited for widgets, progressive enhancement, and partial modernization efforts.',
+      "One of Preact's strongest practical advantages is that it embeds well into existing pages and mixed technology stacks. Its small footprint makes it well suited for widgets, progressive enhancement, and partial modernization efforts.",
       'This can be operationally important. Teams do not always need a full framework takeover. Sometimes they need a component system that can live beside server templates, CMS pages, or legacy application surfaces.',
     ],
   },
@@ -436,37 +436,6 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
 ] as const
 
-const helpStyles = `
-.preact-help-page { min-height: 100dvh; background: #c0c0c0; padding: 0; color: #000; font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif; }
-.preact-help-window { width: 100%; min-height: 100dvh; display: flex; flex-direction: column; box-sizing: border-box; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
-.preact-help-titlebar { position: relative; display: flex; align-items: center; padding: 2px 4px; background: linear-gradient(90deg, #000080 0%, #1084d0 100%); color: #fff; font-size: 13px; font-weight: 700; }
-.preact-help-titletext { position: absolute; left: 50%; transform: translateX(-50%); font-size: 16px; white-space: nowrap; }
-.preact-help-controls { display: flex; gap: 2px; margin-left: auto; }
-.preact-help-control { width: 18px; height: 16px; display: inline-flex; align-items: center; justify-content: center; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; background: #c0c0c0; color: #000; font-size: 11px; line-height: 1; text-decoration: none; }
-.preact-help-tabs { display: flex; gap: 1px; padding: 6px 8px 0; background: #c0c0c0; }
-.preact-help-tab { border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: none; background: #b6b6b6; padding: 5px 10px 4px; font-size: 12px; cursor: pointer; }
-.preact-help-tab.is-active { position: relative; top: 1px; background: #fff; }
-.preact-help-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 240px 1fr; border-top: 1px solid #404040; background: #fff; }
-.preact-help-toc { overflow: auto; padding: 12px; background: #f2f2f2; border-right: 1px solid #808080; }
-.preact-help-toc-title { margin: 0 0 10px; font-size: 12px; font-weight: 700; }
-.preact-help-toc-list { margin: 0; padding: 0; list-style: none; }
-.preact-help-toc-list li { margin: 0 0 8px; }
-.preact-help-toc-list a { color: #000; font-size: 12px; text-decoration: none; }
-.preact-help-content { overflow: auto; padding: 14px 20px 20px; }
-.preact-help-doc-title { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
-.preact-help-doc-subtitle { margin: 0 0 12px; font-size: 12px; }
-.preact-help-section { margin: 0 0 20px; scroll-margin-top: 12px; }
-.preact-help-heading { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-.preact-help-subheading { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-.preact-help-content p, .preact-help-content li { font-size: 12px; line-height: 1.5; }
-.preact-help-content p { margin: 0 0 10px; }
-.preact-help-content ul { margin: 0 0 10px 20px; padding: 0; }
-.preact-help-divider { margin: 14px 0; border: 0; border-top: 1px solid #d0d0d0; }
-.preact-help-codebox { margin: 6px 0 10px; padding: 8px; background: #f4f4f4; border-top: 2px solid #808080; border-left: 2px solid #808080; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
-.preact-help-codebox code { display: block; white-space: pre-wrap; font-family: "Courier New", Courier, monospace; font-size: 12px; }
-@media (max-width: 900px) { .preact-help-main { grid-template-columns: 1fr; } .preact-help-toc { border-right: none; border-bottom: 1px solid #808080; } .preact-help-titletext { position: static; transform: none; margin: 0 auto 0 0; padding-left: 4px; white-space: normal; } }
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -481,155 +450,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-export default function PreactPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+export default function Counter(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Preact',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Preact (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Preact',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="preact-help-page">
-      <style>{helpStyles}</style>
-      <div className="preact-help-window" role="presentation">
-        <header className="preact-help-titlebar">
-          <span className="preact-help-titletext">Preact</span>
-          <div className="preact-help-controls">
-            <button className="preact-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="preact-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Preact"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Preact</h1>
+      <p className="preact-help-doc-subtitle">
+        Manual-style reference covering overview, hooks, DOM alignment, native events, compat
+        strategy, signals, tradeoffs, and practical examples.
+      </p>
 
-        <div className="preact-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`preact-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="preact-help-main">
-          <aside className="preact-help-toc" aria-label="Table of contents">
-            <h2 className="preact-help-toc-title">Contents</h2>
-            <ul className="preact-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="preact-help-content">
-            <h1 className="preact-help-doc-title">Preact</h1>
-            <p className="preact-help-doc-subtitle">
-              Manual-style reference covering overview, hooks, DOM alignment, native events, compat strategy,
-              signals, tradeoffs, and practical examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="preact-help-section">
-                    <h2 className="preact-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="preact-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="preact-help-section">
-                  <h2 className="preact-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="preact-help-section">
-                  <h2 className="preact-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="preact-help-subheading">{snippet.label}</h3>
-                      <div className="preact-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="preact-help-section">
-                <h2 className="preact-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -86,13 +85,11 @@ const problemPatterns = [
   },
   {
     title: 'Not for shortest paths',
-    detail:
-      'Prim minimizes total tree weight, not the distance between any specific pair.',
+    detail: 'Prim minimizes total tree weight, not the distance between any specific pair.',
   },
   {
     title: 'Disconnected components',
-    detail:
-      'If the graph is disconnected, rerun Prim from each component to build a forest.',
+    detail: 'If the graph is disconnected, rerun Prim from each component to build a forest.',
   },
 ]
 
@@ -104,8 +101,7 @@ const loopInvariants = [
   },
   {
     title: 'Tree invariant',
-    detail:
-      'The selected edges always form a tree (no cycles) over the visited vertices.',
+    detail: 'The selected edges always form a tree (no cycles) over the visited vertices.',
   },
   {
     title: 'Visited invariant',
@@ -145,8 +141,7 @@ const complexityNotes = [
   },
   {
     title: 'Space',
-    detail:
-      'O(V) for visited and parent; heap holds up to O(E) edges in the worst case.',
+    detail: 'O(V) for visited and parent; heap holds up to O(E) edges in the worst case.',
   },
   {
     title: 'Practical guidance',
@@ -158,31 +153,26 @@ const complexityNotes = [
 const inputSensitivity = [
   {
     title: 'Dense graphs',
-    detail:
-      'Array-based Prim can be faster than heap-based Prim due to fewer log factors.',
+    detail: 'Array-based Prim can be faster than heap-based Prim due to fewer log factors.',
   },
   {
     title: 'Sparse graphs',
-    detail:
-      'Heap-based Prim is faster when edges are much fewer than V^2.',
+    detail: 'Heap-based Prim is faster when edges are much fewer than V^2.',
   },
   {
     title: 'Duplicate weights',
-    detail:
-      'Multiple MSTs may exist; any valid MST is acceptable.',
+    detail: 'Multiple MSTs may exist; any valid MST is acceptable.',
   },
   {
     title: 'Disconnected inputs',
-    detail:
-      'A single run only covers one component; reseed to build a forest.',
+    detail: 'A single run only covers one component; reseed to build a forest.',
   },
 ]
 
 const performanceProfile = [
   {
     title: 'Heap overhead',
-    detail:
-      'Most runtime comes from push/pop operations; constant factors matter.',
+    detail: 'Most runtime comes from push/pop operations; constant factors matter.',
   },
   {
     title: 'Edge scanning',
@@ -191,13 +181,11 @@ const performanceProfile = [
   },
   {
     title: 'Memory growth',
-    detail:
-      'Heap can contain many candidate edges; prune with visited checks to keep it smaller.',
+    detail: 'Heap can contain many candidate edges; prune with visited checks to keep it smaller.',
   },
   {
     title: 'Early termination',
-    detail:
-      'Once V - 1 edges are chosen, the MST is complete and the algorithm can stop.',
+    detail: 'Once V - 1 edges are chosen, the MST is complete and the algorithm can stop.',
   },
 ]
 
@@ -268,8 +256,7 @@ const variantsAndTweaks = [
   },
   {
     title: 'Bucketed Prim',
-    detail:
-      'For small integer weights, use buckets to avoid log factors.',
+    detail: 'For small integer weights, use buckets to avoid log factors.',
   },
   {
     title: 'Prim on grids',
@@ -344,8 +331,7 @@ const examples = [
                 parent[v] = u
 
     return parent`,
-    explanation:
-      'The O(V^2) array-based version is simple and often fastest on dense graphs.',
+    explanation: 'The O(V^2) array-based version is simple and often fastest on dense graphs.',
   },
 ]
 
@@ -368,28 +354,23 @@ const decisionGuidance = [
 const implementationTips = [
   {
     title: 'Pick lazy vs eager',
-    detail:
-      'Lazy Prim is simpler; eager Prim keeps the heap smaller with decrease-key semantics.',
+    detail: 'Lazy Prim is simpler; eager Prim keeps the heap smaller with decrease-key semantics.',
   },
   {
     title: 'Use adjacency lists for sparse graphs',
-    detail:
-      'They keep runtime proportional to edges instead of V^2 scans.',
+    detail: 'They keep runtime proportional to edges instead of V^2 scans.',
   },
   {
     title: 'Stop after V - 1 edges',
-    detail:
-      'Once the MST has V - 1 edges, you can exit early.',
+    detail: 'Once the MST has V - 1 edges, you can exit early.',
   },
   {
     title: 'Handle disconnected graphs',
-    detail:
-      'If the heap empties early, reseed from an unvisited vertex to build a forest.',
+    detail: 'If the heap empties early, reseed from an unvisited vertex to build a forest.',
   },
   {
     title: 'Track parent edges',
-    detail:
-      'Record the edge that brought a vertex in so you can return the MST explicitly.',
+    detail: 'Record the edge that brought a vertex in so you can return the MST explicitly.',
   },
 ]
 
@@ -406,8 +387,7 @@ const advancedInsights = [
   },
   {
     title: 'Hybrid strategies',
-    detail:
-      'On huge graphs, Boruvka rounds can shrink components, then Prim finishes quickly.',
+    detail: 'On huge graphs, Boruvka rounds can shrink components, then Prim finishes quickly.',
   },
   {
     title: 'Sensitivity to weights',
@@ -426,8 +406,7 @@ const takeaways = [
 const glossaryTerms = [
   {
     term: 'Minimum Spanning Tree (MST)',
-    definition:
-      'A spanning tree that connects all vertices with minimum total edge weight.',
+    definition: 'A spanning tree that connects all vertices with minimum total edge weight.',
   },
   {
     term: 'Cut property',
@@ -436,8 +415,7 @@ const glossaryTerms = [
   },
   {
     term: 'Crossing edge',
-    definition:
-      'An edge with one endpoint in the current tree and one endpoint outside it.',
+    definition: 'An edge with one endpoint in the current tree and one endpoint outside it.',
   },
   {
     term: 'Lazy Prim',
@@ -456,238 +434,15 @@ const glossaryTerms = [
   },
   {
     term: 'Minimum Spanning Forest',
-    definition:
-      'The union of MSTs across all connected components in a disconnected graph.',
+    definition: 'The union of MSTs across all connected components in a disconnected graph.',
   },
   {
     term: 'Frontier',
-    definition:
-      'The set of candidate crossing edges considered for the next Prim expansion.',
+    definition: 'The set of candidate crossing edges considered for the next Prim expansion.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const primWin98HelpStyles = `
-.prim98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.prim98-window {
-  width: 100%;
-  min-height: 100dvh;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-.prim98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  color: #fff;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.prim98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.prim98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.prim98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.prim98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.prim98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.prim98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.prim98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.prim98-toc {
-  padding: 12px;
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.prim98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.prim98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.prim98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.prim98-toc-list a {
-  font-size: 12px;
-  color: #000;
-  text-decoration: none;
-}
-
-.prim98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.prim98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.prim98-section {
-  margin: 0 0 20px;
-}
-
-.prim98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.prim98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.prim98-content p,
-.prim98-content li,
-.prim98-content td,
-.prim98-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.prim98-content p {
-  margin: 0 0 10px;
-}
-
-.prim98-content ul,
-.prim98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.prim98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.prim98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.prim98-table th,
-.prim98-table td {
-  border: 1px solid #808080;
-  text-align: left;
-  vertical-align: top;
-  padding: 4px 6px;
-}
-
-.prim98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  overflow-x: auto;
-}
-
-.prim98-codebox code {
-  display: block;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-}
-
-@media (max-width: 900px) {
-  .prim98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .prim98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -695,10 +450,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -730,301 +481,243 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function PrimsAlgorithmPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: "Prim's Algorithm",
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Prim's Algorithm (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: "Prim's Algorithm",
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="prim98-help-page">
-      <style>{primWin98HelpStyles}</style>
-      <div className="prim98-window" role="presentation">
-        <header className="prim98-titlebar">
-          <span className="prim98-title-text">Prim's Algorithm</span>
-          <div className="prim98-title-controls">
-            <button className="prim98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="prim98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="prim98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`prim98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="prim98-main">
-          <aside className="prim98-toc" aria-label="Table of contents">
-            <h2 className="prim98-toc-title">Contents</h2>
-            <ul className="prim98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Prim\'s Algorithm"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Prim's Algorithm</h1>
+      <p>
+        Prim's algorithm builds a minimum spanning tree by always adding the lightest edge that
+        connects the current tree to a new vertex. It is a cut-property-driven greedy that thrives
+        on adjacency access and dense graphs.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Where Kruskal sorts edges globally, Prim grows locally from a seed. It maintains a
+              frontier of crossing edges and repeatedly picks the cheapest one, ensuring every
+              addition is safe for the MST.
+            </p>
+            <p>Growing an MST from a single seed is the defining pattern of Prim's algorithm.</p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="prim98-content">
-            <h1 className="prim98-doc-title">Prim's Algorithm</h1>
-            <p>
-              Prim's algorithm builds a minimum spanning tree by always adding the lightest edge that connects the current tree to a new
-              vertex. It is a cut-property-driven greedy that thrives on adjacency access and dense graphs.
-            </p>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="prim98-section">
-                  <h2 className="prim98-heading">Overview</h2>
-                  <p>
-                    Where Kruskal sorts edges globally, Prim grows locally from a seed. It maintains a frontier of crossing edges and
-                    repeatedly picks the cheapest one, ensuring every addition is safe for the MST.
-                  </p>
-                  <p>Growing an MST from a single seed is the defining pattern of Prim's algorithm.</p>
-                </section>
-                <hr className="prim98-divider" />
-                <section id="bp-history" className="prim98-section">
-                  <h2 className="prim98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="prim98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Mechanics in Motion</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
                   ))}
-                </section>
-                <hr className="prim98-divider" />
-                <section id="bp-mental-models" className="prim98-section">
-                  <h2 className="prim98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="prim98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="prim98-divider" />
-                <section id="bp-takeaways" className="prim98-section">
-                  <h2 className="prim98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mechanics" className="prim98-section">
-                  <h2 className="prim98-heading">How It Works: Mechanics in Motion</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="prim98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-patterns" className="prim98-section">
-                  <h2 className="prim98-heading">How to Think About Similar Problems</h2>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="prim98-section">
-                  <h2 className="prim98-heading">Loop Invariants (Why It Is Correct)</h2>
-                  {loopInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="prim98-section">
-                  <h2 className="prim98-heading">Complexity Analysis and Intuition</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-sensitivity" className="prim98-section">
-                  <h2 className="prim98-heading">Input Sensitivity</h2>
-                  {inputSensitivity.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="prim98-section">
-                  <h2 className="prim98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="prim98-section">
-                  <h2 className="prim98-heading">Compare and Contrast</h2>
-                  <table className="prim98-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Best for</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.bestFor}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-uses" className="prim98-section">
-                  <h2 className="prim98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="prim98-section">
-                  <h2 className="prim98-heading">Variants and Extensions</h2>
-                  {variantsAndTweaks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="prim98-section">
-                  <h2 className="prim98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decision" className="prim98-section">
-                  <h2 className="prim98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-implementation" className="prim98-section">
-                  <h2 className="prim98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="prim98-section">
-                  <h2 className="prim98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-trace" className="prim98-section">
-                  <h2 className="prim98-heading">Worked Trace on a Tiny Graph</h2>
-                  {stepTrace.map((item) => (
-                    <div key={item.step}>
-                      <h3 className="prim98-subheading">{item.step}</h3>
-                      <p><strong>State:</strong> {item.state}</p>
-                      <p><strong>Note:</strong> {item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-practical" className="prim98-section">
-                  <h2 className="prim98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="prim98-subheading">{example.title}</h3>
-                      <div className="prim98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="prim98-section">
-                <h2 className="prim98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">How to Think About Similar Problems</h2>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Loop Invariants (Why It Is Correct)</h2>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-sensitivity" className="bin98-section">
+            <h2 className="bin98-heading">Input Sensitivity</h2>
+            {inputSensitivity.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Best for</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.bestFor}</td>
+                    <td>{row.notes}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            {variantsAndTweaks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace on a Tiny Graph</h2>
+            {stepTrace.map((item) => (
+              <div key={item.step}>
+                <h3 className="bin98-subheading">{item.step}</h3>
+                <p>
+                  <strong>State:</strong> {item.state}
+                </p>
+                <p>
+                  <strong>Note:</strong> {item.note}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

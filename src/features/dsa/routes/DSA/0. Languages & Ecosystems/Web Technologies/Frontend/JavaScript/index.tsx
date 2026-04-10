@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -209,8 +208,7 @@ const performanceNotes = [
   },
   {
     title: 'Long tasks and responsiveness',
-    detail:
-      'Work over 50ms blocks input; break heavy loops into chunks or move work to workers.',
+    detail: 'Work over 50ms blocks input; break heavy loops into chunks or move work to workers.',
   },
 ]
 
@@ -227,44 +225,37 @@ const languageMechanics = [
   },
   {
     title: 'Strict mode',
-    detail:
-      'Strict mode removes silent failures and changes defaults like this in functions.',
+    detail: 'Strict mode removes silent failures and changes defaults like this in functions.',
   },
   {
     title: 'Equality semantics',
-    detail:
-      'Use === for predictable comparisons; Object.is handles edge cases like NaN.',
+    detail: 'Use === for predictable comparisons; Object.is handles edge cases like NaN.',
   },
 ]
 
 const browserPlatform = [
   {
     title: 'DOM and events',
-    detail:
-      'The DOM provides document structure; events capture user input and lifecycle signals.',
+    detail: 'The DOM provides document structure; events capture user input and lifecycle signals.',
   },
   {
     title: 'Network and storage',
-    detail:
-      'fetch, WebSocket, and IndexedDB cover async data needs and local persistence.',
+    detail: 'fetch, WebSocket, and IndexedDB cover async data needs and local persistence.',
   },
   {
     title: 'Graphics and media',
-    detail:
-      'Canvas, WebGL, audio, and video APIs enable rich interactive experiences.',
+    detail: 'Canvas, WebGL, audio, and video APIs enable rich interactive experiences.',
   },
   {
     title: 'Workers and performance',
-    detail:
-      'Web Workers and Worklets run compute-heavy tasks off the main thread.',
+    detail: 'Web Workers and Worklets run compute-heavy tasks off the main thread.',
   },
 ]
 
 const securityNotes = [
   {
     title: 'Same-origin policy',
-    detail:
-      'Browser security isolates origins; CORS controls cross-origin access.',
+    detail: 'Browser security isolates origins; CORS controls cross-origin access.',
   },
   {
     title: 'XSS prevention',
@@ -273,13 +264,11 @@ const securityNotes = [
   },
   {
     title: 'Dependency hygiene',
-    detail:
-      'Audit packages and lock versions to avoid supply chain issues.',
+    detail: 'Audit packages and lock versions to avoid supply chain issues.',
   },
   {
     title: 'Permissions and APIs',
-    detail:
-      'Powerful APIs (clipboard, geolocation) require user consent and careful UX.',
+    detail: 'Powerful APIs (clipboard, geolocation) require user consent and careful UX.',
   },
 ]
 
@@ -316,13 +305,11 @@ const realWorldUses = [
   },
   {
     context: 'Automation and scripting',
-    detail:
-      'Node scripts automate builds, migrations, and DevOps workflows.',
+    detail: 'Node scripts automate builds, migrations, and DevOps workflows.',
   },
   {
     context: 'Real-time collaboration',
-    detail:
-      'WebSockets and CRDT libraries enable shared cursors, documents, and live editing.',
+    detail: 'WebSockets and CRDT libraries enable shared cursors, documents, and live editing.',
   },
 ]
 
@@ -393,8 +380,7 @@ export const add = (a, b) => a + b
 // app.js
 import { add } from './math.js'
 add(2, 3) // 5`,
-    explanation:
-      'ES modules provide explicit dependencies and enable tree-shaking.',
+    explanation: 'ES modules provide explicit dependencies and enable tree-shaking.',
   },
   {
     title: 'Abortable async work',
@@ -404,8 +390,7 @@ fetch('/api/data', { signal: controller.signal })
   .catch((err) => console.error(err.name))
 
 controller.abort()`,
-    explanation:
-      'AbortController cancels fetch requests and prevents stale work from completing.',
+    explanation: 'AbortController cancels fetch requests and prevents stale work from completing.',
   },
 ]
 
@@ -453,13 +438,11 @@ const advancedInsights = [
   },
   {
     title: 'Long task monitoring',
-    detail:
-      'The Performance API helps track main-thread blocking and interaction latency.',
+    detail: 'The Performance API helps track main-thread blocking and interaction latency.',
   },
   {
     title: 'Interop with WebAssembly',
-    detail:
-      'Wasm complements JS for heavy computation while JS manages UI and orchestration.',
+    detail: 'Wasm complements JS for heavy computation while JS manages UI and orchestration.',
   },
 ]
 
@@ -475,46 +458,38 @@ const takeaways = [
 const debuggingWorkflow = [
   {
     title: 'Use DevTools',
-    detail:
-      'Inspect network, sources, and performance profiles to find hot paths and errors.',
+    detail: 'Inspect network, sources, and performance profiles to find hot paths and errors.',
   },
   {
     title: 'Log intentionally',
-    detail:
-      'Structured logs and error boundaries make production issues diagnosable.',
+    detail: 'Structured logs and error boundaries make production issues diagnosable.',
   },
   {
     title: 'Reproduce with tests',
-    detail:
-      'Capture bugs in unit or integration tests to prevent regressions.',
+    detail: 'Capture bugs in unit or integration tests to prevent regressions.',
   },
   {
     title: 'Measure performance',
-    detail:
-      'Profile long tasks and bundle sizes before and after changes.',
+    detail: 'Profile long tasks and bundle sizes before and after changes.',
   },
 ]
 
 const productionChecklist = [
   {
     title: 'Performance',
-    detail:
-      'Code-split, tree-shake, and keep the main thread responsive.',
+    detail: 'Code-split, tree-shake, and keep the main thread responsive.',
   },
   {
     title: 'Reliability',
-    detail:
-      'Handle errors, timeouts, and retries for network operations.',
+    detail: 'Handle errors, timeouts, and retries for network operations.',
   },
   {
     title: 'Security',
-    detail:
-      'Use CSP, sanitize inputs, and keep dependencies patched.',
+    detail: 'Use CSP, sanitize inputs, and keep dependencies patched.',
   },
   {
     title: 'Observability',
-    detail:
-      'Capture errors and metrics to track real user impact.',
+    detail: 'Capture errors and metrics to track real user impact.',
   },
 ]
 
@@ -538,240 +513,36 @@ const learningPath = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const glossary = [
-  { term: 'Event Loop', definition: 'Scheduler that processes tasks and callbacks in JavaScript runtimes.' },
-  { term: 'Microtask', definition: 'High-priority queue for Promise callbacks and async continuations.' },
+  {
+    term: 'Event Loop',
+    definition: 'Scheduler that processes tasks and callbacks in JavaScript runtimes.',
+  },
+  {
+    term: 'Microtask',
+    definition: 'High-priority queue for Promise callbacks and async continuations.',
+  },
   { term: 'Macrotask', definition: 'Queue for timers, events, and I/O callbacks.' },
-  { term: 'Closure', definition: 'Function retaining access to lexical scope after outer function returns.' },
+  {
+    term: 'Closure',
+    definition: 'Function retaining access to lexical scope after outer function returns.',
+  },
   { term: 'Prototype Chain', definition: 'Delegation path used for property lookup on objects.' },
-  { term: 'Hoisting', definition: 'Compile-time binding behavior where declarations are processed before execution.' },
+  {
+    term: 'Hoisting',
+    definition: 'Compile-time binding behavior where declarations are processed before execution.',
+  },
   { term: 'Tree-shaking', definition: 'Build optimization removing unused module exports.' },
   { term: 'JIT', definition: 'Just-in-time compilation strategy used by engines like V8.' },
-  { term: 'Structured Clone', definition: 'Built-in deep copy algorithm for transferable/serializable data.' },
-  { term: 'CSP', definition: 'Content Security Policy restricting script and resource execution origins.' },
+  {
+    term: 'Structured Clone',
+    definition: 'Built-in deep copy algorithm for transferable/serializable data.',
+  },
+  {
+    term: 'CSP',
+    definition: 'Content Security Policy restricting script and resource execution origins.',
+  },
 ]
-
-const jsHelpStyles = `
-.js98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  margin: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.js98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.js98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 4px;
-  color: #fff;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-}
-
-.js98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.1;
-  pointer-events: none;
-}
-
-.js98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.js98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.js98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.js98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.js98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.js98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-}
-
-.js98-toc {
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  overflow: auto;
-}
-
-.js98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.js98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.js98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.js98-toc-list a {
-  font-size: 12px;
-  color: #000;
-  text-decoration: none;
-}
-
-.js98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.js98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.js98-section {
-  margin: 0 0 22px;
-}
-
-.js98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.js98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.js98-content p,
-.js98-content li,
-.js98-content th,
-.js98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.js98-content p {
-  margin: 0 0 10px;
-}
-
-.js98-content ul,
-.js98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.js98-content table {
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.js98-content th,
-.js98-content td {
-  padding: 2px 8px 2px 0;
-  vertical-align: top;
-}
-
-.js98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.js98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.js98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .js98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .js98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -779,10 +550,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -811,272 +578,211 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function JavaScriptPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'JavaScript',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `JavaScript (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'JavaScript',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="js98-help-page">
-      <style>{jsHelpStyles}</style>
-      <div className="js98-window" role="presentation">
-        <header className="js98-titlebar">
-          <span className="js98-title-text">JavaScript</span>
-          <div className="js98-title-controls">
-            <button className="js98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="js98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="js98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`js98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="js98-main">
-          <aside className="js98-toc" aria-label="Table of contents">
-            <h2 className="js98-toc-title">Contents</h2>
-            <ul className="js98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="JavaScript"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">JavaScript</h1>
+      <p>
+        JavaScript is the only language that runs natively in every browser, and it now powers
+        servers, tooling, and cross-platform apps. It blends a flexible syntax with a
+        single-threaded event loop, giving it a unique programming model. This page covers how
+        JavaScript works and how to avoid its sharp edges.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              JavaScript is defined by ECMAScript, but real behavior depends on the host runtime. In
+              browsers, JavaScript manipulates the DOM and handles user events. In Node.js, it
+              manages servers, files, and networks.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="js98-content">
-            <h1 className="js98-doc-title">JavaScript</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Core Pillars</h2>
+            {corePillars.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">Language Mechanics</h2>
+            {languageMechanics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-platform" className="bin98-section">
+            <h2 className="bin98-heading">Browser Platform APIs</h2>
+            {browserPlatform.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-runtime" className="bin98-section">
+            <h2 className="bin98-heading">Runtime Model: Event Loop and Scheduling</h2>
+            {runtimeDetails.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance and Scaling Considerations</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              JavaScript is the only language that runs natively in every browser, and it now powers servers, tooling, and
-              cross-platform apps. It blends a flexible syntax with a single-threaded event loop, giving it a unique programming
-              model. This page covers how JavaScript works and how to avoid its sharp edges.
+              JavaScript is fast when you lean into asynchronous I/O, predictable object shapes, and
+              minimal DOM work. It slows down when you block the main thread or ship oversized
+              bundles.
             </p>
+          </section>
+          <section id="core-security" className="bin98-section">
+            <h2 className="bin98-heading">Security and Safety</h2>
+            {securityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Workflow</h2>
+            {debuggingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-production" className="bin98-section">
+            <h2 className="bin98-heading">Production Checklist</h2>
+            {productionChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-learning" className="bin98-section">
+            <h2 className="bin98-heading">Learning Path</h2>
+            {learningPath.map((item) => (
+              <p key={item.step}>
+                <strong>{item.step}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="js98-section">
-                  <h2 className="js98-heading">Overview</h2>
-                  <p>
-                    JavaScript is defined by ECMAScript, but real behavior depends on the host runtime. In browsers, JavaScript
-                    manipulates the DOM and handles user events. In Node.js, it manages servers, files, and networks.
-                  </p>
-                </section>
-                <hr className="js98-divider" />
-                <section id="bp-history" className="js98-section">
-                  <h2 className="js98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="js98-section">
-                  <h2 className="js98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="js98-section">
-                  <h2 className="js98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-pillars" className="js98-section">
-                  <h2 className="js98-heading">How It Works: Core Pillars</h2>
-                  {corePillars.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="js98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="js98-section">
-                  <h2 className="js98-heading">Language Mechanics</h2>
-                  {languageMechanics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-platform" className="js98-section">
-                  <h2 className="js98-heading">Browser Platform APIs</h2>
-                  {browserPlatform.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-runtime" className="js98-section">
-                  <h2 className="js98-heading">Runtime Model: Event Loop and Scheduling</h2>
-                  {runtimeDetails.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="js98-section">
-                  <h2 className="js98-heading">Performance and Scaling Considerations</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    JavaScript is fast when you lean into asynchronous I/O, predictable object shapes, and minimal DOM work.
-                    It slows down when you block the main thread or ship oversized bundles.
-                  </p>
-                </section>
-                <section id="core-security" className="js98-section">
-                  <h2 className="js98-heading">Security and Safety</h2>
-                  {securityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-uses" className="js98-section">
-                  <h2 className="js98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-debugging" className="js98-section">
-                  <h2 className="js98-heading">Debugging Workflow</h2>
-                  {debuggingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="js98-section">
-                  <h2 className="js98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-production" className="js98-section">
-                  <h2 className="js98-heading">Production Checklist</h2>
-                  {productionChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-when" className="js98-section">
-                  <h2 className="js98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="js98-section">
-                  <h2 className="js98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-learning" className="js98-section">
-                  <h2 className="js98-heading">Learning Path</h2>
-                  {learningPath.map((item) => (
-                    <p key={item.step}>
-                      <strong>{item.step}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="js98-section">
-                <h2 className="js98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="js98-subheading">{example.title}</h3>
-                    <div className="js98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="js98-section">
-                <h2 className="js98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -40,8 +39,7 @@ const mentalModels = [
   },
   {
     title: 'Two-phase scan',
-    detail:
-      'A fast coarse search narrows the region, followed by a local linear scan to finish.',
+    detail: 'A fast coarse search narrows the region, followed by a local linear scan to finish.',
   },
 ]
 
@@ -127,13 +125,11 @@ const reasoningSteps = [
   },
   {
     title: 'Find candidate block',
-    detail:
-      'Jump until the block end is >= target, then linearly scan within that block.',
+    detail: 'Jump until the block end is >= target, then linearly scan within that block.',
   },
   {
     title: 'Validate early exit',
-    detail:
-      'If the target is outside [blockStart, blockEnd], return not found immediately.',
+    detail: 'If the target is outside [blockStart, blockEnd], return not found immediately.',
   },
 ]
 
@@ -181,13 +177,11 @@ const complexityNotes = [
   },
   {
     title: 'Space cost',
-    detail:
-      'O(1) extra space. Only a few indices and counters are maintained.',
+    detail: 'O(1) extra space. Only a few indices and counters are maintained.',
   },
   {
     title: 'Comparison count',
-    detail:
-      'Approximately sqrt(n) jumps plus up to sqrt(n) linear scans in the final block.',
+    detail: 'Approximately sqrt(n) jumps plus up to sqrt(n) linear scans in the final block.',
   },
   {
     title: 'Prerequisites',
@@ -199,13 +193,11 @@ const complexityNotes = [
 const performanceProfile = [
   {
     title: 'Best-case speed',
-    detail:
-      'If the target lands on a block boundary, the search ends after a few jumps.',
+    detail: 'If the target lands on a block boundary, the search ends after a few jumps.',
   },
   {
     title: 'Worst-case behavior',
-    detail:
-      'You do about sqrt(n) jumps plus sqrt(n) linear checks, giving O(sqrt(n)).',
+    detail: 'You do about sqrt(n) jumps plus sqrt(n) linear checks, giving O(sqrt(n)).',
   },
   {
     title: 'Access patterns',
@@ -255,13 +247,11 @@ const comparisonTable = [
 const realWorldUses = [
   {
     context: 'Block storage scans',
-    detail:
-      'Jumping by block size minimizes disk seeks, then a linear scan reads contiguous data.',
+    detail: 'Jumping by block size minimizes disk seeks, then a linear scan reads contiguous data.',
   },
   {
     context: 'Telemetry bins',
-    detail:
-      'Coarse jumps across sorted buckets reduce comparisons before a short local scan.',
+    detail: 'Coarse jumps across sorted buckets reduce comparisons before a short local scan.',
   },
   {
     context: 'Cache-friendly lookups',
@@ -275,13 +265,11 @@ const realWorldUses = [
   },
   {
     context: 'Teaching and analysis',
-    detail:
-      'Jump search illustrates how to trade extra structure for fewer comparisons.',
+    detail: 'Jump search illustrates how to trade extra structure for fewer comparisons.',
   },
   {
     context: 'Hybrid indexes',
-    detail:
-      'A coarse jump table plus local scan can form the core of a simple index strategy.',
+    detail: 'A coarse jump table plus local scan can form the core of a simple index strategy.',
   },
 ]
 
@@ -342,23 +330,19 @@ const pitfalls = [
 const implementationTips = [
   {
     title: 'Compute step once',
-    detail:
-      'Use a constant step for the whole search to keep bounds predictable.',
+    detail: 'Use a constant step for the whole search to keep bounds predictable.',
   },
   {
     title: 'Clamp block end',
-    detail:
-      'Always use min(step, n) - 1 when checking the block end.',
+    detail: 'Always use min(step, n) - 1 when checking the block end.',
   },
   {
     title: 'Early exit in scan',
-    detail:
-      'Stop the scan when arr[i] > target to avoid useless comparisons.',
+    detail: 'Stop the scan when arr[i] > target to avoid useless comparisons.',
   },
   {
     title: 'Consider a jump table',
-    detail:
-      'Precomputing every k-th key gives a fast coarse index for repeated queries.',
+    detail: 'Precomputing every k-th key gives a fast coarse index for repeated queries.',
   },
 ]
 
@@ -423,7 +407,8 @@ const quickGlossary = [
   },
   {
     term: 'Linear scan phase',
-    definition: 'The fine phase that scans the candidate block sequentially to find the exact index.',
+    definition:
+      'The fine phase that scans the candidate block sequentially to find the exact index.',
   },
   {
     term: 'Block invariant',
@@ -444,18 +429,12 @@ const quickGlossary = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -485,553 +464,271 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const jump98HelpStyles = `
-.jump98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.jump98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.jump98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.jump98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.jump98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.jump98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.jump98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.jump98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.jump98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.jump98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.jump98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.jump98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.jump98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.jump98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.jump98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.jump98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.jump98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.jump98-section {
-  margin: 0 0 20px;
-}
-
-.jump98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.jump98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.jump98-content p,
-.jump98-content li,
-.jump98-content td,
-.jump98-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.jump98-content p {
-  margin: 0 0 10px;
-}
-
-.jump98-content ul,
-.jump98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.jump98-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.jump98-content th,
-.jump98-content td {
-  border: 1px solid #808080;
-  padding: 4px 6px;
-  text-align: left;
-}
-
-.jump98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.jump98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.jump98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .jump98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .jump98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 export default function JumpSearchPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Jump Search',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Jump Search (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Jump Search',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="jump98-page">
-      <style>{jump98HelpStyles}</style>
-      <div className="jump98-window" role="presentation">
-        <header className="jump98-titlebar">
-          <span className="jump98-title-text">Jump Search - Help</span>
-          <div className="jump98-title-controls">
-            <button className="jump98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="jump98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Jump Search"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Jump Search</h1>
+      <p>
+        Jump search works on sorted arrays by jumping ahead in fixed steps and then scanning within
+        the final block. It keeps code simple, uses O(1) memory, and cuts comparisons from O(n) to
+        O(sqrt(n)).
+      </p>
 
-        <div className="jump98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`jump98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="jump98-main">
-          <aside className="jump98-toc" aria-label="Table of contents">
-            <h2 className="jump98-toc-title">Contents</h2>
-            <ul className="jump98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Jump search is a two-phase algorithm: a coarse jump phase that locates a candidate
+              block, and a linear scan phase that confirms the target inside that block. The classic
+              step size is sqrt(n), which minimizes total work.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Problem Patterns</h2>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="jump98-content">
-            <h1 className="jump98-doc-title">Jump Search</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-how-it-works" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {coreConcepts.map((item) => (
+              <div key={item.heading}>
+                <h3 className="bin98-subheading">{item.heading}</h3>
+                <ul>
+                  {item.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-reasoning" className="bin98-section">
+            <h2 className="bin98-heading">Reasoning and Invariants</h2>
+            <h3 className="bin98-subheading">Reasoning Steps</h3>
+            {reasoningSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Loop Invariants</h3>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Jump search works on sorted arrays by jumping ahead in fixed steps and then scanning within the final block. It
-              keeps code simple, uses O(1) memory, and cuts comparisons from O(n) to O(sqrt(n)).
+              Jump search is rarely faster than binary search on CPU arrays, but it is easier to
+              implement, and its linear access patterns can be better for systems where random
+              access is expensive.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="jump98-section">
-                  <h2 className="jump98-heading">Overview</h2>
-                  <p>
-                    Jump search is a two-phase algorithm: a coarse jump phase that locates a candidate block, and a linear scan
-                    phase that confirms the target inside that block. The classic step size is sqrt(n), which minimizes total
-                    work.
-                  </p>
-                </section>
-                <hr className="jump98-divider" />
-                <section id="bp-history" className="jump98-section">
-                  <h2 className="jump98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-mental-models" className="jump98-section">
-                  <h2 className="jump98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-patterns" className="jump98-section">
-                  <h2 className="jump98-heading">Problem Patterns</h2>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="jump98-section">
-                  <h2 className="jump98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-how-it-works" className="jump98-section">
-                  <h2 className="jump98-heading">How It Works</h2>
-                  {coreConcepts.map((item) => (
-                    <div key={item.heading}>
-                      <h3 className="jump98-subheading">{item.heading}</h3>
-                      <ul>
-                        {item.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-reasoning" className="jump98-section">
-                  <h2 className="jump98-heading">Reasoning and Invariants</h2>
-                  <h3 className="jump98-subheading">Reasoning Steps</h3>
-                  {reasoningSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="jump98-subheading">Loop Invariants</h3>
-                  {loopInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="jump98-section">
-                  <h2 className="jump98-heading">Complexity and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Jump search is rarely faster than binary search on CPU arrays, but it is easier to implement, and its linear
-                    access patterns can be better for systems where random access is expensive.
-                  </p>
-                  <h3 className="jump98-subheading">Operation Summary</h3>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Operation</th>
-                        <th>Time</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Jump phase</td>
-                        <td>O(sqrt(n))</td>
-                        <td>Check block endpoints until target range found.</td>
-                      </tr>
-                      <tr>
-                        <td>Linear scan</td>
-                        <td>O(sqrt(n))</td>
-                        <td>Scan within a single block.</td>
-                      </tr>
-                      <tr>
-                        <td>Total search</td>
-                        <td>O(sqrt(n))</td>
-                        <td>Best case O(1), worst case about 2 * sqrt(n) checks.</td>
-                      </tr>
-                      <tr>
-                        <td>Extra space</td>
-                        <td>O(1)</td>
-                        <td>No additional arrays required.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-performance" className="jump98-section">
-                  <h2 className="jump98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="jump98-section">
-                  <h2 className="jump98-heading">Compare and Contrast</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Sorted?</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.sorted}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-applications" className="jump98-section">
-                  <h2 className="jump98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="jump98-section">
-                  <h2 className="jump98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-shortcuts" className="jump98-section">
-                  <h2 className="jump98-heading">Thinking Shortcuts</h2>
-                  <ul>
-                    {thinkingShortcuts.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-implementation" className="jump98-section">
-                  <h2 className="jump98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decisions" className="jump98-section">
-                  <h2 className="jump98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="jump98-section">
-                  <h2 className="jump98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-trace" className="jump98-section">
-                  <h2 className="jump98-heading">Worked Trace</h2>
-                  {stepTrace.map((item) => (
-                    <div key={item.step}>
-                      <h3 className="jump98-subheading">{item.step}</h3>
-                      <p>{item.state}</p>
-                      <p>{item.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-code" className="jump98-section">
-                  <h2 className="jump98-heading">Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="jump98-subheading">{example.title}</h3>
-                      <div className="jump98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="jump98-section">
-                <h2 className="jump98-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
+            <h3 className="bin98-subheading">Operation Summary</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Operation</th>
+                  <th>Time</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Jump phase</td>
+                  <td>O(sqrt(n))</td>
+                  <td>Check block endpoints until target range found.</td>
+                </tr>
+                <tr>
+                  <td>Linear scan</td>
+                  <td>O(sqrt(n))</td>
+                  <td>Scan within a single block.</td>
+                </tr>
+                <tr>
+                  <td>Total search</td>
+                  <td>O(sqrt(n))</td>
+                  <td>Best case O(1), worst case about 2 * sqrt(n) checks.</td>
+                </tr>
+                <tr>
+                  <td>Extra space</td>
+                  <td>O(1)</td>
+                  <td>No additional arrays required.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Sorted?</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.sorted}</td>
+                    <td>{row.notes}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-shortcuts" className="bin98-section">
+            <h2 className="bin98-heading">Thinking Shortcuts</h2>
+            <ul>
+              {thinkingShortcuts.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace</h2>
+            {stepTrace.map((item) => (
+              <div key={item.step}>
+                <h3 className="bin98-subheading">{item.step}</h3>
+                <p>{item.state}</p>
+                <p>{item.note}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

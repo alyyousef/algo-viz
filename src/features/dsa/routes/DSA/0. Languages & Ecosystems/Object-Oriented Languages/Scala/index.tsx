@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -76,7 +74,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-jvm-context',
     title: 'JVM Context',
     paragraphs: [
-      'Scala compiles to JVM bytecode, which means it benefits from the JVM runtime, garbage collection, JIT optimization, mature deployment patterns, and the enormous Java library ecosystem. This is one of Scala\'s biggest practical advantages. It can participate in enterprise and data-platform environments without isolating itself from the broader JVM world.',
+      "Scala compiles to JVM bytecode, which means it benefits from the JVM runtime, garbage collection, JIT optimization, mature deployment patterns, and the enormous Java library ecosystem. This is one of Scala's biggest practical advantages. It can participate in enterprise and data-platform environments without isolating itself from the broader JVM world.",
       'At the same time, Scala is not just a nicer syntax for Java APIs. The language introduces its own standard library, its own idioms, and its own abstractions. The best Scala code usually looks like Scala, not like Java translated into Scala syntax.',
     ],
   },
@@ -146,7 +144,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Language Shape And Syntax',
     paragraphs: [
       'Scala syntax is compact relative to older JVM languages. Type inference reduces repetition, expression-oriented constructs reduce ceremonial statements, and features such as case classes, tuples, for-comprehensions, and collection methods let many tasks be written in a dense but readable form.',
-      'This compactness is one of Scala\'s first visible differences, but it is not the deepest one. The more important difference is that syntax serves a design philosophy built around expressions, composition, and immutable-first modeling rather than around explicit mutable object shells.',
+      "This compactness is one of Scala's first visible differences, but it is not the deepest one. The more important difference is that syntax serves a design philosophy built around expressions, composition, and immutable-first modeling rather than around explicit mutable object shells.",
     ],
   },
   {
@@ -185,7 +183,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-case-classes',
     title: 'Case Classes And Data Modeling',
     paragraphs: [
-      'Case classes are one of Scala\'s most important features. They are lightweight immutable data carriers with built-in support for useful behavior such as structural equality, readable printing, and convenient construction. They make data-oriented modeling far less verbose than traditional JVM POJO patterns.',
+      "Case classes are one of Scala's most important features. They are lightweight immutable data carriers with built-in support for useful behavior such as structural equality, readable printing, and convenient construction. They make data-oriented modeling far less verbose than traditional JVM POJO patterns.",
       'Because case classes pair naturally with sealed traits and pattern matching, they form the backbone of many Scala domain models. They are especially effective for representing events, commands, states, AST nodes, and other algebraic structures.',
     ],
   },
@@ -218,14 +216,14 @@ const coreConceptSections: ContentSection[] = [
     title: 'For-Comprehensions And Composition',
     paragraphs: [
       'For-comprehensions provide a readable way to compose operations over monadic or collection-like contexts. In practice this often means working with collections, `Option`, `Either`, `Future`, or effect types from libraries such as Cats Effect or ZIO.',
-      'They are important because they let Scala express sequential-looking workflows over abstract contexts without abandoning compositional structure. This is part of the language\'s broader goal of making advanced composition ergonomic enough for real application code.',
+      "They are important because they let Scala express sequential-looking workflows over abstract contexts without abandoning compositional structure. This is part of the language's broader goal of making advanced composition ergonomic enough for real application code.",
     ],
   },
   {
     id: 'core-type-system',
     title: 'The Type System Beyond Basics',
     paragraphs: [
-      'Scala\'s type system goes well beyond nominal classes and generics. Depending on the version and style, developers may work with variance, higher-kinded types, contextual abstractions, union or intersection types in Scala 3, opaque types, extension methods, and type-class style APIs.',
+      "Scala's type system goes well beyond nominal classes and generics. Depending on the version and style, developers may work with variance, higher-kinded types, contextual abstractions, union or intersection types in Scala 3, opaque types, extension methods, and type-class style APIs.",
       'This power can be valuable because it helps encode reusable abstractions and domain constraints. It can also become a liability when teams use advanced types to impress each other rather than to clarify software design. The right amount of type sophistication is the amount that improves maintainability.',
     ],
   },
@@ -233,7 +231,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-given-typeclasses',
     title: 'Contextual Abstractions And Type Classes',
     paragraphs: [
-      'Modern Scala, especially Scala 3, supports contextual abstractions such as `given` and `using`, along with extension methods. These features make type-class style design more explicit and more coherent than older implicit-heavy patterns, though the underlying idea is continuous with Scala\'s historical abstraction style.',
+      "Modern Scala, especially Scala 3, supports contextual abstractions such as `given` and `using`, along with extension methods. These features make type-class style design more explicit and more coherent than older implicit-heavy patterns, though the underlying idea is continuous with Scala's historical abstraction style.",
       'Type classes matter because they let behavior be associated with types without forcing inheritance. This is powerful for reusable libraries, serialization, ordering, decoding, pretty-printing, effect abstractions, and other cross-cutting behavior.',
     ],
   },
@@ -258,7 +256,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Tooling, Builds, And Ecosystem Workflow',
     paragraphs: [
       'The Scala build ecosystem historically centers on `sbt`, though other tools such as Mill have gained traction. Day-to-day development also involves compiler versions, ecosystem compatibility, dependency resolution, IDE support, test libraries, and sometimes binary compatibility concerns across Scala versions.',
-      'This is one of Scala\'s practical costs. The language itself is powerful, but the surrounding build and version story can require more care than simpler stacks. Teams need discipline around version alignment and tooling choices.',
+      "This is one of Scala's practical costs. The language itself is powerful, but the surrounding build and version story can require more care than simpler stacks. Teams need discipline around version alignment and tooling choices.",
     ],
   },
   {
@@ -321,7 +319,7 @@ val label = if user.isAdmin then "[admin] " + user.name else user.name`,
     id: 'ex-pattern-match',
     title: 'Pattern Matching Over A Sealed Model',
     description: [
-      'Sealed hierarchies and pattern matching are one of Scala\'s clearest advantages for state and protocol modeling.',
+      "Sealed hierarchies and pattern matching are one of Scala's clearest advantages for state and protocol modeling.",
     ],
     code: `sealed trait LoadState
 case object Idle extends LoadState
@@ -454,13 +452,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Higher-order function',
-        definition:
-          'A function that accepts other functions, returns functions, or both.',
+        definition: 'A function that accepts other functions, returns functions, or both.',
       },
       {
         term: 'Immutable value',
-        definition:
-          'A value whose observable state does not change after creation.',
+        definition: 'A value whose observable state does not change after creation.',
       },
       {
         term: 'Sealed trait',
@@ -481,7 +477,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Type inference',
         definition:
-          'The compiler\'s ability to determine types without explicit annotation in many local situations.',
+          "The compiler's ability to determine types without explicit annotation in many local situations.",
       },
       {
         term: 'Type class',
@@ -616,224 +612,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.scala98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.scala98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.scala98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.scala98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.scala98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.scala98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.scala98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.scala98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.scala98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.scala98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.scala98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.scala98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.scala98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.scala98-toc-item {
-  margin: 0 0 8px;
-}
-
-.scala98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.scala98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.scala98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.scala98-section {
-  margin: 0 0 20px;
-}
-
-.scala98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.scala98-content p,
-.scala98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.scala98-content p {
-  margin: 0 0 10px;
-}
-
-.scala98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.scala98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.scala98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.scala98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .scala98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .scala98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .scala98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="scala98-section">
@@ -888,122 +666,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function ScalaPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Scala',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Scala (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Scala',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="scala98-help-page">
-      <style>{pageStyles}</style>
-      <div className="scala98-help-window" role="presentation">
-        <header className="scala98-titlebar">
-          <span className="scala98-titletext">Scala</span>
-          <div className="scala98-controls">
-            <button className="scala98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="scala98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Scala"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Scala</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="scala98-tabs" role="tablist" aria-label="Scala documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`scala98-tab ${activeTab === tab.id ? 'scala98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="scala98-main">
-          <aside className="scala98-toc" aria-label="Table of contents">
-            <h2 className="scala98-toc-title">Contents</h2>
-            <ul className="scala98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="scala98-toc-item">
-                  <a href={`#${section.id}`} className="scala98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="scala98-content">
-            <h1 className="scala98-doc-title">Scala</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

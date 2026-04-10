@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -8,8 +8,6 @@ type SectionNote = { title: string; details: string; notes: string }
 type NarrativeSection = { id: string; title: string; paragraphs: string[] }
 type ExampleSection = { id: string; title: string; code: string; explanation: string }
 type GlossaryTerm = { term: string; definition: string }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
   'Platform engineering builds internal developer platforms that give application teams self-service access to infrastructure, deployment workflows, and operational tooling without forcing every team to become expert in every low-level cloud and operations detail.',
@@ -569,251 +567,132 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const pageStyles = `
-.platform-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.platform-help-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;box-sizing:border-box;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040}
-.platform-help-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.platform-help-titletext{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px}
-.platform-help-controls{display:flex;gap:2px;margin-left:auto}
-.platform-help-control{width:18px;height:16px;padding:0;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer}
-.platform-help-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0}
-.platform-help-tab{padding:5px 10px 4px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;font-size:12px;cursor:pointer}
-.platform-help-tab.active{position:relative;top:1px;background:#fff}
-.platform-help-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff}
-.platform-help-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080}
-.platform-help-toc-title{margin:0 0 10px;font-size:12px;font-weight:700}
-.platform-help-toc-list{margin:0;padding:0;list-style:none}
-.platform-help-toc-list li{margin:0 0 8px}
-.platform-help-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.platform-help-toc-list a:hover{text-decoration:underline}
-.platform-help-content{overflow:auto;padding:14px 20px 20px}
-.platform-help-doc-title{margin:0 0 12px;font-size:20px;font-weight:700}
-.platform-help-section{margin:0 0 20px}
-.platform-help-heading{margin:0 0 8px;font-size:16px;font-weight:700}
-.platform-help-subheading{margin:0 0 6px;font-size:13px;font-weight:700}
-.platform-help-content p,.platform-help-content li{font-size:12px;line-height:1.5}
-.platform-help-content p{margin:0 0 10px}
-.platform-help-content ul{margin:0 0 10px 20px;padding:0}
-.platform-help-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.platform-help-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff}
-.platform-help-codebox code{display:block;white-space:pre;overflow:auto;font-family:"Courier New",Courier,monospace;font-size:12px}
-@media (max-width:900px){.platform-help-main{grid-template-columns:1fr}.platform-help-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 export default function PlatformEngineeringPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Platform Engineering',
+    defaultTab: 'big-picture',
   })
-
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-  const activeSections = sectionLinks[activeTab] ?? []
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Platform Engineering (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Platform Engineering',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="platform-help-page">
-      <style>{pageStyles}</style>
-      <div className="platform-help-window" role="presentation">
-        <header className="platform-help-titlebar">
-          <span className="platform-help-titletext">Platform Engineering</span>
-          <div className="platform-help-controls">
-            <button
-              className="platform-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="platform-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Platform Engineering"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Platform Engineering</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="platform-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`platform-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="platform-help-main">
-          <aside className="platform-help-toc" aria-label="Table of contents">
-            <h2 className="platform-help-toc-title">Contents</h2>
-            <ul className="platform-help-toc-list">
-              {activeSections.map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="bp-tool-map" className="bin98-section">
+            <h2 className="bin98-heading">Tool Map</h2>
+            {platformDecisionGuide.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <p>
+              The operational burden of modern delivery stacks is too high to leave entirely to each
+              application team. Platform engineering matters because it converts repeated
+              infrastructure and delivery work into supported internal products instead of repeated
+              custom setup.
+            </p>
+            <p>
+              It also creates a way to standardize without centralizing every change request. Teams
+              can move faster because the safe path is prebuilt, while governance improves because
+              that path already encodes policy, operational defaults, and ownership expectations.
+            </p>
+            <p>
+              When it works well, the platform becomes a force multiplier. Application teams spend
+              less time stitching together pipelines, IAM, charts, and dashboards and more time
+              shipping the service behavior that matters to the business.
+            </p>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="platform-help-content">
-            <h1 className="platform-help-doc-title">Platform Engineering</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="platform-help-section">
-                  <h2 className="platform-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="platform-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Operating Checklist</h2>
+            <ul>
+              {operatingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-                <hr className="platform-help-divider" />
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
 
-                <section id="bp-tool-map" className="platform-help-section">
-                  <h2 className="platform-help-heading">Tool Map</h2>
-                  {platformDecisionGuide.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="platform-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="platform-help-divider" />
-
-                <section id="bp-why" className="platform-help-section">
-                  <h2 className="platform-help-heading">Why It Matters</h2>
-                  <p>
-                    The operational burden of modern delivery stacks is too high to leave entirely
-                    to each application team. Platform engineering matters because it converts
-                    repeated infrastructure and delivery work into supported internal products
-                    instead of repeated custom setup.
-                  </p>
-                  <p>
-                    It also creates a way to standardize without centralizing every change request.
-                    Teams can move faster because the safe path is prebuilt, while governance
-                    improves because that path already encodes policy, operational defaults, and
-                    ownership expectations.
-                  </p>
-                  <p>
-                    When it works well, the platform becomes a force multiplier. Application teams
-                    spend less time stitching together pipelines, IAM, charts, and dashboards and
-                    more time shipping the service behavior that matters to the business.
-                  </p>
-                </section>
-
-                <hr className="platform-help-divider" />
-
-                <section id="bp-takeaways" className="platform-help-section">
-                  <h2 className="platform-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="platform-help-section">
-                    <h2 className="platform-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-checklist" className="platform-help-section">
-                  <h2 className="platform-help-heading">Operating Checklist</h2>
-                  <ul>
-                    {operatingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="platform-help-section">
-                    <h2 className="platform-help-heading">{example.title}</h2>
-                    <div className="platform-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="platform-help-section">
-                <h2 className="platform-help-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

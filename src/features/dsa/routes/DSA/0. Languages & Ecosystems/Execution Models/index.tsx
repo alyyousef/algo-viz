@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 import { slugifySegment } from '@/features/dsa/utils/slug'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const EXECUTION_MODELS_BASE_ROUTE = '/dsa/0-languages-and-ecosystems/execution-models'
 
 const overviewSections = [
@@ -389,547 +389,207 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'exec98-glossary', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 function toExecutionModelRoute(name: string): string {
   return `${EXECUTION_MODELS_BASE_ROUTE}/${slugifySegment(name)}`
 }
 
-const executionModelsHelpStyles = `
-.exec98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.exec98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.exec98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.exec98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.exec98-title-controls {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.exec98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.exec98-control:focus-visible,
-.exec98-tab:focus-visible,
-.exec98-toc-link:focus-visible,
-.exec98-inline-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
-.exec98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.exec98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b7b7b7;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.exec98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.exec98-main {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.exec98-toc {
-  overflow: auto;
-  padding: 12px 12px 18px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.exec98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.exec98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.exec98-toc-item + .exec98-toc-item {
-  margin-top: 8px;
-}
-
-.exec98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.exec98-content {
-  overflow: auto;
-  padding: 16px 22px 24px;
-  background: #ffffff;
-}
-
-.exec98-doc-title {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.exec98-intro {
-  margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.exec98-section {
-  margin: 0 0 22px;
-}
-
-.exec98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.exec98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.exec98-divider {
-  margin: 14px 0 16px;
-  border: 0;
-  border-top: 1px solid #d4d4d4;
-}
-
-.exec98-content p,
-.exec98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.exec98-content p {
-  margin: 0 0 10px;
-}
-
-.exec98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.exec98-content li + li {
-  margin-top: 4px;
-}
-
-.exec98-inline-link {
-  color: #000080;
-  text-decoration: underline;
-}
-
-.exec98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px 9px;
-  background: #f3f3f3;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.exec98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .exec98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .exec98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .exec98-title {
-    font-size: 13px;
-    max-width: calc(100% - 72px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .exec98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
 export default function ExecutionModelsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const requestedTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(location.search)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Execution Models (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, location.search, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    if (tab === activeTab) {
-      return
-    }
-
-    const nextParams = new URLSearchParams(location.search)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Execution Models',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Execution Models',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="exec98-help-page">
-      <style>{executionModelsHelpStyles}</style>
-      <div className="exec98-window" role="presentation">
-        <header className="exec98-titlebar">
-          <span className="exec98-title">Execution Models</span>
-          <div className="exec98-title-controls">
-            <button
-              className="exec98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="exec98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Execution Models"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Execution Models</h1>
+      <p className="exec98-intro">
+        This page is the overview for the Execution Models subsection inside Languages &amp;
+        Ecosystems. It explains how programs move from source code to running behavior, why compiled
+        and interpreted systems feel different in practice, and why modern runtimes often blend both
+        approaches.
+      </p>
 
-        <div className="exec98-tabs" role="tablist" aria-label="Execution Models Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`exec98-tab ${activeTab === tab.id ? 'exec98-tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="exec98-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                <p>{section.body}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="exec98-main">
-          <aside className="exec98-toc" aria-label="Table of contents">
-            <h2 className="exec98-toc-title">Contents</h2>
-            <ul className="exec98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="exec98-toc-item">
-                  <a href={`#${section.id}`} className="exec98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="exec98-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <ul>
+              {whyItMatters.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="exec98-content">
-            <h1 className="exec98-doc-title">Execution Models</h1>
-            <p className="exec98-intro">
-              This page is the overview for the Execution Models subsection inside Languages &amp;
-              Ecosystems. It explains how programs move from source code to running behavior, why
-              compiled and interpreted systems feel different in practice, and why modern runtimes
-              often blend both approaches.
+          <hr className="bin98-divider" />
+
+          <section id="exec98-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="exec98-survey" className="bin98-section">
+            <h2 className="bin98-heading">Section Survey</h2>
+            {sectionSurvey.map((item) => (
+              <div key={item.name}>
+                <h3 className="bin98-subheading">{item.name}</h3>
+                <p>{item.summary}</p>
+                <p>
+                  <Link to={toExecutionModelRoute(item.name)} className="exec98-inline-link">
+                    Open {item.name}
+                  </Link>
+                </p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="exec98-themes" className="bin98-section">
+            <h2 className="bin98-heading">Execution Themes</h2>
+            {executionThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="exec98-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="exec98-signals" className="bin98-section">
+            <h2 className="bin98-heading">Topic Signals</h2>
+            {topicSignals.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exec98-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {coreFoundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exec98-tradeoffs" className="bin98-section">
+            <h2 className="bin98-heading">Tradeoff Themes</h2>
+            {tradeoffThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exec98-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exec98-failures" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exec98-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Study Checklist</h2>
+            <ul>
+              {studyChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>
+                <strong>Area:</strong> {example.area}
+              </p>
+              <p>{example.intro}</p>
+              <p>
+                <strong>Why this example fits:</strong> {example.whyFit}
+              </p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="exec98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((entry) => (
+            <p key={entry.term}>
+              <strong>{entry.term}:</strong> {entry.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="exec98-overview" className="exec98-section">
-                  <h2 className="exec98-heading">Overview</h2>
-                  {overviewSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="exec98-subheading">{section.title}</h3>
-                      <p>{section.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exec98-divider" />
-
-                <section id="exec98-why" className="exec98-section">
-                  <h2 className="exec98-heading">Why It Matters</h2>
-                  <ul>
-                    {whyItMatters.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="exec98-divider" />
-
-                <section id="exec98-history" className="exec98-section">
-                  <h2 className="exec98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exec98-divider" />
-
-                <section id="exec98-survey" className="exec98-section">
-                  <h2 className="exec98-heading">Section Survey</h2>
-                  {sectionSurvey.map((item) => (
-                    <div key={item.name}>
-                      <h3 className="exec98-subheading">{item.name}</h3>
-                      <p>{item.summary}</p>
-                      <p>
-                        <Link to={toExecutionModelRoute(item.name)} className="exec98-inline-link">
-                          Open {item.name}
-                        </Link>
-                      </p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exec98-divider" />
-
-                <section id="exec98-themes" className="exec98-section">
-                  <h2 className="exec98-heading">Execution Themes</h2>
-                  {executionThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exec98-divider" />
-
-                <section id="exec98-takeaways" className="exec98-section">
-                  <h2 className="exec98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="exec98-signals" className="exec98-section">
-                  <h2 className="exec98-heading">Topic Signals</h2>
-                  {topicSignals.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exec98-foundations" className="exec98-section">
-                  <h2 className="exec98-heading">Foundations</h2>
-                  {coreFoundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exec98-tradeoffs" className="exec98-section">
-                  <h2 className="exec98-heading">Tradeoff Themes</h2>
-                  {tradeoffThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exec98-compare" className="exec98-section">
-                  <h2 className="exec98-heading">Compare and Contrast</h2>
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exec98-failures" className="exec98-section">
-                  <h2 className="exec98-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exec98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exec98-checklist" className="exec98-section">
-                  <h2 className="exec98-heading">Study Checklist</h2>
-                  <ul>
-                    {studyChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="exec98-section">
-                    <h2 className="exec98-heading">{example.title}</h2>
-                    <p>
-                      <strong>Area:</strong> {example.area}
-                    </p>
-                    <p>{example.intro}</p>
-                    <p>
-                      <strong>Why this example fits:</strong> {example.whyFit}
-                    </p>
-                    <div className="exec98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="exec98-glossary" className="exec98-section">
-                <h2 className="exec98-heading">Glossary</h2>
-                {glossary.map((entry) => (
-                  <p key={entry.term}>
-                    <strong>{entry.term}:</strong> {entry.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

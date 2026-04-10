@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -30,59 +29,49 @@ const historicalMilestones = [
 const prerequisites = [
   {
     title: 'Binary edge weights',
-    detail:
-      'All edges must have weight 0 or 1. Any other weight breaks the deque ordering.',
+    detail: 'All edges must have weight 0 or 1. Any other weight breaks the deque ordering.',
   },
   {
     title: 'Nonnegative costs',
-    detail:
-      '0-1 BFS is a special case of Dijkstra and assumes nonnegative weights.',
+    detail: '0-1 BFS is a special case of Dijkstra and assumes nonnegative weights.',
   },
   {
     title: 'Single-source objective',
-    detail:
-      'Compute shortest paths from one source to all reachable nodes.',
+    detail: 'Compute shortest paths from one source to all reachable nodes.',
   },
   {
     title: 'Adjacency list',
-    detail:
-      'A list of neighbors with weights keeps the algorithm linear in V + E.',
+    detail: 'A list of neighbors with weights keeps the algorithm linear in V + E.',
   },
 ]
 
 const inputsOutputs = [
   {
     title: 'Input',
-    detail:
-      'Graph G(V, E) with weights in {0,1} and a source node.',
+    detail: 'Graph G(V, E) with weights in {0,1} and a source node.',
   },
   {
     title: 'Output',
-    detail:
-      'Shortest distances and optional parents for path reconstruction.',
+    detail: 'Shortest distances and optional parents for path reconstruction.',
   },
   {
     title: 'Optional',
-    detail:
-      'Early stop if only a specific target distance is needed.',
+    detail: 'Early stop if only a specific target distance is needed.',
   },
 ]
 
 const formalDefinitions = [
   {
     title: 'Relaxation rule',
-    detail:
-      'If dist[u] + w < dist[v], update dist[v] and parent[v] = u.',
+    detail: 'If dist[u] + w < dist[v], update dist[v] and parent[v] = u.',
   },
   {
     title: 'Deque ordering',
-    detail:
-      'Edges with weight 0 keep distance, weight 1 increases it by one.',
+    detail: 'Edges with weight 0 keep distance, weight 1 increases it by one.',
   },
   {
     title: 'Monotone expansion',
-    detail:
-      'Nodes popped from the front are processed in nondecreasing distance.',
+    detail: 'Nodes popped from the front are processed in nondecreasing distance.',
   },
 ]
 
@@ -125,18 +114,15 @@ const coreMechanics = [
 const keyStructures = [
   {
     title: 'Deque',
-    detail:
-      'Supports push front and push back in O(1), which matches the binary weight behavior.',
+    detail: 'Supports push front and push back in O(1), which matches the binary weight behavior.',
   },
   {
     title: 'Distance array',
-    detail:
-      'Holds shortest known distance. Initialize with Infinity except the source.',
+    detail: 'Holds shortest known distance. Initialize with Infinity except the source.',
   },
   {
     title: 'Parent array',
-    detail:
-      'Track the predecessor edge for path reconstruction.',
+    detail: 'Track the predecessor edge for path reconstruction.',
   },
   {
     title: 'Visited or in-queue tracking',
@@ -158,49 +144,41 @@ const stepByStepFlow = [
 const dataStructures = [
   {
     title: 'Deque',
-    detail:
-      'Supports O(1) push front/back to simulate two priority buckets.',
+    detail: 'Supports O(1) push front/back to simulate two priority buckets.',
   },
   {
     title: 'Distance array',
-    detail:
-      'Stores shortest known distance from the source.',
+    detail: 'Stores shortest known distance from the source.',
   },
   {
     title: 'Parent array',
-    detail:
-      'Captures the edge that last improved a node.',
+    detail: 'Captures the edge that last improved a node.',
   },
   {
     title: 'In-queue flag (optional)',
-    detail:
-      'Can reduce duplicate pushes but must not block better relaxations.',
+    detail: 'Can reduce duplicate pushes but must not block better relaxations.',
   },
 ]
 
 const correctnessNotes = [
   {
     title: 'Deque preserves order',
-    detail:
-      'Zero-cost edges do not increase distance, so they are processed first.',
+    detail: 'Zero-cost edges do not increase distance, so they are processed first.',
   },
   {
     title: 'Equivalent to Dijkstra',
-    detail:
-      'For weights in {0,1}, the deque emulates a priority queue exactly.',
+    detail: 'For weights in {0,1}, the deque emulates a priority queue exactly.',
   },
   {
     title: 'Relaxation ensures optimality',
-    detail:
-      'No shorter path can appear after a node is popped at its minimal distance.',
+    detail: 'No shorter path can appear after a node is popped at its minimal distance.',
   },
 ]
 
 const terminationRules = [
   {
     title: 'Deque empty',
-    detail:
-      'When the deque is empty, all reachable nodes have final distances.',
+    detail: 'When the deque is empty, all reachable nodes have final distances.',
   },
   {
     title: 'Early goal stop',
@@ -209,8 +187,7 @@ const terminationRules = [
   },
   {
     title: 'Binary-weight requirement',
-    detail:
-      'Edge weights must be 0 or 1. Any other weights break the deque ordering guarantee.',
+    detail: 'Edge weights must be 0 or 1. Any other weights break the deque ordering guarantee.',
   },
 ]
 
@@ -222,8 +199,7 @@ const complexityNotes = [
   },
   {
     title: 'Space complexity',
-    detail:
-      'O(V + E) for graph storage plus distance and parent arrays.',
+    detail: 'O(V + E) for graph storage plus distance and parent arrays.',
   },
   {
     title: 'Why it beats Dijkstra',
@@ -245,8 +221,7 @@ const realWorldUses = [
   },
   {
     context: 'Network routing with tolls',
-    detail:
-      'Binary cost edges model paid vs free links, where you want to minimize toll count.',
+    detail: 'Binary cost edges model paid vs free links, where you want to minimize toll count.',
   },
   {
     context: 'String transformation puzzles',
@@ -295,8 +270,7 @@ grid = [
   0 0 0
 ]
 // 0-1 BFS finds the minimal number of walls to break`,
-    explanation:
-      'Edges through free cells push to front, while breaking a wall pushes to back.',
+    explanation: 'Edges through free cells push to front, while breaking a wall pushes to back.',
   },
   {
     title: 'Convert to 0-1 graph',
@@ -350,23 +324,19 @@ const decisionGuidance = [
 const implementationNotes = [
   {
     title: 'Avoid stale updates',
-    detail:
-      'If you use an in-queue flag, clear it when a node is popped.',
+    detail: 'If you use an in-queue flag, clear it when a node is popped.',
   },
   {
     title: 'Early exit',
-    detail:
-      'You can stop when the goal is popped, not when it is first seen.',
+    detail: 'You can stop when the goal is popped, not when it is first seen.',
   },
   {
     title: 'Graph modeling',
-    detail:
-      'Convert binary decisions into edges of weight 0 or 1 to exploit 0-1 BFS.',
+    detail: 'Convert binary decisions into edges of weight 0 or 1 to exploit 0-1 BFS.',
   },
   {
     title: 'Undirected edges',
-    detail:
-      'Add both directions explicitly with the same weight.',
+    detail: 'Add both directions explicitly with the same weight.',
   },
 ]
 
@@ -378,8 +348,7 @@ const advancedInsights = [
   },
   {
     title: "Dial's algorithm generalization",
-    detail:
-      'For weights in 0..C, you can use C+1 buckets. 0-1 BFS is the C=1 case.',
+    detail: 'For weights in 0..C, you can use C+1 buckets. 0-1 BFS is the C=1 case.',
   },
   {
     title: 'Path reconstruction detail',
@@ -425,8 +394,7 @@ const variantTable = [
 const quickGlossary = [
   {
     term: '0-1 BFS',
-    definition:
-      'Shortest path algorithm for graphs where every edge weight is exactly 0 or 1.',
+    definition: 'Shortest path algorithm for graphs where every edge weight is exactly 0 or 1.',
   },
   {
     term: 'Relaxation',
@@ -435,18 +403,16 @@ const quickGlossary = [
   },
   {
     term: 'Deque ordering',
-    definition:
-      'Push weight-0 relaxations to the front and weight-1 relaxations to the back.',
+    definition: 'Push weight-0 relaxations to the front and weight-1 relaxations to the back.',
   },
   {
     term: 'Monotone expansion',
-    definition:
-      'Nodes popped from the front are processed in nondecreasing distance order.',
+    definition: 'Nodes popped from the front are processed in nondecreasing distance order.',
   },
   {
     term: 'Dial variant',
     definition:
-      "For weights in 0..C, C+1 buckets generalize the same idea; 0-1 BFS is the C=1 case.",
+      'For weights in 0..C, C+1 buckets generalize the same idea; 0-1 BFS is the C=1 case.',
   },
   {
     term: 'Parent array',
@@ -455,8 +421,7 @@ const quickGlossary = [
   },
   {
     term: 'Early goal stop',
-    definition:
-      'Safe only when the goal node is popped from the deque, not when first discovered.',
+    definition: 'Safe only when the goal node is popped from the deque, not when first discovered.',
   },
 ]
 
@@ -494,535 +459,246 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  padding: 2px 4px;
-  min-height: 22px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.win98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-toc-list a:hover {
-  text-decoration: underline;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 22px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 10px 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.win98-codebox pre {
-  margin: 0;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 export default function Topic01BFSPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: '0-1 BFS',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `0-1 BFS (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: '0-1 BFS',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">0-1 BFS - Help</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="0-1 BFS"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">0-1 BFS</h1>
+      <p>
+        0-1 BFS is a specialized shortest path algorithm for graphs whose edge weights are only 0 or
+        1. It replaces the priority queue of Dijkstra with a deque and still expands nodes in
+        nondecreasing distance order. The result is the same optimal paths, but with linear-time
+        performance.
+      </p>
 
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Many problems have edges that are either free (0) or cost one unit (1): breaking a
+              wall, paying a toll, or toggling a bit. 0-1 BFS exploits this structure by using a
+              deque. If traversing an edge adds zero cost, the next node should be processed
+              immediately, so it goes to the front. If it adds one cost, it goes to the back. This
+              simple rule keeps the queue ordered by distance without a heap.
+            </p>
+            <h3 className="bin98-subheading">Input and output contract</h3>
+            <ul>
+              {inputsOutputs.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.detail}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-          <main className="win98-content">
-            <h1 className="win98-doc-title">0-1 BFS</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-prerequisites" className="bin98-section">
+            <h2 className="bin98-heading">Prerequisites</h2>
+            {prerequisites.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-formal" className="bin98-section">
+            <h2 className="bin98-heading">Formal Concepts</h2>
+            {formalDefinitions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">Core Mechanics</h2>
+            {coreMechanics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-flow" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Flow</h2>
+            <ol>
+              {stepByStepFlow.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-structures" className="bin98-section">
+            <h2 className="bin98-heading">Data Structures</h2>
+            <h3 className="bin98-subheading">Primary structures and invariants</h3>
+            {keyStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Implementation details</h3>
+            {dataStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness and Termination</h2>
+            <h3 className="bin98-subheading">Termination rules</h3>
+            {terminationRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Correctness sketch</h3>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              0-1 BFS is a specialized shortest path algorithm for graphs whose edge weights are only 0 or 1. It replaces the
-              priority queue of Dijkstra with a deque and still expands nodes in nondecreasing distance order. The result is the
-              same optimal paths, but with linear-time performance.
+              The deque ordering preserves nondecreasing distance because any 0 edge keeps distance
+              the same and any 1 edge increases it by one. This mimics Dijkstra's greedy rule with a
+              simpler data structure.
             </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              0-1 BFS is a perfect fit when weights are binary. If weights drift beyond 0 or 1,
+              switch to Dijkstra or a bucketed variant like Dial's algorithm.
+            </p>
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Guarantees</h2>
+            {variantTable.map((row) => (
+              <p key={row.variant}>
+                <strong>{row.variant}:</strong> {row.graphType}. <strong>Guarantee:</strong>{' '}
+                {row.guarantee}. <strong>Typical use case:</strong> {row.useCase}.
+              </p>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications and Use Cases</h2>
+            <h3 className="bin98-subheading">Real-world applications</h3>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">When to use it</h3>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Notes</h2>
+            {implementationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-edge-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases and Pitfalls</h2>
+            <h3 className="bin98-subheading">Edge cases checklist</h3>
+            <ul>
+              {edgeCases.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <h3 className="bin98-subheading">Common pitfalls</h3>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    Many problems have edges that are either free (0) or cost one unit (1): breaking a wall, paying a toll, or
-                    toggling a bit. 0-1 BFS exploits this structure by using a deque. If traversing an edge adds zero cost, the
-                    next node should be processed immediately, so it goes to the front. If it adds one cost, it goes to the back.
-                    This simple rule keeps the queue ordered by distance without a heap.
-                  </p>
-                  <h3 className="win98-subheading">Input and output contract</h3>
-                  <ul>
-                    {inputsOutputs.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.detail}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-mental" className="win98-section">
-                  <h2 className="win98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Code Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <pre>
+                  <code>{example.code}</code>
+                </pre>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-prerequisites" className="win98-section">
-                  <h2 className="win98-heading">Prerequisites</h2>
-                  {prerequisites.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-formal" className="win98-section">
-                  <h2 className="win98-heading">Formal Concepts</h2>
-                  {formalDefinitions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="win98-section">
-                  <h2 className="win98-heading">Core Mechanics</h2>
-                  {coreMechanics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-flow" className="win98-section">
-                  <h2 className="win98-heading">Step-by-Step Flow</h2>
-                  <ol>
-                    {stepByStepFlow.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-structures" className="win98-section">
-                  <h2 className="win98-heading">Data Structures</h2>
-                  <h3 className="win98-subheading">Primary structures and invariants</h3>
-                  {keyStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="win98-subheading">Implementation details</h3>
-                  {dataStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="win98-section">
-                  <h2 className="win98-heading">Correctness and Termination</h2>
-                  <h3 className="win98-subheading">Termination rules</h3>
-                  {terminationRules.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="win98-subheading">Correctness sketch</h3>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The deque ordering preserves nondecreasing distance because any 0 edge keeps distance the same and any 1 edge
-                    increases it by one. This mimics Dijkstra's greedy rule with a simpler data structure.
-                  </p>
-                </section>
-                <section id="core-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    0-1 BFS is a perfect fit when weights are binary. If weights drift beyond 0 or 1, switch to Dijkstra or a
-                    bucketed variant like Dial's algorithm.
-                  </p>
-                </section>
-                <section id="core-variants" className="win98-section">
-                  <h2 className="win98-heading">Variants and Guarantees</h2>
-                  {variantTable.map((row) => (
-                    <p key={row.variant}>
-                      <strong>{row.variant}:</strong> {row.graphType}. <strong>Guarantee:</strong> {row.guarantee}.{' '}
-                      <strong>Typical use case:</strong> {row.useCase}.
-                    </p>
-                  ))}
-                </section>
-                <section id="core-applications" className="win98-section">
-                  <h2 className="win98-heading">Applications and Use Cases</h2>
-                  <h3 className="win98-subheading">Real-world applications</h3>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="win98-subheading">When to use it</h3>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-implementation" className="win98-section">
-                  <h2 className="win98-heading">Implementation Notes</h2>
-                  {implementationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-edge-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Edge Cases and Pitfalls</h2>
-                  <h3 className="win98-subheading">Edge cases checklist</h3>
-                  <ul>
-                    {edgeCases.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                  <h3 className="win98-subheading">Common pitfalls</h3>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="win98-section">
-                <h2 className="win98-heading">Code Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="win98-subheading">{example.title}</h3>
-                    <div className="win98-codebox">
-                      <pre>
-                        <code>{example.code}</code>
-                      </pre>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

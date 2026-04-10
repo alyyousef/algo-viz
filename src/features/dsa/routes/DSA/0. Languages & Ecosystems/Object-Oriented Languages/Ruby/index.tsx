@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -34,8 +34,6 @@ type GlossarySection = {
   }>
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -55,7 +53,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Overview',
     paragraphs: [
       'Ruby is a high-level interpreted language built around expressive object-oriented programming and a developer-friendly syntax. Unlike many languages where object orientation is only one available style, Ruby treats object messaging, open classes, mixins, and dynamic behavior as central ideas rather than optional features.',
-      'The result is a language that can feel unusually natural for application code. APIs often read like prose, blocks make iteration elegant, and the runtime is flexible enough to support frameworks that feel highly integrated with the language itself. That flexibility is part of Ruby\'s appeal and part of its cost.',
+      "The result is a language that can feel unusually natural for application code. APIs often read like prose, blocks make iteration elegant, and the runtime is flexible enough to support frameworks that feel highly integrated with the language itself. That flexibility is part of Ruby's appeal and part of its cost.",
     ],
   },
   {
@@ -63,7 +61,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Why Ruby Exists',
     paragraphs: [
       'Ruby was designed with programmer happiness as an explicit goal. Rather than centering on machine-level efficiency or rigid compile-time formality, it tries to create a language where common tasks feel natural and where the syntax supports human readability and elegant expression.',
-      'That philosophy explains much of Ruby\'s shape: minimal punctuation noise, flexible method calling, strong object orientation, powerful blocks, metaprogramming facilities, and a runtime designed for expressive application development rather than for maximal static restriction.',
+      "That philosophy explains much of Ruby's shape: minimal punctuation noise, flexible method calling, strong object orientation, powerful blocks, metaprogramming facilities, and a runtime designed for expressive application development rather than for maximal static restriction.",
     ],
     bullets: [
       'It prioritizes readability and developer experience.',
@@ -76,7 +74,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-everything-object',
     title: 'Everything Is An Object',
     paragraphs: [
-      'One of Ruby\'s defining ideas is that everything is an object. Numbers, strings, classes, modules, booleans, and even `nil` all participate in the object model. This creates a very uniform programming surface because method calls and object behavior are pervasive rather than exceptional.',
+      "One of Ruby's defining ideas is that everything is an object. Numbers, strings, classes, modules, booleans, and even `nil` all participate in the object model. This creates a very uniform programming surface because method calls and object behavior are pervasive rather than exceptional.",
       'That uniformity is not only aesthetic. It shapes how Ruby developers think about APIs and abstractions. Instead of switching mentally between primitive and object worlds, code tends to stay within one message-passing model.',
     ],
   },
@@ -98,7 +96,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-framework-culture',
     title: 'Framework Culture And Rails Influence',
     paragraphs: [
-      'Ruby cannot be discussed honestly without Rails. Ruby on Rails shaped not only Ruby adoption but also much of the language\'s public identity. Convention over configuration, generated structure, domain-friendly application code, and rapid web product development became strongly associated with Ruby through Rails.',
+      "Ruby cannot be discussed honestly without Rails. Ruby on Rails shaped not only Ruby adoption but also much of the language's public identity. Convention over configuration, generated structure, domain-friendly application code, and rapid web product development became strongly associated with Ruby through Rails.",
       'This is important because Ruby culture often assumes a framework-driven way of building applications. Even when a project is not using Rails, its ecosystem expectations around gems, testing, conventions, and clean domain code are influenced by that history.',
     ],
   },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Ruby\'s greatest strength is expressiveness. Well-written Ruby can be extraordinarily readable, especially in application code with strong domain language. Blocks, symbols, modules, duck typing, and flexible object models make it easy to shape APIs around the problem rather than around compiler constraints.',
+      "Ruby's greatest strength is expressiveness. Well-written Ruby can be extraordinarily readable, especially in application code with strong domain language. Blocks, symbols, modules, duck typing, and flexible object models make it easy to shape APIs around the problem rather than around compiler constraints.",
       'It is also excellent for iteration speed. The language is forgiving during design exploration, and the ecosystem historically made it easy to go from idea to working product quickly. That is why Ruby has remained influential long after many newer languages appeared.',
     ],
     bullets: [
@@ -120,13 +118,13 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-limits',
     title: 'Important Limits',
     paragraphs: [
-      'Ruby\'s dynamic power has costs. There is less compile-time protection, runtime behavior can be shaped in surprising ways, and large codebases depend more heavily on tests, conventions, and team discipline to stay coherent. Performance is also a real concern in throughput-heavy systems compared with many compiled alternatives.',
+      "Ruby's dynamic power has costs. There is less compile-time protection, runtime behavior can be shaped in surprising ways, and large codebases depend more heavily on tests, conventions, and team discipline to stay coherent. Performance is also a real concern in throughput-heavy systems compared with many compiled alternatives.",
       'Metaprogramming is another double-edged feature. It can produce beautiful APIs, but it can also hide behavior from readers, complicate debugging, and make tooling weaker when overused.',
     ],
     bullets: [
       'Fewer static guarantees than typed compiled languages.',
       'Runtime flexibility can become maintainability risk.',
-      'Performance and memory efficiency are not Ruby\'s core strengths.',
+      "Performance and memory efficiency are not Ruby's core strengths.",
       'Codebases can become too magical when conventions replace clarity.',
     ],
   },
@@ -170,7 +168,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Modules And Mixins',
     paragraphs: [
       'Ruby uses modules both as namespaces and as mixin containers. Mixins are a major part of Ruby design because they let types share behavior without requiring classical multiple inheritance. A class can include modules to gain methods and capabilities in a very flexible way.',
-      'This is one of Ruby\'s most important alternatives to deep inheritance trees. In well-designed code, modules help keep behavior composable and reusable. In poorly designed code, they can make the method lookup path and effective class behavior harder to trace.',
+      "This is one of Ruby's most important alternatives to deep inheritance trees. In well-designed code, modules help keep behavior composable and reusable. In poorly designed code, they can make the method lookup path and effective class behavior harder to trace.",
     ],
   },
   {
@@ -186,7 +184,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Enumerable And Collection Style',
     paragraphs: [
       'Ruby collection programming relies heavily on `Enumerable` and methods such as `map`, `select`, `reject`, `reduce`, `each_with_object`, and related patterns. This encourages a high-level transformation style that reads well and avoids a lot of manual indexing or mutation-heavy loops.',
-      'For everyday application code, this is one of Ruby\'s biggest ergonomic advantages. The standard collection APIs are expressive enough that many business transformations can be described very directly.',
+      "For everyday application code, this is one of Ruby's biggest ergonomic advantages. The standard collection APIs are expressive enough that many business transformations can be described very directly.",
     ],
   },
   {
@@ -249,7 +247,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-performance',
     title: 'Performance Characteristics',
     paragraphs: [
-      'Ruby performance is usually good enough for many business applications, web APIs, and internal tools, especially when architecture, caching, and database design are done well. But performance is not the language\'s signature advantage, and high-throughput workloads may hit limits sooner than in lower-level or more aggressively optimized runtimes.',
+      "Ruby performance is usually good enough for many business applications, web APIs, and internal tools, especially when architecture, caching, and database design are done well. But performance is not the language's signature advantage, and high-throughput workloads may hit limits sooner than in lower-level or more aggressively optimized runtimes.",
       'The correct mental model is that Ruby buys developer speed with some runtime cost. Teams should optimize the whole system rather than only language microbenchmarks, but they should also be honest when a workload no longer fits Ruby comfortably.',
     ],
   },
@@ -326,7 +324,7 @@ end`,
     id: 'ex-block',
     title: 'Block-Based Iteration',
     description: [
-      'Blocks are one of Ruby\'s defining features and make collection processing and DSL-style APIs feel natural.',
+      "Blocks are one of Ruby's defining features and make collection processing and DSL-style APIs feel natural.",
     ],
     code: `scores = [92, 74, 88, 99]
 
@@ -374,7 +372,7 @@ end`,
     id: 'ex-rails-style',
     title: 'Rails-Style Validation Example',
     description: [
-      'Ruby\'s ecosystem often expresses domain logic through framework-friendly, readable declarations.',
+      "Ruby's ecosystem often expresses domain logic through framework-friendly, readable declarations.",
     ],
     code: `class User < ApplicationRecord
   validates :email, presence: true
@@ -436,13 +434,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Yield',
-        definition:
-          'The mechanism by which a method invokes a provided block.',
+        definition: 'The mechanism by which a method invokes a provided block.',
       },
       {
         term: 'Nil',
-        definition:
-          'Ruby\'s object representing the absence of a meaningful value.',
+        definition: "Ruby's object representing the absence of a meaningful value.",
       },
     ],
   },
@@ -457,8 +453,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Gem',
-        definition:
-          'A packaged Ruby library distributed through the Ruby ecosystem.',
+        definition: 'A packaged Ruby library distributed through the Ruby ecosystem.',
       },
       {
         term: 'Bundler',
@@ -467,18 +462,15 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'RuboCop',
-        definition:
-          'A widely used Ruby linter and style enforcement tool.',
+        definition: 'A widely used Ruby linter and style enforcement tool.',
       },
       {
         term: 'RSpec',
-        definition:
-          'A popular testing framework known for its behavior-driven syntax style.',
+        definition: 'A popular testing framework known for its behavior-driven syntax style.',
       },
       {
         term: 'Minitest',
-        definition:
-          'A smaller built-in-oriented Ruby testing framework with simpler conventions.',
+        definition: 'A smaller built-in-oriented Ruby testing framework with simpler conventions.',
       },
       {
         term: 'Global VM Lock',
@@ -487,8 +479,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'IRB',
-        definition:
-          'Ruby\'s interactive shell for experimenting with code and objects quickly.',
+        definition: "Ruby's interactive shell for experimenting with code and objects quickly.",
       },
     ],
   },
@@ -504,7 +495,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Active Record',
         definition:
-          'Rails\' object-relational mapping layer that maps database tables to Ruby models.',
+          "Rails' object-relational mapping layer that maps database tables to Ruby models.",
       },
       {
         term: 'Convention over configuration',
@@ -518,23 +509,19 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Rack',
-        definition:
-          'A Ruby webserver interface standard underlying many Ruby web frameworks.',
+        definition: 'A Ruby webserver interface standard underlying many Ruby web frameworks.',
       },
       {
         term: 'Sidekiq',
-        definition:
-          'A widely used background job processing system in the Ruby ecosystem.',
+        definition: 'A widely used background job processing system in the Ruby ecosystem.',
       },
       {
         term: 'Puma',
-        definition:
-          'A common Ruby application server used in web deployments.',
+        definition: 'A common Ruby application server used in web deployments.',
       },
       {
         term: 'Sinatra',
-        definition:
-          'A lightweight Ruby web framework often used for smaller services and APIs.',
+        definition: 'A lightweight Ruby web framework often used for smaller services and APIs.',
       },
     ],
   },
@@ -583,224 +570,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
     { id: 'glossary-runtime', label: 'Runtime Terms' },
     { id: 'glossary-ecosystem', label: 'Ecosystem Terms' },
   ],
-}
-
-const pageStyles = `
-.ruby98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ruby98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.ruby98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.ruby98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.ruby98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.ruby98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.ruby98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.ruby98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.ruby98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.ruby98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.ruby98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.ruby98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ruby98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ruby98-toc-item {
-  margin: 0 0 8px;
-}
-
-.ruby98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ruby98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.ruby98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ruby98-section {
-  margin: 0 0 20px;
-}
-
-.ruby98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ruby98-content p,
-.ruby98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ruby98-content p {
-  margin: 0 0 10px;
-}
-
-.ruby98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ruby98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.ruby98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.ruby98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .ruby98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ruby98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .ruby98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -857,122 +626,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function RubyPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Ruby',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Ruby (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Ruby',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="ruby98-help-page">
-      <style>{pageStyles}</style>
-      <div className="ruby98-help-window" role="presentation">
-        <header className="ruby98-titlebar">
-          <span className="ruby98-titletext">Ruby</span>
-          <div className="ruby98-controls">
-            <button className="ruby98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="ruby98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Ruby"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Ruby</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="ruby98-tabs" role="tablist" aria-label="Ruby documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ruby98-tab ${activeTab === tab.id ? 'ruby98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="ruby98-main">
-          <aside className="ruby98-toc" aria-label="Table of contents">
-            <h2 className="ruby98-toc-title">Contents</h2>
-            <ul className="ruby98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="ruby98-toc-item">
-                  <a href={`#${section.id}`} className="ruby98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="ruby98-content">
-            <h1 className="ruby98-doc-title">Ruby</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

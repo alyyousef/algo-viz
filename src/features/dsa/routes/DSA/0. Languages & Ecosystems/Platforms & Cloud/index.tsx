@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -973,23 +975,12 @@ const scenarios = [
 // ─── Types and constants ──────────────────────────────────────────────────────
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -1210,116 +1201,14 @@ const glossary = [
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const win98HelpStyles = `
-.win98-cloud-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-.win98-cloud-page .win98-window {
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-.win98-cloud-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-.win98-cloud-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-.win98-cloud-page .win98-title-controls { display: flex; gap: 2px; margin-left: auto; }
-.win98-cloud-page .win98-control {
-  width: 18px; height: 16px;
-  border-top: 1px solid #fff; border-left: 1px solid #fff;
-  border-right: 1px solid #404040; border-bottom: 1px solid #404040;
-  background: #c0c0c0; color: #000; text-decoration: none;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 11px; line-height: 1;
-}
-.win98-cloud-page .win98-tabs { display: flex; gap: 1px; padding: 6px 8px 0; }
-.win98-cloud-page .win98-tab {
-  border-top: 1px solid #fff; border-left: 1px solid #fff;
-  border-right: 1px solid #404040; border-bottom: none;
-  background: #b6b6b6; padding: 5px 10px 4px; font-size: 12px; cursor: pointer;
-}
-.win98-cloud-page .win98-tab.active { background: #fff; position: relative; top: 1px; }
-.win98-cloud-page .win98-main {
-  border-top: 1px solid #404040; background: #fff;
-  flex: 1; min-height: 0; display: grid; grid-template-columns: 240px 1fr;
-}
-.win98-cloud-page .win98-toc {
-  border-right: 1px solid #808080; background: #f2f2f2; padding: 12px; overflow: auto;
-}
-.win98-cloud-page .win98-toc-title { font-size: 12px; font-weight: 700; margin: 0 0 10px; }
-.win98-cloud-page .win98-toc-list { list-style: none; margin: 0; padding: 0; }
-.win98-cloud-page .win98-toc-list li { margin: 0 0 8px; }
-.win98-cloud-page .win98-toc-list a { color: #000; text-decoration: none; font-size: 12px; }
-.win98-cloud-page .win98-content { padding: 14px 20px 20px; overflow: auto; }
-.win98-cloud-page .win98-doc-title { font-size: 20px; font-weight: 700; margin: 0 0 12px; }
-.win98-cloud-page .win98-section { margin: 0 0 20px; }
-.win98-cloud-page .win98-heading { font-size: 16px; font-weight: 700; margin: 0 0 8px; }
-.win98-cloud-page .win98-subheading { font-size: 13px; font-weight: 700; margin: 0 0 6px; }
-.win98-cloud-page .win98-content p,
-.win98-cloud-page .win98-content li { font-size: 12px; line-height: 1.5; }
-.win98-cloud-page .win98-content p { margin: 0 0 10px; }
-.win98-cloud-page .win98-content ul { margin: 0 0 10px 20px; padding: 0; }
-.win98-cloud-page .win98-divider { border: 0; border-top: 1px solid #d0d0d0; margin: 14px 0; }
-.win98-cloud-page .win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080; border-left: 2px solid #808080;
-  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-  padding: 8px; margin: 6px 0 10px;
-}
-.win98-cloud-page .win98-codebox code {
-  font-family: "Courier New", Courier, monospace; font-size: 12px; white-space: pre; display: block;
-}
-.win98-cloud-page .win98-inline-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
-.win98-cloud-page .win98-push {
-  border-top: 1px solid #fff; border-left: 1px solid #fff;
-  border-right: 1px solid #404040; border-bottom: 1px solid #404040;
-  background: #c0c0c0; font-size: 12px; padding: 4px 8px; cursor: pointer;
-}
-.win98-cloud-page .win98-step-box {
-  background: #fffff0;
-  border-top: 2px solid #808080; border-left: 2px solid #808080;
-  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-  padding: 8px 12px; margin: 6px 0 10px; font-size: 12px; line-height: 1.5;
-}
-.win98-cloud-page .win98-step-controls {
-  display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; font-size: 12px;
-}
-@media (max-width: 900px) {
-  .win98-cloud-page .win98-main { grid-template-columns: 1fr; }
-  .win98-cloud-page .win98-toc { border-right: none; border-bottom: 1px solid #808080; }
-}
-`
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PlatformsAndCloudPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Platforms &amp; Cloud',
+    defaultTab: 'big-picture',
+  })
 
   const defaultExample = codeExamples[0] ?? { title: '', code: '', explanation: '' }
   const defaultScenario = scenarios[0] ?? { id: '', title: '', steps: [], summary: '' }
@@ -1327,429 +1216,352 @@ export default function PlatformsAndCloudPage(): JSX.Element {
   const [selectedExampleTitle, setSelectedExampleTitle] = useState(defaultExample.title)
   const [selectedScenarioId, setSelectedScenarioId] = useState(defaultScenario.id)
   const [stepIndex, setStepIndex] = useState(0)
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
-  })
 
   const selectedExample =
     codeExamples.find((e) => e.title === selectedExampleTitle) ?? defaultExample
   const selectedScenario = scenarios.find((s) => s.id === selectedScenarioId) ?? defaultScenario
   const canStepForward = stepIndex < selectedScenario.steps.length - 1
-  const activeTabLabel = tabs.find((t) => t.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Platforms & Cloud (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleScenarioSelect = (id: string) => {
     setSelectedScenarioId(id)
     setStepIndex(0)
   }
 
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Platforms & Cloud',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((t) => t.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-cloud-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Platforms &amp; Cloud</span>
-          <div className="win98-title-controls">
-            <button
-              className="win98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Platforms &amp; Cloud"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Platforms &amp; Cloud</h1>
+      <p>
+        Cloud platforms provide on-demand infrastructure: compute, storage, networking, databases,
+        messaging, and managed services. This document covers AWS, Azure, and GCP across compute
+        models, storage, networking, IAM, messaging, IaC, containers, serverless, observability,
+        platform engineering, and cost management.
+      </p>
 
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-mental-model" className="bin98-section">
+            <h2 className="bin98-heading">Mental Model</h2>
+            {mentalModel.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why This Matters</h2>
+            <p>
+              Cloud fluency is a baseline expectation for backend, DevOps, and platform engineers.
+              The ability to design secure, available, and cost-efficient cloud architectures — and
+              to debug them when they break — directly determines how fast teams can ship and how
+              reliable their systems are.
+            </p>
+            <p>
+              The most expensive cloud mistakes (security breaches from misconfigured IAM, surprise
+              bills from uncapped autoscaling, outages from single-AZ deployments) are all
+              preventable with correct foundational knowledge. Learn the defaults, know what to
+              change, and codify everything in IaC from day one.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((s) => (
-                <li key={s.id}>
-                  <a href={`#${s.id}`}>{s.label}</a>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-compute" className="bin98-section">
+            <h2 className="bin98-heading">Compute Models</h2>
+            {computeModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-storage" className="bin98-section">
+            <h2 className="bin98-heading">Storage</h2>
+            {storageConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-databases" className="bin98-section">
+            <h2 className="bin98-heading">Managed Databases</h2>
+            {databaseServices.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-networking" className="bin98-section">
+            <h2 className="bin98-heading">Networking</h2>
+            {networkingConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-iam" className="bin98-section">
+            <h2 className="bin98-heading">IAM and Security</h2>
+            {iamSecurity.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-messaging" className="bin98-section">
+            <h2 className="bin98-heading">Messaging and Events</h2>
+            {messagingServices.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-iac" className="bin98-section">
+            <h2 className="bin98-heading">Infrastructure as Code</h2>
+            {iacConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-containers" className="bin98-section">
+            <h2 className="bin98-heading">Containers and Kubernetes</h2>
+            {containersConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-serverless" className="bin98-section">
+            <h2 className="bin98-heading">Serverless Architecture</h2>
+            {serverlessConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-observability" className="bin98-section">
+            <h2 className="bin98-heading">Observability</h2>
+            {observabilityConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-platform" className="bin98-section">
+            <h2 className="bin98-heading">Platform Engineering</h2>
+            {platformEngineering.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-multicloud" className="bin98-section">
+            <h2 className="bin98-heading">Multi-Cloud and Hybrid</h2>
+            {multiCloud.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-cost" className="bin98-section">
+            <h2 className="bin98-heading">Cost Optimization</h2>
+            {costOptimization.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareContrast.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {commonPitfalls.map((p) => (
+                <li key={p.mistake}>
+                  <strong>{p.mistake}:</strong> {p.description}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Checklist</h2>
+            {debuggingChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Checklist</h2>
+            <ul>
+              {correctnessChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-faq" className="bin98-section">
+            <h2 className="bin98-heading">FAQ</h2>
+            {faq.map((item) => (
+              <div key={item.question}>
+                <h3 className="bin98-subheading">{item.question}</h3>
+                <p>{item.answer}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Platforms &amp; Cloud</h1>
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-pseudocode" className="bin98-section">
+            <h2 className="bin98-heading">Pseudocode Patterns</h2>
+            {pseudocodePatterns.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{item.code.trim()}</code>
+                </div>
+                <p>{item.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            <p>Select an example to view the implementation pattern.</p>
+            <div className="bin98-inline-buttons">
+              {codeExamples.map((item) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  className="bin98-push"
+                  onClick={() => setSelectedExampleTitle(item.title)}
+                >
+                  {item.title}
+                </button>
+              ))}
+            </div>
+            <h3 className="bin98-subheading">{selectedExample.title}</h3>
+            <div className="bin98-codebox">
+              <code>{selectedExample.code.trim()}</code>
+            </div>
+            <p>{selectedExample.explanation}</p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="ex-scenarios" className="bin98-section">
+            <h2 className="bin98-heading">Architecture Walkthroughs</h2>
             <p>
-              Cloud platforms provide on-demand infrastructure: compute, storage, networking,
-              databases, messaging, and managed services. This document covers AWS, Azure, and GCP
-              across compute models, storage, networking, IAM, messaging, IaC, containers,
-              serverless, observability, platform engineering, and cost management.
+              Select an architecture and step through how a request or deployment flows through it.
             </p>
+            <div className="bin98-inline-buttons">
+              {scenarios.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="bin98-push"
+                  onClick={() => handleScenarioSelect(s.id)}
+                >
+                  {s.title}
+                </button>
+              ))}
+            </div>
+            <h3 className="bin98-subheading">{selectedScenario.title}</h3>
+            <div className="bin98-step-box">
+              Step {stepIndex + 1} of {selectedScenario.steps.length}:{' '}
+              {selectedScenario.steps[stepIndex]}
+            </div>
+            <div className="bin98-step-controls">
+              <button
+                type="button"
+                className="bin98-push"
+                onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
+                disabled={stepIndex === 0}
+              >
+                &lt; Back
+              </button>
+              <button
+                type="button"
+                className="bin98-push"
+                onClick={() =>
+                  setStepIndex((i) => Math.min(selectedScenario.steps.length - 1, i + 1))
+                }
+                disabled={!canStepForward}
+              >
+                Next &gt;
+              </button>
+              <span>
+                {stepIndex + 1} / {selectedScenario.steps.length}
+              </span>
+            </div>
+            <p>
+              <strong>Summary:</strong> {selectedScenario.summary}
+            </p>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-mental-model" className="win98-section">
-                  <h2 className="win98-heading">Mental Model</h2>
-                  {mentalModel.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-why" className="win98-section">
-                  <h2 className="win98-heading">Why This Matters</h2>
-                  <p>
-                    Cloud fluency is a baseline expectation for backend, DevOps, and platform
-                    engineers. The ability to design secure, available, and cost-efficient cloud
-                    architectures — and to debug them when they break — directly determines how fast
-                    teams can ship and how reliable their systems are.
-                  </p>
-                  <p>
-                    The most expensive cloud mistakes (security breaches from misconfigured IAM,
-                    surprise bills from uncapped autoscaling, outages from single-AZ deployments)
-                    are all preventable with correct foundational knowledge. Learn the defaults,
-                    know what to change, and codify everything in IaC from day one.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-compute" className="win98-section">
-                  <h2 className="win98-heading">Compute Models</h2>
-                  {computeModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-storage" className="win98-section">
-                  <h2 className="win98-heading">Storage</h2>
-                  {storageConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-databases" className="win98-section">
-                  <h2 className="win98-heading">Managed Databases</h2>
-                  {databaseServices.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-networking" className="win98-section">
-                  <h2 className="win98-heading">Networking</h2>
-                  {networkingConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-iam" className="win98-section">
-                  <h2 className="win98-heading">IAM and Security</h2>
-                  {iamSecurity.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-messaging" className="win98-section">
-                  <h2 className="win98-heading">Messaging and Events</h2>
-                  {messagingServices.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-iac" className="win98-section">
-                  <h2 className="win98-heading">Infrastructure as Code</h2>
-                  {iacConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-containers" className="win98-section">
-                  <h2 className="win98-heading">Containers and Kubernetes</h2>
-                  {containersConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-serverless" className="win98-section">
-                  <h2 className="win98-heading">Serverless Architecture</h2>
-                  {serverlessConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-observability" className="win98-section">
-                  <h2 className="win98-heading">Observability</h2>
-                  {observabilityConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-platform" className="win98-section">
-                  <h2 className="win98-heading">Platform Engineering</h2>
-                  {platformEngineering.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-multicloud" className="win98-section">
-                  <h2 className="win98-heading">Multi-Cloud and Hybrid</h2>
-                  {multiCloud.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-cost" className="win98-section">
-                  <h2 className="win98-heading">Cost Optimization</h2>
-                  {costOptimization.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {compareContrast.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {commonPitfalls.map((p) => (
-                      <li key={p.mistake}>
-                        <strong>{p.mistake}:</strong> {p.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-debugging" className="win98-section">
-                  <h2 className="win98-heading">Debugging Checklist</h2>
-                  {debuggingChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-correctness" className="win98-section">
-                  <h2 className="win98-heading">Correctness Checklist</h2>
-                  <ul>
-                    {correctnessChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-faq" className="win98-section">
-                  <h2 className="win98-heading">FAQ</h2>
-                  {faq.map((item) => (
-                    <div key={item.question}>
-                      <h3 className="win98-subheading">{item.question}</h3>
-                      <p>{item.answer}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-pseudocode" className="win98-section">
-                  <h2 className="win98-heading">Pseudocode Patterns</h2>
-                  {pseudocodePatterns.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{item.code.trim()}</code>
-                      </div>
-                      <p>{item.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="ex-code" className="win98-section">
-                  <h2 className="win98-heading">Code Examples</h2>
-                  <p>Select an example to view the implementation pattern.</p>
-                  <div className="win98-inline-buttons">
-                    {codeExamples.map((item) => (
-                      <button
-                        key={item.title}
-                        type="button"
-                        className="win98-push"
-                        onClick={() => setSelectedExampleTitle(item.title)}
-                      >
-                        {item.title}
-                      </button>
-                    ))}
-                  </div>
-                  <h3 className="win98-subheading">{selectedExample.title}</h3>
-                  <div className="win98-codebox">
-                    <code>{selectedExample.code.trim()}</code>
-                  </div>
-                  <p>{selectedExample.explanation}</p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="ex-scenarios" className="win98-section">
-                  <h2 className="win98-heading">Architecture Walkthroughs</h2>
-                  <p>
-                    Select an architecture and step through how a request or deployment flows
-                    through it.
-                  </p>
-                  <div className="win98-inline-buttons">
-                    {scenarios.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        className="win98-push"
-                        onClick={() => handleScenarioSelect(s.id)}
-                      >
-                        {s.title}
-                      </button>
-                    ))}
-                  </div>
-                  <h3 className="win98-subheading">{selectedScenario.title}</h3>
-                  <div className="win98-step-box">
-                    Step {stepIndex + 1} of {selectedScenario.steps.length}:{' '}
-                    {selectedScenario.steps[stepIndex]}
-                  </div>
-                  <div className="win98-step-controls">
-                    <button
-                      type="button"
-                      className="win98-push"
-                      onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
-                      disabled={stepIndex === 0}
-                    >
-                      &lt; Back
-                    </button>
-                    <button
-                      type="button"
-                      className="win98-push"
-                      onClick={() =>
-                        setStepIndex((i) => Math.min(selectedScenario.steps.length - 1, i + 1))
-                      }
-                      disabled={!canStepForward}
-                    >
-                      Next &gt;
-                    </button>
-                    <span>
-                      {stepIndex + 1} / {selectedScenario.steps.length}
-                    </span>
-                  </div>
-                  <p>
-                    <strong>Summary:</strong> {selectedScenario.summary}
-                  </p>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

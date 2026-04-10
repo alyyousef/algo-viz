@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -130,7 +130,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Pages and File-Based Routing',
     paragraphs: [
       'Astro uses file-based routing through `src/pages/`. Files become routes based on their paths, and page files are expected to produce full HTML documents. This keeps route structure visible in the file system rather than hidden behind manual registration.',
-      'The route model fits Astro\'s static-first posture well. A content-heavy site can often be understood directly from the page tree and its generated paths.',
+      "The route model fits Astro's static-first posture well. A content-heavy site can often be understood directly from the page tree and its generated paths.",
     ],
   },
   {
@@ -138,7 +138,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Static Output by Default',
     paragraphs: [
       'Astro defaults to prerendering routes at build time. This means pages and endpoints are generated ahead of time as static output unless the project or route opts into on-demand rendering.',
-      'That default is one of Astro\'s clearest design statements. The framework starts from the assumption that prebuilt HTML is the best default for many websites and then allows more dynamic behavior where needed.',
+      "That default is one of Astro's clearest design statements. The framework starts from the assumption that prebuilt HTML is the best default for many websites and then allows more dynamic behavior where needed.",
     ],
   },
   {
@@ -154,7 +154,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Client Islands',
     paragraphs: [
       'A client island is an interactive UI component that hydrates separately from the rest of the page. Astro can render a mostly static page and then hydrate only the components marked for client-side behavior.',
-      'This is one of Astro\'s defining ideas. Interactivity becomes a local opt-in decision instead of a whole-page default.',
+      "This is one of Astro's defining ideas. Interactivity becomes a local opt-in decision instead of a whole-page default.",
     ],
   },
   {
@@ -178,7 +178,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Framework Integrations',
     paragraphs: [
       'Astro can integrate with React, Vue, Svelte, Preact, Solid, and other UI frameworks. These integrations let teams bring framework components into Astro pages without turning Astro itself into just one more wrapper around a single runtime.',
-      'This multi-framework story is a major differentiator. Teams can choose the right framework for a specific interactive island while keeping the overall site aligned with Astro\'s lightweight page model.',
+      "This multi-framework story is a major differentiator. Teams can choose the right framework for a specific interactive island while keeping the overall site aligned with Astro's lightweight page model.",
     ],
   },
 ] as const
@@ -265,7 +265,10 @@ const coreConceptSectionsContinued: readonly DocSection[] = [
     ],
   },
 ] as const
-const coreConceptSectionsMerged: readonly DocSection[] = [...coreConceptSections, ...coreConceptSectionsContinued]
+const coreConceptSectionsMerged: readonly DocSection[] = [
+  ...coreConceptSections,
+  ...coreConceptSectionsContinued,
+]
 
 const examples: readonly ExampleSection[] = [
   {
@@ -308,7 +311,7 @@ import SearchBox from '../components/SearchBox.jsx'
       },
     ],
     takeaway:
-      'This is Astro\'s defining pattern: keep the page lightweight and hydrate only the component that actually needs browser interactivity.',
+      "This is Astro's defining pattern: keep the page lightweight and hydrate only the component that actually needs browser interactivity.",
   },
   {
     id: 'examples-content',
@@ -380,31 +383,38 @@ Adapters and middleware when dynamic server behavior is required`,
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Astro',
-    definition: 'A web framework focused on fast HTML, minimal client JavaScript, and selective interactivity through islands.',
+    definition:
+      'A web framework focused on fast HTML, minimal client JavaScript, and selective interactivity through islands.',
   },
   {
     term: 'Island architecture',
-    definition: 'A page architecture where most content remains static or server-rendered while small interactive components hydrate independently.',
+    definition:
+      'A page architecture where most content remains static or server-rendered while small interactive components hydrate independently.',
   },
   {
     term: 'Astro component',
-    definition: 'A component written in a `.astro` file with frontmatter and template markup, rendered on the server by default.',
+    definition:
+      'A component written in a `.astro` file with frontmatter and template markup, rendered on the server by default.',
   },
   {
     term: 'Frontmatter',
-    definition: 'The triple-dash script block at the top of an Astro component where imports, props handling, and server-side logic commonly live.',
+    definition:
+      'The triple-dash script block at the top of an Astro component where imports, props handling, and server-side logic commonly live.',
   },
   {
     term: 'Client directive',
-    definition: 'An Astro directive such as `client:load` or `client:visible` that controls when an interactive island hydrates in the browser.',
+    definition:
+      'An Astro directive such as `client:load` or `client:visible` that controls when an interactive island hydrates in the browser.',
   },
   {
     term: 'Server island',
-    definition: 'A deferred or separately rendered server-side fragment used within Astro\'s broader islands approach.',
+    definition:
+      "A deferred or separately rendered server-side fragment used within Astro's broader islands approach.",
   },
   {
     term: 'Content collection',
-    definition: 'Astro\'s structured content system for organizing and validating local content sources such as markdown or MDX.',
+    definition:
+      "Astro's structured content system for organizing and validating local content sources such as markdown or MDX.",
   },
   {
     term: 'Endpoint',
@@ -412,23 +422,28 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Adapter',
-    definition: 'A deployment integration that enables Astro to run with server or hybrid rendering on a specific platform or runtime.',
+    definition:
+      'A deployment integration that enables Astro to run with server or hybrid rendering on a specific platform or runtime.',
   },
   {
     term: 'Static output',
-    definition: 'Astro\'s default mode where routes are prerendered at build time into deployable files.',
+    definition:
+      "Astro's default mode where routes are prerendered at build time into deployable files.",
   },
   {
     term: 'Hybrid rendering',
-    definition: 'A mode where some Astro routes are prerendered while others are rendered on demand.',
+    definition:
+      'A mode where some Astro routes are prerendered while others are rendered on demand.',
   },
   {
     term: 'Integration',
-    definition: 'An Astro extension that adds capabilities such as framework support, Tailwind, MDX, or deployment features.',
+    definition:
+      'An Astro extension that adds capabilities such as framework support, Tailwind, MDX, or deployment features.',
   },
   {
     term: 'View transition',
-    definition: 'An Astro-enhanced navigation effect that makes route changes feel smoother without requiring a full SPA architecture.',
+    definition:
+      'An Astro-enhanced navigation effect that makes route changes feel smoother without requiring a full SPA architecture.',
   },
   {
     term: 'src/pages',
@@ -436,40 +451,10 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Hydration',
-    definition: 'The browser process of activating an interactive component. Astro tries to apply hydration only to explicitly chosen islands rather than the whole page.',
+    definition:
+      'The browser process of activating an interactive component. Astro tries to apply hydration only to explicitly chosen islands rather than the whole page.',
   },
 ] as const
-
-const helpStyles = `
-.astro-help-page { min-height: 100dvh; background: #c0c0c0; padding: 0; color: #000; font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif; }
-.astro-help-window { width: 100%; min-height: 100dvh; display: flex; flex-direction: column; box-sizing: border-box; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
-.astro-help-titlebar { position: relative; display: flex; align-items: center; padding: 2px 4px; background: linear-gradient(90deg, #000080 0%, #1084d0 100%); color: #fff; font-size: 13px; font-weight: 700; }
-.astro-help-titletext { position: absolute; left: 50%; transform: translateX(-50%); font-size: 16px; white-space: nowrap; }
-.astro-help-controls { display: flex; gap: 2px; margin-left: auto; }
-.astro-help-control { width: 18px; height: 16px; display: inline-flex; align-items: center; justify-content: center; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; background: #c0c0c0; color: #000; font-size: 11px; line-height: 1; text-decoration: none; }
-.astro-help-tabs { display: flex; gap: 1px; padding: 6px 8px 0; background: #c0c0c0; }
-.astro-help-tab { border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: none; background: #b6b6b6; padding: 5px 10px 4px; font-size: 12px; cursor: pointer; }
-.astro-help-tab.is-active { position: relative; top: 1px; background: #fff; }
-.astro-help-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 240px 1fr; border-top: 1px solid #404040; background: #fff; }
-.astro-help-toc { overflow: auto; padding: 12px; background: #f2f2f2; border-right: 1px solid #808080; }
-.astro-help-toc-title { margin: 0 0 10px; font-size: 12px; font-weight: 700; }
-.astro-help-toc-list { margin: 0; padding: 0; list-style: none; }
-.astro-help-toc-list li { margin: 0 0 8px; }
-.astro-help-toc-list a { color: #000; font-size: 12px; text-decoration: none; }
-.astro-help-content { overflow: auto; padding: 14px 20px 20px; }
-.astro-help-doc-title { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
-.astro-help-doc-subtitle { margin: 0 0 12px; font-size: 12px; }
-.astro-help-section { margin: 0 0 20px; scroll-margin-top: 12px; }
-.astro-help-heading { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-.astro-help-subheading { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-.astro-help-content p, .astro-help-content li { font-size: 12px; line-height: 1.5; }
-.astro-help-content p { margin: 0 0 10px; }
-.astro-help-content ul { margin: 0 0 10px 20px; padding: 0; }
-.astro-help-divider { margin: 14px 0; border: 0; border-top: 1px solid #d0d0d0; }
-.astro-help-codebox { margin: 6px 0 10px; padding: 8px; background: #f4f4f4; border-top: 2px solid #808080; border-left: 2px solid #808080; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
-.astro-help-codebox code { display: block; white-space: pre-wrap; font-family: "Courier New", Courier, monospace; font-size: 12px; }
-@media (max-width: 900px) { .astro-help-main { grid-template-columns: 1fr; } .astro-help-toc { border-right: none; border-bottom: 1px solid #808080; } .astro-help-titletext { position: static; transform: none; margin: 0 auto 0 0; padding-left: 4px; white-space: normal; } }
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -480,160 +465,88 @@ const tabs: Array<{ id: TabId; label: string }> = [
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': bigPictureSections.map((section) => ({ id: section.id, label: section.title })),
-  'core-concepts': coreConceptSectionsMerged.map((section) => ({ id: section.id, label: section.title })),
+  'core-concepts': coreConceptSectionsMerged.map((section) => ({
+    id: section.id,
+    label: section.title,
+  })),
   examples: examples.map((section) => ({ id: section.id, label: section.title })),
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function AstroPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Astro',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Astro (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Astro',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="astro-help-page">
-      <style>{helpStyles}</style>
-      <div className="astro-help-window" role="presentation">
-        <header className="astro-help-titlebar">
-          <span className="astro-help-titletext">Astro</span>
-          <div className="astro-help-controls">
-            <button className="astro-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="astro-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Astro"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Astro</h1>
+      <p className="astro-help-doc-subtitle">
+        Manual-style reference covering overview, islands architecture, rendering modes,
+        integrations, content workflows, tradeoffs, and practical examples.
+      </p>
 
-        <div className="astro-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`astro-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="astro-help-main">
-          <aside className="astro-help-toc" aria-label="Table of contents">
-            <h2 className="astro-help-toc-title">Contents</h2>
-            <ul className="astro-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="astro-help-content">
-            <h1 className="astro-help-doc-title">Astro</h1>
-            <p className="astro-help-doc-subtitle">
-              Manual-style reference covering overview, islands architecture, rendering modes, integrations,
-              content workflows, tradeoffs, and practical examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSectionsMerged.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="astro-help-section">
-                    <h2 className="astro-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="astro-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSectionsMerged.map((section) => (
-                <section key={section.id} id={section.id} className="astro-help-section">
-                  <h2 className="astro-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="astro-help-section">
-                  <h2 className="astro-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="astro-help-subheading">{snippet.label}</h3>
-                      <div className="astro-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="astro-help-section">
-                <h2 className="astro-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

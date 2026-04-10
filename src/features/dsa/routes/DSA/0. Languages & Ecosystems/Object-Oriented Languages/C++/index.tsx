@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -552,270 +554,12 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.cpp98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cpp98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.cpp98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cpp98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cpp98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.cpp98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.cpp98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cpp98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cpp98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.cpp98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.cpp98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.cpp98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.cpp98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cpp98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cpp98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.cpp98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.cpp98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.cpp98-doc-subtitle {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.cpp98-section {
-  margin: 0 0 20px;
-}
-
-.cpp98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.cpp98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.cpp98-content p,
-.cpp98-content li,
-.cpp98-content td,
-.cpp98-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cpp98-content p {
-  margin: 0 0 10px;
-}
-
-.cpp98-content ul,
-.cpp98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cpp98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.cpp98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.cpp98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.cpp98-inline-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-
-.cpp98-push {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  font-size: 12px;
-  padding: 4px 8px;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cpp98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.cpp98-table th,
-.cpp98-table td {
-  border: 1px solid #b5b5b5;
-  padding: 6px 8px;
-  text-align: left;
-  vertical-align: top;
-}
-
-@media (max-width: 900px) {
-  .cpp98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cpp98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -844,326 +588,252 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   examples: [{ id: 'ex-samples', label: 'Code Examples' }],
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
+
 export default function CPlusPlusPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'C++',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `C++ (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'C++',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="cpp98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="cpp98-window" role="presentation">
-        <header className="cpp98-titlebar">
-          <span className="cpp98-title-text">C++</span>
-          <div className="cpp98-title-controls">
-            <button
-              className="cpp98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="cpp98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="cpp98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`cpp98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="cpp98-main">
-          <aside className="cpp98-toc" aria-label="Table of contents">
-            <h2 className="cpp98-toc-title">Contents</h2>
-            <ul className="cpp98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="C++"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">C++</h1>
+      <p className="cpp98-doc-subtitle">Object-oriented power with systems-level performance</p>
+      <div className="cpp98-inline-actions">
+        <Link to="/algoViz" className="cpp98-push">
+          Back to Catalog
+        </Link>
+      </div>
+      <p>
+        C++ blends object-oriented design, generic programming, and low-level control. It lets you
+        build high-performance systems while modeling rich domain concepts, but it expects
+        discipline around ownership, lifetimes, and undefined behavior.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              C++ is the classic language for performance-critical software. It supports OOP for
+              modular design and RAII for deterministic resource management, while offering
+              templates for zero-cost abstractions.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-apps" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="cpp98-content">
-            <h1 className="cpp98-doc-title">C++</h1>
-            <p className="cpp98-doc-subtitle">
-              Object-oriented power with systems-level performance
-            </p>
-            <div className="cpp98-inline-actions">
-              <Link to="/algoViz" className="cpp98-push">
-                Back to Catalog
-              </Link>
-            </div>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-fundamentals" className="bin98-section">
+            <h2 className="bin98-heading">Language Fundamentals</h2>
+            {languageFundamentals.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pipeline" className="bin98-section">
+            <h2 className="bin98-heading">Compilation Pipeline</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>What happens</th>
+                </tr>
+              </thead>
+              <tbody>
+                {compilationPipeline.map((item) => (
+                  <tr key={item.stage}>
+                    <td>{item.stage}</td>
+                    <td>{item.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-types" className="bin98-section">
+            <h2 className="bin98-heading">Type System and Ownership</h2>
+            {typeSystemDetails.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-stdlib" className="bin98-section">
+            <h2 className="bin98-heading">Standard Library Highlights</h2>
+            {standardLibraryHighlights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-oop" className="bin98-section">
+            <h2 className="bin98-heading">OOP Features</h2>
+            {coreOopFeatures.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Checklist</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              C++ blends object-oriented design, generic programming, and low-level control. It lets
-              you build high-performance systems while modeling rich domain concepts, but it expects
-              discipline around ownership, lifetimes, and undefined behavior.
+              C++ performance is about memory layout, ownership, and eliminating overhead. Modern
+              C++ features help you write safe code without sacrificing speed.
             </p>
+          </section>
+          <section id="core-concurrency" className="bin98-section">
+            <h2 className="bin98-heading">Concurrency and Parallelism</h2>
+            {concurrencyOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-tooling" className="bin98-section">
+            <h2 className="bin98-heading">Tooling and Workflow</h2>
+            {toolingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-interop" className="bin98-section">
+            <h2 className="bin98-heading">Interoperability and Deployment</h2>
+            {interopOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            {deploymentOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-comparisons" className="bin98-section">
+            <h2 className="bin98-heading">Comparisons and Tradeoffs</h2>
+            {comparisonNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-learning" className="bin98-section">
+            <h2 className="bin98-heading">Learning Path</h2>
+            {learningPath.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="cpp98-section">
-                  <h2 className="cpp98-heading">Overview</h2>
-                  <p>
-                    C++ is the classic language for performance-critical software. It supports OOP
-                    for modular design and RAII for deterministic resource management, while
-                    offering templates for zero-cost abstractions.
-                  </p>
-                </section>
-                <hr className="cpp98-divider" />
-                <section id="bp-history" className="cpp98-section">
-                  <h2 className="cpp98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="cpp98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="cpp98-divider" />
-                <section id="bp-apps" className="cpp98-section">
-                  <h2 className="cpp98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="cpp98-divider" />
-                <section id="bp-takeaways" className="cpp98-section">
-                  <h2 className="cpp98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-samples" className="bin98-section">
+          <h2 className="bin98-heading">Code Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cpp98-section">
-                  <h2 className="cpp98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-fundamentals" className="cpp98-section">
-                  <h2 className="cpp98-heading">Language Fundamentals</h2>
-                  {languageFundamentals.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pipeline" className="cpp98-section">
-                  <h2 className="cpp98-heading">Compilation Pipeline</h2>
-                  <table className="cpp98-table">
-                    <thead>
-                      <tr>
-                        <th>Stage</th>
-                        <th>What happens</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {compilationPipeline.map((item) => (
-                        <tr key={item.stage}>
-                          <td>{item.stage}</td>
-                          <td>{item.description}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-types" className="cpp98-section">
-                  <h2 className="cpp98-heading">Type System and Ownership</h2>
-                  {typeSystemDetails.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-stdlib" className="cpp98-section">
-                  <h2 className="cpp98-heading">Standard Library Highlights</h2>
-                  {standardLibraryHighlights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-oop" className="cpp98-section">
-                  <h2 className="cpp98-heading">OOP Features</h2>
-                  {coreOopFeatures.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="cpp98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-performance" className="cpp98-section">
-                  <h2 className="cpp98-heading">Performance Checklist</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    C++ performance is about memory layout, ownership, and eliminating overhead.
-                    Modern C++ features help you write safe code without sacrificing speed.
-                  </p>
-                </section>
-                <section id="core-concurrency" className="cpp98-section">
-                  <h2 className="cpp98-heading">Concurrency and Parallelism</h2>
-                  {concurrencyOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-tooling" className="cpp98-section">
-                  <h2 className="cpp98-heading">Tooling and Workflow</h2>
-                  {toolingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-interop" className="cpp98-section">
-                  <h2 className="cpp98-heading">Interoperability and Deployment</h2>
-                  {interopOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  {deploymentOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="cpp98-section">
-                  <h2 className="cpp98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-comparisons" className="cpp98-section">
-                  <h2 className="cpp98-heading">Comparisons and Tradeoffs</h2>
-                  {comparisonNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decisions" className="cpp98-section">
-                  <h2 className="cpp98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-learning" className="cpp98-section">
-                  <h2 className="cpp98-heading">Learning Path</h2>
-                  {learningPath.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="cpp98-section">
-                  <h2 className="cpp98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-samples" className="cpp98-section">
-                <h2 className="cpp98-heading">Code Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="cpp98-subheading">{example.title}</h3>
-                    <div className="cpp98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cpp98-section">
-                <h2 className="cpp98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,7 @@
-﻿import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -18,13 +20,12 @@ type ExampleSection = {
   explanation: string
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const pageTitle = 'AWS S3'
-const pageSubtitle = 'Object storage on AWS for durable data, distribution, data lakes, archives, and application assets.'
+const pageSubtitle =
+  'Object storage on AWS for durable data, distribution, data lakes, archives, and application assets.'
 
 const introParagraphs = [
-  'Amazon Simple Storage Service, usually shortened to Amazon S3, is AWS\'s object storage platform. It is the default storage primitive for a large portion of AWS architectures because it handles durable object storage at massive scale, integrates with almost every major AWS service, and supports a wide range of access, lifecycle, analytics, security, and data protection features.',
+  "Amazon Simple Storage Service, usually shortened to Amazon S3, is AWS's object storage platform. It is the default storage primitive for a large portion of AWS architectures because it handles durable object storage at massive scale, integrates with almost every major AWS service, and supports a wide range of access, lifecycle, analytics, security, and data protection features.",
   'Most teams first meet S3 as "a place to store files," but that description is too small. In practice S3 is used for application uploads, static assets, log archives, data lake raw zones, backups, media pipelines, software artifacts, machine learning datasets, compliance retention, cross-account data sharing, and event-driven automation. It is foundational infrastructure, not just a file bucket.',
   'This page focuses on Amazon S3 for application and systems design: general purpose buckets first, then newer bucket types, storage classes, access control, lifecycle policy, replication, encryption, observability, performance, and the architectural mistakes that matter in production.',
 ]
@@ -97,7 +98,8 @@ const fitGuide = [
   },
   {
     title: 'Need static web assets, downloads, or media files at scale',
-    choice: 'Use S3, usually with CloudFront in front of it for edge delivery and origin protection.',
+    choice:
+      'Use S3, usually with CloudFront in front of it for edge delivery and origin protection.',
   },
   {
     title: 'Need long-term retention with cost-based archival transitions',
@@ -166,7 +168,7 @@ const coreConceptSections: NarrativeSection[] = [
     id: 'core-lifecycle',
     heading: 'Lifecycle Rules and Archival',
     paragraphs: [
-      'Lifecycle policies automate expiration, transition, noncurrent-version cleanup, multipart-upload cleanup, and archival transitions. This is one of S3\'s most powerful operational tools because it turns storage hygiene and cost control into policy instead of manual cleanup labor.',
+      "Lifecycle policies automate expiration, transition, noncurrent-version cleanup, multipart-upload cleanup, and archival transitions. This is one of S3's most powerful operational tools because it turns storage hygiene and cost control into policy instead of manual cleanup labor.",
       'Good lifecycle design starts with data categories: hot active assets, short-lived uploads, immutable releases, compliance records, and long-term archives do not deserve the same retention and storage-class treatment.',
       'Bad lifecycle design deletes data too early, transitions data before the application is ready for retrieval tradeoffs, or ignores noncurrent versions and incomplete multipart uploads until the bill grows quietly in the background.',
     ],
@@ -479,51 +481,63 @@ const glossaryTerms = [
   },
   {
     term: 'Prefix',
-    definition: 'A shared leading segment of keys used for organization, lifecycle filters, and event filters; not a real directory in general purpose buckets.',
+    definition:
+      'A shared leading segment of keys used for organization, lifecycle filters, and event filters; not a real directory in general purpose buckets.',
   },
   {
     term: 'Versioning',
-    definition: 'An S3 feature that preserves multiple versions of an object instead of silently overwriting state.',
+    definition:
+      'An S3 feature that preserves multiple versions of an object instead of silently overwriting state.',
   },
   {
     term: 'Delete marker',
-    definition: 'A marker created by deletes in a versioned bucket that makes the object appear deleted without erasing prior versions immediately.',
+    definition:
+      'A marker created by deletes in a versioned bucket that makes the object appear deleted without erasing prior versions immediately.',
   },
   {
     term: 'Lifecycle rule',
-    definition: 'A policy that automatically transitions, expires, or cleans up objects and versions over time.',
+    definition:
+      'A policy that automatically transitions, expires, or cleans up objects and versions over time.',
   },
   {
     term: 'Replication',
-    definition: 'Asynchronous copying of objects to another S3 bucket in the same or a different Region.',
+    definition:
+      'Asynchronous copying of objects to another S3 bucket in the same or a different Region.',
   },
   {
     term: 'Object Ownership',
-    definition: 'The S3 control that determines object ownership behavior and whether ACLs remain relevant.',
+    definition:
+      'The S3 control that determines object ownership behavior and whether ACLs remain relevant.',
   },
   {
     term: 'Bucket owner enforced',
-    definition: 'The Object Ownership mode that disables ACLs and makes the bucket owner own every object in the bucket.',
+    definition:
+      'The Object Ownership mode that disables ACLs and makes the bucket owner own every object in the bucket.',
   },
   {
     term: 'Block Public Access',
-    definition: 'A set of S3 safety controls that prevent buckets or objects from being exposed publicly through policies or ACLs.',
+    definition:
+      'A set of S3 safety controls that prevent buckets or objects from being exposed publicly through policies or ACLs.',
   },
   {
     term: 'Presigned URL',
-    definition: 'A time-limited URL that grants delegated access to perform a specific S3 operation without exposing long-lived credentials.',
+    definition:
+      'A time-limited URL that grants delegated access to perform a specific S3 operation without exposing long-lived credentials.',
   },
   {
     term: 'Multipart upload',
-    definition: 'The S3 upload method that splits large object uploads into parts for better throughput and retry handling.',
+    definition:
+      'The S3 upload method that splits large object uploads into parts for better throughput and retry handling.',
   },
   {
     term: 'S3 Object Lock',
-    definition: 'The immutability feature that enforces write-once-read-many style retention and legal hold.',
+    definition:
+      'The immutability feature that enforces write-once-read-many style retention and legal hold.',
   },
   {
     term: 'Directory bucket',
-    definition: 'An S3 bucket type intended for low-latency or data-residency use cases and associated with S3 Express One Zone in Availability Zones.',
+    definition:
+      'An S3 bucket type intended for low-latency or data-residency use cases and associated with S3 Express One Zone in Availability Zones.',
   },
 ]
 
@@ -598,485 +612,180 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   ],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const win98HelpStyles = `
-.aws-s3-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.aws-s3-help-page .win98-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.aws-s3-help-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aws-s3-help-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.aws-s3-help-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.aws-s3-help-page .win98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.aws-s3-help-page .win98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.aws-s3-help-page .win98-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.aws-s3-help-page .win98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.aws-s3-help-page .win98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.aws-s3-help-page .win98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.aws-s3-help-page .win98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.aws-s3-help-page .win98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.aws-s3-help-page .win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.aws-s3-help-page .win98-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.aws-s3-help-page .win98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.aws-s3-help-page .win98-doc-title {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.aws-s3-help-page .win98-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.aws-s3-help-page .win98-section {
-  margin: 0 0 22px;
-}
-
-.aws-s3-help-page .win98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.aws-s3-help-page .win98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aws-s3-help-page .win98-content p,
-.aws-s3-help-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aws-s3-help-page .win98-content p {
-  margin: 0 0 10px;
-}
-
-.aws-s3-help-page .win98-content ul,
-.aws-s3-help-page .win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.aws-s3-help-page .win98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.aws-s3-help-page .win98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.aws-s3-help-page .win98-codebox code {
-  display: block;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-}
-
-.aws-s3-help-page .win98-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .aws-s3-help-page .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .aws-s3-help-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .aws-s3-help-page .win98-title-text {
-    position: static;
-    transform: none;
-    margin-left: 8px;
-    font-size: 14px;
-  }
-}
-`
-
 export default function AWSS3Page(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'A W S S3 Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const tabFromUrl = searchParams.get('tab')
-    if (isTabId(tabFromUrl) && tabFromUrl !== activeTab) {
-      setActiveTab(tabFromUrl)
-    }
-  }, [activeTab, searchParams])
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="aws-s3-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">{pageTitle}</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="A W S S3 Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="bin98-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
 
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+          <hr className="bin98-divider" />
+
+          <section id="bp-bucket-types" className="bin98-section">
+            <h2 className="bin98-heading">Bucket Types</h2>
+            {bucketTypeGuide.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-fit" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ul>
+              {fitGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="win98-content">
-            <h1 className="win98-doc-title">{pageTitle}</h1>
-            <p className="win98-doc-subtitle">{pageSubtitle}</p>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
             ))}
+          </section>
+
+          <section id="core-ops-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Operational Checklist</h2>
+            <ul>
+              {operationalChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Glossary</h2>
+            {glossaryTerms.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.definition}
+              </p>
+            ))}
+          </section>
+
+          <section id="glossary-sources" className="bin98-section">
+            <h2 className="bin98-heading">Primary Sources</h2>
             <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="win98-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
+              This content was compiled from official AWS documentation current as checked on March
+              12, 2026. S3 features and bucket-type support can change, so production decisions
+              should always be verified against the current service documentation and
+              Region-specific guidance.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="win98-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-bucket-types" className="win98-section">
-                  <h2 className="win98-heading">Bucket Types</h2>
-                  {bucketTypeGuide.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-fit" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ul>
-                    {fitGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="win98-divider" />
-
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="win98-section">
-                    <h2 className="win98-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-patterns" className="win98-section">
-                  <h2 className="win98-heading">Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-ops-checklist" className="win98-section">
-                  <h2 className="win98-heading">Operational Checklist</h2>
-                  <ul>
-                    {operationalChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {compareNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="win98-section">
-                    <h2 className="win98-heading">{example.title}</h2>
-                    <div className="win98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="win98-section">
-                  <h2 className="win98-heading">Glossary</h2>
-                  {glossaryTerms.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.definition}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="glossary-sources" className="win98-section">
-                  <h2 className="win98-heading">Primary Sources</h2>
-                  <p>
-                    This content was compiled from official AWS documentation current as checked on March 12, 2026.
-                    S3 features and bucket-type support can change, so production decisions should always be verified
-                    against the current service documentation and Region-specific guidance.
-                  </p>
-                  <ul>
-                    {pageSources.map((source) => (
-                      <li key={source}>
-                        <a href={source} className="win98-inline-link" target="_blank" rel="noreferrer">
-                          {source}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            <ul>
+              {pageSources.map((source) => (
+                <li key={source}>
+                  <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
+                    {source}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

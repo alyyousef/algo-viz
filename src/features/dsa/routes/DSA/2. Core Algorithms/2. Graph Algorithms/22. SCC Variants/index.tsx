@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -88,46 +87,38 @@ const workflowSteps = [
   },
   {
     title: 'Run SCC extraction',
-    detail:
-      'Use DFS-based passes or path-based stacks to assign each vertex a component id.',
+    detail: 'Use DFS-based passes or path-based stacks to assign each vertex a component id.',
   },
   {
     title: 'Build condensation DAG',
-    detail:
-      'Create edges between SCCs when edges cross components, deduplicating parallel edges.',
+    detail: 'Create edges between SCCs when edges cross components, deduplicating parallel edges.',
   },
   {
     title: 'Post-process as needed',
-    detail:
-      'Toposort SCCs, compute source/sink counts, or run DP on the component DAG.',
+    detail: 'Toposort SCCs, compute source/sink counts, or run DP on the component DAG.',
   },
 ]
 
 const variantTradeoffs = [
   {
     title: 'Kosaraju (two-pass)',
-    detail:
-      'Easiest to explain, but requires reversing edges and two DFS passes.',
+    detail: 'Easiest to explain, but requires reversing edges and two DFS passes.',
   },
   {
     title: 'Tarjan (lowlink)',
-    detail:
-      'Single pass with a stack; no reversed graph needed but more bookkeeping.',
+    detail: 'Single pass with a stack; no reversed graph needed but more bookkeeping.',
   },
   {
     title: 'Gabow (path-based)',
-    detail:
-      'Two stacks avoid lowlink arrays; often good constants in practice.',
+    detail: 'Two stacks avoid lowlink arrays; often good constants in practice.',
   },
   {
     title: 'Iterative DFS',
-    detail:
-      'Avoid recursion limits on deep graphs by simulating DFS with explicit stacks.',
+    detail: 'Avoid recursion limits on deep graphs by simulating DFS with explicit stacks.',
   },
   {
     title: 'Forward-backward',
-    detail:
-      'Uses reachability intersections; practical on large graphs but not worst-case tight.',
+    detail: 'Uses reachability intersections; practical on large graphs but not worst-case tight.',
   },
 ]
 
@@ -149,8 +140,7 @@ const variantCatalog = [
   },
   {
     title: 'Iterative DFS variants',
-    detail:
-      'Replace recursion with explicit stacks to avoid call depth limits on large graphs.',
+    detail: 'Replace recursion with explicit stacks to avoid call depth limits on large graphs.',
   },
   {
     title: 'Forward-backward',
@@ -187,8 +177,7 @@ const complexityNotes = [
   },
   {
     title: 'Recursion limits',
-    detail:
-      'Deep graphs can overflow recursion. Iterative variants or manual stacks avoid this.',
+    detail: 'Deep graphs can overflow recursion. Iterative variants or manual stacks avoid this.',
   },
 ]
 
@@ -200,18 +189,15 @@ const realWorldUses = [
   },
   {
     context: 'Deadlock detection',
-    detail:
-      'Wait-for graphs use SCCs to find cycles that represent deadlocks.',
+    detail: 'Wait-for graphs use SCCs to find cycles that represent deadlocks.',
   },
   {
     context: 'Dependency management',
-    detail:
-      'Package managers collapse mutual dependencies to schedule builds or updates safely.',
+    detail: 'Package managers collapse mutual dependencies to schedule builds or updates safely.',
   },
   {
     context: 'Control-flow analysis',
-    detail:
-      'Compilers identify loops, recursion, and fixed points by SCC decomposition.',
+    detail: 'Compilers identify loops, recursion, and fixed points by SCC decomposition.',
   },
   {
     context: 'Web and social graphs',
@@ -220,18 +206,15 @@ const realWorldUses = [
   },
   {
     context: 'Model checking',
-    detail:
-      'SCCs find recurrent states in automata and temporal logic verification.',
+    detail: 'SCCs find recurrent states in automata and temporal logic verification.',
   },
   {
     context: 'Build systems and CI',
-    detail:
-      'Detect cyclic dependencies before scheduling build or test pipelines.',
+    detail: 'Detect cyclic dependencies before scheduling build or test pipelines.',
   },
   {
     context: 'Program analysis',
-    detail:
-      'Call graphs and control-flow graphs use SCCs to identify recursion and loops.',
+    detail: 'Call graphs and control-flow graphs use SCCs to identify recursion and loops.',
   },
   {
     context: 'Graph compression',
@@ -243,13 +226,11 @@ const realWorldUses = [
 const postProcessingPatterns = [
   {
     title: 'Condensation DAG + topo order',
-    detail:
-      'Toposort SCCs to schedule tasks, compute reachability, or run DP across components.',
+    detail: 'Toposort SCCs to schedule tasks, compute reachability, or run DP across components.',
   },
   {
     title: 'Source and sink SCCs',
-    detail:
-      'Count SCCs with zero indegree or outdegree to solve minimum edge additions problems.',
+    detail: 'Count SCCs with zero indegree or outdegree to solve minimum edge additions problems.',
   },
   {
     title: '2-SAT assignment order',
@@ -266,8 +247,7 @@ const postProcessingPatterns = [
 const correctnessSketch = [
   {
     title: 'Mutual reachability',
-    detail:
-      'Vertices belong to the same SCC iff they can reach each other in the directed graph.',
+    detail: 'Vertices belong to the same SCC iff they can reach each other in the directed graph.',
   },
   {
     title: 'Kosaraju order',
@@ -281,8 +261,7 @@ const correctnessSketch = [
   },
   {
     title: 'Condensation DAG',
-    detail:
-      'SCCs have no cycles between them; otherwise they would merge into a larger SCC.',
+    detail: 'SCCs have no cycles between them; otherwise they would merge into a larger SCC.',
   },
 ]
 
@@ -332,8 +311,7 @@ for v in reverse(order):
     if P.top == v:
         P.pop()
         pop from S until v to form SCC`,
-    explanation:
-      'Two stacks track potential roots without explicit lowlink values.',
+    explanation: 'Two stacks track potential roots without explicit lowlink values.',
   },
   {
     title: 'Condensation DAG',
@@ -361,8 +339,7 @@ for each edge (u, v):
         indeg[sccId[v]] += 1
 sources = count indeg == 0
 sinks = count outdeg == 0`,
-    explanation:
-      'Useful for problems like minimum edges to make the graph strongly connected.',
+    explanation: 'Useful for problems like minimum edges to make the graph strongly connected.',
   },
 ]
 
@@ -422,8 +399,7 @@ const advancedInsights = [
   },
   {
     title: 'Memory-aware reversal',
-    detail:
-      'If reversing the graph is expensive, Tarjan or Gabow avoid storing G^T explicitly.',
+    detail: 'If reversing the graph is expensive, Tarjan or Gabow avoid storing G^T explicitly.',
   },
   {
     title: 'SCC DAG DP',
@@ -449,38 +425,31 @@ const takeaways = [
 const glossaryTerms = [
   {
     term: 'Strongly Connected Component (SCC)',
-    definition:
-      'A maximal directed subgraph where every vertex can reach every other vertex.',
+    definition: 'A maximal directed subgraph where every vertex can reach every other vertex.',
   },
   {
     term: 'Condensation graph',
-    definition:
-      'A DAG formed by collapsing each SCC into a single node.',
+    definition: 'A DAG formed by collapsing each SCC into a single node.',
   },
   {
     term: 'Finishing time',
-    definition:
-      'DFS exit order value used by Kosaraju to process SCC roots correctly.',
+    definition: 'DFS exit order value used by Kosaraju to process SCC roots correctly.',
   },
   {
     term: 'Reversed graph (G^T)',
-    definition:
-      'Graph with all edge directions flipped, required by Kosaraju second pass.',
+    definition: 'Graph with all edge directions flipped, required by Kosaraju second pass.',
   },
   {
     term: 'Lowlink',
-    definition:
-      'Tarjan value representing the earliest stack index reachable from a node.',
+    definition: 'Tarjan value representing the earliest stack index reachable from a node.',
   },
   {
     term: 'On-stack marker',
-    definition:
-      'Boolean state used in Tarjan/Gabow to distinguish active DFS-path vertices.',
+    definition: 'Boolean state used in Tarjan/Gabow to distinguish active DFS-path vertices.',
   },
   {
     term: 'Path-based SCC (Gabow)',
-    definition:
-      'Single-pass SCC approach using two stacks instead of lowlink arrays.',
+    definition: 'Single-pass SCC approach using two stacks instead of lowlink arrays.',
   },
   {
     term: 'Forward-backward SCC',
@@ -489,250 +458,23 @@ const glossaryTerms = [
   },
   {
     term: 'Component id',
-    definition:
-      'Assigned label mapping each original vertex to its SCC.',
+    definition: 'Assigned label mapping each original vertex to its SCC.',
   },
   {
     term: 'Source SCC / Sink SCC',
-    definition:
-      'Components with zero indegree or zero outdegree in the condensation DAG.',
+    definition: 'Components with zero indegree or zero outdegree in the condensation DAG.',
   },
   {
     term: '2-SAT SCC rule',
-    definition:
-      'A formula is unsatisfiable if a variable and its negation are in the same SCC.',
+    definition: 'A formula is unsatisfiable if a variable and its negation are in the same SCC.',
   },
   {
     term: 'SCC DAG DP',
-    definition:
-      'Dynamic programming performed on the condensation DAG after cycle collapse.',
+    definition: 'Dynamic programming performed on the condensation DAG after cycle collapse.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.sccv-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.sccv-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.sccv-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.sccv-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.sccv-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.sccv-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.sccv-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.sccv-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.sccv-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.sccv-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.sccv-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.sccv-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.sccv-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.sccv-toc-list li {
-  margin: 0 0 8px;
-}
-
-.sccv-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.sccv-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.sccv-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.sccv-section {
-  margin: 0 0 20px;
-}
-
-.sccv-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.sccv-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.sccv-content p,
-.sccv-content li,
-.sccv-content td,
-.sccv-content th {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.sccv-content p {
-  margin: 0 0 10px;
-}
-
-.sccv-content ul,
-.sccv-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.sccv-content table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0 0 10px;
-}
-
-.sccv-content th,
-.sccv-content td {
-  border: 1px solid #b8b8b8;
-  text-align: left;
-  padding: 5px 6px;
-}
-
-.sccv-content th {
-  background: #efefef;
-}
-
-.sccv-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.sccv-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.sccv-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .sccv-main {
-    grid-template-columns: 1fr;
-  }
-
-  .sccv-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -740,10 +482,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -773,318 +511,255 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function SCCVariantsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'SCC Variants',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `SCC Variants (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'SCC Variants',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="sccv-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="sccv-window" role="presentation">
-        <header className="sccv-titlebar">
-          <span className="sccv-title-text">SCC Variants</span>
-          <div className="sccv-title-controls">
-            <button className="sccv-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="sccv-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="sccv-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`sccv-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="sccv-main">
-          <aside className="sccv-toc" aria-label="Table of contents">
-            <h2 className="sccv-toc-title">Contents</h2>
-            <ul className="sccv-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="SCC Variants"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">SCC Variants</h1>
+      <p>
+        Strongly connected components can be computed in multiple linear-time ways. Each variant
+        trades memory, traversal style, and implementation complexity. This page compares the major
+        SCC algorithms, how to choose between them, and how to use SCC output for condensation DAGs,
+        2-SAT, and dependency analysis.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <h3 className="bin98-subheading">Tarjan, Kosaraju, Gabow, and modern SCC workflows</h3>
+            <p>
+              SCC algorithms decompose a directed graph into maximal sets of mutual reachability.
+              Once SCCs are known, the condensation graph is a DAG, enabling topological processing,
+              cycle breaking, and dependency analysis.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="sccv-content">
-            <h1 className="sccv-doc-title">SCC Variants</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-definitions" className="bin98-section">
+            <h2 className="bin98-heading">Definitions That Matter</h2>
+            {sccDefinitions.map((item) => (
+              <div key={item.heading}>
+                <h3 className="bin98-subheading">{item.heading}</h3>
+                <ul>
+                  {item.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">End-to-End Workflow</h2>
+            <ol>
+              {workflowSteps.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.detail}
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-catalog" className="bin98-section">
+            <h2 className="bin98-heading">Variant Catalog</h2>
+            {variantCatalog.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-selection" className="bin98-section">
+            <h2 className="bin98-heading">Variant Selection Cheatsheet</h2>
+            {variantTradeoffs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Strongly connected components can be computed in multiple linear-time ways. Each variant trades memory, traversal
-              style, and implementation complexity. This page compares the major SCC algorithms, how to choose between them, and
-              how to use SCC output for condensation DAGs, 2-SAT, and dependency analysis.
+              Kosaraju is the simplest but needs the reversed graph. Tarjan is single pass and
+              memory-light. Gabow avoids lowlink bookkeeping with a different stack discipline.
             </p>
+          </section>
+          <section id="core-ops" className="bin98-section">
+            <h2 className="bin98-heading">Operation Summary</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Variant</th>
+                  <th>Passes</th>
+                  <th>Extra storage</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Kosaraju</td>
+                  <td>2 DFS</td>
+                  <td>Reversed graph</td>
+                  <td>Simple, great for teaching and correctness.</td>
+                </tr>
+                <tr>
+                  <td>Tarjan</td>
+                  <td>1 DFS</td>
+                  <td>Stack + arrays</td>
+                  <td>Lowlink based, compact and fast.</td>
+                </tr>
+                <tr>
+                  <td>Gabow</td>
+                  <td>1 DFS</td>
+                  <td>Two stacks</td>
+                  <td>Path-based, avoids lowlink.</td>
+                </tr>
+                <tr>
+                  <td>Forward-backward</td>
+                  <td>Multiple reach</td>
+                  <td>Reachability sets</td>
+                  <td>Practical for huge graphs with pruning.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-post" className="bin98-section">
+            <h2 className="bin98-heading">Post-Processing Patterns</h2>
+            {postProcessingPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Why It Is Correct (Sketch)</h2>
+            {correctnessSketch.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-solving" className="bin98-section">
+            <h2 className="bin98-heading">SCC Problem-Solving Checklist</h2>
+            <ul>
+              {solvingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-testing" className="bin98-section">
+            <h2 className="bin98-heading">Testing and Edge Cases</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="sccv-section">
-                  <h2 className="sccv-heading">Overview</h2>
-                  <h3 className="sccv-subheading">Tarjan, Kosaraju, Gabow, and modern SCC workflows</h3>
-                  <p>
-                    SCC algorithms decompose a directed graph into maximal sets of mutual reachability. Once SCCs are known, the
-                    condensation graph is a DAG, enabling topological processing, cycle breaking, and dependency analysis.
-                  </p>
-                </section>
-                <hr className="sccv-divider" />
-                <section id="bp-history" className="sccv-section">
-                  <h2 className="sccv-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="sccv-divider" />
-                <section id="bp-models" className="sccv-section">
-                  <h2 className="sccv-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="sccv-divider" />
-                <section id="bp-applications" className="sccv-section">
-                  <h2 className="sccv-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="sccv-divider" />
-                <section id="bp-takeaways" className="sccv-section">
-                  <h2 className="sccv-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((item) => (
+            <div key={item.title}>
+              <h3 className="bin98-subheading">{item.title}</h3>
+              <div className="bin98-codebox">
+                <code>{item.code.trim()}</code>
+              </div>
+              <p>{item.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-definitions" className="sccv-section">
-                  <h2 className="sccv-heading">Definitions That Matter</h2>
-                  {sccDefinitions.map((item) => (
-                    <div key={item.heading}>
-                      <h3 className="sccv-subheading">{item.heading}</h3>
-                      <ul>
-                        {item.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-workflow" className="sccv-section">
-                  <h2 className="sccv-heading">End-to-End Workflow</h2>
-                  <ol>
-                    {workflowSteps.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.detail}
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-catalog" className="sccv-section">
-                  <h2 className="sccv-heading">Variant Catalog</h2>
-                  {variantCatalog.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-selection" className="sccv-section">
-                  <h2 className="sccv-heading">Variant Selection Cheatsheet</h2>
-                  {variantTradeoffs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="sccv-section">
-                  <h2 className="sccv-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Kosaraju is the simplest but needs the reversed graph. Tarjan is single pass and memory-light. Gabow avoids
-                    lowlink bookkeeping with a different stack discipline.
-                  </p>
-                </section>
-                <section id="core-ops" className="sccv-section">
-                  <h2 className="sccv-heading">Operation Summary</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Variant</th>
-                        <th>Passes</th>
-                        <th>Extra storage</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Kosaraju</td>
-                        <td>2 DFS</td>
-                        <td>Reversed graph</td>
-                        <td>Simple, great for teaching and correctness.</td>
-                      </tr>
-                      <tr>
-                        <td>Tarjan</td>
-                        <td>1 DFS</td>
-                        <td>Stack + arrays</td>
-                        <td>Lowlink based, compact and fast.</td>
-                      </tr>
-                      <tr>
-                        <td>Gabow</td>
-                        <td>1 DFS</td>
-                        <td>Two stacks</td>
-                        <td>Path-based, avoids lowlink.</td>
-                      </tr>
-                      <tr>
-                        <td>Forward-backward</td>
-                        <td>Multiple reach</td>
-                        <td>Reachability sets</td>
-                        <td>Practical for huge graphs with pruning.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-post" className="sccv-section">
-                  <h2 className="sccv-heading">Post-Processing Patterns</h2>
-                  {postProcessingPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="sccv-section">
-                  <h2 className="sccv-heading">Why It Is Correct (Sketch)</h2>
-                  {correctnessSketch.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="sccv-section">
-                  <h2 className="sccv-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-solving" className="sccv-section">
-                  <h2 className="sccv-heading">SCC Problem-Solving Checklist</h2>
-                  <ul>
-                    {solvingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-testing" className="sccv-section">
-                  <h2 className="sccv-heading">Testing and Edge Cases</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decision" className="sccv-section">
-                  <h2 className="sccv-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="sccv-section">
-                  <h2 className="sccv-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="sccv-section">
-                <h2 className="sccv-heading">Practical Examples</h2>
-                {examples.map((item) => (
-                  <div key={item.title}>
-                    <h3 className="sccv-subheading">{item.title}</h3>
-                    <div className="sccv-codebox">
-                      <code>{item.code.trim()}</code>
-                    </div>
-                    <p>{item.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="sccv-section">
-                <h2 className="sccv-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

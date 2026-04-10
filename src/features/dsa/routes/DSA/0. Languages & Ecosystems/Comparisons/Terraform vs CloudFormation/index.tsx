@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -34,8 +34,6 @@ type GlossarySection = {
   }>
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -45,7 +43,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 
 const introParagraphs = [
   'Terraform and AWS CloudFormation both solve the same central problem: expressing infrastructure as code so teams can provision, update, and review cloud resources systematically instead of through manual console changes. The serious comparison is not whether either can create an AWS VPC or RDS instance. Both can. The meaningful differences are platform scope, language model, state handling, review workflow, AWS integration depth, and which organizational model each tool supports best.',
-  'Terraform is a cloud-agnostic infrastructure-as-code tool centered on HCL, providers, modules, state, and the plan or apply model. CloudFormation is AWS\'s native infrastructure-as-code service built around stacks, templates, change sets, drift detection, nested stacks, and StackSets. Terraform generally optimizes for a common declarative model across many providers. CloudFormation generally optimizes for deep AWS-native integration and first-party service alignment inside the AWS ecosystem.',
+  "Terraform is a cloud-agnostic infrastructure-as-code tool centered on HCL, providers, modules, state, and the plan or apply model. CloudFormation is AWS's native infrastructure-as-code service built around stacks, templates, change sets, drift detection, nested stacks, and StackSets. Terraform generally optimizes for a common declarative model across many providers. CloudFormation generally optimizes for deep AWS-native integration and first-party service alignment inside the AWS ecosystem.",
   'This page is intentionally comprehensive. It covers multi-cloud versus AWS-native orientation, HCL versus JSON or YAML templates, state and stack models, change sets, drift, providers versus AWS resource types, modules versus nested stacks, StackSets, CI workflow, governance, migration tradeoffs, and the environments where one tool is materially more appropriate than the other.',
 ]
 
@@ -55,7 +53,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Overview',
     paragraphs: [
       'Terraform is the broader infrastructure-as-code standard across many organizations because it offers one common language and workflow for many cloud providers and infrastructure services. Teams write HCL, use providers, compose modules, manage state, and run plan or apply operations regardless of whether they are working with AWS, Azure, GCP, Kubernetes, or many SaaS platforms.',
-      'CloudFormation is AWS\'s first-party infrastructure-as-code service. It is focused on AWS and deeply integrated into AWS concepts such as stacks, change sets, nested stacks, StackSets, and drift detection. For AWS-centric organizations, this native integration can be a significant advantage because the tool is built around the platform rather than layered across many providers.',
+      "CloudFormation is AWS's first-party infrastructure-as-code service. It is focused on AWS and deeply integrated into AWS concepts such as stacks, change sets, nested stacks, StackSets, and drift detection. For AWS-centric organizations, this native integration can be a significant advantage because the tool is built around the platform rather than layered across many providers.",
       'The central choice is whether infrastructure standardization across many platforms matters more than staying close to AWS-native tooling and service semantics.',
     ],
   },
@@ -113,8 +111,8 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-production-reality',
     title: 'Production Reality',
     paragraphs: [
-      'Terraform\'s cloud-agnostic model does not automatically make AWS infrastructure cleaner. Teams can still create poor module boundaries, confusing variables, oversized states, and brittle review workflows. Standardization is only valuable when the organization actually applies consistent standards.',
-      'CloudFormation\'s first-party status does not automatically make templates pleasant or architecture elegant. Teams can still create unreadable templates, deeply nested stack hierarchies, hard-to-maintain parameter surfaces, and painful update dependencies. Native does not mean effortless.',
+      "Terraform's cloud-agnostic model does not automatically make AWS infrastructure cleaner. Teams can still create poor module boundaries, confusing variables, oversized states, and brittle review workflows. Standardization is only valuable when the organization actually applies consistent standards.",
+      "CloudFormation's first-party status does not automatically make templates pleasant or architecture elegant. Teams can still create unreadable templates, deeply nested stack hierarchies, hard-to-maintain parameter surfaces, and painful update dependencies. Native does not mean effortless.",
       'The right choice therefore depends less on ideology and more on which operational complexity your organization is better prepared to manage.',
     ],
   },
@@ -158,7 +156,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Terraform Plans Versus CloudFormation Change Sets',
     paragraphs: [
       'Terraform is built culturally around `plan` followed by `apply`. The plan is a first-class part of the review model and many teams center CI, approvals, and change governance on inspecting plans before execution.',
-      'CloudFormation has Change Sets, which play a similar review role for stack updates. They allow teams to inspect how a stack would change before executing the update. This makes CloudFormation less blind than some engineers assume. The difference is not that Terraform can preview changes and CloudFormation cannot. The difference is that Terraform\'s plan workflow is more central to the tool\'s overall identity.',
+      "CloudFormation has Change Sets, which play a similar review role for stack updates. They allow teams to inspect how a stack would change before executing the update. This makes CloudFormation less blind than some engineers assume. The difference is not that Terraform can preview changes and CloudFormation cannot. The difference is that Terraform's plan workflow is more central to the tool's overall identity.",
       'If your organization treats planned infrastructure diffs as a ritualized review artifact, Terraform often feels more natural. If AWS-native stack updates with Change Sets are sufficient, CloudFormation may be entirely adequate.',
     ],
   },
@@ -174,7 +172,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-reuse',
     title: 'Modules Versus Nested Stacks',
     paragraphs: [
-      'Terraform reuses infrastructure through modules. Modules are one of Terraform\'s strongest design tools because they let teams package resource patterns behind clear input and output interfaces. Versioning and registry usage can further standardize module adoption across an organization.',
+      "Terraform reuses infrastructure through modules. Modules are one of Terraform's strongest design tools because they let teams package resource patterns behind clear input and output interfaces. Versioning and registry usage can further standardize module adoption across an organization.",
       'CloudFormation reuses through nested stacks and other AWS ecosystem patterns. Nested stacks can help organize large deployments into composable stack units, but many teams find Terraform modules easier to reason about as reusable infrastructure building blocks than deeply nested template hierarchies.',
       'This is not an absolute rule, but it is a recurring practical preference: Terraform modules often feel like a more ergonomic reuse model than large nested CloudFormation template systems.',
     ],
@@ -200,7 +198,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-governance',
     title: 'Governance, IAM, and AWS Native Integration',
     paragraphs: [
-      'CloudFormation is deeply embedded in AWS operational and security models. That matters for teams whose governance lives primarily inside IAM, Organizations, account boundaries, and AWS-native service workflows. It can feel operationally clean to stay within one vendor\'s first-party model.',
+      "CloudFormation is deeply embedded in AWS operational and security models. That matters for teams whose governance lives primarily inside IAM, Organizations, account boundaries, and AWS-native service workflows. It can feel operationally clean to stay within one vendor's first-party model.",
       'Terraform can also be governed very effectively, but its governance model is often more tool-centric and platform-team-centric rather than AWS-service-native. This can be better or worse depending on whether the organization wants cloud governance to be vendor-neutral or AWS-specific.',
     ],
   },
@@ -208,7 +206,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-ci',
     title: 'CI, Review, and Workflow Design',
     paragraphs: [
-      'Terraform pipelines are widely standardized: format, validate, plan, review, apply. This shared industry rhythm is one of Terraform\'s biggest organizational advantages. It is easy to hire for, easy to document, and supported by a large amount of existing tooling and practice.',
+      "Terraform pipelines are widely standardized: format, validate, plan, review, apply. This shared industry rhythm is one of Terraform's biggest organizational advantages. It is easy to hire for, easy to document, and supported by a large amount of existing tooling and practice.",
       'CloudFormation pipelines often revolve around linting or validation, template packaging as needed, change set creation, review, and stack execution. This can be entirely workable, especially in AWS-first organizations, but the surrounding ecosystem conventions are narrower because the tool is focused on one platform.',
     ],
   },
@@ -263,7 +261,7 @@ const exampleSections: ExampleSection[] = [
 }`,
     notes: [
       'The syntax is concise and infrastructure-focused.',
-      'This code fits naturally into Terraform\'s provider, module, and plan workflow across many infrastructure domains.',
+      "This code fits naturally into Terraform's provider, module, and plan workflow across many infrastructure domains.",
     ],
   },
   {
@@ -327,7 +325,7 @@ CloudFormation workflow:
   approve
   execute stack update`,
     notes: [
-      'Terraform plan review is one of the tool\'s strongest cultural defaults.',
+      "Terraform plan review is one of the tool's strongest cultural defaults.",
       'CloudFormation change sets provide a comparable review checkpoint inside AWS-native stack operations.',
     ],
   },
@@ -387,28 +385,23 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Provider',
-        definition:
-          'A plugin that lets Terraform manage a specific cloud or service API.',
+        definition: 'A plugin that lets Terraform manage a specific cloud or service API.',
       },
       {
         term: 'Module',
-        definition:
-          'A reusable package of Terraform configuration with inputs and outputs.',
+        definition: 'A reusable package of Terraform configuration with inputs and outputs.',
       },
       {
         term: 'State',
-        definition:
-          'Terraform\'s record of managed resources and their last known attributes.',
+        definition: "Terraform's record of managed resources and their last known attributes.",
       },
       {
         term: 'Plan',
-        definition:
-          'A preview of the changes Terraform intends to make during apply.',
+        definition: 'A preview of the changes Terraform intends to make during apply.',
       },
       {
         term: 'Backend',
-        definition:
-          'The storage mechanism for Terraform state, such as local or remote backends.',
+        definition: 'The storage mechanism for Terraform state, such as local or remote backends.',
       },
     ],
   },
@@ -418,8 +411,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Stack',
-        definition:
-          'A deployed CloudFormation unit containing resources managed together by AWS.',
+        definition: 'A deployed CloudFormation unit containing resources managed together by AWS.',
       },
       {
         term: 'Template',
@@ -459,8 +451,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Desired State',
-        definition:
-          'The target resource configuration the IaC system aims to converge toward.',
+        definition: 'The target resource configuration the IaC system aims to converge toward.',
       },
       {
         term: 'Drift',
@@ -526,240 +517,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.tf-cfn-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.tf-cfn-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.tf-cfn-help-titlebar {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.tf-cfn-help-titletext {
-  grid-column: 2;
-  justify-self: center;
-  font-size: 15px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.tf-cfn-help-controls {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  gap: 2px;
-}
-
-.tf-cfn-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.tf-cfn-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.tf-cfn-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.tf-cfn-help-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.tf-cfn-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.tf-cfn-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.tf-cfn-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.tf-cfn-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tf-cfn-help-toc-item {
-  margin: 0 0 8px;
-}
-
-.tf-cfn-help-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.tf-cfn-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.tf-cfn-help-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.tf-cfn-help-section {
-  margin: 0 0 20px;
-}
-
-.tf-cfn-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.tf-cfn-help-content p,
-.tf-cfn-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.tf-cfn-help-content p {
-  margin: 0 0 10px;
-}
-
-.tf-cfn-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.tf-cfn-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.tf-cfn-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.tf-cfn-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .tf-cfn-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .tf-cfn-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .tf-cfn-help-window {
-    min-height: auto;
-  }
-
-  .tf-cfn-help-titlebar {
-    grid-template-columns: 1fr auto;
-    row-gap: 4px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .tf-cfn-help-titletext {
-    grid-column: 1 / span 2;
-    grid-row: 1;
-    white-space: normal;
-    padding: 0 28px;
-  }
-
-  .tf-cfn-help-controls {
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="tf-cfn-help-section">
@@ -814,128 +571,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function TerraformVsCloudFormationPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Terraform vs CloudFormation',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Terraform vs CloudFormation (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Terraform vs CloudFormation',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="tf-cfn-help-page">
-      <style>{pageStyles}</style>
-      <div className="tf-cfn-help-window" role="presentation">
-        <header className="tf-cfn-help-titlebar">
-          <span className="tf-cfn-help-titletext">Terraform vs CloudFormation</span>
-          <div className="tf-cfn-help-controls">
-            <button
-              className="tf-cfn-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="tf-cfn-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Terraform vs CloudFormation"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Terraform vs CloudFormation</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="tf-cfn-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`tf-cfn-help-tab ${activeTab === tab.id ? 'tf-cfn-help-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="tf-cfn-help-main">
-          <aside className="tf-cfn-help-toc" aria-label="Table of contents">
-            <h2 className="tf-cfn-help-toc-title">Contents</h2>
-            <ul className="tf-cfn-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="tf-cfn-help-toc-item">
-                  <a href={`#${section.id}`} className="tf-cfn-help-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="tf-cfn-help-content">
-            <h1 className="tf-cfn-help-doc-title">Terraform vs CloudFormation</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

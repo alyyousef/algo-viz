@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -47,11 +47,13 @@ const foundations = [
 const taxonomy = [
   {
     title: 'Pure Branch and Bound',
-    detail: 'Bounds + branching only. Good when relaxations are tight and feasible solutions are easy to find.',
+    detail:
+      'Bounds + branching only. Good when relaxations are tight and feasible solutions are easy to find.',
   },
   {
     title: 'Branch and Cut',
-    detail: 'Add cutting planes to tighten relaxations while searching. Backbone of modern MIP solvers.',
+    detail:
+      'Add cutting planes to tighten relaxations while searching. Backbone of modern MIP solvers.',
   },
   {
     title: 'Branch and Price',
@@ -182,18 +184,15 @@ const boundingTechniques = [
 const boundingRules = [
   {
     title: 'Lower bound (minimization)',
-    detail:
-      'A lower bound is an optimistic estimate. If it is already >= incumbent, prune.',
+    detail: 'A lower bound is an optimistic estimate. If it is already >= incumbent, prune.',
   },
   {
     title: 'Upper bound (maximization)',
-    detail:
-      'An upper bound is an optimistic estimate. If it is <= incumbent, prune.',
+    detail: 'An upper bound is an optimistic estimate. If it is <= incumbent, prune.',
   },
   {
     title: 'Dual bounds from relaxations',
-    detail:
-      'Solve a linear or convex relaxation to get strong bounds that are safe for pruning.',
+    detail: 'Solve a linear or convex relaxation to get strong bounds that are safe for pruning.',
   },
   {
     title: 'Heuristic incumbents',
@@ -205,13 +204,11 @@ const boundingRules = [
 const branchingStrategies = [
   {
     title: 'Most fractional variable',
-    detail:
-      'In LP relaxations, branch on variables closest to 0.5 to split the search evenly.',
+    detail: 'In LP relaxations, branch on variables closest to 0.5 to split the search evenly.',
   },
   {
     title: 'Most constrained decision',
-    detail:
-      'Branch on the variable with the smallest feasible domain to fail fast.',
+    detail: 'Branch on the variable with the smallest feasible domain to fail fast.',
   },
   {
     title: 'Strong branching',
@@ -220,8 +217,7 @@ const branchingStrategies = [
   },
   {
     title: 'Problem-specific choices',
-    detail:
-      'In TSP, branch on edges; in scheduling, branch on job ordering or machine assignment.',
+    detail: 'In TSP, branch on edges; in scheduling, branch on job ordering or machine assignment.',
   },
 ]
 
@@ -297,8 +293,7 @@ const workedExamples = [
       'Compute fractional knapsack bound for the remaining capacity.',
       'Prune if bound <= incumbent best value.',
     ],
-    note:
-      'Fractional fill gives a valid upper bound for maximization; it is the classic Branch and Bound success case.',
+    note: 'Fractional fill gives a valid upper bound for maximization; it is the classic Branch and Bound success case.',
   },
   {
     title: 'Scheduling with deadlines',
@@ -308,8 +303,7 @@ const workedExamples = [
       'Prune branches that cannot beat the best schedule found.',
       'Use a greedy schedule as the initial incumbent.',
     ],
-    note:
-      'Even loose scheduling bounds can prune heavily when jobs are tight.',
+    note: 'Even loose scheduling bounds can prune heavily when jobs are tight.',
   },
 ]
 
@@ -460,8 +454,7 @@ const takeaways = [
 const glossaryTerms = [
   {
     term: 'Incumbent',
-    definition:
-      'The best feasible solution found so far during the search.',
+    definition: 'The best feasible solution found so far during the search.',
   },
   {
     term: 'Bound',
@@ -502,213 +495,6 @@ const glossaryTerms = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const branchBoundHelpStyles = `
-.branch-bound-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.branch-bound-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.branch-bound-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-}
-
-.branch-bound-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.branch-bound-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.branch-bound-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-.branch-bound-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.branch-bound-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.branch-bound-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.branch-bound-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.branch-bound-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.branch-bound-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.branch-bound-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.branch-bound-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.branch-bound-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.branch-bound-help-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.branch-bound-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.branch-bound-help-section {
-  margin: 0 0 20px;
-}
-
-.branch-bound-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.branch-bound-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.branch-bound-help-content p,
-.branch-bound-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.branch-bound-help-content p {
-  margin: 0 0 10px;
-}
-
-.branch-bound-help-content ul,
-.branch-bound-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.branch-bound-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.branch-bound-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.branch-bound-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .branch-bound-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .branch-bound-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -748,406 +534,331 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function BranchAndBoundPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Branch and Bound (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Branch and Bound',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Branch and Bound',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="branch-bound-help-page">
-      <style>{branchBoundHelpStyles}</style>
-      <div className="branch-bound-help-window" role="presentation">
-        <header className="branch-bound-help-titlebar">
-          <span className="branch-bound-help-title">Branch and Bound</span>
-          <div className="branch-bound-help-controls">
-            <button className="branch-bound-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="branch-bound-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Branch and Bound"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Branch and Bound</h1>
+      <p>
+        Branch and Bound explores a decision tree of candidate solutions while eliminating subtrees
+        that cannot outperform the best solution found so far. It is the backbone of exact solvers
+        for knapsack, scheduling, routing, and integer programming.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {foundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="branch-bound-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`branch-bound-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+          <hr className="bin98-divider" />
 
-        <div className="branch-bound-help-main">
-          <aside className="branch-bound-help-toc" aria-label="Table of contents">
-            <h2 className="branch-bound-help-toc-title">Contents</h2>
-            <ul className="branch-bound-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewPanels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-taxonomy" className="bin98-section">
+            <h2 className="bin98-heading">Taxonomy</h2>
+            {taxonomy.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-modeling" className="bin98-section">
+            <h2 className="bin98-heading">Modeling Checklist</h2>
+            <ul>
+              {modelingChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="branch-bound-help-content">
-            <h1 className="branch-bound-help-doc-title">Branch and Bound</h1>
+          <hr className="bin98-divider" />
+
+          <section id="core-loop" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Loop</h2>
+            {algorithmSteps.map((step) => (
+              <div key={step.heading}>
+                <h3 className="bin98-subheading">{step.heading}</h3>
+                <ul>
+                  {step.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-selection" className="bin98-section">
+            <h2 className="bin98-heading">Node Selection</h2>
+            {nodeSelection.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-bounding" className="bin98-section">
+            <h2 className="bin98-heading">Bounding Techniques</h2>
+            {boundingTechniques.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-rules" className="bin98-section">
+            <h2 className="bin98-heading">Bounding Rules</h2>
+            {boundingRules.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-branching" className="bin98-section">
+            <h2 className="bin98-heading">Branching Strategies</h2>
+            {branchingStrategies.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity</h2>
             <p>
-              Branch and Bound explores a decision tree of candidate solutions while eliminating subtrees that cannot outperform the
-              best solution found so far. It is the backbone of exact solvers for knapsack, scheduling, routing, and integer programming.
+              Branch and Bound is a time-space trade. The method stays exact, but performance
+              depends on how fast it finds good incumbents and how aggressively its bounds can cut
+              the tree.
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-foundations" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Foundations</h2>
-                  {foundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
+            {complexityNotes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-instrumentation" className="bin98-section">
+            <h2 className="bin98-heading">Instrumentation</h2>
+            {instrumentation.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-comparisons" className="bin98-section">
+            <h2 className="bin98-heading">Comparisons</h2>
+            {comparisonTable.map((item) => (
+              <div key={item.method}>
+                <h3 className="bin98-subheading">{item.method}</h3>
+                <p>
+                  Guarantee: {item.guarantee}. Pruning: {item.pruning}. Typical use:{' '}
+                  {item.typicalUse}.
+                </p>
+              </div>
+            ))}
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {applications.map((item) => (
+              <div key={item.context}>
+                <h3 className="bin98-subheading">{item.context}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+            <h3 className="bin98-subheading">Failure Story</h3>
+            <p>{failureStory}</p>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging</h2>
+            <ul>
+              {debuggingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-use" className="bin98-section">
+            <h2 className="bin98-heading">When To Use It</h2>
+            <ul>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-avoid" className="bin98-section">
+            <h2 className="bin98-heading">When To Avoid It</h2>
+            <ul>
+              {whenToAvoid.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="core-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="examples-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Examples</h2>
+            {workedExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <ol>
+                  {example.steps.map((step) => (
+                    <li key={step}>{step}</li>
                   ))}
-                </section>
+                </ol>
+                <p>{example.note}</p>
+              </div>
+            ))}
+          </section>
 
-                <hr className="branch-bound-help-divider" />
+          <hr className="bin98-divider" />
 
-                <section id="bp-overview" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Overview</h2>
-                  {overviewPanels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
+          <section id="examples-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-                <hr className="branch-bound-help-divider" />
-
-                <section id="bp-taxonomy" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Taxonomy</h2>
-                  {taxonomy.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="bp-mental" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-modeling" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Modeling Checklist</h2>
-                  <ul>
-                    {modelingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-loop" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Algorithm Loop</h2>
-                  {algorithmSteps.map((step) => (
-                    <div key={step.heading}>
-                      <h3 className="branch-bound-help-subheading">{step.heading}</h3>
-                      <ul>
-                        {step.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-selection" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Node Selection</h2>
-                  {nodeSelection.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-bounding" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Bounding Techniques</h2>
-                  {boundingTechniques.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-rules" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Bounding Rules</h2>
-                  {boundingRules.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-branching" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Branching Strategies</h2>
-                  {branchingStrategies.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-complexity" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Complexity</h2>
-                  <p>
-                    Branch and Bound is a time-space trade. The method stays exact, but performance depends on how fast it finds good
-                    incumbents and how aggressively its bounds can cut the tree.
-                  </p>
-                  {complexityNotes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-instrumentation" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Instrumentation</h2>
-                  {instrumentation.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-comparisons" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Comparisons</h2>
-                  {comparisonTable.map((item) => (
-                    <div key={item.method}>
-                      <h3 className="branch-bound-help-subheading">{item.method}</h3>
-                      <p>
-                        Guarantee: {item.guarantee}. Pruning: {item.pruning}. Typical use: {item.typicalUse}.
-                      </p>
-                    </div>
-                  ))}
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-applications" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Applications</h2>
-                  {applications.map((item) => (
-                    <div key={item.context}>
-                      <h3 className="branch-bound-help-subheading">{item.context}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                  <h3 className="branch-bound-help-subheading">Failure Story</h3>
-                  <p>{failureStory}</p>
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-pitfalls" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-debugging" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Debugging</h2>
-                  <ul>
-                    {debuggingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-use" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">When To Use It</h2>
-                  <ul>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-avoid" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">When To Avoid It</h2>
-                  <ul>
-                    {whenToAvoid.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-advanced" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="branch-bound-help-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="core-takeaways" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="examples-worked" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Worked Examples</h2>
-                  {workedExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="branch-bound-help-subheading">{example.title}</h3>
-                      <ol>
-                        {example.steps.map((step) => (
-                          <li key={step}>{step}</li>
-                        ))}
-                      </ol>
-                      <p>{example.note}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="branch-bound-help-divider" />
-
-                <section id="examples-code" className="branch-bound-help-section">
-                  <h2 className="branch-bound-help-heading">Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="branch-bound-help-subheading">{example.title}</h3>
-                      <div className="branch-bound-help-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="branch-bound-help-section">
-                <h2 className="branch-bound-help-heading">Terms</h2>
-                {glossaryTerms.map((item) => (
-                  <div key={item.term}>
-                    <h3 className="branch-bound-help-subheading">{item.term}</h3>
-                    <p>{item.definition}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Terms</h2>
+          {glossaryTerms.map((item) => (
+            <div key={item.term}>
+              <h3 className="bin98-subheading">{item.term}</h3>
+              <p>{item.definition}</p>
+            </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

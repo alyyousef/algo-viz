@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -97,8 +97,7 @@ const buildSteps = [
   },
   {
     title: 'Finish in linear time',
-    detail:
-      'Every character is processed a constant number of times, so building LPS is O(m).',
+    detail: 'Every character is processed a constant number of times, so building LPS is O(m).',
   },
 ]
 
@@ -109,64 +108,53 @@ const matchSteps = [
   },
   {
     title: 'Advance on match',
-    detail:
-      'When text[i] == pattern[j], increment both. If j reaches m, report a match.',
+    detail: 'When text[i] == pattern[j], increment both. If j reaches m, report a match.',
   },
   {
     title: 'Fallback on mismatch',
-    detail:
-      'If j > 0, set j = LPS[j-1]. If j == 0, only move i forward.',
+    detail: 'If j > 0, set j = LPS[j-1]. If j == 0, only move i forward.',
   },
   {
     title: 'Keep scanning',
-    detail:
-      'No backtracking on the text index, so total work is O(n).',
+    detail: 'No backtracking on the text index, so total work is O(n).',
   },
 ]
 
 const complexityNotes = [
   {
     title: 'Preprocessing time',
-    detail:
-      'O(m) to build the LPS array for a pattern of length m.',
+    detail: 'O(m) to build the LPS array for a pattern of length m.',
   },
   {
     title: 'Search time',
-    detail:
-      'O(n) over a text of length n, plus reporting matches.',
+    detail: 'O(n) over a text of length n, plus reporting matches.',
   },
   {
     title: 'Memory cost',
-    detail:
-      'O(m) for the LPS array. No extra structures beyond the pattern.',
+    detail: 'O(m) for the LPS array. No extra structures beyond the pattern.',
   },
   {
     title: 'Predictable worst-case',
-    detail:
-      'Unlike naive search, KMP never degrades to O(n*m).',
+    detail: 'Unlike naive search, KMP never degrades to O(n*m).',
   },
 ]
 
 const realWorldUses = [
   {
     context: 'Text editors',
-    detail:
-      'Find/replace operations use KMP for predictable search time across large files.',
+    detail: 'Find/replace operations use KMP for predictable search time across large files.',
   },
   {
     context: 'Compilers and lexers',
-    detail:
-      'Tokenization and keyword recognition benefit from efficient substring search.',
+    detail: 'Tokenization and keyword recognition benefit from efficient substring search.',
   },
   {
     context: 'DNA sequence analysis',
-    detail:
-      'Exact motif matching across long genomes is linear with KMP.',
+    detail: 'Exact motif matching across long genomes is linear with KMP.',
   },
   {
     context: 'Log scanning',
-    detail:
-      'Searching for error signatures in streaming logs can be done without backtracking.',
+    detail: 'Searching for error signatures in streaming logs can be done without backtracking.',
   },
 ]
 
@@ -218,8 +206,7 @@ function search(text, pattern):
     title: 'Overlapping matches',
     code: `// Pattern: "aba", text: "ababa"
 // Matches at 0 and 2 because j resets to lps[2] = 1 after first match.`,
-    explanation:
-      'Resetting j with LPS allows the next match to start inside the previous match.',
+    explanation: 'Resetting j with LPS allows the next match to start inside the previous match.',
   },
 ]
 
@@ -271,8 +258,6 @@ const takeaways = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -301,481 +286,192 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const kmpHelpStyles = `
-.kmp-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.kmp-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-.kmp-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.kmp-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.kmp-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.kmp-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.kmp-help-control:active {
-  border-top: 1px solid #404040;
-  border-left: 1px solid #404040;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
-}
-
-.kmp-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.kmp-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.kmp-help-tab.is-active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.kmp-help-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.kmp-help-toc {
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-  overflow: auto;
-}
-
-.kmp-help-toc h2 {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.kmp-help-toc ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.kmp-help-toc li {
-  margin: 0 0 8px;
-}
-
-.kmp-help-toc a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.kmp-help-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.kmp-help-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.kmp-help-intro {
-  margin: 0 0 14px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.kmp-help-section {
-  margin: 0 0 20px;
-}
-
-.kmp-help-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.kmp-help-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.kmp-help-content p,
-.kmp-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.kmp-help-content p {
-  margin: 0 0 10px;
-}
-
-.kmp-help-content ul,
-.kmp-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.kmp-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.kmp-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  overflow-x: auto;
-}
-
-.kmp-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .kmp-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .kmp-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .kmp-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 6px;
-    font-size: 13px;
-    white-space: normal;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function KnuthMorrisPrattKMPPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Knuth-Morris-Pratt (KMP)',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Knuth-Morris-Pratt (KMP) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Knuth-Morris-Pratt (KMP)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="kmp-help-page">
-      <style>{kmpHelpStyles}</style>
-      <div className="kmp-help-window" role="presentation">
-        <header className="kmp-help-titlebar">
-          <span className="kmp-help-titletext">Knuth-Morris-Pratt (KMP)</span>
-          <div className="kmp-help-controls">
-            <button className="kmp-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="kmp-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Knuth-Morris-Pratt (KMP)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Knuth-Morris-Pratt (KMP)</h1>
+      <p className="kmp-help-intro">
+        KMP solves single-pattern search by precomputing how the pattern overlaps with itself. This
+        page keeps the original material intact, but presents it as a Windows-style help document
+        focused on the LPS table, mismatch fallback, and the practical cases where linear worst-case
+        search matters.
+      </p>
 
-        <div className="kmp-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`kmp-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              KMP solves the classic substring search problem in guaranteed linear time by avoiding
+              re-checking text characters. It does this by building a prefix table, also called LPS,
+              for the pattern and using it to decide how far the pattern can shift after a mismatch.
+            </p>
+          </section>
 
-        <div className="kmp-help-main">
-          <aside className="kmp-help-toc" aria-label="Table of contents">
-            <h2>Contents</h2>
+          <hr className="bin98-divider" />
+
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
             <ul>
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="kmp-help-content">
-            <h1 className="kmp-help-doc-title">Knuth-Morris-Pratt (KMP)</h1>
-            <p className="kmp-help-intro">
-              KMP solves single-pattern search by precomputing how the pattern overlaps with itself. This page keeps the original
-              material intact, but presents it as a Windows-style help document focused on the LPS table, mismatch fallback, and
-              the practical cases where linear worst-case search matters.
-            </p>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Overview</h2>
-                  <p>
-                    KMP solves the classic substring search problem in guaranteed linear time by avoiding re-checking text characters.
-                    It does this by building a prefix table, also called LPS, for the pattern and using it to decide how far the pattern
-                    can shift after a mismatch.
-                  </p>
-                </section>
-
-                <hr className="kmp-help-divider" />
-
-                <section id="bp-history" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+          <section id="core-components" className="bin98-section">
+            <h2 className="bin98-heading">Core Components</h2>
+            {coreComponents.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
                   ))}
-                </section>
+                </ul>
+              </div>
+            ))}
+          </section>
 
-                <hr className="kmp-help-divider" />
+          <section id="core-build" className="bin98-section">
+            <h2 className="bin98-heading">Prefix Table Construction</h2>
+            {buildSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <section id="bp-applications" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
+          <section id="core-match" className="bin98-section">
+            <h2 className="bin98-heading">Matching Workflow</h2>
+            {matchSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <hr className="kmp-help-divider" />
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-                <section id="bp-takeaways" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-models" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
 
-                <section id="core-components" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Core Components</h2>
-                  {coreComponents.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="kmp-help-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-                <section id="core-build" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Prefix Table Construction</h2>
-                  {buildSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
+      {activeTab === 'examples' && (
+        <section id="ex-code" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((item) => (
+            <div key={item.title}>
+              <h3 className="bin98-subheading">{item.title}</h3>
+              <pre className="bin98-codebox">
+                <code>{item.code.trim()}</code>
+              </pre>
+              <p>{item.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-                <section id="core-match" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Matching Workflow</h2>
-                  {matchSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-complexity" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-when" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-
-                <section id="core-advanced" className="kmp-help-section">
-                  <h2 className="kmp-help-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-code" className="kmp-help-section">
-                <h2 className="kmp-help-heading">Practical Examples</h2>
-                {examples.map((item) => (
-                  <div key={item.title}>
-                    <h3 className="kmp-help-subheading">{item.title}</h3>
-                    <pre className="kmp-help-codebox">
-                      <code>{item.code.trim()}</code>
-                    </pre>
-                    <p>{item.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="kmp-help-section">
-                <h2 className="kmp-help-heading">Glossary</h2>
-                <p><strong>LPS:</strong> Longest proper prefix that is also a suffix for each pattern prefix.</p>
-                <p><strong>Proper prefix:</strong> A prefix shorter than the whole string.</p>
-                <p><strong>Overlap:</strong> A suffix of the matched prefix that can continue as a prefix of the pattern.</p>
-                <p><strong>Streaming search:</strong> Processing text left-to-right without backtracking or full buffering.</p>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          <p>
+            <strong>LPS:</strong> Longest proper prefix that is also a suffix for each pattern
+            prefix.
+          </p>
+          <p>
+            <strong>Proper prefix:</strong> A prefix shorter than the whole string.
+          </p>
+          <p>
+            <strong>Overlap:</strong> A suffix of the matched prefix that can continue as a prefix
+            of the pattern.
+          </p>
+          <p>
+            <strong>Streaming search:</strong> Processing text left-to-right without backtracking or
+            full buffering.
+          </p>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

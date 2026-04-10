@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -233,7 +233,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-adoption',
     title: 'Incremental Adoption and Migration',
     paragraphs: [
-      'One of React\'s enduring advantages is incremental adoption. Teams can embed React in one page section, build isolated widgets, or grow into a full single-page or server-rendered application over time.',
+      "One of React's enduring advantages is incremental adoption. Teams can embed React in one page section, build isolated widgets, or grow into a full single-page or server-rendered application over time.",
       'That makes React attractive for modernization efforts where replacing the entire front end at once would be too risky. The same flexibility that helps gradual adoption also means teams should be explicit about integration boundaries and long-term migration direction.',
     ],
   },
@@ -250,7 +250,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Tradeoffs',
     paragraphs: [
       'React can feel simple at the component level and complicated at the application-architecture level. Teams that underestimate the architecture layer often end up with inconsistent routing, state, form, and data-loading patterns.',
-      'Another tradeoff is that React\'s popularity can create false confidence. A huge ecosystem and labor market do not remove the need for disciplined architecture. They simply provide more options and more ways to assemble a strong or weak system.',
+      "Another tradeoff is that React's popularity can create false confidence. A huge ecosystem and labor market do not remove the need for disciplined architecture. They simply provide more options and more ways to assemble a strong or weak system.",
     ],
   },
   {
@@ -258,7 +258,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Compare and Contrast References',
     paragraphs: [
       'React is commonly compared with Vue for ecosystem freedom versus a more cohesive progressive framework, with Angular for UI-library scope versus a full framework, and with signal-based or compiler-first systems for how they model updates and reactivity.',
-      'These comparisons are useful because they reveal React\'s actual role: a flexible rendering-centered core with enormous ecosystem leverage, not a single default answer to every front-end architecture question.',
+      "These comparisons are useful because they reveal React's actual role: a flexible rendering-centered core with enormous ecosystem leverage, not a single default answer to every front-end architecture question.",
     ],
   },
 ] as const
@@ -284,7 +284,8 @@ export default function Counter() {
 }`,
       },
     ],
-    takeaway: 'The core React experience is function components plus hooks, with rendering expressed directly in JSX.',
+    takeaway:
+      'The core React experience is function components plus hooks, with rendering expressed directly in JSX.',
   },
   {
     id: 'examples-derived',
@@ -305,7 +306,7 @@ export default function Counter() {
       },
     ],
     takeaway:
-      'A large part of React\'s appeal is that many UI derivations stay as plain JavaScript rather than moving into a special template or reactive API.',
+      "A large part of React's appeal is that many UI derivations stay as plain JavaScript rather than moving into a special template or reactive API.",
   },
   {
     id: 'examples-custom-hook',
@@ -387,59 +388,84 @@ Higher-level framework added when SSR or platform structure matters`,
       },
     ],
     takeaway:
-      'React\'s flexibility is real, but it means the team must be deliberate about the architecture around the library.',
+      "React's flexibility is real, but it means the team must be deliberate about the architecture around the library.",
   },
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'React', definition: 'A UI library for building component-based user interfaces with declarative rendering.' },
-  { term: 'JSX', definition: 'A JavaScript or TypeScript syntax extension used to describe UI structure inside React component code.' },
-  { term: 'Hook', definition: 'A React function such as `useState` or `useEffect` that lets function components access React features.' },
-  { term: 'Function component', definition: 'The modern React component form where a function returns JSX and uses hooks for state and related behavior.' },
+  {
+    term: 'React',
+    definition:
+      'A UI library for building component-based user interfaces with declarative rendering.',
+  },
+  {
+    term: 'JSX',
+    definition:
+      'A JavaScript or TypeScript syntax extension used to describe UI structure inside React component code.',
+  },
+  {
+    term: 'Hook',
+    definition:
+      'A React function such as `useState` or `useEffect` that lets function components access React features.',
+  },
+  {
+    term: 'Function component',
+    definition:
+      'The modern React component form where a function returns JSX and uses hooks for state and related behavior.',
+  },
   { term: 'Props', definition: 'Inputs passed from a parent component to a child component.' },
-  { term: 'State', definition: 'Component-managed data that can change over time and trigger rerendering.' },
-  { term: 'Context', definition: 'A React feature for passing values through the component tree without manual prop drilling.' },
-  { term: 'Effect', definition: 'React logic used to synchronize with external systems or imperative APIs after rendering.' },
-  { term: 'Custom hook', definition: 'A reusable function that combines React hooks into a shareable unit of logic.' },
-  { term: 'Rerender', definition: 'The process where React runs component rendering logic again after relevant state or props change.' },
-  { term: 'Ref', definition: 'A React object used to hold mutable values or access imperative DOM instances without causing rerenders.' },
-  { term: 'Reducer', definition: 'A state-transition pattern often used in React when updates are easier to describe as actions.' },
-  { term: 'Controlled input', definition: 'A form pattern where input values are driven directly from React state.' },
-  { term: 'Transition', definition: 'A React mechanism for marking some updates as lower-priority so urgent UI work can stay responsive.' },
-  { term: 'Deferred value', definition: 'A React mechanism for letting some rendered values lag behind urgent state changes to improve responsiveness.' },
-  { term: 'Component tree', definition: 'The hierarchy of React components that together make up an application interface.' },
+  {
+    term: 'State',
+    definition: 'Component-managed data that can change over time and trigger rerendering.',
+  },
+  {
+    term: 'Context',
+    definition:
+      'A React feature for passing values through the component tree without manual prop drilling.',
+  },
+  {
+    term: 'Effect',
+    definition:
+      'React logic used to synchronize with external systems or imperative APIs after rendering.',
+  },
+  {
+    term: 'Custom hook',
+    definition: 'A reusable function that combines React hooks into a shareable unit of logic.',
+  },
+  {
+    term: 'Rerender',
+    definition:
+      'The process where React runs component rendering logic again after relevant state or props change.',
+  },
+  {
+    term: 'Ref',
+    definition:
+      'A React object used to hold mutable values or access imperative DOM instances without causing rerenders.',
+  },
+  {
+    term: 'Reducer',
+    definition:
+      'A state-transition pattern often used in React when updates are easier to describe as actions.',
+  },
+  {
+    term: 'Controlled input',
+    definition: 'A form pattern where input values are driven directly from React state.',
+  },
+  {
+    term: 'Transition',
+    definition:
+      'A React mechanism for marking some updates as lower-priority so urgent UI work can stay responsive.',
+  },
+  {
+    term: 'Deferred value',
+    definition:
+      'A React mechanism for letting some rendered values lag behind urgent state changes to improve responsiveness.',
+  },
+  {
+    term: 'Component tree',
+    definition: 'The hierarchy of React components that together make up an application interface.',
+  },
 ] as const
-
-const helpStyles = `
-.react-help-page { min-height: 100dvh; background: #c0c0c0; padding: 0; color: #000; font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif; }
-.react-help-window { width: 100%; min-height: 100dvh; display: flex; flex-direction: column; box-sizing: border-box; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
-.react-help-titlebar { position: relative; display: flex; align-items: center; padding: 2px 4px; background: linear-gradient(90deg, #000080 0%, #1084d0 100%); color: #fff; font-size: 13px; font-weight: 700; }
-.react-help-titletext { position: absolute; left: 50%; transform: translateX(-50%); font-size: 16px; white-space: nowrap; }
-.react-help-controls { display: flex; gap: 2px; margin-left: auto; }
-.react-help-control { width: 18px; height: 16px; display: inline-flex; align-items: center; justify-content: center; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; background: #c0c0c0; color: #000; font-size: 11px; line-height: 1; text-decoration: none; }
-.react-help-tabs { display: flex; gap: 1px; padding: 6px 8px 0; background: #c0c0c0; }
-.react-help-tab { border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: none; background: #b6b6b6; padding: 5px 10px 4px; font-size: 12px; cursor: pointer; }
-.react-help-tab.is-active { position: relative; top: 1px; background: #fff; }
-.react-help-main { flex: 1; min-height: 0; display: grid; grid-template-columns: 240px 1fr; border-top: 1px solid #404040; background: #fff; }
-.react-help-toc { overflow: auto; padding: 12px; background: #f2f2f2; border-right: 1px solid #808080; }
-.react-help-toc-title { margin: 0 0 10px; font-size: 12px; font-weight: 700; }
-.react-help-toc-list { margin: 0; padding: 0; list-style: none; }
-.react-help-toc-list li { margin: 0 0 8px; }
-.react-help-toc-list a { color: #000; font-size: 12px; text-decoration: none; }
-.react-help-content { overflow: auto; padding: 14px 20px 20px; }
-.react-help-doc-title { margin: 0 0 12px; font-size: 20px; font-weight: 700; }
-.react-help-doc-subtitle { margin: 0 0 12px; font-size: 12px; }
-.react-help-section { margin: 0 0 20px; scroll-margin-top: 12px; }
-.react-help-heading { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-.react-help-subheading { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-.react-help-content p, .react-help-content li { font-size: 12px; line-height: 1.5; }
-.react-help-content p { margin: 0 0 10px; }
-.react-help-content ul { margin: 0 0 10px 20px; padding: 0; }
-.react-help-divider { margin: 14px 0; border: 0; border-top: 1px solid #d0d0d0; }
-.react-help-codebox { margin: 6px 0 10px; padding: 8px; background: #f4f4f4; border-top: 2px solid #808080; border-left: 2px solid #808080; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
-.react-help-codebox code { display: block; white-space: pre-wrap; font-family: "Courier New", Courier, monospace; font-size: 12px; }
-@media (max-width: 900px) { .react-help-main { grid-template-columns: 1fr; } .react-help-toc { border-right: none; border-bottom: 1px solid #808080; } .react-help-titletext { position: static; transform: none; margin: 0 auto 0 0; padding-left: 4px; white-space: normal; } }
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -455,155 +481,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-export default function ReactPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+export default function Counter(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'React',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `React (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'React',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="react-help-page">
-      <style>{helpStyles}</style>
-      <div className="react-help-window" role="presentation">
-        <header className="react-help-titlebar">
-          <span className="react-help-titletext">React</span>
-          <div className="react-help-controls">
-            <button className="react-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="react-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="React"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">React</h1>
+      <p className="react-help-doc-subtitle">
+        Manual-style reference covering overview, JSX, hooks, state model, ecosystem shape,
+        framework layering, tradeoffs, and practical examples.
+      </p>
 
-        <div className="react-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`react-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="react-help-main">
-          <aside className="react-help-toc" aria-label="Table of contents">
-            <h2 className="react-help-toc-title">Contents</h2>
-            <ul className="react-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="react-help-content">
-            <h1 className="react-help-doc-title">React</h1>
-            <p className="react-help-doc-subtitle">
-              Manual-style reference covering overview, JSX, hooks, state model, ecosystem shape, framework layering, tradeoffs,
-              and practical examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="react-help-section">
-                    <h2 className="react-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="react-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="react-help-section">
-                  <h2 className="react-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="react-help-section">
-                  <h2 className="react-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="react-help-subheading">{snippet.label}</h3>
-                      <div className="react-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="react-help-section">
-                <h2 className="react-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

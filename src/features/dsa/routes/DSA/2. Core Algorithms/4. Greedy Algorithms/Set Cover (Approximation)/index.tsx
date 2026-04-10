@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -98,8 +98,7 @@ const algorithmSteps = [
 const approximationNotes = [
   {
     title: 'Harmonic approximation',
-    detail:
-      'Greedy achieves at most H_n times the optimum, where H_n = 1 + 1/2 + ... + 1/n.',
+    detail: 'Greedy achieves at most H_n times the optimum, where H_n = 1 + 1/2 + ... + 1/n.',
   },
   {
     title: 'Tight up to constants',
@@ -294,211 +293,6 @@ const quickGlossary = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const setCoverHelpStyles = `
-.set-cover-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.set-cover-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  box-sizing: border-box;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.set-cover-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.set-cover-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.set-cover-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.set-cover-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.set-cover-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.set-cover-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.set-cover-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.set-cover-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.set-cover-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.set-cover-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.set-cover-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.set-cover-toc-list li {
-  margin: 0 0 8px;
-}
-
-.set-cover-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.set-cover-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.set-cover-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.set-cover-section {
-  margin: 0 0 20px;
-}
-
-.set-cover-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.set-cover-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.set-cover-content p,
-.set-cover-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.set-cover-content p {
-  margin: 0 0 10px;
-}
-
-.set-cover-content ul,
-.set-cover-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.set-cover-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.set-cover-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.set-cover-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .set-cover-main {
-    grid-template-columns: 1fr;
-  }
-
-  .set-cover-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -506,10 +300,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -534,255 +324,201 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function SetCoverApproximationPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Set Cover (Approximation)',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Set Cover (Approximation) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Set Cover (Approximation)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="set-cover-help-page">
-      <style>{setCoverHelpStyles}</style>
-      <div className="set-cover-window" role="presentation">
-        <header className="set-cover-titlebar">
-          <span className="set-cover-title">Set Cover (Approximation)</span>
-          <div className="set-cover-controls">
-            <button className="set-cover-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="set-cover-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Set Cover (Approximation)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Set Cover (Approximation)</h1>
+      <p>
+        Greedy selection for a classic NP-hard covering problem. Set Cover asks for the smallest
+        collection of sets whose union covers every element in a universe. The exact solution is
+        NP-hard, but the greedy approximation is fast, intuitive, and has a tight theoretical
+        guarantee. This page explains the problem definition, the greedy rule, why it works, and how
+        to implement it responsibly.
+      </p>
 
-        <div className="set-cover-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`set-cover-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="set-cover-main">
-          <aside className="set-cover-toc" aria-label="Table of contents">
-            <h2 className="set-cover-toc-title">Contents</h2>
-            <ul className="set-cover-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Set Cover models decisions where each action covers multiple requirements and you want
+              the fewest actions overall. The greedy approximation repeatedly chooses the most
+              valuable set at the moment, guaranteeing a solution within a logarithmic factor of the
+              optimal size.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="set-cover-content">
-            <h1 className="set-cover-doc-title">Set Cover (Approximation)</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-approach" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: The Greedy Approach</h2>
+            {coreConcepts.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-steps" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Steps</h2>
+            {algorithmSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Greedy selection for a classic NP-hard covering problem. Set Cover asks for the smallest collection of sets whose union
-              covers every element in a universe. The exact solution is NP-hard, but the greedy approximation is fast, intuitive, and
-              has a tight theoretical guarantee. This page explains the problem definition, the greedy rule, why it works, and how to
-              implement it responsibly.
+              The key invariant: each step must measure only newly covered elements. Counting
+              already covered elements makes greedy appear better than it is and breaks the
+              approximation guarantee.
             </p>
+          </section>
+          <section id="core-guarantees" className="bin98-section">
+            <h2 className="bin98-heading">Approximation Guarantees</h2>
+            {approximationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <div className="bin98-codebox">
+              <code>{'H_n = 1 + 1/2 + 1/3 + ... + 1/n  <=  1 + ln(n)'}</code>
+            </div>
+            <p>
+              This harmonic bound quantifies how far greedy can be from optimal. The bound is tight
+              up to constants, which is why greedy remains a gold standard for approximation.
+            </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              Greedy is often I/O and memory bound. Bitsets, sparse lists, and incremental gain
+              updates can make the difference between a toy implementation and a production-quality
+              solver.
+            </p>
+          </section>
+          <section id="core-comparison" className="bin98-section">
+            <h2 className="bin98-heading">Greedy vs Optimal (Quick Intuition)</h2>
+            <p>
+              <strong>Quality:</strong> Greedy is within H_n factor of optimal; exact optimization
+              returns the optimum.
+            </p>
+            <p>
+              <strong>Runtime:</strong> Greedy is polynomial and fast; exact methods are exponential
+              in the worst case.
+            </p>
+            <p>
+              <strong>Practical scale:</strong> Greedy works well on large universes; exact methods
+              fit small to medium instances.
+            </p>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-guidance" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="set-cover-section">
-                  <h2 className="set-cover-heading">Overview</h2>
-                  <p>
-                    Set Cover models decisions where each action covers multiple requirements and you want the fewest actions overall.
-                    The greedy approximation repeatedly chooses the most valuable set at the moment, guaranteeing a solution within a
-                    logarithmic factor of the optimal size.
-                  </p>
-                </section>
-                <hr className="set-cover-divider" />
-                <section id="bp-history" className="set-cover-section">
-                  <h2 className="set-cover-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="set-cover-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="set-cover-section">
-                  <h2 className="set-cover-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-applications" className="set-cover-section">
-                  <h2 className="set-cover-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="set-cover-section">
-                  <h2 className="set-cover-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-approach" className="set-cover-section">
-                  <h2 className="set-cover-heading">How It Works: The Greedy Approach</h2>
-                  {coreConcepts.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="set-cover-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-steps" className="set-cover-section">
-                  <h2 className="set-cover-heading">Algorithm Steps</h2>
-                  {algorithmSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The key invariant: each step must measure only newly covered elements. Counting already covered elements makes
-                    greedy appear better than it is and breaks the approximation guarantee.
-                  </p>
-                </section>
-                <section id="core-guarantees" className="set-cover-section">
-                  <h2 className="set-cover-heading">Approximation Guarantees</h2>
-                  {approximationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <div className="set-cover-codebox">
-                    <code>{'H_n = 1 + 1/2 + 1/3 + ... + 1/n  <=  1 + ln(n)'}</code>
-                  </div>
-                  <p>
-                    This harmonic bound quantifies how far greedy can be from optimal. The bound is tight up to constants, which is
-                    why greedy remains a gold standard for approximation.
-                  </p>
-                </section>
-                <section id="core-complexity" className="set-cover-section">
-                  <h2 className="set-cover-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Greedy is often I/O and memory bound. Bitsets, sparse lists, and incremental gain updates can make the difference
-                    between a toy implementation and a production-quality solver.
-                  </p>
-                </section>
-                <section id="core-comparison" className="set-cover-section">
-                  <h2 className="set-cover-heading">Greedy vs Optimal (Quick Intuition)</h2>
-                  <p><strong>Quality:</strong> Greedy is within H_n factor of optimal; exact optimization returns the optimum.</p>
-                  <p><strong>Runtime:</strong> Greedy is polynomial and fast; exact methods are exponential in the worst case.</p>
-                  <p><strong>Practical scale:</strong> Greedy works well on large universes; exact methods fit small to medium instances.</p>
-                </section>
-                <section id="core-pitfalls" className="set-cover-section">
-                  <h2 className="set-cover-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-guidance" className="set-cover-section">
-                  <h2 className="set-cover-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="set-cover-section">
-                  <h2 className="set-cover-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="set-cover-section">
-                <h2 className="set-cover-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="set-cover-subheading">{example.title}</h3>
-                    <div className="set-cover-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="set-cover-section">
-                <h2 className="set-cover-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

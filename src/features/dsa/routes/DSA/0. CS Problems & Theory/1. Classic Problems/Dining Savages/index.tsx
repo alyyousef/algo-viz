@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -499,233 +499,6 @@ const glossary = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const diningSavagesHelpStyles = `
-.ds-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ds-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.ds-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ds-help-title {
-  position: absolute;
-  inset: 0 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.ds-help-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.ds-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.ds-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.ds-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  color: #000;
-  padding: 5px 10px 4px;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.ds-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.ds-help-main {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.ds-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.ds-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ds-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ds-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.ds-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ds-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.ds-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ds-help-section {
-  margin: 0 0 20px;
-}
-
-.ds-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ds-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ds-help-content p,
-.ds-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.ds-help-content p {
-  margin: 0 0 10px;
-}
-
-.ds-help-content ul,
-.ds-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.ds-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.ds-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  overflow: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.ds-help-codebox code {
-  display: block;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-}
-
-@media (max-width: 900px) {
-  .ds-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ds-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 560px) {
-  .ds-help-title {
-    inset: 0 44px;
-    font-size: 13px;
-  }
-
-  .ds-help-content {
-    padding: 12px 14px 16px;
-  }
-}
-`
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -762,354 +535,263 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
 export default function DiningSavagesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Dining Savages (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Dining Savages',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Dining Savages',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="ds-help-page">
-      <style>{diningSavagesHelpStyles}</style>
-      <div className="ds-help-window" role="presentation">
-        <header className="ds-help-titlebar">
-          <span className="ds-help-title">Dining Savages</span>
-          <div className="ds-help-controls">
-            <button
-              className="ds-help-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="ds-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Dining Savages"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Dining Savages</h1>
+      <p>
+        The Dining Savages problem models a group of consumers sharing a finite pot of servings.
+        Each savage wants to eat whenever hungry, but the pot can become empty. A single cook
+        refills it, but must only be awakened when needed. This makes it a tight, practical puzzle
+        about mutual exclusion, condition synchronization, and avoiding duplicate refills.
+      </p>
 
-        <div className="ds-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ds-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="ds-help-main">
-          <aside className="ds-help-toc" aria-label="Table of contents">
-            <h2 className="ds-help-toc-title">Contents</h2>
-            <ul className="ds-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+          <hr className="bin98-divider" />
+
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-roles" className="bin98-section">
+            <h2 className="bin98-heading">Core Roles and Components</h2>
+            {roles.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-setup" className="bin98-section">
+            <h2 className="bin98-heading">Problem Setup</h2>
+            {setup.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-state" className="bin98-section">
+            <h2 className="bin98-heading">State Model</h2>
+            {stateModel.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Requirements</h2>
+            {correctness.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-solutions" className="bin98-section">
+            <h2 className="bin98-heading">Common Solution Patterns</h2>
+            {solutionPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              The heart of the solution is making the "pot empty" signal one-shot. A single savage
+              takes responsibility for waking the cook, while everyone else waits for the refill.
+            </p>
+          </section>
+
+          <section id="core-failure" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((pitfall) => (
+                <li key={pitfall.mistake}>
+                  <strong>{pitfall.mistake}:</strong> {pitfall.description}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="ds-help-content">
-            <h1 className="ds-help-doc-title">Dining Savages</h1>
-            <p>
-              The Dining Savages problem models a group of consumers sharing a finite pot of
-              servings. Each savage wants to eat whenever hungry, but the pot can become empty. A
-              single cook refills it, but must only be awakened when needed. This makes it a tight,
-              practical puzzle about mutual exclusion, condition synchronization, and avoiding
-              duplicate refills.
+          <section id="core-fairness" className="bin98-section">
+            <h2 className="bin98-heading">Fairness and Variants</h2>
+            <h3 className="bin98-subheading">Fairness and Starvation</h3>
+            {fairness.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Variants and Extensions</h3>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareContrast.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Notes</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-flow" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Flow</h2>
+            <ol>
+              {howItWorks.map((item) => (
+                <li key={item.step}>
+                  <strong>
+                    Step {item.step}: {item.title}
+                  </strong>{' '}
+                  {item.details}
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section id="ex-semaphore" className="bin98-section">
+            <h2 className="bin98-heading">Semaphore Sketch</h2>
+            {semaphoreSketch.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <pre className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </pre>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="ex-monitor" className="bin98-section">
+            <h2 className="bin98-heading">Monitor Sketch</h2>
+            {monitorSketch.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <pre className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </pre>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {codeExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">
+                  {example.title} ({example.language})
+                </h3>
+                <pre className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </pre>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="ex-real-world" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Connections</h2>
+            {realWorldConnections.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="ex-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging and Validation Tips</h2>
+            {debuggingTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="ds-help-section">
-                  <h2 className="ds-help-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="ds-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="ds-help-divider" />
-
-                <section id="bp-history" className="ds-help-section">
-                  <h2 className="ds-help-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="ds-help-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="ds-help-divider" />
-
-                <section id="bp-takeaways" className="ds-help-section">
-                  <h2 className="ds-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-roles" className="ds-help-section">
-                  <h2 className="ds-help-heading">Core Roles and Components</h2>
-                  {roles.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-setup" className="ds-help-section">
-                  <h2 className="ds-help-heading">Problem Setup</h2>
-                  {setup.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-state" className="ds-help-section">
-                  <h2 className="ds-help-heading">State Model</h2>
-                  {stateModel.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-correctness" className="ds-help-section">
-                  <h2 className="ds-help-heading">Correctness Requirements</h2>
-                  {correctness.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-solutions" className="ds-help-section">
-                  <h2 className="ds-help-heading">Common Solution Patterns</h2>
-                  {solutionPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The heart of the solution is making the "pot empty" signal one-shot. A single
-                    savage takes responsibility for waking the cook, while everyone else waits for
-                    the refill.
-                  </p>
-                </section>
-
-                <section id="core-failure" className="ds-help-section">
-                  <h2 className="ds-help-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="ds-help-section">
-                  <h2 className="ds-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((pitfall) => (
-                      <li key={pitfall.mistake}>
-                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-fairness" className="ds-help-section">
-                  <h2 className="ds-help-heading">Fairness and Variants</h2>
-                  <h3 className="ds-help-subheading">Fairness and Starvation</h3>
-                  {fairness.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="ds-help-subheading">Variants and Extensions</h3>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-compare" className="ds-help-section">
-                  <h2 className="ds-help-heading">Compare and Contrast</h2>
-                  {compareContrast.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-performance" className="ds-help-section">
-                  <h2 className="ds-help-heading">Performance Notes</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-flow" className="ds-help-section">
-                  <h2 className="ds-help-heading">Step-by-Step Flow</h2>
-                  <ol>
-                    {howItWorks.map((item) => (
-                      <li key={item.step}>
-                        <strong>
-                          Step {item.step}: {item.title}
-                        </strong>{' '}
-                        {item.details}
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-
-                <section id="ex-semaphore" className="ds-help-section">
-                  <h2 className="ds-help-heading">Semaphore Sketch</h2>
-                  {semaphoreSketch.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="ds-help-subheading">{example.title}</h3>
-                      <pre className="ds-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </pre>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="ex-monitor" className="ds-help-section">
-                  <h2 className="ds-help-heading">Monitor Sketch</h2>
-                  {monitorSketch.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="ds-help-subheading">{example.title}</h3>
-                      <pre className="ds-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </pre>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="ex-code" className="ds-help-section">
-                  <h2 className="ds-help-heading">Code Examples</h2>
-                  {codeExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="ds-help-subheading">
-                        {example.title} ({example.language})
-                      </h3>
-                      <pre className="ds-help-codebox">
-                        <code>{example.code.trim()}</code>
-                      </pre>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="ex-real-world" className="ds-help-section">
-                  <h2 className="ds-help-heading">Real-World Connections</h2>
-                  {realWorldConnections.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="ex-debugging" className="ds-help-section">
-                  <h2 className="ds-help-heading">Debugging and Validation Tips</h2>
-                  {debuggingTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="ds-help-section">
-                <h2 className="ds-help-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

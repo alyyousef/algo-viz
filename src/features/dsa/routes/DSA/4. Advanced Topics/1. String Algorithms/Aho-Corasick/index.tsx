@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -130,7 +130,8 @@ const definitions = [
   },
   {
     term: 'Failure link',
-    detail: 'A pointer to the longest proper suffix of the current prefix that is also in the trie.',
+    detail:
+      'A pointer to the longest proper suffix of the current prefix that is also in the trie.',
   },
   {
     term: 'Output list',
@@ -220,8 +221,7 @@ const invariants = [
   },
   {
     title: 'No backtracking',
-    detail:
-      'The automaton never rewinds the text pointer; all work is done by state transitions.',
+    detail: 'The automaton never rewinds the text pointer; all work is done by state transitions.',
   },
 ]
 
@@ -271,8 +271,7 @@ const realWorldUses = [
   },
   {
     context: 'Log analysis',
-    detail:
-      'Match lists of error signatures or compliance keywords in massive log streams.',
+    detail: 'Match lists of error signatures or compliance keywords in massive log streams.',
   },
 ]
 
@@ -408,13 +407,11 @@ const outputReporting = [
   },
   {
     title: 'Report with end index',
-    detail:
-      'Outputs are naturally aligned with the end index i. Start index is i - length + 1.',
+    detail: 'Outputs are naturally aligned with the end index i. Start index is i - length + 1.',
   },
   {
     title: 'Streaming compatibility',
-    detail:
-      'Carry the current node across chunks to keep matches across boundary splits.',
+    detail: 'Carry the current node across chunks to keep matches across boundary splits.',
   },
 ]
 
@@ -591,8 +588,6 @@ const takeaways = [
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -633,584 +628,298 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const ahoHelpStyles = `
-.aho-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.aho-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-.aho-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aho-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.aho-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.aho-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.aho-help-control:active {
-  border-top: 1px solid #404040;
-  border-left: 1px solid #404040;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
-}
-
-.aho-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.aho-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.aho-help-tab.is-active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.aho-help-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.aho-help-toc {
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-  overflow: auto;
-}
-
-.aho-help-toc h2 {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.aho-help-toc ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.aho-help-toc li {
-  margin: 0 0 8px;
-}
-
-.aho-help-toc a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.aho-help-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.aho-help-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.aho-help-intro {
-  margin: 0 0 14px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aho-help-section {
-  margin: 0 0 20px;
-}
-
-.aho-help-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.aho-help-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.aho-help-content p,
-.aho-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aho-help-content p {
-  margin: 0 0 10px;
-}
-
-.aho-help-content ul,
-.aho-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.aho-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.aho-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  overflow-x: auto;
-}
-
-.aho-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .aho-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .aho-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .aho-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 6px;
-    font-size: 13px;
-    white-space: normal;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function AhoCorasickPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Aho-Corasick',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Aho-Corasick (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Aho-Corasick',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="aho-help-page">
-      <style>{ahoHelpStyles}</style>
-      <div className="aho-help-window" role="presentation">
-        <header className="aho-help-titlebar">
-          <span className="aho-help-titletext">Aho-Corasick</span>
-          <div className="aho-help-controls">
-            <button className="aho-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="aho-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Aho-Corasick"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Aho-Corasick</h1>
+      <p className="aho-help-intro">
+        Aho-Corasick compiles a dictionary of patterns into one automaton, then scans text in a
+        single forward pass without backtracking. This page keeps the original material intact, but
+        presents it as a Windows-style help document focused on failure links, reporting, and the
+        practical tradeoffs of multi-pattern search.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Aho-Corasick is a multi-string search algorithm that compiles a set of patterns into
+              one machine. It merges the prefixes of all patterns in a trie and adds failure links
+              so the search never moves backward in the text. The result is predictable, linear-time
+              scanning that reports all matches as they occur.
+            </p>
+          </section>
 
-        <div className="aho-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`aho-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+          <hr className="bin98-divider" />
 
-        <div className="aho-help-main">
-          <aside className="aho-help-toc" aria-label="Table of contents">
-            <h2>Contents</h2>
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
             <ul>
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="aho-help-content">
-            <h1 className="aho-help-doc-title">Aho-Corasick</h1>
-            <p className="aho-help-intro">
-              Aho-Corasick compiles a dictionary of patterns into one automaton, then scans text in a single forward pass without
-              backtracking. This page keeps the original material intact, but presents it as a Windows-style help document focused on
-              failure links, reporting, and the practical tradeoffs of multi-pattern search.
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-definitions" className="bin98-section">
+            <h2 className="bin98-heading">Definitions and Notation</h2>
+            {definitions.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-components" className="bin98-section">
+            <h2 className="bin98-heading">Core Components</h2>
+            {coreComponents.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <section id="core-build" className="bin98-section">
+            <h2 className="bin98-heading">Construction Workflow</h2>
+            {buildSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-match" className="bin98-section">
+            <h2 className="bin98-heading">Matching Workflow</h2>
+            {matchSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Invariants</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-output" className="bin98-section">
+            <h2 className="bin98-heading">Output Reporting Strategy</h2>
+            {outputReporting.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Intuition</h2>
+            {correctnessSketch.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section id="core-edge-cases" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases to Plan For</h2>
+            <ul>
+              {edgeCases.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+
+          <section id="core-comparison" className="bin98-section">
+            <h2 className="bin98-heading">Comparisons with Related Algorithms</h2>
+            {comparisonRows.map((row) => (
+              <div key={row.algorithm}>
+                <h3 className="bin98-subheading">{row.algorithm}</h3>
+                <p>
+                  <strong>Strengths:</strong> {row.strengths}
+                </p>
+                <p>
+                  <strong>Weaknesses:</strong> {row.weaknesses}
+                </p>
+                <p>
+                  <strong>Best use:</strong> {row.bestUse}
+                </p>
+              </div>
+            ))}
+          </section>
+
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-tuning" className="bin98-section">
+            <h2 className="bin98-heading">Performance Tuning Checklist</h2>
+            {tuningTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-variations" className="bin98-section">
+            <h2 className="bin98-heading">Variations and Extensions</h2>
+            {variations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Checklist</h2>
+            <ol>
+              {implementationChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <pre className="bin98-codebox">
+                  <code>{item.code.trim()}</code>
+                </pre>
+                <p>{item.explanation}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="ex-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Example</h2>
+            <p>
+              <strong>Pattern set:</strong> {workedExample.patterns.join(', ')}
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="aho-help-section">
-                  <h2 className="aho-help-heading">Overview</h2>
-                  <p>
-                    Aho-Corasick is a multi-string search algorithm that compiles a set of patterns into one machine. It merges the
-                    prefixes of all patterns in a trie and adds failure links so the search never moves backward in the text. The result
-                    is predictable, linear-time scanning that reports all matches as they occur.
-                  </p>
-                </section>
+            <p>
+              <strong>Text:</strong> {workedExample.text}
+            </p>
+            <ul>
+              {workedExample.notes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+            <h3 className="bin98-subheading">Step-by-step trace</h3>
+            {exampleTrace.map((row) => (
+              <p key={`${row.index}-${row.char}`}>
+                <strong>
+                  Index {row.index} ({row.char}):
+                </strong>{' '}
+                state `{row.state}`. {row.action} Outputs: {row.outputs}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-                <hr className="aho-help-divider" />
-
-                <section id="bp-history" className="aho-help-section">
-                  <h2 className="aho-help-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <hr className="aho-help-divider" />
-
-                <section id="bp-applications" className="aho-help-section">
-                  <h2 className="aho-help-heading">Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <hr className="aho-help-divider" />
-
-                <section id="bp-takeaways" className="aho-help-section">
-                  <h2 className="aho-help-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-models" className="aho-help-section">
-                  <h2 className="aho-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-definitions" className="aho-help-section">
-                  <h2 className="aho-help-heading">Definitions and Notation</h2>
-                  {definitions.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-components" className="aho-help-section">
-                  <h2 className="aho-help-heading">Core Components</h2>
-                  {coreComponents.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="aho-help-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="core-build" className="aho-help-section">
-                  <h2 className="aho-help-heading">Construction Workflow</h2>
-                  {buildSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-match" className="aho-help-section">
-                  <h2 className="aho-help-heading">Matching Workflow</h2>
-                  {matchSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-invariants" className="aho-help-section">
-                  <h2 className="aho-help-heading">Algorithm Invariants</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-complexity" className="aho-help-section">
-                  <h2 className="aho-help-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-output" className="aho-help-section">
-                  <h2 className="aho-help-heading">Output Reporting Strategy</h2>
-                  {outputReporting.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-correctness" className="aho-help-section">
-                  <h2 className="aho-help-heading">Correctness Intuition</h2>
-                  {correctnessSketch.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="aho-help-section">
-                  <h2 className="aho-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-edge-cases" className="aho-help-section">
-                  <h2 className="aho-help-heading">Edge Cases to Plan For</h2>
-                  <ul>
-                    {edgeCases.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section id="core-when" className="aho-help-section">
-                  <h2 className="aho-help-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-
-                <section id="core-comparison" className="aho-help-section">
-                  <h2 className="aho-help-heading">Comparisons with Related Algorithms</h2>
-                  {comparisonRows.map((row) => (
-                    <div key={row.algorithm}>
-                      <h3 className="aho-help-subheading">{row.algorithm}</h3>
-                      <p><strong>Strengths:</strong> {row.strengths}</p>
-                      <p><strong>Weaknesses:</strong> {row.weaknesses}</p>
-                      <p><strong>Best use:</strong> {row.bestUse}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="core-advanced" className="aho-help-section">
-                  <h2 className="aho-help-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-tuning" className="aho-help-section">
-                  <h2 className="aho-help-heading">Performance Tuning Checklist</h2>
-                  {tuningTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-variations" className="aho-help-section">
-                  <h2 className="aho-help-heading">Variations and Extensions</h2>
-                  {variations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-implementation" className="aho-help-section">
-                  <h2 className="aho-help-heading">Implementation Checklist</h2>
-                  <ol>
-                    {implementationChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-code" className="aho-help-section">
-                  <h2 className="aho-help-heading">Practical Examples</h2>
-                  {examples.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="aho-help-subheading">{item.title}</h3>
-                      <pre className="aho-help-codebox">
-                        <code>{item.code.trim()}</code>
-                      </pre>
-                      <p>{item.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="ex-worked" className="aho-help-section">
-                  <h2 className="aho-help-heading">Worked Example</h2>
-                  <p><strong>Pattern set:</strong> {workedExample.patterns.join(', ')}</p>
-                  <p><strong>Text:</strong> {workedExample.text}</p>
-                  <ul>
-                    {workedExample.notes.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                  <h3 className="aho-help-subheading">Step-by-step trace</h3>
-                  {exampleTrace.map((row) => (
-                    <p key={`${row.index}-${row.char}`}>
-                      <strong>Index {row.index} ({row.char}):</strong> state `{row.state}`. {row.action} Outputs: {row.outputs}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="aho-help-section">
-                <h2 className="aho-help-heading">Glossary</h2>
-                {definitions.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.detail}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {definitions.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.detail}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

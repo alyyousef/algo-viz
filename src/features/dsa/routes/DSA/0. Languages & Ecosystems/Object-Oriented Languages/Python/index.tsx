@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -50,31 +49,26 @@ const mentalModels = [
   },
   {
     title: 'Explicit is better than implicit',
-    detail:
-      'Readable naming and clear interfaces outweigh clever inheritance tricks.',
+    detail: 'Readable naming and clear interfaces outweigh clever inheritance tricks.',
   },
 ]
 
 const languageFundamentals = [
   {
     title: 'Interpreted and dynamic',
-    detail:
-      'Python executes bytecode in an interpreter, favoring flexibility and fast iteration.',
+    detail: 'Python executes bytecode in an interpreter, favoring flexibility and fast iteration.',
   },
   {
     title: 'Class-based object model',
-    detail:
-      'Classes define behavior, while instances hold state and delegate to class methods.',
+    detail: 'Classes define behavior, while instances hold state and delegate to class methods.',
   },
   {
     title: 'First-class functions',
-    detail:
-      'Functions are objects, enabling decorators, callbacks, and strategy patterns.',
+    detail: 'Functions are objects, enabling decorators, callbacks, and strategy patterns.',
   },
   {
     title: 'Batteries included',
-    detail:
-      'The standard library provides IO, networking, data formats, and testing tools.',
+    detail: 'The standard library provides IO, networking, data formats, and testing tools.',
   },
 ]
 
@@ -100,46 +94,38 @@ const runtimePipeline = [
 const typeSystemDetails = [
   {
     title: 'Dynamic typing',
-    detail:
-      'Types are enforced at runtime, enabling rapid change but requiring tests.',
+    detail: 'Types are enforced at runtime, enabling rapid change but requiring tests.',
   },
   {
     title: 'Type hints',
-    detail:
-      'Optional annotations improve tooling and documentation without changing runtime.',
+    detail: 'Optional annotations improve tooling and documentation without changing runtime.',
   },
   {
     title: 'Protocols and ABCs',
-    detail:
-      'Protocols define structural typing; ABCs define explicit contracts.',
+    detail: 'Protocols define structural typing; ABCs define explicit contracts.',
   },
   {
     title: 'Dataclasses and attrs',
-    detail:
-      'Data-centric classes reduce boilerplate and make intent clearer.',
+    detail: 'Data-centric classes reduce boilerplate and make intent clearer.',
   },
 ]
 
 const standardLibraryHighlights = [
   {
     title: 'Collections and dataclasses',
-    detail:
-      'collections and dataclasses provide structured containers and helpers.',
+    detail: 'collections and dataclasses provide structured containers and helpers.',
   },
   {
     title: 'asyncio',
-    detail:
-      'Async event loops for high-concurrency IO workloads.',
+    detail: 'Async event loops for high-concurrency IO workloads.',
   },
   {
     title: 'pathlib and typing',
-    detail:
-      'Modern APIs for file paths and type annotations.',
+    detail: 'Modern APIs for file paths and type annotations.',
   },
   {
     title: 'unittest and logging',
-    detail:
-      'Built-in testing and structured logging tools.',
+    detail: 'Built-in testing and structured logging tools.',
   },
 ]
 
@@ -214,13 +200,11 @@ const dataModelProtocols = [
   },
   {
     title: 'Context management',
-    detail:
-      'Define __enter__ and __exit__ to manage resources with the with statement.',
+    detail: 'Define __enter__ and __exit__ to manage resources with the with statement.',
   },
   {
     title: 'Callable objects',
-    detail:
-      'Define __call__ to make instances behave like functions for configurable strategies.',
+    detail: 'Define __call__ to make instances behave like functions for configurable strategies.',
   },
 ]
 
@@ -275,13 +259,11 @@ const realWorldUses = [
   },
   {
     context: 'DevOps and platform tooling',
-    detail:
-      'Infrastructure scripts and CLIs use OOP to encapsulate environments and tasks.',
+    detail: 'Infrastructure scripts and CLIs use OOP to encapsulate environments and tasks.',
   },
   {
     context: 'Desktop apps',
-    detail:
-      'Qt and Tkinter use classes for widgets, signals, and event handling.',
+    detail: 'Qt and Tkinter use classes for widgets, signals, and event handling.',
   },
 ]
 
@@ -362,8 +344,7 @@ def save(serializer: Serializer, data):
 with Timer() as t:
     _ = sum(range(100000))
 print(t.elapsed)`,
-    explanation:
-      'Context managers model resource lifecycles cleanly and predictably.',
+    explanation: 'Context managers model resource lifecycles cleanly and predictably.',
   },
   {
     title: 'Mixin for shared behavior',
@@ -375,8 +356,7 @@ print(t.elapsed)`,
 class User(JsonMixin):
     def __init__(self, name):
         self.name = name`,
-    explanation:
-      'Mixins share behavior without deep inheritance.',
+    explanation: 'Mixins share behavior without deep inheritance.',
   },
 ]
 
@@ -422,8 +402,7 @@ const advancedInsights = [
   },
   {
     title: 'Typing for scale',
-    detail:
-      'Type hints, Protocols, and mypy reduce regressions in large OOP systems.',
+    detail: 'Type hints, Protocols, and mypy reduce regressions in large OOP systems.',
   },
 ]
 
@@ -438,381 +417,158 @@ const takeaways = [
 const toolingWorkflow = [
   {
     title: 'Typing and linting',
-    detail:
-      'mypy, ruff, and pylint keep large class hierarchies consistent.',
+    detail: 'mypy, ruff, and pylint keep large class hierarchies consistent.',
   },
   {
     title: 'Testing',
-    detail:
-      'pytest and unittest cover unit and integration tests.',
+    detail: 'pytest and unittest cover unit and integration tests.',
   },
   {
     title: 'Packaging',
-    detail:
-      'Poetry, uv, and pip manage environments and dependencies.',
+    detail: 'Poetry, uv, and pip manage environments and dependencies.',
   },
   {
     title: 'Profiling',
-    detail:
-      'cProfile and py-spy reveal hot paths and allocation costs.',
+    detail: 'cProfile and py-spy reveal hot paths and allocation costs.',
   },
 ]
 
 const concurrencyOptions = [
   {
     title: 'asyncio',
-    detail:
-      'Cooperative concurrency for IO-bound tasks and servers.',
+    detail: 'Cooperative concurrency for IO-bound tasks and servers.',
   },
   {
     title: 'multiprocessing',
-    detail:
-      'Multiple processes bypass the GIL for CPU-heavy tasks.',
+    detail: 'Multiple processes bypass the GIL for CPU-heavy tasks.',
   },
   {
     title: 'threading',
-    detail:
-      'Threads are best for IO-bound work due to the GIL.',
+    detail: 'Threads are best for IO-bound work due to the GIL.',
   },
   {
     title: 'native extensions',
-    detail:
-      'Cython, Rust, or C extensions unlock parallel CPU work.',
+    detail: 'Cython, Rust, or C extensions unlock parallel CPU work.',
   },
 ]
 
 const interopOptions = [
   {
     title: 'C and C++ bindings',
-    detail:
-      'ctypes, cffi, and pybind11 expose native libraries.',
+    detail: 'ctypes, cffi, and pybind11 expose native libraries.',
   },
   {
     title: 'Java and .NET',
-    detail:
-      'JPype and pythonnet bridge managed runtimes.',
+    detail: 'JPype and pythonnet bridge managed runtimes.',
   },
   {
     title: 'Web and JS',
-    detail:
-      'Pyodide and WebAssembly run Python in the browser.',
+    detail: 'Pyodide and WebAssembly run Python in the browser.',
   },
   {
     title: 'RPC and APIs',
-    detail:
-      'gRPC and REST are common integration paths.',
+    detail: 'gRPC and REST are common integration paths.',
   },
 ]
 
 const deploymentOptions = [
   {
     title: 'Web services',
-    detail:
-      'Deploy APIs with FastAPI, Django, or Flask.',
+    detail: 'Deploy APIs with FastAPI, Django, or Flask.',
   },
   {
     title: 'CLI tools',
-    detail:
-      'Typer and Click build command-line apps.',
+    detail: 'Typer and Click build command-line apps.',
   },
   {
     title: 'Packaging apps',
-    detail:
-      'PyInstaller and zipapp bundle applications.',
+    detail: 'PyInstaller and zipapp bundle applications.',
   },
   {
     title: 'Containers',
-    detail:
-      'Docker images standardize runtime environments.',
+    detail: 'Docker images standardize runtime environments.',
   },
 ]
 
 const comparisonNotes = [
   {
     title: 'Compared to Java',
-    detail:
-      'Python is more flexible but lacks static enforcement and JVM performance.',
+    detail: 'Python is more flexible but lacks static enforcement and JVM performance.',
   },
   {
     title: 'Compared to C++',
-    detail:
-      'Python trades low-level control for speed of development and readability.',
+    detail: 'Python trades low-level control for speed of development and readability.',
   },
   {
     title: 'Compared to Ruby',
-    detail:
-      'Python has a larger ecosystem and broader tooling adoption.',
+    detail: 'Python has a larger ecosystem and broader tooling adoption.',
   },
   {
     title: 'Compared to Go',
-    detail:
-      'Python is more dynamic, Go offers simpler concurrency and faster binaries.',
+    detail: 'Python is more dynamic, Go offers simpler concurrency and faster binaries.',
   },
 ]
 
 const learningPath = [
   {
     title: 'Core syntax and classes',
-    detail:
-      'Learn classes, methods, and instance vs class attributes.',
+    detail: 'Learn classes, methods, and instance vs class attributes.',
   },
   {
     title: 'Dataclasses and type hints',
-    detail:
-      'Adopt dataclasses and typing for clarity in larger projects.',
+    detail: 'Adopt dataclasses and typing for clarity in larger projects.',
   },
   {
     title: 'Protocols and ABCs',
-    detail:
-      'Use Protocols and ABCs to design clean interfaces.',
+    detail: 'Use Protocols and ABCs to design clean interfaces.',
   },
   {
     title: 'Performance awareness',
-    detail:
-      'Profile, use __slots__, and lean on optimized libraries.',
+    detail: 'Profile, use __slots__, and lean on optimized libraries.',
   },
   {
     title: 'Production patterns',
-    detail:
-      'Test, package, and deploy with standard tooling.',
+    detail: 'Test, package, and deploy with standard tooling.',
   },
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const glossary = [
-  { term: 'Duck Typing', definition: 'Compatibility based on behavior and methods, not strict inheritance.' },
-  { term: 'MRO', definition: 'Method Resolution Order used to resolve attributes in inheritance chains.' },
-  { term: 'Descriptor', definition: 'An object with __get__ / __set__ hooks controlling attribute access.' },
-  { term: 'Dataclass', definition: 'A class decorator that generates common methods for data-centric classes.' },
+  {
+    term: 'Duck Typing',
+    definition: 'Compatibility based on behavior and methods, not strict inheritance.',
+  },
+  {
+    term: 'MRO',
+    definition: 'Method Resolution Order used to resolve attributes in inheritance chains.',
+  },
+  {
+    term: 'Descriptor',
+    definition: 'An object with __get__ / __set__ hooks controlling attribute access.',
+  },
+  {
+    term: 'Dataclass',
+    definition: 'A class decorator that generates common methods for data-centric classes.',
+  },
   { term: 'Protocol', definition: 'Structural typing contract used by type checkers.' },
-  { term: '__slots__', definition: 'A way to reduce per-instance memory by removing dynamic __dict__.' },
-  { term: 'GIL', definition: 'Global Interpreter Lock that affects CPU-bound thread parallelism in CPython.' },
-  { term: 'Mixin', definition: 'A reusable behavior class intended to be composed via inheritance.' },
+  {
+    term: '__slots__',
+    definition: 'A way to reduce per-instance memory by removing dynamic __dict__.',
+  },
+  {
+    term: 'GIL',
+    definition: 'Global Interpreter Lock that affects CPU-bound thread parallelism in CPython.',
+  },
+  {
+    term: 'Mixin',
+    definition: 'A reusable behavior class intended to be composed via inheritance.',
+  },
   { term: 'ABC', definition: 'Abstract Base Class used for explicit interface contracts.' },
-  { term: 'Context Manager', definition: 'An object implementing __enter__ and __exit__ for scoped resources.' },
+  {
+    term: 'Context Manager',
+    definition: 'An object implementing __enter__ and __exit__ for scoped resources.',
+  },
 ]
-
-const pythonHelpStyles = `
-.python98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  margin: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.python98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.python98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 4px;
-  color: #fff;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-}
-
-.python98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.1;
-  pointer-events: none;
-}
-
-.python98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.python98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.python98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.python98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.python98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.python98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-}
-
-.python98-toc {
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  overflow: auto;
-}
-
-.python98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.python98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.python98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.python98-toc-list a {
-  font-size: 12px;
-  color: #000;
-  text-decoration: none;
-}
-
-.python98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.python98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.python98-section {
-  margin: 0 0 22px;
-}
-
-.python98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.python98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.python98-content p,
-.python98-content li,
-.python98-content th,
-.python98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.python98-content p {
-  margin: 0 0 10px;
-}
-
-.python98-content ul,
-.python98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.python98-content table {
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.python98-content th,
-.python98-content td {
-  padding: 2px 8px 2px 0;
-  vertical-align: top;
-}
-
-.python98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.python98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.python98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .python98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .python98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -820,10 +576,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -856,323 +608,260 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function PythonOopPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Python',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Python (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Python',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="python98-help-page">
-      <style>{pythonHelpStyles}</style>
-      <div className="python98-window" role="presentation">
-        <header className="python98-titlebar">
-          <span className="python98-title-text">Python</span>
-          <div className="python98-title-controls">
-            <button className="python98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="python98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="python98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`python98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="python98-main">
-          <aside className="python98-toc" aria-label="Table of contents">
-            <h2 className="python98-toc-title">Contents</h2>
-            <ul className="python98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Python"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Python</h1>
+      <p>
+        Python treats everything as an object, but it does not force rigid hierarchies. The language
+        favors readable composition, duck typing, and a powerful data model that lets you override
+        how your objects behave. This document focuses on Python OOP mechanics, design choices, and
+        practical guidance for maintainable systems.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Python blends classic OOP (classes, inheritance, encapsulation) with a dynamic object
+              model. Interfaces are expressed through behavior rather than strict base classes,
+              which keeps code flexible but demands discipline in naming, testing, and design.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="python98-content">
-            <h1 className="python98-doc-title">Python</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-fundamentals" className="bin98-section">
+            <h2 className="bin98-heading">Language Fundamentals</h2>
+            {languageFundamentals.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-runtime" className="bin98-section">
+            <h2 className="bin98-heading">Runtime Pipeline</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>What happens</th>
+                </tr>
+              </thead>
+              <tbody>
+                {runtimePipeline.map((item) => (
+                  <tr key={item.stage}>
+                    <td>{item.stage}</td>
+                    <td>{item.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-types" className="bin98-section">
+            <h2 className="bin98-heading">Type System and Design</h2>
+            {typeSystemDetails.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-library" className="bin98-section">
+            <h2 className="bin98-heading">Standard Library Highlights</h2>
+            {standardLibraryHighlights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pillars" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: OOP Pillars in Python</h2>
+            {oopPillars.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-workflow" className="bin98-section">
+            <h2 className="bin98-heading">Tooling and Workflow</h2>
+            {toolingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-object-model" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Python Object Model</h2>
+            {objectModelNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-protocols" className="bin98-section">
+            <h2 className="bin98-heading">Data Model Protocols</h2>
+            {dataModelProtocols.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-concurrency" className="bin98-section">
+            <h2 className="bin98-heading">Concurrency and Parallelism</h2>
+            {concurrencyOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {performanceTradeoffs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Python treats everything as an object, but it does not force rigid hierarchies. The language favors readable
-              composition, duck typing, and a powerful data model that lets you override how your objects behave. This document
-              focuses on Python OOP mechanics, design choices, and practical guidance for maintainable systems.
+              Python OOP optimizes for clarity and flexibility. Use it to express domain logic, then
+              lean on optimized libraries or native extensions for compute-heavy workloads.
             </p>
+          </section>
+          <section id="core-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-interop" className="bin98-section">
+            <h2 className="bin98-heading">Interoperability and Deployment</h2>
+            <h3 className="bin98-subheading">Interoperability</h3>
+            {interopOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Deployment</h3>
+            {deploymentOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Comparisons and Tradeoffs</h2>
+            {comparisonNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-learning" className="bin98-section">
+            <h2 className="bin98-heading">Learning Path</h2>
+            {learningPath.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="python98-section">
-                  <h2 className="python98-heading">Overview</h2>
-                  <p>
-                    Python blends classic OOP (classes, inheritance, encapsulation) with a dynamic object model. Interfaces are
-                    expressed through behavior rather than strict base classes, which keeps code flexible but demands discipline
-                    in naming, testing, and design.
-                  </p>
-                </section>
-                <hr className="python98-divider" />
-                <section id="bp-history" className="python98-section">
-                  <h2 className="python98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="python98-section">
-                  <h2 className="python98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="python98-section">
-                  <h2 className="python98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-fundamentals" className="python98-section">
-                  <h2 className="python98-heading">Language Fundamentals</h2>
-                  {languageFundamentals.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-runtime" className="python98-section">
-                  <h2 className="python98-heading">Runtime Pipeline</h2>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Stage</th>
-                        <th>What happens</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {runtimePipeline.map((item) => (
-                        <tr key={item.stage}>
-                          <td>{item.stage}</td>
-                          <td>{item.description}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-types" className="python98-section">
-                  <h2 className="python98-heading">Type System and Design</h2>
-                  {typeSystemDetails.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-library" className="python98-section">
-                  <h2 className="python98-heading">Standard Library Highlights</h2>
-                  {standardLibraryHighlights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pillars" className="python98-section">
-                  <h2 className="python98-heading">How It Works: OOP Pillars in Python</h2>
-                  {oopPillars.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="python98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-workflow" className="python98-section">
-                  <h2 className="python98-heading">Tooling and Workflow</h2>
-                  {toolingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-object-model" className="python98-section">
-                  <h2 className="python98-heading">How It Works: Python Object Model</h2>
-                  {objectModelNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-protocols" className="python98-section">
-                  <h2 className="python98-heading">Data Model Protocols</h2>
-                  {dataModelProtocols.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-concurrency" className="python98-section">
-                  <h2 className="python98-heading">Concurrency and Parallelism</h2>
-                  {concurrencyOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="python98-section">
-                  <h2 className="python98-heading">Complexity Analysis and Tradeoffs</h2>
-                  {performanceTradeoffs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Python OOP optimizes for clarity and flexibility. Use it to express domain logic, then lean on optimized
-                    libraries or native extensions for compute-heavy workloads.
-                  </p>
-                </section>
-                <section id="core-uses" className="python98-section">
-                  <h2 className="python98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-interop" className="python98-section">
-                  <h2 className="python98-heading">Interoperability and Deployment</h2>
-                  <h3 className="python98-subheading">Interoperability</h3>
-                  {interopOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <h3 className="python98-subheading">Deployment</h3>
-                  {deploymentOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="python98-section">
-                  <h2 className="python98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-compare" className="python98-section">
-                  <h2 className="python98-heading">Comparisons and Tradeoffs</h2>
-                  {comparisonNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-when" className="python98-section">
-                  <h2 className="python98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-learning" className="python98-section">
-                  <h2 className="python98-heading">Learning Path</h2>
-                  {learningPath.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="python98-section">
-                  <h2 className="python98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="python98-section">
-                <h2 className="python98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="python98-subheading">{example.title}</h3>
-                    <div className="python98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="python98-section">
-                <h2 className="python98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

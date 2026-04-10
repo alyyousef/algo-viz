@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -115,7 +115,8 @@ const patterns = [
   },
   {
     title: 'Greedy merging',
-    detail: 'Huffman coding repeatedly merges the two smallest weights, producing an optimal prefix code.',
+    detail:
+      'Huffman coding repeatedly merges the two smallest weights, producing an optimal prefix code.',
   },
   {
     title: 'Resource and capacity choices',
@@ -124,7 +125,8 @@ const patterns = [
   },
   {
     title: 'Edge filtering with safety checks',
-    detail: 'Pick the best candidate edge or item that keeps the solution feasible, often using DSU or cycle checks.',
+    detail:
+      'Pick the best candidate edge or item that keeps the solution feasible, often using DSU or cycle checks.',
   },
 ]
 
@@ -165,8 +167,7 @@ const workedExamples = [
       'Skip any activity that overlaps the last chosen finish time.',
       'Continue in sorted order; the greedy schedule stays ahead of any optimal schedule.',
     ],
-    why:
-      'The exchange argument shows any optimal solution can be modified to include the earliest finish without reducing the total count.',
+    why: 'The exchange argument shows any optimal solution can be modified to include the earliest finish without reducing the total count.',
   },
   {
     title: 'Kruskal MST (minimum total weight)',
@@ -176,8 +177,7 @@ const workedExamples = [
       'Repeat until you have n - 1 edges.',
       'Each added edge is the lightest crossing some cut, so it is safe.',
     ],
-    why:
-      'The cut property guarantees each chosen edge belongs to some MST, preserving optimality at every step.',
+    why: 'The cut property guarantees each chosen edge belongs to some MST, preserving optimality at every step.',
   },
   {
     title: 'Huffman coding (optimal prefix code)',
@@ -187,8 +187,7 @@ const workedExamples = [
       'Push the merged node back; repeat until one node remains.',
       'Assign 0/1 along tree edges to create codes.',
     ],
-    why:
-      'In an optimal prefix code, the two least frequent symbols can be placed at the deepest leaves and merged safely.',
+    why: 'In an optimal prefix code, the two least frequent symbols can be placed at the deepest leaves and merged safely.',
   },
   {
     title: 'Dijkstra (non-negative shortest paths)',
@@ -198,8 +197,7 @@ const workedExamples = [
       'Relax its outgoing edges and update neighbors.',
       'Finalized nodes never get a shorter path later.',
     ],
-    why:
-      'Non-negative edges ensure that once a node is chosen, its distance is minimal among all remaining paths.',
+    why: 'Non-negative edges ensure that once a node is chosen, its distance is minimal among all remaining paths.',
   },
 ]
 
@@ -276,7 +274,8 @@ const complexityTable = [
 const failureCases = [
   {
     title: '0/1 knapsack',
-    detail: 'Density greedy can miss the best combination. Use dynamic programming or branch and bound.',
+    detail:
+      'Density greedy can miss the best combination. Use dynamic programming or branch and bound.',
   },
   {
     title: 'Non-canonical coin systems',
@@ -289,7 +288,8 @@ const failureCases = [
   },
   {
     title: 'Weighted interval scheduling',
-    detail: 'Earliest finish ignores weights; dynamic programming is required for the optimal total weight.',
+    detail:
+      'Earliest finish ignores weights; dynamic programming is required for the optimal total weight.',
   },
   {
     title: 'Global constraints that break monotonicity',
@@ -356,8 +356,7 @@ const glossaryTerms = [
   },
   {
     term: 'Greedy-choice property',
-    definition:
-      'The condition that some optimal solution begins with the greedy decision.',
+    definition: 'The condition that some optimal solution begins with the greedy decision.',
   },
   {
     term: 'Exchange argument',
@@ -366,8 +365,7 @@ const glossaryTerms = [
   },
   {
     term: 'Cut property',
-    definition:
-      'The MST fact that the lightest edge crossing any cut is safe to take.',
+    definition: 'The MST fact that the lightest edge crossing any cut is safe to take.',
   },
   {
     term: 'Matroid',
@@ -376,13 +374,11 @@ const glossaryTerms = [
   },
   {
     term: 'Monotone progress',
-    definition:
-      'The property that accepted choices never need to be undone.',
+    definition: 'The property that accepted choices never need to be undone.',
   },
   {
     term: 'Feasibility',
-    definition:
-      'The constraint check that determines whether a candidate can be accepted safely.',
+    definition: 'The constraint check that determines whether a candidate can be accepted safely.',
   },
   {
     term: 'Priority metric',
@@ -392,196 +388,6 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const greedyHelpStyles = `
-.greedy-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.greedy-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.greedy-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-}
-
-.greedy-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.greedy-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.greedy-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-.greedy-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.greedy-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.greedy-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.greedy-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.greedy-help-toc {
-  overflow: auto;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  padding: 12px;
-}
-
-.greedy-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.greedy-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.greedy-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.greedy-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.greedy-help-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.greedy-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.greedy-help-section {
-  margin: 0 0 20px;
-}
-
-.greedy-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.greedy-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.greedy-help-content p,
-.greedy-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.greedy-help-content p {
-  margin: 0 0 10px;
-}
-
-.greedy-help-content ul,
-.greedy-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.greedy-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-@media (max-width: 900px) {
-  .greedy-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .greedy-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -608,258 +414,185 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
     { id: 'core-failure', label: 'Failure Modes' },
     { id: 'core-hygiene', label: 'Hygiene' },
   ],
-  examples: [
-    { id: 'examples-worked', label: 'Worked Examples' },
-  ],
+  examples: [{ id: 'examples-worked', label: 'Worked Examples' }],
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GreedyAlgorithmsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Greedy Algorithms (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Greedy Algorithms',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Greedy Algorithms',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="greedy-help-page">
-      <style>{greedyHelpStyles}</style>
-      <div className="greedy-help-window" role="presentation">
-        <header className="greedy-help-titlebar">
-          <span className="greedy-help-title">Greedy Algorithms</span>
-          <div className="greedy-help-controls">
-            <button className="greedy-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="greedy-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-
-        <div className="greedy-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`greedy-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="greedy-help-main">
-          <aside className="greedy-help-toc" aria-label="Table of contents">
-            <h2 className="greedy-help-toc-title">Contents</h2>
-            <ul className="greedy-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Greedy Algorithms"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Greedy Algorithms</h1>
+      <p>
+        Greedy algorithms build a solution piece by piece, always taking the best-looking option
+        according to a fixed rule. They never backtrack, so the correctness hinge is a proof that
+        each local choice can be part of a global optimum. When that proof exists, greedy solutions
+        are fast, clean, and often O(n log n) with simple data structures.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations: What Makes Greedy Work</h2>
+            {foundations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-pillars" className="bin98-section">
+            <h2 className="bin98-heading">Three Pillars of a Safe Greedy</h2>
+            {pillars.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-signals" className="bin98-section">
+            <h2 className="bin98-heading">Signals a Greedy Fit</h2>
+            <ul>
+              {signals.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="greedy-help-content">
-            <h1 className="greedy-help-doc-title">Greedy Algorithms</h1>
-            <p>
-              Greedy algorithms build a solution piece by piece, always taking the best-looking option according to a fixed rule.
-              They never backtrack, so the correctness hinge is a proof that each local choice can be part of a global optimum.
-              When that proof exists, greedy solutions are fast, clean, and often O(n log n) with simple data structures.
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-loop" className="bin98-section">
+            <h2 className="bin98-heading">Greedy Loop Anatomy</h2>
+            {greedyLoop.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-modeling" className="bin98-section">
+            <h2 className="bin98-heading">Problem Modeling Checklist</h2>
+            <ul>
+              {modelingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-proof" className="bin98-section">
+            <h2 className="bin98-heading">Proof Playbook</h2>
+            {proofToolkit.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Common Greedy Patterns</h2>
+            {patterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-canonical" className="bin98-section">
+            <h2 className="bin98-heading">Canonical Algorithms in Practice</h2>
+            {canonicalAlgorithms.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Template and Pitfalls</h2>
+            {implementationTemplate.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Data Structures</h2>
+            {complexityTable.map((row) => (
+              <div key={row.pattern}>
+                <h3 className="bin98-subheading">{row.pattern}</h3>
+                <p>
+                  <strong>Typical structure:</strong> {row.structure}
+                </p>
+                <p>
+                  <strong>Complexity:</strong> {row.complexity}
+                </p>
+                <p>
+                  <strong>Notes:</strong> {row.note}
+                </p>
+              </div>
+            ))}
+          </section>
+          <section id="core-comparisons" className="bin98-section">
+            <h2 className="bin98-heading">Greedy in Context</h2>
+            {comparisons.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-failure" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes and Counterexamples</h2>
+            {failureCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-hygiene" className="bin98-section">
+            <h2 className="bin98-heading">Hygiene Before You Ship</h2>
+            <ol>
+              {hygiene.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="examples-worked" className="bin98-section">
+          <h2 className="bin98-heading">Worked Examples</h2>
+          {workedExamples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <ol>
+                {example.steps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+              <p>{example.why}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-foundations" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Foundations: What Makes Greedy Work</h2>
-                  {foundations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="greedy-help-divider" />
-                <section id="bp-pillars" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Three Pillars of a Safe Greedy</h2>
-                  {pillars.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="greedy-help-divider" />
-                <section id="bp-signals" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Signals a Greedy Fit</h2>
-                  <ul>
-                    {signals.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-loop" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Greedy Loop Anatomy</h2>
-                  {greedyLoop.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-modeling" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Problem Modeling Checklist</h2>
-                  <ul>
-                    {modelingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-proof" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Proof Playbook</h2>
-                  {proofToolkit.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-patterns" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Common Greedy Patterns</h2>
-                  {patterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-canonical" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Canonical Algorithms in Practice</h2>
-                  {canonicalAlgorithms.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-implementation" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Implementation Template and Pitfalls</h2>
-                  {implementationTemplate.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Complexity and Data Structures</h2>
-                  {complexityTable.map((row) => (
-                    <div key={row.pattern}>
-                      <h3 className="greedy-help-subheading">{row.pattern}</h3>
-                      <p><strong>Typical structure:</strong> {row.structure}</p>
-                      <p><strong>Complexity:</strong> {row.complexity}</p>
-                      <p><strong>Notes:</strong> {row.note}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-comparisons" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Greedy in Context</h2>
-                  {comparisons.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-failure" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Failure Modes and Counterexamples</h2>
-                  {failureCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-hygiene" className="greedy-help-section">
-                  <h2 className="greedy-help-heading">Hygiene Before You Ship</h2>
-                  <ol>
-                    {hygiene.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="examples-worked" className="greedy-help-section">
-                <h2 className="greedy-help-heading">Worked Examples</h2>
-                {workedExamples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="greedy-help-subheading">{example.title}</h3>
-                    <ol>
-                      {example.steps.map((step) => (
-                        <li key={step}>{step}</li>
-                      ))}
-                    </ol>
-                    <p>{example.why}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="greedy-help-section">
-                <h2 className="greedy-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

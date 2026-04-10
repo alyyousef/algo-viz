@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +28,6 @@ type GlossaryTerm = {
   term: string
   definition: string
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
   'Crossplane turns Kubernetes into a control plane for external infrastructure and higher-level platform APIs. Instead of asking every application team to understand each cloud provider API, a platform team can define Kubernetes-native abstractions and let Crossplane reconcile those abstractions into real infrastructure.',
@@ -75,15 +73,18 @@ const adoptionGuide: Array<{ title: string; choice: string }> = [
   },
   {
     title: 'Need to give developers self-service access to databases, buckets, or clusters',
-    choice: 'Use XRDs, claims, and compositions rather than exposing raw provider resources directly.',
+    choice:
+      'Use XRDs, claims, and compositions rather than exposing raw provider resources directly.',
   },
   {
     title: 'Need GitOps delivery of Kubernetes applications',
-    choice: 'Pair Crossplane with Argo CD or another GitOps controller instead of expecting Crossplane alone to be the application delivery plane.',
+    choice:
+      'Pair Crossplane with Argo CD or another GitOps controller instead of expecting Crossplane alone to be the application delivery plane.',
   },
   {
     title: 'Need broad standalone infrastructure workflows outside a Kubernetes control plane',
-    choice: 'Terraform may still be the simpler fit depending on the operating model and ecosystem already in use.',
+    choice:
+      'Terraform may still be the simpler fit depending on the operating model and ecosystem already in use.',
   },
 ]
 
@@ -248,15 +249,51 @@ spec:
 ]
 
 const glossary: GlossaryTerm[] = [
-  { term: 'Crossplane', definition: 'A Kubernetes-native control plane framework for managing external infrastructure and publishing higher-level platform APIs.' },
-  { term: 'Provider', definition: 'A package that installs controllers and resource definitions for a specific external system or cloud service.' },
-  { term: 'Managed resource', definition: 'A low-level Crossplane resource that maps closely to a provider object such as a bucket, database instance, or network.' },
-  { term: 'ProviderConfig', definition: 'Configuration that tells managed resources how to authenticate and connect to the target provider.' },
-  { term: 'XRD', definition: 'CompositeResourceDefinition. It defines a new higher-level API that the platform wants to publish.' },
-  { term: 'Claim', definition: 'A namespaced self-service resource that lets application teams request a platform product without working with provider-specific resources directly.' },
-  { term: 'Composition', definition: 'The mapping layer that realizes a composite resource through one or more managed resources.' },
-  { term: 'Connection details', definition: 'Usable outputs such as hostnames, credentials, or ports that Crossplane can publish for consumers after provisioning.' },
-  { term: 'Reconciliation', definition: 'The controller loop that continually works to align actual external state with declared desired state.' },
+  {
+    term: 'Crossplane',
+    definition:
+      'A Kubernetes-native control plane framework for managing external infrastructure and publishing higher-level platform APIs.',
+  },
+  {
+    term: 'Provider',
+    definition:
+      'A package that installs controllers and resource definitions for a specific external system or cloud service.',
+  },
+  {
+    term: 'Managed resource',
+    definition:
+      'A low-level Crossplane resource that maps closely to a provider object such as a bucket, database instance, or network.',
+  },
+  {
+    term: 'ProviderConfig',
+    definition:
+      'Configuration that tells managed resources how to authenticate and connect to the target provider.',
+  },
+  {
+    term: 'XRD',
+    definition:
+      'CompositeResourceDefinition. It defines a new higher-level API that the platform wants to publish.',
+  },
+  {
+    term: 'Claim',
+    definition:
+      'A namespaced self-service resource that lets application teams request a platform product without working with provider-specific resources directly.',
+  },
+  {
+    term: 'Composition',
+    definition:
+      'The mapping layer that realizes a composite resource through one or more managed resources.',
+  },
+  {
+    term: 'Connection details',
+    definition:
+      'Usable outputs such as hostnames, credentials, or ports that Crossplane can publish for consumers after provisioning.',
+  },
+  {
+    term: 'Reconciliation',
+    definition:
+      'The controller loop that continually works to align actual external state with declared desired state.',
+  },
 ]
 
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -285,153 +322,97 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const pageStyles = `
-.crossplane-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
-.crossplane-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box;}
-.crossplane-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
-.crossplane-title-text{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px;}
-.crossplane-title-controls{display:flex;gap:2px;margin-left:auto;}
-.crossplane-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer;padding:0;}
-.crossplane-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0;}
-.crossplane-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer;}
-.crossplane-tab.active{position:relative;top:1px;background:#fff;}
-.crossplane-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff;}
-.crossplane-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080;}
-.crossplane-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
-.crossplane-toc-list{margin:0;padding:0;list-style:none;}
-.crossplane-toc-list li{margin:0 0 8px;}
-.crossplane-toc-list a{color:#000;text-decoration:none;font-size:12px;}
-.crossplane-toc-list a:hover{text-decoration:underline;}
-.crossplane-content{overflow:auto;padding:14px 20px 20px;}
-.crossplane-doc-title{margin:0 0 12px;font-size:20px;font-weight:700;}
-.crossplane-section{margin:0 0 20px;}
-.crossplane-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
-.crossplane-subheading{margin:0 0 6px;font-size:13px;font-weight:700;}
-.crossplane-content p,.crossplane-content li{font-size:12px;line-height:1.5;}
-.crossplane-content p{margin:0 0 10px;}
-.crossplane-content ul{margin:0 0 10px 20px;padding:0;}
-.crossplane-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0;}
-.crossplane-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;}
-.crossplane-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;}
-@media (max-width:900px){.crossplane-main{grid-template-columns:1fr}.crossplane-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function CrossplanePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Crossplane',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Crossplane (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Crossplane',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="crossplane-help-page">
-      <style>{pageStyles}</style>
-      <div className="crossplane-window" role="presentation">
-        <header className="crossplane-titlebar">
-          <span className="crossplane-title-text">Crossplane</span>
-          <div className="crossplane-title-controls">
-            <button className="crossplane-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="crossplane-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="crossplane-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button key={tab.id} type="button" className={`crossplane-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)} role="tab" aria-selected={activeTab === tab.id}>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="crossplane-main">
-          <aside className="crossplane-toc" aria-label="Table of contents">
-            <h2 className="crossplane-toc-title">Contents</h2>
-            <ul className="crossplane-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}><a href={`#${section.id}`}>{section.label}</a></li>
+    <TopicPageShell
+      title="Crossplane"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Crossplane</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            {adoptionGuide.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.choice}
+              </p>
+            ))}
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="crossplane-content">
-            <h1 className="crossplane-doc-title">Crossplane</h1>
-            {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {activeTab === 'big-picture' && <>
-              <section id="bp-overview" className="crossplane-section">
-                <h2 className="crossplane-heading">Overview</h2>
-                {bigPicture.map((item) => <div key={item.title}><h3 className="crossplane-subheading">{item.title}</h3><p>{item.details}</p><p>{item.notes}</p></div>)}
-              </section>
-              <hr className="crossplane-divider" />
-              <section id="bp-takeaways" className="crossplane-section">
-                <h2 className="crossplane-heading">Key Takeaways</h2>
-                {adoptionGuide.map((item) => <p key={item.title}><strong>{item.title}:</strong> {item.choice}</p>)}
-                <ul>{keyTakeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'core-concepts' && <>
-              {coreSections.map((section) => (
-                <section key={section.id} id={section.id} className="crossplane-section">
-                  <h2 className="crossplane-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => <p key={`${section.id}-${paragraph}`}>{paragraph}</p>)}
-                </section>
+          </section>
+        </>
+      )}
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
               ))}
-              <section id="core-checklist" className="crossplane-section">
-                <h2 className="crossplane-heading">Design Checklist</h2>
-                <ul>{designChecklist.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'examples' && <>
-              {examples.map((example) => (
-                <section key={example.id} id={example.id} className="crossplane-section">
-                  <h2 className="crossplane-heading">{example.title}</h2>
-                  <div className="crossplane-codebox"><code>{example.code.trim()}</code></div>
-                  <p>{example.explanation}</p>
-                </section>
+            </section>
+          ))}
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Design Checklist</h2>
+            <ul>
+              {designChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </>}
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="crossplane-section">
-                <h2 className="crossplane-heading">Glossary</h2>
-                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            </ul>
+          </section>
+        </>
+      )}
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

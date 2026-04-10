@@ -1,15 +1,18 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 type Section = { id: string; title: string; paragraphs: string[]; bullets?: string[] }
 type Example = { id: string; title: string; description: string[]; code: string; notes: string[] }
-type GlossarySection = { id: string; title: string; terms: Array<{ term: string; definition: string }> }
+type GlossarySection = {
+  id: string
+  title: string
+  terms: Array<{ term: string; definition: string }>
+}
 
 const PAGE_TITLE = 'Docker'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -269,11 +272,24 @@ const glossarySections: GlossarySection[] = [
     id: 'glossary-artifacts',
     title: 'Artifact Terms',
     terms: [
-      { term: 'Image', definition: 'A layered packaged filesystem and metadata artifact used to start containers.' },
-      { term: 'Container', definition: 'A running or stopped instance of an image with runtime configuration and a writable layer.' },
-      { term: 'Dockerfile', definition: 'The build instruction file that defines how an image is created.' },
+      {
+        term: 'Image',
+        definition: 'A layered packaged filesystem and metadata artifact used to start containers.',
+      },
+      {
+        term: 'Container',
+        definition:
+          'A running or stopped instance of an image with runtime configuration and a writable layer.',
+      },
+      {
+        term: 'Dockerfile',
+        definition: 'The build instruction file that defines how an image is created.',
+      },
       { term: 'Layer', definition: 'A reusable filesystem change unit within an image build.' },
-      { term: 'Tag', definition: 'A human-readable reference used to identify an image version in a registry.' },
+      {
+        term: 'Tag',
+        definition: 'A human-readable reference used to identify an image version in a registry.',
+      },
       { term: 'Registry', definition: 'A service that stores and distributes container images.' },
     ],
   },
@@ -281,24 +297,66 @@ const glossarySections: GlossarySection[] = [
     id: 'glossary-runtime',
     title: 'Runtime Terms',
     terms: [
-      { term: 'Bind mount', definition: 'A direct mapping between a host filesystem path and a path inside a container.' },
-      { term: 'Volume', definition: 'Docker-managed persistent storage attached to one or more containers.' },
-      { term: 'Port publishing', definition: 'Mapping a container port to a port on the host machine.' },
-      { term: 'ENTRYPOINT', definition: 'The configured executable that defines the container startup program.' },
-      { term: 'CMD', definition: 'The default command arguments or fallback start command for a container.' },
-      { term: 'Build context', definition: 'The set of files sent to the Docker build process for use by the Dockerfile.' },
+      {
+        term: 'Bind mount',
+        definition:
+          'A direct mapping between a host filesystem path and a path inside a container.',
+      },
+      {
+        term: 'Volume',
+        definition: 'Docker-managed persistent storage attached to one or more containers.',
+      },
+      {
+        term: 'Port publishing',
+        definition: 'Mapping a container port to a port on the host machine.',
+      },
+      {
+        term: 'ENTRYPOINT',
+        definition: 'The configured executable that defines the container startup program.',
+      },
+      {
+        term: 'CMD',
+        definition: 'The default command arguments or fallback start command for a container.',
+      },
+      {
+        term: 'Build context',
+        definition: 'The set of files sent to the Docker build process for use by the Dockerfile.',
+      },
     ],
   },
   {
     id: 'glossary-workflows',
     title: 'Workflow Terms',
     terms: [
-      { term: 'BuildKit', definition: 'The modern Docker build engine that improves performance and supports advanced build features.' },
-      { term: 'Compose', definition: 'A Docker tool and file format for defining and running multi-container applications.' },
-      { term: 'Multi-stage build', definition: 'A Dockerfile pattern that uses more than one FROM stage to separate build and runtime concerns.' },
-      { term: 'Base image', definition: 'The starting image referenced by FROM when building a new image.' },
-      { term: 'Container runtime', definition: 'The software layer responsible for executing and managing containers on a host.' },
-      { term: 'Immutable artifact', definition: 'A build artifact meant to be reused as-is rather than modified after distribution.' },
+      {
+        term: 'BuildKit',
+        definition:
+          'The modern Docker build engine that improves performance and supports advanced build features.',
+      },
+      {
+        term: 'Compose',
+        definition:
+          'A Docker tool and file format for defining and running multi-container applications.',
+      },
+      {
+        term: 'Multi-stage build',
+        definition:
+          'A Dockerfile pattern that uses more than one FROM stage to separate build and runtime concerns.',
+      },
+      {
+        term: 'Base image',
+        definition: 'The starting image referenced by FROM when building a new image.',
+      },
+      {
+        term: 'Container runtime',
+        definition:
+          'The software layer responsible for executing and managing containers on a host.',
+      },
+      {
+        term: 'Immutable artifact',
+        definition:
+          'A build artifact meant to be reused as-is rather than modified after distribution.',
+      },
     ],
   },
 ]
@@ -310,41 +368,6 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
 }
 
-const dockerHelpStyles = `
-.docker-help98-page{min-height:100dvh;background:#c0c0c0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
-.docker-help98-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box;}
-.docker-help98-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
-.docker-help98-title{position:absolute;left:50%;transform:translateX(-50%);font-size:14px;white-space:nowrap;}
-.docker-help98-controls{display:flex;gap:2px;margin-left:auto;}
-.docker-help98-control{width:18px;height:16px;display:inline-flex;align-items:center;justify-content:center;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;font:inherit;font-size:11px;line-height:1;text-decoration:none;cursor:pointer;}
-.docker-help98-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0;background:#c0c0c0;}
-.docker-help98-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;color:#000;font:inherit;font-size:12px;cursor:pointer;}
-.docker-help98-tab.active{position:relative;top:1px;background:#fff;}
-.docker-help98-main{display:grid;grid-template-columns:240px minmax(0,1fr);flex:1;min-height:0;border-top:1px solid #404040;background:#fff;}
-.docker-help98-toc{overflow:auto;padding:12px;background:#f2f2f2;border-right:1px solid #808080;}
-.docker-help98-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
-.docker-help98-toc-list{margin:0;padding:0;list-style:none;}
-.docker-help98-toc-list li{margin:0 0 8px;}
-.docker-help98-toc-list a{color:#000;font-size:12px;text-decoration:none;}
-.docker-help98-content{overflow:auto;padding:14px 20px 24px;}
-.docker-help98-doc-title{margin:0 0 12px;font-size:20px;font-weight:700;}
-.docker-help98-section{margin:0 0 20px;}
-.docker-help98-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
-.docker-help98-content p,.docker-help98-content li,.docker-help98-content dd,.docker-help98-content dt{font-size:12px;line-height:1.5;}
-.docker-help98-content p,.docker-help98-content dd{margin:0 0 10px;}
-.docker-help98-content ul{margin:0 0 10px 18px;padding:0;}
-.docker-help98-divider{margin:14px 0;border:0;border-top:1px solid #d0d0d0;}
-.docker-help98-codebox{margin:8px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;}
-.docker-help98-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;line-height:1.45;}
-.docker-help98-glossary{margin:0;}
-.docker-help98-glossary dt{margin:0 0 2px;font-weight:700;}
-@media (max-width:900px){.docker-help98-main{grid-template-columns:1fr;}.docker-help98-toc{border-right:none;border-bottom:1px solid #808080;}.docker-help98-content{padding:14px 14px 20px;}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderSection(section: Section, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="docker-help98-section">
@@ -352,7 +375,13 @@ function renderSection(section: Section, isLast: boolean): JSX.Element {
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      {section.bullets ? <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+      {section.bullets ? (
+        <ul>
+          {section.bullets.map((bullet) => (
+            <li key={bullet}>{bullet}</li>
+          ))}
+        </ul>
+      ) : null}
       {!isLast ? <hr className="docker-help98-divider" /> : null}
     </section>
   )
@@ -368,7 +397,11 @@ function renderExample(section: Example, isLast: boolean): JSX.Element {
       <div className="docker-help98-codebox">
         <code>{section.code.trim()}</code>
       </div>
-      <ul>{section.notes.map((note) => <li key={note}>{note}</li>)}</ul>
+      <ul>
+        {section.notes.map((note) => (
+          <li key={note}>{note}</li>
+        ))}
+      </ul>
       {!isLast ? <hr className="docker-help98-divider" /> : null}
     </section>
   )
@@ -392,114 +425,47 @@ function renderGlossary(section: GlossarySection, isLast: boolean): JSX.Element 
 }
 
 export default function DockerPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Docker Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="docker-help98-page">
-      <style>{dockerHelpStyles}</style>
-      <div className="docker-help98-window" role="presentation">
-        <header className="docker-help98-titlebar">
-          <span className="docker-help98-title">{PAGE_TITLE}</span>
-          <div className="docker-help98-controls">
-            <button className="docker-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="docker-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Docker Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="docker-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`docker-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="docker-help98-main">
-          <aside className="docker-help98-toc" aria-label="Table of contents">
-            <h2 className="docker-help98-toc-title">Contents</h2>
-            <ul className="docker-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="docker-help98-content">
-            <h1 className="docker-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="docker-help98-divider" />
-
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) => renderSection(section, index === bigPictureSections.length - 1))
-              : null}
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) => renderSection(section, index === coreConceptSections.length - 1))
-              : null}
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) => renderExample(section, index === exampleSections.length - 1))
-              : null}
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) => renderGlossary(section, index === glossarySections.length - 1))
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExample(section, index === exampleSections.length - 1),
+          )
+        : null}
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossary(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

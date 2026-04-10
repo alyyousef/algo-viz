@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -118,7 +120,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Servlet and Filter Heritage vs Middleware Pipeline',
     paragraphs: [
       'Spring Boot web applications commonly feel like layered application frameworks built around controllers, servlet or reactive abstractions, filters, interceptors, and Spring-managed components. That is a productive model, but the request path is often expressed through several Spring concepts at once rather than one visible linear pipeline.',
-      'ASP.NET Core makes the middleware pipeline a first-class architectural concept. Requests move through ordered middleware components before reaching endpoints. This is one of the framework\'s clearest identities, and it often makes cross-cutting concerns such as authentication, exception handling, CORS, and routing feel structurally explicit.',
+      "ASP.NET Core makes the middleware pipeline a first-class architectural concept. Requests move through ordered middleware components before reaching endpoints. This is one of the framework's clearest identities, and it often makes cross-cutting concerns such as authentication, exception handling, CORS, and routing feel structurally explicit.",
     ],
   },
   {
@@ -317,39 +319,48 @@ public class AuditFilter extends OncePerRequestFilter {
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Starter',
-    definition: 'A Spring Boot dependency bundle that brings in a feature-oriented set of dependencies and defaults.',
+    definition:
+      'A Spring Boot dependency bundle that brings in a feature-oriented set of dependencies and defaults.',
   },
   {
     term: 'Auto-configuration',
-    definition: 'Spring Boot configuring infrastructure automatically based on conditions such as classpath contents and existing beans.',
+    definition:
+      'Spring Boot configuring infrastructure automatically based on conditions such as classpath contents and existing beans.',
   },
   {
     term: 'Actuator',
-    definition: 'Spring Boot\'s production-ready operational feature set for health, metrics, and application management endpoints.',
+    definition:
+      "Spring Boot's production-ready operational feature set for health, metrics, and application management endpoints.",
   },
   {
     term: 'Middleware',
-    definition: 'An ASP.NET Core request-processing component that participates in the ordered HTTP pipeline.',
+    definition:
+      'An ASP.NET Core request-processing component that participates in the ordered HTTP pipeline.',
   },
   {
     term: 'Minimal API',
-    definition: 'A lightweight ASP.NET Core endpoint style that allows routes to be declared directly in application bootstrap code.',
+    definition:
+      'A lightweight ASP.NET Core endpoint style that allows routes to be declared directly in application bootstrap code.',
   },
   {
     term: 'Generic Host',
-    definition: 'The .NET hosting abstraction used by ASP.NET Core to set up configuration, logging, dependency injection, and application lifetime.',
+    definition:
+      'The .NET hosting abstraction used by ASP.NET Core to set up configuration, logging, dependency injection, and application lifetime.',
   },
   {
     term: 'Controller',
-    definition: 'A class that handles routed HTTP requests, common in both Spring Boot and ASP.NET Core MVC-style applications.',
+    definition:
+      'A class that handles routed HTTP requests, common in both Spring Boot and ASP.NET Core MVC-style applications.',
   },
   {
     term: 'Options Binding',
-    definition: 'The .NET pattern of binding configuration data to strongly typed objects used by ASP.NET Core applications.',
+    definition:
+      'The .NET pattern of binding configuration data to strongly typed objects used by ASP.NET Core applications.',
   },
   {
     term: 'Profile',
-    definition: 'A Spring mechanism for activating environment-specific beans and configuration behavior.',
+    definition:
+      'A Spring mechanism for activating environment-specific beans and configuration behavior.',
   },
   {
     term: 'Bean',
@@ -357,234 +368,17 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Hosted Service',
-    definition: 'A background service pattern in ASP.NET Core and the .NET host used for long-running or scheduled application work.',
+    definition:
+      'A background service pattern in ASP.NET Core and the .NET host used for long-running or scheduled application work.',
   },
   {
     term: 'Self-Contained Deployment',
-    definition: 'A .NET deployment model that includes the runtime with the application instead of depending on a preinstalled shared runtime.',
+    definition:
+      'A .NET deployment model that includes the runtime with the application instead of depending on a preinstalled shared runtime.',
   },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.spring-aspnet-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.spring-aspnet-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.spring-aspnet-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.spring-aspnet-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.spring-aspnet-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.spring-aspnet-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.spring-aspnet-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.spring-aspnet-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.spring-aspnet-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.spring-aspnet-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.spring-aspnet-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.spring-aspnet-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.spring-aspnet-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.spring-aspnet-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.spring-aspnet-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.spring-aspnet-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.spring-aspnet-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.spring-aspnet-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.spring-aspnet-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.spring-aspnet-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.spring-aspnet-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.spring-aspnet-help-content p,
-.spring-aspnet-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.spring-aspnet-help-content p {
-  margin: 0 0 10px;
-}
-
-.spring-aspnet-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.spring-aspnet-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.spring-aspnet-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.spring-aspnet-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .spring-aspnet-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .spring-aspnet-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .spring-aspnet-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -600,154 +394,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function SpringBootVsAspNetCorePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Spring Boot vs ASP.NET Core',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Spring Boot vs ASP.NET Core (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Spring Boot vs ASP.NET Core',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="spring-aspnet-help-page">
-      <style>{helpStyles}</style>
-      <div className="spring-aspnet-help-window" role="presentation">
-        <header className="spring-aspnet-help-titlebar">
-          <span className="spring-aspnet-help-titletext">Spring Boot vs ASP.NET Core</span>
-          <div className="spring-aspnet-help-controls">
-            <button className="spring-aspnet-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="spring-aspnet-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Spring Boot vs ASP.NET Core"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Spring Boot vs ASP.NET Core</h1>
+      <p className="spring-aspnet-help-doc-subtitle">
+        Manual-style comparison of ecosystem gravity, dependency injection, middleware, hosting,
+        operations, and Java-versus-.NET platform tradeoffs.
+      </p>
 
-        <div className="spring-aspnet-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`spring-aspnet-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="spring-aspnet-help-main">
-          <aside className="spring-aspnet-help-toc" aria-label="Table of contents">
-            <h2 className="spring-aspnet-help-toc-title">Contents</h2>
-            <ul className="spring-aspnet-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="spring-aspnet-help-content">
-            <h1 className="spring-aspnet-help-doc-title">Spring Boot vs ASP.NET Core</h1>
-            <p className="spring-aspnet-help-doc-subtitle">
-              Manual-style comparison of ecosystem gravity, dependency injection, middleware, hosting, operations, and Java-versus-.NET platform tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="spring-aspnet-help-section">
-                    <h2 className="spring-aspnet-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="spring-aspnet-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="spring-aspnet-help-section">
-                  <h2 className="spring-aspnet-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="spring-aspnet-help-section">
-                  <h2 className="spring-aspnet-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="spring-aspnet-help-subheading">{snippet.label}</h3>
-                      <div className="spring-aspnet-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="spring-aspnet-help-section">
-                <h2 className="spring-aspnet-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

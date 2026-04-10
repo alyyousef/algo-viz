@@ -1,8 +1,7 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const mentalModels = [
   {
@@ -146,11 +145,13 @@ const variations = [
   },
   {
     title: 'Bitonic subsequence',
-    detail: 'Compute LIS left-to-right and right-to-left on reversed array; combine to maximize up-then-down chains.',
+    detail:
+      'Compute LIS left-to-right and right-to-left on reversed array; combine to maximize up-then-down chains.',
   },
   {
     title: 'K-constrained LIS',
-    detail: 'Only allow jumps within value/window constraints; use segment trees over indices or values to enforce limits.',
+    detail:
+      'Only allow jumps within value/window constraints; use segment trees over indices or values to enforce limits.',
   },
 ]
 
@@ -217,7 +218,6 @@ const codeExamples = [
       'Useful when values are large but range queries must be fast, or when interleaving updates/queries in online variants.',
   },
 ]
-
 
 const dpRecurrence = [
   {
@@ -338,214 +338,6 @@ const takeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.lis98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.lis98-window {
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.lis98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.lis98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.lis98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.lis98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-  padding: 0;
-}
-
-.lis98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.lis98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.lis98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.lis98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.lis98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.lis98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.lis98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.lis98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.lis98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.lis98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.lis98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.lis98-section {
-  margin: 0 0 20px;
-}
-
-.lis98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.lis98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.lis98-content p,
-.lis98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.lis98-content p {
-  margin: 0 0 10px;
-}
-
-.lis98-content ul,
-.lis98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.lis98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.lis98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.lis98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .lis98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .lis98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -557,11 +349,13 @@ const tabs: Array<{ id: TabId; label: string }> = [
 const lisGlossary = [
   {
     term: 'Subsequence',
-    definition: 'A sequence formed by deleting elements without changing relative order; elements are not required to be contiguous.',
+    definition:
+      'A sequence formed by deleting elements without changing relative order; elements are not required to be contiguous.',
   },
   {
     term: 'Strict LIS',
-    definition: 'Longest subsequence where each next element is strictly greater than the previous one.',
+    definition:
+      'Longest subsequence where each next element is strictly greater than the previous one.',
   },
   {
     term: 'LNDS',
@@ -573,7 +367,8 @@ const lisGlossary = [
   },
   {
     term: 'tails[k]',
-    definition: 'In O(n log n), the minimum possible tail value of any increasing subsequence of length k+1.',
+    definition:
+      'In O(n log n), the minimum possible tail value of any increasing subsequence of length k+1.',
   },
   {
     term: 'lower_bound',
@@ -615,291 +410,230 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function LongestIncreasingSubsequenceLISPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const activeTab: TabId = isTabId(searchParams.get('tab')) ? (searchParams.get('tab') as TabId) : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Longest Increasing Subsequence (LIS) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Longest Increasing Subsequence (LIS)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Longest Increasing Subsequence (LIS)',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="lis98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="lis98-window" role="presentation">
-        <header className="lis98-titlebar">
-          <span className="lis98-title-text">Longest Increasing Subsequence (LIS)</span>
-          <div className="lis98-title-controls">
-            <button className="lis98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="lis98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="lis98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`lis98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setSearchParams((prev) => {
-                const next = new URLSearchParams(prev)
-                next.set('tab', tab.id)
-                return next
-              }, { replace: true })}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="lis98-main">
-          <aside className="lis98-toc" aria-label="Table of contents">
-            <h2 className="lis98-toc-title">Contents</h2>
-            <ul className="lis98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Longest Increasing Subsequence (LIS)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Longest Increasing Subsequence (LIS)</h1>
+      <p>
+        Given an array, LIS finds the longest subsequence (not necessarily contiguous) where each
+        element is strictly larger than the previous. It is a core dynamic programming and greedy
+        showcase: a quadratic DP teaches the recurrence and reconstruction, while a patience-sorting
+        greedy with binary search delivers O(n log n) performance for large inputs. The two
+        approaches compute the same optimal length; the difference is how they maintain and compress
+        state.
+      </p>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              LIS extracts the longest ordered signal hidden in noisy data. It underpins problems
+              like envelope nesting, longest chain of pairs, and trend detection. The elegance comes
+              from combining a monotone structure (tails) with binary search to keep the state
+              minimal and extendable.
+            </p>
+            <p>
+              You can think of it as the smallest set of representatives that still captures every
+              possible increasing length, which is why the greedy strategy is safe.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why LIS Matters</h2>
+            <ul>
+              <li>Canonical DP and greedy example with matching optimal solutions.</li>
+              <li>Reduces many 2D problems (Russian doll envelopes) after sorting.</li>
+              <li>Appears in trend analysis, bioinformatics alignments, and scheduling.</li>
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="lis98-content">
-            <h1 className="lis98-doc-title">Longest Increasing Subsequence (LIS)</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-framing" className="bin98-section">
+            <h2 className="bin98-heading">Problem Framing</h2>
+            <h3 className="bin98-subheading">Definition</h3>
             <p>
-              Given an array, LIS finds the longest subsequence (not necessarily contiguous) where each element is strictly larger
-              than the previous. It is a core dynamic programming and greedy showcase: a quadratic DP teaches the recurrence and
-              reconstruction, while a patience-sorting greedy with binary search delivers O(n log n) performance for large inputs.
-              The two approaches compute the same optimal length; the difference is how they maintain and compress state.
+              Input: array a[0..n-1]. Find the maximum-length sequence of indices i0 &lt; i1 &lt;
+              ... &lt; ik with a[i0] &lt; a[i1] &lt; ... &lt; a[ik]. Strict order; elements do not
+              need to be adjacent.
             </p>
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="lis98-section">
-                  <h2 className="lis98-heading">Overview</h2>
-                  <p>
-                    LIS extracts the longest ordered signal hidden in noisy data. It underpins problems like envelope nesting,
-                    longest chain of pairs, and trend detection. The elegance comes from combining a monotone structure (tails)
-                    with binary search to keep the state minimal and extendable.
-                  </p>
-                  <p>
-                    You can think of it as the smallest set of representatives that still captures every possible increasing
-                    length, which is why the greedy strategy is safe.
-                  </p>
-                </section>
-                <hr className="lis98-divider" />
-                <section id="bp-mental-models" className="lis98-section">
-                  <h2 className="lis98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="lis98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="lis98-divider" />
-                <section id="bp-why" className="lis98-section">
-                  <h2 className="lis98-heading">Why LIS Matters</h2>
-                  <ul>
-                    <li>Canonical DP and greedy example with matching optimal solutions.</li>
-                    <li>Reduces many 2D problems (Russian doll envelopes) after sorting.</li>
-                    <li>Appears in trend analysis, bioinformatics alignments, and scheduling.</li>
-                  </ul>
-                </section>
-                <hr className="lis98-divider" />
-                <section id="bp-takeaways" className="lis98-section">
-                  <h2 className="lis98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+            <p>
+              Output can be length only or the subsequence itself. Reconstruction requires storing
+              predecessors.
+            </p>
+            <h3 className="bin98-subheading">Strict vs non-decreasing</h3>
+            <p>
+              Strict LIS requires a[i] &lt; a[j]. Non-decreasing (LNDS) allows equal values a[i]
+              &lt;= a[j]. The only code change in patience sorting is the binary search condition
+              (lower_bound vs upper_bound), but it changes answers when duplicates appear.
+            </p>
+            <h3 className="bin98-subheading">Edge cases</h3>
+            <ul>
+              <li>Empty input returns length 0 and an empty subsequence.</li>
+              <li>All decreasing values give length 1.</li>
+              <li>Repeated values depend on strict vs non-decreasing rules.</li>
+            </ul>
+          </section>
+          <section id="core-dp" className="bin98-section">
+            <h2 className="bin98-heading">DP Recurrence (O(n^2))</h2>
+            {dpRecurrence.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-options" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Options</h2>
+            {algorithmOptions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Start with O(n^2) DP to grasp the recurrence, then switch to patience sorting for
+              scale. Both compute identical answers; they differ only in efficiency and
+              reconstruction bookkeeping.
+            </p>
+          </section>
+          <section id="core-walkthrough" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-step (Patience Sorting)</h2>
+            <ol>
+              {walkthroughSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+            <h3 className="bin98-subheading">Invariants</h3>
+            {patienceInvariant.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Notes</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Insights</h2>
+            {correctnessInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-variations" className="bin98-section">
+            <h2 className="bin98-heading">Variations and Related Problems</h2>
+            {variations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Checklist</h2>
+            <ul>
+              {implementationChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-framing" className="lis98-section">
-                  <h2 className="lis98-heading">Problem Framing</h2>
-                  <h3 className="lis98-subheading">Definition</h3>
-                  <p>
-                    Input: array a[0..n-1]. Find the maximum-length sequence of indices i0 &lt; i1 &lt; ... &lt; ik with a[i0] &lt; a[i1] &lt; ...
-                    &lt; a[ik]. Strict order; elements do not need to be adjacent.
-                  </p>
-                  <p>Output can be length only or the subsequence itself. Reconstruction requires storing predecessors.</p>
-                  <h3 className="lis98-subheading">Strict vs non-decreasing</h3>
-                  <p>
-                    Strict LIS requires a[i] &lt; a[j]. Non-decreasing (LNDS) allows equal values a[i] &lt;= a[j]. The only code
-                    change in patience sorting is the binary search condition (lower_bound vs upper_bound), but it changes answers
-                    when duplicates appear.
-                  </p>
-                  <h3 className="lis98-subheading">Edge cases</h3>
-                  <ul>
-                    <li>Empty input returns length 0 and an empty subsequence.</li>
-                    <li>All decreasing values give length 1.</li>
-                    <li>Repeated values depend on strict vs non-decreasing rules.</li>
-                  </ul>
-                </section>
-                <section id="core-dp" className="lis98-section">
-                  <h2 className="lis98-heading">DP Recurrence (O(n^2))</h2>
-                  {dpRecurrence.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-options" className="lis98-section">
-                  <h2 className="lis98-heading">Algorithm Options</h2>
-                  {algorithmOptions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Start with O(n^2) DP to grasp the recurrence, then switch to patience sorting for scale. Both compute identical
-                    answers; they differ only in efficiency and reconstruction bookkeeping.
-                  </p>
-                </section>
-                <section id="core-walkthrough" className="lis98-section">
-                  <h2 className="lis98-heading">Step-by-step (Patience Sorting)</h2>
-                  <ol>
-                    {walkthroughSteps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                  <h3 className="lis98-subheading">Invariants</h3>
-                  {patienceInvariant.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="lis98-section">
-                  <h2 className="lis98-heading">Complexity Notes</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="lis98-section">
-                  <h2 className="lis98-heading">Correctness Insights</h2>
-                  {correctnessInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="lis98-section">
-                  <h2 className="lis98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-variations" className="lis98-section">
-                  <h2 className="lis98-heading">Variations and Related Problems</h2>
-                  {variations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-checklist" className="lis98-section">
-                  <h2 className="lis98-heading">Implementation Checklist</h2>
-                  <ul>
-                    {implementationChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-worked" className="bin98-section">
+            <h2 className="bin98-heading">Worked Example</h2>
+            <p>
+              <strong>Input:</strong> nums = <code>{workedExample.input}</code>
+            </p>
+            <ol>
+              {workedExample.steps.map((step) => (
+                <li key={`${step.i}-${step.x}`}>
+                  i={step.i}, x={step.x}, tails={step.tails}. {step.note}
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Practical Code Examples</h2>
+            {codeExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {applications.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-worked" className="lis98-section">
-                  <h2 className="lis98-heading">Worked Example</h2>
-                  <p>
-                    <strong>Input:</strong> nums = <code>{workedExample.input}</code>
-                  </p>
-                  <ol>
-                    {workedExample.steps.map((step) => (
-                      <li key={`${step.i}-${step.x}`}>
-                        i={step.i}, x={step.x}, tails={step.tails}. {step.note}
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="ex-code" className="lis98-section">
-                  <h2 className="lis98-heading">Practical Code Examples</h2>
-                  {codeExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="lis98-subheading">{example.title}</h3>
-                      <div className="lis98-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-applications" className="lis98-section">
-                  <h2 className="lis98-heading">Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="lis98-section">
-                <h2 className="lis98-heading">Glossary</h2>
-                {lisGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {lisGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -29,8 +29,6 @@ type GlossaryItem = {
 const pageTitle = 'Cloud SQL vs DynamoDB'
 const pageSubtitle =
   'Comparing a managed relational database service with a serverless key-value and document database.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -244,7 +242,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-user-order',
     title: 'Store Users and Orders',
-    summary: 'The same domain looks relational in one system and denormalized or access-pattern-shaped in the other.',
+    summary:
+      'The same domain looks relational in one system and denormalized or access-pattern-shaped in the other.',
     cloudSqlCode: `CREATE TABLE users (
   id BIGSERIAL PRIMARY KEY,
   email TEXT NOT NULL UNIQUE
@@ -273,7 +272,8 @@ CREATE TABLE orders (
   {
     id: 'ex-query',
     title: 'Fetch Recent Orders for a User',
-    summary: 'One system uses SQL over related rows. The other uses a key-conditioned query designed ahead of time.',
+    summary:
+      'One system uses SQL over related rows. The other uses a key-conditioned query designed ahead of time.',
     cloudSqlCode: `SELECT id, total_cents, created_at
 FROM orders
 WHERE user_id = 42
@@ -295,7 +295,8 @@ LIMIT 20;`,
   {
     id: 'ex-transaction',
     title: 'Update Inventory and Create an Order Atomically',
-    summary: 'Both platforms support correctness tools, but one is fundamentally transactional by design.',
+    summary:
+      'Both platforms support correctness tools, but one is fundamentally transactional by design.',
     cloudSqlCode: `BEGIN;
 
 UPDATE inventory
@@ -350,7 +351,8 @@ ON orders (created_at DESC);`,
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'Relational database',
-    definition: 'A database model organized around tables, relationships, SQL queries, and transactional integrity.',
+    definition:
+      'A database model organized around tables, relationships, SQL queries, and transactional integrity.',
   },
   {
     term: 'Cloud SQL',
@@ -364,39 +366,48 @@ const glossaryTerms: GlossaryItem[] = [
   },
   {
     term: 'Partition key',
-    definition: 'The DynamoDB key component that determines how items are distributed and how requests are routed.',
+    definition:
+      'The DynamoDB key component that determines how items are distributed and how requests are routed.',
   },
   {
     term: 'Sort key',
-    definition: 'An optional DynamoDB primary key component used to order related items within a partition.',
+    definition:
+      'An optional DynamoDB primary key component used to order related items within a partition.',
   },
   {
     term: 'Primary key',
-    definition: 'The identifying key for a record; in SQL this is a row identity concept, while in DynamoDB it also defines access behavior.',
+    definition:
+      'The identifying key for a record; in SQL this is a row identity concept, while in DynamoDB it also defines access behavior.',
   },
   {
     term: 'Global secondary index',
-    definition: 'A DynamoDB index that provides an alternate key-based access path over table data.',
+    definition:
+      'A DynamoDB index that provides an alternate key-based access path over table data.',
   },
   {
     term: 'Read replica',
-    definition: 'A copy of a relational database used for read scaling or disaster recovery scenarios.',
+    definition:
+      'A copy of a relational database used for read scaling or disaster recovery scenarios.',
   },
   {
     term: 'High availability',
-    definition: 'A deployment strategy that reduces downtime through redundancy and failover support.',
+    definition:
+      'A deployment strategy that reduces downtime through redundancy and failover support.',
   },
   {
     term: 'ACID',
-    definition: 'A set of transactional guarantees commonly associated with relational database systems.',
+    definition:
+      'A set of transactional guarantees commonly associated with relational database systems.',
   },
   {
     term: 'Denormalization',
-    definition: 'A modeling strategy that duplicates or restructures data to optimize specific reads or writes.',
+    definition:
+      'A modeling strategy that duplicates or restructures data to optimize specific reads or writes.',
   },
   {
     term: 'Conditional write',
-    definition: 'A DynamoDB write that only succeeds if specified conditions are true, often used for correctness and concurrency control.',
+    definition:
+      'A DynamoDB write that only succeeds if specified conditions are true, often used for correctness and concurrency control.',
   },
 ]
 
@@ -427,401 +438,112 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.cloudsql-dynamo-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cloudsql-dynamo-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cloudsql-dynamo-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudsql-dynamo-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cloudsql-dynamo-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cloudsql-dynamo-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.cloudsql-dynamo-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.cloudsql-dynamo-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.cloudsql-dynamo-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cloudsql-dynamo-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.cloudsql-dynamo-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.cloudsql-dynamo-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cloudsql-dynamo-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cloudsql-dynamo-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cloudsql-dynamo-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.cloudsql-dynamo-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cloudsql-dynamo-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cloudsql-dynamo-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudsql-dynamo-help-section {
-  margin: 0 0 20px;
-}
-
-.cloudsql-dynamo-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cloudsql-dynamo-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudsql-dynamo-help-content p,
-.cloudsql-dynamo-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cloudsql-dynamo-help-content p {
-  margin: 0 0 10px;
-}
-
-.cloudsql-dynamo-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cloudsql-dynamo-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.cloudsql-dynamo-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.cloudsql-dynamo-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cloudsql-dynamo-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloudsql-dynamo-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cloudsql-dynamo-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function CloudSqlVsDynamoDbPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Cloud Sql Vs Dynamo Db Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cloudsql-dynamo-help-page">
-      <style>{pageStyles}</style>
-      <div className="cloudsql-dynamo-help-window" role="presentation">
-        <header className="cloudsql-dynamo-help-titlebar">
-          <span className="cloudsql-dynamo-help-title">{pageTitle}</span>
-          <div className="cloudsql-dynamo-help-controls">
-            <button className="cloudsql-dynamo-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cloudsql-dynamo-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Cloud Sql Vs Dynamo Db Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="cloudsql-dynamo-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares Cloud SQL and DynamoDB as real architectural choices rather than generic
+        managed databases. The point is to make the tradeoffs explicit: relational model versus
+        NoSQL model, query flexibility versus access-pattern discipline, transactional semantics,
+        scaling approach, index strategy, operational fit, and the type of application each service
+        is actually designed to serve well.
+      </p>
 
-        <div className="cloudsql-dynamo-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`cloudsql-dynamo-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cloudsql-dynamo-help-main">
-          <aside className="cloudsql-dynamo-help-toc" aria-label="Table of contents">
-            <h2 className="cloudsql-dynamo-help-toc-title">Contents</h2>
-            <ul className="cloudsql-dynamo-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="cloudsql-dynamo-help-content">
-            <h1 className="cloudsql-dynamo-help-doc-title">{pageTitle}</h1>
-            <p className="cloudsql-dynamo-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares Cloud SQL and DynamoDB as real architectural choices rather than generic managed databases.
-              The point is to make the tradeoffs explicit: relational model versus NoSQL model, query flexibility versus
-              access-pattern discipline, transactional semantics, scaling approach, index strategy, operational fit, and the
-              type of application each service is actually designed to serve well.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cloudsql-dynamo-help-section">
-                    <h2 className="cloudsql-dynamo-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cloudsql-dynamo-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cloudsql-dynamo-help-section">
-                  <h2 className="cloudsql-dynamo-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cloudsql-dynamo-help-section">
-                    <h2 className="cloudsql-dynamo-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="cloudsql-dynamo-help-section">
-                    <h2 className="cloudsql-dynamo-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="cloudsql-dynamo-help-subheading">Cloud SQL</h3>
-                    <div className="cloudsql-dynamo-help-codebox">
-                      <code>{example.cloudSqlCode.trim()}</code>
-                    </div>
-                    <h3 className="cloudsql-dynamo-help-subheading">DynamoDB</h3>
-                    <div className="cloudsql-dynamo-help-codebox">
-                      <code>{example.dynamoCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cloudsql-dynamo-help-section">
-                <h2 className="cloudsql-dynamo-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">Cloud SQL</h3>
+              <div className="bin98-codebox">
+                <code>{example.cloudSqlCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">DynamoDB</h3>
+              <div className="bin98-codebox">
+                <code>{example.dynamoCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

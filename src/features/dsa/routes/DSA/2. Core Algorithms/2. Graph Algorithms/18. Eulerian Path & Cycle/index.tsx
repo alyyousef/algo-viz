@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -30,59 +31,49 @@ const historicalMilestones = [
 const prerequisites = [
   {
     title: 'Graph type',
-    detail:
-      'Eulerian checks differ for undirected and directed graphs; pick the correct rules.',
+    detail: 'Eulerian checks differ for undirected and directed graphs; pick the correct rules.',
   },
   {
     title: 'Edge-centric goal',
-    detail:
-      'Eulerian paths use every edge exactly once; vertices may repeat.',
+    detail: 'Eulerian paths use every edge exactly once; vertices may repeat.',
   },
   {
     title: 'Connectivity concept',
-    detail:
-      'Only vertices with non-zero degree must be connected (ignore isolated vertices).',
+    detail: 'Only vertices with non-zero degree must be connected (ignore isolated vertices).',
   },
   {
     title: 'Degree bookkeeping',
-    detail:
-      'Undirected graphs need degree parity; directed graphs need in/out balance.',
+    detail: 'Undirected graphs need degree parity; directed graphs need in/out balance.',
   },
 ]
 
 const inputsOutputs = [
   {
     title: 'Input',
-    detail:
-      'Graph G(V, E), directed or undirected, with adjacency lists.',
+    detail: 'Graph G(V, E), directed or undirected, with adjacency lists.',
   },
   {
     title: 'Output',
-    detail:
-      'Eulerian path or cycle as a vertex list, or a failure if none exists.',
+    detail: 'Eulerian path or cycle as a vertex list, or a failure if none exists.',
   },
   {
     title: 'Optional',
-    detail:
-      'Status classification: none, path only, or cycle.',
+    detail: 'Status classification: none, path only, or cycle.',
   },
 ]
 
 const formalDefinitions = [
   {
     title: 'Eulerian path (trail)',
-    detail:
-      'A walk that uses each edge exactly once and may start/end at different vertices.',
+    detail: 'A walk that uses each edge exactly once and may start/end at different vertices.',
   },
   {
     title: 'Eulerian cycle (circuit)',
-    detail:
-      'An Eulerian path that starts and ends at the same vertex.',
+    detail: 'An Eulerian path that starts and ends at the same vertex.',
   },
   {
     title: 'Degree balance (undirected)',
-    detail:
-      'A cycle requires all even degrees; a path requires exactly two odd degrees.',
+    detail: 'A cycle requires all even degrees; a path requires exactly two odd degrees.',
   },
   {
     title: 'Degree balance (directed)',
@@ -184,23 +175,19 @@ const stepByStepFlow = [
 const dataStructures = [
   {
     title: 'Adjacency list with edge IDs',
-    detail:
-      'Track multi-edges and mark each edge used exactly once.',
+    detail: 'Track multi-edges and mark each edge used exactly once.',
   },
   {
     title: 'Degree arrays',
-    detail:
-      'Degree counts for undirected; in/out for directed graphs.',
+    detail: 'Degree counts for undirected; in/out for directed graphs.',
   },
   {
     title: 'Edge-used flags',
-    detail:
-      'Boolean array keyed by edge ID to prevent reuse.',
+    detail: 'Boolean array keyed by edge ID to prevent reuse.',
   },
   {
     title: 'Stack for Hierholzer',
-    detail:
-      'Tracks current walk; vertices are popped into the final trail when stuck.',
+    detail: 'Tracks current walk; vertices are popped into the final trail when stuck.',
   },
 ]
 
@@ -212,13 +199,11 @@ const correctnessNotes = [
   },
   {
     title: 'Connectivity necessity',
-    detail:
-      'All non-zero-degree vertices must lie in a single component to traverse every edge.',
+    detail: 'All non-zero-degree vertices must lie in a single component to traverse every edge.',
   },
   {
     title: 'Hierholzer correctness',
-    detail:
-      'Local cycles can be spliced into the tour without breaking edge uniqueness.',
+    detail: 'Local cycles can be spliced into the tour without breaking edge uniqueness.',
   },
 ]
 
@@ -353,8 +338,7 @@ A-B, B-C, C-A, C-D, D-C
 Degrees: A=2, B=2, C=4, D=2
 All even -> Eulerian cycle exists
 One possible cycle: A-B-C-D-C-A`,
-    explanation:
-      'All vertices have even degree and the graph is connected, so a cycle exists.',
+    explanation: 'All vertices have even degree and the graph is connected, so a cycle exists.',
   },
 ]
 
@@ -434,223 +418,6 @@ const takeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.euler98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.euler98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.euler98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.euler98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.euler98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.euler98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.euler98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.euler98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  color: #000;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.euler98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.euler98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px 1fr;
-}
-
-.euler98-toc {
-  background: #efefef;
-  border-right: 1px solid #808080;
-  padding: 12px;
-  overflow: auto;
-}
-
-.euler98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.euler98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.euler98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.euler98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.euler98-toc-list a:hover {
-  text-decoration: underline;
-}
-
-.euler98-content {
-  padding: 14px 20px 22px;
-  overflow: auto;
-}
-
-.euler98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.euler98-content a {
-  color: #000080;
-}
-
-.euler98-section {
-  margin: 0 0 18px;
-}
-
-.euler98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.euler98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.euler98-content p,
-.euler98-content li {
-  margin: 0 0 9px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.euler98-content ul,
-.euler98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.euler98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 13px 0;
-}
-
-.euler98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.euler98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .euler98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .euler98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -658,10 +425,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -697,303 +460,250 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function EulerianPathCyclePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Eulerian Path &amp; Cycle',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Eulerian Path & Cycle (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Eulerian Path & Cycle',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="euler98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="euler98-window" role="presentation">
-        <header className="euler98-titlebar">
-          <span className="euler98-title">Eulerian Path &amp; Cycle</span>
-          <div className="euler98-title-controls">
-            <button className="euler98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="euler98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="euler98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`euler98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="euler98-main">
-          <aside className="euler98-toc" aria-label="Table of contents">
-            <h2 className="euler98-toc-title">Contents</h2>
-            <ul className="euler98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Eulerian Path &amp; Cycle"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Eulerian Path &amp; Cycle</h1>
+      <p>
+        Eulerian paths and cycles determine whether every edge can be traversed exactly once. The
+        decision comes from degree rules plus connectivity, and Hierholzer constructs the trail in
+        linear time.
+      </p>
+      <p>
+        <Link to="/algoViz">Back to catalog</Link>
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              An Eulerian trail uses each edge exactly once; an Eulerian cycle also returns to the
+              starting vertex. Unlike Hamiltonian paths, Eulerian trails are efficiently testable
+              and constructible.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-prerequisites" className="bin98-section">
+            <h2 className="bin98-heading">Prerequisites</h2>
+            {prerequisites.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-io" className="bin98-section">
+            <h2 className="bin98-heading">Inputs and Outputs</h2>
+            {inputsOutputs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-formal" className="bin98-section">
+            <h2 className="bin98-heading">Formal Concepts</h2>
+            {formalDefinitions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="euler98-content">
-            <h1 className="euler98-doc-title">Eulerian Path &amp; Cycle</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-existence" className="bin98-section">
+            <h2 className="bin98-heading">Existence Conditions</h2>
+            {existenceConditions.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-algorithm" className="bin98-section">
+            <h2 className="bin98-heading">Hierholzer Steps</h2>
+            {algorithmSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-flow" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Flow</h2>
+            <ol>
+              {stepByStepFlow.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-data" className="bin98-section">
+            <h2 className="bin98-heading">Data Structures</h2>
+            {dataStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Notes</h2>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Notes</h2>
+            {implementationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="ex-edge-cases" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases Checklist</h2>
+            <ul>
+              {edgeCases.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Core Terms</h2>
+            {formalDefinitions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Eulerian paths and cycles determine whether every edge can be traversed exactly once. The decision comes from
-              degree rules plus connectivity, and Hierholzer constructs the trail in linear time.
+              <strong>Degree parity:</strong> Odd/even degree pattern used in undirected Eulerian
+              existence checks.
             </p>
             <p>
-              <Link to="/algoViz">Back to catalog</Link>
+              <strong>Balance condition:</strong> In/out-degree equality rules used for directed
+              Eulerian checks.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="euler98-section">
-                  <h2 className="euler98-heading">Overview</h2>
-                  <p>
-                    An Eulerian trail uses each edge exactly once; an Eulerian cycle also returns to the starting vertex.
-                    Unlike Hamiltonian paths, Eulerian trails are efficiently testable and constructible.
-                  </p>
-                </section>
-                <hr className="euler98-divider" />
-                <section id="bp-history" className="euler98-section">
-                  <h2 className="euler98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="euler98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-prerequisites" className="euler98-section">
-                  <h2 className="euler98-heading">Prerequisites</h2>
-                  {prerequisites.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-io" className="euler98-section">
-                  <h2 className="euler98-heading">Inputs and Outputs</h2>
-                  {inputsOutputs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-formal" className="euler98-section">
-                  <h2 className="euler98-heading">Formal Concepts</h2>
-                  {formalDefinitions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-mental" className="euler98-section">
-                  <h2 className="euler98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-when" className="euler98-section">
-                  <h2 className="euler98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="bp-takeaways" className="euler98-section">
-                  <h2 className="euler98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-existence" className="euler98-section">
-                  <h2 className="euler98-heading">Existence Conditions</h2>
-                  {existenceConditions.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="euler98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-algorithm" className="euler98-section">
-                  <h2 className="euler98-heading">Hierholzer Steps</h2>
-                  {algorithmSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-flow" className="euler98-section">
-                  <h2 className="euler98-heading">Step-by-Step Flow</h2>
-                  <ol>
-                    {stepByStepFlow.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-data" className="euler98-section">
-                  <h2 className="euler98-heading">Data Structures</h2>
-                  {dataStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="euler98-section">
-                  <h2 className="euler98-heading">Correctness Notes</h2>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-implementation" className="euler98-section">
-                  <h2 className="euler98-heading">Implementation Notes</h2>
-                  {implementationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="euler98-section">
-                  <h2 className="euler98-heading">Complexity and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="euler98-section">
-                  <h2 className="euler98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="euler98-section">
-                  <h2 className="euler98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-code" className="euler98-section">
-                  <h2 className="euler98-heading">Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="euler98-subheading">{example.title}</h3>
-                      <div className="euler98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-applications" className="euler98-section">
-                  <h2 className="euler98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="ex-edge-cases" className="euler98-section">
-                  <h2 className="euler98-heading">Edge Cases Checklist</h2>
-                  <ul>
-                    {edgeCases.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="euler98-section">
-                  <h2 className="euler98-heading">Core Terms</h2>
-                  {formalDefinitions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p><strong>Degree parity:</strong> Odd/even degree pattern used in undirected Eulerian existence checks.</p>
-                  <p><strong>Balance condition:</strong> In/out-degree equality rules used for directed Eulerian checks.</p>
-                  <p><strong>Cycle splicing:</strong> Merging local tours into one global trail in Hierholzer's method.</p>
-                </section>
-                <section id="glossary-variants" className="euler98-section">
-                  <h2 className="euler98-heading">Variants and Tradeoffs</h2>
-                  {variantTable.map((item) => (
-                    <p key={item.variant}>
-                      <strong>{item.variant}:</strong> {item.graphType}. <strong>Guarantee:</strong> {item.guarantee}.{' '}
-                      <strong>Typical use case:</strong> {item.useCase}.
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            <p>
+              <strong>Cycle splicing:</strong> Merging local tours into one global trail in
+              Hierholzer's method.
+            </p>
+          </section>
+          <section id="glossary-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Tradeoffs</h2>
+            {variantTable.map((item) => (
+              <p key={item.variant}>
+                <strong>{item.variant}:</strong> {item.graphType}. <strong>Guarantee:</strong>{' '}
+                {item.guarantee}. <strong>Typical use case:</strong> {item.useCase}.
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

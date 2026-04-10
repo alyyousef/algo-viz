@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -37,8 +36,7 @@ const historicalMilestones = [
   },
   {
     title: 'Web components and templates mature (2020+)',
-    detail:
-      'Native components and template primitives allow reusable markup without frameworks.',
+    detail: 'Native components and template primitives allow reusable markup without frameworks.',
   },
 ]
 
@@ -60,8 +58,7 @@ const mentalModels = [
   },
   {
     title: 'Semantics drive accessibility',
-    detail:
-      'Elements convey roles and relationships to assistive technologies without extra ARIA.',
+    detail: 'Elements convey roles and relationships to assistive technologies without extra ARIA.',
   },
   {
     title: 'Metadata shapes discovery',
@@ -192,8 +189,7 @@ const formsAndInput = [
   },
   {
     title: 'Autocomplete and UX',
-    detail:
-      'autocomplete tokens help users fill forms faster and more accurately.',
+    detail: 'autocomplete tokens help users fill forms faster and more accurately.',
   },
 ]
 
@@ -205,8 +201,7 @@ const mediaAndGraphics = [
   },
   {
     title: 'Video and audio',
-    detail:
-      'Native media tags support multiple sources, captions, and controls without plugins.',
+    detail: 'Native media tags support multiple sources, captions, and controls without plugins.',
   },
   {
     title: 'SVG and canvas',
@@ -220,8 +215,7 @@ const mediaAndGraphics = [
   },
   {
     title: 'Figures and captions',
-    detail:
-      'figure and figcaption provide semantic grouping for images, charts, and media.',
+    detail: 'figure and figcaption provide semantic grouping for images, charts, and media.',
   },
 ]
 
@@ -248,8 +242,7 @@ const parsingAndRendering = [
   },
   {
     title: 'Preload scanner',
-    detail:
-      'Browsers scan HTML for critical resources early to speed up rendering.',
+    detail: 'Browsers scan HTML for critical resources early to speed up rendering.',
   },
 ]
 
@@ -261,13 +254,11 @@ const performanceAndDelivery = [
   },
   {
     title: 'Resource hints',
-    detail:
-      'preconnect, dns-prefetch, and preload reduce latency for fonts, CSS, and key scripts.',
+    detail: 'preconnect, dns-prefetch, and preload reduce latency for fonts, CSS, and key scripts.',
   },
   {
     title: 'Caching and reuse',
-    detail:
-      'Stable HTML with cacheable assets lets browsers reuse CSS and JS across navigations.',
+    detail: 'Stable HTML with cacheable assets lets browsers reuse CSS and JS across navigations.',
   },
   {
     title: 'Server rendering choices',
@@ -276,8 +267,7 @@ const performanceAndDelivery = [
   },
   {
     title: 'Streaming and partials',
-    detail:
-      'Streaming HTML can reveal content faster while async components finish rendering.',
+    detail: 'Streaming HTML can reveal content faster while async components finish rendering.',
   },
 ]
 
@@ -364,8 +354,7 @@ const examples = [
   <summary>More info</summary>
   <p>Details/summary creates accessible disclosure without JavaScript.</p>
 </details>`,
-    explanation:
-      'Modern HTML provides interactive primitives that reduce custom scripting.',
+    explanation: 'Modern HTML provides interactive primitives that reduce custom scripting.',
   },
 ]
 
@@ -435,138 +424,114 @@ const takeaways = [
 const seoAndMetadata = [
   {
     title: 'Title and description',
-    detail:
-      'Unique titles and meta descriptions improve search snippets and click-through.',
+    detail: 'Unique titles and meta descriptions improve search snippets and click-through.',
   },
   {
     title: 'Open Graph and cards',
-    detail:
-      'Social previews use og:title, og:image, and twitter:card metadata.',
+    detail: 'Social previews use og:title, og:image, and twitter:card metadata.',
   },
   {
     title: 'Canonical URLs',
-    detail:
-      'Canonical tags reduce duplicate content issues across URLs.',
+    detail: 'Canonical tags reduce duplicate content issues across URLs.',
   },
   {
     title: 'Structured data',
-    detail:
-      'JSON-LD helps search engines interpret entities, products, and reviews.',
+    detail: 'JSON-LD helps search engines interpret entities, products, and reviews.',
   },
 ]
 
 const htmlApis = [
   {
     title: 'Media and graphics',
-    detail:
-      'video, audio, canvas, and svg cover native media without plugins.',
+    detail: 'video, audio, canvas, and svg cover native media without plugins.',
   },
   {
     title: 'Interactive elements',
-    detail:
-      'details, summary, dialog, and popover provide built-in UI affordances.',
+    detail: 'details, summary, dialog, and popover provide built-in UI affordances.',
   },
   {
     title: 'Data and templates',
-    detail:
-      'template and slot support reusable UI via web components.',
+    detail: 'template and slot support reusable UI via web components.',
   },
   {
     title: 'Forms and validation',
-    detail:
-      'Form-associated elements and validity states support accessible input handling.',
+    detail: 'Form-associated elements and validity states support accessible input handling.',
   },
 ]
 
 const securityNotes = [
   {
     title: 'Safe embedding',
-    detail:
-      'Use sandboxed iframes and strict allow lists for third-party content.',
+    detail: 'Use sandboxed iframes and strict allow lists for third-party content.',
   },
   {
     title: 'Content security policy',
-    detail:
-      'CSP in meta or headers limits script, style, and media sources.',
+    detail: 'CSP in meta or headers limits script, style, and media sources.',
   },
   {
     title: 'Link safety',
-    detail:
-      'Add rel="noopener noreferrer" to external links opened with target="_blank".',
+    detail: 'Add rel="noopener noreferrer" to external links opened with target="_blank".',
   },
   {
     title: 'Input trust',
-    detail:
-      'Validate and sanitize user input server-side even if HTML validation exists.',
+    detail: 'Validate and sanitize user input server-side even if HTML validation exists.',
   },
 ]
 
 const toolingWorkflow = [
   {
     title: 'Validators and linters',
-    detail:
-      'Use the W3C validator or HTML linters to catch invalid markup early.',
+    detail: 'Use the W3C validator or HTML linters to catch invalid markup early.',
   },
   {
     title: 'Static site generators',
-    detail:
-      'SSG tools produce fast HTML with predictable structure and caching.',
+    detail: 'SSG tools produce fast HTML with predictable structure and caching.',
   },
   {
     title: 'Component libraries',
-    detail:
-      'Reusable components keep structure consistent across pages and teams.',
+    detail: 'Reusable components keep structure consistent across pages and teams.',
   },
   {
     title: 'Testing',
-    detail:
-      'Accessibility tests and snapshots verify structure and semantics.',
+    detail: 'Accessibility tests and snapshots verify structure and semantics.',
   },
 ]
 
 const debuggingWorkflow = [
   {
     title: 'Inspect the DOM',
-    detail:
-      'Use DevTools to confirm nesting, attributes, and computed accessibility roles.',
+    detail: 'Use DevTools to confirm nesting, attributes, and computed accessibility roles.',
   },
   {
     title: 'Validate semantics',
-    detail:
-      'Check heading order and landmark structure with accessibility tools.',
+    detail: 'Check heading order and landmark structure with accessibility tools.',
   },
   {
     title: 'Audit performance',
-    detail:
-      'Measure HTML payload size and render-blocking resources in Lighthouse.',
+    detail: 'Measure HTML payload size and render-blocking resources in Lighthouse.',
   },
   {
     title: 'Test without CSS/JS',
-    detail:
-      'Disable CSS or scripts to confirm progressive enhancement holds up.',
+    detail: 'Disable CSS or scripts to confirm progressive enhancement holds up.',
   },
 ]
 
 const productionChecklist = [
   {
     title: 'Semantics',
-    detail:
-      'Use correct elements, headings, and landmarks for navigability.',
+    detail: 'Use correct elements, headings, and landmarks for navigability.',
   },
   {
     title: 'Accessibility',
-    detail:
-      'Ensure labels, alt text, and focus order are complete and meaningful.',
+    detail: 'Ensure labels, alt text, and focus order are complete and meaningful.',
   },
   {
     title: 'Performance',
-    detail:
-      'Keep HTML lean and leverage resource hints for critical assets.',
+    detail: 'Keep HTML lean and leverage resource hints for critical assets.',
   },
   {
     title: 'SEO and sharing',
-    detail:
-      'Add metadata and structured data for discovery and previews.',
+    detail: 'Add metadata and structured data for discovery and previews.',
   },
 ]
 
@@ -590,240 +555,30 @@ const learningPath = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const glossary = [
   { term: 'DOM', definition: 'Document Object Model tree produced by parsing HTML.' },
   { term: 'Semantic HTML', definition: 'Markup that uses elements for meaning, not appearance.' },
-  { term: 'Landmarks', definition: 'Structural regions like main/nav/header used for navigation and accessibility.' },
-  { term: 'Progressive Enhancement', definition: 'Start with robust HTML, then layer CSS and JS features.' },
-  { term: 'ARIA', definition: 'Accessibility attributes used when native semantics are insufficient.' },
+  {
+    term: 'Landmarks',
+    definition: 'Structural regions like main/nav/header used for navigation and accessibility.',
+  },
+  {
+    term: 'Progressive Enhancement',
+    definition: 'Start with robust HTML, then layer CSS and JS features.',
+  },
+  {
+    term: 'ARIA',
+    definition: 'Accessibility attributes used when native semantics are insufficient.',
+  },
   { term: 'Hydration', definition: 'Client-side binding of behavior onto server-rendered HTML.' },
   { term: 'CSP', definition: 'Content Security Policy controlling allowed resource sources.' },
-  { term: 'Structured Data', definition: 'Machine-readable metadata (often JSON-LD) for search engines.' },
+  {
+    term: 'Structured Data',
+    definition: 'Machine-readable metadata (often JSON-LD) for search engines.',
+  },
   { term: 'Viewport Meta', definition: 'Head tag controlling mobile layout viewport behavior.' },
   { term: 'Doctype', definition: 'Declaration that triggers standards mode parsing.' },
 ]
-
-const htmlHelpStyles = `
-.html98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  margin: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.html98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.html98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 2px 4px;
-  color: #fff;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-}
-
-.html98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.1;
-  pointer-events: none;
-}
-
-.html98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.html98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.html98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.html98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.html98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.html98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  flex: 1;
-  min-height: 0;
-}
-
-.html98-toc {
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-  overflow: auto;
-}
-
-.html98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.html98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.html98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.html98-toc-list a {
-  font-size: 12px;
-  color: #000;
-  text-decoration: none;
-}
-
-.html98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.html98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.html98-section {
-  margin: 0 0 22px;
-}
-
-.html98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.html98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.html98-content p,
-.html98-content li,
-.html98-content th,
-.html98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.html98-content p {
-  margin: 0 0 10px;
-}
-
-.html98-content ul,
-.html98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.html98-content table {
-  border-collapse: collapse;
-  margin: 0 0 10px;
-}
-
-.html98-content th,
-.html98-content td {
-  padding: 2px 8px 2px 0;
-  vertical-align: top;
-}
-
-.html98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.html98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.html98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .html98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .html98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -831,10 +586,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -867,304 +618,242 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function HtmlPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'HTML',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `HTML (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'HTML',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="html98-help-page">
-      <style>{htmlHelpStyles}</style>
-      <div className="html98-window" role="presentation">
-        <header className="html98-titlebar">
-          <span className="html98-title-text">HTML</span>
-          <div className="html98-title-controls">
-            <button className="html98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="html98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="html98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`html98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="html98-main">
-          <aside className="html98-toc" aria-label="Table of contents">
-            <h2 className="html98-toc-title">Contents</h2>
-            <ul className="html98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="HTML"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">HTML</h1>
+      <p>
+        HTML defines the structure and meaning of web content. It is the contract between authors,
+        browsers, and assistive technologies. Everything else on the front end builds on this
+        foundation, so mastering HTML means mastering how a page is read, parsed, and experienced.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              HTML turns raw text into a structured document tree. That structure powers layout,
+              accessibility, search indexing, and how scripts locate and update content. When the
+              HTML is correct, everything else becomes easier and more reliable.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="html98-content">
-            <h1 className="html98-doc-title">HTML</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-building" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Building Blocks</h2>
+            {coreBuildingBlocks.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-anatomy" className="bin98-section">
+            <h2 className="bin98-heading">Document Anatomy</h2>
+            {documentAnatomy.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-semantics" className="bin98-section">
+            <h2 className="bin98-heading">Semantics and Landmarks</h2>
+            {semanticsAndLandmarks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-forms" className="bin98-section">
+            <h2 className="bin98-heading">Forms and Input</h2>
+            {formsAndInput.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-media" className="bin98-section">
+            <h2 className="bin98-heading">Media and Graphics</h2>
+            {mediaAndGraphics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-apis" className="bin98-section">
+            <h2 className="bin98-heading">HTML Platform APIs</h2>
+            {htmlApis.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-seo" className="bin98-section">
+            <h2 className="bin98-heading">SEO and Metadata</h2>
+            {seoAndMetadata.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-parsing" className="bin98-section">
+            <h2 className="bin98-heading">Parsing and Rendering Pipeline</h2>
+            {parsingAndRendering.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance and Delivery</h2>
+            {performanceAndDelivery.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              HTML defines the structure and meaning of web content. It is the contract between authors, browsers, and assistive
-              technologies. Everything else on the front end builds on this foundation, so mastering HTML means mastering how a page
-              is read, parsed, and experienced.
+              HTML is the first byte the browser sees. Keeping it semantic, compact, and
+              well-ordered improves time-to-render and reduces the work required to hydrate rich
+              interfaces.
             </p>
+          </section>
+          <section id="core-security" className="bin98-section">
+            <h2 className="bin98-heading">Security Considerations</h2>
+            {securityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-tooling" className="bin98-section">
+            <h2 className="bin98-heading">Tooling and Workflow</h2>
+            {toolingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Workflow</h2>
+            {debuggingWorkflow.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-production" className="bin98-section">
+            <h2 className="bin98-heading">Production Checklist</h2>
+            {productionChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-learning" className="bin98-section">
+            <h2 className="bin98-heading">Learning Path</h2>
+            {learningPath.map((item) => (
+              <p key={item.step}>
+                <strong>{item.step}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="html98-section">
-                  <h2 className="html98-heading">Overview</h2>
-                  <p>
-                    HTML turns raw text into a structured document tree. That structure powers layout, accessibility, search indexing,
-                    and how scripts locate and update content. When the HTML is correct, everything else becomes easier and more reliable.
-                  </p>
-                </section>
-                <hr className="html98-divider" />
-                <section id="bp-history" className="html98-section">
-                  <h2 className="html98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="html98-section">
-                  <h2 className="html98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="html98-section">
-                  <h2 className="html98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-building" className="html98-section">
-                  <h2 className="html98-heading">How It Works: Building Blocks</h2>
-                  {coreBuildingBlocks.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="html98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-anatomy" className="html98-section">
-                  <h2 className="html98-heading">Document Anatomy</h2>
-                  {documentAnatomy.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-semantics" className="html98-section">
-                  <h2 className="html98-heading">Semantics and Landmarks</h2>
-                  {semanticsAndLandmarks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-forms" className="html98-section">
-                  <h2 className="html98-heading">Forms and Input</h2>
-                  {formsAndInput.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-media" className="html98-section">
-                  <h2 className="html98-heading">Media and Graphics</h2>
-                  {mediaAndGraphics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-apis" className="html98-section">
-                  <h2 className="html98-heading">HTML Platform APIs</h2>
-                  {htmlApis.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-seo" className="html98-section">
-                  <h2 className="html98-heading">SEO and Metadata</h2>
-                  {seoAndMetadata.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-parsing" className="html98-section">
-                  <h2 className="html98-heading">Parsing and Rendering Pipeline</h2>
-                  {parsingAndRendering.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="html98-section">
-                  <h2 className="html98-heading">Performance and Delivery</h2>
-                  {performanceAndDelivery.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    HTML is the first byte the browser sees. Keeping it semantic, compact, and well-ordered improves time-to-render and
-                    reduces the work required to hydrate rich interfaces.
-                  </p>
-                </section>
-                <section id="core-security" className="html98-section">
-                  <h2 className="html98-heading">Security Considerations</h2>
-                  {securityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-tooling" className="html98-section">
-                  <h2 className="html98-heading">Tooling and Workflow</h2>
-                  {toolingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-debugging" className="html98-section">
-                  <h2 className="html98-heading">Debugging Workflow</h2>
-                  {debuggingWorkflow.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="html98-section">
-                  <h2 className="html98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-production" className="html98-section">
-                  <h2 className="html98-heading">Production Checklist</h2>
-                  {productionChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-when" className="html98-section">
-                  <h2 className="html98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="html98-section">
-                  <h2 className="html98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-learning" className="html98-section">
-                  <h2 className="html98-heading">Learning Path</h2>
-                  {learningPath.map((item) => (
-                    <p key={item.step}>
-                      <strong>{item.step}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="html98-section">
-                <h2 className="html98-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="html98-subheading">{example.title}</h3>
-                    <div className="html98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="html98-section">
-                <h2 className="html98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

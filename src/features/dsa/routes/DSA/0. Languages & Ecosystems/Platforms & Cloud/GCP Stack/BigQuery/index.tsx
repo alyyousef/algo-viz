@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -22,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'BigQuery is Google Cloud\'s managed analytical data warehouse. The simplest mental model is that it gives you warehouse-scale SQL without asking you to provision, patch, or tune traditional database servers.',
+      "BigQuery is Google Cloud's managed analytical data warehouse. The simplest mental model is that it gives you warehouse-scale SQL without asking you to provision, patch, or tune traditional database servers.",
       'It is built for analytical workloads: large scans, aggregations, joins, time slicing, dashboard backends, transformation pipelines, and shared reporting over very large datasets. It is not mainly designed as an OLTP application database.',
       'Adopting BigQuery usually means adopting a warehouse operating model. The operational center of gravity moves away from servers and toward datasets, schemas, table design, governance, performance review, and query cost discipline.',
     ],
@@ -213,7 +211,7 @@ const coreSections: Array<
     paragraphs: [
       'BigQuery is usually paired with Cloud Storage for landing zones, orchestration systems for pipelines, BI tools for reporting, and governance systems for metadata and access management.',
       'It also serves as a foundation for adjacent analytical work such as machine learning, geospatial analysis, and data-serving patterns that depend on warehouse-curated facts.',
-      'This ecosystem fit is one of BigQuery\'s strongest traits. The warehouse is valuable not only because it can answer SQL questions, but because it integrates well into the rest of a cloud data platform.',
+      "This ecosystem fit is one of BigQuery's strongest traits. The warehouse is valuable not only because it can answer SQL questions, but because it integrates well into the rest of a cloud data platform.",
     ],
   },
   {
@@ -362,7 +360,8 @@ FILTER USING (region = 'EMEA');`,
 const glossaryTerms = [
   {
     term: 'Dataset',
-    definition: 'A logical container inside a project that holds tables, views, routines, and related BigQuery objects.',
+    definition:
+      'A logical container inside a project that holds tables, views, routines, and related BigQuery objects.',
   },
   {
     term: 'Table',
@@ -370,15 +369,18 @@ const glossaryTerms = [
   },
   {
     term: 'Schema',
-    definition: 'The structural definition of a table, including field names, types, nullability, and nesting.',
+    definition:
+      'The structural definition of a table, including field names, types, nullability, and nesting.',
   },
   {
     term: 'Partitioning',
-    definition: 'A storage strategy that divides data by a partition key so irrelevant portions of a table can be skipped.',
+    definition:
+      'A storage strategy that divides data by a partition key so irrelevant portions of a table can be skipped.',
   },
   {
     term: 'Clustering',
-    definition: 'A storage strategy that groups related values for selected columns to improve selective analytical access.',
+    definition:
+      'A storage strategy that groups related values for selected columns to improve selective analytical access.',
   },
   {
     term: 'STRUCT',
@@ -390,7 +392,8 @@ const glossaryTerms = [
   },
   {
     term: 'UNNEST',
-    definition: 'A SQL operation that expands an array into rows so repeated values can be analyzed relationally.',
+    definition:
+      'A SQL operation that expands an array into rows so repeated values can be analyzed relationally.',
   },
   {
     term: 'Query job',
@@ -398,27 +401,33 @@ const glossaryTerms = [
   },
   {
     term: 'Materialized view',
-    definition: 'A view-like warehouse object that stores precomputed results for repeated query patterns.',
+    definition:
+      'A view-like warehouse object that stores precomputed results for repeated query patterns.',
   },
   {
     term: 'Authorized view',
-    definition: 'A view used to expose controlled access to underlying data without granting direct access to every base table.',
+    definition:
+      'A view used to expose controlled access to underlying data without granting direct access to every base table.',
   },
   {
     term: 'Row-level security',
-    definition: 'A governance feature that restricts which rows a user or group can see in a table.',
+    definition:
+      'A governance feature that restricts which rows a user or group can see in a table.',
   },
   {
     term: 'Dry run',
-    definition: 'A query estimation mode that reports expected bytes processed without executing the query.',
+    definition:
+      'A query estimation mode that reports expected bytes processed without executing the query.',
   },
   {
     term: 'BigLake',
-    definition: 'A hybrid data-access pattern that extends governance and SQL access across warehouse and external storage layers.',
+    definition:
+      'A hybrid data-access pattern that extends governance and SQL access across warehouse and external storage layers.',
   },
   {
     term: 'Time travel',
-    definition: 'A recovery-oriented capability that allows access to prior table states within a retention window.',
+    definition:
+      'A recovery-oriented capability that allows access to prior table states within a retention window.',
   },
 ]
 
@@ -457,390 +466,105 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const bigQueryHelpStyles = `
-.bigquery-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.bigquery-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.bigquery-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bigquery-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.bigquery-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.bigquery-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.bigquery-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.bigquery-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.bigquery-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.bigquery-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.bigquery-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.bigquery-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.bigquery-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.bigquery-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.bigquery-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.bigquery-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.bigquery-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.bigquery-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bigquery-help-section {
-  margin: 0 0 20px;
-}
-
-.bigquery-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.bigquery-help-content p,
-.bigquery-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.bigquery-help-content p {
-  margin: 0 0 10px;
-}
-
-.bigquery-help-content ul,
-.bigquery-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.bigquery-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.bigquery-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.bigquery-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .bigquery-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .bigquery-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .bigquery-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPBigQueryPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP BigQuery (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP BigQuery',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP BigQuery',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="bigquery-help-page">
-      <style>{bigQueryHelpStyles}</style>
-      <div className="bigquery-help-window" role="presentation">
-        <header className="bigquery-help-titlebar">
-          <span className="bigquery-help-title">GCP BigQuery</span>
-          <div className="bigquery-help-controls">
-            <button className="bigquery-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="bigquery-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP BigQuery"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP BigQuery</h1>
+      <p className="bigquery-help-doc-subtitle">
+        Managed analytical warehouse and SQL platform for large-scale data work
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact BigQuery manual:
+        what the system is, where it fits in a GCP data platform, how warehouse objects and queries
+        work, how teams ingest and transform data, and which design habits matter for correctness,
+        cost, and performance.
+      </p>
 
-        <div className="bigquery-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`bigquery-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="bigquery-help-main">
-          <aside className="bigquery-help-toc" aria-label="Table of contents">
-            <h2 className="bigquery-help-toc-title">Contents</h2>
-            <ul className="bigquery-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="bigquery-help-content">
-            <h1 className="bigquery-help-doc-title">GCP BigQuery</h1>
-            <p className="bigquery-help-doc-subtitle">Managed analytical warehouse and SQL platform for large-scale data work</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact BigQuery manual: what the system is, where
-              it fits in a GCP data platform, how warehouse objects and queries work, how teams ingest and transform data, and
-              which design habits matter for correctness, cost, and performance.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="bigquery-help-section">
-                    <h2 className="bigquery-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="bigquery-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="bigquery-help-section">
-                  <h2 className="bigquery-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="bigquery-help-section">
-                    <h2 className="bigquery-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="bigquery-help-section">
-                    <h2 className="bigquery-help-heading">{example.title}</h2>
-                    <div className="bigquery-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="bigquery-help-section">
-                <h2 className="bigquery-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

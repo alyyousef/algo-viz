@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -67,13 +69,11 @@ const coreSteps = [
   },
   {
     title: 'Divide into left and right halves',
-    detail:
-      'Split at the median x coordinate so each half is balanced in size.',
+    detail: 'Split at the median x coordinate so each half is balanced in size.',
   },
   {
     title: 'Solve subproblems recursively',
-    detail:
-      'Compute the closest pair in each half; call their best distances dL and dR.',
+    detail: 'Compute the closest pair in each half; call their best distances dL and dR.',
   },
   {
     title: 'Build the middle strip',
@@ -110,8 +110,7 @@ const correctnessNotes = [
   },
   {
     title: 'No missed pairs',
-    detail:
-      'Every candidate closer than d must appear in the strip scan, ensuring completeness.',
+    detail: 'Every candidate closer than d must appear in the strip scan, ensuring completeness.',
   },
 ]
 
@@ -128,8 +127,7 @@ const complexityNotes = [
   },
   {
     title: 'Brute force baseline',
-    detail:
-      'The naive method checks all pairs in O(n^2), which becomes impractical for large n.',
+    detail: 'The naive method checks all pairs in O(n^2), which becomes impractical for large n.',
   },
   {
     title: 'Precision stability',
@@ -138,8 +136,7 @@ const complexityNotes = [
   },
   {
     title: 'Cache behavior',
-    detail:
-      'Sorted arrays and sequential scans make the algorithm cache-friendly in practice.',
+    detail: 'Sorted arrays and sequential scans make the algorithm cache-friendly in practice.',
   },
   {
     title: 'Higher dimensions',
@@ -177,8 +174,7 @@ const optimizations = [
   },
   {
     title: 'Presort by y once',
-    detail:
-      'Maintain a y-sorted list throughout recursion to avoid sorting the strip repeatedly.',
+    detail: 'Maintain a y-sorted list throughout recursion to avoid sorting the strip repeatedly.',
   },
   {
     title: 'Small n cutoff',
@@ -187,26 +183,22 @@ const optimizations = [
   },
   {
     title: 'Stable partitioning',
-    detail:
-      'Partition the y-sorted list into left and right in linear time to keep O(n log n).',
+    detail: 'Partition the y-sorted list into left and right in linear time to keep O(n log n).',
   },
   {
     title: 'Integer coordinates',
-    detail:
-      'When inputs are integers, squared distances fit in 64-bit for better determinism.',
+    detail: 'When inputs are integers, squared distances fit in 64-bit for better determinism.',
   },
   {
     title: 'Return both distance and pair',
-    detail:
-      'Track the closest pair alongside the distance so you do not need a second pass.',
+    detail: 'Track the closest pair alongside the distance so you do not need a second pass.',
   },
 ]
 
 const realWorldUses = [
   {
     context: 'Geospatial analysis',
-    detail:
-      'Find the nearest facilities, accident hotspots, or nearby devices on a map.',
+    detail: 'Find the nearest facilities, accident hotspots, or nearby devices on a map.',
   },
   {
     context: 'Computer graphics',
@@ -220,18 +212,15 @@ const realWorldUses = [
   },
   {
     context: 'Astronomy',
-    detail:
-      'Measure closest star or galaxy pairs in observational catalogs.',
+    detail: 'Measure closest star or galaxy pairs in observational catalogs.',
   },
   {
     context: 'Clustering and data analysis',
-    detail:
-      'Seed cluster algorithms or evaluate nearest-neighbor distances for anomaly detection.',
+    detail: 'Seed cluster algorithms or evaluate nearest-neighbor distances for anomaly detection.',
   },
   {
     context: 'Manufacturing and QA',
-    detail:
-      'Detect points that are too close together in CNC, PCB, or lithography layouts.',
+    detail: 'Detect points that are too close together in CNC, PCB, or lithography layouts.',
   },
 ]
 
@@ -285,8 +274,7 @@ function solve(pointsByX):
                 best = d
                 pair = (points[i], points[j])
     return (best, pair)`,
-    explanation:
-      'Small sets are cheaper to solve directly; the recursion stops here.',
+    explanation: 'Small sets are cheaper to solve directly; the recursion stops here.',
   },
 ]
 
@@ -319,8 +307,7 @@ const takeaways = [
 const glossaryTerms = [
   {
     term: 'Closest pair problem',
-    definition:
-      'The task of finding the two points in a set with the smallest Euclidean distance.',
+    definition: 'The task of finding the two points in a set with the smallest Euclidean distance.',
   },
   {
     term: 'Divide and conquer',
@@ -339,8 +326,7 @@ const glossaryTerms = [
   },
   {
     term: 'Brute force',
-    definition:
-      'The baseline method that checks every pair directly in O(n^2) time.',
+    definition: 'The baseline method that checks every pair directly in O(n^2) time.',
   },
   {
     term: 'KD-tree',
@@ -360,218 +346,6 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const closestPairHelpStyles = `
-.closest-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.closest-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-}
-
-.closest-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.closest-help98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.closest-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.closest-help98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.closest-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.closest-help98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.closest-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.closest-help98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.closest-help98-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.closest-help98-toctitle {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.closest-help98-toclist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.closest-help98-toclist li {
-  margin: 0 0 8px;
-}
-
-.closest-help98-toclist a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.closest-help98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.closest-help98-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.closest-help98-section {
-  margin: 0 0 20px;
-}
-
-.closest-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.closest-help98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.closest-help98-content p,
-.closest-help98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.closest-help98-content p {
-  margin: 0 0 10px;
-}
-
-.closest-help98-content ul,
-.closest-help98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.closest-help98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.closest-help98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.closest-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-.closest-help98-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .closest-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .closest-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -603,264 +377,192 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ClosestPairOfPointsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Closest Pair of Points',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Closest Pair of Points (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Closest Pair of Points',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="closest-help98-page">
-      <style>{closestPairHelpStyles}</style>
-      <div className="closest-help98-window" role="presentation">
-        <header className="closest-help98-titlebar">
-          <span className="closest-help98-titletext">Closest Pair of Points</span>
-          <div className="closest-help98-controls">
-            <button className="closest-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="closest-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Closest Pair of Points"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="closest-help98-title">Closest Pair of Points</h1>
+      <p>
+        The closest pair of points problem asks for the two points in a set with the smallest
+        Euclidean distance. A naive all-pairs check is quadratic, but the classic divide-and-conquer
+        method runs in O(n log n) by splitting the plane, solving subproblems, and only checking a
+        narrow strip around the split line.
+      </p>
+      <p>
+        This page keeps the material in help-document form: text first, code only where examples are
+        needed, and page-local tab state stored in the URL query string so the current section can
+        be restored.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="closest-help98-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="closest-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`closest-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              The algorithm uses spatial structure to avoid unnecessary comparisons. Once you know a
+              best distance d on each side, any closer cross-boundary pair must live in a thin
+              vertical strip. Sorting that strip by y makes the merge step linear.
+            </p>
+            <p>
+              The central idea is that geometry does part of the pruning work. You still solve
+              recursive subproblems like any divide-and-conquer algorithm, but the strip argument
+              prevents the combine step from falling back to quadratic behavior.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-        <div className="closest-help98-main">
-          <aside className="closest-help98-toc" aria-label="Table of contents">
-            <h2 className="closest-help98-toctitle">Contents</h2>
-            <ul className="closest-help98-toclist">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="core-walkthrough" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step</h2>
+            <ol>
+              {coreSteps.map((step) => (
+                <li key={step.title}>
+                  <strong>{step.title}:</strong> {step.detail}
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness</h2>
+            {correctnessNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              The geometry of the strip guarantees that checking only a few neighbors per point is
+              enough, so the merge step is linear and no candidate closest pair is missed.
+            </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              The closest pair problem is a textbook demonstration of how geometric constraints
+              reduce work from quadratic to near linear per level. Sorting is the dominant cost.
+            </p>
+            <ul>
+              {complexityVariants.map((item) => (
+                <li key={item.variant}>
+                  <strong>{item.variant}:</strong> time {item.time}, space {item.space}.{' '}
+                  {item.notes}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <section id="core-optimizations" className="bin98-section">
+            <h2 className="bin98-heading">Optimizations and Variants</h2>
+            {optimizations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-when-to-use" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+        </>
+      )}
 
-          <main className="closest-help98-content">
-            <h1 className="closest-help98-title">Closest Pair of Points</h1>
-            <p>
-              The closest pair of points problem asks for the two points in a set with the smallest Euclidean distance. A naive
-              all-pairs check is quadratic, but the classic divide-and-conquer method runs in O(n log n) by splitting the plane,
-              solving subproblems, and only checking a narrow strip around the split line.
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              This page keeps the material in help-document form: text first, code only where examples are needed, and page-local
-              tab state stored in the URL query string so the current section can be restored.
-            </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="closest-help98-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Overview</h2>
-                  <p>
-                    The algorithm uses spatial structure to avoid unnecessary comparisons. Once you know a best distance d on each
-                    side, any closer cross-boundary pair must live in a thin vertical strip. Sorting that strip by y makes the merge
-                    step linear.
-                  </p>
-                  <p>
-                    The central idea is that geometry does part of the pruning work. You still solve recursive subproblems like any
-                    divide-and-conquer algorithm, but the strip argument prevents the combine step from falling back to quadratic
-                    behavior.
-                  </p>
-                </section>
-                <hr className="closest-help98-divider" />
-                <section id="bp-history" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="closest-help98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="closest-help98-divider" />
-                <section id="bp-applications" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="closest-help98-divider" />
-                <section id="bp-takeaways" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="closest-help98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-walkthrough" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Step-by-Step</h2>
-                  <ol>
-                    {coreSteps.map((step) => (
-                      <li key={step.title}>
-                        <strong>{step.title}:</strong> {step.detail}
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-correctness" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Correctness</h2>
-                  {correctnessNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The geometry of the strip guarantees that checking only a few neighbors per point is enough, so the merge step
-                    is linear and no candidate closest pair is missed.
-                  </p>
-                </section>
-                <section id="core-complexity" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Complexity</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The closest pair problem is a textbook demonstration of how geometric constraints reduce work from quadratic to
-                    near linear per level. Sorting is the dominant cost.
-                  </p>
-                  <ul>
-                    {complexityVariants.map((item) => (
-                      <li key={item.variant}>
-                        <strong>{item.variant}:</strong> time {item.time}, space {item.space}. {item.notes}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-optimizations" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Optimizations and Variants</h2>
-                  {optimizations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-when-to-use" className="closest-help98-section">
-                  <h2 className="closest-help98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="closest-help98-section">
-                    <h2 className="closest-help98-heading">{example.title}</h2>
-                    <div className="closest-help98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="closest-help98-section">
-                <h2 className="closest-help98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

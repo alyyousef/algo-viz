@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMoments = [
   {
@@ -176,8 +175,7 @@ const traversalCheatSheet = [
   },
   {
     title: 'Level-order (BFS)',
-    detail:
-      'Visit nodes by depth. Finds nearest targets and supports width or level computations.',
+    detail: 'Visit nodes by depth. Finds nearest targets and supports width or level computations.',
   },
 ]
 
@@ -571,214 +569,6 @@ const practicePrompts = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const tree98HelpStyles = `
-.tree98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.tree98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.tree98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.tree98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.tree98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.tree98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.tree98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.tree98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.tree98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.tree98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.tree98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.tree98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.tree98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.tree98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.tree98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.tree98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.tree98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.tree98-section {
-  margin: 0 0 20px;
-}
-
-.tree98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.tree98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.tree98-content p,
-.tree98-content li,
-.tree98-content th,
-.tree98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.tree98-content p {
-  margin: 0 0 10px;
-}
-
-.tree98-content ul,
-.tree98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.tree98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.tree98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.tree98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .tree98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .tree98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -786,10 +576,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -823,314 +609,255 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function TreesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Trees',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Trees (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Trees',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="tree98-help-page">
-      <style>{tree98HelpStyles}</style>
-      <div className="tree98-window" role="presentation">
-        <header className="tree98-titlebar">
-          <span className="tree98-title-text">Trees</span>
-          <div className="tree98-title-controls">
-            <button className="tree98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="tree98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="tree98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`tree98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="tree98-main">
-          <aside className="tree98-toc" aria-label="Table of contents">
-            <h2 className="tree98-toc-title">Contents</h2>
-            <ul className="tree98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Trees"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Trees</h1>
+      <p>
+        Trees turn hierarchy into a performance tool. By constraining graphs to be acyclic and
+        rooted, we gain cheap pathfinding, ordered traversals, and predictable heights. From file
+        systems to game engines and query planners, trees make decisions, compress space, and bound
+        latency.
+      </p>
+      <p>
+        A tree is the simplest way to impose hierarchy on relationships. It is a connected acyclic
+        graph where a single root defines direction. That constraint is powerful: there is exactly
+        one simple path between any two nodes, so traversals never face ambiguity. The height of the
+        tree sets the cost of searches and updates, which is why balanced shapes are prized.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Trees let us store order, locality, and hierarchy all at once, enabling fast lookups
+              without the overhead of full graph machinery. Shape is a performance contract: when
+              height stays near logarithmic, operations stay predictably fast.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMoments.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-families" className="bin98-section">
+            <h2 className="bin98-heading">Major Tree Families</h2>
+            {treeFamilies.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-real-world" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorld.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-terms" className="bin98-section">
+            <h2 className="bin98-heading">Terminology</h2>
+            {terminology.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Structure, Traversal, and Balance</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <p>
+              Think of traversals as control over when you see a node relative to its children. That
+              ordering is what makes trees versatile: you can generate sorted sequences, evaluate
+              expressions, delete subtrees safely, or short-circuit searches based on partial
+              information.
+            </p>
+          </section>
+          <section id="core-traversals" className="bin98-section">
+            <h2 className="bin98-heading">Traversal Cheat Sheet</h2>
+            {traversalCheatSheet.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-balancing" className="bin98-section">
+            <h2 className="bin98-heading">Balancing Snapshot</h2>
+            {balancingSnapshot.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Invariants That Keep Trees Correct</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-layouts" className="bin98-section">
+            <h2 className="bin98-heading">Storage Layouts and Memory Behavior</h2>
+            {storageLayouts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-operations" className="bin98-section">
+            <h2 className="bin98-heading">Operations Playbook</h2>
+            {operationsPlaybook.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Performance Intuition</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              Asymptotic bounds assume unit-cost pointer follows, but real systems pay cache and
+              disk penalties. Trees with higher branching factors collapse height, reducing cache
+              misses and I/O.
+            </p>
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Considerations in Practice</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-augmentation" className="bin98-section">
+            <h2 className="bin98-heading">Augmentations That Add Power</h2>
+            <ul>
+              {augmentationIdeas.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="tree98-content">
-            <h1 className="tree98-doc-title">Trees</h1>
-            <p>
-              Trees turn hierarchy into a performance tool. By constraining graphs to be acyclic and rooted, we gain cheap pathfinding,
-              ordered traversals, and predictable heights. From file systems to game engines and query planners, trees make decisions,
-              compress space, and bound latency.
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Current Frontiers</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-testing" className="bin98-section">
+            <h2 className="bin98-heading">Testing Checklist</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="ex-practice" className="bin98-section">
+            <h2 className="bin98-heading">Practice and Build Challenges</h2>
+            <ul>
+              {practicePrompts.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {terminology.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.detail}
             </p>
-            <p>
-              A tree is the simplest way to impose hierarchy on relationships. It is a connected acyclic graph where a single root defines
-              direction. That constraint is powerful: there is exactly one simple path between any two nodes, so traversals never face
-              ambiguity. The height of the tree sets the cost of searches and updates, which is why balanced shapes are prized.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="tree98-section">
-                  <h2 className="tree98-heading">Overview</h2>
-                  <p>
-                    Trees let us store order, locality, and hierarchy all at once, enabling fast lookups without the overhead of full graph
-                    machinery. Shape is a performance contract: when height stays near logarithmic, operations stay predictably fast.
-                  </p>
-                </section>
-                <hr className="tree98-divider" />
-                <section id="bp-history" className="tree98-section">
-                  <h2 className="tree98-heading">Historical Context</h2>
-                  {historicalMoments.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="tree98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="tree98-section">
-                  <h2 className="tree98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-families" className="tree98-section">
-                  <h2 className="tree98-heading">Major Tree Families</h2>
-                  {treeFamilies.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-real-world" className="tree98-section">
-                  <h2 className="tree98-heading">Real-World Applications</h2>
-                  {realWorld.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-terms" className="tree98-section">
-                  <h2 className="tree98-heading">Terminology</h2>
-                  {terminology.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="tree98-section">
-                  <h2 className="tree98-heading">How It Works: Structure, Traversal, and Balance</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="tree98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p>
-                    Think of traversals as control over when you see a node relative to its children. That ordering is what makes trees
-                    versatile: you can generate sorted sequences, evaluate expressions, delete subtrees safely, or short-circuit searches
-                    based on partial information.
-                  </p>
-                </section>
-                <section id="core-traversals" className="tree98-section">
-                  <h2 className="tree98-heading">Traversal Cheat Sheet</h2>
-                  {traversalCheatSheet.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-balancing" className="tree98-section">
-                  <h2 className="tree98-heading">Balancing Snapshot</h2>
-                  {balancingSnapshot.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="tree98-section">
-                  <h2 className="tree98-heading">Invariants That Keep Trees Correct</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-layouts" className="tree98-section">
-                  <h2 className="tree98-heading">Storage Layouts and Memory Behavior</h2>
-                  {storageLayouts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-operations" className="tree98-section">
-                  <h2 className="tree98-heading">Operations Playbook</h2>
-                  {operationsPlaybook.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="tree98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-complexity" className="tree98-section">
-                  <h2 className="tree98-heading">Complexity Analysis and Performance Intuition</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Asymptotic bounds assume unit-cost pointer follows, but real systems pay cache and disk penalties. Trees with higher
-                    branching factors collapse height, reducing cache misses and I/O.
-                  </p>
-                </section>
-                <section id="core-performance" className="tree98-section">
-                  <h2 className="tree98-heading">Performance Considerations in Practice</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-augmentation" className="tree98-section">
-                  <h2 className="tree98-heading">Augmentations That Add Power</h2>
-                  <ul>
-                    {augmentationIdeas.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decision" className="tree98-section">
-                  <h2 className="tree98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="tree98-section">
-                  <h2 className="tree98-heading">Advanced Insights and Current Frontiers</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="tree98-section">
-                  <h2 className="tree98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="tree98-section">
-                  <h2 className="tree98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="tree98-subheading">{example.title}</h3>
-                      <div className="tree98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-testing" className="tree98-section">
-                  <h2 className="tree98-heading">Testing Checklist</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="ex-practice" className="tree98-section">
-                  <h2 className="tree98-heading">Practice and Build Challenges</h2>
-                  <ul>
-                    {practicePrompts.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="tree98-section">
-                <h2 className="tree98-heading">Glossary</h2>
-                {terminology.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.detail}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

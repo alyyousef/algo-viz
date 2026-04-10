@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const overviewSections = [
   {
@@ -394,540 +392,205 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'exp98-glossary', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
-const expressHelpStyles = `
-.exp98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.exp98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.exp98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.exp98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.exp98-title-controls {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.exp98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.exp98-control:focus-visible,
-.exp98-tab:focus-visible,
-.exp98-toc-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
-.exp98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.exp98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b7b7b7;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.exp98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.exp98-main {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.exp98-toc {
-  overflow: auto;
-  padding: 12px 12px 18px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.exp98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.exp98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.exp98-toc-item + .exp98-toc-item {
-  margin-top: 8px;
-}
-
-.exp98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.exp98-content {
-  overflow: auto;
-  padding: 16px 22px 24px;
-  background: #ffffff;
-}
-
-.exp98-doc-title {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.exp98-intro {
-  margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.exp98-section {
-  margin: 0 0 22px;
-}
-
-.exp98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.exp98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.exp98-divider {
-  margin: 14px 0 16px;
-  border: 0;
-  border-top: 1px solid #d4d4d4;
-}
-
-.exp98-content p,
-.exp98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.exp98-content p {
-  margin: 0 0 10px;
-}
-
-.exp98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.exp98-content li + li {
-  margin-top: 4px;
-}
-
-.exp98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px 9px;
-  background: #f3f3f3;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.exp98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .exp98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .exp98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .exp98-title {
-    font-size: 13px;
-    max-width: calc(100% - 72px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .exp98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
-
 export default function ExpressJsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const requestedTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(location.search)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Express.js (Backend) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, location.search, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    if (tab === activeTab) {
-      return
-    }
-
-    const nextParams = new URLSearchParams(location.search)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Express.js (Backend)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Express.js (Backend)',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="exp98-help-page">
-      <style>{expressHelpStyles}</style>
-      <div className="exp98-window" role="presentation">
-        <header className="exp98-titlebar">
-          <span className="exp98-title">Express.js (Backend)</span>
-          <div className="exp98-title-controls">
-            <button
-              className="exp98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="exp98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Express.js (Backend)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Express.js (Backend)</h1>
+      <p className="exp98-intro">
+        This page is a backend-focused overview of Express.js as a Node web framework. It explains
+        the middleware pipeline, routing model, ecosystem fit, operational tradeoffs, and the
+        architectural discipline needed to keep Express applications maintainable as they grow.
+      </p>
 
-        <div className="exp98-tabs" role="tablist" aria-label="Express Backend Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`exp98-tab ${activeTab === tab.id ? 'exp98-tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="exp98-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                <p>{section.body}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="exp98-main">
-          <aside className="exp98-toc" aria-label="Table of contents">
-            <h2 className="exp98-toc-title">Contents</h2>
-            <ul className="exp98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="exp98-toc-item">
-                  <a href={`#${section.id}`} className="exp98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="exp98-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <ul>
+              {whyItMatters.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="exp98-content">
-            <h1 className="exp98-doc-title">Express.js (Backend)</h1>
-            <p className="exp98-intro">
-              This page is a backend-focused overview of Express.js as a Node web framework. It
-              explains the middleware pipeline, routing model, ecosystem fit, operational tradeoffs,
-              and the architectural discipline needed to keep Express applications maintainable as
-              they grow.
+          <hr className="bin98-divider" />
+
+          <section id="exp98-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="exp98-themes" className="bin98-section">
+            <h2 className="bin98-heading">Big Picture Themes</h2>
+            {bigPictureThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="exp98-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="exp98-signals" className="bin98-section">
+            <h2 className="bin98-heading">Topic Signals</h2>
+            {topicSignals.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {coreFoundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-features" className="bin98-section">
+            <h2 className="bin98-heading">Framework Features</h2>
+            {frameworkFeatures.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-runtime" className="bin98-section">
+            <h2 className="bin98-heading">Runtime and Operations</h2>
+            {runtimeAndOperations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-uses" className="bin98-section">
+            <h2 className="bin98-heading">Ecosystem Uses</h2>
+            {ecosystemUses.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-failures" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="exp98-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Study Checklist</h2>
+            <ul>
+              {studyChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>
+                <strong>Area:</strong> {example.area}
+              </p>
+              <p>{example.intro}</p>
+              <p>
+                <strong>Why this example fits:</strong> {example.whyFit}
+              </p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="exp98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((entry) => (
+            <p key={entry.term}>
+              <strong>{entry.term}:</strong> {entry.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="exp98-overview" className="exp98-section">
-                  <h2 className="exp98-heading">Overview</h2>
-                  {overviewSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="exp98-subheading">{section.title}</h3>
-                      <p>{section.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exp98-divider" />
-
-                <section id="exp98-why" className="exp98-section">
-                  <h2 className="exp98-heading">Why It Matters</h2>
-                  <ul>
-                    {whyItMatters.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="exp98-divider" />
-
-                <section id="exp98-history" className="exp98-section">
-                  <h2 className="exp98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exp98-divider" />
-
-                <section id="exp98-themes" className="exp98-section">
-                  <h2 className="exp98-heading">Big Picture Themes</h2>
-                  {bigPictureThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="exp98-divider" />
-
-                <section id="exp98-takeaways" className="exp98-section">
-                  <h2 className="exp98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="exp98-signals" className="exp98-section">
-                  <h2 className="exp98-heading">Topic Signals</h2>
-                  {topicSignals.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-foundations" className="exp98-section">
-                  <h2 className="exp98-heading">Foundations</h2>
-                  {coreFoundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-features" className="exp98-section">
-                  <h2 className="exp98-heading">Framework Features</h2>
-                  {frameworkFeatures.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-runtime" className="exp98-section">
-                  <h2 className="exp98-heading">Runtime and Operations</h2>
-                  {runtimeAndOperations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-uses" className="exp98-section">
-                  <h2 className="exp98-heading">Ecosystem Uses</h2>
-                  {ecosystemUses.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-compare" className="exp98-section">
-                  <h2 className="exp98-heading">Compare and Contrast</h2>
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-failures" className="exp98-section">
-                  <h2 className="exp98-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="exp98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="exp98-checklist" className="exp98-section">
-                  <h2 className="exp98-heading">Study Checklist</h2>
-                  <ul>
-                    {studyChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="exp98-section">
-                    <h2 className="exp98-heading">{example.title}</h2>
-                    <p>
-                      <strong>Area:</strong> {example.area}
-                    </p>
-                    <p>{example.intro}</p>
-                    <p>
-                      <strong>Why this example fits:</strong> {example.whyFit}
-                    </p>
-                    <div className="exp98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="exp98-glossary" className="exp98-section">
-                <h2 className="exp98-heading">Glossary</h2>
-                {glossary.map((entry) => (
-                  <p key={entry.term}>
-                    <strong>{entry.term}:</strong> {entry.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

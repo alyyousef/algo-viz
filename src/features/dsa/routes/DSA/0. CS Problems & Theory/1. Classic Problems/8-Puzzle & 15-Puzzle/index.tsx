@@ -1,6 +1,5 @@
-
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -14,8 +13,7 @@ const bigPicture = [
   },
   {
     title: 'Why it matters',
-    details:
-      'It is a classic testbed for search algorithms, heuristics, and optimal path finding.',
+    details: 'It is a classic testbed for search algorithms, heuristics, and optimal path finding.',
     notes:
       'Many AI and algorithms courses use it to explain state spaces and admissible heuristics.',
   },
@@ -23,8 +21,7 @@ const bigPicture = [
     title: 'What it teaches',
     details:
       'State representation, branching factor, pruning, and trade-offs between time and memory.',
-    notes:
-      'It shows why blind search explodes and why good heuristics make problems tractable.',
+    notes: 'It shows why blind search explodes and why good heuristics make problems tractable.',
   },
 ]
 
@@ -33,22 +30,17 @@ const history = [
     title: '1870s: Sam Loyd popularizes the 15-puzzle',
     details:
       'The 15-puzzle became a worldwide craze, with prizes offered for supposedly impossible configurations.',
-    notes:
-      'It helped motivate early thinking about permutation parity and solvability.',
+    notes: 'It helped motivate early thinking about permutation parity and solvability.',
   },
   {
     title: '1950s-1970s: Search algorithms formalized',
-    details:
-      'Researchers used the 8-puzzle to compare BFS, DFS, A*, and heuristic design.',
-    notes:
-      'It became a standard example for admissible heuristics and optimal search.',
+    details: 'Researchers used the 8-puzzle to compare BFS, DFS, A*, and heuristic design.',
+    notes: 'It became a standard example for admissible heuristics and optimal search.',
   },
   {
     title: '1990s+: Pattern databases',
-    details:
-      'Large precomputed heuristic tables drastically improved 15-puzzle performance.',
-    notes:
-      'This inspired a wave of heuristic engineering for hard combinatorial problems.',
+    details: 'Large precomputed heuristic tables drastically improved 15-puzzle performance.',
+    notes: 'This inspired a wave of heuristic engineering for hard combinatorial problems.',
   },
 ]
 
@@ -60,8 +52,7 @@ const coreConcepts = [
   },
   {
     title: 'Actions (moves)',
-    detail:
-      'From any state, you can move the blank up, down, left, or right if inside the board.',
+    detail: 'From any state, you can move the blank up, down, left, or right if inside the board.',
   },
   {
     title: 'Goal test',
@@ -70,8 +61,7 @@ const coreConcepts = [
   },
   {
     title: 'Cost model',
-    detail:
-      'Each move usually costs 1, so shortest path equals fewest moves.',
+    detail: 'Each move usually costs 1, so shortest path equals fewest moves.',
   },
   {
     title: 'State graph',
@@ -93,13 +83,11 @@ const solvabilityRules = [
   },
   {
     title: '8-puzzle (odd width)',
-    detail:
-      'A configuration is solvable if the number of inversions is even.',
+    detail: 'A configuration is solvable if the number of inversions is even.',
   },
   {
     title: '15-puzzle (even width)',
-    detail:
-      'A configuration is solvable if (inversions + blankRowFromBottom) is even.',
+    detail: 'A configuration is solvable if (inversions + blankRowFromBottom) is even.',
   },
   {
     title: 'Why this works',
@@ -144,13 +132,11 @@ const algorithmOptions = [
   },
   {
     name: 'Uniform Cost Search',
-    detail:
-      'Same as BFS when all moves cost 1. Useful when costs differ.',
+    detail: 'Same as BFS when all moves cost 1. Useful when costs differ.',
   },
   {
     name: 'Depth-First Search (DFS)',
-    detail:
-      'Low memory but can get lost deep and is not optimal without depth limits.',
+    detail: 'Low memory but can get lost deep and is not optimal without depth limits.',
   },
   {
     name: 'Iterative Deepening DFS (IDDFS)',
@@ -164,49 +150,41 @@ const algorithmOptions = [
   },
   {
     name: 'IDA*',
-    detail:
-      'Iterative deepening A* reduces memory by doing depth-limited f-cost searches.',
+    detail: 'Iterative deepening A* reduces memory by doing depth-limited f-cost searches.',
   },
   {
     name: 'Bidirectional Search',
-    detail:
-      'Search from start and goal simultaneously; works well when reverse moves are easy.',
+    detail: 'Search from start and goal simultaneously; works well when reverse moves are easy.',
   },
 ]
 
 const heuristics = [
   {
     title: 'Misplaced tiles (Hamming)',
-    detail:
-      'Count how many tiles are not in their goal positions. Simple but weak.',
+    detail: 'Count how many tiles are not in their goal positions. Simple but weak.',
   },
   {
     title: 'Manhattan distance',
-    detail:
-      'Sum of distances of each tile from its goal position. Admissible and standard.',
+    detail: 'Sum of distances of each tile from its goal position. Admissible and standard.',
   },
   {
     title: 'Linear conflict',
-    detail:
-      'Adds extra cost when two tiles are in the same row or column but in the wrong order.',
+    detail: 'Adds extra cost when two tiles are in the same row or column but in the wrong order.',
   },
   {
     title: 'Pattern database',
-    detail:
-      'Precompute exact distances for subsets of tiles. Combine for a stronger heuristic.',
+    detail: 'Precompute exact distances for subsets of tiles. Combine for a stronger heuristic.',
   },
   {
     title: 'Corner and edge conflicts',
-    detail:
-      'Add penalties for tiles blocking correct placement of corner or edge tiles.',
+    detail: 'Add penalties for tiles blocking correct placement of corner or edge tiles.',
   },
 ]
 
 const admissibilityNotes = [
   {
     title: 'Admissible heuristic',
-    detail:
-      'Never overestimates true distance. Guarantees optimality for A* and IDA*.',
+    detail: 'Never overestimates true distance. Guarantees optimality for A* and IDA*.',
   },
   {
     title: 'Consistent heuristic',
@@ -269,9 +247,9 @@ const comparisons = [
       'Sudoku is a constraint satisfaction and deduction problem. The puzzle is pure search with a simple transition model.',
   },
   {
-    title: '8/15-puzzle vs Rubik\'s Cube',
+    title: "8/15-puzzle vs Rubik's Cube",
     detail:
-      'Rubik\'s has a far larger state space and higher branching. The puzzle is smaller but still hard without heuristics.',
+      "Rubik's has a far larger state space and higher branching. The puzzle is smaller but still hard without heuristics.",
   },
   {
     title: '8/15-puzzle vs Graph shortest path',
@@ -293,8 +271,7 @@ const pitfalls = [
   },
   {
     mistake: 'No closed set',
-    description:
-      'Without a visited set, search will revisit states and blow up quickly.',
+    description: 'Without a visited set, search will revisit states and blow up quickly.',
   },
   {
     mistake: 'Inefficient state encoding',
@@ -316,13 +293,11 @@ const variants = [
   },
   {
     title: 'Toroidal puzzle',
-    detail:
-      'The board wraps around edges, changing the state graph and solvability structure.',
+    detail: 'The board wraps around edges, changing the state graph and solvability structure.',
   },
   {
     title: 'Multiple blanks',
-    detail:
-      'More than one empty space increases branching and changes solvability constraints.',
+    detail: 'More than one empty space increases branching and changes solvability constraints.',
   },
 ]
 
@@ -334,26 +309,22 @@ const optimizationTips = [
   },
   {
     title: 'Precompute goal positions',
-    detail:
-      'Store goal coordinates for each tile to compute Manhattan distance quickly.',
+    detail: 'Store goal coordinates for each tile to compute Manhattan distance quickly.',
   },
   {
     title: 'Move ordering',
-    detail:
-      'In IDA*, expand moves that reduce the heuristic first to find solutions earlier.',
+    detail: 'In IDA*, expand moves that reduce the heuristic first to find solutions earlier.',
   },
   {
     title: 'Transposition table',
-    detail:
-      'Cache visited states with best g-cost to prune worse paths.',
+    detail: 'Cache visited states with best g-cost to prune worse paths.',
   },
 ]
 
 const whatsItFor = [
   {
     title: 'Teaching search',
-    detail:
-      'Used to teach BFS, DFS, A*, IDA*, and the impact of heuristics on node expansions.',
+    detail: 'Used to teach BFS, DFS, A*, IDA*, and the impact of heuristics on node expansions.',
   },
   {
     title: 'Benchmarking heuristics',
@@ -362,13 +333,11 @@ const whatsItFor = [
   },
   {
     title: 'Explaining admissibility',
-    detail:
-      'A clean example for why never overestimate matters and how it guarantees optimality.',
+    detail: 'A clean example for why never overestimate matters and how it guarantees optimality.',
   },
   {
     title: 'Algorithm design patterns',
-    detail:
-      'Demonstrates how to combine precomputation (PDBs) with runtime search.',
+    detail: 'Demonstrates how to combine precomputation (PDBs) with runtime search.',
   },
 ]
 
@@ -380,13 +349,11 @@ const realWorldConnections = [
   },
   {
     title: 'Compiler optimization',
-    detail:
-      'Heuristic search resembles register allocation and instruction scheduling problems.',
+    detail: 'Heuristic search resembles register allocation and instruction scheduling problems.',
   },
   {
     title: 'Heuristic engineering',
-    detail:
-      'Pattern databases are an example of trading memory for speed in search tasks.',
+    detail: 'Pattern databases are an example of trading memory for speed in search tasks.',
   },
 ]
 
@@ -420,8 +387,7 @@ const examples = [
         f = tentative + manhattan(neighbor)
         open.pushOrUpdate(neighbor, f)
   return failure`,
-    explanation:
-      'A* finds an optimal solution when the heuristic never overestimates.',
+    explanation: 'A* finds an optimal solution when the heuristic never overestimates.',
   },
   {
     title: 'Manhattan distance example',
@@ -436,31 +402,26 @@ State:
 0 7 8
 
 Manhattan = dist(7) + dist(8) = 1 + 1 = 2`,
-    explanation:
-      'Each tile contributes its row and column distance from the goal position.',
+    explanation: 'Each tile contributes its row and column distance from the goal position.',
   },
 ]
 
 const evaluationChecklist = [
   {
     title: 'Correctness',
-    detail:
-      'Does the solver always return a valid sequence of moves that reaches the goal?',
+    detail: 'Does the solver always return a valid sequence of moves that reaches the goal?',
   },
   {
     title: 'Optimality',
-    detail:
-      'Does it return the shortest solution length? (Requires admissible heuristic.)',
+    detail: 'Does it return the shortest solution length? (Requires admissible heuristic.)',
   },
   {
     title: 'Performance',
-    detail:
-      'Track nodes expanded, max frontier size, and runtime.',
+    detail: 'Track nodes expanded, max frontier size, and runtime.',
   },
   {
     title: 'Memory',
-    detail:
-      'A* can blow up memory. IDA* keeps memory low but can re-expand nodes.',
+    detail: 'A* can blow up memory. IDA* keeps memory low but can re-expand nodes.',
   },
 ]
 
@@ -475,28 +436,23 @@ const keyTakeaways = [
 const glossary = [
   {
     term: 'Inversion',
-    definition:
-      'A pair of tiles out of order in the flattened board; used to test solvability.',
+    definition: 'A pair of tiles out of order in the flattened board; used to test solvability.',
   },
   {
     term: 'Admissible heuristic',
-    definition:
-      'A heuristic that never overestimates the true distance to the goal.',
+    definition: 'A heuristic that never overestimates the true distance to the goal.',
   },
   {
     term: 'Consistent heuristic',
-    definition:
-      'A heuristic where f = g + h never decreases along any path.',
+    definition: 'A heuristic where f = g + h never decreases along any path.',
   },
   {
     term: 'Pattern database',
-    definition:
-      'A precomputed table of exact distances for subsets of tiles, used as a heuristic.',
+    definition: 'A precomputed table of exact distances for subsets of tiles, used as a heuristic.',
   },
   {
     term: 'State space',
-    definition:
-      'The graph of all reachable puzzle configurations connected by legal moves.',
+    definition: 'The graph of all reachable puzzle configurations connected by legal moves.',
   },
   {
     term: 'Branching factor',
@@ -505,554 +461,260 @@ const glossary = [
   },
 ]
 
+type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
+const tabs: Array<{ id: TabId; label: string }> = [
+  { id: 'big-picture', label: 'The Big Picture' },
+  { id: 'core-concepts', label: 'Core Concepts' },
+  { id: 'examples', label: 'Examples' },
+  { id: 'glossary', label: 'Glossary' },
+]
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [
+    { id: 'bp-overview', label: 'Overview' },
+    { id: 'bp-history', label: 'Historical Context' },
+    { id: 'bp-takeaways', label: 'Key Takeaways' },
+  ],
+  'core-concepts': [
+    { id: 'core-concepts', label: 'Core Concepts' },
+    { id: 'core-thinking', label: 'How to Think' },
+    { id: 'core-solvable', label: 'Solvability Rules' },
+    { id: 'core-algorithms', label: 'Algorithm Options' },
+    { id: 'core-heuristics', label: 'Heuristics' },
+    { id: 'core-admissible', label: 'Admissibility Notes' },
+    { id: 'core-complexity', label: 'Complexity Table' },
+    { id: 'core-use', label: 'What It Is Used For' },
+    { id: 'core-optimizations', label: 'Optimization Tips' },
+    { id: 'core-compare', label: 'Compare and Contrast' },
+    { id: 'core-pitfalls', label: 'Common Pitfalls' },
+    { id: 'core-variants', label: 'Variants and Extensions' },
+    { id: 'core-real', label: 'Real-World Connections' },
+    { id: 'core-eval', label: 'Evaluate a Solver' },
+  ],
+  examples: [{ id: 'ex-worked', label: 'Worked Examples' }],
+  glossary: [{ id: 'glossary-terms', label: 'Terms' }],
+}
+
 export default function EightPuzzlePage(): JSX.Element {
-  type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return tab === 'big-picture' || tab === 'core-concepts' || tab === 'examples' || tab === 'glossary'
-      ? tab
-      : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: '8-Puzzle &amp; 15-Puzzle',
+    defaultTab: 'big-picture',
   })
 
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const label =
-      activeTab === 'big-picture'
-        ? 'The Big Picture'
-        : activeTab === 'core-concepts'
-          ? 'Core Concepts'
-          : activeTab === 'examples'
-            ? 'Examples'
-            : 'Glossary'
-    document.title = `8-Puzzle & 15-Puzzle (${label})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: '8-Puzzle & 15-Puzzle',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const tabs: Array<{ id: TabId; label: string }> = [
-    { id: 'big-picture', label: 'The Big Picture' },
-    { id: 'core-concepts', label: 'Core Concepts' },
-    { id: 'examples', label: 'Examples' },
-    { id: 'glossary', label: 'Glossary' },
-  ]
-
-  const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
-    'big-picture': [
-      { id: 'bp-overview', label: 'Overview' },
-      { id: 'bp-history', label: 'Historical Context' },
-      { id: 'bp-takeaways', label: 'Key Takeaways' },
-    ],
-    'core-concepts': [
-      { id: 'core-concepts', label: 'Core Concepts' },
-      { id: 'core-thinking', label: 'How to Think' },
-      { id: 'core-solvable', label: 'Solvability Rules' },
-      { id: 'core-algorithms', label: 'Algorithm Options' },
-      { id: 'core-heuristics', label: 'Heuristics' },
-      { id: 'core-admissible', label: 'Admissibility Notes' },
-      { id: 'core-complexity', label: 'Complexity Table' },
-      { id: 'core-use', label: 'What It Is Used For' },
-      { id: 'core-optimizations', label: 'Optimization Tips' },
-      { id: 'core-compare', label: 'Compare and Contrast' },
-      { id: 'core-pitfalls', label: 'Common Pitfalls' },
-      { id: 'core-variants', label: 'Variants and Extensions' },
-      { id: 'core-real', label: 'Real-World Connections' },
-      { id: 'core-eval', label: 'Evaluate a Solver' },
-    ],
-    examples: [{ id: 'ex-worked', label: 'Worked Examples' }],
-    glossary: [{ id: 'glossary-terms', label: 'Terms' }],
-  }
-
-  const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.win98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0 0 10px;
-  font-size: 12px;
-}
-
-.win98-table th,
-.win98-table td {
-  border: 1px solid #808080;
-  padding: 6px 8px;
-  text-align: left;
-}
-
-.win98-table thead th {
-  background: #e6e6e6;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-  `
-
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">8-Puzzle &amp; 15-Puzzle</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+    <TopicPageShell
+      title="8-Puzzle &amp; 15-Puzzle"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">8-Puzzle &amp; 15-Puzzle</h1>
+      <p>
+        The 8-puzzle and 15-puzzle are classic sliding-tile problems that highlight how search
+        algorithms behave in large state spaces. With only one empty space, each move is simple, but
+        finding an optimal sequence can be difficult without strong heuristics. These puzzles are
+        the go-to teaching example for A*, admissible heuristics, and solvability.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">The Big Picture</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {history.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-concepts" className="bin98-section">
+            <h2 className="bin98-heading">Core Concepts</h2>
+            {coreConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-thinking" className="bin98-section">
+            <h2 className="bin98-heading">How to Think About It</h2>
+            {howToThink.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-solvable" className="bin98-section">
+            <h2 className="bin98-heading">Solvability Rules</h2>
+            {solvabilityRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              <strong>Practical tip:</strong> If your solver runs forever on a random board, it is
+              often because the board is unsolvable. The inversion check is O(n^2) and avoids huge
+              wasted searches.
+            </p>
+          </section>
+          <section id="core-algorithms" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Options</h2>
+            {algorithmOptions.map((item) => (
+              <p key={item.name}>
+                <strong>{item.name}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-heuristics" className="bin98-section">
+            <h2 className="bin98-heading">Heuristics That Matter</h2>
+            {heuristics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-admissible" className="bin98-section">
+            <h2 className="bin98-heading">Admissibility Notes</h2>
+            {admissibilityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Practical Trade-offs</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {complexityTable.map((row) => (
+                  <tr key={row.approach}>
+                    <td>{row.approach}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          <section id="core-use" className="bin98-section">
+            <h2 className="bin98-heading">What It Is Used For</h2>
+            {whatsItFor.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-optimizations" className="bin98-section">
+            <h2 className="bin98-heading">Optimization Tips</h2>
+            {optimizationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisons.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((pitfall) => (
+                <li key={pitfall.mistake}>
+                  <strong>{pitfall.mistake}:</strong> {pitfall.description}
                 </li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">8-Puzzle &amp; 15-Puzzle</h1>
-            <p>
-              The 8-puzzle and 15-puzzle are classic sliding-tile problems that highlight how search algorithms behave in large
-              state spaces. With only one empty space, each move is simple, but finding an optimal sequence can be difficult without
-              strong heuristics. These puzzles are the go-to teaching example for A*, admissible heuristics, and solvability.
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-real" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Connections</h2>
+            {realWorldConnections.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-eval" className="bin98-section">
+            <h2 className="bin98-heading">How to Evaluate a Solver</h2>
+            {evaluationChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="ex-worked" className="bin98-section">
+          <h2 className="bin98-heading">Worked Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">The Big Picture</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {history.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-concepts" className="win98-section">
-                  <h2 className="win98-heading">Core Concepts</h2>
-                  {coreConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-thinking" className="win98-section">
-                  <h2 className="win98-heading">How to Think About It</h2>
-                  {howToThink.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-solvable" className="win98-section">
-                  <h2 className="win98-heading">Solvability Rules</h2>
-                  {solvabilityRules.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    <strong>Practical tip:</strong> If your solver runs forever on a random board, it is often because the board is
-                    unsolvable. The inversion check is O(n^2) and avoids huge wasted searches.
-                  </p>
-                </section>
-                <section id="core-algorithms" className="win98-section">
-                  <h2 className="win98-heading">Algorithm Options</h2>
-                  {algorithmOptions.map((item) => (
-                    <p key={item.name}>
-                      <strong>{item.name}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-heuristics" className="win98-section">
-                  <h2 className="win98-heading">Heuristics That Matter</h2>
-                  {heuristics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-admissible" className="win98-section">
-                  <h2 className="win98-heading">Admissibility Notes</h2>
-                  {admissibilityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="win98-section">
-                  <h2 className="win98-heading">Complexity and Practical Trade-offs</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Approach</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Note</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {complexityTable.map((row) => (
-                        <tr key={row.approach}>
-                          <td>{row.approach}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.note}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-use" className="win98-section">
-                  <h2 className="win98-heading">What It Is Used For</h2>
-                  {whatsItFor.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-optimizations" className="win98-section">
-                  <h2 className="win98-heading">Optimization Tips</h2>
-                  {optimizationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {comparisons.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((pitfall) => (
-                      <li key={pitfall.mistake}>
-                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-variants" className="win98-section">
-                  <h2 className="win98-heading">Variants and Extensions</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-real" className="win98-section">
-                  <h2 className="win98-heading">Real-World Connections</h2>
-                  {realWorldConnections.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-eval" className="win98-section">
-                  <h2 className="win98-heading">How to Evaluate a Solver</h2>
-                  {evaluationChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-worked" className="win98-section">
-                <h2 className="win98-heading">Worked Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="win98-subheading">{example.title}</h3>
-                    <div className="win98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

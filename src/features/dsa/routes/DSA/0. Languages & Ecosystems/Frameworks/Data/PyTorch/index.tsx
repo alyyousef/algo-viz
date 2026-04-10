@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'PyTorch'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -489,18 +487,15 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Forward pass',
-        definition:
-          'The computation that maps inputs through a model to outputs.',
+        definition: 'The computation that maps inputs through a model to outputs.',
       },
       {
         term: 'Loss function',
-        definition:
-          'The scalar objective minimized during training.',
+        definition: 'The scalar objective minimized during training.',
       },
       {
         term: 'Optimizer',
-        definition:
-          'The component that updates parameters using gradients.',
+        definition: 'The component that updates parameters using gradients.',
       },
       {
         term: 'Backward pass',
@@ -530,13 +525,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Dataset',
-        definition:
-          'An object that defines how samples are accessed in a PyTorch data pipeline.',
+        definition: 'An object that defines how samples are accessed in a PyTorch data pipeline.',
       },
       {
         term: 'DataLoader',
-        definition:
-          'An iterator utility that batches, shuffles, and loads data from a Dataset.',
+        definition: 'An iterator utility that batches, shuffles, and loads data from a Dataset.',
       },
       {
         term: 'state_dict',
@@ -550,8 +543,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Device placement',
-        definition:
-          'The assignment of tensors and modules to CPU or accelerator devices.',
+        definition: 'The assignment of tensors and modules to CPU or accelerator devices.',
       },
     ],
   },
@@ -576,13 +568,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Mini-batch',
-        definition:
-          'A small subset of training data processed together in one optimization step.',
+        definition: 'A small subset of training data processed together in one optimization step.',
       },
       {
         term: 'Inference',
-        definition:
-          'Running a trained model to produce outputs without updating parameters.',
+        definition: 'Running a trained model to produce outputs without updating parameters.',
       },
       {
         term: 'Scheduler',
@@ -608,230 +598,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const pytorchHelpStyles = `
-.pytorch-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.pytorch-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.pytorch-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.pytorch-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.pytorch-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.pytorch-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.pytorch-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.pytorch-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.pytorch-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.pytorch-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.pytorch-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.pytorch-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.pytorch-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.pytorch-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.pytorch-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.pytorch-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.pytorch-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.pytorch-help98-section {
-  margin: 0 0 20px;
-}
-
-.pytorch-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.pytorch-help98-content p,
-.pytorch-help98-content li,
-.pytorch-help98-content dd,
-.pytorch-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.pytorch-help98-content p,
-.pytorch-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.pytorch-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.pytorch-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.pytorch-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.pytorch-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.pytorch-help98-glossary {
-  margin: 0;
-}
-
-.pytorch-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .pytorch-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .pytorch-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .pytorch-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -891,118 +657,47 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function PyTorchPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Py Torch Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="pytorch-help98-page">
-      <style>{pytorchHelpStyles}</style>
-      <div className="pytorch-help98-window" role="presentation">
-        <header className="pytorch-help98-titlebar">
-          <span className="pytorch-help98-title">{PAGE_TITLE}</span>
-          <div className="pytorch-help98-controls">
-            <button className="pytorch-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="pytorch-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Py Torch Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="pytorch-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`pytorch-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="pytorch-help98-main">
-          <aside className="pytorch-help98-toc" aria-label="Table of contents">
-            <h2 className="pytorch-help98-toc-title">Contents</h2>
-            <ul className="pytorch-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="pytorch-help98-content">
-            <h1 className="pytorch-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="pytorch-help98-divider" />
-
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) => renderContentSection(section, index === bigPictureSections.length - 1))
-              : null}
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) => renderExampleSection(section, index === exampleSections.length - 1))
-              : null}
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

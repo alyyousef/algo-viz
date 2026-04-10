@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -85,8 +84,7 @@ const mechanics = [
 const problemPatterns = [
   {
     title: 'Shortest hop paths',
-    detail:
-      'When every edge has equal cost, BFS gives the exact shortest path in number of edges.',
+    detail: 'When every edge has equal cost, BFS gives the exact shortest path in number of edges.',
   },
   {
     title: 'Level-based properties',
@@ -105,8 +103,7 @@ const problemPatterns = [
   },
   {
     title: 'Not for weighted graphs',
-    detail:
-      'If edges have different costs, BFS is not optimal; use Dijkstra or 0-1 BFS.',
+    detail: 'If edges have different costs, BFS is not optimal; use Dijkstra or 0-1 BFS.',
   },
 ]
 
@@ -177,8 +174,7 @@ const complexityNotes = [
 const inputSensitivity = [
   {
     title: 'High branching factor',
-    detail:
-      'Frontiers explode quickly. Memory becomes the limiting factor well before time.',
+    detail: 'Frontiers explode quickly. Memory becomes the limiting factor well before time.',
   },
   {
     title: 'Sparse vs dense graphs',
@@ -192,16 +188,14 @@ const inputSensitivity = [
   },
   {
     title: 'Weighted edges',
-    detail:
-      'BFS assumptions break if edge weights differ; shortest paths become incorrect.',
+    detail: 'BFS assumptions break if edge weights differ; shortest paths become incorrect.',
   },
 ]
 
 const performanceProfile = [
   {
     title: 'Memory footprint',
-    detail:
-      'Visited arrays, parent pointers, and large frontiers dominate memory usage.',
+    detail: 'Visited arrays, parent pointers, and large frontiers dominate memory usage.',
   },
   {
     title: 'Queue behavior',
@@ -215,8 +209,7 @@ const performanceProfile = [
   },
   {
     title: 'Early exit',
-    detail:
-      'If searching for a target, stop at first dequeue or first discovery to cut work.',
+    detail: 'If searching for a target, stop at first dequeue or first discovery to cut work.',
   },
 ]
 
@@ -292,13 +285,11 @@ const variantsAndTweaks = [
   },
   {
     title: '0-1 BFS',
-    detail:
-      'Use a deque to handle edges with weights 0 or 1 in linear time.',
+    detail: 'Use a deque to handle edges with weights 0 or 1 in linear time.',
   },
   {
     title: 'Level-by-level BFS',
-    detail:
-      'Track frontier sizes to process explicit layers and handle fixed-depth constraints.',
+    detail: 'Track frontier sizes to process explicit layers and handle fixed-depth constraints.',
   },
 ]
 
@@ -404,28 +395,23 @@ const decisionGuidance = [
 const implementationTips = [
   {
     title: 'Mark visited at enqueue time',
-    detail:
-      'This avoids duplicate work and preserves the shortest-path guarantee.',
+    detail: 'This avoids duplicate work and preserves the shortest-path guarantee.',
   },
   {
     title: 'Use array-based queues',
-    detail:
-      'Simple arrays with head/tail indices are faster than shift-based queues.',
+    detail: 'Simple arrays with head/tail indices are faster than shift-based queues.',
   },
   {
     title: 'Keep parent pointers',
-    detail:
-      'Parents make shortest path reconstruction cheap and deterministic.',
+    detail: 'Parents make shortest path reconstruction cheap and deterministic.',
   },
   {
     title: 'Stop early when possible',
-    detail:
-      'If you only need a single target, terminate at first discovery or dequeue.',
+    detail: 'If you only need a single target, terminate at first discovery or dequeue.',
   },
   {
     title: 'Choose adjacency lists',
-    detail:
-      'They preserve O(V + E) performance on sparse graphs.',
+    detail: 'They preserve O(V + E) performance on sparse graphs.',
   },
 ]
 
@@ -466,13 +452,31 @@ const takeaways = [
 ]
 
 const glossary = [
-  { term: 'Breadth-First Search (BFS)', definition: 'A traversal that explores a graph level-by-level using a queue.' },
-  { term: 'Frontier', definition: 'The current boundary of discovered nodes waiting to be processed.' },
+  {
+    term: 'Breadth-First Search (BFS)',
+    definition: 'A traversal that explores a graph level-by-level using a queue.',
+  },
+  {
+    term: 'Frontier',
+    definition: 'The current boundary of discovered nodes waiting to be processed.',
+  },
   { term: 'Level', definition: 'All nodes at the same shortest-hop distance from the source.' },
-  { term: 'Visited-on-enqueue', definition: 'Marking a node as visited when enqueued to avoid duplicate insertion.' },
-  { term: 'Parent pointer', definition: 'A predecessor record used to reconstruct shortest paths.' },
-  { term: 'Multi-source BFS', definition: 'A BFS seeded by multiple starts to compute nearest-source distances in one pass.' },
-  { term: 'Bidirectional BFS', definition: 'Two BFS waves (source and target) that meet in the middle.' },
+  {
+    term: 'Visited-on-enqueue',
+    definition: 'Marking a node as visited when enqueued to avoid duplicate insertion.',
+  },
+  {
+    term: 'Parent pointer',
+    definition: 'A predecessor record used to reconstruct shortest paths.',
+  },
+  {
+    term: 'Multi-source BFS',
+    definition: 'A BFS seeded by multiple starts to compute nearest-source distances in one pass.',
+  },
+  {
+    term: 'Bidirectional BFS',
+    definition: 'Two BFS waves (source and target) that meet in the middle.',
+  },
   { term: '0-1 BFS', definition: 'Deque-based BFS for graphs with edge weights only 0 or 1.' },
 ]
 
@@ -514,337 +518,255 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const bfs98Styles = `
-.bfs98-page{min-height:100dvh;background:#c0c0c0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.bfs98-window{width:100%;min-height:100dvh;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box;display:flex;flex-direction:column}
-.bfs98-titlebar{position:relative;display:flex;align-items:center;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.bfs98-title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px}
-.bfs98-title-controls{display:flex;gap:2px;margin-left:auto}
-.bfs98-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:1}
-.bfs98-tabs{display:flex;gap:1px;padding:6px 8px 0}
-.bfs98-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer}
-.bfs98-tab.active{background:#fff;position:relative;top:1px}
-.bfs98-main{border-top:1px solid #404040;background:#fff;flex:1;min-height:0;display:grid;grid-template-columns:240px 1fr}
-.bfs98-toc{border-right:1px solid #808080;background:#f2f2f2;padding:12px;overflow:auto}
-.bfs98-toc-title{margin:0 0 10px;font-size:12px;font-weight:700}
-.bfs98-toc-list{list-style:none;margin:0;padding:0}
-.bfs98-toc-list li{margin:0 0 8px}
-.bfs98-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.bfs98-content{padding:14px 20px 20px;overflow:auto}
-.bfs98-doc-title{margin:0 0 12px;font-size:20px;font-weight:700}
-.bfs98-section{margin:0 0 20px}
-.bfs98-heading{margin:0 0 8px;font-size:16px;font-weight:700}
-.bfs98-subheading{margin:0 0 6px;font-size:13px;font-weight:700}
-.bfs98-content p,.bfs98-content li,.bfs98-content td,.bfs98-content th{font-size:12px;line-height:1.5}
-.bfs98-content p{margin:0 0 10px}
-.bfs98-content ul,.bfs98-content ol{margin:0 0 10px 20px;padding:0}
-.bfs98-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.bfs98-table{width:100%;border-collapse:collapse;margin:0 0 10px}
-.bfs98-table th,.bfs98-table td{border:1px solid #a0a0a0;padding:4px 6px;text-align:left;vertical-align:top}
-.bfs98-state{font-family:"Courier New",Courier,monospace}
-.bfs98-codebox{background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;padding:8px;margin:6px 0 10px}
-.bfs98-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px}
-@media (max-width:900px){.bfs98-main{grid-template-columns:1fr}.bfs98-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function BreadthFirstSearchPage(): JSX.Element {
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Breadth-First Search',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Breadth-First Search (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="bfs98-page">
-      <style>{bfs98Styles}</style>
-      <div className="bfs98-window" role="presentation">
-        <header className="bfs98-titlebar">
-          <span className="bfs98-title">Breadth-First Search</span>
-          <div className="bfs98-title-controls">
-            <button className="bfs98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="bfs98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="bfs98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`bfs98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="bfs98-main">
-          <aside className="bfs98-toc" aria-label="Table of contents">
-            <h2 className="bfs98-toc-title">Contents</h2>
-            <ul className="bfs98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Breadth-First Search"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Breadth-First Search</h1>
+      <p>
+        Breadth-first search explores evenly, like ripples moving outward. It guarantees
+        minimum-edge paths in unweighted graphs, builds distance layers that power bipartite checks,
+        and forms the backbone of crawling, routing, and puzzle solving. Understanding its
+        mechanics, constraints, and variants turns a simple queue into a reliable workhorse for
+        graph problems.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              BFS answers: what is the fewest steps to reach each node when every move costs the
+              same? By expanding in perfect layers, it produces optimal hop counts, natural parent
+              pointers for reconstruction, and a timeline of the graph in distance order. The catch
+              is memory: level-wide frontiers can balloon, so engineering the representation matters
+              as much as the algorithm.
+            </p>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            <p>
+              BFS expands in exact distance order from the source. This level-by-level structure is
+              what guarantees shortest-hop optimality in unweighted graphs.
+            </p>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="bfs98-content">
-            <h1 className="bfs98-doc-title">Breadth-First Search</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">Mechanics in Motion</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">How to Think About Similar Problems</h2>
+            {problemPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Loop Invariants (Why It Is Correct)</h2>
+            {loopInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Performance Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Breadth-first search explores evenly, like ripples moving outward. It guarantees minimum-edge paths in unweighted graphs,
-              builds distance layers that power bipartite checks, and forms the backbone of crawling, routing, and puzzle solving.
-              Understanding its mechanics, constraints, and variants turns a simple queue into a reliable workhorse for graph problems.
+              Rule of thumb: BFS time usually matches graph size; memory is the constraint. Choose
+              adjacency lists, compress frontiers, and prune branching to keep layers tractable.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="bfs98-section">
-                  <h2 className="bfs98-heading">Overview</h2>
-                  <p>
-                    BFS answers: what is the fewest steps to reach each node when every move costs the same? By expanding in perfect layers,
-                    it produces optimal hop counts, natural parent pointers for reconstruction, and a timeline of the graph in distance order.
-                    The catch is memory: level-wide frontiers can balloon, so engineering the representation matters as much as the algorithm.
-                  </p>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="bfs98-divider" />
-                <section id="bp-history" className="bfs98-section">
-                  <h2 className="bfs98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-models" className="bfs98-section">
-                  <h2 className="bfs98-heading">Mental Models</h2>
-                  <p>
-                    BFS expands in exact distance order from the source. This level-by-level structure is what guarantees shortest-hop
-                    optimality in unweighted graphs.
-                  </p>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="bfs98-section">
-                  <h2 className="bfs98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mechanics" className="bfs98-section">
-                  <h2 className="bfs98-heading">Mechanics in Motion</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="bfs98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-patterns" className="bfs98-section">
-                  <h2 className="bfs98-heading">How to Think About Similar Problems</h2>
-                  {problemPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="bfs98-section">
-                  <h2 className="bfs98-heading">Loop Invariants (Why It Is Correct)</h2>
-                  {loopInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="bfs98-section">
-                  <h2 className="bfs98-heading">Complexity Analysis and Performance Intuition</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Rule of thumb: BFS time usually matches graph size; memory is the constraint. Choose adjacency lists, compress frontiers,
-                    and prune branching to keep layers tractable.
-                  </p>
-                </section>
-                <section id="core-sensitivity" className="bfs98-section">
-                  <h2 className="bfs98-heading">Input Sensitivity</h2>
-                  {inputSensitivity.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-profile" className="bfs98-section">
-                  <h2 className="bfs98-heading">Performance Profile</h2>
-                  {performanceProfile.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="bfs98-section">
-                  <h2 className="bfs98-heading">Compare and Contrast</h2>
-                  <table className="bfs98-table">
-                    <thead>
-                      <tr>
-                        <th>Algorithm</th>
-                        <th>Time</th>
-                        <th>Space</th>
-                        <th>Best for</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.algorithm}>
-                          <td>{row.algorithm}</td>
-                          <td>{row.time}</td>
-                          <td>{row.space}</td>
-                          <td>{row.bestFor}</td>
-                          <td>{row.notes}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-uses" className="bfs98-section">
-                  <h2 className="bfs98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variants" className="bfs98-section">
-                  <h2 className="bfs98-heading">Variants and Performance Tweaks</h2>
-                  {variantsAndTweaks.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="bfs98-section">
-                  <h2 className="bfs98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-tips" className="bfs98-section">
-                  <h2 className="bfs98-heading">Implementation Tips</h2>
-                  {implementationTips.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decisions" className="bfs98-section">
-                  <h2 className="bfs98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="bfs98-section">
-                  <h2 className="bfs98-heading">Advanced Insights and Current Frontiers</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-trace" className="bfs98-section">
-                  <h2 className="bfs98-heading">Worked Trace on a Tiny Graph</h2>
-                  <ol>
-                    {stepTrace.map((item) => (
-                      <li key={item.step}>
-                        <p><strong>{item.step}:</strong> {item.note}</p>
-                        <p className="bfs98-state">{item.state}</p>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="ex-code" className="bfs98-section">
-                  <h2 className="bfs98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="bfs98-subheading">{example.title}</h3>
-                      <div className="bfs98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="bfs98-section">
-                <h2 className="bfs98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
+          </section>
+          <section id="core-sensitivity" className="bin98-section">
+            <h2 className="bin98-heading">Input Sensitivity</h2>
+            {inputSensitivity.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-profile" className="bin98-section">
+            <h2 className="bin98-heading">Performance Profile</h2>
+            {performanceProfile.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Time</th>
+                  <th>Space</th>
+                  <th>Best for</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.algorithm}>
+                    <td>{row.algorithm}</td>
+                    <td>{row.time}</td>
+                    <td>{row.space}</td>
+                    <td>{row.bestFor}</td>
+                    <td>{row.notes}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Performance Tweaks</h2>
+            {variantsAndTweaks.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-tips" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Tips</h2>
+            {implementationTips.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Current Frontiers</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-trace" className="bin98-section">
+            <h2 className="bin98-heading">Worked Trace on a Tiny Graph</h2>
+            <ol>
+              {stepTrace.map((item) => (
+                <li key={item.step}>
+                  <p>
+                    <strong>{item.step}:</strong> {item.note}
+                  </p>
+                  <p className="bfs98-state">{item.state}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

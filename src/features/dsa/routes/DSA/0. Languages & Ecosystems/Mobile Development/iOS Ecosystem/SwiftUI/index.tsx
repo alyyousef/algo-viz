@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -34,8 +34,6 @@ type GlossarySection = {
   }>
 }
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -44,7 +42,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ]
 
 const introParagraphs = [
-  'SwiftUI is Apple\'s declarative user-interface framework for building apps across Apple platforms with Swift. Apple positions it as one set of APIs and tools for interfaces on iPhone, iPad, Mac, Apple Watch, Apple TV, and visionOS-class experiences, while still allowing UIKit and AppKit interoperation when a codebase needs lower-level or legacy platform views.',
+  "SwiftUI is Apple's declarative user-interface framework for building apps across Apple platforms with Swift. Apple positions it as one set of APIs and tools for interfaces on iPhone, iPad, Mac, Apple Watch, Apple TV, and visionOS-class experiences, while still allowing UIKit and AppKit interoperation when a codebase needs lower-level or legacy platform views.",
   'The central idea is that the interface is a function of state. Instead of imperatively mutating labels, stacks, navigation controllers, and animations every time data changes, a SwiftUI view describes the UI for the current state and lets the framework reconcile the rendered result. This changes the job of UI code from issuing commands to declaring relationships.',
   'That shift is architectural, not cosmetic. SwiftUI changes how teams think about ownership of state, propagation of shared data, view identity, navigation, environment values, animation, previews, and compatibility with older Apple UI frameworks. Teams that approach it as UIKit with different syntax tend to fight the framework; teams that embrace its data-flow model usually get far better results.',
   'As of April 3, 2026, SwiftUI remains a current first-party Apple framework and a central part of Apple-platform application development. Architecture choices should therefore be made against current Apple documentation and current platform targets, not against early SwiftUI-era assumptions that treated it as too immature for serious production work.',
@@ -55,7 +53,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'SwiftUI is Apple\'s modern declarative UI framework. Apple frames it as a way to build interfaces across Apple platforms with one set of tools, and that framing matters because SwiftUI is both a coding model and a platform strategy.',
+      "SwiftUI is Apple's modern declarative UI framework. Apple frames it as a way to build interfaces across Apple platforms with one set of tools, and that framing matters because SwiftUI is both a coding model and a platform strategy.",
       'The key architectural point is that SwiftUI is state-driven. A view describes what should appear for current state, and the framework recalculates the interface when that state changes. That is fundamentally different from imperative UI systems where developers manually keep individual controls, layout, and navigation state synchronized.',
     ],
   },
@@ -63,7 +61,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-why-it-matters',
     title: 'Why SwiftUI Matters',
     paragraphs: [
-      'SwiftUI matters because it is Apple\'s preferred direction for modern app UI development. It gives Apple-platform teams one consistent mental model for composing screens, moving data through a hierarchy, handling navigation, animating changes, and aligning with platform behavior.',
+      "SwiftUI matters because it is Apple's preferred direction for modern app UI development. It gives Apple-platform teams one consistent mental model for composing screens, moving data through a hierarchy, handling navigation, animating changes, and aligning with platform behavior.",
       'It also matters because it is not only for greenfield apps. Apple explicitly supports adoption alongside UIKit and AppKit, which makes SwiftUI relevant for incremental modernization and mixed-framework codebases rather than only for brand-new applications.',
     ],
     bullets: [
@@ -362,18 +360,15 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'View',
-        definition:
-          'The fundamental SwiftUI protocol representing a piece of user interface.',
+        definition: 'The fundamental SwiftUI protocol representing a piece of user interface.',
       },
       {
         term: 'State',
-        definition:
-          'Locally owned mutable state that SwiftUI stores and observes for updates.',
+        definition: 'Locally owned mutable state that SwiftUI stores and observes for updates.',
       },
       {
         term: 'Binding',
-        definition:
-          'A read-write connection to state owned somewhere else.',
+        definition: 'A read-write connection to state owned somewhere else.',
       },
       {
         term: 'NavigationStack',
@@ -398,13 +393,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'EnvironmentObject',
-        definition:
-          'An observable object supplied to a hierarchy through the environment.',
+        definition: 'An observable object supplied to a hierarchy through the environment.',
       },
       {
         term: 'ObservableObject',
-        definition:
-          'A reference-type model that publishes changes for SwiftUI to react to.',
+        definition: 'A reference-type model that publishes changes for SwiftUI to react to.',
       },
       {
         term: 'Identity',
@@ -413,8 +406,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Body',
-        definition:
-          'The computed description of a SwiftUI views current UI.',
+        definition: 'The computed description of a SwiftUI views current UI.',
       },
       {
         term: 'Path',
@@ -429,13 +421,11 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Preview',
-        definition:
-          'An Xcode-driven SwiftUI development view for fast UI iteration.',
+        definition: 'An Xcode-driven SwiftUI development view for fast UI iteration.',
       },
       {
         term: 'Modifier',
-        definition:
-          'A function-like transformation that configures or wraps a SwiftUI view.',
+        definition: 'A function-like transformation that configures or wraps a SwiftUI view.',
       },
       {
         term: 'task',
@@ -444,13 +434,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'UIViewControllerRepresentable',
-        definition:
-          'A protocol that wraps a UIKit view controller for use in SwiftUI.',
+        definition: 'A protocol that wraps a UIKit view controller for use in SwiftUI.',
       },
       {
         term: 'AppKit',
-        definition:
-          'The traditional macOS UI framework that SwiftUI can interoperate with.',
+        definition: 'The traditional macOS UI framework that SwiftUI can interoperate with.',
       },
       {
         term: 'UIKit',
@@ -495,218 +483,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
     { id: 'glossary-dataflow', label: 'Data Flow Terms' },
     { id: 'glossary-workflow', label: 'Workflow Terms' },
   ],
-}
-
-const pageStyles = `
-.swiftui-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.swiftui-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.swiftui-help-titlebar {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.swiftui-help-titletext {
-  grid-column: 2;
-  justify-self: center;
-  font-size: 15px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.swiftui-help-controls {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  gap: 2px;
-}
-
-.swiftui-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.swiftui-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.swiftui-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.swiftui-help-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.swiftui-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.swiftui-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.swiftui-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.swiftui-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.swiftui-help-toc-item {
-  margin: 0 0 8px;
-}
-
-.swiftui-help-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.swiftui-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.swiftui-help-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.swiftui-help-section {
-  margin: 0 0 20px;
-}
-
-.swiftui-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.swiftui-help-content p,
-.swiftui-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.swiftui-help-content p {
-  margin: 0 0 10px;
-}
-
-.swiftui-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.swiftui-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.swiftui-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.swiftui-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .swiftui-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .swiftui-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -763,123 +539,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function SwiftUIPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'SwiftUI',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `SwiftUI (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'SwiftUI',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="swiftui-help-page">
-      <style>{pageStyles}</style>
-      <div className="swiftui-help-window" role="presentation">
-        <header className="swiftui-help-titlebar">
-          <span className="swiftui-help-titletext">SwiftUI</span>
-          <div className="swiftui-help-controls">
-            <button className="swiftui-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="swiftui-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="SwiftUI"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">SwiftUI</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="swiftui-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`swiftui-help-tab ${activeTab === tab.id ? 'swiftui-help-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="swiftui-help-main">
-          <aside className="swiftui-help-toc" aria-label="Table of contents">
-            <h2 className="swiftui-help-toc-title">Contents</h2>
-            <ul className="swiftui-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="swiftui-help-toc-item">
-                  <a href={`#${section.id}`} className="swiftui-help-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="swiftui-help-content">
-            <h1 className="swiftui-help-doc-title">SwiftUI</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

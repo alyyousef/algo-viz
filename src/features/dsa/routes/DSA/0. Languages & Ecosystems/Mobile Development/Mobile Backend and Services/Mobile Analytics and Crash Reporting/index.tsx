@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Mobile Analytics and Crash Reporting'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -333,27 +331,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Event',
-        definition: 'A structured record describing a meaningful user or system action emitted by the app for analytics.',
+        definition:
+          'A structured record describing a meaningful user or system action emitted by the app for analytics.',
       },
       {
         term: 'Property',
-        definition: 'Context attached to an event or user profile that helps segment or interpret analytics data.',
+        definition:
+          'Context attached to an event or user profile that helps segment or interpret analytics data.',
       },
       {
         term: 'Funnel',
-        definition: 'A sequence of events or milestones used to measure progression through a product journey.',
+        definition:
+          'A sequence of events or milestones used to measure progression through a product journey.',
       },
       {
         term: 'Retention',
-        definition: 'A measure of whether users return and continue engaging with the app over time.',
+        definition:
+          'A measure of whether users return and continue engaging with the app over time.',
       },
       {
         term: 'Attribution',
-        definition: 'The attempt to connect user behavior or conversion to a source such as a campaign, push notification, or acquisition channel.',
+        definition:
+          'The attempt to connect user behavior or conversion to a source such as a campaign, push notification, or acquisition channel.',
       },
       {
         term: 'Schema drift',
-        definition: 'The divergence between intended analytics event definitions and the actual event data emitted by the app over time.',
+        definition:
+          'The divergence between intended analytics event definitions and the actual event data emitted by the app over time.',
       },
     ],
   },
@@ -363,27 +367,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Crash report',
-        definition: 'A captured record of a fatal application failure including stack information and runtime context.',
+        definition:
+          'A captured record of a fatal application failure including stack information and runtime context.',
       },
       {
         term: 'Non-fatal error',
-        definition: 'A caught exception or failure that does not terminate the app but still indicates degraded behavior.',
+        definition:
+          'A caught exception or failure that does not terminate the app but still indicates degraded behavior.',
       },
       {
         term: 'Symbolication',
-        definition: 'The process of translating raw crash addresses into readable function and file information using symbol artifacts.',
+        definition:
+          'The process of translating raw crash addresses into readable function and file information using symbol artifacts.',
       },
       {
         term: 'dSYM',
-        definition: 'An iOS debug symbol artifact needed to symbolicate many production crash reports accurately.',
+        definition:
+          'An iOS debug symbol artifact needed to symbolicate many production crash reports accurately.',
       },
       {
         term: 'Mapping file',
-        definition: 'An Android obfuscation artifact used to reconstruct readable stack traces after R8 or ProGuard processing.',
+        definition:
+          'An Android obfuscation artifact used to reconstruct readable stack traces after R8 or ProGuard processing.',
       },
       {
         term: 'Breadcrumb',
-        definition: 'A lightweight diagnostic record of recent actions or states captured to help explain the path to a failure.',
+        definition:
+          'A lightweight diagnostic record of recent actions or states captured to help explain the path to a failure.',
       },
     ],
   },
@@ -393,7 +403,8 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Crash-free users',
-        definition: 'A release-health metric estimating the proportion of users who did not encounter a fatal crash in a given period.',
+        definition:
+          'A release-health metric estimating the proportion of users who did not encounter a fatal crash in a given period.',
       },
       {
         term: 'Release health',
@@ -401,19 +412,23 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Alert threshold',
-        definition: 'A configured condition that triggers notification when a telemetry signal crosses a defined severity boundary.',
+        definition:
+          'A configured condition that triggers notification when a telemetry signal crosses a defined severity boundary.',
       },
       {
         term: 'Consent gating',
-        definition: 'Runtime control that enables or disables telemetry collection based on user consent or policy state.',
+        definition:
+          'Runtime control that enables or disables telemetry collection based on user consent or policy state.',
       },
       {
         term: 'Data minimization',
-        definition: 'The practice of collecting only the telemetry needed for legitimate product and reliability purposes.',
+        definition:
+          'The practice of collecting only the telemetry needed for legitimate product and reliability purposes.',
       },
       {
         term: 'Instrumentation contract',
-        definition: 'The agreed definition of events, properties, and telemetry behavior that the app and downstream analysis depend on.',
+        definition:
+          'The agreed definition of events, properties, and telemetry behavior that the app and downstream analysis depend on.',
       },
     ],
   },
@@ -424,230 +439,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const analyticsHelpStyles = `
-.analytics-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.analytics-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.analytics-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.analytics-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.analytics-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.analytics-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.analytics-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.analytics-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.analytics-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.analytics-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.analytics-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-.analytics-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.analytics-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.analytics-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.analytics-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.analytics-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.analytics-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.analytics-help98-section {
-  margin: 0 0 20px;
-}
-
-.analytics-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.analytics-help98-content p,
-.analytics-help98-content li,
-.analytics-help98-content dd,
-.analytics-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.analytics-help98-content p,
-.analytics-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.analytics-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.analytics-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.analytics-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.analytics-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.analytics-help98-glossary {
-  margin: 0;
-}
-
-.analytics-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .analytics-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .analytics-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .analytics-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -707,125 +498,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function MobileAnalyticsAndCrashReportingPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Mobile Analytics And Crash Reporting Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="analytics-help98-page">
-      <style>{analyticsHelpStyles}</style>
-      <div className="analytics-help98-window" role="presentation">
-        <header className="analytics-help98-titlebar">
-          <span className="analytics-help98-title">{PAGE_TITLE}</span>
-          <div className="analytics-help98-controls">
-            <button className="analytics-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="analytics-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Mobile Analytics And Crash Reporting Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="analytics-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`analytics-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="analytics-help98-main">
-          <aside className="analytics-help98-toc" aria-label="Table of contents">
-            <h2 className="analytics-help98-toc-title">Contents</h2>
-            <ul className="analytics-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="analytics-help98-content">
-            <h1 className="analytics-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="analytics-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -129,7 +129,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-syntax',
     title: 'Core Syntax',
     paragraphs: [
-      'SolidJS uses JSX, but reactive values are commonly read by calling accessors such as `count()` instead of reading plain variables. Control flow is often handled with primitives such as `<Show>` and `<For>`, which make dependencies explicit and work well with the library\'s update model.',
+      "SolidJS uses JSX, but reactive values are commonly read by calling accessors such as `count()` instead of reading plain variables. Control flow is often handled with primitives such as `<Show>` and `<For>`, which make dependencies explicit and work well with the library's update model.",
       'This means the syntax looks familiar at first glance but behaves differently from rerender-driven JSX frameworks. The important habit is understanding where reactive reads happen and how those reads connect to computations and DOM updates.',
     ],
   },
@@ -337,7 +337,7 @@ export default function FrameworkList() {
     id: 'examples-resource',
     title: 'Async Resource Example',
     description:
-      'Resources show how asynchronous data can participate directly in Solid\'s reactive model.',
+      "Resources show how asynchronous data can participate directly in Solid's reactive model.",
     snippets: [
       {
         label: 'UserCard.tsx',
@@ -383,11 +383,13 @@ Context or module patterns for shared application state`,
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'SolidJS',
-    definition: 'A reactive UI library centered on signals, fine-grained updates, and JSX-based component authoring.',
+    definition:
+      'A reactive UI library centered on signals, fine-grained updates, and JSX-based component authoring.',
   },
   {
     term: 'Signal',
-    definition: 'A reactive state primitive that tracks reads and notifies dependents when the value changes.',
+    definition:
+      'A reactive state primitive that tracks reads and notifies dependents when the value changes.',
   },
   {
     term: 'createSignal',
@@ -395,7 +397,8 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'createMemo',
-    definition: 'A SolidJS API for derived reactive values that recompute when dependencies change.',
+    definition:
+      'A SolidJS API for derived reactive values that recompute when dependencies change.',
   },
   {
     term: 'createEffect',
@@ -403,7 +406,8 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Fine-grained reactivity',
-    definition: 'A model where updates target the exact computations or DOM bindings that depend on changed state.',
+    definition:
+      'A model where updates target the exact computations or DOM bindings that depend on changed state.',
   },
   {
     term: 'Accessor',
@@ -427,230 +431,15 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'SolidStart',
-    definition: 'The broader Solid application framework used for routing, SSR, and full-stack workflows.',
+    definition:
+      'The broader Solid application framework used for routing, SSR, and full-stack workflows.',
   },
   {
     term: 'Fine-grained update',
-    definition: 'A targeted UI update that affects only the computations or DOM bindings that depend on changed state.',
+    definition:
+      'A targeted UI update that affects only the computations or DOM bindings that depend on changed state.',
   },
 ] as const
-
-const helpStyles = `
-.solid-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.solid-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.solid-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.solid-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.solid-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.solid-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.solid-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.solid-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.solid-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.solid-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.solid-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.solid-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.solid-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.solid-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.solid-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.solid-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.solid-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.solid-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.solid-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.solid-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.solid-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.solid-help-content p,
-.solid-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.solid-help-content p {
-  margin: 0 0 10px;
-}
-
-.solid-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.solid-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.solid-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.solid-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .solid-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .solid-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .solid-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -666,155 +455,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-export default function SolidJsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+export default function Counter(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'SolidJS',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `SolidJS (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'SolidJS',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="solid-help-page">
-      <style>{helpStyles}</style>
-      <div className="solid-help-window" role="presentation">
-        <header className="solid-help-titlebar">
-          <span className="solid-help-titletext">SolidJS</span>
-          <div className="solid-help-controls">
-            <button className="solid-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="solid-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="SolidJS"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">SolidJS</h1>
+      <p className="solid-help-doc-subtitle">
+        Manual-style reference covering overview, signals, fine-grained reactivity, JSX authoring,
+        app-framework layering, tradeoffs, and practical examples.
+      </p>
 
-        <div className="solid-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`solid-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="solid-help-main">
-          <aside className="solid-help-toc" aria-label="Table of contents">
-            <h2 className="solid-help-toc-title">Contents</h2>
-            <ul className="solid-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="solid-help-content">
-            <h1 className="solid-help-doc-title">SolidJS</h1>
-            <p className="solid-help-doc-subtitle">
-              Manual-style reference covering overview, signals, fine-grained reactivity, JSX authoring, app-framework layering,
-              tradeoffs, and practical examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="solid-help-section">
-                    <h2 className="solid-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="solid-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="solid-help-section">
-                  <h2 className="solid-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="solid-help-section">
-                  <h2 className="solid-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="solid-help-subheading">{snippet.label}</h3>
-                      <div className="solid-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="solid-help-section">
-                <h2 className="solid-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

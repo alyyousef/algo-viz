@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -7,13 +9,11 @@ type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'AWS EC2'
 const pageSubtitle = 'Virtual machine compute on AWS with full operating-system control.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const bigPictureSections = [
   {
     title: 'What it is',
     paragraphs: [
-      'Amazon Elastic Compute Cloud, usually shortened to EC2, is AWS\'s general-purpose virtual machine service. It gives you compute instances with a chosen CPU and memory profile, an operating system image, attached storage, network interfaces, and identity and security settings. You manage the guest operating system and everything that runs inside it.',
+      "Amazon Elastic Compute Cloud, usually shortened to EC2, is AWS's general-purpose virtual machine service. It gives you compute instances with a chosen CPU and memory profile, an operating system image, attached storage, network interfaces, and identity and security settings. You manage the guest operating system and everything that runs inside it.",
       'EC2 sits at the lower, more flexible end of AWS compute. Compared with Lambda, ECS Fargate, or other higher-level platforms, EC2 exposes far more infrastructure detail. That makes it useful when you need operating-system access, custom runtimes, long-lived background processes, unusual networking, specialized hardware, or a migration path for software that was not designed for a fully managed platform.',
     ],
   },
@@ -160,7 +160,7 @@ const coreConceptSections = [
     id: 'core-nitro',
     heading: 'Nitro System, Virtualization, and Hardware Features',
     paragraphs: [
-      'Many modern EC2 instance families are built on the AWS Nitro System. Nitro is AWS\'s hardware and software architecture for offloading management, networking, storage, and security functions so the guest gets strong isolation and high performance. It is a major reason EC2 can offer both virtualization and near-bare-metal behavior for many workloads.',
+      "Many modern EC2 instance families are built on the AWS Nitro System. Nitro is AWS's hardware and software architecture for offloading management, networking, storage, and security functions so the guest gets strong isolation and high performance. It is a major reason EC2 can offer both virtualization and near-bare-metal behavior for many workloads.",
       'Nitro-based instances commonly expose EBS volumes as NVMe devices and use enhanced networking through ENA. That affects driver expectations, network throughput, and how operating-system images should be prepared. Teams that build custom AMIs need to understand those assumptions or they eventually hit confusing boot, storage, or driver problems.',
       'Bare metal instance types exist when virtualization overhead or hardware access constraints matter. They are useful for certain licensing models, nested virtualization cases, low-level hardware requirements, and some specialized performance-sensitive workloads. But bare metal does not remove the need for disciplined automation. It only changes the level of control and responsibility.',
     ],
@@ -430,8 +430,7 @@ const glossaryTerms = [
   },
   {
     term: 'AMI',
-    definition:
-      'Amazon Machine Image; the template used to launch an EC2 instance.',
+    definition: 'Amazon Machine Image; the template used to launch an EC2 instance.',
   },
   {
     term: 'Launch template',
@@ -445,8 +444,7 @@ const glossaryTerms = [
   },
   {
     term: 'EBS',
-    definition:
-      'Elastic Block Store; persistent block storage commonly attached to EC2 instances.',
+    definition: 'Elastic Block Store; persistent block storage commonly attached to EC2 instances.',
   },
   {
     term: 'Instance store',
@@ -455,8 +453,7 @@ const glossaryTerms = [
   },
   {
     term: 'Security group',
-    definition:
-      'A stateful virtual firewall attached to an instance network interface.',
+    definition: 'A stateful virtual firewall attached to an instance network interface.',
   },
   {
     term: 'ENI',
@@ -465,8 +462,7 @@ const glossaryTerms = [
   },
   {
     term: 'Instance profile',
-    definition:
-      'The IAM container used to attach an IAM role to an EC2 instance.',
+    definition: 'The IAM container used to attach an IAM role to an EC2 instance.',
   },
   {
     term: 'IMDS',
@@ -559,455 +555,169 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const ec2HelpStyles = `
-.ec2-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.ec2-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.ec2-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ec2-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.ec2-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.ec2-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.ec2-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.ec2-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.ec2-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.ec2-help-main {
-  display: grid;
-  grid-template-columns: 236px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.ec2-help-toc {
-  overflow: auto;
-  padding: 12px;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-}
-
-.ec2-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ec2-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ec2-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.ec2-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.ec2-help-content {
-  overflow: auto;
-  padding: 16px 20px 24px;
-  background: #fff;
-}
-
-.ec2-help-content h1 {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.ec2-help-content h2 {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.ec2-help-content h3 {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.ec2-help-content p,
-.ec2-help-content li {
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.ec2-help-content p {
-  margin: 0 0 10px;
-}
-
-.ec2-help-content ul,
-.ec2-help-content ol {
-  margin: 0 0 12px 20px;
-  padding: 0;
-}
-
-.ec2-help-section {
-  margin: 0 0 22px;
-}
-
-.ec2-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.ec2-help-codebox {
-  margin: 6px 0 12px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.ec2-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-.ec2-help-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .ec2-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .ec2-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .ec2-help-title {
-    font-size: 13px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function AwsEc2Page(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Aws Ec2 Page',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="ec2-help-page">
-      <style>{ec2HelpStyles}</style>
-      <div className="ec2-help-window" role="presentation">
-        <header className="ec2-help-titlebar">
-          <span className="ec2-help-title">{pageTitle}</span>
-          <div className="ec2-help-controls">
-            <button className="ec2-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="ec2-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Aws Ec2 Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1>{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page is intentionally broad because EC2 is not just a VM launch button. It is the
+        operational foundation for a large class of AWS workloads, and good EC2 design depends on
+        understanding how compute shape, images, networking, storage, identity, bootstrapping,
+        scaling, and replacement fit together.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="ec2-help-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="ec2-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`ec2-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2>Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
 
-        <div className="ec2-help-main">
-          <aside className="ec2-help-toc" aria-label="Table of contents">
-            <h2 className="ec2-help-toc-title">Contents</h2>
-            <ul className="ec2-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+          <hr className="bin98-divider" />
+
+          <section id="bp-purchase-models" className="bin98-section">
+            <h2>Purchase Models</h2>
+            {purchaseModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.summary}</p>
+                <ul>
+                  {item.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-launch-flow" className="bin98-section">
+            <h2>Launch Flow</h2>
+            <ol>
+              {launchLifecycle.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="bp-when" className="bin98-section">
+            <h2>When to Choose EC2</h2>
+            <ul>
+              {fitGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="ec2-help-content">
-            <h1>{pageTitle}</h1>
-            <p className="ec2-help-subheading">{pageSubtitle}</p>
-            <p>
-              This page is intentionally broad because EC2 is not just a VM launch button. It is the operational foundation for a
-              large class of AWS workloads, and good EC2 design depends on understanding how compute shape, images, networking,
-              storage, identity, bootstrapping, scaling, and replacement fit together.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2>{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-ops-notes" className="bin98-section">
+            <h2>Operational Notes</h2>
+            {operationalNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-patterns" className="bin98-section">
+            <h2>Design Patterns</h2>
+            {designPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2>Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2>{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2>Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="ec2-help-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="ec2-help-section">
-                  <h2>Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="ec2-help-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="ec2-help-divider" />
-
-                <section id="bp-purchase-models" className="ec2-help-section">
-                  <h2>Purchase Models</h2>
-                  {purchaseModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="ec2-help-subheading">{item.title}</h3>
-                      <p>{item.summary}</p>
-                      <ul>
-                        {item.details.map((detail) => (
-                          <li key={detail}>{detail}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="ec2-help-divider" />
-
-                <section id="bp-launch-flow" className="ec2-help-section">
-                  <h2>Launch Flow</h2>
-                  <ol>
-                    {launchLifecycle.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-
-                <hr className="ec2-help-divider" />
-
-                <section id="bp-when" className="ec2-help-section">
-                  <h2>When to Choose EC2</h2>
-                  <ul>
-                    {fitGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="ec2-help-section">
-                    <h2>{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-ops-notes" className="ec2-help-section">
-                  <h2>Operational Notes</h2>
-                  {operationalNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-patterns" className="ec2-help-section">
-                  <h2>Design Patterns</h2>
-                  {designPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="ec2-help-section">
-                  <h2>Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="ec2-help-section">
-                    <h2>{example.title}</h2>
-                    <div className="ec2-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="ec2-help-section">
-                <h2>Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="ec2-help-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="ec2-help-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a href={source} className="ec2-help-inline-link" target="_blank" rel="noreferrer">
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -31,8 +31,7 @@ const milestones = [
   },
   {
     title: 'SIMD and vector intrinsics go mainstream',
-    detail:
-      'SSE, AVX, and NEON exposed explicit vectorization for media and numerical workloads.',
+    detail: 'SSE, AVX, and NEON exposed explicit vectorization for media and numerical workloads.',
   },
 ]
 
@@ -59,8 +58,7 @@ const mentalModels = [
   },
   {
     title: 'Sharp edges, sharp tools',
-    detail:
-      'You gain power and risk. Tooling and discipline are essential to stay safe.',
+    detail: 'You gain power and risk. Tooling and discipline are essential to stay safe.',
   },
 ]
 
@@ -104,8 +102,7 @@ const hardwareModel = [
   },
   {
     title: 'Branch prediction',
-    detail:
-      'Mispredicts cost dozens of cycles. Data-oriented layouts and branchless code help.',
+    detail: 'Mispredicts cost dozens of cycles. Data-oriented layouts and branchless code help.',
   },
   {
     title: 'SIMD width',
@@ -119,8 +116,7 @@ const hardwareModel = [
   },
   {
     title: 'I/O and syscalls',
-    detail:
-      'Crossing into the kernel is expensive; batch syscalls and reduce context switches.',
+    detail: 'Crossing into the kernel is expensive; batch syscalls and reduce context switches.',
   },
 ]
 
@@ -132,23 +128,19 @@ const toolingAndSafety = [
   },
   {
     title: 'Profilers',
-    detail:
-      'perf, VTune, Instruments, and flamegraphs reveal cache misses and hot functions.',
+    detail: 'perf, VTune, Instruments, and flamegraphs reveal cache misses and hot functions.',
   },
   {
     title: 'Static analysis',
-    detail:
-      'Clang-Tidy, Coverity, and Rust Clippy catch API misuse and dangerous patterns.',
+    detail: 'Clang-Tidy, Coverity, and Rust Clippy catch API misuse and dangerous patterns.',
   },
   {
     title: 'Fuzzing',
-    detail:
-      'libFuzzer and AFL discover edge cases that manual testing misses.',
+    detail: 'libFuzzer and AFL discover edge cases that manual testing misses.',
   },
   {
     title: 'Memory checking',
-    detail:
-      'Valgrind and AddressSanitizer highlight leaks, use-after-free, and double frees.',
+    detail: 'Valgrind and AddressSanitizer highlight leaks, use-after-free, and double frees.',
   },
   {
     title: 'Build flags',
@@ -165,23 +157,19 @@ const complexityNotes = [
   },
   {
     title: 'Deterministic latency',
-    detail:
-      'No GC pauses, but lock contention and page faults can still cause spikes.',
+    detail: 'No GC pauses, but lock contention and page faults can still cause spikes.',
   },
   {
     title: 'Layout-driven speed',
-    detail:
-      'SoA layouts often outperform AoS when vectorizing or scanning large arrays.',
+    detail: 'SoA layouts often outperform AoS when vectorizing or scanning large arrays.',
   },
   {
     title: 'Memory bandwidth limits',
-    detail:
-      'For large datasets, bandwidth caps performance regardless of instruction count.',
+    detail: 'For large datasets, bandwidth caps performance regardless of instruction count.',
   },
   {
     title: 'Binary size vs instruction cache',
-    detail:
-      'Over-inlining can bloat binaries and hurt i-cache performance.',
+    detail: 'Over-inlining can bloat binaries and hurt i-cache performance.',
   },
 ]
 
@@ -193,13 +181,11 @@ const applications = [
   },
   {
     context: 'Embedded and firmware',
-    detail:
-      'Resource-constrained devices demand precise memory use and predictable interrupts.',
+    detail: 'Resource-constrained devices demand precise memory use and predictable interrupts.',
   },
   {
     context: 'Game engines and graphics',
-    detail:
-      'Real-time frame budgets depend on data-oriented design, SIMD math, and memory arenas.',
+    detail: 'Real-time frame budgets depend on data-oriented design, SIMD math, and memory arenas.',
   },
   {
     context: 'Networking and storage',
@@ -213,8 +199,7 @@ const applications = [
   },
   {
     context: 'High-performance computing',
-    detail:
-      'Vectorization, tiling, and MPI/OpenMP drive throughput at scale.',
+    detail: 'Vectorization, tiling, and MPI/OpenMP drive throughput at scale.',
   },
 ]
 
@@ -269,8 +254,7 @@ const abiNotes = [
   },
   {
     title: 'Name mangling',
-    detail:
-      'C++ encodes type information in symbol names; extern "C" disables mangling for FFI.',
+    detail: 'C++ encodes type information in symbol names; extern "C" disables mangling for FFI.',
   },
   {
     title: 'Endianness and word size',
@@ -279,8 +263,7 @@ const abiNotes = [
   },
   {
     title: 'Stack frames and unwinding',
-    detail:
-      'ABIs define stack frame layout and metadata for exception handling and debugging.',
+    detail: 'ABIs define stack frame layout and metadata for exception handling and debugging.',
   },
   {
     title: 'Binary compatibility',
@@ -296,8 +279,7 @@ const abiExamples = [
 extern "C" int add(int a, int b) {
   return a + b;
 }`,
-    explanation:
-      'extern "C" uses the C ABI so other languages can link without C++ name mangling.',
+    explanation: 'extern "C" uses the C ABI so other languages can link without C++ name mangling.',
   },
   {
     title: 'Struct layout mismatch',
@@ -321,8 +303,7 @@ const examples = [
   }
   return s;
 }`,
-    explanation:
-      'Row-major storage keeps memory sequential, minimizing cache misses.',
+    explanation: 'Row-major storage keeps memory sequential, minimizing cache misses.',
   },
   {
     title: 'Manual memory with RAII (C++)',
@@ -332,8 +313,7 @@ const examples = [
   Buffer(size_t n) : n(n), data(static_cast<double*>(malloc(n * sizeof(double)))) {}
   ~Buffer() { free(data); }
 };`,
-    explanation:
-      'Lifetime is explicit; RAII guarantees cleanup without a garbage collector.',
+    explanation: 'Lifetime is explicit; RAII guarantees cleanup without a garbage collector.',
   },
   {
     title: 'Safe systems control (Rust)',
@@ -342,8 +322,7 @@ const examples = [
     *v += 1;
   }
 }`,
-    explanation:
-      'Borrowing prevents aliasing and enables compiler optimizations.',
+    explanation: 'Borrowing prevents aliasing and enables compiler optimizations.',
   },
   {
     title: 'Branchless clamp (C)',
@@ -352,8 +331,7 @@ const examples = [
   if (x > hi) return hi;
   return x;
 }`,
-    explanation:
-      'Even simple conditionals matter in hot loops; measure branch behavior.',
+    explanation: 'Even simple conditionals matter in hot loops; measure branch behavior.',
   },
 ]
 
@@ -436,8 +414,7 @@ const hardwareFirst = mentalModels[3] ?? {
 }
 const sharpTools = mentalModels[4] ?? {
   title: 'Sharp edges, sharp tools',
-  detail:
-    'You gain power and risk. Tooling and discipline are essential to stay safe.',
+  detail: 'You gain power and risk. Tooling and discipline are essential to stay safe.',
 }
 const compilePipeline = coreMechanics[0] ?? {
   heading: 'Compilation pipeline',
@@ -488,229 +465,6 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.win98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.win98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.win98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.win98-section {
-  margin: 0 0 20px;
-}
-
-.win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.win98-content p,
-.win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.win98-content p {
-  margin: 0 0 10px;
-}
-
-.win98-content ul,
-.win98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.win98-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin: 6px 0 12px;
-}
-
-.win98-table th,
-.win98-table td {
-  border: 1px solid #c0c0c0;
-  padding: 4px 6px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.win98-table th {
-  background: #e6e6e6;
-}
-
-@media (max-width: 900px) {
-  .win98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -718,10 +472,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -750,280 +500,217 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function LowLevelLanguagesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Low-Level Languages',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Low-Level Languages (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Low-Level Languages',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Low-Level Languages</span>
-          <div className="win98-title-controls">
-            <button className="win98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Low-Level Languages"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Low-Level Languages</h1>
+      <p>
+        Low-level languages expose hardware details so you can tune cache behavior, memory layout,
+        and concurrency. They demand precision and discipline, but they deliver deterministic
+        performance when done right.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              These languages prioritize control over convenience. You manage allocation, lifetime,
+              and layout explicitly, which enables tight latency budgets and predictable binaries.
+              The cost is complexity and the risk of undefined behavior.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {milestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Low-Level Languages</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-how" className="bin98-section">
+            <h2 className="bin98-heading">How It Works</h2>
+            {coreMechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-hardware" className="bin98-section">
+            <h2 className="bin98-heading">Hardware Cost Model</h2>
+            {hardwareModel.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Intuition</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Low-level languages expose hardware details so you can tune cache behavior, memory layout, and concurrency. They
-              demand precision and discipline, but they deliver deterministic performance when done right.
+              Once algorithms are chosen, most gains come from layout, vectorization, and minimizing
+              synchronization. Measure first, optimize second.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  <p>
-                    These languages prioritize control over convenience. You manage allocation, lifetime, and layout explicitly,
-                    which enables tight latency budgets and predictable binaries. The cost is complexity and the risk of undefined
-                    behavior.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-history" className="win98-section">
-                  <h2 className="win98-heading">Historical Context</h2>
-                  {milestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-models" className="win98-section">
-                  <h2 className="win98-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-how" className="win98-section">
-                  <h2 className="win98-heading">How It Works</h2>
-                  {coreMechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="win98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-hardware" className="win98-section">
-                  <h2 className="win98-heading">Hardware Cost Model</h2>
-                  {hardwareModel.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="win98-section">
-                  <h2 className="win98-heading">Performance Intuition</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Once algorithms are chosen, most gains come from layout, vectorization, and minimizing synchronization. Measure
-                    first, optimize second.
-                  </p>
-                </section>
-                <section id="core-tooling" className="win98-section">
-                  <h2 className="win98-heading">Tooling and Safety Net</h2>
-                  {toolingAndSafety.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-applications" className="win98-section">
-                  <h2 className="win98-heading">Real-World Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Low-Level vs High-Level Comparison</h2>
-                  <table className="win98-table">
-                    <thead>
-                      <tr>
-                        <th>Dimension</th>
-                        <th>Low-level</th>
-                        <th>High-level</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comparisonTable.map((row) => (
-                        <tr key={row.dimension}>
-                          <td>{row.dimension}</td>
-                          <td>{row.low}</td>
-                          <td>{row.high}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-                <section id="core-abi" className="win98-section">
-                  <h2 className="win98-heading">ABI Deep Dive</h2>
-                  {abiNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-decisions" className="win98-section">
-                  <h2 className="win98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionPoints.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="win98-section">
-                  <h2 className="win98-heading">Advanced Insights and Frontiers</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="win98-section">
-                  <h2 className="win98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-abi" className="win98-section">
-                  <h2 className="win98-heading">ABI Examples</h2>
-                  {abiExamples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="win98-subheading">{example.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{example.code}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <div key={item.term}>
-                    <h3 className="win98-subheading">{item.term}</h3>
-                    <p>{item.definition}</p>
-                  </div>
+          </section>
+          <section id="core-tooling" className="bin98-section">
+            <h2 className="bin98-heading">Tooling and Safety Net</h2>
+            {toolingAndSafety.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {applications.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Low-Level vs High-Level Comparison</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Low-level</th>
+                  <th>High-level</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr key={row.dimension}>
+                    <td>{row.dimension}</td>
+                    <td>{row.low}</td>
+                    <td>{row.high}</td>
+                  </tr>
                 ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+              </tbody>
+            </table>
+          </section>
+          <section id="core-abi" className="bin98-section">
+            <h2 className="bin98-heading">ABI Deep Dive</h2>
+            {abiNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decisions" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionPoints.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Frontiers</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-abi" className="bin98-section">
+            <h2 className="bin98-heading">ABI Examples</h2>
+            {abiExamples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <div key={item.term}>
+              <h3 className="bin98-subheading">{item.term}</h3>
+              <p>{item.definition}</p>
+            </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -288,240 +290,62 @@ and benefits from generated typed clients or streaming:
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
-  { term: 'Resource', definition: 'A conceptual entity in REST-style design exposed through a URL and represented through HTTP responses.' },
-  { term: 'Representation', definition: 'The returned form of a resource, often JSON in practical REST-style APIs.' },
-  { term: 'Stateless', definition: 'A communication style where each request contains the context needed for it to be processed independently.' },
-  { term: 'RPC', definition: 'Remote Procedure Call, a model where a client invokes a remote method as an explicit operation.' },
-  { term: 'Proto File', definition: 'A Protocol Buffers schema file that defines gRPC services and message structures.' },
-  { term: 'Protocol Buffers', definition: 'A compact binary serialization format commonly used by gRPC.' },
+  {
+    term: 'Resource',
+    definition:
+      'A conceptual entity in REST-style design exposed through a URL and represented through HTTP responses.',
+  },
+  {
+    term: 'Representation',
+    definition: 'The returned form of a resource, often JSON in practical REST-style APIs.',
+  },
+  {
+    term: 'Stateless',
+    definition:
+      'A communication style where each request contains the context needed for it to be processed independently.',
+  },
+  {
+    term: 'RPC',
+    definition:
+      'Remote Procedure Call, a model where a client invokes a remote method as an explicit operation.',
+  },
+  {
+    term: 'Proto File',
+    definition: 'A Protocol Buffers schema file that defines gRPC services and message structures.',
+  },
+  {
+    term: 'Protocol Buffers',
+    definition: 'A compact binary serialization format commonly used by gRPC.',
+  },
   { term: 'Unary RPC', definition: 'A single request followed by a single response in gRPC.' },
-  { term: 'Bidirectional Streaming', definition: 'A gRPC mode where both client and server can send multiple messages over one RPC stream.' },
-  { term: 'HTTP/2', definition: 'The transport protocol version commonly used by gRPC, enabling multiplexing and streaming features.' },
-  { term: 'Reflection', definition: 'A gRPC capability that lets servers describe their APIs to compatible tools at runtime.' },
-  { term: 'Status Code', definition: 'A machine-readable success or error indicator, such as HTTP status codes in REST-style APIs or gRPC status codes in gRPC.' },
-  { term: 'Generated Client', definition: 'Client code created automatically from a service contract so developers do not hand-author every request shape.' },
+  {
+    term: 'Bidirectional Streaming',
+    definition:
+      'A gRPC mode where both client and server can send multiple messages over one RPC stream.',
+  },
+  {
+    term: 'HTTP/2',
+    definition:
+      'The transport protocol version commonly used by gRPC, enabling multiplexing and streaming features.',
+  },
+  {
+    term: 'Reflection',
+    definition:
+      'A gRPC capability that lets servers describe their APIs to compatible tools at runtime.',
+  },
+  {
+    term: 'Status Code',
+    definition:
+      'A machine-readable success or error indicator, such as HTTP status codes in REST-style APIs or gRPC status codes in gRPC.',
+  },
+  {
+    term: 'Generated Client',
+    definition:
+      'Client code created automatically from a service contract so developers do not hand-author every request shape.',
+  },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.rest-grpc-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.rest-grpc-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.rest-grpc-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.rest-grpc-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.rest-grpc-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.rest-grpc-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.rest-grpc-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.rest-grpc-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.rest-grpc-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.rest-grpc-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.rest-grpc-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.rest-grpc-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.rest-grpc-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.rest-grpc-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.rest-grpc-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.rest-grpc-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.rest-grpc-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.rest-grpc-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.rest-grpc-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.rest-grpc-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.rest-grpc-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.rest-grpc-help-content p,
-.rest-grpc-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.rest-grpc-help-content p {
-  margin: 0 0 10px;
-}
-
-.rest-grpc-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.rest-grpc-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.rest-grpc-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.rest-grpc-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .rest-grpc-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .rest-grpc-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .rest-grpc-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -537,154 +361,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function RestVsGrpcPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'REST vs gRPC',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `REST vs gRPC (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'REST vs gRPC',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="rest-grpc-help-page">
-      <style>{helpStyles}</style>
-      <div className="rest-grpc-help-window" role="presentation">
-        <header className="rest-grpc-help-titlebar">
-          <span className="rest-grpc-help-titletext">REST vs gRPC</span>
-          <div className="rest-grpc-help-controls">
-            <button className="rest-grpc-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="rest-grpc-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="REST vs gRPC"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">REST vs gRPC</h1>
+      <p className="rest-grpc-help-doc-subtitle">
+        Manual-style comparison of resource-oriented HTTP APIs, contract-first RPC, streaming, and
+        service-platform tradeoffs.
+      </p>
 
-        <div className="rest-grpc-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`rest-grpc-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="rest-grpc-help-main">
-          <aside className="rest-grpc-help-toc" aria-label="Table of contents">
-            <h2 className="rest-grpc-help-toc-title">Contents</h2>
-            <ul className="rest-grpc-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="rest-grpc-help-content">
-            <h1 className="rest-grpc-help-doc-title">REST vs gRPC</h1>
-            <p className="rest-grpc-help-doc-subtitle">
-              Manual-style comparison of resource-oriented HTTP APIs, contract-first RPC, streaming, and service-platform tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="rest-grpc-help-section">
-                    <h2 className="rest-grpc-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="rest-grpc-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="rest-grpc-help-section">
-                  <h2 className="rest-grpc-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="rest-grpc-help-section">
-                  <h2 className="rest-grpc-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="rest-grpc-help-subheading">{snippet.label}</h3>
-                      <div className="rest-grpc-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="rest-grpc-help-section">
-                <h2 className="rest-grpc-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -227,8 +225,7 @@ const glossary = [
   },
   {
     term: 'MVT',
-    definition:
-      'Model-View-Template, a label often used for Django’s structural style.',
+    definition: 'Model-View-Template, a label often used for Django’s structural style.',
   },
   {
     term: 'MVC',
@@ -257,432 +254,143 @@ const glossary = [
   },
 ]
 
-const win98HelpStyles = `
-.django-rails-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.django-rails-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.django-rails-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.django-rails-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-
-.django-rails-help-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.django-rails-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: #000;
-  background: #c0c0c0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.django-rails-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.django-rails-help-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.django-rails-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.django-rails-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.django-rails-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.django-rails-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.django-rails-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.django-rails-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.django-rails-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.django-rails-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.django-rails-help-content p,
-.django-rails-help-content li {
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.django-rails-help-content p {
-  margin: 0 0 10px;
-}
-
-.django-rails-help-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.django-rails-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.django-rails-help-section {
-  margin: 0 0 22px;
-}
-
-.django-rails-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.django-rails-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.django-rails-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.django-rails-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.django-rails-help-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .django-rails-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .django-rails-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .django-rails-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function DjangoVsRubyOnRailsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const rawTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(rawTab) ? rawTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Django vs Ruby on Rails (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const currentSections = sectionLinks[activeTab]
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: false })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Django vs Ruby on Rails',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Django vs Ruby on Rails',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="django-rails-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="django-rails-help-window" role="presentation">
-        <header className="django-rails-help-titlebar">
-          <span className="django-rails-help-title">Django vs Ruby on Rails</span>
-          <div className="django-rails-help-controls">
-            <button type="button" className="django-rails-help-control" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="django-rails-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Django vs Ruby on Rails"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Django vs Ruby on Rails</h1>
+      <p>
+        This page compares two mature, high-productivity web frameworks. The goal is not to declare
+        a universal winner, but to show how Django and Ruby on Rails differ in philosophy,
+        structure, tooling, and the kinds of teams that benefit most from each approach.
+      </p>
 
-        <div className="django-rails-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`django-rails-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections[0]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-when-django-fits" className="bin98-section">
+            <h2 className="bin98-heading">When Django Fits Better</h2>
+            {bigPictureSections[1]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-when-rails-fits" className="bin98-section">
+            <h2 className="bin98-heading">When Rails Fits Better</h2>
+            {bigPictureSections[2]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-tradeoffs" className="bin98-section">
+            <h2 className="bin98-heading">Tradeoffs</h2>
+            {bigPictureSections[3]?.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+            <p>
+              The comparison includes overview, key ideas, syntax and APIs, ecosystem, architecture,
+              use cases, tradeoffs, and compare-and-contrast guidance because those are the
+              practical dimensions that usually decide the choice.
+            </p>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          {conceptSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {index < conceptSections.length - 1 ? <hr className="bin98-divider" /> : null}
+            </section>
           ))}
-        </div>
+        </>
+      )}
 
-        <div className="django-rails-help-main">
-          <aside className="django-rails-help-toc" aria-label="Table of contents">
-            <h2 className="django-rails-help-toc-title">Contents</h2>
-            <ul className="django-rails-help-toc-list">
-              {currentSections.map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-crud" className="bin98-section">
+            <h2 className="bin98-heading">{examples.crud.title}</h2>
+            <p>{examples.crud.intro}</p>
+            <h3 className="bin98-subheading">Django</h3>
+            <div className="bin98-codebox">
+              <code>{examples.crud.djangoCode}</code>
+            </div>
+            <h3 className="bin98-subheading">Ruby on Rails</h3>
+            <div className="bin98-codebox">
+              <code>{examples.crud.railsCode}</code>
+            </div>
+            <ul>
+              {examples.crud.notes.map((note) => (
+                <li key={note}>{note}</li>
               ))}
             </ul>
-          </aside>
-
-          <main className="django-rails-help-content">
-            <h1 className="django-rails-help-doc-title">Django vs Ruby on Rails</h1>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="ex-auth" className="bin98-section">
+            <h2 className="bin98-heading">{examples.auth.title}</h2>
+            <p>{examples.auth.intro}</p>
+            <h3 className="bin98-subheading">Django</h3>
+            <div className="bin98-codebox">
+              <code>{examples.auth.djangoCode}</code>
+            </div>
+            <h3 className="bin98-subheading">Ruby on Rails</h3>
+            <div className="bin98-codebox">
+              <code>{examples.auth.railsCode}</code>
+            </div>
+            <ul>
+              {examples.auth.notes.map((note) => (
+                <li key={note}>{note}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="ex-reference" className="bin98-section">
+            <h2 className="bin98-heading">Decision Reference</h2>
             <p>
-              This page compares two mature, high-productivity web frameworks. The goal is not to declare a universal winner,
-              but to show how Django and Ruby on Rails differ in philosophy, structure, tooling, and the kinds of teams that
-              benefit most from each approach.
+              Use this summary when the comparison needs to be turned into a practical framework
+              choice for a real team.
             </p>
+            <ul>
+              {decisionReference.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">Overview</h2>
-                  {bigPictureSections[0]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-                <hr className="django-rails-help-divider" />
-                <section id="bp-when-django-fits" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">When Django Fits Better</h2>
-                  {bigPictureSections[1]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-                <hr className="django-rails-help-divider" />
-                <section id="bp-when-rails-fits" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">When Rails Fits Better</h2>
-                  {bigPictureSections[2]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-                <hr className="django-rails-help-divider" />
-                <section id="bp-tradeoffs" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">Tradeoffs</h2>
-                  {bigPictureSections[3]?.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                  <p>
-                    The comparison includes overview, key ideas, syntax and APIs, ecosystem, architecture, use cases, tradeoffs,
-                    and compare-and-contrast guidance because those are the practical dimensions that usually decide the choice.
-                  </p>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {conceptSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="django-rails-help-section">
-                    <h2 className="django-rails-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                    {index < conceptSections.length - 1 ? <hr className="django-rails-help-divider" /> : null}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-crud" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">{examples.crud.title}</h2>
-                  <p>{examples.crud.intro}</p>
-                  <h3 className="django-rails-help-subheading">Django</h3>
-                  <div className="django-rails-help-codebox">
-                    <code>{examples.crud.djangoCode}</code>
-                  </div>
-                  <h3 className="django-rails-help-subheading">Ruby on Rails</h3>
-                  <div className="django-rails-help-codebox">
-                    <code>{examples.crud.railsCode}</code>
-                  </div>
-                  <ul>
-                    {examples.crud.notes.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="django-rails-help-divider" />
-                <section id="ex-auth" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">{examples.auth.title}</h2>
-                  <p>{examples.auth.intro}</p>
-                  <h3 className="django-rails-help-subheading">Django</h3>
-                  <div className="django-rails-help-codebox">
-                    <code>{examples.auth.djangoCode}</code>
-                  </div>
-                  <h3 className="django-rails-help-subheading">Ruby on Rails</h3>
-                  <div className="django-rails-help-codebox">
-                    <code>{examples.auth.railsCode}</code>
-                  </div>
-                  <ul>
-                    {examples.auth.notes.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="django-rails-help-divider" />
-                <section id="ex-reference" className="django-rails-help-section">
-                  <h2 className="django-rails-help-heading">Decision Reference</h2>
-                  <p>
-                    Use this summary when the comparison needs to be turned into a practical framework choice for a real team.
-                  </p>
-                  <ul>
-                    {decisionReference.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="django-rails-help-section">
-                <h2 className="django-rails-help-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

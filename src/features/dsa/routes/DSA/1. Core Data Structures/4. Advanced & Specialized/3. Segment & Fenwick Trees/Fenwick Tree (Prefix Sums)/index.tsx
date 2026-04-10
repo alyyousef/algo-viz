@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -48,28 +47,23 @@ const mentalModels = [
 const terminology = [
   {
     term: 'lowbit(i)',
-    detail:
-      'lowbit(i) = i & -i gives the size of the range covered by tree[i].',
+    detail: 'lowbit(i) = i & -i gives the size of the range covered by tree[i].',
   },
   {
     term: 'Bucket range',
-    detail:
-      'tree[i] stores the sum of values in (i - lowbit(i) + 1) .. i.',
+    detail: 'tree[i] stores the sum of values in (i - lowbit(i) + 1) .. i.',
   },
   {
     term: '1-indexed array',
-    detail:
-      'Index 0 is unused so lowbit math works cleanly.',
+    detail: 'Index 0 is unused so lowbit math works cleanly.',
   },
   {
     term: 'Prefix sum',
-    detail:
-      'Sum of values from 1 to i, computed by walking down the lowbit chain.',
+    detail: 'Sum of values from 1 to i, computed by walking down the lowbit chain.',
   },
   {
     term: 'Point update',
-    detail:
-      'Add delta to one index and propagate to all buckets that cover it.',
+    detail: 'Add delta to one index and propagate to all buckets that cover it.',
   },
 ]
 
@@ -127,13 +121,11 @@ const coreConcepts = [
 const invariants = [
   {
     title: 'Bucket correctness',
-    detail:
-      'For every i, tree[i] equals the sum of a fixed range length lowbit(i).',
+    detail: 'For every i, tree[i] equals the sum of a fixed range length lowbit(i).',
   },
   {
     title: 'Prefix decomposition',
-    detail:
-      'Any prefix [1..i] can be decomposed into disjoint buckets following i -= lowbit(i).',
+    detail: 'Any prefix [1..i] can be decomposed into disjoint buckets following i -= lowbit(i).',
   },
   {
     title: 'Monotonic prefixes for kth',
@@ -142,16 +134,14 @@ const invariants = [
   },
   {
     title: '1-based indexing',
-    detail:
-      'All update and query loops terminate correctly only when indices start at 1.',
+    detail: 'All update and query loops terminate correctly only when indices start at 1.',
   },
 ]
 
 const operationVariants = [
   {
     title: 'Point update + prefix query',
-    detail:
-      'The classic Fenwick use case. O(log n) update and query.',
+    detail: 'The classic Fenwick use case. O(log n) update and query.',
   },
   {
     title: 'Range update + point query',
@@ -160,13 +150,11 @@ const operationVariants = [
   },
   {
     title: 'Range update + range query',
-    detail:
-      'Use two trees to support range adds and prefix sums in O(log n).',
+    detail: 'Use two trees to support range adds and prefix sums in O(log n).',
   },
   {
     title: '2D and 3D Fenwick',
-    detail:
-      'Extend loops across dimensions: O(log^d n) for d dimensions.',
+    detail: 'Extend loops across dimensions: O(log^d n) for d dimensions.',
   },
 ]
 
@@ -196,23 +184,19 @@ const complexityNotes = [
 const performanceNotes = [
   {
     title: 'Small constants',
-    detail:
-      'Tight loops and contiguous arrays make Fenwick fast in practice.',
+    detail: 'Tight loops and contiguous arrays make Fenwick fast in practice.',
   },
   {
     title: 'Memory locality',
-    detail:
-      'Access patterns are predictable and cache friendly compared to pointer trees.',
+    detail: 'Access patterns are predictable and cache friendly compared to pointer trees.',
   },
   {
     title: 'Build strategy',
-    detail:
-      'Linear build saves time when initializing from static data.',
+    detail: 'Linear build saves time when initializing from static data.',
   },
   {
     title: 'Type width',
-    detail:
-      'Use 64-bit for sums unless you can guarantee small totals.',
+    detail: 'Use 64-bit for sums unless you can guarantee small totals.',
   },
 ]
 
@@ -224,8 +208,7 @@ const rangeUpdateMath = [
   },
   {
     title: 'Two-tree formula',
-    detail:
-      'Prefix sum after range adds: sum(i) = i * query(B1, i) - query(B2, i).',
+    detail: 'Prefix sum after range adds: sum(i) = i * query(B1, i) - query(B2, i).',
   },
   {
     title: 'Update formula',
@@ -237,18 +220,15 @@ const rangeUpdateMath = [
 const coordinateCompression = [
   {
     title: 'Why compress',
-    detail:
-      'Fenwick needs dense indices. Compress sparse keys to 1..m to keep memory small.',
+    detail: 'Fenwick needs dense indices. Compress sparse keys to 1..m to keep memory small.',
   },
   {
     title: 'How to compress',
-    detail:
-      'Sort unique keys, map each key to its rank, then use the rank in updates and queries.',
+    detail: 'Sort unique keys, map each key to its rank, then use the rank in updates and queries.',
   },
   {
     title: 'Use cases',
-    detail:
-      'Inversion counting, offline queries, and frequency tracking over large domains.',
+    detail: 'Inversion counting, offline queries, and frequency tracking over large domains.',
   },
 ]
 
@@ -282,8 +262,7 @@ const realWorldUses = [
   },
   {
     context: 'Inversion counting',
-    detail:
-      'Coordinate compress values and track how many smaller elements have appeared so far.',
+    detail: 'Coordinate compress values and track how many smaller elements have appeared so far.',
   },
   {
     context: 'Fenwick for text editors',
@@ -297,8 +276,7 @@ const realWorldUses = [
   },
   {
     context: '2D heatmaps',
-    detail:
-      'Use a 2D Fenwick for dynamic grid counts in dashboards and sensor maps.',
+    detail: 'Use a 2D Fenwick for dynamic grid counts in dashboards and sensor maps.',
   },
 ]
 
@@ -398,8 +376,7 @@ function sum(x, y):
         for j = y; j > 0; j -= j & -j:
             res += tree[i][j]
     return res`,
-    explanation:
-      'Nested lowbit loops generalize Fenwick to 2D for dynamic rectangle sums.',
+    explanation: 'Nested lowbit loops generalize Fenwick to 2D for dynamic rectangle sums.',
   },
 ]
 
@@ -464,228 +441,6 @@ const takeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const fenwick98HelpStyles = `
-.fenwick98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.fenwick98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.fenwick98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.fenwick98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.fenwick98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.fenwick98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.fenwick98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.fenwick98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.fenwick98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.fenwick98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.fenwick98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.fenwick98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.fenwick98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.fenwick98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.fenwick98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.fenwick98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.fenwick98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.fenwick98-section {
-  margin: 0 0 20px;
-}
-
-.fenwick98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.fenwick98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.fenwick98-content p,
-.fenwick98-content li,
-.fenwick98-content th,
-.fenwick98-content td {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.fenwick98-content p {
-  margin: 0 0 10px;
-}
-
-.fenwick98-content ul,
-.fenwick98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.fenwick98-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 8px 0 10px;
-}
-
-.fenwick98-table th,
-.fenwick98-table td {
-  border: 1px solid #b8b8b8;
-  text-align: left;
-  padding: 4px 6px;
-  vertical-align: top;
-}
-
-.fenwick98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.fenwick98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.fenwick98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .fenwick98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .fenwick98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -693,10 +448,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -729,316 +480,255 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function FenwickTreePrefixSumsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Fenwick Tree (Prefix Sums)',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Fenwick Tree (Prefix Sums) (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Fenwick Tree (Prefix Sums)',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="fenwick98-help-page">
-      <style>{fenwick98HelpStyles}</style>
-      <div className="fenwick98-window" role="presentation">
-        <header className="fenwick98-titlebar">
-          <span className="fenwick98-title-text">Fenwick Tree (Prefix Sums)</span>
-          <div className="fenwick98-title-controls">
-            <button className="fenwick98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="fenwick98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="fenwick98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`fenwick98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="fenwick98-main">
-          <aside className="fenwick98-toc" aria-label="Table of contents">
-            <h2 className="fenwick98-toc-title">Contents</h2>
-            <ul className="fenwick98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Fenwick Tree (Prefix Sums)"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Fenwick Tree (Prefix Sums)</h1>
+      <p>
+        Fenwick trees (binary indexed trees) keep prefix sums and frequencies fast while using only
+        a single array. They shine when updates are frequent, queries are prefix-based, and memory
+        or constant factors matter.
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              A Fenwick tree stores partial sums in buckets determined by the lowest set bit of each
+              index. This answers prefix sums in O(log n) and applies point updates in O(log n),
+              while using only n + 1 storage.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-uses" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="fenwick98-content">
-            <h1 className="fenwick98-doc-title">Fenwick Tree (Prefix Sums)</h1>
-            <p>
-              Fenwick trees (binary indexed trees) keep prefix sums and frequencies fast while using only a single array. They shine when
-              updates are frequent, queries are prefix-based, and memory or constant factors matter.
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-terms" className="bin98-section">
+            <h2 className="bin98-heading">Terminology</h2>
+            {terminology.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Invariants</h2>
+            {invariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Structure and Operations</h2>
+            {coreConcepts.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Operation Variants</h2>
+            {operationVariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Notes</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-range-math" className="bin98-section">
+            <h2 className="bin98-heading">Range Update Math (Two-Tree Trick)</h2>
+            {rangeUpdateMath.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-compression" className="bin98-section">
+            <h2 className="bin98-heading">Coordinate Compression</h2>
+            {coordinateCompression.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-summary" className="bin98-section">
+            <h2 className="bin98-heading">Operation Summary</h2>
+            <table className="bin98-table">
+              <thead>
+                <tr>
+                  <th>Operation</th>
+                  <th>Time</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Point update</td>
+                  <td>O(log n)</td>
+                  <td>Update buckets using i += lowbit(i).</td>
+                </tr>
+                <tr>
+                  <td>Prefix sum</td>
+                  <td>O(log n)</td>
+                  <td>Accumulate buckets using i -= lowbit(i).</td>
+                </tr>
+                <tr>
+                  <td>Range sum</td>
+                  <td>O(log n)</td>
+                  <td>prefix(r) - prefix(l - 1).</td>
+                </tr>
+                <tr>
+                  <td>Build from array</td>
+                  <td>O(n)</td>
+                  <td>Propagate each bucket once.</td>
+                </tr>
+                <tr>
+                  <td>k-th by frequency</td>
+                  <td>O(log n)</td>
+                  <td>Binary lifting on prefix sums.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-tests" className="bin98-section">
+            <h2 className="bin98-heading">Testing Checklist</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="ex-practice" className="bin98-section">
+            <h2 className="bin98-heading">Practice and Build Ideas</h2>
+            <ul>
+              {practiceIdeas.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {terminology.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.detail}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Overview</h2>
-                  <p>
-                    A Fenwick tree stores partial sums in buckets determined by the lowest set bit of each index. This answers prefix sums
-                    in O(log n) and applies point updates in O(log n), while using only n + 1 storage.
-                  </p>
-                </section>
-                <hr className="fenwick98-divider" />
-                <section id="bp-history" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fenwick98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-uses" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-terms" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Terminology</h2>
-                  {terminology.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-invariants" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Invariants</h2>
-                  {invariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">How It Works: Structure and Operations</h2>
-                  {coreConcepts.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="fenwick98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-variants" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Operation Variants</h2>
-                  {operationVariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Performance Notes</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-range-math" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Range Update Math (Two-Tree Trick)</h2>
-                  {rangeUpdateMath.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-compression" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Coordinate Compression</h2>
-                  {coordinateCompression.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decision" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-summary" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Operation Summary</h2>
-                  <table className="fenwick98-table">
-                    <thead>
-                      <tr>
-                        <th>Operation</th>
-                        <th>Time</th>
-                        <th>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Point update</td>
-                        <td>O(log n)</td>
-                        <td>Update buckets using i += lowbit(i).</td>
-                      </tr>
-                      <tr>
-                        <td>Prefix sum</td>
-                        <td>O(log n)</td>
-                        <td>Accumulate buckets using i -= lowbit(i).</td>
-                      </tr>
-                      <tr>
-                        <td>Range sum</td>
-                        <td>O(log n)</td>
-                        <td>prefix(r) - prefix(l - 1).</td>
-                      </tr>
-                      <tr>
-                        <td>Build from array</td>
-                        <td>O(n)</td>
-                        <td>Propagate each bucket once.</td>
-                      </tr>
-                      <tr>
-                        <td>k-th by frequency</td>
-                        <td>O(log n)</td>
-                        <td>Binary lifting on prefix sums.</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </section>
-                <section id="ex-code" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="fenwick98-subheading">{example.title}</h3>
-                      <div className="fenwick98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-tests" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Testing Checklist</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="ex-practice" className="fenwick98-section">
-                  <h2 className="fenwick98-heading">Practice and Build Ideas</h2>
-                  <ul>
-                    {practiceIdeas.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="fenwick98-section">
-                <h2 className="fenwick98-heading">Glossary</h2>
-                {terminology.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.detail}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

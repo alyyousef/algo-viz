@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -30,69 +31,57 @@ const historicalMilestones = [
 const prerequisites = [
   {
     title: 'Graph with non-negative edge weights',
-    detail:
-      'A* assumes non-negative costs so that shorter paths remain valid during expansion.',
+    detail: 'A* assumes non-negative costs so that shorter paths remain valid during expansion.',
   },
   {
     title: 'Heuristic function h(n)',
-    detail:
-      'An estimate of the remaining cost to the goal. Quality of h determines speed.',
+    detail: 'An estimate of the remaining cost to the goal. Quality of h determines speed.',
   },
   {
     title: 'State representation',
-    detail:
-      'Each node represents a state; neighbors and edge costs must be well-defined.',
+    detail: 'Each node represents a state; neighbors and edge costs must be well-defined.',
   },
   {
     title: 'Start and goal nodes',
-    detail:
-      'A* solves a single-source single-target shortest path problem.',
+    detail: 'A* solves a single-source single-target shortest path problem.',
   },
 ]
 
 const inputsOutputs = [
   {
     title: 'Input',
-    detail:
-      'Graph G(V, E), start s, goal t, edge costs, and a heuristic h(n).',
+    detail: 'Graph G(V, E), start s, goal t, edge costs, and a heuristic h(n).',
   },
   {
     title: 'Output',
-    detail:
-      'Shortest path from s to t and its total cost, or failure if unreachable.',
+    detail: 'Shortest path from s to t and its total cost, or failure if unreachable.',
   },
   {
     title: 'Optional',
-    detail:
-      'Explored set, cost maps, and parent links for visualization and debugging.',
+    detail: 'Explored set, cost maps, and parent links for visualization and debugging.',
   },
 ]
 
 const formalDefinitions = [
   {
     title: 'g(n)',
-    detail:
-      'Cost of the best-known path from start to node n.',
+    detail: 'Cost of the best-known path from start to node n.',
   },
   {
     title: 'h(n)',
-    detail:
-      'Heuristic estimate of the cost from n to the goal.',
+    detail: 'Heuristic estimate of the cost from n to the goal.',
   },
   {
     title: 'f(n)',
-    detail:
-      'Evaluation function f(n) = g(n) + h(n) used to rank nodes.',
+    detail: 'Evaluation function f(n) = g(n) + h(n) used to rank nodes.',
   },
   {
     title: 'Admissible heuristic',
-    detail:
-      'h(n) never overestimates the true remaining cost.',
+    detail: 'h(n) never overestimates the true remaining cost.',
   },
   {
     title: 'Consistent heuristic',
-    detail:
-      'h(n) <= cost(n, n2) + h(n2) for every edge (n, n2).',
+    detail: 'h(n) <= cost(n, n2) + h(n2) for every edge (n, n2).',
   },
 ]
 
@@ -122,8 +111,7 @@ const coreMechanics = [
   },
   {
     title: 'Relax neighbors with g scores',
-    detail:
-      'When a cheaper path to a neighbor is found, update its g score, parent, and f score.',
+    detail: 'When a cheaper path to a neighbor is found, update its g score, parent, and f score.',
   },
   {
     title: 'Goal test at expansion',
@@ -153,8 +141,7 @@ const heuristicRules = [
 const keyStructures = [
   {
     title: 'Priority queue (min-heap)',
-    detail:
-      'Orders nodes by f = g + h, so the most promising node is expanded first.',
+    detail: 'Orders nodes by f = g + h, so the most promising node is expanded first.',
   },
   {
     title: 'Distance maps',
@@ -163,8 +150,7 @@ const keyStructures = [
   },
   {
     title: 'Parent pointers',
-    detail:
-      'Track how each node was reached. Needed to reconstruct the final path.',
+    detail: 'Track how each node was reached. Needed to reconstruct the final path.',
   },
   {
     title: 'Closed set',
@@ -185,28 +171,23 @@ const stepByStepFlow = [
 const dataStructures = [
   {
     title: 'Priority queue with decrease-key',
-    detail:
-      'Supports efficient updates when a better path to an open node is found.',
+    detail: 'Supports efficient updates when a better path to an open node is found.',
   },
   {
     title: 'g-score map',
-    detail:
-      'Tracks best-known cost from start to each node.',
+    detail: 'Tracks best-known cost from start to each node.',
   },
   {
     title: 'f-score map',
-    detail:
-      'Stores g + h to avoid recomputation in the heap.',
+    detail: 'Stores g + h to avoid recomputation in the heap.',
   },
   {
     title: 'Parent map',
-    detail:
-      'Allows path reconstruction after reaching the goal.',
+    detail: 'Allows path reconstruction after reaching the goal.',
   },
   {
     title: 'Closed set',
-    detail:
-      'Prevents redundant expansions when heuristics are consistent.',
+    detail: 'Prevents redundant expansions when heuristics are consistent.',
   },
 ]
 
@@ -218,8 +199,7 @@ const terminationRules = [
   },
   {
     title: 'No path',
-    detail:
-      'If the open set becomes empty, the goal is unreachable from the start.',
+    detail: 'If the open set becomes empty, the goal is unreachable from the start.',
   },
   {
     title: 'Weighted A*',
@@ -231,18 +211,15 @@ const terminationRules = [
 const correctnessNotes = [
   {
     title: 'Admissibility implies optimality',
-    detail:
-      'If h never overestimates, A* will not skip the optimal path.',
+    detail: 'If h never overestimates, A* will not skip the optimal path.',
   },
   {
     title: 'Consistency prevents re-openings',
-    detail:
-      'With a consistent h, once a node is closed its best path is final.',
+    detail: 'With a consistent h, once a node is closed its best path is final.',
   },
   {
     title: 'Goal pop is a proof',
-    detail:
-      'When the goal is popped, no cheaper path remains in the open set.',
+    detail: 'When the goal is popped, no cheaper path remains in the open set.',
   },
 ]
 
@@ -254,8 +231,7 @@ const complexityNotes = [
   },
   {
     title: 'Space complexity',
-    detail:
-      'A* stores all frontier nodes, so memory can be the limiting factor on large graphs.',
+    detail: 'A* stores all frontier nodes, so memory can be the limiting factor on large graphs.',
   },
   {
     title: 'Heuristic sensitivity',
@@ -377,23 +353,19 @@ const decisionGuidance = [
 const implementationNotes = [
   {
     title: 'Tie-breaking',
-    detail:
-      'When f ties, prefer larger g to reduce zig-zag in grid maps.',
+    detail: 'When f ties, prefer larger g to reduce zig-zag in grid maps.',
   },
   {
     title: 'Decrease-key workaround',
-    detail:
-      'If the heap lacks decrease-key, push duplicates and ignore stale entries.',
+    detail: 'If the heap lacks decrease-key, push duplicates and ignore stale entries.',
   },
   {
     title: 'Heuristic scaling',
-    detail:
-      'Weighted A* uses f = g + w*h. Pick w carefully to bound suboptimality.',
+    detail: 'Weighted A* uses f = g + w*h. Pick w carefully to bound suboptimality.',
   },
   {
     title: 'Grid heuristics',
-    detail:
-      'Manhattan for 4-way, octile for 8-way, Euclidean for continuous movement.',
+    detail: 'Manhattan for 4-way, octile for 8-way, Euclidean for continuous movement.',
   },
 ]
 
@@ -472,8 +444,14 @@ const glossaryTerms = [
   { term: 'g(n)', definition: 'Best-known exact cost from start to node n.' },
   { term: 'h(n)', definition: 'Estimated remaining cost from n to the goal.' },
   { term: 'f(n)', definition: 'Evaluation score combining traveled and estimated remaining cost.' },
-  { term: 'Admissible heuristic', definition: 'Heuristic that never overestimates the true remaining cost.' },
-  { term: 'Consistent heuristic', definition: 'Heuristic obeying triangle inequality across edges.' },
+  {
+    term: 'Admissible heuristic',
+    definition: 'Heuristic that never overestimates the true remaining cost.',
+  },
+  {
+    term: 'Consistent heuristic',
+    definition: 'Heuristic obeying triangle inequality across edges.',
+  },
   { term: 'Open set', definition: 'Priority queue of discovered frontier nodes not yet expanded.' },
   { term: 'Closed set', definition: 'Expanded nodes finalized under consistent heuristics.' },
   { term: 'Weighted A*', definition: 'Variant using f = g + w*h to trade optimality for speed.' },
@@ -481,38 +459,6 @@ const glossaryTerms = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98AStarHelpStyles = `
-.astar-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif;}
-.astar-help-window{border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;background:#c0c0c0;width:100%;min-height:100dvh;margin:0;display:flex;flex-direction:column;box-sizing:border-box;}
-.astar-help-titlebar{position:relative;display:flex;align-items:center;min-height:22px;padding:2px 4px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700;}
-.astar-help-title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;white-space:nowrap;}
-.astar-help-controls{display:flex;gap:2px;margin-left:auto;}
-.astar-help-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:1;}
-.astar-help-tabs{display:flex;gap:1px;padding:6px 8px 0;}
-.astar-help-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer;}
-.astar-help-tab.active{background:#fff;position:relative;top:1px;}
-.astar-help-main{border-top:1px solid #404040;background:#fff;flex:1;min-height:0;display:grid;grid-template-columns:240px 1fr;}
-.astar-help-toc{border-right:1px solid #808080;background:#f2f2f2;padding:12px;overflow:auto;}
-.astar-help-toc-title{margin:0 0 10px;font-size:12px;font-weight:700;}
-.astar-help-toc-list{list-style:none;margin:0;padding:0;}
-.astar-help-toc-list li{margin:0 0 8px;}
-.astar-help-toc-list a{color:#000;text-decoration:none;font-size:12px;}
-.astar-help-content{padding:14px 20px 20px;overflow:auto;}
-.astar-help-doc-title{margin:0 0 10px;font-size:20px;font-weight:700;}
-.astar-help-content p,.astar-help-content li{font-size:12px;line-height:1.5;}
-.astar-help-content p{margin:0 0 10px;}
-.astar-help-content ul,.astar-help-content ol{margin:0 0 10px 20px;padding:0;}
-.astar-help-section{margin:0 0 20px;}
-.astar-help-heading{margin:0 0 8px;font-size:16px;font-weight:700;}
-.astar-help-subheading{margin:0 0 6px;font-size:13px;font-weight:700;}
-.astar-help-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0;}
-.astar-help-codebox{margin:6px 0 10px;padding:8px;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff;background:#f4f4f4;}
-.astar-help-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px;}
-.astar-help-link{color:#000080;}
-@media (max-width:900px){.astar-help-main{grid-template-columns:1fr;}.astar-help-toc{border-right:none;border-bottom:1px solid #808080;}}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -520,10 +466,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -557,284 +499,276 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AStarSearchPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `A-Star Search (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'A-Star Search',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'A-Star Search',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="astar-help-page">
-      <style>{win98AStarHelpStyles}</style>
-      <div className="astar-help-window" role="presentation">
-        <header className="astar-help-titlebar">
-          <span className="astar-help-title">A-Star Search - Help</span>
-          <div className="astar-help-controls">
-            <button className="astar-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="astar-help-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="astar-help-tabs" role="tablist" aria-label="Major sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`astar-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="astar-help-main">
-          <aside className="astar-help-toc" aria-label="Table of contents">
-            <h2 className="astar-help-toc-title">Contents</h2>
-            <ul className="astar-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+    <TopicPageShell
+      title="A-Star Search"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">A-Star Search</h1>
+      <p>
+        A* Search finds the shortest path by combining the cost already traveled with a heuristic
+        estimate of the cost remaining. When the heuristic is admissible, it is both fast and
+        optimal, making it the go-to algorithm for routing, games, robotics, and puzzle solving.
+      </p>
+      <p>
+        <Link to="/algoViz" className="astar-help-link">
+          Back to Catalog
+        </Link>
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              A* sits between Dijkstra and greedy best-first search. Dijkstra explores in all
+              directions with guaranteed optimality; greedy search rushes toward the goal but can
+              miss the best path. A* mixes both: g(n) measures the path cost so far, while h(n)
+              estimates the remaining cost. The sum f(n) guides the search to explore the most
+              promising nodes first without sacrificing optimality.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-prerequisites" className="bin98-section">
+            <h2 className="bin98-heading">Prerequisites and Definitions</h2>
+            {prerequisites.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-io" className="bin98-section">
+            <h2 className="bin98-heading">Inputs and Outputs</h2>
+            {inputsOutputs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-formal" className="bin98-section">
+            <h2 className="bin98-heading">Formal Concepts</h2>
+            {formalDefinitions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">Core Mechanics</h2>
+            {coreMechanics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-heuristics" className="bin98-section">
+            <h2 className="bin98-heading">Heuristic Rules of Thumb</h2>
+            {heuristicRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              A heuristic that is optimistic but informative is the sweet spot. Overestimation
+              speeds the search but risks missing the true shortest path.
+            </p>
+          </section>
+          <section id="core-structures" className="bin98-section">
+            <h2 className="bin98-heading">Data Structures and Invariants</h2>
+            <h3 className="bin98-subheading">Key Structures</h3>
+            {keyStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <h3 className="bin98-subheading">Implementation Structures</h3>
+            {dataStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-flow" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Flow</h2>
+            <ol>
+              {stepByStepFlow.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-termination" className="bin98-section">
+            <h2 className="bin98-heading">Termination Rules</h2>
+            {terminationRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              If h is admissible and consistent, A* expands nodes in nondecreasing optimal path
+              cost. That is why the first expansion of the goal yields the shortest path.
+            </p>
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Sketch</h2>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              A* trades memory for speed. It can be dramatically faster than Dijkstra, but it
+              requires storing the frontier and heuristic metadata.
+            </p>
+          </section>
+          <section id="core-edge-cases" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases Checklist</h2>
+            <ul>
+              {edgeCases.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-variants-guarantees" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Guarantees</h2>
+            <ul>
+              {variantTable.map((row) => (
+                <li key={row.variant}>
+                  <strong>{row.variant}:</strong> Graph type: {row.graphType}. Guarantee:{' '}
+                  {row.guarantee}. Typical use case: {row.useCase}.
                 </li>
               ))}
             </ul>
-          </aside>
-          <main className="astar-help-content">
-            <h1 className="astar-help-doc-title">A-Star Search</h1>
-            <p>
-              A* Search finds the shortest path by combining the cost already traveled with a heuristic estimate of the cost
-              remaining. When the heuristic is admissible, it is both fast and optimal, making it the go-to algorithm for
-              routing, games, robotics, and puzzle solving.
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Notes</h2>
+            {implementationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-extensions" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            <ul>
+              {variants.map((row) => (
+                <li key={row.variant}>
+                  <strong>{row.variant}:</strong> Guarantee: {row.guarantee}. Tradeoff:{' '}
+                  {row.tradeoff}.
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              <Link to="/algoViz" className="astar-help-link">
-                Back to Catalog
-              </Link>
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="astar-help-section">
-                  <h2 className="astar-help-heading">Overview</h2>
-                  <p>
-                    A* sits between Dijkstra and greedy best-first search. Dijkstra explores in all directions with guaranteed
-                    optimality; greedy search rushes toward the goal but can miss the best path. A* mixes both: g(n) measures the
-                    path cost so far, while h(n) estimates the remaining cost. The sum f(n) guides the search to explore the most
-                    promising nodes first without sacrificing optimality.
-                  </p>
-                </section>
-                <hr className="astar-help-divider" />
-                <section id="bp-prerequisites" className="astar-help-section">
-                  <h2 className="astar-help-heading">Prerequisites and Definitions</h2>
-                  {prerequisites.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <hr className="astar-help-divider" />
-                <section id="bp-io" className="astar-help-section">
-                  <h2 className="astar-help-heading">Inputs and Outputs</h2>
-                  {inputsOutputs.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <hr className="astar-help-divider" />
-                <section id="bp-formal" className="astar-help-section">
-                  <h2 className="astar-help-heading">Formal Concepts</h2>
-                  {formalDefinitions.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <hr className="astar-help-divider" />
-                <section id="bp-history" className="astar-help-section">
-                  <h2 className="astar-help-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <hr className="astar-help-divider" />
-                <section id="bp-takeaways" className="astar-help-section">
-                  <h2 className="astar-help-heading">Key Takeaways</h2>
-                  <ul>{takeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental-models" className="astar-help-section">
-                  <h2 className="astar-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="astar-help-section">
-                  <h2 className="astar-help-heading">Core Mechanics</h2>
-                  {coreMechanics.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-heuristics" className="astar-help-section">
-                  <h2 className="astar-help-heading">Heuristic Rules of Thumb</h2>
-                  {heuristicRules.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                  <p>A heuristic that is optimistic but informative is the sweet spot. Overestimation speeds the search but risks missing the true shortest path.</p>
-                </section>
-                <section id="core-structures" className="astar-help-section">
-                  <h2 className="astar-help-heading">Data Structures and Invariants</h2>
-                  <h3 className="astar-help-subheading">Key Structures</h3>
-                  {keyStructures.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                  <h3 className="astar-help-subheading">Implementation Structures</h3>
-                  {dataStructures.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-flow" className="astar-help-section">
-                  <h2 className="astar-help-heading">Step-by-Step Flow</h2>
-                  <ol>{stepByStepFlow.map((item) => <li key={item}>{item}</li>)}</ol>
-                </section>
-                <section id="core-termination" className="astar-help-section">
-                  <h2 className="astar-help-heading">Termination Rules</h2>
-                  {terminationRules.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                  <p>
-                    If h is admissible and consistent, A* expands nodes in nondecreasing optimal path cost. That is why the first
-                    expansion of the goal yields the shortest path.
-                  </p>
-                </section>
-                <section id="core-correctness" className="astar-help-section">
-                  <h2 className="astar-help-heading">Correctness Sketch</h2>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="astar-help-section">
-                  <h2 className="astar-help-heading">Complexity and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}><strong>{note.title}:</strong> {note.detail}</p>
-                  ))}
-                  <p>
-                    A* trades memory for speed. It can be dramatically faster than Dijkstra, but it requires storing the frontier
-                    and heuristic metadata.
-                  </p>
-                </section>
-                <section id="core-edge-cases" className="astar-help-section">
-                  <h2 className="astar-help-heading">Edge Cases Checklist</h2>
-                  <ul>{edgeCases.map((item) => <li key={item}>{item}</li>)}</ul>
-                </section>
-                <section id="core-variants-guarantees" className="astar-help-section">
-                  <h2 className="astar-help-heading">Variants and Guarantees</h2>
-                  <ul>
-                    {variantTable.map((row) => (
-                      <li key={row.variant}>
-                        <strong>{row.variant}:</strong> Graph type: {row.graphType}. Guarantee: {row.guarantee}. Typical use case: {row.useCase}.
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-applications" className="astar-help-section">
-                  <h2 className="astar-help-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}><strong>{item.context}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="astar-help-section">
-                  <h2 className="astar-help-heading">Common Pitfalls</h2>
-                  <ul>{pitfalls.map((item) => <li key={item}>{item}</li>)}</ul>
-                </section>
-                <section id="core-decision" className="astar-help-section">
-                  <h2 className="astar-help-heading">When to Use It</h2>
-                  <ol>{decisionGuidance.map((item) => <li key={item}>{item}</li>)}</ol>
-                </section>
-                <section id="core-implementation" className="astar-help-section">
-                  <h2 className="astar-help-heading">Implementation Notes</h2>
-                  {implementationNotes.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="astar-help-section">
-                  <h2 className="astar-help-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}><strong>{item.title}:</strong> {item.detail}</p>
-                  ))}
-                </section>
-                <section id="core-extensions" className="astar-help-section">
-                  <h2 className="astar-help-heading">Variants and Extensions</h2>
-                  <ul>
-                    {variants.map((row) => (
-                      <li key={row.variant}><strong>{row.variant}:</strong> Guarantee: {row.guarantee}. Tradeoff: {row.tradeoff}.</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="astar-help-section">
-                <h2 className="astar-help-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="astar-help-subheading">{example.title}</h3>
-                    <div className="astar-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="astar-help-section">
-                <h2 className="astar-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

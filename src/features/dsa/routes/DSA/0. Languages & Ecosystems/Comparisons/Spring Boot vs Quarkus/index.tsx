@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,7 +35,7 @@ const bigPictureSections: readonly DocSection[] = [
     title: 'Overview',
     paragraphs: [
       'Spring Boot and Quarkus are both Java frameworks for building backend services, APIs, and cloud applications, but they optimize for slightly different defaults. Spring Boot emphasizes a massive ecosystem, familiar Spring programming models, auto-configuration, starter dependencies, and a mature enterprise development experience. Quarkus emphasizes build-time optimization, very fast startup, low memory usage, developer tooling geared toward hot reload, and strong alignment with container and native-image deployment.',
-      'That means the practical question is not which framework can expose REST endpoints or talk to a database. Both can. The more useful question is whether the team benefits more from Spring Boot\'s ecosystem breadth and conventional enterprise familiarity or from Quarkus\'s build-time model, fast developer loop, and stronger native-image posture.',
+      "That means the practical question is not which framework can expose REST endpoints or talk to a database. Both can. The more useful question is whether the team benefits more from Spring Boot's ecosystem breadth and conventional enterprise familiarity or from Quarkus's build-time model, fast developer loop, and stronger native-image posture.",
       'The original page scope was placeholder content for Spring Boot vs Quarkus, with planned notes on overview, key ideas, APIs, ecosystem, architecture, use cases, and tradeoffs. This help-style page keeps that scope and expands it into a fuller technical reference.',
     ],
   },
@@ -101,7 +103,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-auto-config',
     title: 'Auto-configuration vs Build-Time Augmentation',
     paragraphs: [
-      'Spring Boot\'s signature productivity feature is auto-configuration. If the right classes are on the classpath and the application has not already provided its own bean, Boot can automatically configure a large amount of infrastructure. That is why adding a starter dependency often turns on a working feature with very little explicit setup.',
+      "Spring Boot's signature productivity feature is auto-configuration. If the right classes are on the classpath and the application has not already provided its own bean, Boot can automatically configure a large amount of infrastructure. That is why adding a starter dependency often turns on a working feature with very little explicit setup.",
       'Quarkus is more strongly defined by build-time augmentation. Extensions analyze and prepare application behavior during the build so that runtime work is reduced. This matters because startup speed, memory footprint, and native-image compatibility all benefit when the framework can push more processing earlier in the lifecycle.',
     ],
   },
@@ -125,7 +127,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-native',
     title: 'JVM Runtime vs Native-Image Story',
     paragraphs: [
-      'Spring Boot supports GraalVM native-image workflows and AOT processing, so it is no longer accurate to frame it as JVM-only. However, much of Spring\'s heritage was built in a world where broad runtime flexibility was more important than native compilation constraints, so native workflows often require more deliberate attention.',
+      "Spring Boot supports GraalVM native-image workflows and AOT processing, so it is no longer accurate to frame it as JVM-only. However, much of Spring's heritage was built in a world where broad runtime flexibility was more important than native compilation constraints, so native workflows often require more deliberate attention.",
       'Quarkus was designed with native executables much closer to the center of its identity. Even when running on the JVM, many of its design choices reflect the goal of minimizing runtime work. That does not mean every Quarkus application should become native, but it does mean the framework generally feels more aligned with that deployment style.',
     ],
   },
@@ -134,15 +136,15 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Startup Time and Memory Footprint',
     paragraphs: [
       'In many environments, Spring Boot on the JVM is perfectly acceptable and operationally efficient enough. For long-lived services, the startup difference may not dominate the business outcome. Memory and cold start still matter, but they must be evaluated in context rather than treated as abstract scoreboard metrics.',
-      'Quarkus is often chosen precisely because startup speed and memory usage are not secondary concerns. In serverless-style, bursty, dense-container, or fast-scaling environments, those characteristics may materially affect platform economics and operational behavior. This is one of Quarkus\'s strongest practical advantages.',
+      "Quarkus is often chosen precisely because startup speed and memory usage are not secondary concerns. In serverless-style, bursty, dense-container, or fast-scaling environments, those characteristics may materially affect platform economics and operational behavior. This is one of Quarkus's strongest practical advantages.",
     ],
   },
   {
     id: 'core-data',
     title: 'Data Access and Persistence',
     paragraphs: [
-      'Spring Boot benefits from the maturity of Spring Data, transaction management, and the surrounding Spring database stack. Repository abstractions, declarative transactions, and deep community knowledge make data access one of Spring\'s safest bets.',
-      'Quarkus supports Hibernate ORM and also offers Panache, which simplifies common persistence patterns with an active-record or repository style API. Some teams find Panache concise and pleasant, especially for straightforward CRUD services, but the decision should still account for how much the team values Spring Data\'s broader familiarity and ecosystem depth.',
+      "Spring Boot benefits from the maturity of Spring Data, transaction management, and the surrounding Spring database stack. Repository abstractions, declarative transactions, and deep community knowledge make data access one of Spring's safest bets.",
+      "Quarkus supports Hibernate ORM and also offers Panache, which simplifies common persistence patterns with an active-record or repository style API. Some teams find Panache concise and pleasant, especially for straightforward CRUD services, but the decision should still account for how much the team values Spring Data's broader familiarity and ecosystem depth.",
     ],
   },
   {
@@ -157,7 +159,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-ops',
     title: 'Operations, Observability, and Packaging',
     paragraphs: [
-      'Spring Boot Actuator is one of the framework\'s strongest operational features. Health endpoints, metrics, environment insight, and management integrations make operational maturity a built-in part of the platform. Spring Boot also supports layered jars and buildpacks for container workflows, which keeps it very competitive in mainstream cloud packaging.',
+      "Spring Boot Actuator is one of the framework's strongest operational features. Health endpoints, metrics, environment insight, and management integrations make operational maturity a built-in part of the platform. Spring Boot also supports layered jars and buildpacks for container workflows, which keeps it very competitive in mainstream cloud packaging.",
       'Quarkus also supports health, metrics, configuration, and cloud deployment patterns very well, and its packaging and startup profile make it attractive for containerized services. The operational difference is not that one can be monitored and the other cannot. It is that Spring Boot emphasizes a mature management ecosystem while Quarkus emphasizes runtime efficiency and cloud ergonomics.',
     ],
   },
@@ -165,7 +167,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-compatibility',
     title: 'Library Compatibility and Migration Risk',
     paragraphs: [
-      'Spring Boot usually wins on compatibility confidence. The odds are high that your library, your team\'s internal starter, your organization\'s security conventions, and your existing production playbooks already assume Spring.',
+      "Spring Boot usually wins on compatibility confidence. The odds are high that your library, your team's internal starter, your organization's security conventions, and your existing production playbooks already assume Spring.",
       'Quarkus can be extremely productive, but its build-time and native-aware design means some libraries and dynamic patterns deserve more scrutiny. This does not make Quarkus fragile. It means that framework fit should be evaluated against the exact dependencies and reflective behaviors your application uses.',
     ],
   },
@@ -257,8 +259,7 @@ public class Book extends PanacheEntity {
   {
     id: 'examples-dev-native',
     title: 'Development Loop and Native Build Intent',
-    description:
-      'The command story highlights the runtime assumptions of each framework.',
+    description: 'The command story highlights the runtime assumptions of each framework.',
     snippets: [
       {
         label: 'Spring Boot',
@@ -308,274 +309,66 @@ public class Book extends PanacheEntity {
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Starter',
-    definition: 'A Spring Boot dependency bundle that brings in a useful default stack for a feature such as web, data, or security.',
+    definition:
+      'A Spring Boot dependency bundle that brings in a useful default stack for a feature such as web, data, or security.',
   },
   {
     term: 'Auto-configuration',
-    definition: 'Spring Boot automatically configuring infrastructure based on classpath contents, conditions, and missing user-defined beans.',
+    definition:
+      'Spring Boot automatically configuring infrastructure based on classpath contents, conditions, and missing user-defined beans.',
   },
   {
     term: 'Actuator',
-    definition: 'Spring Boot\'s operational feature set for health, metrics, environment, and management endpoints.',
+    definition:
+      "Spring Boot's operational feature set for health, metrics, environment, and management endpoints.",
   },
   {
     term: 'AOT',
-    definition: 'Ahead-of-time processing that prepares application behavior earlier in the lifecycle, especially relevant to native-image support.',
+    definition:
+      'Ahead-of-time processing that prepares application behavior earlier in the lifecycle, especially relevant to native-image support.',
   },
   {
     term: 'Build-Time Augmentation',
-    definition: 'Quarkus performing framework work during the build so less work remains at runtime.',
+    definition:
+      'Quarkus performing framework work during the build so less work remains at runtime.',
   },
   {
     term: 'Extension',
-    definition: 'A Quarkus integration module that contributes build-time and runtime behavior for a particular capability.',
+    definition:
+      'A Quarkus integration module that contributes build-time and runtime behavior for a particular capability.',
   },
   {
     term: 'ArC',
-    definition: 'Quarkus\'s CDI-based dependency injection container.',
+    definition: "Quarkus's CDI-based dependency injection container.",
   },
   {
     term: 'Panache',
-    definition: 'A Quarkus persistence convenience layer that simplifies common Hibernate ORM usage through active-record or repository patterns.',
+    definition:
+      'A Quarkus persistence convenience layer that simplifies common Hibernate ORM usage through active-record or repository patterns.',
   },
   {
     term: 'Native Executable',
-    definition: 'A compiled binary, typically produced with GraalVM or Mandrel tooling, that avoids a conventional JVM startup path.',
+    definition:
+      'A compiled binary, typically produced with GraalVM or Mandrel tooling, that avoids a conventional JVM startup path.',
   },
   {
     term: 'Dev Mode',
-    definition: 'Quarkus\'s development workflow with hot deployment and fast iteration through `quarkus:dev`.',
+    definition:
+      "Quarkus's development workflow with hot deployment and fast iteration through `quarkus:dev`.",
   },
   {
     term: 'Layered Jar',
-    definition: 'A Spring Boot packaging feature that separates archive contents into layers to improve container image caching.',
+    definition:
+      'A Spring Boot packaging feature that separates archive contents into layers to improve container image caching.',
   },
   {
     term: 'CDI',
-    definition: 'Contexts and Dependency Injection, the Jakarta standard dependency injection model used by Quarkus.',
+    definition:
+      'Contexts and Dependency Injection, the Jakarta standard dependency injection model used by Quarkus.',
   },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.spring-quarkus-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.spring-quarkus-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.spring-quarkus-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.spring-quarkus-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.spring-quarkus-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.spring-quarkus-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.spring-quarkus-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.spring-quarkus-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.spring-quarkus-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.spring-quarkus-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.spring-quarkus-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.spring-quarkus-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.spring-quarkus-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.spring-quarkus-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.spring-quarkus-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.spring-quarkus-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.spring-quarkus-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.spring-quarkus-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.spring-quarkus-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.spring-quarkus-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.spring-quarkus-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.spring-quarkus-help-content p,
-.spring-quarkus-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.spring-quarkus-help-content p {
-  margin: 0 0 10px;
-}
-
-.spring-quarkus-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.spring-quarkus-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.spring-quarkus-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.spring-quarkus-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .spring-quarkus-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .spring-quarkus-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .spring-quarkus-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -591,154 +384,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function SpringBootVsQuarkusPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Spring Boot vs Quarkus',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Spring Boot vs Quarkus (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Spring Boot vs Quarkus',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="spring-quarkus-help-page">
-      <style>{helpStyles}</style>
-      <div className="spring-quarkus-help-window" role="presentation">
-        <header className="spring-quarkus-help-titlebar">
-          <span className="spring-quarkus-help-titletext">Spring Boot vs Quarkus</span>
-          <div className="spring-quarkus-help-controls">
-            <button className="spring-quarkus-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="spring-quarkus-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Spring Boot vs Quarkus"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Spring Boot vs Quarkus</h1>
+      <p className="spring-quarkus-help-doc-subtitle">
+        Manual-style comparison of ecosystem breadth, build-time optimization, native-image fit, dev
+        mode, and enterprise Java platform tradeoffs.
+      </p>
 
-        <div className="spring-quarkus-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`spring-quarkus-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="spring-quarkus-help-main">
-          <aside className="spring-quarkus-help-toc" aria-label="Table of contents">
-            <h2 className="spring-quarkus-help-toc-title">Contents</h2>
-            <ul className="spring-quarkus-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="spring-quarkus-help-content">
-            <h1 className="spring-quarkus-help-doc-title">Spring Boot vs Quarkus</h1>
-            <p className="spring-quarkus-help-doc-subtitle">
-              Manual-style comparison of ecosystem breadth, build-time optimization, native-image fit, dev mode, and enterprise Java platform tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="spring-quarkus-help-section">
-                    <h2 className="spring-quarkus-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="spring-quarkus-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="spring-quarkus-help-section">
-                  <h2 className="spring-quarkus-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="spring-quarkus-help-section">
-                  <h2 className="spring-quarkus-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="spring-quarkus-help-subheading">{snippet.label}</h3>
-                      <div className="spring-quarkus-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="spring-quarkus-help-section">
-                <h2 className="spring-quarkus-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -391,32 +389,88 @@ const glossarySections: GlossarySection[] = [
     id: 'glossary-core',
     title: 'Core Xamarin Terms',
     terms: [
-      { term: 'Xamarin', definition: 'The Microsoft-owned .NET mobile application stack that enabled native app development for Android, iOS, and macOS with C#.' },
-      { term: 'Xamarin Native', definition: 'A practical term for Xamarin.Android and Xamarin.iOS projects that used platform-specific user interfaces while sharing .NET code underneath.' },
-      { term: 'Xamarin.Forms', definition: 'The higher-level cross-platform UI framework that let developers share user interface code in C# or XAML while rendering native controls underneath.' },
-      { term: 'Xamarin.Essentials', definition: 'A cross-platform library that exposed common device capabilities such as connectivity, launcher, preferences, and secure storage through a unified API.' },
+      {
+        term: 'Xamarin',
+        definition:
+          'The Microsoft-owned .NET mobile application stack that enabled native app development for Android, iOS, and macOS with C#.',
+      },
+      {
+        term: 'Xamarin Native',
+        definition:
+          'A practical term for Xamarin.Android and Xamarin.iOS projects that used platform-specific user interfaces while sharing .NET code underneath.',
+      },
+      {
+        term: 'Xamarin.Forms',
+        definition:
+          'The higher-level cross-platform UI framework that let developers share user interface code in C# or XAML while rendering native controls underneath.',
+      },
+      {
+        term: 'Xamarin.Essentials',
+        definition:
+          'A cross-platform library that exposed common device capabilities such as connectivity, launcher, preferences, and secure storage through a unified API.',
+      },
     ],
   },
   {
     id: 'glossary-ui',
     title: 'UI and Architecture Terms',
     terms: [
-      { term: 'XAML', definition: 'A declarative markup language used heavily in Xamarin.Forms to describe page layout, bindings, and UI resources.' },
-      { term: 'BindingContext', definition: 'The data context object that Xamarin.Forms bindings resolve against, commonly set to a view model.' },
-      { term: 'MVVM', definition: 'Model-View-ViewModel, a UI architecture pattern commonly used in Xamarin.Forms to separate presentation from logic and state.' },
-      { term: 'Renderer', definition: 'The Xamarin.Forms mechanism that maps a shared control to a native platform control and allows deep customization.' },
-      { term: 'DependencyService', definition: 'A Xamarin.Forms mechanism for resolving platform-specific implementations from shared code.' },
+      {
+        term: 'XAML',
+        definition:
+          'A declarative markup language used heavily in Xamarin.Forms to describe page layout, bindings, and UI resources.',
+      },
+      {
+        term: 'BindingContext',
+        definition:
+          'The data context object that Xamarin.Forms bindings resolve against, commonly set to a view model.',
+      },
+      {
+        term: 'MVVM',
+        definition:
+          'Model-View-ViewModel, a UI architecture pattern commonly used in Xamarin.Forms to separate presentation from logic and state.',
+      },
+      {
+        term: 'Renderer',
+        definition:
+          'The Xamarin.Forms mechanism that maps a shared control to a native platform control and allows deep customization.',
+      },
+      {
+        term: 'DependencyService',
+        definition:
+          'A Xamarin.Forms mechanism for resolving platform-specific implementations from shared code.',
+      },
     ],
   },
   {
     id: 'glossary-operations',
     title: 'Build, Tooling, and Migration Terms',
     terms: [
-      { term: 'Build host', definition: 'A machine required for platform-specific build steps, especially a Mac for iOS build and signing workflows from Windows-based development setups.' },
-      { term: 'NuGet', definition: 'The package manager used heavily in Xamarin solutions for framework references and third-party libraries.' },
-      { term: 'SDK-style project', definition: 'The newer .NET project format used by modern .NET platform tooling and migration targets.' },
-      { term: '.NET MAUI', definition: 'The modern supported evolution of Xamarin.Forms for cross-platform UI development on .NET.' },
-      { term: 'End of support', definition: 'The point after which Microsoft no longer provides fixes, updates, or official technical assistance. For Xamarin this date was May 1, 2024.' },
+      {
+        term: 'Build host',
+        definition:
+          'A machine required for platform-specific build steps, especially a Mac for iOS build and signing workflows from Windows-based development setups.',
+      },
+      {
+        term: 'NuGet',
+        definition:
+          'The package manager used heavily in Xamarin solutions for framework references and third-party libraries.',
+      },
+      {
+        term: 'SDK-style project',
+        definition:
+          'The newer .NET project format used by modern .NET platform tooling and migration targets.',
+      },
+      {
+        term: '.NET MAUI',
+        definition:
+          'The modern supported evolution of Xamarin.Forms for cross-platform UI development on .NET.',
+      },
+      {
+        term: 'End of support',
+        definition:
+          'The point after which Microsoft no longer provides fixes, updates, or official technical assistance. For Xamarin this date was May 1, 2024.',
+      },
     ],
   },
 ]
@@ -461,163 +515,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.xamarin-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.xamarin-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.xamarin-help-titlebar {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.xamarin-help-titletext {
-  grid-column: 2;
-  justify-self: center;
-  font-size: 15px;
-  line-height: 1.1;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.xamarin-help-controls {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  gap: 2px;
-}
-
-.xamarin-help-control {
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.xamarin-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.xamarin-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.xamarin-help-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.xamarin-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.xamarin-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.xamarin-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.xamarin-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.xamarin-help-toc-item { margin: 0 0 8px; }
-.xamarin-help-toc-link { color: #000; text-decoration: none; font-size: 12px; }
-.xamarin-help-content { overflow: auto; padding: 14px 20px 20px; }
-.xamarin-help-doc-title { margin: 0 0 10px; font-size: 20px; font-weight: 700; }
-.xamarin-help-section { margin: 0 0 20px; }
-.xamarin-help-heading { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
-.xamarin-help-content p, .xamarin-help-content li { font-size: 12px; line-height: 1.5; }
-.xamarin-help-content p { margin: 0 0 10px; }
-.xamarin-help-content ul { margin: 0 0 10px 20px; padding: 0; }
-.xamarin-help-divider { margin: 14px 0; border: 0; border-top: 1px solid #d0d0d0; }
-.xamarin-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-.xamarin-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-@media (max-width: 900px) {
-  .xamarin-help-main { grid-template-columns: 1fr; }
-  .xamarin-help-toc { border-right: none; border-bottom: 1px solid #808080; }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="xamarin-help-section">
@@ -625,7 +522,13 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      {section.bullets ? <ul>{section.bullets.map((item) => <li key={item}>{item}</li>)}</ul> : null}
+      {section.bullets ? (
+        <ul>
+          {section.bullets.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : null}
       {isLast ? null : <hr className="xamarin-help-divider" />}
     </section>
   )
@@ -638,8 +541,14 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="xamarin-help-codebox"><code>{section.code.trim()}</code></div>
-      <ul>{section.notes.map((note) => <li key={note}>{note}</li>)}</ul>
+      <div className="xamarin-help-codebox">
+        <code>{section.code.trim()}</code>
+      </div>
+      <ul>
+        {section.notes.map((note) => (
+          <li key={note}>{note}</li>
+        ))}
+      </ul>
       {isLast ? null : <hr className="xamarin-help-divider" />}
     </section>
   )
@@ -650,124 +559,59 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
     <section key={section.id} id={section.id} className="xamarin-help-section">
       <h2 className="xamarin-help-heading">{section.title}</h2>
       {section.terms.map((item) => (
-        <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>
+        <p key={item.term}>
+          <strong>{item.term}:</strong> {item.definition}
+        </p>
       ))}
       {isLast ? null : <hr className="xamarin-help-divider" />}
     </section>
   )
 }
+
 export default function XamarinPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Xamarin',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Xamarin (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Xamarin',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="xamarin-help-page">
-      <style>{pageStyles}</style>
-      <div className="xamarin-help-window" role="presentation">
-        <header className="xamarin-help-titlebar">
-          <span className="xamarin-help-titletext">Xamarin</span>
-          <div className="xamarin-help-controls">
-            <button className="xamarin-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="xamarin-help-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Xamarin"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Xamarin</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
 
-        <div className="xamarin-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`xamarin-help-tab ${activeTab === tab.id ? 'xamarin-help-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? combinedBigPictureSections.map((section, index) =>
+            renderContentSection(section, index === combinedBigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="xamarin-help-main">
-          <aside className="xamarin-help-toc" aria-label="Table of contents">
-            <h2 className="xamarin-help-toc-title">Contents</h2>
-            <ul className="xamarin-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="xamarin-help-toc-item">
-                  <a href={`#${section.id}`} className="xamarin-help-toc-link">{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? combinedCoreConceptSections.map((section, index) =>
+            renderContentSection(section, index === combinedCoreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="xamarin-help-content">
-            <h1 className="xamarin-help-doc-title">Xamarin</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? combinedExampleSections.map((section, index) =>
+            renderExampleSection(section, index === combinedExampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? combinedBigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === combinedBigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? combinedCoreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === combinedCoreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? combinedExampleSections.map((section, index) =>
-                  renderExampleSection(section, index === combinedExampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

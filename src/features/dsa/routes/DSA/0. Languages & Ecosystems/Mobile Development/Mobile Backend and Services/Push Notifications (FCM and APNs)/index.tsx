@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Push Notifications (FCM and APNs)'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -46,7 +44,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 
 const introParagraphs = [
   'Push notifications on mobile usually mean a delivery chain that begins on an application server, moves through a provider such as Firebase Cloud Messaging or Apple Push Notification service, and ends on a device that may or may not be online, foregrounded, or willing to display the message immediately. This is an operational messaging system, not a guaranteed direct message bus.',
-  'The right mental model is that FCM and APNs play different roles. APNs is Apple\'s native push transport for iPhone and iPad devices. FCM is Google\'s messaging layer that can act as the direct provider on Android and as an orchestration layer that still hands iOS delivery off to APNs. Teams need to understand both layers if they want reliable mobile messaging.',
+  "The right mental model is that FCM and APNs play different roles. APNs is Apple's native push transport for iPhone and iPad devices. FCM is Google's messaging layer that can act as the direct provider on Android and as an orchestration layer that still hands iOS delivery off to APNs. Teams need to understand both layers if they want reliable mobile messaging.",
   'This page focuses on push notifications in real mobile systems. It covers APNs and FCM responsibilities, token lifecycle, permissions, notification and data payloads, foreground and background behavior, routing, reliability, collapse and priority semantics, backend design, monitoring, examples, and the terms that matter when teams are debugging delivery or designing notification workflows.',
 ] as const
 
@@ -77,7 +75,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-fcm-vs-apns',
     title: 'FCM vs APNs Responsibilities',
     paragraphs: [
-      'APNs is Apple\'s push gateway for Apple devices. If an iOS app receives remote notifications, APNs is part of the path. FCM is Google\'s messaging platform and can provide a unified API surface for mobile teams, topic routing, token management workflows, analytics integration, and Android-native delivery.',
+      "APNs is Apple's push gateway for Apple devices. If an iOS app receives remote notifications, APNs is part of the path. FCM is Google's messaging platform and can provide a unified API surface for mobile teams, topic routing, token management workflows, analytics integration, and Android-native delivery.",
       'For iOS specifically, FCM is not a replacement for APNs transport. It is a layer above it. Messages sent through Firebase to an iPhone still rely on APNs credentials and APNs delivery rules. Teams that miss that distinction often misdiagnose iOS notification issues as only Firebase issues or only Apple issues when the problem can span both.',
     ],
   },
@@ -364,27 +362,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'APNs',
-        definition: 'Apple Push Notification service, the native Apple transport used to deliver remote notifications to Apple devices.',
+        definition:
+          'Apple Push Notification service, the native Apple transport used to deliver remote notifications to Apple devices.',
       },
       {
         term: 'FCM',
-        definition: 'Firebase Cloud Messaging, Google\'s push messaging service often used directly for Android and as a sending/orchestration layer for iOS.',
+        definition:
+          "Firebase Cloud Messaging, Google's push messaging service often used directly for Android and as a sending/orchestration layer for iOS.",
       },
       {
         term: 'Device token',
-        definition: 'A platform-issued address used to target a specific app installation on a device for push delivery.',
+        definition:
+          'A platform-issued address used to target a specific app installation on a device for push delivery.',
       },
       {
         term: 'Registration token',
-        definition: 'A provider-specific token, such as an FCM token, used by the backend to address a mobile app instance.',
+        definition:
+          'A provider-specific token, such as an FCM token, used by the backend to address a mobile app instance.',
       },
       {
         term: 'Payload',
-        definition: 'The structured message body sent through the push provider, including display information and optional data fields.',
+        definition:
+          'The structured message body sent through the push provider, including display information and optional data fields.',
       },
       {
         term: 'Silent push',
-        definition: 'A background-oriented notification intended to wake or refresh the app without necessarily displaying a visible alert.',
+        definition:
+          'A background-oriented notification intended to wake or refresh the app without necessarily displaying a visible alert.',
       },
     ],
   },
@@ -394,27 +398,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Collapse identifier',
-        definition: 'A grouping mechanism that allows a newer message to replace older pending messages for the same logical stream.',
+        definition:
+          'A grouping mechanism that allows a newer message to replace older pending messages for the same logical stream.',
       },
       {
         term: 'Expiration',
-        definition: 'The time after which an undelivered notification should be dropped instead of arriving stale.',
+        definition:
+          'The time after which an undelivered notification should be dropped instead of arriving stale.',
       },
       {
         term: 'Priority',
-        definition: 'The urgency hint provided to the push provider to influence delivery treatment and device wake behavior.',
+        definition:
+          'The urgency hint provided to the push provider to influence delivery treatment and device wake behavior.',
       },
       {
         term: 'Foreground presentation',
-        definition: 'How the app or operating system handles a notification while the app is already open and active.',
+        definition:
+          'How the app or operating system handles a notification while the app is already open and active.',
       },
       {
         term: 'Deep link',
-        definition: 'A navigation target encoded in or derived from the notification so the app opens the relevant screen directly.',
+        definition:
+          'A navigation target encoded in or derived from the notification so the app opens the relevant screen directly.',
       },
       {
         term: 'Notification preference',
-        definition: 'An app-level user choice controlling which categories of notifications should be sent or shown.',
+        definition:
+          'An app-level user choice controlling which categories of notifications should be sent or shown.',
       },
     ],
   },
@@ -424,27 +434,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Provider acceptance',
-        definition: 'The state where APNs or FCM accepts the message for delivery processing, which is not the same as user-visible delivery.',
+        definition:
+          'The state where APNs or FCM accepts the message for delivery processing, which is not the same as user-visible delivery.',
       },
       {
         term: 'Invalid token cleanup',
-        definition: 'The backend process of removing tokens that providers report as stale, expired, or no longer valid.',
+        definition:
+          'The backend process of removing tokens that providers report as stale, expired, or no longer valid.',
       },
       {
         term: 'Topic messaging',
-        definition: 'An FCM feature for sending to groups of subscribed devices through a named topic instead of individual tokens.',
+        definition:
+          'An FCM feature for sending to groups of subscribed devices through a named topic instead of individual tokens.',
       },
       {
         term: 'Notification service',
-        definition: 'A backend subsystem that decides who should receive a notification, builds payloads, and sends them through a provider.',
+        definition:
+          'A backend subsystem that decides who should receive a notification, builds payloads, and sends them through a provider.',
       },
       {
         term: 'Background mode',
-        definition: 'An app capability and operating-system behavior that affects what work can happen when a notification arrives offscreen.',
+        definition:
+          'An app capability and operating-system behavior that affects what work can happen when a notification arrives offscreen.',
       },
       {
         term: 'Delivery pipeline',
-        definition: 'The full path from backend event creation through provider routing and device handling to user-visible or app-visible result.',
+        definition:
+          'The full path from backend event creation through provider routing and device handling to user-visible or app-visible result.',
       },
     ],
   },
@@ -455,230 +471,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   'core-concepts': coreConceptSections.map((section) => ({ id: section.id, label: section.title })),
   examples: exampleSections.map((section) => ({ id: section.id, label: section.title })),
   glossary: glossarySections.map((section) => ({ id: section.id, label: section.title })),
-}
-
-const pushHelpStyles = `
-.push-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.push-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.push-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.push-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.push-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.push-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.push-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.push-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.push-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.push-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.push-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-.push-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.push-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.push-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.push-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.push-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.push-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.push-help98-section {
-  margin: 0 0 20px;
-}
-
-.push-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.push-help98-content p,
-.push-help98-content li,
-.push-help98-content dd,
-.push-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.push-help98-content p,
-.push-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.push-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.push-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.push-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.push-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.push-help98-glossary {
-  margin: 0;
-}
-
-.push-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .push-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .push-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .push-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -738,125 +530,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function PushNotificationsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Push Notifications Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="push-help98-page">
-      <style>{pushHelpStyles}</style>
-      <div className="push-help98-window" role="presentation">
-        <header className="push-help98-titlebar">
-          <span className="push-help98-title">{PAGE_TITLE}</span>
-          <div className="push-help98-controls">
-            <button className="push-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="push-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Push Notifications Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="push-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`push-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="push-help98-main">
-          <aside className="push-help98-toc" aria-label="Table of contents">
-            <h2 className="push-help98-toc-title">Contents</h2>
-            <ul className="push-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="push-help98-content">
-            <h1 className="push-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="push-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

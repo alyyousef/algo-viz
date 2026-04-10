@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -84,8 +84,7 @@ const dataStructures = [
   },
   {
     title: 'Sorted departure array',
-    detail:
-      'Gives the next train to leave, allowing us to free platforms as soon as possible.',
+    detail: 'Gives the next train to leave, allowing us to free platforms as soon as possible.',
   },
   {
     title: 'Two-pointer sweep',
@@ -125,13 +124,11 @@ const correctnessNotes = [
 const complexityNotes = [
   {
     title: 'Time complexity',
-    detail:
-      'Sorting dominates at O(n log n). The two-pointer sweep is O(n).',
+    detail: 'Sorting dominates at O(n log n). The two-pointer sweep is O(n).',
   },
   {
     title: 'Space complexity',
-    detail:
-      'O(n) for the arrival and departure arrays. The sweep itself uses O(1) extra space.',
+    detail: 'O(n) for the arrival and departure arrays. The sweep itself uses O(1) extra space.',
   },
   {
     title: 'Input constraints',
@@ -140,8 +137,7 @@ const complexityNotes = [
   },
   {
     title: 'Alternative complexity',
-    detail:
-      'Using a heap still yields O(n log n) but gives assignments if you track platform IDs.',
+    detail: 'Using a heap still yields O(n log n) but gives assignments if you track platform IDs.',
   },
 ]
 
@@ -158,8 +154,7 @@ const edgeCases = [
   },
   {
     title: 'Single train',
-    detail:
-      'With one train, the answer is 1 regardless of times.',
+    detail: 'With one train, the answer is 1 regardless of times.',
   },
   {
     title: 'Already sorted data',
@@ -171,28 +166,23 @@ const edgeCases = [
 const realWorldUses = [
   {
     context: 'Railway platforms',
-    detail:
-      'Estimate the minimum number of platforms needed to avoid delays given a timetable.',
+    detail: 'Estimate the minimum number of platforms needed to avoid delays given a timetable.',
   },
   {
     context: 'Airport gates',
-    detail:
-      'Assign aircraft gate windows to avoid overlaps and minimize gate count.',
+    detail: 'Assign aircraft gate windows to avoid overlaps and minimize gate count.',
   },
   {
     context: 'CPU cores',
-    detail:
-      'Determine how many cores are required to run fixed-interval jobs without preemption.',
+    detail: 'Determine how many cores are required to run fixed-interval jobs without preemption.',
   },
   {
     context: 'Call center staffing',
-    detail:
-      'Measure concurrent call intervals to estimate minimum agents needed to avoid waits.',
+    detail: 'Measure concurrent call intervals to estimate minimum agents needed to avoid waits.',
   },
   {
     context: 'Network ports',
-    detail:
-      'Plan concurrent bandwidth reservations or time windows for shared links.',
+    detail: 'Plan concurrent bandwidth reservations or time windows for shared links.',
   },
 ]
 
@@ -215,8 +205,7 @@ Sweep:
 1130 dep -> count 1
 1200 dep -> count 0
 ...`,
-    explanation:
-      'The maximum concurrent trains is 3, so 3 platforms suffice.',
+    explanation: 'The maximum concurrent trains is 3, so 3 platforms suffice.',
   },
   {
     title: 'Two-pointer pseudocode',
@@ -252,8 +241,7 @@ For each train:
   else:
      create new platform
   push updated departure`,
-    explanation:
-      'The heap variant returns platform IDs and a full schedule, not just the count.',
+    explanation: 'The heap variant returns platform IDs and a full schedule, not just the count.',
   },
 ]
 
@@ -310,7 +298,8 @@ const quickGlossary = [
   },
   {
     term: 'Endpoint convention',
-    definition: 'Rule for handling arrival and departure at equal times, such as arrival <= departure.',
+    definition:
+      'Rule for handling arrival and departure at equal times, such as arrival <= departure.',
   },
   {
     term: 'Interval partitioning relation',
@@ -319,211 +308,6 @@ const quickGlossary = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const platformHelpStyles = `
-.platform-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.platform-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  box-sizing: border-box;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.platform-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.platform-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.platform-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.platform-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.platform-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.platform-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.platform-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.platform-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.platform-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.platform-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.platform-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.platform-toc-list li {
-  margin: 0 0 8px;
-}
-
-.platform-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.platform-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.platform-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.platform-section {
-  margin: 0 0 20px;
-}
-
-.platform-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.platform-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.platform-content p,
-.platform-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.platform-content p {
-  margin: 0 0 10px;
-}
-
-.platform-content ul,
-.platform-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.platform-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.platform-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.platform-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .platform-main {
-    grid-template-columns: 1fr;
-  }
-
-  .platform-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -531,10 +315,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -559,240 +339,175 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MinimumNumberOfPlatformsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Minimum Number of Platforms',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Minimum Number of Platforms (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Minimum Number of Platforms',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="platform-help-page">
-      <style>{platformHelpStyles}</style>
-      <div className="platform-window" role="presentation">
-        <header className="platform-titlebar">
-          <span className="platform-title">Minimum Number of Platforms</span>
-          <div className="platform-controls">
-            <button className="platform-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="platform-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Minimum Number of Platforms"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Minimum Number of Platforms</h1>
+      <p>
+        Count peak overlap to size platforms, gates, or cores. The minimum number of platforms
+        problem asks how many platforms a station needs so no train waits. The greedy solution sorts
+        arrivals and departures, then sweeps through time to measure the maximum concurrency. It is
+        simple, fast, and directly generalizes to gates, servers, or any fixed time window
+        resources.
+      </p>
 
-        <div className="platform-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`platform-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="platform-main">
-          <aside className="platform-toc" aria-label="Table of contents">
-            <h2 className="platform-toc-title">Contents</h2>
-            <ul className="platform-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Each train occupies a platform from arrival to departure. The minimum number of
+              platforms is the maximum number of trains present at any instant. The algorithm
+              focuses on counting concurrency, not building a full assignment.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="platform-content">
-            <h1 className="platform-doc-title">Minimum Number of Platforms</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-ideas" className="bin98-section">
+            <h2 className="bin98-heading">What the Algorithm Does</h2>
+            {coreIdeas.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-steps" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Process</h2>
+            <ol>
+              {algorithmSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-structures" className="bin98-section">
+            <h2 className="bin98-heading">Data Structures Used</h2>
+            {dataStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Why the Greedy Choice Works</h2>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Count peak overlap to size platforms, gates, or cores. The minimum number of platforms problem asks how many platforms a
-              station needs so no train waits. The greedy solution sorts arrivals and departures, then sweeps through time to measure
-              the maximum concurrency. It is simple, fast, and directly generalizes to gates, servers, or any fixed time window
-              resources.
+              The sweep simulates the station in chronological order. Every arrival must have a
+              platform, and the peak count is both necessary and sufficient.
             </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-edge-cases" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases and Conventions</h2>
+            {edgeCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Extensions</h2>
+            {variants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="platform-section">
-                  <h2 className="platform-heading">Overview</h2>
-                  <p>
-                    Each train occupies a platform from arrival to departure. The minimum number of platforms is the maximum number of
-                    trains present at any instant. The algorithm focuses on counting concurrency, not building a full assignment.
-                  </p>
-                </section>
-                <hr className="platform-divider" />
-                <section id="bp-history" className="platform-section">
-                  <h2 className="platform-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="platform-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="platform-section">
-                  <h2 className="platform-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-applications" className="platform-section">
-                  <h2 className="platform-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="platform-section">
-                  <h2 className="platform-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-ideas" className="platform-section">
-                  <h2 className="platform-heading">What the Algorithm Does</h2>
-                  {coreIdeas.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-steps" className="platform-section">
-                  <h2 className="platform-heading">Step-by-Step Process</h2>
-                  <ol>
-                    {algorithmSteps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-structures" className="platform-section">
-                  <h2 className="platform-heading">Data Structures Used</h2>
-                  {dataStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="platform-section">
-                  <h2 className="platform-heading">Why the Greedy Choice Works</h2>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The sweep simulates the station in chronological order. Every arrival must have a platform, and the peak count is
-                    both necessary and sufficient.
-                  </p>
-                </section>
-                <section id="core-complexity" className="platform-section">
-                  <h2 className="platform-heading">Complexity Analysis</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-edge-cases" className="platform-section">
-                  <h2 className="platform-heading">Edge Cases and Conventions</h2>
-                  {edgeCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="platform-section">
-                  <h2 className="platform-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-variants" className="platform-section">
-                  <h2 className="platform-heading">Variants and Extensions</h2>
-                  {variants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="platform-section">
-                <h2 className="platform-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="platform-subheading">{example.title}</h3>
-                    <div className="platform-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="platform-section">
-                <h2 className="platform-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

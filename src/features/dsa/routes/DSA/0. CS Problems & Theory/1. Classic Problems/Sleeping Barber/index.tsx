@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -8,8 +10,7 @@ const bigPicture = [
     title: 'What it is',
     details:
       'A classic synchronization problem modeling a barber shop with one barber, one barber chair, and a limited waiting room.',
-    notes:
-      'Customers either wait, get a haircut immediately, or leave if the shop is full.',
+    notes: 'Customers either wait, get a haircut immediately, or leave if the shop is full.',
   },
   {
     title: 'Why it matters',
@@ -20,8 +21,7 @@ const bigPicture = [
   },
   {
     title: 'What it teaches',
-    details:
-      'Correctness requires mutual exclusion, proper signaling, and avoiding lost wakeups.',
+    details: 'Correctness requires mutual exclusion, proper signaling, and avoiding lost wakeups.',
     notes:
       'It distinguishes safety (no two customers in the chair) from liveness (the barber eventually works).',
   },
@@ -32,22 +32,18 @@ const historicalContext = [
     title: 'Origins in OS pedagogy',
     details:
       'The sleeping barber problem is a canonical example for teaching synchronization and process coordination.',
-    notes:
-      'It appears alongside dining philosophers and producer-consumer in OS textbooks.',
+    notes: 'It appears alongside dining philosophers and producer-consumer in OS textbooks.',
   },
   {
     title: 'Semaphore-based solutions',
     details:
       'The problem is often solved using counting semaphores to track customers and available chairs.',
-    notes:
-      'It demonstrates the usefulness of blocking primitives over busy-waiting.',
+    notes: 'It demonstrates the usefulness of blocking primitives over busy-waiting.',
   },
   {
     title: 'Modern analogs',
-    details:
-      'Today it maps to server queues, rate-limited APIs, and bounded job schedulers.',
-    notes:
-      'The same patterns appear in thread pools and service systems.',
+    details: 'Today it maps to server queues, rate-limited APIs, and bounded job schedulers.',
+    notes: 'The same patterns appear in thread pools and service systems.',
   },
 ]
 
@@ -89,7 +85,8 @@ const problemSetup = [
   },
   {
     title: 'Rules',
-    detail: 'If the barber is idle, he sleeps; customers wake him. If all chairs are full, customers leave.',
+    detail:
+      'If the barber is idle, he sleeps; customers wake him. If all chairs are full, customers leave.',
   },
   {
     title: 'Goal',
@@ -201,8 +198,7 @@ customer():
   else:
     signal(mutex)
     leave()`,
-    explanation:
-      'A customer either joins the queue and wakes the barber or leaves if full.',
+    explanation: 'A customer either joins the queue and wakes the barber or leaves if full.',
   },
   {
     title: 'Condition variable idea',
@@ -228,8 +224,7 @@ customer():
   else:
     unlock(m)
     leave()`,
-    explanation:
-      'The barber sleeps on a condition variable when there are no customers.',
+    explanation: 'The barber sleeps on a condition variable when there are no customers.',
   },
 ]
 
@@ -299,217 +294,6 @@ const keyTakeaways = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.sb98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.sb98-window {
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.sb98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.sb98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.sb98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.sb98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.sb98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  overflow-x: auto;
-}
-
-.sb98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.sb98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.sb98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.sb98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.sb98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.sb98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.sb98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.sb98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.sb98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.sb98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.sb98-section {
-  margin: 0 0 20px;
-}
-
-.sb98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.sb98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.sb98-content p,
-.sb98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.sb98-content p {
-  margin: 0 0 10px;
-}
-
-.sb98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.sb98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.sb98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.sb98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .sb98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .sb98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .sb98-title-text {
-    font-size: 13px;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -517,10 +301,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -543,234 +323,167 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function SleepingBarberPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Sleeping Barber',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Sleeping Barber (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Sleeping Barber',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="sb98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="sb98-window" role="presentation">
-        <header className="sb98-titlebar">
-          <span className="sb98-title-text">Sleeping Barber</span>
-          <div className="sb98-title-controls">
-            <button className="sb98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="sb98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="sb98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`sb98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="sb98-main">
-          <aside className="sb98-toc" aria-label="Table of contents">
-            <h2 className="sb98-toc-title">Contents</h2>
-            <ul className="sb98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+    <TopicPageShell
+      title="Sleeping Barber"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Sleeping Barber</h1>
+      <p>
+        The sleeping barber problem models a server that sleeps when idle and wakes when clients
+        arrive, but with a bounded waiting room. It captures blocking, admission control, and
+        signaling in a simple and rigorous setting. This page presents the formal model, core
+        invariants, and standard semaphore/condition-variable solutions.
+      </p>
+      <p>
+        <Link to="/algoViz">Back to Catalog</Link>
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-setup" className="bin98-section">
+            <h2 className="bin98-heading">Problem Setup</h2>
+            {problemSetup.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-goals" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Goals</h2>
+            {correctnessGoals.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Safety constrains occupancy and waiting limits; liveness ensures the barber eventually
+              serves waiting customers.
+            </p>
+          </section>
+          <section id="core-claims" className="bin98-section">
+            <h2 className="bin98-heading">Key Claims</h2>
+            {keyClaims.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-model" className="bin98-section">
+            <h2 className="bin98-heading">Formal Model</h2>
+            {formalModel.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-patterns" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Patterns</h2>
+            {algorithmPatterns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-variations" className="bin98-section">
+            <h2 className="bin98-heading">Variations</h2>
+            {variations.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-applications" className="bin98-section">
+            <h2 className="bin98-heading">Applications</h2>
+            {applications.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((pitfall) => (
+                <li key={pitfall.mistake}>
+                  <strong>{pitfall.mistake}:</strong> {pitfall.description}
                 </li>
               ))}
             </ul>
-          </aside>
-          <main className="sb98-content">
-            <h1 className="sb98-doc-title">Sleeping Barber</h1>
-            <p>
-              The sleeping barber problem models a server that sleeps when idle and wakes when clients arrive, but with a bounded
-              waiting room. It captures blocking, admission control, and signaling in a simple and rigorous setting. This page
-              presents the formal model, core invariants, and standard semaphore/condition-variable solutions.
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <section id="ex-pseudocode" className="bin98-section">
+          <h2 className="bin98-heading">Pseudocode Reference</h2>
+          {pseudocode.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Quick Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              <Link to="/algoViz">Back to Catalog</Link>
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="sb98-section">
-                  <h2 className="sb98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="sb98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="sb98-divider" />
-                <section id="bp-history" className="sb98-section">
-                  <h2 className="sb98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="sb98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="sb98-divider" />
-                <section id="bp-takeaways" className="sb98-section">
-                  <h2 className="sb98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((takeaway) => (
-                      <li key={takeaway}>{takeaway}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-setup" className="sb98-section">
-                  <h2 className="sb98-heading">Problem Setup</h2>
-                  {problemSetup.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-goals" className="sb98-section">
-                  <h2 className="sb98-heading">Correctness Goals</h2>
-                  {correctnessGoals.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Safety constrains occupancy and waiting limits; liveness ensures the barber eventually serves waiting
-                    customers.
-                  </p>
-                </section>
-                <section id="core-claims" className="sb98-section">
-                  <h2 className="sb98-heading">Key Claims</h2>
-                  {keyClaims.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-model" className="sb98-section">
-                  <h2 className="sb98-heading">Formal Model</h2>
-                  {formalModel.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-patterns" className="sb98-section">
-                  <h2 className="sb98-heading">Algorithm Patterns</h2>
-                  {algorithmPatterns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-variations" className="sb98-section">
-                  <h2 className="sb98-heading">Variations</h2>
-                  {variations.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-applications" className="sb98-section">
-                  <h2 className="sb98-heading">Applications</h2>
-                  {applications.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="sb98-section">
-                  <h2 className="sb98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((pitfall) => (
-                      <li key={pitfall.mistake}>
-                        <strong>{pitfall.mistake}:</strong> {pitfall.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-pseudocode" className="sb98-section">
-                <h2 className="sb98-heading">Pseudocode Reference</h2>
-                {pseudocode.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="sb98-subheading">{example.title}</h3>
-                    <div className="sb98-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="sb98-section">
-                <h2 className="sb98-heading">Quick Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

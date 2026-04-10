@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMoments = [
   {
@@ -63,8 +62,7 @@ const terminology = [
   },
   {
     term: 'Load factor (alpha)',
-    detail:
-      'alpha = n / capacity. Controls collision probability and expected probe length.',
+    detail: 'alpha = n / capacity. Controls collision probability and expected probe length.',
   },
   {
     term: 'Collision',
@@ -83,8 +81,7 @@ const terminology = [
   },
   {
     term: 'Rehash',
-    detail:
-      'Recompute bucket positions, typically after resizing or changing hash parameters.',
+    detail: 'Recompute bucket positions, typically after resizing or changing hash parameters.',
   },
 ]
 
@@ -144,16 +141,14 @@ const hashFunctionChecklist = [
   },
   {
     title: 'Width and mixing',
-    detail:
-      'Ensure output uses high-quality mixing, especially when capacity is a power of two.',
+    detail: 'Ensure output uses high-quality mixing, especially when capacity is a power of two.',
   },
 ]
 
 const deletionStrategies = [
   {
     title: 'Chaining delete',
-    detail:
-      'Remove from the bucket list; often O(1) when bucket is small.',
+    detail: 'Remove from the bucket list; often O(1) when bucket is small.',
   },
   {
     title: 'Tombstones',
@@ -167,8 +162,7 @@ const deletionStrategies = [
   },
   {
     title: 'Rebuild on delete ratio',
-    detail:
-      'Trigger rehash when tombstones exceed a threshold to restore probe lengths.',
+    detail: 'Trigger rehash when tombstones exceed a threshold to restore probe lengths.',
   },
 ]
 
@@ -230,8 +224,7 @@ const performanceNotes = [
   },
   {
     title: 'Chaining loves high alpha',
-    detail:
-      'Chaining stays stable at higher load factors but pointer chasing hurts locality.',
+    detail: 'Chaining stays stable at higher load factors but pointer chasing hurts locality.',
   },
   {
     title: 'Resize spikes',
@@ -240,8 +233,7 @@ const performanceNotes = [
   },
   {
     title: 'Key size matters',
-    detail:
-      'Large keys dominate time; consider storing hashes or interning strings for speed.',
+    detail: 'Large keys dominate time; consider storing hashes or interning strings for speed.',
   },
 ]
 
@@ -258,13 +250,11 @@ const correctnessInvariants = [
   },
   {
     title: 'Load-factor policy',
-    detail:
-      'Resizing thresholds must guarantee probe sequences stay bounded in expectation.',
+    detail: 'Resizing thresholds must guarantee probe sequences stay bounded in expectation.',
   },
   {
     title: 'Hash stability',
-    detail:
-      'Keys must not mutate after insertion or their hash and equality change.',
+    detail: 'Keys must not mutate after insertion or their hash and equality change.',
   },
 ]
 
@@ -474,212 +464,6 @@ const practicePrompts = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const hash98HelpStyles = `
-.hash98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.hash98-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.hash98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.hash98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.hash98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.hash98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.hash98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.hash98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.hash98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.hash98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.hash98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.hash98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.hash98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.hash98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.hash98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.hash98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.hash98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.hash98-section {
-  margin: 0 0 20px;
-}
-
-.hash98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.hash98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.hash98-content p,
-.hash98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.hash98-content p {
-  margin: 0 0 10px;
-}
-
-.hash98-content ul,
-.hash98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.hash98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.hash98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.hash98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .hash98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .hash98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -687,10 +471,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -721,277 +501,216 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function HashTablesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Hash Tables &amp; Maps',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Hash Tables & Maps (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Hash Tables & Maps',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="hash98-help-page">
-      <style>{hash98HelpStyles}</style>
-      <div className="hash98-window" role="presentation">
-        <header className="hash98-titlebar">
-          <span className="hash98-title-text">Hash Tables &amp; Maps</span>
-          <div className="hash98-title-controls">
-            <button className="hash98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="hash98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="hash98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`hash98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="hash98-main">
-          <aside className="hash98-toc" aria-label="Table of contents">
-            <h2 className="hash98-toc-title">Contents</h2>
-            <ul className="hash98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Hash Tables &amp; Maps"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Hash Tables &amp; Maps</h1>
+      <p>
+        Hash tables convert arbitrary keys into bucket indices so most lookups, inserts, and deletes
+        finish in expected constant time. The promise depends on good mixing, controlled load
+        factor, and collision strategies that keep probes short.
+      </p>
+      <p>
+        Hash tables trade ordering for speed. By hashing keys into bucket positions, they avoid tree
+        rotations or array shifts and instead depend on uniform randomness and resizing to keep
+        operations near O(1).
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Their weakness is adversarial or unlucky collisions that stretch probe lengths, which
+              modern hash functions, randomized seeding, and resize policies are designed to blunt.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMoments.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-designs" className="bin98-section">
+            <h2 className="bin98-heading">Table Designs and Collision Policies</h2>
+            {tableDesigns.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-real-world" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorld.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-terms" className="bin98-section">
+            <h2 className="bin98-heading">Terminology</h2>
+            {terminology.map((item) => (
+              <p key={item.term}>
+                <strong>{item.term}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-hash-check" className="bin98-section">
+            <h2 className="bin98-heading">Hash Function Checklist</h2>
+            {hashFunctionChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-delete" className="bin98-section">
+            <h2 className="bin98-heading">Deletion Strategies</h2>
+            {deletionStrategies.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: Hashing, Collisions, Resizing</h2>
+            {mechanics.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <p>
+              Design choices in hash function, collision policy, and resize thresholds decide
+              whether probes stay short under load.
+            </p>
+          </section>
+          <section id="core-invariants" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Invariants</h2>
+            {correctnessInvariants.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Performance Intuition</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-performance" className="bin98-section">
+            <h2 className="bin98-heading">Performance Considerations in Practice</h2>
+            {performanceNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-decision" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights and Current Frontiers</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="hash98-content">
-            <h1 className="hash98-doc-title">Hash Tables &amp; Maps</h1>
-            <p>
-              Hash tables convert arbitrary keys into bucket indices so most lookups, inserts, and deletes finish in expected constant
-              time. The promise depends on good mixing, controlled load factor, and collision strategies that keep probes short.
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-practical" className="bin98-section">
+            <h2 className="bin98-heading">Practical Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-testing" className="bin98-section">
+            <h2 className="bin98-heading">Testing Checklist</h2>
+            <ul>
+              {testingChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="ex-practice" className="bin98-section">
+            <h2 className="bin98-heading">Practice and Build Challenges</h2>
+            <ul>
+              {practicePrompts.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {terminology.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.detail}
             </p>
-            <p>
-              Hash tables trade ordering for speed. By hashing keys into bucket positions, they avoid tree rotations or array shifts and
-              instead depend on uniform randomness and resizing to keep operations near O(1).
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="hash98-section">
-                  <h2 className="hash98-heading">Overview</h2>
-                  <p>
-                    Their weakness is adversarial or unlucky collisions that stretch probe lengths, which modern hash functions, randomized
-                    seeding, and resize policies are designed to blunt.
-                  </p>
-                </section>
-                <hr className="hash98-divider" />
-                <section id="bp-history" className="hash98-section">
-                  <h2 className="hash98-heading">Historical Context</h2>
-                  {historicalMoments.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="hash98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="hash98-section">
-                  <h2 className="hash98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-designs" className="hash98-section">
-                  <h2 className="hash98-heading">Table Designs and Collision Policies</h2>
-                  {tableDesigns.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-real-world" className="hash98-section">
-                  <h2 className="hash98-heading">Real-World Applications</h2>
-                  {realWorld.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-terms" className="hash98-section">
-                  <h2 className="hash98-heading">Terminology</h2>
-                  {terminology.map((item) => (
-                    <p key={item.term}>
-                      <strong>{item.term}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-hash-check" className="hash98-section">
-                  <h2 className="hash98-heading">Hash Function Checklist</h2>
-                  {hashFunctionChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-delete" className="hash98-section">
-                  <h2 className="hash98-heading">Deletion Strategies</h2>
-                  {deletionStrategies.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-mechanics" className="hash98-section">
-                  <h2 className="hash98-heading">How It Works: Hashing, Collisions, Resizing</h2>
-                  {mechanics.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="hash98-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p>
-                    Design choices in hash function, collision policy, and resize thresholds decide whether probes stay short under load.
-                  </p>
-                </section>
-                <section id="core-invariants" className="hash98-section">
-                  <h2 className="hash98-heading">Correctness Invariants</h2>
-                  {correctnessInvariants.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="hash98-section">
-                  <h2 className="hash98-heading">Complexity Analysis and Performance Intuition</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-performance" className="hash98-section">
-                  <h2 className="hash98-heading">Performance Considerations in Practice</h2>
-                  {performanceNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-decision" className="hash98-section">
-                  <h2 className="hash98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="hash98-section">
-                  <h2 className="hash98-heading">Advanced Insights and Current Frontiers</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="hash98-section">
-                  <h2 className="hash98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-practical" className="hash98-section">
-                  <h2 className="hash98-heading">Practical Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="hash98-subheading">{example.title}</h3>
-                      <div className="hash98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-testing" className="hash98-section">
-                  <h2 className="hash98-heading">Testing Checklist</h2>
-                  <ul>
-                    {testingChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="ex-practice" className="hash98-section">
-                  <h2 className="hash98-heading">Practice and Build Challenges</h2>
-                  <ul>
-                    {practicePrompts.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="hash98-section">
-                <h2 className="hash98-heading">Glossary</h2>
-                {terminology.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.detail}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
-

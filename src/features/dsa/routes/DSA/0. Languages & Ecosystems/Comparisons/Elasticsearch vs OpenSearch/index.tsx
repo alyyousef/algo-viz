@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'Elasticsearch vs OpenSearch'
-const pageSubtitle = 'Comparing Elastic’s current search platform with the Apache-2.0 OpenSearch fork.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  'Comparing Elastic’s current search platform with the Apache-2.0 OpenSearch fork.'
 const bigPictureSections = [
   {
     title: 'What both products are',
@@ -60,23 +61,29 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
     choice: 'Prefer Elasticsearch.',
   },
   {
-    title: 'Need an Apache-2.0 project with open community governance and broad redistribution freedom',
+    title:
+      'Need an Apache-2.0 project with open community governance and broad redistribution freedom',
     choice: 'Prefer OpenSearch.',
   },
   {
-    title: 'Already run modern post-7.11 Elasticsearch in production and depend on current Elastic features',
-    choice: 'Staying on Elasticsearch is usually operationally simpler than forcing a fork migration.',
+    title:
+      'Already run modern post-7.11 Elasticsearch in production and depend on current Elastic features',
+    choice:
+      'Staying on Elasticsearch is usually operationally simpler than forcing a fork migration.',
   },
   {
-    title: 'Already run Elasticsearch OSS 6.x or 7.10.2 and want to move toward the OpenSearch ecosystem',
+    title:
+      'Already run Elasticsearch OSS 6.x or 7.10.2 and want to move toward the OpenSearch ecosystem',
     choice: 'OpenSearch is a natural migration target.',
   },
   {
-    title: 'Need strong confidence that official server and official client versions evolve together under one vendor roadmap',
+    title:
+      'Need strong confidence that official server and official client versions evolve together under one vendor roadmap',
     choice: 'Prefer Elasticsearch.',
   },
   {
-    title: 'Need to avoid depending on Elastic distribution terms for the server distribution you run',
+    title:
+      'Need to avoid depending on Elastic distribution terms for the server distribution you run',
     choice: 'Prefer OpenSearch.',
   },
   {
@@ -84,15 +91,18 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
     choice: 'Prefer OpenSearch.',
   },
   {
-    title: 'Need to maximize continuity with the latest Elastic search and AI documentation and release train',
+    title:
+      'Need to maximize continuity with the latest Elastic search and AI documentation and release train',
     choice: 'Prefer Elasticsearch.',
   },
   {
     title: 'Need the smallest migration risk from current Elastic production systems',
-    choice: 'Usually stay with Elasticsearch unless there is a strong governance or cost reason to move.',
+    choice:
+      'Usually stay with Elasticsearch unless there is a strong governance or cost reason to move.',
   },
   {
-    title: 'Need the strongest guarantee that the project remains fully Apache-2.0 at the distribution level',
+    title:
+      'Need the strongest guarantee that the project remains fully Apache-2.0 at the distribution level',
     choice: 'Prefer OpenSearch.',
   },
 ]
@@ -291,7 +301,8 @@ const workloadFitCases: Array<{ title: string; detail: string }> = [
       'Elasticsearch may be the stronger fit if search, observability, and security are being intentionally procured and operated as one Elastic-centric platform.',
   },
   {
-    title: 'Team valuing community governance and redistribution flexibility over single-vendor packaging',
+    title:
+      'Team valuing community governance and redistribution flexibility over single-vendor packaging',
     detail:
       'OpenSearch is usually the stronger fit because the project story is cleaner around Apache 2.0 and Linux Foundation support.',
   },
@@ -539,448 +550,162 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const esOsHelpStyles = `
-.es-os-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.es-os-help-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.es-os-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.es-os-help-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.es-os-help-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.es-os-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.es-os-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.es-os-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.es-os-help-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.es-os-help-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.es-os-help-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.es-os-help-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.es-os-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.es-os-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.es-os-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.es-os-help-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.es-os-help-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.es-os-help-section {
-  margin: 0 0 20px;
-}
-
-.es-os-help-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.es-os-help-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.es-os-help-content p,
-.es-os-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.es-os-help-content p {
-  margin: 0 0 10px;
-}
-
-.es-os-help-content ul,
-.es-os-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.es-os-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.es-os-help-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.es-os-help-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.es-os-help-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .es-os-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .es-os-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .es-os-help-title-text {
-    position: static;
-    transform: none;
-    margin-left: 8px;
-    font-size: 14px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ElasticsearchVsOpenSearchPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Elasticsearch Vs Open Search Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="es-os-help-page">
-      <style>{esOsHelpStyles}</style>
-      <div className="es-os-help-window" role="presentation">
-        <header className="es-os-help-titlebar">
-          <span className="es-os-help-title-text">{pageTitle}</span>
-          <div className="es-os-help-title-controls">
-            <button className="es-os-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="es-os-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="es-os-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`es-os-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+    <TopicPageShell
+      title="Elasticsearch Vs Open Search Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page compares current Elasticsearch and OpenSearch as platform choices, not just as
+        similar-looking REST APIs. The highest-signal questions are version lineage, licensing and
+        governance, client compatibility, migration risk, and which project roadmap your team wants
+        to follow.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="es-os-help-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="es-os-help-main">
-          <aside className="es-os-help-toc" aria-label="Table of contents">
-            <h2 className="es-os-help-toc-title">Contents</h2>
-            <ul className="es-os-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-decision" className="bin98-section">
+            <h2 className="bin98-heading">Decision Guide</h2>
+            <ul>
+              {decisionGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">History and Direction</h2>
+            <ul>
+              {historyAndDirection.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-questions" className="bin98-section">
+            <h2 className="bin98-heading">Decision Questions</h2>
+            <ul>
+              {decisionQuestions.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-          <main className="es-os-help-content">
-            <h1 className="es-os-help-doc-title">{pageTitle}</h1>
-            <p className="es-os-help-subheading">{pageSubtitle}</p>
-            <p>
-              This page compares current Elasticsearch and OpenSearch as platform choices, not just as similar-looking REST APIs.
-              The highest-signal questions are version lineage, licensing and governance, client compatibility, migration risk, and
-              which project roadmap your team wants to follow.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-notes" className="bin98-section">
+            <h2 className="bin98-heading">Operating Notes</h2>
+            {operatingNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-workload-fit" className="bin98-section">
+            <h2 className="bin98-heading">Workload Fit by Scenario</h2>
+            {workloadFitCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="es-os-help-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="es-os-help-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-                <hr className="es-os-help-divider" />
-                <section id="bp-decision" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">Decision Guide</h2>
-                  <ul>
-                    {decisionGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="es-os-help-divider" />
-                <section id="bp-history" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">History and Direction</h2>
-                  <ul>
-                    {historyAndDirection.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="es-os-help-divider" />
-                <section id="bp-questions" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">Decision Questions</h2>
-                  <ul>
-                    {decisionQuestions.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="es-os-help-section">
-                    <h2 className="es-os-help-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-notes" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">Operating Notes</h2>
-                  {operatingNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-workload-fit" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">Workload Fit by Scenario</h2>
-                  {workloadFitCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="es-os-help-section">
-                  <h2 className="es-os-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="es-os-help-section">
-                    <h2 className="es-os-help-heading">{example.title}</h2>
-                    <div className="es-os-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="es-os-help-section">
-                <h2 className="es-os-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="es-os-help-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="es-os-help-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a
+                  href={source}
+                  className="es-os-help-inline-link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -310,8 +312,7 @@ COMMIT;`,
   {
     id: 'examples-decision',
     title: 'Simple Selection Heuristic',
-    description:
-      'A short heuristic helps separate ideology from workload analysis.',
+    description: 'A short heuristic helps separate ideology from workload analysis.',
     snippets: [
       {
         label: 'Use SQL When',
@@ -338,282 +339,77 @@ COMMIT;`,
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Relational Database',
-    definition: 'A database that stores structured data in related tables and typically uses SQL for querying and manipulation.',
+    definition:
+      'A database that stores structured data in related tables and typically uses SQL for querying and manipulation.',
   },
   {
     term: 'NoSQL',
-    definition: 'A broad category of non-relational databases including document, key-value, wide-column, and graph systems.',
+    definition:
+      'A broad category of non-relational databases including document, key-value, wide-column, and graph systems.',
   },
   {
     term: 'Schema',
-    definition: 'The defined structure of stored data, including fields, types, constraints, and relationships.',
+    definition:
+      'The defined structure of stored data, including fields, types, constraints, and relationships.',
   },
   {
     term: 'Normalization',
-    definition: 'A relational design practice that reduces duplication by splitting data into related tables.',
+    definition:
+      'A relational design practice that reduces duplication by splitting data into related tables.',
   },
   {
     term: 'Denormalization',
-    definition: 'A modeling practice that duplicates or embeds data to optimize specific reads or reduce joins.',
+    definition:
+      'A modeling practice that duplicates or embeds data to optimize specific reads or reduce joins.',
   },
   {
     term: 'Join',
-    definition: 'A relational query operation that combines rows from multiple tables based on matching conditions.',
+    definition:
+      'A relational query operation that combines rows from multiple tables based on matching conditions.',
   },
   {
     term: 'ACID',
-    definition: 'A set of transactional guarantees covering atomicity, consistency, isolation, and durability.',
+    definition:
+      'A set of transactional guarantees covering atomicity, consistency, isolation, and durability.',
   },
   {
     term: 'Eventual Consistency',
-    definition: 'A consistency model in which replicas may temporarily differ but converge over time.',
+    definition:
+      'A consistency model in which replicas may temporarily differ but converge over time.',
   },
   {
     term: 'Document Database',
-    definition: 'A NoSQL database that stores data as document-like records, often JSON or BSON shaped.',
+    definition:
+      'A NoSQL database that stores data as document-like records, often JSON or BSON shaped.',
   },
   {
     term: 'Key-Value Store',
-    definition: 'A database optimized for storing and retrieving values by a unique key with minimal query complexity.',
+    definition:
+      'A database optimized for storing and retrieving values by a unique key with minimal query complexity.',
   },
   {
     term: 'Wide-Column Store',
-    definition: 'A NoSQL database family designed around partitioned rows with flexible columns and high write scalability.',
+    definition:
+      'A NoSQL database family designed around partitioned rows with flexible columns and high write scalability.',
   },
   {
     term: 'Graph Database',
-    definition: 'A database designed to represent nodes and edges efficiently for traversal-heavy relationship queries.',
+    definition:
+      'A database designed to represent nodes and edges efficiently for traversal-heavy relationship queries.',
   },
   {
     term: 'Partition Key',
-    definition: 'A field used to distribute data across shards or partitions in many distributed NoSQL systems.',
+    definition:
+      'A field used to distribute data across shards or partitions in many distributed NoSQL systems.',
   },
   {
     term: 'Aggregate',
-    definition: 'A group of related data treated as one read or write unit, common in document-oriented design.',
+    definition:
+      'A group of related data treated as one read or write unit, common in document-oriented design.',
   },
 ] as const
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const helpStyles = `
-.sql-nosql-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.sql-nosql-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.sql-nosql-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.sql-nosql-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.sql-nosql-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.sql-nosql-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.sql-nosql-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.sql-nosql-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.sql-nosql-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.sql-nosql-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.sql-nosql-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.sql-nosql-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.sql-nosql-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.sql-nosql-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.sql-nosql-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.sql-nosql-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.sql-nosql-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.sql-nosql-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.sql-nosql-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.sql-nosql-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.sql-nosql-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.sql-nosql-help-content p,
-.sql-nosql-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.sql-nosql-help-content p {
-  margin: 0 0 10px;
-}
-
-.sql-nosql-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.sql-nosql-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.sql-nosql-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.sql-nosql-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .sql-nosql-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .sql-nosql-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .sql-nosql-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -629,154 +425,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function SqlVsNosqlPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'SQL vs NoSQL',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `SQL vs NoSQL (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'SQL vs NoSQL',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="sql-nosql-help-page">
-      <style>{helpStyles}</style>
-      <div className="sql-nosql-help-window" role="presentation">
-        <header className="sql-nosql-help-titlebar">
-          <span className="sql-nosql-help-titletext">SQL vs NoSQL</span>
-          <div className="sql-nosql-help-controls">
-            <button className="sql-nosql-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="sql-nosql-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="SQL vs NoSQL"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">SQL vs NoSQL</h1>
+      <p className="sql-nosql-help-doc-subtitle">
+        Manual-style comparison of relational modeling, non-relational data families, consistency,
+        scaling, and access-pattern tradeoffs.
+      </p>
 
-        <div className="sql-nosql-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`sql-nosql-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="sql-nosql-help-main">
-          <aside className="sql-nosql-help-toc" aria-label="Table of contents">
-            <h2 className="sql-nosql-help-toc-title">Contents</h2>
-            <ul className="sql-nosql-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="sql-nosql-help-content">
-            <h1 className="sql-nosql-help-doc-title">SQL vs NoSQL</h1>
-            <p className="sql-nosql-help-doc-subtitle">
-              Manual-style comparison of relational modeling, non-relational data families, consistency, scaling, and access-pattern tradeoffs.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="sql-nosql-help-section">
-                    <h2 className="sql-nosql-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="sql-nosql-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="sql-nosql-help-section">
-                  <h2 className="sql-nosql-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="sql-nosql-help-section">
-                  <h2 className="sql-nosql-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="sql-nosql-help-subheading">{snippet.label}</h3>
-                      <div className="sql-nosql-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="sql-nosql-help-section">
-                <h2 className="sql-nosql-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

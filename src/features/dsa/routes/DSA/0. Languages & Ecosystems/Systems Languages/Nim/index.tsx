@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Nim\'s biggest strengths are developer ergonomics, expressive metaprogramming, efficient native code generation, and a useful balance between high-level readability and low-level control. Many developers are drawn to it because it can feel much lighter to write than older native languages while still producing performant binaries.',
+      "Nim's biggest strengths are developer ergonomics, expressive metaprogramming, efficient native code generation, and a useful balance between high-level readability and low-level control. Many developers are drawn to it because it can feel much lighter to write than older native languages while still producing performant binaries.",
       'Another major strength is that the language can scale from simple scripts and tools to more complex systems-oriented programs without forcing a complete change in programming model.',
     ],
     bullets: [
@@ -120,7 +118,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-limits',
     title: 'Important Limits',
     paragraphs: [
-      'Nim has real tradeoffs. Its ecosystem is smaller than those of mainstream languages, and some teams may find that the language\'s flexibility leads to inconsistent style or overuse of metaprogramming. The relative lack of dominant industry conventions can make large-team standardization more work than in ecosystems with narrower norms.',
+      "Nim has real tradeoffs. Its ecosystem is smaller than those of mainstream languages, and some teams may find that the language's flexibility leads to inconsistent style or overuse of metaprogramming. The relative lack of dominant industry conventions can make large-team standardization more work than in ecosystems with narrower norms.",
       'It also is not the default choice in most enterprise environments. That means fewer established libraries, fewer engineers already fluent in the language, and more friction when an organization optimizes for hiring familiarity rather than technical fit.',
     ],
     bullets: [
@@ -135,7 +133,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Practical Mental Model',
     paragraphs: [
       'The best mental model is that Nim is a pragmatic native language that tries to make systems-capable programming feel lighter and faster. It does not remove the need to think about performance, memory, and interoperability, but it often lets developers express that work with less syntactic friction.',
-      'Good Nim code is explicit where cost and ownership matter, restrained in its metaprogramming, and organized so that the language\'s flexibility improves clarity rather than weakening it.',
+      "Good Nim code is explicit where cost and ownership matter, restrained in its metaprogramming, and organized so that the language's flexibility improves clarity rather than weakening it.",
     ],
   },
 ] as const
@@ -146,7 +144,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Language Shape And Syntax',
     paragraphs: [
       'Nim syntax is one of its most immediately distinctive features. It uses indentation instead of braces, aims for readability, and often feels approachable to developers coming from Python-like languages. At the same time, it remains statically typed and compiled, which makes the overall experience quite different from dynamic scripting languages.',
-      'This combination matters because much of Nim\'s appeal comes from lowering the visual and structural overhead of systems-oriented code. A native program can still look relatively lightweight on the page.',
+      "This combination matters because much of Nim's appeal comes from lowering the visual and structural overhead of systems-oriented code. A native program can still look relatively lightweight on the page.",
     ],
   },
   {
@@ -177,7 +175,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-arc-orc',
     title: 'ARC, ORC, And Ownership Tradeoffs',
     paragraphs: [
-      'ARC and ORC are important parts of Nim\'s modern story. They move the language closer to deterministic resource management and reduce reliance on traditional tracing garbage collection for many workloads. This can improve performance predictability and make native integration easier in some contexts.',
+      "ARC and ORC are important parts of Nim's modern story. They move the language closer to deterministic resource management and reduce reliance on traditional tracing garbage collection for many workloads. This can improve performance predictability and make native integration easier in some contexts.",
       'The broader lesson is that Nim tries to be practical rather than ideological. It does not insist that every program must use one universal memory model. Instead, it gives developers options, with the responsibility to understand the consequences of those options.',
     ],
   },
@@ -201,7 +199,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-macros-templates',
     title: 'Macros, Templates, And Metaprogramming',
     paragraphs: [
-      'Metaprogramming is one of Nim\'s defining strengths. Templates and macros allow developers to generate or transform code in ways that can eliminate boilerplate, create domain-specific APIs, and encode reusable patterns at compile time. This is a major reason some developers choose Nim over otherwise similar native languages.',
+      "Metaprogramming is one of Nim's defining strengths. Templates and macros allow developers to generate or transform code in ways that can eliminate boilerplate, create domain-specific APIs, and encode reusable patterns at compile time. This is a major reason some developers choose Nim over otherwise similar native languages.",
       'The power is real, but so is the risk. Metaprogramming can improve clarity when it removes repetitive low-signal code. It becomes harmful when it turns straightforward logic into a private language that only the original author can maintain.',
     ],
   },
@@ -234,7 +232,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Tooling, Build Workflow, And Distribution',
     paragraphs: [
       'Nim offers a workable build and packaging story for native applications, libraries, and tooling, though the surrounding ecosystem is smaller than those of older mainstream languages. Native binary output is especially valuable for distribution because it reduces deployment complexity relative to managed stacks.',
-      'For many users, one of Nim\'s attractions is being able to write a productive high-level-looking program and still ship a standalone executable without dragging in a heavy runtime platform.',
+      "For many users, one of Nim's attractions is being able to write a productive high-level-looking program and still ship a standalone executable without dragging in a heavy runtime platform.",
     ],
   },
   {
@@ -296,7 +294,7 @@ const exampleSections: ExampleSection[] = [
   "Hello, " & name`,
     notes: [
       'The syntax stays lightweight while remaining statically typed.',
-      'This contributes to Nim\'s scripting-like readability.',
+      "This contributes to Nim's scripting-like readability.",
     ],
   },
   {
@@ -308,16 +306,14 @@ const exampleSections: ExampleSection[] = [
     code: `proc first[T](items: seq[T]): T =
   items[0]`,
     notes: [
-      'This is typical of Nim\'s pragmatic generic programming style.',
+      "This is typical of Nim's pragmatic generic programming style.",
       'Generic abstractions should stay close to the real problem they solve.',
     ],
   },
   {
     id: 'ex-template',
     title: 'Template For Boilerplate Reduction',
-    description: [
-      'Templates can remove repetitive source patterns when used with restraint.',
-    ],
+    description: ['Templates can remove repetitive source patterns when used with restraint.'],
     code: `template withLog(body: untyped) =
   echo "start"
   body
@@ -331,7 +327,7 @@ const exampleSections: ExampleSection[] = [
     id: 'ex-seq',
     title: 'Sequence-Based Dynamic Collection',
     description: [
-      'Sequences are Nim\'s common growable collection type for many ordinary programs.',
+      "Sequences are Nim's common growable collection type for many ordinary programs.",
     ],
     code: `var scores = @[92, 74, 88, 99]
 scores.add 100`,
@@ -343,9 +339,7 @@ scores.add 100`,
   {
     id: 'ex-pointer',
     title: 'Pointer-Level Access',
-    description: [
-      'Nim can still expose low-level memory access when the program requires it.',
-    ],
+    description: ['Nim can still expose low-level memory access when the program requires it.'],
     code: `var value = 10
 let ptrValue = addr value`,
     notes: [
@@ -374,18 +368,15 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Procedure',
-        definition:
-          'A callable unit of behavior in Nim, commonly declared with `proc`.',
+        definition: 'A callable unit of behavior in Nim, commonly declared with `proc`.',
       },
       {
         term: 'Object',
-        definition:
-          'A structured data type used to group related fields in Nim.',
+        definition: 'A structured data type used to group related fields in Nim.',
       },
       {
         term: 'Sequence (`seq`)',
-        definition:
-          'A growable dynamic collection type commonly used in Nim.',
+        definition: 'A growable dynamic collection type commonly used in Nim.',
       },
       {
         term: 'Template',
@@ -399,8 +390,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Generic',
-        definition:
-          'A type-parameterized definition that can work across multiple concrete types.',
+        definition: 'A type-parameterized definition that can work across multiple concrete types.',
       },
       {
         term: 'Distinct type',
@@ -421,7 +411,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'ARC',
         definition:
-          'Automatic Reference Counting, one of Nim\'s memory-management approaches for more deterministic behavior.',
+          "Automatic Reference Counting, one of Nim's memory-management approaches for more deterministic behavior.",
       },
       {
         term: 'ORC',
@@ -466,8 +456,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'C interop',
-        definition:
-          'The ability to bind to and call C APIs directly from Nim code.',
+        definition: 'The ability to bind to and call C APIs directly from Nim code.',
       },
       {
         term: 'Metaprogramming',
@@ -552,224 +541,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.nim98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.nim98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.nim98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.nim98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.nim98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.nim98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.nim98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.nim98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.nim98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.nim98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.nim98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.nim98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.nim98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.nim98-toc-item {
-  margin: 0 0 8px;
-}
-
-.nim98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.nim98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.nim98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.nim98-section {
-  margin: 0 0 20px;
-}
-
-.nim98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.nim98-content p,
-.nim98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.nim98-content p {
-  margin: 0 0 10px;
-}
-
-.nim98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.nim98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.nim98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.nim98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .nim98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .nim98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .nim98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="nim98-section">
@@ -824,122 +595,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function NimPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Nim',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Nim (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Nim',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="nim98-help-page">
-      <style>{pageStyles}</style>
-      <div className="nim98-help-window" role="presentation">
-        <header className="nim98-titlebar">
-          <span className="nim98-titletext">Nim</span>
-          <div className="nim98-controls">
-            <button className="nim98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="nim98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Nim"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Nim</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="nim98-tabs" role="tablist" aria-label="Nim documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`nim98-tab ${activeTab === tab.id ? 'nim98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="nim98-main">
-          <aside className="nim98-toc" aria-label="Table of contents">
-            <h2 className="nim98-toc-title">Contents</h2>
-            <ul className="nim98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="nim98-toc-item">
-                  <a href={`#${section.id}`} className="nim98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="nim98-content">
-            <h1 className="nim98-doc-title">Nim</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

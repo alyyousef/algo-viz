@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -106,7 +104,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-strengths',
     title: 'Major Strengths',
     paragraphs: [
-      'Zig\'s main strengths are explicit resource handling, strong C interoperability, a coherent toolchain story, compile-time power without a gigantic template language, and performance characteristics that align well with systems work. Developers often appreciate that the language encourages them to think clearly about ownership, allocation, and failure instead of leaving those concerns half-hidden.',
+      "Zig's main strengths are explicit resource handling, strong C interoperability, a coherent toolchain story, compile-time power without a gigantic template language, and performance characteristics that align well with systems work. Developers often appreciate that the language encourages them to think clearly about ownership, allocation, and failure instead of leaving those concerns half-hidden.",
       'Another major strength is debuggability. Zig tries to make incorrect assumptions fail loudly in development, and its language design often produces code whose runtime behavior is easier to trace back to the source.',
     ],
     bullets: [
@@ -146,7 +144,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Language Shape And Syntax',
     paragraphs: [
       'Zig syntax is intentionally direct. It resembles familiar C-family structure in some places, but it avoids many of the historical edge cases and preprocessor-heavy workflows that made older low-level code difficult to reason about. Declarations, control flow, and types are written in a style meant to be uniform and readable once the core patterns are learned.',
-      'A lot of Zig\'s design is about making the source reveal more of the program\'s actual behavior. You see allocator parameters, error-returning functions, pointer distinctions, and explicit conversions rather than relying on a large number of silent defaults.',
+      "A lot of Zig's design is about making the source reveal more of the program's actual behavior. You see allocator parameters, error-returning functions, pointer distinctions, and explicit conversions rather than relying on a large number of silent defaults.",
     ],
   },
   {
@@ -161,7 +159,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-allocators',
     title: 'Allocators',
     paragraphs: [
-      'Allocators are central to Zig\'s design. Rather than having one hidden global heap model, Zig frequently passes allocator values explicitly into APIs that may need dynamic memory. This makes allocation strategy part of the interface rather than an invisible implementation detail.',
+      "Allocators are central to Zig's design. Rather than having one hidden global heap model, Zig frequently passes allocator values explicitly into APIs that may need dynamic memory. This makes allocation strategy part of the interface rather than an invisible implementation detail.",
       'That design matters in systems work because different contexts want different tradeoffs. A short-lived command-line tool, a long-running server, an arena-based parser, and an embedded target may all need different allocation behavior. Zig makes that choice visible instead of pretending one memory strategy fits every case.',
     ],
   },
@@ -201,7 +199,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-comptime',
     title: 'Compile-Time Execution And `comptime`',
     paragraphs: [
-      'One of Zig\'s defining features is compile-time execution. Certain code can run during compilation, which allows the language to generate specialized implementations, validate assumptions, compute constants, and express generic behavior without a separate preprocessor or a giant template system.',
+      "One of Zig's defining features is compile-time execution. Certain code can run during compilation, which allows the language to generate specialized implementations, validate assumptions, compute constants, and express generic behavior without a separate preprocessor or a giant template system.",
       'The key point is that compile-time power is still meant to remain understandable. Zig uses `comptime` to expose when values or logic must be known at compile time, which helps keep metaprogramming tied more directly to ordinary language constructs.',
     ],
   },
@@ -217,7 +215,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-c-interop',
     title: 'C Interoperability',
     paragraphs: [
-      'C interoperability is one of Zig\'s strongest practical features. Zig can call C code, consume C headers, and produce code that fits naturally into C-facing environments. This makes it highly useful as either a replacement for selected C components or as a language that lives alongside existing native codebases.',
+      "C interoperability is one of Zig's strongest practical features. Zig can call C code, consume C headers, and produce code that fits naturally into C-facing environments. This makes it highly useful as either a replacement for selected C components or as a language that lives alongside existing native codebases.",
       'That matters strategically because low-level ecosystems are full of C libraries, operating system APIs, embedded vendor interfaces, and long-lived infrastructure. A systems language that cannot work well with C starts from a serious disadvantage.',
     ],
   },
@@ -257,7 +255,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-where-it-shines',
     title: 'Where Zig Shines',
     paragraphs: [
-      'Zig shines in software that benefits from native execution, direct memory control, predictable binaries, and explicit integration with system APIs. It is especially compelling for standalone tools, infrastructure software, embedded targets, performance-sensitive libraries, and code that needs to live near C without inheriting all of C\'s workflow pain.',
+      "Zig shines in software that benefits from native execution, direct memory control, predictable binaries, and explicit integration with system APIs. It is especially compelling for standalone tools, infrastructure software, embedded targets, performance-sensitive libraries, and code that needs to live near C without inheriting all of C's workflow pain.",
       'It also shines for engineers who want a lower-complexity alternative to C++ in some domains, especially when the codebase values directness and toolchain coherence more than large abstraction frameworks.',
     ],
   },
@@ -403,13 +401,11 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Error union',
-        definition:
-          'A return form that represents either a successful value or a named error.',
+        definition: 'A return form that represents either a successful value or a named error.',
       },
       {
         term: 'Optional',
-        definition:
-          'A type that can either contain a value or be null-like absent.',
+        definition: 'A type that can either contain a value or be null-like absent.',
       },
       {
         term: 'Slice',
@@ -577,224 +573,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.zig98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.zig98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.zig98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.zig98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.zig98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.zig98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.zig98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.zig98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.zig98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.zig98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.zig98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.zig98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.zig98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.zig98-toc-item {
-  margin: 0 0 8px;
-}
-
-.zig98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.zig98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.zig98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.zig98-section {
-  margin: 0 0 20px;
-}
-
-.zig98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.zig98-content p,
-.zig98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.zig98-content p {
-  margin: 0 0 10px;
-}
-
-.zig98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.zig98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.zig98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.zig98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .zig98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .zig98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .zig98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="zig98-section">
@@ -849,122 +627,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function ZigPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Zig',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Zig (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Zig',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="zig98-help-page">
-      <style>{pageStyles}</style>
-      <div className="zig98-help-window" role="presentation">
-        <header className="zig98-titlebar">
-          <span className="zig98-titletext">Zig</span>
-          <div className="zig98-controls">
-            <button className="zig98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="zig98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Zig"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Zig</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="zig98-tabs" role="tablist" aria-label="Zig documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`zig98-tab ${activeTab === tab.id ? 'zig98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="zig98-main">
-          <aside className="zig98-toc" aria-label="Table of contents">
-            <h2 className="zig98-toc-title">Contents</h2>
-            <ul className="zig98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="zig98-toc-item">
-                  <a href={`#${section.id}`} className="zig98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="zig98-content">
-            <h1 className="zig98-doc-title">Zig</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

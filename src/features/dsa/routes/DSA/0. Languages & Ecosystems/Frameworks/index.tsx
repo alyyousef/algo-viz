@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 import { slugifySegment } from '@/features/dsa/utils/slug'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 const FRAMEWORKS_BASE_ROUTE = '/dsa/0-languages-and-ecosystems/frameworks'
 
 const overviewSections = [
@@ -411,587 +411,225 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'glossary', label: 'Glossary' },
 ]
 
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
-
-export default function FrameworksPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const requestedTab = searchParams.get('tab')
-  const activeTab: TabId = isTabId(requestedTab) ? requestedTab : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(location.search)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Frameworks (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, location.search, setSearchParams])
-
-  const handleTabChange = (tab: TabId) => {
-    if (tab === activeTab) {
-      return
-    }
-
-    const nextParams = new URLSearchParams(location.search)
-    nextParams.set('tab', tab)
-    setSearchParams(nextParams)
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Frameworks',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-
-    void navigate('/algoViz')
-  }
-
-  const frameworksHelpStyles = `
-.fw98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.fw98-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.fw98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 28px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.fw98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.fw98-title-controls {
-  display: inline-flex;
-  gap: 2px;
-}
-
-.fw98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.fw98-control:focus-visible,
-.fw98-tab:focus-visible,
-.fw98-toc-link:focus-visible,
-.fw98-inline-link:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
-.fw98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.fw98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b7b7b7;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  line-height: 1.2;
-  cursor: pointer;
-}
-
-.fw98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.fw98-main {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.fw98-toc {
-  overflow: auto;
-  padding: 12px 12px 18px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.fw98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.fw98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.fw98-toc-item + .fw98-toc-item {
-  margin-top: 8px;
-}
-
-.fw98-toc-link {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.fw98-content {
-  overflow: auto;
-  padding: 16px 22px 24px;
-  background: #ffffff;
-}
-
-.fw98-doc-title {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.fw98-intro {
-  margin: 0 0 16px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.fw98-section {
-  margin: 0 0 22px;
-}
-
-.fw98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.fw98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.fw98-divider {
-  margin: 14px 0 16px;
-  border: 0;
-  border-top: 1px solid #d4d4d4;
-}
-
-.fw98-content p,
-.fw98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.fw98-content p {
-  margin: 0 0 10px;
-}
-
-.fw98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.fw98-content li + li {
-  margin-top: 4px;
-}
-
-.fw98-inline-link {
-  color: #000080;
-}
-
-.fw98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px 9px;
-  background: #f3f3f3;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.fw98-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .fw98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .fw98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .fw98-title {
-    font-size: 13px;
-    max-width: calc(100% - 72px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .fw98-content {
-    padding: 14px 14px 18px;
-  }
-}
-`
+export default function DashboardPage(): JSX.Element {
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Frameworks',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="fw98-help-page">
-      <style>{frameworksHelpStyles}</style>
-      <div className="fw98-window" role="presentation">
-        <header className="fw98-titlebar">
-          <span className="fw98-title">Frameworks</span>
-          <div className="fw98-title-controls">
-            <button
-              className="fw98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="fw98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Frameworks"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={[]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Frameworks</h1>
+      <p className="fw98-intro">
+        This page is an overview of software frameworks as a broad ecosystem category. It explains
+        why frameworks exist, how they impose structure, how their conventions affect the full
+        software lifecycle, and how the child framework domains in this section connect to frontend,
+        backend, mobile, data, cloud and DevOps, and game development.
+      </p>
 
-        <div className="fw98-tabs" role="tablist" aria-label="Frameworks Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`fw98-tab ${activeTab === tab.id ? 'fw98-tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="fw98-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {overviewSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                <p>{section.body}</p>
+              </div>
+            ))}
+          </section>
 
-        <div className="fw98-main">
-          <aside className="fw98-toc" aria-label="Table of contents">
-            <h2 className="fw98-toc-title">Contents</h2>
-            <ul className="fw98-toc-list">
-              {(activeTab === 'big-picture'
-                ? [
-                    { id: 'fw98-overview', label: 'Overview' },
-                    { id: 'fw98-why', label: 'Why It Matters' },
-                    { id: 'fw98-history', label: 'Historical Context' },
-                    { id: 'fw98-tracks', label: 'Framework Tracks' },
-                    { id: 'fw98-themes', label: 'Big Picture Themes' },
-                    { id: 'fw98-takeaways', label: 'Key Takeaways' },
-                  ]
-                : activeTab === 'core-concepts'
-                  ? [
-                      { id: 'fw98-signals', label: 'Topic Signals' },
-                      { id: 'fw98-foundations', label: 'Foundations' },
-                      { id: 'fw98-features', label: 'Framework Features' },
-                      { id: 'fw98-runtime', label: 'Runtime and Operations' },
-                      { id: 'fw98-uses', label: 'Ecosystem Uses' },
-                      { id: 'fw98-compare', label: 'Compare and Contrast' },
-                      { id: 'fw98-failures', label: 'Failure Modes' },
-                      { id: 'fw98-checklist', label: 'Study Checklist' },
-                    ]
-                  : activeTab === 'examples'
-                    ? examples.map((example) => ({ id: example.id, label: example.title }))
-                    : [{ id: 'fw98-glossary', label: 'Terms' }]
-              ).map((section) => (
-                <li key={section.id} className="fw98-toc-item">
-                  <a href={`#${section.id}`} className="fw98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
+          <hr className="bin98-divider" />
+
+          <section id="fw98-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <ul>
+              {whyItMatters.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
 
-          <main className="fw98-content">
-            <h1 className="fw98-doc-title">Frameworks</h1>
-            <p className="fw98-intro">
-              This page is an overview of software frameworks as a broad ecosystem category. It
-              explains why frameworks exist, how they impose structure, how their conventions affect
-              the full software lifecycle, and how the child framework domains in this section
-              connect to frontend, backend, mobile, data, cloud and DevOps, and game development.
+          <hr className="bin98-divider" />
+
+          <section id="fw98-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalContext.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="fw98-tracks" className="bin98-section">
+            <h2 className="bin98-heading">Framework Tracks</h2>
+            {frameworkTracks.map((track) => (
+              <div key={track.title}>
+                <h3 className="bin98-subheading">
+                  <Link
+                    to={`${FRAMEWORKS_BASE_ROUTE}/${slugifySegment(track.routeLabel)}`}
+                    className="fw98-inline-link"
+                  >
+                    {track.title}
+                  </Link>
+                </h3>
+                <p>{track.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="fw98-themes" className="bin98-section">
+            <h2 className="bin98-heading">Big Picture Themes</h2>
+            {bigPictureThemes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <hr className="bin98-divider" />
+
+          <section id="fw98-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="fw98-signals" className="bin98-section">
+            <h2 className="bin98-heading">Topic Signals</h2>
+            {topicSignals.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-foundations" className="bin98-section">
+            <h2 className="bin98-heading">Foundations</h2>
+            {coreFoundations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-features" className="bin98-section">
+            <h2 className="bin98-heading">Framework Features</h2>
+            {frameworkFeatures.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-runtime" className="bin98-section">
+            <h2 className="bin98-heading">Runtime and Operations</h2>
+            {runtimeAndOperations.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-uses" className="bin98-section">
+            <h2 className="bin98-heading">Ecosystem Uses</h2>
+            {ecosystemUses.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {comparisons.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-failures" className="bin98-section">
+            <h2 className="bin98-heading">Failure Modes</h2>
+            {failureModes.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="fw98-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Study Checklist</h2>
+            <ul>
+              {studyChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>
+                <strong>Area:</strong> {example.area}
+              </p>
+              <p>{example.intro}</p>
+              <p>
+                <strong>Why this example fits:</strong> {example.whyFit}
+              </p>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>
+                <strong>Takeaway:</strong> {example.takeaway}
+              </p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="fw98-glossary" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((entry) => (
+            <p key={entry.term}>
+              <strong>{entry.term}:</strong> {entry.definition}
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="fw98-overview" className="fw98-section">
-                  <h2 className="fw98-heading">Overview</h2>
-                  {overviewSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="fw98-subheading">{section.title}</h3>
-                      <p>{section.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="fw98-divider" />
-
-                <section id="fw98-why" className="fw98-section">
-                  <h2 className="fw98-heading">Why It Matters</h2>
-                  <ul>
-                    {whyItMatters.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-
-                <hr className="fw98-divider" />
-
-                <section id="fw98-history" className="fw98-section">
-                  <h2 className="fw98-heading">Historical Context</h2>
-                  {historicalContext.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="fw98-divider" />
-
-                <section id="fw98-tracks" className="fw98-section">
-                  <h2 className="fw98-heading">Framework Tracks</h2>
-                  {frameworkTracks.map((track) => (
-                    <div key={track.title}>
-                      <h3 className="fw98-subheading">
-                        <Link
-                          to={`${FRAMEWORKS_BASE_ROUTE}/${slugifySegment(track.routeLabel)}`}
-                          className="fw98-inline-link"
-                        >
-                          {track.title}
-                        </Link>
-                      </h3>
-                      <p>{track.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="fw98-divider" />
-
-                <section id="fw98-themes" className="fw98-section">
-                  <h2 className="fw98-heading">Big Picture Themes</h2>
-                  {bigPictureThemes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <hr className="fw98-divider" />
-
-                <section id="fw98-takeaways" className="fw98-section">
-                  <h2 className="fw98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="fw98-signals" className="fw98-section">
-                  <h2 className="fw98-heading">Topic Signals</h2>
-                  {topicSignals.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-foundations" className="fw98-section">
-                  <h2 className="fw98-heading">Foundations</h2>
-                  {coreFoundations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-features" className="fw98-section">
-                  <h2 className="fw98-heading">Framework Features</h2>
-                  {frameworkFeatures.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-runtime" className="fw98-section">
-                  <h2 className="fw98-heading">Runtime and Operations</h2>
-                  {runtimeAndOperations.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-uses" className="fw98-section">
-                  <h2 className="fw98-heading">Ecosystem Uses</h2>
-                  {ecosystemUses.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-compare" className="fw98-section">
-                  <h2 className="fw98-heading">Compare and Contrast</h2>
-                  {comparisons.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-failures" className="fw98-section">
-                  <h2 className="fw98-heading">Failure Modes</h2>
-                  {failureModes.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="fw98-subheading">{item.title}</h3>
-                      <p>{item.body}</p>
-                    </div>
-                  ))}
-                </section>
-
-                <section id="fw98-checklist" className="fw98-section">
-                  <h2 className="fw98-heading">Study Checklist</h2>
-                  <ul>
-                    {studyChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="fw98-section">
-                    <h2 className="fw98-heading">{example.title}</h2>
-                    <p>
-                      <strong>Area:</strong> {example.area}
-                    </p>
-                    <p>{example.intro}</p>
-                    <p>
-                      <strong>Why this example fits:</strong> {example.whyFit}
-                    </p>
-                    <div className="fw98-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>
-                      <strong>Takeaway:</strong> {example.takeaway}
-                    </p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="fw98-glossary" className="fw98-section">
-                <h2 className="fw98-heading">Glossary</h2>
-                {glossary.map((entry) => (
-                  <p key={entry.term}>
-                    <strong>{entry.term}:</strong> {entry.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

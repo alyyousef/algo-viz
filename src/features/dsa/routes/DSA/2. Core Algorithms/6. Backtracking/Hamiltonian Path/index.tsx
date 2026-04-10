@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -16,8 +16,7 @@ const historicalMilestones = [
   },
   {
     title: 'NP-complete classification (1972)',
-    detail:
-      "The Hamiltonian path problem was among Karp's original NP-complete problems.",
+    detail: "The Hamiltonian path problem was among Karp's original NP-complete problems.",
   },
   {
     title: 'Backtracking becomes standard (1970s+)',
@@ -79,18 +78,15 @@ const algorithmSteps = [
   },
   {
     title: 'Extend the path',
-    detail:
-      'Try adding a neighbor that has not been visited yet. Mark it visited and recurse.',
+    detail: 'Try adding a neighbor that has not been visited yet. Mark it visited and recurse.',
   },
   {
     title: 'Check completion',
-    detail:
-      'If the path length equals |V|, you found a Hamiltonian path. Return success.',
+    detail: 'If the path length equals |V|, you found a Hamiltonian path. Return success.',
   },
   {
     title: 'Backtrack',
-    detail:
-      'If no neighbor works, unmark the last vertex and try the next option.',
+    detail: 'If no neighbor works, unmark the last vertex and try the next option.',
   },
 ]
 
@@ -153,8 +149,7 @@ const realWorldUses = [
   },
   {
     context: 'Circuit testing',
-    detail:
-      'Visiting each component exactly once can model certain test traversal constraints.',
+    detail: 'Visiting each component exactly once can model certain test traversal constraints.',
   },
 ]
 
@@ -169,8 +164,7 @@ const examples = [
 
 One Hamiltonian path:
   1 -> 2 -> 4 -> 3`,
-    explanation:
-      'The path visits every vertex exactly once and follows existing edges.',
+    explanation: 'The path visits every vertex exactly once and follows existing edges.',
   },
   {
     title: 'Backtracking pseudocode',
@@ -191,8 +185,7 @@ One Hamiltonian path:
 
     if dfs(start): return path
     return null`,
-    explanation:
-      'Depth-first search explores possibilities, undoing choices when a branch fails.',
+    explanation: 'Depth-first search explores possibilities, undoing choices when a branch fails.',
   },
   {
     title: 'Directed graph note',
@@ -223,8 +216,7 @@ const decisionGuidance = [
 const advancedInsights = [
   {
     title: 'Sufficient conditions',
-    detail:
-      'Dirac and Ore conditions provide quick checks for Hamiltonian cycles in dense graphs.',
+    detail: 'Dirac and Ore conditions provide quick checks for Hamiltonian cycles in dense graphs.',
   },
   {
     title: 'Ordering by degree',
@@ -274,211 +266,6 @@ const quickGlossary = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const hamiltonianHelpStyles = `
-.hamiltonian-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.hamiltonian-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  box-sizing: border-box;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.hamiltonian-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.hamiltonian-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-
-.hamiltonian-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.hamiltonian-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.hamiltonian-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.hamiltonian-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.hamiltonian-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.hamiltonian-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.hamiltonian-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.hamiltonian-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.hamiltonian-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.hamiltonian-toc-list li {
-  margin: 0 0 8px;
-}
-
-.hamiltonian-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.hamiltonian-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.hamiltonian-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.hamiltonian-section {
-  margin: 0 0 20px;
-}
-
-.hamiltonian-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.hamiltonian-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.hamiltonian-content p,
-.hamiltonian-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.hamiltonian-content p {
-  margin: 0 0 10px;
-}
-
-.hamiltonian-content ul,
-.hamiltonian-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.hamiltonian-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.hamiltonian-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.hamiltonian-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .hamiltonian-main {
-    grid-template-columns: 1fr;
-  }
-
-  .hamiltonian-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -486,10 +273,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -514,251 +297,194 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function HamiltonianPathPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Hamiltonian Path',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Hamiltonian Path (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Hamiltonian Path',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="hamiltonian-help-page">
-      <style>{hamiltonianHelpStyles}</style>
-      <div className="hamiltonian-window" role="presentation">
-        <header className="hamiltonian-titlebar">
-          <span className="hamiltonian-title">Hamiltonian Path</span>
-          <div className="hamiltonian-controls">
-            <button className="hamiltonian-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="hamiltonian-control" aria-label="Close">X</Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Hamiltonian Path"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Hamiltonian Path</h1>
+      <p>
+        Backtracking through graphs to visit each vertex exactly once. Hamiltonian Path is a classic
+        graph problem: find a route that visits every vertex exactly once. It is NP-complete, which
+        makes backtracking the practical default for exact solutions. This page explains the
+        intuition, algorithm, pruning strategies, and tradeoffs you need to implement it well.
+      </p>
 
-        <div className="hamiltonian-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`hamiltonian-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="hamiltonian-main">
-          <aside className="hamiltonian-toc" aria-label="Table of contents">
-            <h2 className="hamiltonian-toc-title">Contents</h2>
-            <ul className="hamiltonian-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Hamiltonian paths model scenarios where each location must be visited exactly once.
+              The difficulty comes from the global constraint: a choice that looks good locally
+              might block completion later, which is why backtracking and pruning are essential.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-models" className="bin98-section">
+            <h2 className="bin98-heading">Core Concept and Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
+          </section>
+        </>
+      )}
 
-          <main className="hamiltonian-content">
-            <h1 className="hamiltonian-doc-title">Hamiltonian Path</h1>
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-backtracking" className="bin98-section">
+            <h2 className="bin98-heading">How It Works: The Backtracking Approach</h2>
+            {coreConcepts.map((block) => (
+              <div key={block.heading}>
+                <h3 className="bin98-subheading">{block.heading}</h3>
+                <ul>
+                  {block.bullets.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+          <section id="core-steps" className="bin98-section">
+            <h2 className="bin98-heading">Algorithm Steps</h2>
+            {algorithmSteps.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
             <p>
-              Backtracking through graphs to visit each vertex exactly once. Hamiltonian Path is a classic graph problem: find a
-              route that visits every vertex exactly once. It is NP-complete, which makes backtracking the practical default for exact
-              solutions. This page explains the intuition, algorithm, pruning strategies, and tradeoffs you need to implement it well.
+              The invariant: every vertex appears at most once in the path. Backtracking enforces
+              this by undoing a choice whenever no valid extension exists.
             </p>
+          </section>
+          <section id="core-pruning" className="bin98-section">
+            <h2 className="bin98-heading">Pruning and Heuristics</h2>
+            {pruningHeuristics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              Even basic heuristics can shrink the search tree dramatically. Start with degree
+              ordering and add memoization for smaller graphs when exactness matters.
+            </p>
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity Analysis and Tradeoffs</h2>
+            {complexityNotes.map((note) => (
+              <p key={note.title}>
+                <strong>{note.title}:</strong> {note.detail}
+              </p>
+            ))}
+            <p>
+              Because the worst case is factorial, problem size is the main constraint. Pruning
+              shifts the practical limit, but does not change the theoretical complexity.
+            </p>
+          </section>
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Hamiltonian vs Eulerian (Quick Intuition)</h2>
+            <p>
+              <strong>Focus:</strong> Hamiltonian visits every vertex once; Eulerian traverses every
+              edge once.
+            </p>
+            <p>
+              <strong>Difficulty:</strong> Hamiltonian path is NP-complete; Eulerian path has
+              polynomial-time checks.
+            </p>
+            <p>
+              <strong>Typical method:</strong> Hamiltonian uses backtracking/search; Eulerian uses
+              degree rules plus DFS.
+            </p>
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <section id="core-guidance" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+        </>
+      )}
 
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Overview</h2>
-                  <p>
-                    Hamiltonian paths model scenarios where each location must be visited exactly once. The difficulty comes from the
-                    global constraint: a choice that looks good locally might block completion later, which is why backtracking and
-                    pruning are essential.
-                  </p>
-                </section>
-                <hr className="hamiltonian-divider" />
-                <section id="bp-history" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="hamiltonian-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-models" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Core Concept and Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-applications" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-takeaways" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
+      {activeTab === 'examples' && (
+        <section id="ex-practical" className="bin98-section">
+          <h2 className="bin98-heading">Practical Examples</h2>
+          {examples.map((example) => (
+            <div key={example.title}>
+              <h3 className="bin98-subheading">{example.title}</h3>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </div>
+          ))}
+        </section>
+      )}
 
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-backtracking" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">How It Works: The Backtracking Approach</h2>
-                  {coreConcepts.map((block) => (
-                    <div key={block.heading}>
-                      <h3 className="hamiltonian-subheading">{block.heading}</h3>
-                      <ul>
-                        {block.bullets.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </section>
-                <section id="core-steps" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Algorithm Steps</h2>
-                  {algorithmSteps.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    The invariant: every vertex appears at most once in the path. Backtracking enforces this by undoing a choice
-                    whenever no valid extension exists.
-                  </p>
-                </section>
-                <section id="core-pruning" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Pruning and Heuristics</h2>
-                  {pruningHeuristics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Even basic heuristics can shrink the search tree dramatically. Start with degree ordering and add memoization for
-                    smaller graphs when exactness matters.
-                  </p>
-                </section>
-                <section id="core-complexity" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Complexity Analysis and Tradeoffs</h2>
-                  {complexityNotes.map((note) => (
-                    <p key={note.title}>
-                      <strong>{note.title}:</strong> {note.detail}
-                    </p>
-                  ))}
-                  <p>
-                    Because the worst case is factorial, problem size is the main constraint. Pruning shifts the practical limit, but
-                    does not change the theoretical complexity.
-                  </p>
-                </section>
-                <section id="core-compare" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Hamiltonian vs Eulerian (Quick Intuition)</h2>
-                  <p><strong>Focus:</strong> Hamiltonian visits every vertex once; Eulerian traverses every edge once.</p>
-                  <p><strong>Difficulty:</strong> Hamiltonian path is NP-complete; Eulerian path has polynomial-time checks.</p>
-                  <p><strong>Typical method:</strong> Hamiltonian uses backtracking/search; Eulerian uses degree rules plus DFS.</p>
-                </section>
-                <section id="core-pitfalls" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <section id="core-guidance" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-advanced" className="hamiltonian-section">
-                  <h2 className="hamiltonian-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <section id="ex-practical" className="hamiltonian-section">
-                <h2 className="hamiltonian-heading">Practical Examples</h2>
-                {examples.map((example) => (
-                  <div key={example.title}>
-                    <h3 className="hamiltonian-subheading">{example.title}</h3>
-                    <div className="hamiltonian-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="hamiltonian-section">
-                <h2 className="hamiltonian-heading">Glossary</h2>
-                {quickGlossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {quickGlossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

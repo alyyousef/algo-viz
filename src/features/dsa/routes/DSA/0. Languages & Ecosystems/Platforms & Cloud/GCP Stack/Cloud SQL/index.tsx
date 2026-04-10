@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -13,216 +11,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-const cloudSqlHelpStyles = `
-.cloudsql-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cloudsql-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cloudsql-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudsql-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cloudsql-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cloudsql-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.cloudsql-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cloudsql-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cloudsql-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cloudsql-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.cloudsql-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.cloudsql-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cloudsql-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cloudsql-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cloudsql-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.cloudsql-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cloudsql-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cloudsql-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudsql-help-section {
-  margin: 0 0 20px;
-}
-
-.cloudsql-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cloudsql-help-content p,
-.cloudsql-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cloudsql-help-content p {
-  margin: 0 0 10px;
-}
-
-.cloudsql-help-content ul,
-.cloudsql-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cloudsql-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.cloudsql-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.cloudsql-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cloudsql-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloudsql-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cloudsql-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
 
 const bigPictureSections: Array<
   | { id: string; title: string; paragraphs: string[] }
@@ -232,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Cloud SQL is Google Cloud\'s managed relational database service for MySQL, PostgreSQL, and SQL Server. The simplest mental model is that it gives you a managed transactional database instance without asking you to operate the full database infrastructure stack yourself.',
+      "Cloud SQL is Google Cloud's managed relational database service for MySQL, PostgreSQL, and SQL Server. The simplest mental model is that it gives you a managed transactional database instance without asking you to operate the full database infrastructure stack yourself.",
       'It is designed for application databases, not for warehouse-scale analytics. The central concerns are transactions, schemas, indexes, connection management, backups, replicas, failover, and secure application connectivity.',
       'Adopting Cloud SQL usually means choosing managed operations for a familiar relational engine. The team still owns database design, query quality, schema evolution, and workload behavior, but a large share of instance management moves into the platform.',
     ],
@@ -513,51 +301,63 @@ DATABASE_USER=app_user`,
 const glossaryTerms = [
   {
     term: 'Instance',
-    definition: 'The managed Cloud SQL database resource that runs a selected relational engine version and configuration.',
+    definition:
+      'The managed Cloud SQL database resource that runs a selected relational engine version and configuration.',
   },
   {
     term: 'High availability',
-    definition: 'A deployment posture that reduces service disruption risk during certain infrastructure failure scenarios.',
+    definition:
+      'A deployment posture that reduces service disruption risk during certain infrastructure failure scenarios.',
   },
   {
     term: 'Backup',
-    definition: 'A recoverable stored snapshot or backup set used to restore database state after loss or error.',
+    definition:
+      'A recoverable stored snapshot or backup set used to restore database state after loss or error.',
   },
   {
     term: 'Point-in-time recovery',
-    definition: 'A recovery capability that restores the database to a specific historical moment within a supported retention window.',
+    definition:
+      'A recovery capability that restores the database to a specific historical moment within a supported retention window.',
   },
   {
     term: 'Read replica',
-    definition: 'A replicated secondary instance used primarily for read scaling or workload separation.',
+    definition:
+      'A replicated secondary instance used primarily for read scaling or workload separation.',
   },
   {
     term: 'Private IP',
-    definition: 'A connectivity model where applications reach the database through private networking rather than public access.',
+    definition:
+      'A connectivity model where applications reach the database through private networking rather than public access.',
   },
   {
     term: 'Cloud SQL Auth Proxy',
-    definition: 'A connectivity helper that simplifies secure application or operator access to Cloud SQL instances.',
+    definition:
+      'A connectivity helper that simplifies secure application or operator access to Cloud SQL instances.',
   },
   {
     term: 'Connector',
-    definition: 'A language or platform integration path used to connect applications to Cloud SQL securely and consistently.',
+    definition:
+      'A language or platform integration path used to connect applications to Cloud SQL securely and consistently.',
   },
   {
     term: 'IAM database authentication',
-    definition: 'A database access model that uses Google Cloud IAM identities for supported authentication patterns.',
+    definition:
+      'A database access model that uses Google Cloud IAM identities for supported authentication patterns.',
   },
   {
     term: 'Connection pooling',
-    definition: 'A strategy for reusing database connections efficiently instead of opening a new connection for every operation.',
+    definition:
+      'A strategy for reusing database connections efficiently instead of opening a new connection for every operation.',
   },
   {
     term: 'Maintenance window',
-    definition: 'A planned time period when platform maintenance activity may be applied to the managed database instance.',
+    definition:
+      'A planned time period when platform maintenance activity may be applied to the managed database instance.',
   },
   {
     term: 'OLTP',
-    definition: 'Online transaction processing, the class of workload Cloud SQL is generally intended to support.',
+    definition:
+      'Online transaction processing, the class of workload Cloud SQL is generally intended to support.',
   },
 ]
 
@@ -593,180 +393,105 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPCloudSQLPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP Cloud SQL (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP Cloud SQL',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP Cloud SQL',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cloudsql-help-page">
-      <style>{cloudSqlHelpStyles}</style>
-      <div className="cloudsql-help-window" role="presentation">
-        <header className="cloudsql-help-titlebar">
-          <span className="cloudsql-help-title">GCP Cloud SQL</span>
-          <div className="cloudsql-help-controls">
-            <button className="cloudsql-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cloudsql-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP Cloud SQL"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP Cloud SQL</h1>
+      <p className="cloudsql-help-doc-subtitle">
+        Managed relational databases for MySQL, PostgreSQL, and SQL Server workloads
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact Cloud SQL manual:
+        what the service is, how it fits into transactional application architecture, and which
+        design choices matter for engine selection, connectivity, recovery, performance, and secure
+        operations.
+      </p>
 
-        <div className="cloudsql-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`cloudsql-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cloudsql-help-main">
-          <aside className="cloudsql-help-toc" aria-label="Table of contents">
-            <h2 className="cloudsql-help-toc-title">Contents</h2>
-            <ul className="cloudsql-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="cloudsql-help-content">
-            <h1 className="cloudsql-help-doc-title">GCP Cloud SQL</h1>
-            <p className="cloudsql-help-doc-subtitle">Managed relational databases for MySQL, PostgreSQL, and SQL Server workloads</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact Cloud SQL manual: what the service is,
-              how it fits into transactional application architecture, and which design choices matter for engine selection,
-              connectivity, recovery, performance, and secure operations.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cloudsql-help-section">
-                    <h2 className="cloudsql-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cloudsql-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cloudsql-help-section">
-                  <h2 className="cloudsql-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cloudsql-help-section">
-                    <h2 className="cloudsql-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="cloudsql-help-section">
-                    <h2 className="cloudsql-help-heading">{example.title}</h2>
-                    <div className="cloudsql-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cloudsql-help-section">
-                <h2 className="cloudsql-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -975,23 +977,12 @@ const scenarios = [
 // ─── Types and constants ──────────────────────────────────────────────────────
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return (
-    value === 'big-picture' ||
-    value === 'core-concepts' ||
-    value === 'examples' ||
-    value === 'glossary'
-  )
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -1188,213 +1179,14 @@ const glossary = [
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const win98HelpStyles = `
-.win98-mbs-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-.win98-mbs-page .win98-window {
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-.win98-mbs-page .win98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-.win98-mbs-page .win98-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-}
-.win98-mbs-page .win98-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-.win98-mbs-page .win98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-}
-.win98-mbs-page .win98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-.win98-mbs-page .win98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-.win98-mbs-page .win98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-.win98-mbs-page .win98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-.win98-mbs-page .win98-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-.win98-mbs-page .win98-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-.win98-mbs-page .win98-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.win98-mbs-page .win98-toc-list li { margin: 0 0 8px; }
-.win98-mbs-page .win98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-.win98-mbs-page .win98-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-.win98-mbs-page .win98-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-.win98-mbs-page .win98-section { margin: 0 0 20px; }
-.win98-mbs-page .win98-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-.win98-mbs-page .win98-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-.win98-mbs-page .win98-content p,
-.win98-mbs-page .win98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-.win98-mbs-page .win98-content p { margin: 0 0 10px; }
-.win98-mbs-page .win98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-.win98-mbs-page .win98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-.win98-mbs-page .win98-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-.win98-mbs-page .win98-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-.win98-mbs-page .win98-inline-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 10px;
-}
-.win98-mbs-page .win98-push {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  font-size: 12px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-.win98-mbs-page .win98-step-box {
-  background: #fffff0;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px 12px;
-  margin: 6px 0 10px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-.win98-mbs-page .win98-step-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 4px 0 10px;
-  font-size: 12px;
-}
-@media (max-width: 900px) {
-  .win98-mbs-page .win98-main { grid-template-columns: 1fr; }
-  .win98-mbs-page .win98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function MobileBackendAndServicesPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Mobile Backend and Services',
+    defaultTab: 'big-picture',
+  })
 
   const defaultExample = codeExamples[0] ?? { title: '', code: '', explanation: '' }
   const defaultScenario = scenarios[0] ?? { id: '', title: '', steps: [], summary: '' }
@@ -1402,404 +1194,326 @@ export default function MobileBackendAndServicesPage(): JSX.Element {
   const [selectedExampleTitle, setSelectedExampleTitle] = useState(defaultExample.title)
   const [selectedScenarioId, setSelectedScenarioId] = useState(defaultScenario.id)
   const [stepIndex, setStepIndex] = useState(0)
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
-  })
 
   const selectedExample =
     codeExamples.find((e) => e.title === selectedExampleTitle) ?? defaultExample
   const selectedScenario = scenarios.find((s) => s.id === selectedScenarioId) ?? defaultScenario
   const canStepForward = stepIndex < selectedScenario.steps.length - 1
-  const activeTabLabel = tabs.find((t) => t.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Mobile Backend and Services (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
 
   const handleScenarioSelect = (id: string) => {
     setSelectedScenarioId(id)
     setStepIndex(0)
   }
 
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Mobile Backend and Services',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((t) => t.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="win98-mbs-page">
-      <style>{win98HelpStyles}</style>
-      <div className="win98-window" role="presentation">
-        <header className="win98-titlebar">
-          <span className="win98-title-text">Mobile Backend and Services</span>
-          <div className="win98-title-controls">
-            <button
-              className="win98-control"
-              type="button"
-              aria-label="Minimize"
-              onClick={handleMinimize}
-            >
-              _
-            </button>
-            <Link to="/algoViz" className="win98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Mobile Backend and Services"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Mobile Backend and Services</h1>
+      <p>
+        Mobile apps depend on server-side services for authentication, data storage, push
+        notifications, analytics, crash reporting, remote configuration, and CI/CD. This document
+        covers Firebase, Supabase, authentication patterns, push delivery, observability, feature
+        flags, API design, offline sync, and mobile release pipelines.
+      </p>
 
-        <div className="win98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`win98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* ── Big Picture ── */}
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-mental-model" className="bin98-section">
+            <h2 className="bin98-heading">Mental Model</h2>
+            {mentalModel.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why This Matters</h2>
+            <p>
+              The backend is where security, data integrity, and business logic live. A weak backend
+              undermines a well-built mobile app. Misconfigured security rules, unversioned APIs,
+              broken token refresh, and missing crash reporting are among the most common causes of
+              mobile app incidents in production.
+            </p>
+            <p>
+              Service selection made at the start of a project is hard to undo. Firebase data models
+              do not translate cleanly to SQL. Tightly coupled push notification flows are expensive
+              to replace. Understanding the trade-offs early prevents costly migrations later.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-        <div className="win98-main">
-          <aside className="win98-toc" aria-label="Table of contents">
-            <h2 className="win98-toc-title">Contents</h2>
-            <ul className="win98-toc-list">
-              {sectionLinks[activeTab].map((s) => (
-                <li key={s.id}>
-                  <a href={`#${s.id}`}>{s.label}</a>
+      {/* ── Core Concepts ── */}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-firebase" className="bin98-section">
+            <h2 className="bin98-heading">Firebase</h2>
+            {firebaseConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-supabase" className="bin98-section">
+            <h2 className="bin98-heading">Supabase</h2>
+            {supabaseConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-auth" className="bin98-section">
+            <h2 className="bin98-heading">Authentication</h2>
+            {authConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-push" className="bin98-section">
+            <h2 className="bin98-heading">Push Notifications</h2>
+            {pushNotifications.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-observability" className="bin98-section">
+            <h2 className="bin98-heading">Analytics and Crash Reporting</h2>
+            {observability.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-remoteconfig" className="bin98-section">
+            <h2 className="bin98-heading">Remote Config and Feature Flags</h2>
+            {remoteConfig.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-cicd" className="bin98-section">
+            <h2 className="bin98-heading">CI/CD for Mobile</h2>
+            {cicdConcepts.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-api" className="bin98-section">
+            <h2 className="bin98-heading">API Design for Mobile</h2>
+            {apiDesign.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-offline" className="bin98-section">
+            <h2 className="bin98-heading">Offline and Sync</h2>
+            {offlineSync.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-security" className="bin98-section">
+            <h2 className="bin98-heading">Security</h2>
+            {securityPractices.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-compare" className="bin98-section">
+            <h2 className="bin98-heading">Compare and Contrast</h2>
+            {compareContrast.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {commonPitfalls.map((p) => (
+                <li key={p.mistake}>
+                  <strong>{p.mistake}:</strong> {p.description}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-debugging" className="bin98-section">
+            <h2 className="bin98-heading">Debugging Checklist</h2>
+            {debuggingChecklist.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Checklist</h2>
+            <ul>
+              {correctnessChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="core-faq" className="bin98-section">
+            <h2 className="bin98-heading">FAQ</h2>
+            {faq.map((item) => (
+              <div key={item.question}>
+                <h3 className="bin98-subheading">{item.question}</h3>
+                <p>{item.answer}</p>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
 
-          <main className="win98-content">
-            <h1 className="win98-doc-title">Mobile Backend and Services</h1>
+      {/* ── Examples ── */}
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-pseudocode" className="bin98-section">
+            <h2 className="bin98-heading">Pseudocode Patterns</h2>
+            {pseudocodePatterns.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{item.code.trim()}</code>
+                </div>
+                <p>{item.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            <p>Select an example to view the implementation pattern.</p>
+            <div className="bin98-inline-buttons">
+              {codeExamples.map((item) => (
+                <button
+                  key={item.title}
+                  type="button"
+                  className="bin98-push"
+                  onClick={() => setSelectedExampleTitle(item.title)}
+                >
+                  {item.title}
+                </button>
+              ))}
+            </div>
+            <h3 className="bin98-subheading">{selectedExample.title}</h3>
+            <div className="bin98-codebox">
+              <code>{selectedExample.code.trim()}</code>
+            </div>
+            <p>{selectedExample.explanation}</p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="ex-scenarios" className="bin98-section">
+            <h2 className="bin98-heading">Flow Walkthroughs</h2>
+            <p>Select a flow and step through how the system behaves end-to-end.</p>
+            <div className="bin98-inline-buttons">
+              {scenarios.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="bin98-push"
+                  onClick={() => handleScenarioSelect(s.id)}
+                >
+                  {s.title}
+                </button>
+              ))}
+            </div>
+            <h3 className="bin98-subheading">{selectedScenario.title}</h3>
+            <div className="bin98-step-box">
+              Step {stepIndex + 1} of {selectedScenario.steps.length}:{' '}
+              {selectedScenario.steps[stepIndex]}
+            </div>
+            <div className="bin98-step-controls">
+              <button
+                type="button"
+                className="bin98-push"
+                onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
+                disabled={stepIndex === 0}
+              >
+                &lt; Back
+              </button>
+              <button
+                type="button"
+                className="bin98-push"
+                onClick={() =>
+                  setStepIndex((i) => Math.min(selectedScenario.steps.length - 1, i + 1))
+                }
+                disabled={!canStepForward}
+              >
+                Next &gt;
+              </button>
+              <span>
+                {stepIndex + 1} / {selectedScenario.steps.length}
+              </span>
+            </div>
             <p>
-              Mobile apps depend on server-side services for authentication, data storage, push
-              notifications, analytics, crash reporting, remote configuration, and CI/CD. This
-              document covers Firebase, Supabase, authentication patterns, push delivery,
-              observability, feature flags, API design, offline sync, and mobile release pipelines.
+              <strong>Summary:</strong> {selectedScenario.summary}
             </p>
+          </section>
+        </>
+      )}
 
-            {/* ── Big Picture ── */}
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="win98-section">
-                  <h2 className="win98-heading">Overview</h2>
-                  {bigPicture.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.details}</p>
-                      <p>{item.notes}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-mental-model" className="win98-section">
-                  <h2 className="win98-heading">Mental Model</h2>
-                  {mentalModel.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-why" className="win98-section">
-                  <h2 className="win98-heading">Why This Matters</h2>
-                  <p>
-                    The backend is where security, data integrity, and business logic live. A weak
-                    backend undermines a well-built mobile app. Misconfigured security rules,
-                    unversioned APIs, broken token refresh, and missing crash reporting are among
-                    the most common causes of mobile app incidents in production.
-                  </p>
-                  <p>
-                    Service selection made at the start of a project is hard to undo. Firebase data
-                    models do not translate cleanly to SQL. Tightly coupled push notification flows
-                    are expensive to replace. Understanding the trade-offs early prevents costly
-                    migrations later.
-                  </p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="bp-takeaways" className="win98-section">
-                  <h2 className="win98-heading">Key Takeaways</h2>
-                  <ul>
-                    {keyTakeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {/* ── Core Concepts ── */}
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-firebase" className="win98-section">
-                  <h2 className="win98-heading">Firebase</h2>
-                  {firebaseConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-supabase" className="win98-section">
-                  <h2 className="win98-heading">Supabase</h2>
-                  {supabaseConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-auth" className="win98-section">
-                  <h2 className="win98-heading">Authentication</h2>
-                  {authConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-push" className="win98-section">
-                  <h2 className="win98-heading">Push Notifications</h2>
-                  {pushNotifications.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-observability" className="win98-section">
-                  <h2 className="win98-heading">Analytics and Crash Reporting</h2>
-                  {observability.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-remoteconfig" className="win98-section">
-                  <h2 className="win98-heading">Remote Config and Feature Flags</h2>
-                  {remoteConfig.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-cicd" className="win98-section">
-                  <h2 className="win98-heading">CI/CD for Mobile</h2>
-                  {cicdConcepts.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-api" className="win98-section">
-                  <h2 className="win98-heading">API Design for Mobile</h2>
-                  {apiDesign.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-offline" className="win98-section">
-                  <h2 className="win98-heading">Offline and Sync</h2>
-                  {offlineSync.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-security" className="win98-section">
-                  <h2 className="win98-heading">Security</h2>
-                  {securityPractices.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-compare" className="win98-section">
-                  <h2 className="win98-heading">Compare and Contrast</h2>
-                  {compareContrast.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-pitfalls" className="win98-section">
-                  <h2 className="win98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {commonPitfalls.map((p) => (
-                      <li key={p.mistake}>
-                        <strong>{p.mistake}:</strong> {p.description}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-debugging" className="win98-section">
-                  <h2 className="win98-heading">Debugging Checklist</h2>
-                  {debuggingChecklist.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-correctness" className="win98-section">
-                  <h2 className="win98-heading">Correctness Checklist</h2>
-                  <ul>
-                    {correctnessChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="win98-divider" />
-                <section id="core-faq" className="win98-section">
-                  <h2 className="win98-heading">FAQ</h2>
-                  {faq.map((item) => (
-                    <div key={item.question}>
-                      <h3 className="win98-subheading">{item.question}</h3>
-                      <p>{item.answer}</p>
-                    </div>
-                  ))}
-                </section>
-              </>
-            )}
-
-            {/* ── Examples ── */}
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-pseudocode" className="win98-section">
-                  <h2 className="win98-heading">Pseudocode Patterns</h2>
-                  {pseudocodePatterns.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="win98-subheading">{item.title}</h3>
-                      <div className="win98-codebox">
-                        <code>{item.code.trim()}</code>
-                      </div>
-                      <p>{item.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <hr className="win98-divider" />
-                <section id="ex-code" className="win98-section">
-                  <h2 className="win98-heading">Code Examples</h2>
-                  <p>Select an example to view the implementation pattern.</p>
-                  <div className="win98-inline-buttons">
-                    {codeExamples.map((item) => (
-                      <button
-                        key={item.title}
-                        type="button"
-                        className="win98-push"
-                        onClick={() => setSelectedExampleTitle(item.title)}
-                      >
-                        {item.title}
-                      </button>
-                    ))}
-                  </div>
-                  <h3 className="win98-subheading">{selectedExample.title}</h3>
-                  <div className="win98-codebox">
-                    <code>{selectedExample.code.trim()}</code>
-                  </div>
-                  <p>{selectedExample.explanation}</p>
-                </section>
-                <hr className="win98-divider" />
-                <section id="ex-scenarios" className="win98-section">
-                  <h2 className="win98-heading">Flow Walkthroughs</h2>
-                  <p>Select a flow and step through how the system behaves end-to-end.</p>
-                  <div className="win98-inline-buttons">
-                    {scenarios.map((s) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        className="win98-push"
-                        onClick={() => handleScenarioSelect(s.id)}
-                      >
-                        {s.title}
-                      </button>
-                    ))}
-                  </div>
-                  <h3 className="win98-subheading">{selectedScenario.title}</h3>
-                  <div className="win98-step-box">
-                    Step {stepIndex + 1} of {selectedScenario.steps.length}:{' '}
-                    {selectedScenario.steps[stepIndex]}
-                  </div>
-                  <div className="win98-step-controls">
-                    <button
-                      type="button"
-                      className="win98-push"
-                      onClick={() => setStepIndex((i) => Math.max(0, i - 1))}
-                      disabled={stepIndex === 0}
-                    >
-                      &lt; Back
-                    </button>
-                    <button
-                      type="button"
-                      className="win98-push"
-                      onClick={() =>
-                        setStepIndex((i) => Math.min(selectedScenario.steps.length - 1, i + 1))
-                      }
-                      disabled={!canStepForward}
-                    >
-                      Next &gt;
-                    </button>
-                    <span>
-                      {stepIndex + 1} / {selectedScenario.steps.length}
-                    </span>
-                  </div>
-                  <p>
-                    <strong>Summary:</strong> {selectedScenario.summary}
-                  </p>
-                </section>
-              </>
-            )}
-
-            {/* ── Glossary ── */}
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="win98-section">
-                <h2 className="win98-heading">Glossary</h2>
-                {glossary.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {/* ── Glossary ── */}
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

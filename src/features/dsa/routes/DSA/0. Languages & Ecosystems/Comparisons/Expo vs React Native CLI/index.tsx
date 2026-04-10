@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -7,8 +9,6 @@ type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'Expo vs React Native CLI'
 const pageSubtitle = 'Comparing the Expo framework path with React Native without a framework.'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const bigPictureSections: Array<{ title: string; paragraphs: string[] }> = [
   {
     title: 'What the comparison really means now',
@@ -61,7 +61,8 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
     choice: 'Prefer Expo.',
   },
   {
-    title: 'Need to integrate an unusual native SDK or custom native architecture immediately and heavily',
+    title:
+      'Need to integrate an unusual native SDK or custom native architecture immediately and heavily',
     choice: 'Prefer the no-framework path unless Expo prebuild or modules clearly cover it.',
   },
   {
@@ -69,7 +70,8 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
     choice: 'Prefer Expo.',
   },
   {
-    title: 'Need full ownership of Gradle, Xcode targets, native dependency wiring, and manual native customization',
+    title:
+      'Need full ownership of Gradle, Xcode targets, native dependency wiring, and manual native customization',
     choice: 'Prefer React Native without a framework.',
   },
   {
@@ -86,7 +88,8 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
   },
   {
     title: 'Need a brownfield integration strategy into an existing native app',
-    choice: 'The no-framework path is often more direct, though Expo also documents brownfield approaches.',
+    choice:
+      'The no-framework path is often more direct, though Expo also documents brownfield approaches.',
   },
 ]
 
@@ -463,448 +466,162 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const expoRnCliHelpStyles = `
-.expo-rncli-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.expo-rncli-help-window {
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  background: #c0c0c0;
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.expo-rncli-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.expo-rncli-help-title-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.expo-rncli-help-title-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.expo-rncli-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-
-.expo-rncli-help-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.expo-rncli-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.expo-rncli-help-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.expo-rncli-help-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-}
-
-.expo-rncli-help-toc {
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-  overflow: auto;
-}
-
-.expo-rncli-help-toc-title {
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 0 10px;
-}
-
-.expo-rncli-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.expo-rncli-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.expo-rncli-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.expo-rncli-help-content {
-  padding: 14px 20px 20px;
-  overflow: auto;
-}
-
-.expo-rncli-help-doc-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px;
-}
-
-.expo-rncli-help-section {
-  margin: 0 0 20px;
-}
-
-.expo-rncli-help-heading {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.expo-rncli-help-subheading {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 6px;
-}
-
-.expo-rncli-help-content p,
-.expo-rncli-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.expo-rncli-help-content p {
-  margin: 0 0 10px;
-}
-
-.expo-rncli-help-content ul,
-.expo-rncli-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.expo-rncli-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.expo-rncli-help-codebox {
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  padding: 8px;
-  margin: 6px 0 10px;
-}
-
-.expo-rncli-help-codebox code {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  white-space: pre;
-  display: block;
-}
-
-.expo-rncli-help-inline-link {
-  color: #000080;
-}
-
-@media (max-width: 900px) {
-  .expo-rncli-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .expo-rncli-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .expo-rncli-help-title-text {
-    position: static;
-    transform: none;
-    margin-left: 8px;
-    font-size: 14px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ExpoVsReactNativeCliPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Expo Vs React Native Cli Page',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="expo-rncli-help-page">
-      <style>{expoRnCliHelpStyles}</style>
-      <div className="expo-rncli-help-window" role="presentation">
-        <header className="expo-rncli-help-titlebar">
-          <span className="expo-rncli-help-title-text">{pageTitle}</span>
-          <div className="expo-rncli-help-title-controls">
-            <button className="expo-rncli-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="expo-rncli-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
-        <div className="expo-rncli-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`expo-rncli-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+    <TopicPageShell
+      title="Expo Vs React Native Cli Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="bin98-subheading">{pageSubtitle}</p>
+      <p>
+        This page compares Expo with the path often called “React Native CLI,” but the current React
+        Native docs frame that alternative more accurately as React Native without a framework. The
+        real question is whether your team benefits more from Expo’s framework layer or from direct
+        ownership of the native project surface.
+      </p>
+      <p>
+        The title-bar minimize control returns to the previous page when possible, or to{' '}
+        <Link to="/algoViz" className="expo-rncli-help-inline-link">
+          /algoViz
+        </Link>{' '}
+        when there is no prior history entry.
+      </p>
 
-        <div className="expo-rncli-help-main">
-          <aside className="expo-rncli-help-toc" aria-label="Table of contents">
-            <h2 className="expo-rncli-help-toc-title">Contents</h2>
-            <ul className="expo-rncli-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPictureSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="bin98-subheading">{section.title}</h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-decision" className="bin98-section">
+            <h2 className="bin98-heading">Decision Guide</h2>
+            <ul>
+              {decisionGuide.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.choice}
                 </li>
               ))}
             </ul>
-          </aside>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">History and Direction</h2>
+            <ul>
+              {historyAndDirection.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-questions" className="bin98-section">
+            <h2 className="bin98-heading">Decision Questions</h2>
+            <ul>
+              {decisionQuestions.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
 
-          <main className="expo-rncli-help-content">
-            <h1 className="expo-rncli-help-doc-title">{pageTitle}</h1>
-            <p className="expo-rncli-help-subheading">{pageSubtitle}</p>
-            <p>
-              This page compares Expo with the path often called “React Native CLI,” but the current React Native docs frame that
-              alternative more accurately as React Native without a framework. The real question is whether your team benefits more
-              from Expo’s framework layer or from direct ownership of the native project surface.
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreConceptSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+
+          <section id="core-notes" className="bin98-section">
+            <h2 className="bin98-heading">Operating Notes</h2>
+            {operatingNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-workload-fit" className="bin98-section">
+            <h2 className="bin98-heading">Workload Fit by Scenario</h2>
+            {workloadFitCases.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
             </p>
-            <p>
-              The title-bar minimize control returns to the previous page when possible, or to{' '}
-              <Link to="/algoViz" className="expo-rncli-help-inline-link">
-                /algoViz
-              </Link>{' '}
-              when there is no prior history entry.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">Overview</h2>
-                  {bigPictureSections.map((section) => (
-                    <div key={section.title}>
-                      <h3 className="expo-rncli-help-subheading">{section.title}</h3>
-                      {section.paragraphs.map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-                <hr className="expo-rncli-help-divider" />
-                <section id="bp-decision" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">Decision Guide</h2>
-                  <ul>
-                    {decisionGuide.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}:</strong> {item.choice}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="expo-rncli-help-divider" />
-                <section id="bp-history" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">History and Direction</h2>
-                  <ul>
-                    {historyAndDirection.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-                <hr className="expo-rncli-help-divider" />
-                <section id="bp-questions" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">Decision Questions</h2>
-                  <ul>
-                    {decisionQuestions.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                {coreConceptSections.map((section) => (
-                  <section key={section.id} id={section.id} className="expo-rncli-help-section">
-                    <h2 className="expo-rncli-help-heading">{section.heading}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                ))}
-
-                <section id="core-notes" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">Operating Notes</h2>
-                  {operatingNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-workload-fit" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">Workload Fit by Scenario</h2>
-                  {workloadFitCases.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-
-                <section id="core-pitfalls" className="expo-rncli-help-section">
-                  <h2 className="expo-rncli-help-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="expo-rncli-help-section">
-                    <h2 className="expo-rncli-help-heading">{example.title}</h2>
-                    <div className="expo-rncli-help-codebox">
-                      <code>{example.code.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="expo-rncli-help-section">
-                <h2 className="expo-rncli-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-                <h3 className="expo-rncli-help-subheading">Primary Source Set</h3>
-                <ul>
-                  {pageSources.map((source) => (
-                    <li key={source}>
-                      <a href={source} className="expo-rncli-help-inline-link" target="_blank" rel="noreferrer">
-                        {source}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+          ))}
+          <h3 className="bin98-subheading">Primary Source Set</h3>
+          <ul>
+            {pageSources.map((source) => (
+              <li key={source}>
+                <a
+                  href={source}
+                  className="expo-rncli-help-inline-link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {source}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

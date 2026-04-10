@@ -1,11 +1,9 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -13,216 +11,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-const cloudStorageHelpStyles = `
-.cloudstorage-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.cloudstorage-help-window {
-  min-height: 100dvh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.cloudstorage-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudstorage-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.cloudstorage-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.cloudstorage-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  font-size: 11px;
-  line-height: 1;
-  padding: 0;
-}
-
-.cloudstorage-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-}
-
-.cloudstorage-help-tab {
-  padding: 5px 10px 4px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.cloudstorage-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.cloudstorage-help-main {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  flex: 1;
-  min-height: 0;
-  background: #fff;
-  border-top: 1px solid #404040;
-}
-
-.cloudstorage-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.cloudstorage-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.cloudstorage-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cloudstorage-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.cloudstorage-help-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.cloudstorage-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.cloudstorage-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.cloudstorage-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.cloudstorage-help-section {
-  margin: 0 0 20px;
-}
-
-.cloudstorage-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cloudstorage-help-content p,
-.cloudstorage-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.cloudstorage-help-content p {
-  margin: 0 0 10px;
-}
-
-.cloudstorage-help-content ul,
-.cloudstorage-help-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.cloudstorage-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.cloudstorage-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.cloudstorage-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .cloudstorage-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .cloudstorage-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .cloudstorage-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
 
 const bigPictureSections: Array<
   | { id: string; title: string; paragraphs: string[] }
@@ -232,7 +20,7 @@ const bigPictureSections: Array<
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Cloud Storage is Google Cloud\'s managed object storage service. The simplest mental model is that it stores objects inside buckets rather than rows in tables or files on a traditional mounted filesystem.',
+      "Cloud Storage is Google Cloud's managed object storage service. The simplest mental model is that it stores objects inside buckets rather than rows in tables or files on a traditional mounted filesystem.",
       'It is designed for durable blob and file-like storage: images, videos, logs, backups, archives, static site assets, model artifacts, data lake files, and other unstructured or semi-structured objects.',
       'Adopting Cloud Storage usually means moving from host-local or ad hoc shared storage toward a managed bucket-and-object model with strong durability, lifecycle controls, IAM integration, and API-based access patterns.',
     ],
@@ -495,7 +283,8 @@ const examples = [
 const glossaryTerms = [
   {
     term: 'Bucket',
-    definition: 'The top-level Cloud Storage container that carries location, access, lifecycle, and broad storage policy.',
+    definition:
+      'The top-level Cloud Storage container that carries location, access, lifecycle, and broad storage policy.',
   },
   {
     term: 'Object',
@@ -503,27 +292,33 @@ const glossaryTerms = [
   },
   {
     term: 'Storage class',
-    definition: 'The selected cost and access posture for stored objects, such as Standard, Nearline, Coldline, or Archive.',
+    definition:
+      'The selected cost and access posture for stored objects, such as Standard, Nearline, Coldline, or Archive.',
   },
   {
     term: 'Lifecycle rule',
-    definition: 'An automated rule that changes object behavior over time, such as transition or deletion.',
+    definition:
+      'An automated rule that changes object behavior over time, such as transition or deletion.',
   },
   {
     term: 'Versioning',
-    definition: 'A bucket feature that preserves older object generations when objects are replaced or deleted.',
+    definition:
+      'A bucket feature that preserves older object generations when objects are replaced or deleted.',
   },
   {
     term: 'Soft delete',
-    definition: 'A recovery-oriented protection feature that helps restore deleted objects within a retention window.',
+    definition:
+      'A recovery-oriented protection feature that helps restore deleted objects within a retention window.',
   },
   {
     term: 'Uniform bucket-level access',
-    definition: 'A storage access mode that centralizes access decisions at the bucket level rather than relying on older per-object ACL patterns.',
+    definition:
+      'A storage access mode that centralizes access decisions at the bucket level rather than relying on older per-object ACL patterns.',
   },
   {
     term: 'Signed URL',
-    definition: 'A time-limited URL that grants controlled access to an object without broadly exposing the bucket.',
+    definition:
+      'A time-limited URL that grants controlled access to an object without broadly exposing the bucket.',
   },
   {
     term: 'Prefix',
@@ -531,15 +326,18 @@ const glossaryTerms = [
   },
   {
     term: 'Hierarchical namespace',
-    definition: 'A Cloud Storage capability that provides stronger directory-like namespace behavior for supported workloads.',
+    definition:
+      'A Cloud Storage capability that provides stronger directory-like namespace behavior for supported workloads.',
   },
   {
     term: 'CMEK',
-    definition: 'Customer-managed encryption keys used when organizations want tighter control over encryption-key management.',
+    definition:
+      'Customer-managed encryption keys used when organizations want tighter control over encryption-key management.',
   },
   {
     term: 'Data lake',
-    definition: 'A storage-oriented analytical pattern where large volumes of files and objects are kept for downstream processing and analytics.',
+    definition:
+      'A storage-oriented analytical pattern where large volumes of files and objects are kept for downstream processing and analytics.',
   },
 ]
 
@@ -574,180 +372,104 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function GCPCloudStoragePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `GCP Cloud Storage (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'GCP Cloud Storage',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'GCP Cloud Storage',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="cloudstorage-help-page">
-      <style>{cloudStorageHelpStyles}</style>
-      <div className="cloudstorage-help-window" role="presentation">
-        <header className="cloudstorage-help-titlebar">
-          <span className="cloudstorage-help-title">GCP Cloud Storage</span>
-          <div className="cloudstorage-help-controls">
-            <button className="cloudstorage-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="cloudstorage-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="GCP Cloud Storage"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">GCP Cloud Storage</h1>
+      <p className="cloudstorage-help-doc-subtitle">
+        Managed object storage for files, blobs, archives, assets, and data lake workloads
+      </p>
+      <p>
+        This page is intentionally detailed. It is meant to read like a compact Cloud Storage
+        manual: what the service is, how buckets and objects work, and which design choices matter
+        for access control, lifecycle, recovery, performance, and cost.
+      </p>
 
-        <div className="cloudstorage-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`cloudstorage-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="cloudstorage-help-main">
-          <aside className="cloudstorage-help-toc" aria-label="Table of contents">
-            <h2 className="cloudstorage-help-toc-title">Contents</h2>
-            <ul className="cloudstorage-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <main className="cloudstorage-help-content">
-            <h1 className="cloudstorage-help-doc-title">GCP Cloud Storage</h1>
-            <p className="cloudstorage-help-doc-subtitle">Managed object storage for files, blobs, archives, assets, and data lake workloads</p>
-            <p>
-              This page is intentionally detailed. It is meant to read like a compact Cloud Storage manual: what the service is,
-              how buckets and objects work, and which design choices matter for access control, lifecycle, recovery, performance,
-              and cost.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="cloudstorage-help-section">
-                    <h2 className="cloudstorage-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="cloudstorage-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="cloudstorage-help-section">
-                  <h2 className="cloudstorage-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="cloudstorage-help-section">
-                    <h2 className="cloudstorage-help-heading">{section.title}</h2>
-                    {'paragraphs' in section &&
-                      section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {'bullets' in section && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example, index) => (
-                  <section key={example.title} id={`example-${index + 1}`} className="cloudstorage-help-section">
-                    <h2 className="cloudstorage-help-heading">{example.title}</h2>
-                    <div className="cloudstorage-help-codebox">
-                      <code>{example.code}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {'paragraphs' in section &&
+                section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              {'bullets' in section && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="cloudstorage-help-section">
-                <h2 className="cloudstorage-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example, index) => (
+            <section key={example.title} id={`example-${index + 1}`} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

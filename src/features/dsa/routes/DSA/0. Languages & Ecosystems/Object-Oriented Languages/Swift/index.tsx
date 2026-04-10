@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -33,8 +33,6 @@ type GlossarySection = {
     definition: string
   }>
 }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -126,7 +124,7 @@ const bigPictureSections: ContentSection[] = [
     bullets: [
       'The ecosystem is much stronger on Apple platforms than elsewhere.',
       'Advanced generics and protocol-heavy design can become complex.',
-      'Cross-platform story exists but is not the language\'s dominant center of gravity.',
+      "Cross-platform story exists but is not the language's dominant center of gravity.",
       'Interop with older Objective-C systems can introduce design compromises.',
     ],
   },
@@ -161,8 +159,8 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-optionals',
     title: 'Optionals And Explicit Absence',
     paragraphs: [
-      'Optionals are one of Swift\'s defining features. Instead of letting absence hide as an ordinary value in many places, Swift models the possibility of no value explicitly. This forces code to unwrap, bind, guard, or otherwise acknowledge uncertainty before using the underlying value.',
-      'That explicitness is one of Swift\'s key safety wins. It reduces entire categories of accidental null-handling errors, though it also means developers need discipline around choosing where optionality is truly part of the domain model.',
+      "Optionals are one of Swift's defining features. Instead of letting absence hide as an ordinary value in many places, Swift models the possibility of no value explicitly. This forces code to unwrap, bind, guard, or otherwise acknowledge uncertainty before using the underlying value.",
+      "That explicitness is one of Swift's key safety wins. It reduces entire categories of accidental null-handling errors, though it also means developers need discipline around choosing where optionality is truly part of the domain model.",
     ],
   },
   {
@@ -176,7 +174,7 @@ const coreConceptSections: ContentSection[] = [
       'Prefer structs for many ordinary data models.',
       'Use classes when identity and shared reference semantics matter.',
       'Do not default to classes only because the codebase is nominally OOP.',
-      'Value semantics are one of Swift\'s biggest architectural advantages.',
+      "Value semantics are one of Swift's biggest architectural advantages.",
     ],
   },
   {
@@ -184,7 +182,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Protocols And Protocol-Oriented Design',
     paragraphs: [
       'Protocols are central in Swift. They define capabilities and contracts without forcing a single inheritance hierarchy. Types can conform to protocols, generic code can depend on those protocols, and protocol extensions can share behavior in flexible ways.',
-      'This is why Swift is often called protocol-oriented. Much of the language\'s expressive power comes from separating what a type can do from whether it belongs to a particular class lineage.',
+      "This is why Swift is often called protocol-oriented. Much of the language's expressive power comes from separating what a type can do from whether it belongs to a particular class lineage.",
     ],
   },
   {
@@ -200,7 +198,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Generics And Reusable APIs',
     paragraphs: [
       'Swift generics allow reusable abstractions while preserving type safety and performance. Generic functions, generic types, protocol constraints, and associated types make it possible to build rich APIs without collapsing everything into weakly typed containers.',
-      'Generics are powerful, but they also contribute to Swift\'s complexity ceiling. When used carefully they make libraries precise and reusable. When overused they can turn ordinary code into a maze of constraints that slows human understanding.',
+      "Generics are powerful, but they also contribute to Swift's complexity ceiling. When used carefully they make libraries precise and reusable. When overused they can turn ordinary code into a maze of constraints that slows human understanding.",
     ],
   },
   {
@@ -223,7 +221,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-concurrency',
     title: 'Structured Concurrency',
     paragraphs: [
-      'Modern Swift includes structured concurrency through `async` and `await`, tasks, actors, and related mechanisms. This is one of the language\'s major modern strengths because it gives native developers a clearer model for asynchronous work than callback pyramids or ad hoc thread handling.',
+      "Modern Swift includes structured concurrency through `async` and `await`, tasks, actors, and related mechanisms. This is one of the language's major modern strengths because it gives native developers a clearer model for asynchronous work than callback pyramids or ad hoc thread handling.",
       'Actors are especially important because they provide a language-level model for isolating mutable state in concurrent programs. They do not remove the need for careful design, but they give Swift a safer concurrency story than many native stacks traditionally offered.',
     ],
   },
@@ -316,7 +314,7 @@ var user = UserProfile(id: 1, name: "Ava", isAdmin: true)
 user.name = "Ava Carter"`,
     notes: [
       'This models simple data without introducing shared reference identity.',
-      'Value semantics are one of Swift\'s most important design advantages.',
+      "Value semantics are one of Swift's most important design advantages.",
     ],
   },
   {
@@ -354,7 +352,7 @@ struct FriendlyGreeter: Greeter {
 }`,
     notes: [
       'Protocols support flexible abstraction without requiring a class hierarchy.',
-      'This style aligns well with Swift\'s broader design philosophy.',
+      "This style aligns well with Swift's broader design philosophy.",
     ],
   },
   {
@@ -399,7 +397,7 @@ func greeting() async throws -> String {
 }`,
     notes: [
       'This keeps asynchronous control flow readable.',
-      'Structured concurrency is one of Swift\'s major modern strengths.',
+      "Structured concurrency is one of Swift's major modern strengths.",
     ],
   },
   {
@@ -438,7 +436,7 @@ let firstNumber = firstItem(in: [10, 20, 30])
 let firstWord = firstItem(in: ["alpha", "beta"])`,
     notes: [
       'One implementation works across many element types.',
-      'The result stays aligned with Swift\'s static type system.',
+      "The result stays aligned with Swift's static type system.",
     ],
   },
 ] as const
@@ -450,8 +448,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Optional',
-        definition:
-          'A type that explicitly represents the presence or absence of a value.',
+        definition: 'A type that explicitly represents the presence or absence of a value.',
       },
       {
         term: 'Struct',
@@ -465,8 +462,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Protocol',
-        definition:
-          'A contract describing capabilities or requirements that types can conform to.',
+        definition: 'A contract describing capabilities or requirements that types can conform to.',
       },
       {
         term: 'Enum with associated values',
@@ -496,8 +492,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Generic',
-        definition:
-          'A reusable abstraction parameterized over one or more types.',
+        definition: 'A reusable abstraction parameterized over one or more types.',
       },
       {
         term: 'Associated type',
@@ -517,7 +512,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Throwing function',
         definition:
-          'A function that can report failure through Swift\'s explicit error-handling model.',
+          "A function that can report failure through Swift's explicit error-handling model.",
       },
       {
         term: 'Opaque return type',
@@ -543,7 +538,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'ARC',
         definition:
-          'Automatic Reference Counting, Swift\'s primary memory-management mechanism for reference types.',
+          "Automatic Reference Counting, Swift's primary memory-management mechanism for reference types.",
       },
       {
         term: 'Retain cycle',
@@ -552,23 +547,20 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Actor',
-        definition:
-          'A concurrency construct that isolates mutable state behind serialized access.',
+        definition: 'A concurrency construct that isolates mutable state behind serialized access.',
       },
       {
         term: 'Task',
-        definition:
-          'A unit of asynchronous work in Swift\'s structured concurrency model.',
+        definition: "A unit of asynchronous work in Swift's structured concurrency model.",
       },
       {
         term: 'Swift Package Manager',
-        definition:
-          'The package, dependency, and build system used widely in the Swift ecosystem.',
+        definition: 'The package, dependency, and build system used widely in the Swift ecosystem.',
       },
       {
         term: 'SwiftUI',
         definition:
-          'Apple\'s declarative UI framework that has strongly influenced modern Swift application design.',
+          "Apple's declarative UI framework that has strongly influenced modern Swift application design.",
       },
       {
         term: 'Objective-C interop',
@@ -631,224 +623,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
   ],
 }
 
-const pageStyles = `
-.swift98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.swift98-help-window {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.swift98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-}
-
-.swift98-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.swift98-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.swift98-control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 16px;
-  padding: 0;
-  background: #c0c0c0;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  color: #000000;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.swift98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.swift98-tab {
-  padding: 5px 10px 4px;
-  background: #b6b6b6;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  color: #000000;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.swift98-tab-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.swift98-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.swift98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #efefef;
-  border-right: 1px solid #808080;
-}
-
-.swift98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.swift98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.swift98-toc-item {
-  margin: 0 0 8px;
-}
-
-.swift98-toc-link {
-  color: #000000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.swift98-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.swift98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.swift98-section {
-  margin: 0 0 20px;
-}
-
-.swift98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.swift98-content p,
-.swift98-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.swift98-content p {
-  margin: 0 0 10px;
-}
-
-.swift98-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.swift98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.swift98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.swift98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-@media (max-width: 900px) {
-  .swift98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .swift98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-
-@media (max-width: 640px) {
-  .swift98-titletext {
-    max-width: calc(100% - 56px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.1;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
     <section key={section.id} id={section.id} className="swift98-section">
@@ -903,122 +677,49 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function SwiftPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Swift',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Swift (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Swift',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="swift98-help-page">
-      <style>{pageStyles}</style>
-      <div className="swift98-help-window" role="presentation">
-        <header className="swift98-titlebar">
-          <span className="swift98-titletext">Swift</span>
-          <div className="swift98-controls">
-            <button className="swift98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="swift98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Swift"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Swift</h1>
+      {introParagraphs.map((paragraph, index) => (
+        <p key={`intro-${index}`}>{paragraph}</p>
+      ))}
 
-        <div className="swift98-tabs" role="tablist" aria-label="Swift documentation sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`swift98-tab ${activeTab === tab.id ? 'swift98-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="swift98-main">
-          <aside className="swift98-toc" aria-label="Table of contents">
-            <h2 className="swift98-toc-title">Contents</h2>
-            <ul className="swift98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id} className="swift98-toc-item">
-                  <a href={`#${section.id}`} className="swift98-toc-link">
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="swift98-content">
-            <h1 className="swift98-doc-title">Swift</h1>
-            {introParagraphs.map((paragraph, index) => (
-              <p key={`intro-${index}`}>{paragraph}</p>
-            ))}
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
-
 
 const historicalMilestones = [
   {
@@ -35,59 +36,49 @@ const prerequisites = [
   },
   {
     title: 'Graph traversal access',
-    detail:
-      'For directed graphs, you must traverse incoming edges on the goal side.',
+    detail: 'For directed graphs, you must traverse incoming edges on the goal side.',
   },
   {
     title: 'Nonnegative weights for Dijkstra',
-    detail:
-      'Weighted bidirectional search assumes nonnegative edges to preserve shortest paths.',
+    detail: 'Weighted bidirectional search assumes nonnegative edges to preserve shortest paths.',
   },
   {
     title: 'Memory for two visited sets',
-    detail:
-      'You store visited nodes and parents from both sides, which doubles bookkeeping.',
+    detail: 'You store visited nodes and parents from both sides, which doubles bookkeeping.',
   },
 ]
 
 const inputsOutputs = [
   {
     title: 'Input',
-    detail:
-      'Graph G(V, E), start s, goal t, and optionally edge weights.',
+    detail: 'Graph G(V, E), start s, goal t, and optionally edge weights.',
   },
   {
     title: 'Output',
-    detail:
-      'A shortest path between s and t, or failure if unreachable.',
+    detail: 'A shortest path between s and t, or failure if unreachable.',
   },
   {
     title: 'Optional',
-    detail:
-      'Distance maps from both sides for diagnostics or alternative path choices.',
+    detail: 'Distance maps from both sides for diagnostics or alternative path choices.',
   },
 ]
 
 const formalDefinitions = [
   {
     title: 'Frontiers',
-    detail:
-      'Two queues or heaps that hold the boundary of the explored region from each side.',
+    detail: 'Two queues or heaps that hold the boundary of the explored region from each side.',
   },
   {
     title: 'Intersection',
-    detail:
-      'A node visited by both sides defines a candidate path through that node.',
+    detail: 'A node visited by both sides defines a candidate path through that node.',
   },
   {
     title: 'Meeting cost',
-    detail:
-      'For weighted graphs, total cost is distStart[x] + distGoal[x].',
+    detail: 'For weighted graphs, total cost is distStart[x] + distGoal[x].',
   },
   {
     title: 'Termination condition',
-    detail:
-      'Stop when no unexplored path can beat the best meeting cost found so far.',
+    detail: 'Stop when no unexplored path can beat the best meeting cost found so far.',
   },
 ]
 
@@ -140,41 +131,34 @@ const stepByStepFlow = [
 const dataStructures = [
   {
     title: 'Two queues or heaps',
-    detail:
-      'BFS uses queues; Dijkstra uses priority queues for both directions.',
+    detail: 'BFS uses queues; Dijkstra uses priority queues for both directions.',
   },
   {
     title: 'Visited and parent maps',
-    detail:
-      'Track which nodes each side has explored and how to reconstruct paths.',
+    detail: 'Track which nodes each side has explored and how to reconstruct paths.',
   },
   {
     title: 'Distance arrays',
-    detail:
-      'Store best-known distances from both directions for weighted graphs.',
+    detail: 'Store best-known distances from both directions for weighted graphs.',
   },
   {
     title: 'Best meeting record',
-    detail:
-      'Keep the best meeting node and cost found so far.',
+    detail: 'Keep the best meeting node and cost found so far.',
   },
 ]
 
 const correctnessNotes = [
   {
     title: 'Unweighted shortest path',
-    detail:
-      'BFS expands in layers. The first intersection yields a shortest path by edge count.',
+    detail: 'BFS expands in layers. The first intersection yields a shortest path by edge count.',
   },
   {
     title: 'Weighted shortest path',
-    detail:
-      'Dijkstra order and the cost-based stop rule guarantee the best meeting is optimal.',
+    detail: 'Dijkstra order and the cost-based stop rule guarantee the best meeting is optimal.',
   },
   {
     title: 'Directed graph handling',
-    detail:
-      'Backward search must use reverse edges to preserve path direction.',
+    detail: 'Backward search must use reverse edges to preserve path direction.',
   },
 ]
 
@@ -347,8 +331,7 @@ const decisionGuidance = [
 const implementationNotes = [
   {
     title: 'Balanced expansion',
-    detail:
-      'Expanding the smaller frontier reduces total explored nodes.',
+    detail: 'Expanding the smaller frontier reduces total explored nodes.',
   },
   {
     title: 'Path stitching',
@@ -357,13 +340,11 @@ const implementationNotes = [
   },
   {
     title: 'Termination for Dijkstra',
-    detail:
-      'Use minStart + minGoal >= bestFound to stop safely.',
+    detail: 'Use minStart + minGoal >= bestFound to stop safely.',
   },
   {
     title: 'Memory limits',
-    detail:
-      'If visited maps are too large, consider heuristic search or pruning.',
+    detail: 'If visited maps are too large, consider heuristic search or pruning.',
   },
 ]
 
@@ -420,223 +401,6 @@ const variantTable = [
 ]
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
-const win98HelpStyles = `
-.bi98-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  padding: 0;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.bi98-window {
-  width: 100%;
-  min-height: 100dvh;
-  margin: 0;
-  background: #c0c0c0;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.bi98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bi98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.bi98-title-controls {
-  margin-left: auto;
-  display: flex;
-  gap: 2px;
-}
-
-.bi98-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.bi98-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.bi98-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  color: #000;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.bi98-tab.active {
-  background: #fff;
-  position: relative;
-  top: 1px;
-}
-
-.bi98-main {
-  border-top: 1px solid #404040;
-  background: #fff;
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px 1fr;
-}
-
-.bi98-toc {
-  background: #efefef;
-  border-right: 1px solid #808080;
-  padding: 12px;
-  overflow: auto;
-}
-
-.bi98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.bi98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.bi98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.bi98-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.bi98-toc-list a:hover {
-  text-decoration: underline;
-}
-
-.bi98-content {
-  padding: 14px 20px 22px;
-  overflow: auto;
-}
-
-.bi98-doc-title {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.bi98-content a {
-  color: #000080;
-}
-
-.bi98-section {
-  margin: 0 0 18px;
-}
-
-.bi98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.bi98-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.bi98-content p,
-.bi98-content li {
-  margin: 0 0 9px;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.bi98-content ul,
-.bi98-content ol {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.bi98-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 13px 0;
-}
-
-.bi98-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-}
-
-.bi98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-@media (max-width: 900px) {
-  .bi98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .bi98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -644,10 +408,6 @@ const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'examples', label: 'Examples' },
   { id: 'glossary', label: 'Glossary' },
 ]
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
 
 const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   'big-picture': [
@@ -684,311 +444,259 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function BidirectionalSearchPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Bidirectional Search',
+    defaultTab: 'big-picture',
   })
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Bidirectional Search (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Bidirectional Search',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
 
   return (
-    <div className="bi98-help-page">
-      <style>{win98HelpStyles}</style>
-      <div className="bi98-window" role="presentation">
-        <header className="bi98-titlebar">
-          <span className="bi98-title">Bidirectional Search</span>
-          <div className="bi98-title-controls">
-            <button className="bi98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="bi98-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="bi98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`bi98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="bi98-main">
-          <aside className="bi98-toc" aria-label="Table of contents">
-            <h2 className="bi98-toc-title">Contents</h2>
-            <ul className="bi98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+    <TopicPageShell
+      title="Bidirectional Search"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Bidirectional Search</h1>
+      <p>
+        Bidirectional search runs two coordinated searches: one from the start and one from the
+        goal. By letting frontiers meet in the middle, it reduces the exponential blowup that makes
+        one-sided BFS or Dijkstra expensive on large graphs.
+      </p>
+      <p>
+        <Link to="/algoViz">Back to catalog</Link>
+      </p>
+
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            <p>
+              Bidirectional search is a meet-in-the-middle strategy for shortest path and
+              reachability. Instead of exploring all nodes out to depth <strong>d</strong> from the
+              start, it explores about <strong>d/2</strong> levels from both ends, then stitches a
+              path through an intersection.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-history" className="bin98-section">
+            <h2 className="bin98-heading">Historical Context</h2>
+            {historicalMilestones.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.detail}</p>
+              </div>
+            ))}
+          </section>
+          <section id="bp-prerequisites" className="bin98-section">
+            <h2 className="bin98-heading">Prerequisites</h2>
+            {prerequisites.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-io" className="bin98-section">
+            <h2 className="bin98-heading">Inputs and Outputs</h2>
+            {inputsOutputs.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-formal" className="bin98-section">
+            <h2 className="bin98-heading">Formal Concepts</h2>
+            {formalDefinitions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="bp-when" className="bin98-section">
+            <h2 className="bin98-heading">When to Use It</h2>
+            <ol>
+              {decisionGuidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {takeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="bi98-content">
-            <h1 className="bi98-doc-title">Bidirectional Search</h1>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mechanics" className="bin98-section">
+            <h2 className="bin98-heading">Core Mechanics</h2>
+            {coreMechanics.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-flow" className="bin98-section">
+            <h2 className="bin98-heading">Step-by-Step Flow</h2>
+            <ol>
+              {stepByStepFlow.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </section>
+          <section id="core-key-structures" className="bin98-section">
+            <h2 className="bin98-heading">Key Structures and Invariants</h2>
+            {keyStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-data-structures" className="bin98-section">
+            <h2 className="bin98-heading">Data Structures</h2>
+            {dataStructures.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-termination" className="bin98-section">
+            <h2 className="bin98-heading">Termination Rules</h2>
+            {terminationRules.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-correctness" className="bin98-section">
+            <h2 className="bin98-heading">Correctness Notes</h2>
             <p>
-              Bidirectional search runs two coordinated searches: one from the start and one from the goal. By letting frontiers
-              meet in the middle, it reduces the exponential blowup that makes one-sided BFS or Dijkstra expensive on large graphs.
+              The key idea is that each side explores paths in nondecreasing order of length (BFS)
+              or cost (Dijkstra). Once the stop rule is met, no shorter path can beat the best
+              meeting already found.
+            </p>
+            {correctnessNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-complexity" className="bin98-section">
+            <h2 className="bin98-heading">Complexity and Tradeoffs</h2>
+            {complexityNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-implementation" className="bin98-section">
+            <h2 className="bin98-heading">Implementation Notes</h2>
+            {implementationNotes.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-advanced" className="bin98-section">
+            <h2 className="bin98-heading">Advanced Insights</h2>
+            {advancedInsights.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="core-pitfalls" className="bin98-section">
+            <h2 className="bin98-heading">Common Pitfalls</h2>
+            <ul>
+              {pitfalls.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'examples' && (
+        <>
+          <section id="ex-code" className="bin98-section">
+            <h2 className="bin98-heading">Code Examples</h2>
+            {examples.map((example) => (
+              <div key={example.title}>
+                <h3 className="bin98-subheading">{example.title}</h3>
+                <div className="bin98-codebox">
+                  <code>{example.code.trim()}</code>
+                </div>
+                <p>{example.explanation}</p>
+              </div>
+            ))}
+          </section>
+          <section id="ex-applications" className="bin98-section">
+            <h2 className="bin98-heading">Real-World Applications</h2>
+            {realWorldUses.map((item) => (
+              <p key={item.context}>
+                <strong>{item.context}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
+          <section id="ex-edge-cases" className="bin98-section">
+            <h2 className="bin98-heading">Edge Cases Checklist</h2>
+            <ul>
+              {edgeCases.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <>
+          <section id="glossary-terms" className="bin98-section">
+            <h2 className="bin98-heading">Core Terms</h2>
+            {formalDefinitions.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+            <p>
+              <strong>Frontier selection:</strong> Expand the smaller frontier or lower-cost side to
+              balance work.
             </p>
             <p>
-              <Link to="/algoViz">Back to catalog</Link>
+              <strong>Path stitching:</strong> Combine parent traces from both sides through the
+              chosen meeting node.
             </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                <section id="bp-overview" className="bi98-section">
-                  <h2 className="bi98-heading">Overview</h2>
-                  <p>
-                    Bidirectional search is a meet-in-the-middle strategy for shortest path and reachability. Instead of exploring
-                    all nodes out to depth <strong>d</strong> from the start, it explores about <strong>d/2</strong> levels from
-                    both ends, then stitches a path through an intersection.
-                  </p>
-                </section>
-                <hr className="bi98-divider" />
-                <section id="bp-history" className="bi98-section">
-                  <h2 className="bi98-heading">Historical Context</h2>
-                  {historicalMilestones.map((item) => (
-                    <div key={item.title}>
-                      <h3 className="bi98-subheading">{item.title}</h3>
-                      <p>{item.detail}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="bp-prerequisites" className="bi98-section">
-                  <h2 className="bi98-heading">Prerequisites</h2>
-                  {prerequisites.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-io" className="bi98-section">
-                  <h2 className="bi98-heading">Inputs and Outputs</h2>
-                  {inputsOutputs.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-formal" className="bi98-section">
-                  <h2 className="bi98-heading">Formal Concepts</h2>
-                  {formalDefinitions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-mental" className="bi98-section">
-                  <h2 className="bi98-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="bp-when" className="bi98-section">
-                  <h2 className="bi98-heading">When to Use It</h2>
-                  <ol>
-                    {decisionGuidance.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="bp-takeaways" className="bi98-section">
-                  <h2 className="bi98-heading">Key Takeaways</h2>
-                  <ul>
-                    {takeaways.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mechanics" className="bi98-section">
-                  <h2 className="bi98-heading">Core Mechanics</h2>
-                  {coreMechanics.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-flow" className="bi98-section">
-                  <h2 className="bi98-heading">Step-by-Step Flow</h2>
-                  <ol>
-                    {stepByStepFlow.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ol>
-                </section>
-                <section id="core-key-structures" className="bi98-section">
-                  <h2 className="bi98-heading">Key Structures and Invariants</h2>
-                  {keyStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-data-structures" className="bi98-section">
-                  <h2 className="bi98-heading">Data Structures</h2>
-                  {dataStructures.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-termination" className="bi98-section">
-                  <h2 className="bi98-heading">Termination Rules</h2>
-                  {terminationRules.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-correctness" className="bi98-section">
-                  <h2 className="bi98-heading">Correctness Notes</h2>
-                  <p>
-                    The key idea is that each side explores paths in nondecreasing order of length (BFS) or cost (Dijkstra).
-                    Once the stop rule is met, no shorter path can beat the best meeting already found.
-                  </p>
-                  {correctnessNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-complexity" className="bi98-section">
-                  <h2 className="bi98-heading">Complexity and Tradeoffs</h2>
-                  {complexityNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-implementation" className="bi98-section">
-                  <h2 className="bi98-heading">Implementation Notes</h2>
-                  {implementationNotes.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-advanced" className="bi98-section">
-                  <h2 className="bi98-heading">Advanced Insights</h2>
-                  {advancedInsights.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="core-pitfalls" className="bi98-section">
-                  <h2 className="bi98-heading">Common Pitfalls</h2>
-                  <ul>
-                    {pitfalls.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'examples' && (
-              <>
-                <section id="ex-code" className="bi98-section">
-                  <h2 className="bi98-heading">Code Examples</h2>
-                  {examples.map((example) => (
-                    <div key={example.title}>
-                      <h3 className="bi98-subheading">{example.title}</h3>
-                      <div className="bi98-codebox">
-                        <code>{example.code.trim()}</code>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </div>
-                  ))}
-                </section>
-                <section id="ex-applications" className="bi98-section">
-                  <h2 className="bi98-heading">Real-World Applications</h2>
-                  {realWorldUses.map((item) => (
-                    <p key={item.context}>
-                      <strong>{item.context}:</strong> {item.detail}
-                    </p>
-                  ))}
-                </section>
-                <section id="ex-edge-cases" className="bi98-section">
-                  <h2 className="bi98-heading">Edge Cases Checklist</h2>
-                  <ul>
-                    {edgeCases.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </section>
-              </>
-            )}
-
-            {activeTab === 'glossary' && (
-              <>
-                <section id="glossary-terms" className="bi98-section">
-                  <h2 className="bi98-heading">Core Terms</h2>
-                  {formalDefinitions.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
-                  ))}
-                  <p><strong>Frontier selection:</strong> Expand the smaller frontier or lower-cost side to balance work.</p>
-                  <p><strong>Path stitching:</strong> Combine parent traces from both sides through the chosen meeting node.</p>
-                  <p><strong>Reverse graph search:</strong> On directed graphs, the goal-side traversal follows incoming edges.</p>
-                </section>
-                <section id="glossary-variants" className="bi98-section">
-                  <h2 className="bi98-heading">Variants and Guarantees</h2>
-                  {variantTable.map((item) => (
-                    <p key={item.variant}>
-                      <strong>{item.variant}:</strong> {item.graphType}. <strong>Guarantee:</strong> {item.guarantee}.{' '}
-                      <strong>Typical use case:</strong> {item.useCase}.
-                    </p>
-                  ))}
-                </section>
-              </>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            <p>
+              <strong>Reverse graph search:</strong> On directed graphs, the goal-side traversal
+              follows incoming edges.
+            </p>
+          </section>
+          <section id="glossary-variants" className="bin98-section">
+            <h2 className="bin98-heading">Variants and Guarantees</h2>
+            {variantTable.map((item) => (
+              <p key={item.variant}>
+                <strong>{item.variant}:</strong> {item.graphType}. <strong>Guarantee:</strong>{' '}
+                {item.guarantee}. <strong>Typical use case:</strong> {item.useCase}.
+              </p>
+            ))}
+          </section>
+        </>
+      )}
+    </TopicPageShell>
   )
 }

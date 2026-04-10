@@ -1,5 +1,5 @@
-﻿import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -35,8 +35,6 @@ type GlossarySection = {
 }
 
 const PAGE_TITLE = 'Swift for iOS'
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -55,7 +53,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'Swift is Apple\'s modern programming language for application and framework development across Apple platforms. On iOS, it is the default language for most new native work because it combines strong type safety, expressive syntax, value semantics where useful, protocol-oriented design, automatic memory management, and first-party support across Apple\'s tooling and documentation.',
+      "Swift is Apple's modern programming language for application and framework development across Apple platforms. On iOS, it is the default language for most new native work because it combines strong type safety, expressive syntax, value semantics where useful, protocol-oriented design, automatic memory management, and first-party support across Apple's tooling and documentation.",
       'That does not mean Swift replaces the rest of the stack. It sits underneath UI frameworks such as UIKit and SwiftUI, above the runtime and system libraries, and alongside package management, testing, profiling, signing, and deployment workflows in Xcode. In practice, "Swift for iOS" is a language-plus-toolchain topic, not only a syntax topic.',
     ],
   },
@@ -446,27 +444,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Optional',
-        definition: 'A type that represents either a wrapped value or the absence of a value, forcing code to acknowledge uncertainty explicitly.',
+        definition:
+          'A type that represents either a wrapped value or the absence of a value, forcing code to acknowledge uncertainty explicitly.',
       },
       {
         term: 'Struct',
-        definition: 'A value type commonly used in Swift for domain models, configuration objects, and state snapshots where shared identity is unnecessary.',
+        definition:
+          'A value type commonly used in Swift for domain models, configuration objects, and state snapshots where shared identity is unnecessary.',
       },
       {
         term: 'Class',
-        definition: 'A reference type used when identity, shared mutable state, inheritance, or framework integration requires object semantics.',
+        definition:
+          'A reference type used when identity, shared mutable state, inheritance, or framework integration requires object semantics.',
       },
       {
         term: 'Enum',
-        definition: 'A type that represents one of a fixed set of cases, often used to model UI state, domain state, or finite workflows precisely.',
+        definition:
+          'A type that represents one of a fixed set of cases, often used to model UI state, domain state, or finite workflows precisely.',
       },
       {
         term: 'Protocol',
-        definition: 'A declaration of required capabilities that lets multiple types conform to a shared contract without forcing a single inheritance tree.',
+        definition:
+          'A declaration of required capabilities that lets multiple types conform to a shared contract without forcing a single inheritance tree.',
       },
       {
         term: 'Generic',
-        definition: 'A type or function parameterized over other types so code can be reused without erasing type information.',
+        definition:
+          'A type or function parameterized over other types so code can be reused without erasing type information.',
       },
     ],
   },
@@ -476,27 +480,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'ARC',
-        definition: 'Automatic Reference Counting, the memory-management system used for Swift reference types.',
+        definition:
+          'Automatic Reference Counting, the memory-management system used for Swift reference types.',
       },
       {
         term: 'Strong reference',
-        definition: 'A reference that keeps an object alive and contributes to its reference count.',
+        definition:
+          'A reference that keeps an object alive and contributes to its reference count.',
       },
       {
         term: 'Weak reference',
-        definition: 'A non-owning reference that becomes nil when the referenced object is deallocated, often used to avoid retain cycles.',
+        definition:
+          'A non-owning reference that becomes nil when the referenced object is deallocated, often used to avoid retain cycles.',
       },
       {
         term: 'Retain cycle',
-        definition: 'A memory leak pattern in which objects keep one another alive through strong references and never reach deallocation.',
+        definition:
+          'A memory leak pattern in which objects keep one another alive through strong references and never reach deallocation.',
       },
       {
         term: 'Value semantics',
-        definition: 'Behavior where a value is treated as its own independent data rather than as a shared object identity.',
+        definition:
+          'Behavior where a value is treated as its own independent data rather than as a shared object identity.',
       },
       {
         term: 'Actor',
-        definition: 'A Swift concurrency type that protects mutable state behind an isolated asynchronous boundary.',
+        definition:
+          'A Swift concurrency type that protects mutable state behind an isolated asynchronous boundary.',
       },
     ],
   },
@@ -506,27 +516,33 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Foundation',
-        definition: 'Apple\'s core framework for fundamental data types, collections, dates, URLs, networking primitives, and many non-UI app concerns.',
+        definition:
+          "Apple's core framework for fundamental data types, collections, dates, URLs, networking primitives, and many non-UI app concerns.",
       },
       {
         term: 'UIKit',
-        definition: 'Apple\'s imperative iOS user-interface framework built around views, view controllers, navigation containers, and lifecycle callbacks.',
+        definition:
+          "Apple's imperative iOS user-interface framework built around views, view controllers, navigation containers, and lifecycle callbacks.",
       },
       {
         term: 'SwiftUI',
-        definition: 'Apple\'s declarative UI framework where interface output is described as a function of current state.',
+        definition:
+          "Apple's declarative UI framework where interface output is described as a function of current state.",
       },
       {
         term: 'Swift Package Manager',
-        definition: 'The Swift-native package and dependency-management system used to define and integrate reusable modules.',
+        definition:
+          'The Swift-native package and dependency-management system used to define and integrate reusable modules.',
       },
       {
         term: 'Main actor',
-        definition: 'The concurrency isolation domain associated with UI-affecting work that must run on the main thread.',
+        definition:
+          'The concurrency isolation domain associated with UI-affecting work that must run on the main thread.',
       },
       {
         term: 'Codable',
-        definition: 'A protocol-based Swift system for encoding and decoding structured data such as JSON into typed models.',
+        definition:
+          'A protocol-based Swift system for encoding and decoding structured data such as JSON into typed models.',
       },
     ],
   },
@@ -549,230 +565,6 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
     id: section.id,
     label: section.title,
   })),
-}
-
-const swiftIosHelpStyles = `
-.swift-ios-help98-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.swift-ios-help98-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.swift-ios-help98-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.swift-ios-help98-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  letter-spacing: 0.1px;
-  white-space: nowrap;
-}
-
-.swift-ios-help98-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.swift-ios-help98-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  font: inherit;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.swift-ios-help98-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.swift-ios-help98-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  color: #000;
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.swift-ios-help98-tab.active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.swift-ios-help98-main {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  flex: 1;
-  min-height: 0;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.swift-ios-help98-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.swift-ios-help98-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.swift-ios-help98-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.swift-ios-help98-toc-list li {
-  margin: 0 0 8px;
-}
-
-.swift-ios-help98-toc-list a {
-  color: #000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.swift-ios-help98-content {
-  overflow: auto;
-  padding: 14px 20px 24px;
-}
-
-.swift-ios-help98-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.swift-ios-help98-section {
-  margin: 0 0 20px;
-}
-.swift-ios-help98-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.swift-ios-help98-content p,
-.swift-ios-help98-content li,
-.swift-ios-help98-content dd,
-.swift-ios-help98-content dt {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.swift-ios-help98-content p,
-.swift-ios-help98-content dd {
-  margin: 0 0 10px;
-}
-
-.swift-ios-help98-content ul {
-  margin: 0 0 10px 18px;
-  padding: 0;
-}
-
-.swift-ios-help98-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.swift-ios-help98-codebox {
-  margin: 8px 0 10px;
-  padding: 8px;
-  overflow-x: auto;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.swift-ios-help98-codebox code {
-  display: block;
-  white-space: pre;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.swift-ios-help98-glossary {
-  margin: 0;
-}
-
-.swift-ios-help98-glossary dt {
-  margin: 0 0 2px;
-  font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .swift-ios-help98-main {
-    grid-template-columns: 1fr;
-  }
-
-  .swift-ios-help98-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .swift-ios-help98-content {
-    padding: 14px 14px 20px;
-  }
-}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
 }
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
@@ -832,125 +624,50 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function SwiftForIosPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `${PAGE_TITLE} (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: PAGE_TITLE,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Swift For Ios Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="swift-ios-help98-page">
-      <style>{swiftIosHelpStyles}</style>
-      <div className="swift-ios-help98-window" role="presentation">
-        <header className="swift-ios-help98-titlebar">
-          <span className="swift-ios-help98-title">{PAGE_TITLE}</span>
-          <div className="swift-ios-help98-controls">
-            <button className="swift-ios-help98-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="swift-ios-help98-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Swift For Ios Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <hr className="bin98-divider" />
 
-        <div className="swift-ios-help98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`swift-ios-help98-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {activeTab === 'big-picture'
+        ? bigPictureSections.map((section, index) =>
+            renderContentSection(section, index === bigPictureSections.length - 1),
+          )
+        : null}
 
-        <div className="swift-ios-help98-main">
-          <aside className="swift-ios-help98-toc" aria-label="Table of contents">
-            <h2 className="swift-ios-help98-toc-title">Contents</h2>
-            <ul className="swift-ios-help98-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
-              ))}
-            </ul>
-          </aside>
+      {activeTab === 'core-concepts'
+        ? coreConceptSections.map((section, index) =>
+            renderContentSection(section, index === coreConceptSections.length - 1),
+          )
+        : null}
 
-          <main className="swift-ios-help98-content">
-            <h1 className="swift-ios-help98-doc-title">{PAGE_TITLE}</h1>
-            {introParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-            <hr className="swift-ios-help98-divider" />
+      {activeTab === 'examples'
+        ? exampleSections.map((section, index) =>
+            renderExampleSection(section, index === exampleSections.length - 1),
+          )
+        : null}
 
-            {activeTab === 'big-picture'
-              ? bigPictureSections.map((section, index) =>
-                  renderContentSection(section, index === bigPictureSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'core-concepts'
-              ? coreConceptSections.map((section, index) =>
-                  renderContentSection(section, index === coreConceptSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'examples'
-              ? exampleSections.map((section, index) =>
-                  renderExampleSection(section, index === exampleSections.length - 1),
-                )
-              : null}
-
-            {activeTab === 'glossary'
-              ? glossarySections.map((section, index) =>
-                  renderGlossarySection(section, index === glossarySections.length - 1),
-                )
-              : null}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary'
+        ? glossarySections.map((section, index) =>
+            renderGlossarySection(section, index === glossarySections.length - 1),
+          )
+        : null}
+    </TopicPageShell>
   )
 }

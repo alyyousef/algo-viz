@@ -1,5 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment } from 'react'
+
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -28,8 +30,6 @@ type GlossaryTerm = {
 }
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const bigPictureSections: readonly DocSection[] = [
   {
@@ -114,7 +114,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Single-File Components',
     paragraphs: [
       'A common Vue unit is the Single-File Component, typically stored in a `.vue` file. It can colocate template, script, and style, which makes a component easy to inspect as one document.',
-      'This structure is one of Vue\'s defining ergonomics. It keeps markup-like UI structure readable while still allowing JavaScript or TypeScript logic to live close to the rendered output.',
+      "This structure is one of Vue's defining ergonomics. It keeps markup-like UI structure readable while still allowing JavaScript or TypeScript logic to live close to the rendered output.",
     ],
   },
   {
@@ -122,7 +122,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Templates and Rendering Style',
     paragraphs: [
       'Vue templates use HTML-like syntax enhanced with Vue directives and bindings. This keeps the presentation layer visually familiar while still giving the framework a clear place to express reactivity, control flow, and component composition.',
-      'For many teams, templates are a readability advantage because UI intent remains easy to scan. For other teams, JSX-style rendering feels more natural. This is one of Vue\'s most meaningful style tradeoffs compared with code-centric libraries.',
+      "For many teams, templates are a readability advantage because UI intent remains easy to scan. For other teams, JSX-style rendering feels more natural. This is one of Vue's most meaningful style tradeoffs compared with code-centric libraries.",
     ],
   },
   {
@@ -137,7 +137,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-reactivity',
     title: 'Reactivity Model',
     paragraphs: [
-      'Vue\'s reactivity system is a central design feature rather than an add-on. Primitives such as `ref`, `reactive`, `computed`, and `watch` let developers model local state, structured state, derived values, and side-effect reactions.',
+      "Vue's reactivity system is a central design feature rather than an add-on. Primitives such as `ref`, `reactive`, `computed`, and `watch` let developers model local state, structured state, derived values, and side-effect reactions.",
       'This gives Vue a more explicitly reactive feel than frameworks whose mental model is centered primarily on rerendering function components. Many teams find that clarity useful for reasoning about derived state and dependency tracking.',
     ],
   },
@@ -162,14 +162,14 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Composables and Logic Reuse',
     paragraphs: [
       'Composables are a common Composition API pattern for packaging reusable stateful logic into normal functions. This gives Vue teams a consistent way to share logic without forcing mixin-heavy patterns from older eras.',
-      'The result is that logic reuse can stay explicit and testable while still fitting naturally into the framework\'s reactive model.',
+      "The result is that logic reuse can stay explicit and testable while still fitting naturally into the framework's reactive model.",
     ],
   },
   {
     id: 'core-ecosystem',
     title: 'Ecosystem and Architecture',
     paragraphs: [
-      'Vue\'s ecosystem often feels more coordinated than some library-first alternatives. Vue Router is the standard routing layer, Pinia is the current official state management recommendation, and the development toolchain is designed around Vue\'s component model.',
+      "Vue's ecosystem often feels more coordinated than some library-first alternatives. Vue Router is the standard routing layer, Pinia is the current official state management recommendation, and the development toolchain is designed around Vue's component model.",
       'For application architecture, this means teams can adopt a cohesive baseline quickly. The framework gives enough flexibility for different project sizes while still offering a clear happy path for common frontend concerns.',
     ],
   },
@@ -241,7 +241,7 @@ const coreConceptSections: readonly DocSection[] = [
     id: 'core-tradeoffs',
     title: 'Tradeoffs',
     paragraphs: [
-      'Vue\'s template-first style is a strength for many teams, but developers who prefer JavaScript-only rendering may still favor JSX-heavy workflows. The ecosystem is strong, yet the market size and third-party library breadth are still often compared against React\'s larger surface area.',
+      "Vue's template-first style is a strength for many teams, but developers who prefer JavaScript-only rendering may still favor JSX-heavy workflows. The ecosystem is strong, yet the market size and third-party library breadth are still often compared against React's larger surface area.",
       'Another tradeoff is historical variation. Because Vue has evolved through multiple major API styles, teams sometimes have to understand both Options API patterns and Composition API patterns when maintaining mixed-age codebases.',
     ],
   },
@@ -258,7 +258,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Compare and Contrast References',
     paragraphs: [
       'Vue is commonly compared with React for framework cohesion versus ecosystem freedom, with Svelte for runtime reactivity versus compiler-first design, and with Angular for lightweight flexibility versus heavier built-in structure.',
-      'Those comparisons are useful because they reveal Vue\'s place in the frontend spectrum: more integrated than a bare UI library, less heavy than a highly opinionated enterprise framework, and more runtime-centric than compiler-first approaches.',
+      "Those comparisons are useful because they reveal Vue's place in the frontend spectrum: more integrated than a bare UI library, less heavy than a highly opinionated enterprise framework, and more runtime-centric than compiler-first approaches.",
     ],
   },
 ] as const
@@ -268,7 +268,7 @@ const examples: readonly ExampleSection[] = [
     id: 'examples-component',
     title: 'Basic Component Example',
     description:
-      'A small Single-File Component shows Vue\'s common authoring shape: reactive state in `script setup` and declarative rendering in the template.',
+      "A small Single-File Component shows Vue's common authoring shape: reactive state in `script setup` and declarative rendering in the template.",
     snippets: [
       {
         label: 'Counter.vue',
@@ -284,7 +284,7 @@ const count = ref(0)
       },
     ],
     takeaway:
-      'This pattern captures Vue\'s core feel: state is explicit, events update it directly, and the template reflects the latest value.',
+      "This pattern captures Vue's core feel: state is explicit, events update it directly, and the template reflects the latest value.",
   },
   {
     id: 'examples-derived',
@@ -393,30 +393,35 @@ Nuxt when SSR or full app-platform behavior is desired`,
       },
     ],
     takeaway:
-      'The ecosystem story is one of Vue\'s strongest practical advantages for teams that want a coherent starting architecture.',
+      "The ecosystem story is one of Vue's strongest practical advantages for teams that want a coherent starting architecture.",
   },
 ] as const
 
 const glossaryTerms: readonly GlossaryTerm[] = [
   {
     term: 'Vue.js',
-    definition: 'A progressive JavaScript framework for building reactive user interfaces with components.',
+    definition:
+      'A progressive JavaScript framework for building reactive user interfaces with components.',
   },
   {
     term: 'Single-File Component',
-    definition: 'A `.vue` file that colocates template, script, and optionally style for one component.',
+    definition:
+      'A `.vue` file that colocates template, script, and optionally style for one component.',
   },
   {
     term: 'Composition API',
-    definition: 'Vue\'s modern authoring style built around functions such as `ref`, `reactive`, `computed`, and lifecycle hooks.',
+    definition:
+      "Vue's modern authoring style built around functions such as `ref`, `reactive`, `computed`, and lifecycle hooks.",
   },
   {
     term: 'Options API',
-    definition: 'An older but still valid Vue component style organized around fields such as `data`, `computed`, and `methods`.',
+    definition:
+      'An older but still valid Vue component style organized around fields such as `data`, `computed`, and `methods`.',
   },
   {
     term: 'ref',
-    definition: 'A reactive primitive for storing a value that updates dependents when the value changes.',
+    definition:
+      'A reactive primitive for storing a value that updates dependents when the value changes.',
   },
   {
     term: 'reactive',
@@ -432,7 +437,8 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Directive',
-    definition: 'A special template marker such as `v-if` or `v-for` that adds reactive behavior to markup.',
+    definition:
+      'A special template marker such as `v-if` or `v-for` that adds reactive behavior to markup.',
   },
   {
     term: 'Prop',
@@ -444,15 +450,18 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'Pinia',
-    definition: 'The official state management library recommended for shared Vue application state.',
+    definition:
+      'The official state management library recommended for shared Vue application state.',
   },
   {
     term: 'Vue Router',
-    definition: 'The standard routing solution commonly used for navigation and route structure in Vue applications.',
+    definition:
+      'The standard routing solution commonly used for navigation and route structure in Vue applications.',
   },
   {
     term: 'Composable',
-    definition: 'A reusable function, commonly used with the Composition API, that packages reactive state and related behavior.',
+    definition:
+      'A reusable function, commonly used with the Composition API, that packages reactive state and related behavior.',
   },
   {
     term: 'script setup',
@@ -464,230 +473,15 @@ const glossaryTerms: readonly GlossaryTerm[] = [
   },
   {
     term: 'provide/inject',
-    definition: 'A Vue mechanism for sharing values across parts of the component tree without ordinary prop drilling.',
+    definition:
+      'A Vue mechanism for sharing values across parts of the component tree without ordinary prop drilling.',
   },
   {
     term: 'Nuxt',
-    definition: 'A broader Vue framework commonly used for SSR, routing conventions, and fuller application-platform behavior.',
+    definition:
+      'A broader Vue framework commonly used for SSR, routing conventions, and fuller application-platform behavior.',
   },
 ] as const
-
-const helpStyles = `
-.vue-js-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  padding: 0;
-  color: #000000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.vue-js-help-window {
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-}
-
-.vue-js-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.vue-js-help-titletext {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.vue-js-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.vue-js-help-control {
-  width: 18px;
-  height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000000;
-  font-size: 11px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.vue-js-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  background: #c0c0c0;
-}
-
-.vue-js-help-tab {
-  border-top: 1px solid #ffffff;
-  border-left: 1px solid #ffffff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.vue-js-help-tab.is-active {
-  position: relative;
-  top: 1px;
-  background: #ffffff;
-}
-
-.vue-js-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #ffffff;
-}
-
-.vue-js-help-toc {
-  overflow: auto;
-  padding: 12px;
-  background: #f2f2f2;
-  border-right: 1px solid #808080;
-}
-
-.vue-js-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.vue-js-help-toc-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.vue-js-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.vue-js-help-toc-list a {
-  color: #000000;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.vue-js-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.vue-js-help-doc-title {
-  margin: 0 0 12px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.vue-js-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 12px;
-}
-
-.vue-js-help-section {
-  margin: 0 0 20px;
-  scroll-margin-top: 12px;
-}
-
-.vue-js-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.vue-js-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.vue-js-help-content p,
-.vue-js-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.vue-js-help-content p {
-  margin: 0 0 10px;
-}
-
-.vue-js-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.vue-js-help-divider {
-  margin: 14px 0;
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-}
-
-.vue-js-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  background: #f4f4f4;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
-}
-
-.vue-js-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .vue-js-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .vue-js-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .vue-js-help-titletext {
-    position: static;
-    transform: none;
-    margin: 0 auto 0 0;
-    padding-left: 4px;
-    white-space: normal;
-  }
-}
-`
 
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
@@ -703,155 +497,80 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function VueJsPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Vue.js',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Vue.js (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Vue.js',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="vue-js-help-page">
-      <style>{helpStyles}</style>
-      <div className="vue-js-help-window" role="presentation">
-        <header className="vue-js-help-titlebar">
-          <span className="vue-js-help-titletext">Vue.js</span>
-          <div className="vue-js-help-controls">
-            <button className="vue-js-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="vue-js-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Vue.js"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Vue.js</h1>
+      <p className="vue-js-help-doc-subtitle">
+        Manual-style reference covering overview, templates, reactivity, component authoring,
+        ecosystem shape, SSR story, tradeoffs, and practical examples.
+      </p>
 
-        <div className="vue-js-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`vue-js-help-tab ${activeTab === tab.id ? 'is-active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="vue-js-help-main">
-          <aside className="vue-js-help-toc" aria-label="Table of contents">
-            <h2 className="vue-js-help-toc-title">Contents</h2>
-            <ul className="vue-js-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' &&
+        bigPictureSections.map((section, index) => (
+          <Fragment key={section.id}>
+            <section id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
+            </section>
+            {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+          </Fragment>
+        ))}
 
-          <main className="vue-js-help-content">
-            <h1 className="vue-js-help-doc-title">Vue.js</h1>
-            <p className="vue-js-help-doc-subtitle">
-              Manual-style reference covering overview, templates, reactivity, component authoring, ecosystem shape, SSR story,
-              tradeoffs, and practical examples.
+      {activeTab === 'core-concepts' &&
+        coreConceptSections.map((section) => (
+          <section key={section.id} id={section.id} className="bin98-section">
+            <h2 className="bin98-heading">{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+      {activeTab === 'examples' &&
+        examples.map((example) => (
+          <section key={example.id} id={example.id} className="bin98-section">
+            <h2 className="bin98-heading">{example.title}</h2>
+            <p>{example.description}</p>
+            {example.snippets.map((snippet) => (
+              <Fragment key={`${example.id}-${snippet.label}`}>
+                <h3 className="bin98-subheading">{snippet.label}</h3>
+                <div className="bin98-codebox">
+                  <code>{snippet.code}</code>
+                </div>
+              </Fragment>
+            ))}
+            <p>
+              <strong>Takeaway:</strong> {example.takeaway}
             </p>
+          </section>
+        ))}
 
-            {activeTab === 'big-picture' &&
-              bigPictureSections.map((section, index) => (
-                <Fragment key={section.id}>
-                  <section id={section.id} className="vue-js-help-section">
-                    <h2 className="vue-js-help-heading">{section.title}</h2>
-                    {section.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </section>
-                  {index < bigPictureSections.length - 1 && <hr className="vue-js-help-divider" />}
-                </Fragment>
-              ))}
-
-            {activeTab === 'core-concepts' &&
-              coreConceptSections.map((section) => (
-                <section key={section.id} id={section.id} className="vue-js-help-section">
-                  <h2 className="vue-js-help-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
-              ))}
-
-            {activeTab === 'examples' &&
-              examples.map((example) => (
-                <section key={example.id} id={example.id} className="vue-js-help-section">
-                  <h2 className="vue-js-help-heading">{example.title}</h2>
-                  <p>{example.description}</p>
-                  {example.snippets.map((snippet) => (
-                    <Fragment key={`${example.id}-${snippet.label}`}>
-                      <h3 className="vue-js-help-subheading">{snippet.label}</h3>
-                      <div className="vue-js-help-codebox">
-                        <code>{snippet.code}</code>
-                      </div>
-                    </Fragment>
-                  ))}
-                  <p>
-                    <strong>Takeaway:</strong> {example.takeaway}
-                  </p>
-                </section>
-              ))}
-
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="vue-js-help-section">
-                <h2 className="vue-js-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -27,9 +27,8 @@ type GlossaryItem = {
 }
 
 const pageTitle = 'AWS vs Azure'
-const pageSubtitle = "Comparing the broadest public cloud platform with Microsoft's enterprise-and-hybrid centric cloud platform."
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
-
+const pageSubtitle =
+  "Comparing the broadest public cloud platform with Microsoft's enterprise-and-hybrid centric cloud platform."
 const tabs: Array<{ id: TabId; label: string }> = [
   { id: 'big-picture', label: 'The Big Picture' },
   { id: 'core-concepts', label: 'Core Concepts' },
@@ -284,7 +283,8 @@ const examples: ExampleItem[] = [
   {
     id: 'ex-vm',
     title: 'Launch a Virtual Machine',
-    summary: 'Both clouds can provision a VM quickly, but the command shape already hints at their surrounding management model.',
+    summary:
+      'Both clouds can provision a VM quickly, but the command shape already hints at their surrounding management model.',
     awsCode: `aws ec2 run-instances \\
   --image-id ami-1234567890abcdef0 \\
   --instance-type t3.micro \\
@@ -299,12 +299,14 @@ const examples: ExampleItem[] = [
   --vnet-name app-prod-vnet \\
   --subnet app \\
   --public-ip-sku Standard`,
-    explanation: 'AWS starts directly from EC2 and subnet vocabulary inside the account model. Azure makes the resource group explicit immediately, which reflects how central grouping, lifecycle, and access management are to the Azure mental model.',
+    explanation:
+      'AWS starts directly from EC2 and subnet vocabulary inside the account model. Azure makes the resource group explicit immediately, which reflects how central grouping, lifecycle, and access management are to the Azure mental model.',
   },
   {
     id: 'ex-storage',
     title: 'Upload an Object to Cloud Storage',
-    summary: 'Object storage is foundational on both clouds, but the surrounding access and platform patterns differ.',
+    summary:
+      'Object storage is foundational on both clouds, but the surrounding access and platform patterns differ.',
     awsCode: `aws s3 cp ./report.csv s3://finance-archive-logs/reports/2026/report.csv`,
     azureCode: `az storage blob upload \\
   --account-name financearchive \\
@@ -312,7 +314,8 @@ const examples: ExampleItem[] = [
   --name 2026/report.csv \\
   --file ./report.csv \\
   --auth-mode login`,
-    explanation: 'S3 is one of the most central AWS primitives and appears everywhere in AWS-native architectures. Blob Storage is equally important in Azure, but the surrounding experience often feels more explicitly tied to the broader Azure account, RBAC, and storage-account model.',
+    explanation:
+      'S3 is one of the most central AWS primitives and appears everywhere in AWS-native architectures. Blob Storage is equally important in Azure, but the surrounding experience often feels more explicitly tied to the broader Azure account, RBAC, and storage-account model.',
   },
   {
     id: 'ex-serverless',
@@ -331,12 +334,14 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route='hello')
 def hello(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse('hello from azure functions')`,
-    explanation: 'Lambda usually feels like one node in a broader AWS event mesh. Azure Functions is equally event-driven, but many teams experience it as one compute mode inside a larger Microsoft application and governance platform rather than as a serverless-first worldview by itself.',
+    explanation:
+      'Lambda usually feels like one node in a broader AWS event mesh. Azure Functions is equally event-driven, but many teams experience it as one compute mode inside a larger Microsoft application and governance platform rather than as a serverless-first worldview by itself.',
   },
   {
     id: 'ex-iac',
     title: 'Infrastructure as Code Shape',
-    summary: 'First-party infrastructure authoring reflects what each provider wants teams to internalize about the platform.',
+    summary:
+      'First-party infrastructure authoring reflects what each provider wants teams to internalize about the platform.',
     awsCode: `import * as cdk from 'aws-cdk-lib'
 import * as s3 from 'aws-cdk-lib/aws-s3'
 
@@ -361,62 +366,76 @@ export class LogsStack extends cdk.Stack {
     allowBlobPublicAccess: false
   }
 }`,
-    explanation: 'AWS CDK leans into software-defined composition over many AWS service constructs. Azure Bicep stays very close to the Resource Manager model, which reinforces Azures resource-group, declarative governance, and management-plane worldview.',
+    explanation:
+      'AWS CDK leans into software-defined composition over many AWS service constructs. Azure Bicep stays very close to the Resource Manager model, which reinforces Azures resource-group, declarative governance, and management-plane worldview.',
   },
 ]
 
 const glossaryTerms: GlossaryItem[] = [
   {
     term: 'AWS account',
-    definition: 'A foundational AWS isolation and billing boundary commonly used to separate workloads, environments, or teams.',
+    definition:
+      'A foundational AWS isolation and billing boundary commonly used to separate workloads, environments, or teams.',
   },
   {
     term: 'Azure subscription',
-    definition: 'A primary Azure billing and governance boundary under a tenant, often used to separate environments, teams, or business units.',
+    definition:
+      'A primary Azure billing and governance boundary under a tenant, often used to separate environments, teams, or business units.',
   },
   {
     term: 'Resource group',
-    definition: 'An Azure logical container for related resources that share lifecycle, access, and management context.',
+    definition:
+      'An Azure logical container for related resources that share lifecycle, access, and management context.',
   },
   {
     term: 'Management group',
-    definition: 'An Azure hierarchy layer above subscriptions used to apply governance and policy across larger environments.',
+    definition:
+      'An Azure hierarchy layer above subscriptions used to apply governance and policy across larger environments.',
   },
   {
     term: 'IAM',
-    definition: 'AWS Identity and Access Management, the AWS permission system for users, roles, policies, and access control.',
+    definition:
+      'AWS Identity and Access Management, the AWS permission system for users, roles, policies, and access control.',
   },
   {
     term: 'Microsoft Entra ID',
-    definition: 'Microsofts cloud identity platform used for authentication, directory management, application access, and many Azure security scenarios.',
+    definition:
+      'Microsofts cloud identity platform used for authentication, directory management, application access, and many Azure security scenarios.',
   },
   {
     term: 'VPC',
-    definition: 'An AWS Virtual Private Cloud, the foundational network isolation boundary for many AWS workloads.',
+    definition:
+      'An AWS Virtual Private Cloud, the foundational network isolation boundary for many AWS workloads.',
   },
   {
     term: 'VNet',
-    definition: 'An Azure Virtual Network, the foundational private networking boundary for Azure resources and connected services.',
+    definition:
+      'An Azure Virtual Network, the foundational private networking boundary for Azure resources and connected services.',
   },
   {
     term: 'Availability Zone',
-    definition: 'A physically separate location within a region used to reduce shared failure domains and improve resilience.',
+    definition:
+      'A physically separate location within a region used to reduce shared failure domains and improve resilience.',
   },
   {
     term: 'S3',
-    definition: 'Amazon Simple Storage Service, AWS object storage for durable, scalable unstructured data.',
+    definition:
+      'Amazon Simple Storage Service, AWS object storage for durable, scalable unstructured data.',
   },
   {
     term: 'Blob Storage',
-    definition: 'Azure object storage for massive-scale unstructured data such as files, media, logs, and archives.',
+    definition:
+      'Azure object storage for massive-scale unstructured data such as files, media, logs, and archives.',
   },
   {
     term: 'Lambda',
-    definition: 'AWS serverless compute for event-driven code execution without managing servers directly.',
+    definition:
+      'AWS serverless compute for event-driven code execution without managing servers directly.',
   },
   {
     term: 'Azure Functions',
-    definition: 'Azures event-driven serverless compute platform for HTTP triggers, timers, queues, storage events, and more.',
+    definition:
+      'Azures event-driven serverless compute platform for HTTP triggers, timers, queues, storage events, and more.',
   },
   {
     term: 'EKS',
@@ -459,400 +478,112 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
-const pageStyles = `
-.aws-azure-help-page {
-  min-height: 100dvh;
-  background: #c0c0c0;
-  color: #000;
-  font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
-}
-
-.aws-azure-help-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  background: #c0c0c0;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #404040;
-  border-bottom: 2px solid #404040;
-  box-sizing: border-box;
-}
-
-.aws-azure-help-titlebar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 2px 4px;
-  background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aws-azure-help-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  white-space: nowrap;
-}
-
-.aws-azure-help-controls {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.aws-azure-help-control {
-  width: 18px;
-  height: 16px;
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: 1px solid #404040;
-  background: #c0c0c0;
-  color: #000;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  line-height: 1;
-  font-family: inherit;
-}
-.aws-azure-help-tabs {
-  display: flex;
-  gap: 1px;
-  padding: 6px 8px 0;
-  flex-wrap: wrap;
-}
-
-.aws-azure-help-tab {
-  border-top: 1px solid #fff;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #404040;
-  border-bottom: none;
-  background: #b6b6b6;
-  padding: 5px 10px 4px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.aws-azure-help-tab.active {
-  position: relative;
-  top: 1px;
-  background: #fff;
-}
-
-.aws-azure-help-main {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  border-top: 1px solid #404040;
-  background: #fff;
-}
-
-.aws-azure-help-toc {
-  overflow: auto;
-  border-right: 1px solid #808080;
-  background: #f2f2f2;
-  padding: 12px;
-}
-
-.aws-azure-help-toc-title {
-  margin: 0 0 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.aws-azure-help-toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.aws-azure-help-toc-list li {
-  margin: 0 0 8px;
-}
-
-.aws-azure-help-toc-list a {
-  color: #000;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.aws-azure-help-content {
-  overflow: auto;
-  padding: 14px 20px 20px;
-}
-
-.aws-azure-help-doc-title {
-  margin: 0 0 6px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.aws-azure-help-doc-subtitle {
-  margin: 0 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aws-azure-help-section {
-  margin: 0 0 20px;
-}
-
-.aws-azure-help-heading {
-  margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.aws-azure-help-subheading {
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.aws-azure-help-content p,
-.aws-azure-help-content li {
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.aws-azure-help-content p {
-  margin: 0 0 10px;
-}
-
-.aws-azure-help-content ul {
-  margin: 0 0 10px 20px;
-  padding: 0;
-}
-
-.aws-azure-help-divider {
-  border: 0;
-  border-top: 1px solid #d0d0d0;
-  margin: 14px 0;
-}
-
-.aws-azure-help-codebox {
-  margin: 6px 0 10px;
-  padding: 8px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  background: #f4f4f4;
-}
-
-.aws-azure-help-codebox code {
-  display: block;
-  white-space: pre-wrap;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 12px;
-}
-
-@media (max-width: 900px) {
-  .aws-azure-help-main {
-    grid-template-columns: 1fr;
-  }
-
-  .aws-azure-help-toc {
-    border-right: none;
-    border-bottom: 1px solid #808080;
-  }
-
-  .aws-azure-help-title {
-    position: static;
-    transform: none;
-    margin: 0 auto;
-    padding-left: 18px;
-  }
-}
-`
-
 export default function AwsVsAzurePage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const tabParam = searchParams.get('tab')
-  const activeTab: TabId = isTabId(tabParam) ? tabParam : 'big-picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-    document.title = `${pageTitle} (${activeTabLabel})`
-  }, [activeTab, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: pageTitle,
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
-  const handleTabChange = (tabId: TabId) => {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('tab', tabId)
-    setSearchParams(nextParams, { replace: true })
-  }
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Aws Vs Azure Page',
+    defaultTab: 'big-picture',
+  })
 
   return (
-    <div className="aws-azure-help-page">
-      <style>{pageStyles}</style>
-      <div className="aws-azure-help-window" role="presentation">
-        <header className="aws-azure-help-titlebar">
-          <span className="aws-azure-help-title">{pageTitle}</span>
-          <div className="aws-azure-help-controls">
-            <button className="aws-azure-help-control" type="button" aria-label="Minimize" onClick={handleMinimize}>
-              _
-            </button>
-            <Link to="/algoViz" className="aws-azure-help-control" aria-label="Close">
-              X
-            </Link>
-          </div>
-        </header>
+    <TopicPageShell
+      title="Aws Vs Azure Page"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
+      <p className="aws-azure-help-doc-subtitle">{pageSubtitle}</p>
+      <p>
+        This page compares AWS and Azure as platform choices for real infrastructure, application,
+        and organization design. The point is not to memorize service-name pairs. The point is to
+        understand the deeper tradeoffs: platform shape, governance model, identity, networking,
+        compute, storage, data-platform gravity, serverless and container posture, cost control,
+        hybrid continuity, and the kind of company each cloud tends to fit best.
+      </p>
 
-        <div className="aws-azure-help-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`aws-azure-help-tab ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="aws-azure-help-main">
-          <aside className="aws-azure-help-toc" aria-label="Table of contents">
-            <h2 className="aws-azure-help-toc-title">Contents</h2>
-            <ul className="aws-azure-help-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
-                </li>
+      {activeTab === 'big-picture' && (
+        <>
+          {bigPictureSections.map((section, index) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
-            </ul>
-          </aside>
-
-          <main className="aws-azure-help-content">
-            <h1 className="aws-azure-help-doc-title">{pageTitle}</h1>
-            <p className="aws-azure-help-doc-subtitle">{pageSubtitle}</p>
-            <p>
-              This page compares AWS and Azure as platform choices for real infrastructure, application, and organization design.
-              The point is not to memorize service-name pairs. The point is to understand the deeper tradeoffs: platform shape,
-              governance model, identity, networking, compute, storage, data-platform gravity, serverless and container posture,
-              cost control, hybrid continuity, and the kind of company each cloud tends to fit best.
-            </p>
-
-            {activeTab === 'big-picture' && (
-              <>
-                {bigPictureSections.map((section, index) => (
-                  <section key={section.id} id={section.id} className="aws-azure-help-section">
-                    <h2 className="aws-azure-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                    {index < bigPictureSections.length - 1 && <hr className="aws-azure-help-divider" />}
-                  </section>
-                ))}
-              </>
-            )}
-
-            {activeTab === 'core-concepts' && (
-              <>
-                <section id="core-mental" className="aws-azure-help-section">
-                  <h2 className="aws-azure-help-heading">Mental Models</h2>
-                  {mentalModels.map((item) => (
-                    <p key={item.title}>
-                      <strong>{item.title}:</strong> {item.detail}
-                    </p>
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
                   ))}
-                </section>
+                </ul>
+              )}
+              {index < bigPictureSections.length - 1 && <hr className="bin98-divider" />}
+            </section>
+          ))}
+        </>
+      )}
 
-                {coreSections.map((section) => (
-                  <section key={section.id} id={section.id} className="aws-azure-help-section">
-                    <h2 className="aws-azure-help-heading">{section.title}</h2>
-                    {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                    {section.bullets && (
-                      <ul>
-                        {section.bullets.map((bullet) => (
-                          <li key={bullet}>{bullet}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
-                ))}
-              </>
-            )}
+      {activeTab === 'core-concepts' && (
+        <>
+          <section id="core-mental" className="bin98-section">
+            <h2 className="bin98-heading">Mental Models</h2>
+            {mentalModels.map((item) => (
+              <p key={item.title}>
+                <strong>{item.title}:</strong> {item.detail}
+              </p>
+            ))}
+          </section>
 
-            {activeTab === 'examples' && (
-              <>
-                {examples.map((example) => (
-                  <section key={example.id} id={example.id} className="aws-azure-help-section">
-                    <h2 className="aws-azure-help-heading">{example.title}</h2>
-                    <p>{example.summary}</p>
-                    <h3 className="aws-azure-help-subheading">AWS</h3>
-                    <div className="aws-azure-help-codebox">
-                      <code>{example.awsCode.trim()}</code>
-                    </div>
-                    <h3 className="aws-azure-help-subheading">Azure</h3>
-                    <div className="aws-azure-help-codebox">
-                      <code>{example.azureCode.trim()}</code>
-                    </div>
-                    <p>{example.explanation}</p>
-                  </section>
-                ))}
-              </>
-            )}
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs?.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              {section.bullets && (
+                <ul>
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </>
+      )}
 
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="aws-azure-help-section">
-                <h2 className="aws-azure-help-heading">Glossary</h2>
-                {glossaryTerms.map((item) => (
-                  <p key={item.term}>
-                    <strong>{item.term}:</strong> {item.definition}
-                  </p>
-                ))}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <p>{example.summary}</p>
+              <h3 className="bin98-subheading">AWS</h3>
+              <div className="bin98-codebox">
+                <code>{example.awsCode.trim()}</code>
+              </div>
+              <h3 className="bin98-subheading">Azure</h3>
+              <div className="bin98-codebox">
+                <code>{example.azureCode.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossaryTerms.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }

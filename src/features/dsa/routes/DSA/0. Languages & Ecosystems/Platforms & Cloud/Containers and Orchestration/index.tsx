@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
@@ -8,8 +8,6 @@ type SectionNote = { title: string; details: string; notes: string }
 type NarrativeSection = { id: string; title: string; paragraphs: string[] }
 type ExampleSection = { id: string; title: string; code: string; explanation: string }
 type GlossaryTerm = { term: string; definition: string }
-
-const MINIMIZED_HELP_TASKS_KEY = 'win96:minimized-help-tasks'
 
 const introParagraphs = [
   'Containers and orchestration are the operational foundation for packaging, scheduling, networking, scaling, and managing modern distributed applications. Containers standardize how software is shipped. Orchestration systems decide where it runs, how it is connected, how it recovers from failure, and how it evolves over time.',
@@ -247,16 +245,48 @@ readinessProbe:
 ]
 
 const glossary: GlossaryTerm[] = [
-  { term: 'Container', definition: 'A packaged process environment that bundles an application with its filesystem dependencies and runtime metadata.' },
-  { term: 'Image', definition: 'An immutable container package built from layered filesystem content and metadata.' },
+  {
+    term: 'Container',
+    definition:
+      'A packaged process environment that bundles an application with its filesystem dependencies and runtime metadata.',
+  },
+  {
+    term: 'Image',
+    definition:
+      'An immutable container package built from layered filesystem content and metadata.',
+  },
   { term: 'Registry', definition: 'A system for storing and distributing container images.' },
-  { term: 'Orchestrator', definition: 'A control plane that schedules, scales, networks, and manages groups of containerized workloads.' },
-  { term: 'Scheduler', definition: 'The part of the orchestration system that decides where workloads should run.' },
-  { term: 'Service discovery', definition: 'The mechanism by which workloads find and communicate with other workloads through stable names or endpoints.' },
-  { term: 'Ingress', definition: 'The path and policy by which external traffic enters the orchestrated platform.' },
-  { term: 'Readiness', definition: 'A signal indicating whether a workload is prepared to receive traffic.' },
-  { term: 'Liveness', definition: 'A signal indicating whether a workload should continue running or be restarted.' },
-  { term: 'Persistent volume', definition: 'A storage resource used to give orchestrated workloads data that outlives container restarts.' },
+  {
+    term: 'Orchestrator',
+    definition:
+      'A control plane that schedules, scales, networks, and manages groups of containerized workloads.',
+  },
+  {
+    term: 'Scheduler',
+    definition: 'The part of the orchestration system that decides where workloads should run.',
+  },
+  {
+    term: 'Service discovery',
+    definition:
+      'The mechanism by which workloads find and communicate with other workloads through stable names or endpoints.',
+  },
+  {
+    term: 'Ingress',
+    definition: 'The path and policy by which external traffic enters the orchestrated platform.',
+  },
+  {
+    term: 'Readiness',
+    definition: 'A signal indicating whether a workload is prepared to receive traffic.',
+  },
+  {
+    term: 'Liveness',
+    definition: 'A signal indicating whether a workload should continue running or be restarted.',
+  },
+  {
+    term: 'Persistent volume',
+    definition:
+      'A storage resource used to give orchestrated workloads data that outlives container restarts.',
+  },
 ]
 
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -289,158 +319,107 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Terms' }],
 }
 
-const pageStyles = `
-.containers-help-page{min-height:100dvh;background:#c0c0c0;padding:0;color:#000;font-family:"MS Sans Serif",Tahoma,"Segoe UI",sans-serif}
-.containers-window{width:100%;min-height:100dvh;display:flex;flex-direction:column;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;box-sizing:border-box}
-.containers-titlebar{position:relative;display:flex;align-items:center;min-height:24px;padding:2px 6px;background:linear-gradient(90deg,#000080 0%,#1084d0 100%);color:#fff;font-size:13px;font-weight:700}
-.containers-title-text{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 92px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;pointer-events:none;font-size:15px}
-.containers-title-controls{display:flex;gap:2px;margin-left:auto}
-.containers-control{width:18px;height:16px;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;background:#c0c0c0;color:#000;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;line-height:1;cursor:pointer;padding:0}
-.containers-tabs{display:flex;flex-wrap:wrap;gap:1px;padding:6px 8px 0}
-.containers-tab{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:none;background:#b6b6b6;padding:5px 10px 4px;font-size:12px;cursor:pointer}
-.containers-tab.active{position:relative;top:1px;background:#fff}
-.containers-main{flex:1;min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);border-top:1px solid #404040;background:#fff}
-.containers-toc{overflow:auto;padding:12px;background:#f1f1f1;border-right:1px solid #808080}
-.containers-toc-title{margin:0 0 10px;font-size:12px;font-weight:700}
-.containers-toc-list{margin:0;padding:0;list-style:none}
-.containers-toc-list li{margin:0 0 8px}
-.containers-toc-list a{color:#000;text-decoration:none;font-size:12px}
-.containers-toc-list a:hover{text-decoration:underline}
-.containers-content{overflow:auto;padding:14px 20px 20px}
-.containers-doc-title{margin:0 0 12px;font-size:20px;font-weight:700}
-.containers-section{margin:0 0 20px}
-.containers-heading{margin:0 0 8px;font-size:16px;font-weight:700}
-.containers-subheading{margin:0 0 6px;font-size:13px;font-weight:700}
-.containers-content p,.containers-content li{font-size:12px;line-height:1.5}
-.containers-content p{margin:0 0 10px}
-.containers-content ul{margin:0 0 10px 20px;padding:0}
-.containers-divider{border:0;border-top:1px solid #d0d0d0;margin:14px 0}
-.containers-codebox{margin:6px 0 10px;padding:8px;background:#f4f4f4;border-top:2px solid #808080;border-left:2px solid #808080;border-right:2px solid #fff;border-bottom:2px solid #fff}
-.containers-codebox code{display:block;white-space:pre;font-family:"Courier New",Courier,monospace;font-size:12px}
-@media (max-width:900px){.containers-main{grid-template-columns:1fr}.containers-toc{border-right:none;border-bottom:1px solid #808080}}
-`
-
-function isTabId(value: string | null): value is TabId {
-  return value === 'big-picture' || value === 'core-concepts' || value === 'examples' || value === 'glossary'
-}
-
 export default function ContainersAndOrchestrationPage(): JSX.Element {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [activeTab, setActiveTab] = useState<TabId>(() => {
-    const tab = searchParams.get('tab')
-    return isTabId(tab) ? tab : 'big-picture'
+  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+    tabs,
+    pageTitle: 'Containers and Orchestration',
+    defaultTab: 'big-picture',
   })
 
-  const activeTabLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'The Big Picture'
-
-  useEffect(() => {
-    const nextParams = new URLSearchParams(searchParams)
-    if (nextParams.get('tab') !== activeTab) {
-      nextParams.set('tab', activeTab)
-      setSearchParams(nextParams, { replace: true })
-    }
-    document.title = `Containers and Orchestration (${activeTabLabel})`
-  }, [activeTab, activeTabLabel, searchParams, setSearchParams])
-
-  const handleMinimize = () => {
-    const minimizedTask = {
-      id: `help:${location.pathname}`,
-      title: 'Containers and Orchestration',
-      url: `${location.pathname}${location.search}${location.hash}`,
-      kind: 'help',
-    }
-    const rawTasks = window.localStorage.getItem(MINIMIZED_HELP_TASKS_KEY)
-    const parsedTasks = rawTasks ? (JSON.parse(rawTasks) as Array<{ id: string }>) : []
-    const nextTasks = [...parsedTasks.filter((task) => task.id !== minimizedTask.id), minimizedTask]
-    window.localStorage.setItem(MINIMIZED_HELP_TASKS_KEY, JSON.stringify(nextTasks))
-
-    const historyState = window.history.state as { idx?: number } | null
-    if (historyState?.idx && historyState.idx > 0) {
-      void navigate(-1)
-      return
-    }
-    void navigate('/algoViz')
-  }
-
   return (
-    <div className="containers-help-page">
-      <style>{pageStyles}</style>
-      <div className="containers-window" role="presentation">
-        <header className="containers-titlebar">
-          <span className="containers-title-text">Containers and Orchestration</span>
-          <div className="containers-title-controls">
-            <button className="containers-control" type="button" aria-label="Minimize" onClick={handleMinimize}>_</button>
-            <Link to="/algoViz" className="containers-control" aria-label="Close">X</Link>
-          </div>
-        </header>
-        <div className="containers-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button key={tab.id} type="button" className={`containers-tab ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)} role="tab" aria-selected={activeTab === tab.id}>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-        <div className="containers-main">
-          <aside className="containers-toc" aria-label="Table of contents">
-            <h2 className="containers-toc-title">Contents</h2>
-            <ul className="containers-toc-list">
-              {sectionLinks[activeTab].map((section) => (
-                <li key={section.id}><a href={`#${section.id}`}>{section.label}</a></li>
+    <TopicPageShell
+      title="Containers and Orchestration"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+      onMinimize={handleMinimize}
+    >
+      <h1 className="bin98-doc-title">Containers and Orchestration</h1>
+      {introParagraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      {activeTab === 'big-picture' && (
+        <>
+          <section id="bp-overview" className="bin98-section">
+            <h2 className="bin98-heading">Overview</h2>
+            {bigPicture.map((item) => (
+              <div key={item.title}>
+                <h3 className="bin98-subheading">{item.title}</h3>
+                <p>{item.details}</p>
+                <p>{item.notes}</p>
+              </div>
+            ))}
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-why" className="bin98-section">
+            <h2 className="bin98-heading">Why It Matters</h2>
+            <p>
+              Modern platforms need packaging that is portable and runtime control that is
+              repeatable. Containers matter because they reduce environment drift; orchestration
+              matters because it turns many packaged workloads into something the platform can
+              actually operate under change and failure.
+            </p>
+            <p>
+              That is why this topic sits at the center of cloud platforms. It affects build
+              pipelines, runtime policy, networking, tenancy, rollout safety, observability, and how
+              much platform complexity an organization is willing to own.
+            </p>
+          </section>
+          <hr className="bin98-divider" />
+          <section id="bp-takeaways" className="bin98-section">
+            <h2 className="bin98-heading">Key Takeaways</h2>
+            <ul>
+              {keyTakeaways.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
-          </aside>
-          <main className="containers-content">
-            <h1 className="containers-doc-title">Containers and Orchestration</h1>
-            {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {activeTab === 'big-picture' && <>
-              <section id="bp-overview" className="containers-section">
-                <h2 className="containers-heading">Overview</h2>
-                {bigPicture.map((item) => <div key={item.title}><h3 className="containers-subheading">{item.title}</h3><p>{item.details}</p><p>{item.notes}</p></div>)}
-              </section>
-              <hr className="containers-divider" />
-              <section id="bp-why" className="containers-section">
-                <h2 className="containers-heading">Why It Matters</h2>
-                <p>Modern platforms need packaging that is portable and runtime control that is repeatable. Containers matter because they reduce environment drift; orchestration matters because it turns many packaged workloads into something the platform can actually operate under change and failure.</p>
-                <p>That is why this topic sits at the center of cloud platforms. It affects build pipelines, runtime policy, networking, tenancy, rollout safety, observability, and how much platform complexity an organization is willing to own.</p>
-              </section>
-              <hr className="containers-divider" />
-              <section id="bp-takeaways" className="containers-section">
-                <h2 className="containers-heading">Key Takeaways</h2>
-                <ul>{keyTakeaways.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'core-concepts' && <>
-              {coreSections.map((section) => (
-                <section key={section.id} id={section.id} className="containers-section">
-                  <h2 className="containers-heading">{section.title}</h2>
-                  {section.paragraphs.map((paragraph) => <p key={`${section.id}-${paragraph}`}>{paragraph}</p>)}
-                </section>
+          </section>
+        </>
+      )}
+      {activeTab === 'core-concepts' && (
+        <>
+          {coreSections.map((section) => (
+            <section key={section.id} id={section.id} className="bin98-section">
+              <h2 className="bin98-heading">{section.title}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={`${section.id}-${paragraph}`}>{paragraph}</p>
               ))}
-              <section id="core-checklist" className="containers-section">
-                <h2 className="containers-heading">Design Checklist</h2>
-                <ul>{designChecklist.map((item) => <li key={item}>{item}</li>)}</ul>
-              </section>
-            </>}
-            {activeTab === 'examples' && <>
-              {examples.map((example) => (
-                <section key={example.id} id={example.id} className="containers-section">
-                  <h2 className="containers-heading">{example.title}</h2>
-                  <div className="containers-codebox"><code>{example.code.trim()}</code></div>
-                  <p>{example.explanation}</p>
-                </section>
+            </section>
+          ))}
+          <section id="core-checklist" className="bin98-section">
+            <h2 className="bin98-heading">Design Checklist</h2>
+            <ul>
+              {designChecklist.map((item) => (
+                <li key={item}>{item}</li>
               ))}
-            </>}
-            {activeTab === 'glossary' && (
-              <section id="glossary-terms" className="containers-section">
-                <h2 className="containers-heading">Glossary</h2>
-                {glossary.map((item) => <p key={item.term}><strong>{item.term}:</strong> {item.definition}</p>)}
-              </section>
-            )}
-          </main>
-        </div>
-      </div>
-    </div>
+            </ul>
+          </section>
+        </>
+      )}
+      {activeTab === 'examples' && (
+        <>
+          {examples.map((example) => (
+            <section key={example.id} id={example.id} className="bin98-section">
+              <h2 className="bin98-heading">{example.title}</h2>
+              <div className="bin98-codebox">
+                <code>{example.code.trim()}</code>
+              </div>
+              <p>{example.explanation}</p>
+            </section>
+          ))}
+        </>
+      )}
+      {activeTab === 'glossary' && (
+        <section id="glossary-terms" className="bin98-section">
+          <h2 className="bin98-heading">Glossary</h2>
+          {glossary.map((item) => (
+            <p key={item.term}>
+              <strong>{item.term}:</strong> {item.definition}
+            </p>
+          ))}
+        </section>
+      )}
+    </TopicPageShell>
   )
 }
