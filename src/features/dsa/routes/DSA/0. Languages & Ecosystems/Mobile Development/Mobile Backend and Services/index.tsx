@@ -5,7 +5,7 @@ import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
-// ─── Big Picture ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Big Picture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const bigPicture = [
   {
@@ -13,7 +13,7 @@ const bigPicture = [
     details:
       'Mobile backend and services refers to the server-side infrastructure that mobile apps depend on: authentication, databases, file storage, push notifications, analytics, crash reporting, remote configuration, and CI/CD pipelines. Most production mobile apps are thin clients backed by one or more of these services.',
     notes:
-      'The trend is toward Backend-as-a-Service (BaaS) platforms that bundle auth, database, storage, and functions into a single SDK — reducing the need to build and operate separate backend infrastructure.',
+      'The trend is toward Backend-as-a-Service (BaaS) platforms that bundle auth, database, storage, and functions into a single SDK â€” reducing the need to build and operate separate backend infrastructure.',
   },
   {
     title: 'Why it matters',
@@ -38,7 +38,7 @@ const bigPicture = [
   },
 ]
 
-// ─── Mental Model ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Mental Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const mentalModel = [
   {
@@ -54,12 +54,12 @@ const mentalModel = [
   {
     title: 'The authentication token flow',
     detail:
-      'User signs in → backend issues a short-lived JWT access token and a long-lived refresh token → app stores tokens securely (Keychain/EncryptedSharedPreferences) → app attaches access token to API requests → when the access token expires, the refresh token is used to get a new one silently.',
+      'User signs in â†’ backend issues a short-lived JWT access token and a long-lived refresh token â†’ app stores tokens securely (Keychain/EncryptedSharedPreferences) â†’ app attaches access token to API requests â†’ when the access token expires, the refresh token is used to get a new one silently.',
   },
   {
     title: 'Push notification delivery chain',
     detail:
-      'Your server sends a message to Apple Push Notification service (APNs) or Firebase Cloud Messaging (FCM) → APNs/FCM delivers to the device OS → the OS delivers to the app. Your server never talks to devices directly. The delivery guarantee depends on the notification priority and device state.',
+      'Your server sends a message to Apple Push Notification service (APNs) or Firebase Cloud Messaging (FCM) â†’ APNs/FCM delivers to the device OS â†’ the OS delivers to the app. Your server never talks to devices directly. The delivery guarantee depends on the notification priority and device state.',
   },
   {
     title: 'SDK vs REST API',
@@ -69,11 +69,11 @@ const mentalModel = [
   {
     title: 'Cost model awareness',
     detail:
-      'BaaS platforms charge by reads, writes, storage, function invocations, or concurrent connections. Firebase Realtime Database charges per GB downloaded — a hot listener on a large document can become expensive quickly. Model costs before choosing a data architecture.',
+      'BaaS platforms charge by reads, writes, storage, function invocations, or concurrent connections. Firebase Realtime Database charges per GB downloaded â€” a hot listener on a large document can become expensive quickly. Model costs before choosing a data architecture.',
   },
 ]
 
-// ─── Firebase ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Firebase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const firebaseConcepts = [
   {
@@ -89,7 +89,7 @@ const firebaseConcepts = [
   {
     title: 'Firebase Realtime Database',
     detail:
-      'JSON tree database with sub-millisecond sync across clients. Simpler than Firestore but harder to query and less scalable. Charges per GB downloaded — real-time listeners on large data sets can generate unexpected costs. Prefer Firestore for new projects.',
+      'JSON tree database with sub-millisecond sync across clients. Simpler than Firestore but harder to query and less scalable. Charges per GB downloaded â€” real-time listeners on large data sets can generate unexpected costs. Prefer Firestore for new projects.',
   },
   {
     title: 'Firebase Storage',
@@ -123,7 +123,7 @@ const firebaseConcepts = [
   },
 ]
 
-// ─── Supabase ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Supabase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const supabaseConcepts = [
   {
@@ -144,7 +144,7 @@ const supabaseConcepts = [
   {
     title: 'Supabase Realtime',
     detail:
-      'Broadcasts Postgres changes (INSERT, UPDATE, DELETE) to subscribed clients via WebSocket. Subscribe to specific tables, rows, or columns. Built on Postgres logical replication — inherently consistent with the database state rather than an eventually-consistent cache.',
+      'Broadcasts Postgres changes (INSERT, UPDATE, DELETE) to subscribed clients via WebSocket. Subscribe to specific tables, rows, or columns. Built on Postgres logical replication â€” inherently consistent with the database state rather than an eventually-consistent cache.',
   },
   {
     title: 'Storage',
@@ -159,22 +159,22 @@ const supabaseConcepts = [
   {
     title: 'Supabase vs Firebase',
     detail:
-      'Supabase uses SQL (PostgreSQL) — powerful queries, joins, indexes, and migrations. Firebase uses NoSQL — simpler data model but weaker querying. Supabase is open-source and self-hostable; Firebase is Google-proprietary. Supabase pricing is predictable (compute + storage); Firebase pricing can spike with read-heavy workloads.',
+      'Supabase uses SQL (PostgreSQL) â€” powerful queries, joins, indexes, and migrations. Firebase uses NoSQL â€” simpler data model but weaker querying. Supabase is open-source and self-hostable; Firebase is Google-proprietary. Supabase pricing is predictable (compute + storage); Firebase pricing can spike with read-heavy workloads.',
   },
 ]
 
-// ─── Authentication ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Authentication â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const authConcepts = [
   {
     title: 'JWT (JSON Web Token)',
     detail:
-      'A signed, base64-encoded token containing claims (user ID, roles, expiry). Signed with a secret (HMAC) or keypair (RS256). The backend verifies the signature without a database lookup. Never store JWTs in localStorage on web — use HttpOnly cookies or Keychain/EncryptedSharedPreferences on mobile.',
+      'A signed, base64-encoded token containing claims (user ID, roles, expiry). Signed with a secret (HMAC) or keypair (RS256). The backend verifies the signature without a database lookup. Never store JWTs in localStorage on web â€” use HttpOnly cookies or Keychain/EncryptedSharedPreferences on mobile.',
   },
   {
     title: 'Access token + refresh token pattern',
     detail:
-      'Access tokens are short-lived (15 min – 1 hour). Refresh tokens are long-lived (days–weeks) and stored securely. When the access token expires, the client silently exchanges the refresh token for a new pair. The refresh token is invalidated on sign-out or compromise.',
+      'Access tokens are short-lived (15 min â€“ 1 hour). Refresh tokens are long-lived (daysâ€“weeks) and stored securely. When the access token expires, the client silently exchanges the refresh token for a new pair. The refresh token is invalidated on sign-out or compromise.',
   },
   {
     title: 'OAuth 2.0 and social login',
@@ -184,7 +184,7 @@ const authConcepts = [
   {
     title: 'Sign in with Apple (SIWA)',
     detail:
-      'Mandatory on iOS if you offer any third-party social login. Apple generates a user identifier stable across devices but opaque (not the email). Apple provides a relay email to protect privacy. Handle the case where the user hides their email — your system must work with the relay address.',
+      'Mandatory on iOS if you offer any third-party social login. Apple generates a user identifier stable across devices but opaque (not the email). Apple provides a relay email to protect privacy. Handle the case where the user hides their email â€” your system must work with the relay address.',
   },
   {
     title: 'Biometric authentication',
@@ -203,7 +203,7 @@ const authConcepts = [
   },
 ]
 
-// ─── Push Notifications ────────────────────────────────────────────────────────
+// â”€â”€â”€ Push Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const pushNotifications = [
   {
@@ -224,12 +224,12 @@ const pushNotifications = [
   {
     title: 'Permission flow',
     detail:
-      'iOS requires explicit permission (UNUserNotificationCenter.requestAuthorization). Show rationale before prompting — the system permission dialog can only be shown once. Android 13+ (API 33) also requires runtime permission. Handle denial gracefully: core features must work without notifications.',
+      'iOS requires explicit permission (UNUserNotificationCenter.requestAuthorization). Show rationale before prompting â€” the system permission dialog can only be shown once. Android 13+ (API 33) also requires runtime permission. Handle denial gracefully: core features must work without notifications.',
   },
   {
     title: 'Device token registration',
     detail:
-      'On first launch, request permission → register with APNs/FCM → receive a device token → send the token to your server → server stores (userId, token, platform). On token refresh (APNs rotates tokens periodically), update the server. Delete tokens on sign-out.',
+      'On first launch, request permission â†’ register with APNs/FCM â†’ receive a device token â†’ send the token to your server â†’ server stores (userId, token, platform). On token refresh (APNs rotates tokens periodically), update the server. Delete tokens on sign-out.',
   },
   {
     title: 'Notification payload',
@@ -248,7 +248,7 @@ const pushNotifications = [
   },
 ]
 
-// ─── Analytics and Crash Reporting ────────────────────────────────────────────
+// â”€â”€â”€ Analytics and Crash Reporting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const observability = [
   {
@@ -288,13 +288,13 @@ const observability = [
   },
 ]
 
-// ─── Remote Config and Feature Flags ─────────────────────────────────────────
+// â”€â”€â”€ Remote Config and Feature Flags â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const remoteConfig = [
   {
     title: 'Use cases',
     detail:
-      'Kill switches for broken features, percentage rollouts (5% → 50% → 100%), A/B test variants, dynamic content (promo text, API endpoints), onboarding flow experiments, and emergency patches without App Store review.',
+      'Kill switches for broken features, percentage rollouts (5% â†’ 50% â†’ 100%), A/B test variants, dynamic content (promo text, API endpoints), onboarding flow experiments, and emergency patches without App Store review.',
   },
   {
     title: 'Firebase Remote Config',
@@ -314,11 +314,11 @@ const remoteConfig = [
   {
     title: 'Implementation pattern',
     detail:
-      'Fetch remote config at app startup (or on resume). Apply defaults in case fetch fails or the cache is cold. Gate features with if (config.isEnabled("feature_x")) checks in the relevant code paths. Never use remote config for security-critical decisions — the values are visible in the SDK cache.',
+      'Fetch remote config at app startup (or on resume). Apply defaults in case fetch fails or the cache is cold. Gate features with if (config.isEnabled("feature_x")) checks in the relevant code paths. Never use remote config for security-critical decisions â€” the values are visible in the SDK cache.',
   },
 ]
 
-// ─── CI/CD for Mobile ─────────────────────────────────────────────────────────
+// â”€â”€â”€ CI/CD for Mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const cicdConcepts = [
   {
@@ -349,7 +349,7 @@ const cicdConcepts = [
   {
     title: 'GitHub Actions for mobile',
     detail:
-      'Use macos-latest runners for iOS builds (expensive — billed per minute). Use ubuntu-latest for Android builds (cheaper). Cache CocoaPods with actions/cache, Gradle with gradle-build-action. Integrate Fastlane lanes as steps. Store signing secrets in GitHub Secrets.',
+      'Use macos-latest runners for iOS builds (expensive â€” billed per minute). Use ubuntu-latest for Android builds (cheaper). Cache CocoaPods with actions/cache, Gradle with gradle-build-action. Integrate Fastlane lanes as steps. Store signing secrets in GitHub Secrets.',
   },
   {
     title: 'Code signing in CI',
@@ -363,7 +363,7 @@ const cicdConcepts = [
   },
 ]
 
-// ─── API Design for Mobile ────────────────────────────────────────────────────
+// â”€â”€â”€ API Design for Mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const apiDesign = [
   {
@@ -374,12 +374,12 @@ const apiDesign = [
   {
     title: 'API versioning',
     detail:
-      'Version APIs (/v1/, /v2/) to avoid breaking older app versions still in the field. Mobile apps are not instantly updated — old versions may be active for months. Never remove a field or change a field type in a live API version. Use deprecation headers to signal upcoming removals.',
+      'Version APIs (/v1/, /v2/) to avoid breaking older app versions still in the field. Mobile apps are not instantly updated â€” old versions may be active for months. Never remove a field or change a field type in a live API version. Use deprecation headers to signal upcoming removals.',
   },
   {
     title: 'Pagination',
     detail:
-      'Never return unbounded lists. Use cursor-based pagination (next_cursor token) for feeds and timelines — it is stable under insertions. Use offset-based for admin lists where stability under insertion is not required. Page size should be configurable to allow clients to tune for their network conditions.',
+      'Never return unbounded lists. Use cursor-based pagination (next_cursor token) for feeds and timelines â€” it is stable under insertions. Use offset-based for admin lists where stability under insertion is not required. Page size should be configurable to allow clients to tune for their network conditions.',
   },
   {
     title: 'Error response contract',
@@ -389,7 +389,7 @@ const apiDesign = [
   {
     title: 'Compression and efficiency',
     detail:
-      'Enable gzip/brotli on your API server — SDKs request it automatically. Use ETags or Last-Modified headers for cache validation. For mobile, minimize response payload size: return only fields the client uses, use short field names for high-frequency endpoints.',
+      'Enable gzip/brotli on your API server â€” SDKs request it automatically. Use ETags or Last-Modified headers for cache validation. For mobile, minimize response payload size: return only fields the client uses, use short field names for high-frequency endpoints.',
   },
   {
     title: 'Rate limiting',
@@ -398,13 +398,13 @@ const apiDesign = [
   },
 ]
 
-// ─── Offline and Sync ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Offline and Sync â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const offlineSync = [
   {
     title: 'Offline-first architecture',
     detail:
-      'All writes go to local storage first. A background sync worker replicates changes to the server when connectivity is available. The UI reads only from local storage — it is always fast and functional regardless of network state.',
+      'All writes go to local storage first. A background sync worker replicates changes to the server when connectivity is available. The UI reads only from local storage â€” it is always fast and functional regardless of network state.',
   },
   {
     title: 'Conflict resolution',
@@ -414,12 +414,12 @@ const offlineSync = [
   {
     title: 'Optimistic updates',
     detail:
-      'Apply state changes in the UI immediately before the server confirms them. Roll back on server error. Provides a responsive feel even over high-latency networks. Requires careful error handling — the rollback must leave the UI in a consistent, explainable state.',
+      'Apply state changes in the UI immediately before the server confirms them. Roll back on server error. Provides a responsive feel even over high-latency networks. Requires careful error handling â€” the rollback must leave the UI in a consistent, explainable state.',
   },
   {
     title: 'Firestore offline persistence',
     detail:
-      "Firestore's SDK caches all read documents and queued writes locally. When offline, reads return cached data; writes queue and sync automatically on reconnection. Enabled by default on mobile. Does not support complex SQL queries — limitation of the NoSQL model.",
+      "Firestore's SDK caches all read documents and queued writes locally. When offline, reads return cached data; writes queue and sync automatically on reconnection. Enabled by default on mobile. Does not support complex SQL queries â€” limitation of the NoSQL model.",
   },
   {
     title: 'Supabase realtime + local cache',
@@ -428,42 +428,42 @@ const offlineSync = [
   },
 ]
 
-// ─── Security ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Security â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const securityPractices = [
   {
     title: 'Never trust the client',
     detail:
-      'Validate all input on the server. Authorization checks must happen server-side — Firestore Security Rules or Row Level Security. A malicious client can send any payload regardless of what the mobile app enforces locally.',
+      'Validate all input on the server. Authorization checks must happen server-side â€” Firestore Security Rules or Row Level Security. A malicious client can send any payload regardless of what the mobile app enforces locally.',
   },
   {
     title: 'Secrets management',
     detail:
-      'Never embed API keys, secrets, or private keys in the mobile binary — they are extractable. Use Firebase App Check to restrict which apps can call your APIs. Store server-side secrets in environment variables or a secrets manager (AWS Secrets Manager, GCP Secret Manager, HashiCorp Vault).',
+      'Never embed API keys, secrets, or private keys in the mobile binary â€” they are extractable. Use Firebase App Check to restrict which apps can call your APIs. Store server-side secrets in environment variables or a secrets manager (AWS Secrets Manager, GCP Secret Manager, HashiCorp Vault).',
   },
   {
     title: 'Certificate pinning',
     detail:
-      "Pin the server's certificate or public key in the mobile app to prevent MITM attacks. Implement in URLSession (iOS) or OkHttp (Android) via a custom TrustManager. Include a backup pin and a rotation window — a pin with no fallback causes outages on certificate renewal.",
+      "Pin the server's certificate or public key in the mobile app to prevent MITM attacks. Implement in URLSession (iOS) or OkHttp (Android) via a custom TrustManager. Include a backup pin and a rotation window â€” a pin with no fallback causes outages on certificate renewal.",
   },
   {
     title: 'Data minimization',
     detail:
-      'Collect only the data you need. Store only what you need. Display only what the user needs. Reducing data collection is the safest protection against breaches — data you do not have cannot be leaked. Align with GDPR, CCPA, and COPPA requirements early.',
+      'Collect only the data you need. Store only what you need. Display only what the user needs. Reducing data collection is the safest protection against breaches â€” data you do not have cannot be leaked. Align with GDPR, CCPA, and COPPA requirements early.',
   },
   {
-    title: 'Firebase Security Rules — common mistakes',
+    title: 'Firebase Security Rules â€” common mistakes',
     detail:
-      'Rules default to deny all. Allow rules must be explicit. Never write allow read, write: if true — this is public access. Test rules with the Firebase Emulator before deploying. Rules cannot fix a data model that puts sensitive data in publicly-readable documents.',
+      'Rules default to deny all. Allow rules must be explicit. Never write allow read, write: if true â€” this is public access. Test rules with the Firebase Emulator before deploying. Rules cannot fix a data model that puts sensitive data in publicly-readable documents.',
   },
   {
     title: 'Token expiry and rotation',
     detail:
-      'Short access token lifetimes (15–60 minutes) limit the damage from token theft. Refresh tokens should be rotated on each use (refresh token rotation). Invalidate all tokens on password change or sign-out-all-devices. Monitor for refresh token reuse as a compromise signal.',
+      'Short access token lifetimes (15â€“60 minutes) limit the damage from token theft. Refresh tokens should be rotated on each use (refresh token rotation). Invalidate all tokens on password change or sign-out-all-devices. Monitor for refresh token reuse as a compromise signal.',
   },
 ]
 
-// ─── Compare and Contrast ─────────────────────────────────────────────────────
+// â”€â”€â”€ Compare and Contrast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const compareContrast = [
   {
@@ -498,7 +498,7 @@ const compareContrast = [
   },
 ]
 
-// ─── Common Pitfalls ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Common Pitfalls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const commonPitfalls = [
   {
@@ -534,16 +534,16 @@ const commonPitfalls = [
   {
     mistake: 'Not versioning APIs',
     description:
-      'Changing an API response shape without versioning breaks existing app versions still in the field. Mobile apps are not instantly updated — old versions may be in use for 6–12 months after a release. Always version breaking changes.',
+      'Changing an API response shape without versioning breaks existing app versions still in the field. Mobile apps are not instantly updated â€” old versions may be in use for 6â€“12 months after a release. Always version breaking changes.',
   },
   {
     mistake: 'Using WebView for OAuth',
     description:
-      "Presenting OAuth flows in an embedded WebView allows the app to read the user's credentials — OAuth providers prohibit this. Use ASWebAuthenticationSession (iOS) or Chrome Custom Tabs (Android). These use the system browser's secure session and cookie store.",
+      "Presenting OAuth flows in an embedded WebView allows the app to read the user's credentials â€” OAuth providers prohibit this. Use ASWebAuthenticationSession (iOS) or Chrome Custom Tabs (Android). These use the system browser's secure session and cookie store.",
   },
 ]
 
-// ─── Debugging Checklist ──────────────────────────────────────────────────────
+// â”€â”€â”€ Debugging Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const debuggingChecklist = [
   {
@@ -554,17 +554,17 @@ const debuggingChecklist = [
   {
     title: 'Firestore permission denied?',
     detail:
-      'Check Security Rules in the Firebase Console Rules playground. Verify the request.auth.uid matches expected values. Ensure the user is authenticated (auth state is propagated before the Firestore call). Check collection path casing — Firestore paths are case-sensitive.',
+      'Check Security Rules in the Firebase Console Rules playground. Verify the request.auth.uid matches expected values. Ensure the user is authenticated (auth state is propagated before the Firestore call). Check collection path casing â€” Firestore paths are case-sensitive.',
   },
   {
     title: 'Auth token expired silently?',
     detail:
-      'Check if 401 responses are handled by a retry interceptor. Firebase/Supabase SDKs refresh tokens automatically — if using raw API calls, implement refresh manually. Log token expiry times and compare against request timestamps.',
+      'Check if 401 responses are handled by a retry interceptor. Firebase/Supabase SDKs refresh tokens automatically â€” if using raw API calls, implement refresh manually. Log token expiry times and compare against request timestamps.',
   },
   {
     title: 'Analytics events not appearing?',
     detail:
-      'Firebase Analytics events have up to 24 hours of processing delay in the console. Use DebugView (enable with -FIRDebugEnabled launch argument on iOS) for real-time event inspection. Verify ATT permission on iOS — denial blocks event transmission to Firebase.',
+      'Firebase Analytics events have up to 24 hours of processing delay in the console. Use DebugView (enable with -FIRDebugEnabled launch argument on iOS) for real-time event inspection. Verify ATT permission on iOS â€” denial blocks event transmission to Firebase.',
   },
   {
     title: 'CI build failing on signing?',
@@ -578,22 +578,22 @@ const debuggingChecklist = [
   },
 ]
 
-// ─── Correctness Checklist ────────────────────────────────────────────────────
+// â”€â”€â”€ Correctness Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const correctnessChecklist = [
-  'Store auth tokens in Keychain (iOS) or EncryptedSharedPreferences (Android) — never in UserDefaults or plain SharedPreferences.',
+  'Store auth tokens in Keychain (iOS) or EncryptedSharedPreferences (Android) â€” never in UserDefaults or plain SharedPreferences.',
   'Implement a token refresh interceptor that retries 401 responses after silently refreshing the access token.',
-  'Test Firestore Security Rules in the Firebase Emulator before deploying — never ship with allow read, write: if true.',
+  'Test Firestore Security Rules in the Firebase Emulator before deploying â€” never ship with allow read, write: if true.',
   'Version your APIs (/v1/) and treat breaking changes (field removal, type changes) as a new version.',
   'Request push notification permission contextually, not at first launch. Handle denial without breaking core features.',
   'Send device tokens to the server on every launch (tokens rotate); delete tokens from the server on sign-out.',
   'Never embed API secrets in the mobile binary. Use Firebase App Check or a backend proxy for protected endpoints.',
   'Enable gzip compression on your API server and handle compressed responses in the mobile SDK.',
   'Use cursor-based pagination for feeds and timelines; never return unbounded lists.',
-  'Test crash reporting by triggering a test crash in a non-production build — verify it appears in the dashboard before shipping.',
+  'Test crash reporting by triggering a test crash in a non-production build â€” verify it appears in the dashboard before shipping.',
 ]
 
-// ─── FAQ ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const faq = [
   {
@@ -609,7 +609,7 @@ const faq = [
   {
     question: 'Do I need both FCM and APNs?',
     answer:
-      'On the server side, you can use FCM as a unified API for both platforms — FCM handles the APNs delivery for iOS internally. You only need direct APNs integration for features FCM does not support, such as VoIP notifications via PushKit or CallKit.',
+      'On the server side, you can use FCM as a unified API for both platforms â€” FCM handles the APNs delivery for iOS internally. You only need direct APNs integration for features FCM does not support, such as VoIP notifications via PushKit or CallKit.',
   },
   {
     question: 'How do I handle offline support with Firestore?',
@@ -633,20 +633,20 @@ const faq = [
   },
 ]
 
-// ─── Key Takeaways ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Key Takeaways â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const keyTakeaways = [
   'The mobile app is a thin client. Business logic, authorization, and data integrity belong on the server.',
   'Firebase is the fastest BaaS to production but introduces vendor lock-in and can produce unpredictable costs at scale. Supabase is the open-source SQL alternative.',
   'Use FCM as the unified push notification API for both Android and iOS. Handle APNs directly only for VoIP/PushKit.',
   'Store auth tokens in Keychain (iOS) or EncryptedSharedPreferences (Android). Never store secrets in the mobile binary.',
-  'Test Firestore Security Rules and Supabase RLS policies in emulators before deploying — misconfigured rules are a critical security vulnerability.',
+  'Test Firestore Security Rules and Supabase RLS policies in emulators before deploying â€” misconfigured rules are a critical security vulnerability.',
   'Version your APIs. Mobile apps are not instantly updated; old versions may be in the field for many months.',
   'Fastlane + Match solves the most painful part of mobile CI/CD: code signing. Set it up early.',
   'Crash reporting and analytics should be instrumented before the first TestFlight or beta release, not after the first production outage.',
 ]
 
-// ─── Pseudocode Patterns ──────────────────────────────────────────────────────
+// â”€â”€â”€ Pseudocode Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const pseudocodePatterns = [
   {
@@ -666,7 +666,7 @@ intercept(request):
         saveTokens(newTokens)
         return retry(request.withToken(newTokens.accessToken))
       else:
-        signOut()  // Refresh token invalid — force re-login
+        signOut()  // Refresh token invalid â€” force re-login
         return response
 
   return response`,
@@ -677,9 +677,9 @@ intercept(request):
     title: 'Push notification registration flow',
     code: `// App launch
 requestNotificationPermission()
-  → granted: registerWithAPNs() / FCM.token()
-  → receive deviceToken (String)
-  → API.registerDevice(userId, deviceToken, platform)
+  â†’ granted: registerWithAPNs() / FCM.token()
+  â†’ receive deviceToken (String)
+  â†’ API.registerDevice(userId, deviceToken, platform)
 
 // Server stores: { userId, token, platform, updatedAt }
 
@@ -692,7 +692,7 @@ onSignOut():
   API.removeDevice(userId, deviceToken)
   FCM.deleteToken()`,
     explanation:
-      'Register on every launch — not just first launch — because APNs tokens rotate silently. Always delete the server-side record on sign-out to prevent notifications being delivered to the wrong user after a device is transferred.',
+      'Register on every launch â€” not just first launch â€” because APNs tokens rotate silently. Always delete the server-side record on sign-out to prevent notifications being delivered to the wrong user after a device is transferred.',
   },
   {
     title: 'Offline-first write pattern',
@@ -720,7 +720,7 @@ for note in pendingNotes:
   },
 ]
 
-// ─── Code Examples ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Code Examples â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const codeExamples = [
   {
@@ -751,7 +751,7 @@ func signOut() throws {
     try Auth.auth().signOut()
 }`,
     explanation:
-      'getIDToken() returns a cached token and refreshes it automatically when near expiry. Attach this token to API requests as a Bearer header. addStateDidChangeListener fires on app launch with the restored auth state — use it to drive navigation.',
+      'getIDToken() returns a cached token and refreshes it automatically when near expiry. Attach this token to API requests as a Bearer header. addStateDidChangeListener fires on app launch with the restored auth state â€” use it to drive navigation.',
   },
   {
     title: 'Firestore real-time listener',
@@ -821,10 +821,10 @@ func insertNote(title: String, body: String) async throws {
         .execute()
 }`,
     explanation:
-      'The anon key is safe to embed — it has no special privileges. RLS policies on the notes table ensure users can only see and modify their own rows. The JWT from supabase.auth.signIn() is automatically attached to all subsequent requests by the SDK.',
+      'The anon key is safe to embed â€” it has no special privileges. RLS policies on the notes table ensure users can only see and modify their own rows. The JWT from supabase.auth.signIn() is automatically attached to all subsequent requests by the SDK.',
   },
   {
-    title: 'FCM push notification (server — Node.js)',
+    title: 'FCM push notification (server â€” Node.js)',
     code: `import admin from 'firebase-admin';
 
 admin.initializeApp({ credential: admin.credential.applicationDefault() });
@@ -853,7 +853,7 @@ async function sendPushNotification(
   return messageId;
 }`,
     explanation:
-      'The apns and android blocks apply platform-specific overrides. android.priority: "high" wakes the device from Doze mode. The server uses a service account (application default credentials) — the FCM server key is never embedded in the mobile app.',
+      'The apns and android blocks apply platform-specific overrides. android.priority: "high" wakes the device from Doze mode. The server uses a service account (application default credentials) â€” the FCM server key is never embedded in the mobile app.',
   },
   {
     title: 'Firebase Remote Config fetch (Android Kotlin)',
@@ -873,7 +873,7 @@ suspend fun fetchConfig() {
     try {
         remoteConfig.fetchAndActivate().await()
     } catch (e: Exception) {
-        // Defaults are already active — log and continue
+        // Defaults are already active â€” log and continue
         Timber.e(e, "Remote Config fetch failed")
     }
 }
@@ -923,7 +923,7 @@ end`,
   },
 ]
 
-// ─── Scenarios (interactive) ──────────────────────────────────────────────────
+// â”€â”€â”€ Scenarios (interactive) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const scenarios = [
   {
@@ -933,13 +933,13 @@ const scenarios = [
       'User enters email and password. App calls Auth.auth().signIn(withEmail:password:).',
       'Firebase validates credentials server-side and returns a User object with an ID token (JWT, ~1 hour expiry) and refresh token.',
       'The SDK stores the refresh token securely. The app receives the User and navigates to the home screen.',
-      'App makes an API call to the custom backend. It fetches the current ID token via user.getIDToken() — the SDK refreshes it automatically if near expiry.',
+      'App makes an API call to the custom backend. It fetches the current ID token via user.getIDToken() â€” the SDK refreshes it automatically if near expiry.',
       'The custom backend verifies the JWT signature using Firebase Admin SDK. On success, it executes the business logic and returns the response.',
       'After 1 hour, the ID token expires. The next getIDToken() call triggers a silent refresh using the stored refresh token. The user never sees a sign-in prompt.',
       'User taps "Sign out." App calls Auth.auth().signOut(), deletes the FCM device token from the server, and clears local state.',
     ],
     summary:
-      'Firebase Auth manages the full token lifecycle. Your backend only needs to verify JWTs — it never handles passwords or manages sessions directly.',
+      'Firebase Auth manages the full token lifecycle. Your backend only needs to verify JWTs â€” it never handles passwords or manages sessions directly.',
   },
   {
     id: 'push-registration',
@@ -954,7 +954,7 @@ const scenarios = [
       'User taps the notification. The app opens and the UNUserNotificationCenterDelegate method is called with the notification content and identifier.',
     ],
     summary:
-      'Notifications travel server → FCM/APNs → OS → app. Your server never contacts the device directly. Always keep device tokens updated on the server and remove them on sign-out.',
+      'Notifications travel server â†’ FCM/APNs â†’ OS â†’ app. Your server never contacts the device directly. Always keep device tokens updated on the server and remove them on sign-out.',
   },
   {
     id: 'cicd-release',
@@ -974,7 +974,7 @@ const scenarios = [
   },
 ]
 
-// ─── Types and constants ──────────────────────────────────────────────────────
+// â”€â”€â”€ Types and constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -1016,13 +1016,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Glossary Terms' }],
 }
 
-// ─── Glossary ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Glossary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const glossary = [
   {
     term: 'BaaS',
     definition:
-      'Backend-as-a-Service — a platform providing pre-built backend services (auth, database, storage) via SDKs.',
+      'Backend-as-a-Service â€” a platform providing pre-built backend services (auth, database, storage) via SDKs.',
   },
   {
     term: 'Firebase',
@@ -1042,16 +1042,16 @@ const glossary = [
   {
     term: 'RLS',
     definition:
-      "Row Level Security — PostgreSQL's per-row authorization layer used extensively by Supabase.",
+      "Row Level Security â€” PostgreSQL's per-row authorization layer used extensively by Supabase.",
   },
   {
     term: 'JWT',
     definition:
-      'JSON Web Token — a signed, encoded token containing claims used for stateless authentication.',
+      'JSON Web Token â€” a signed, encoded token containing claims used for stateless authentication.',
   },
   {
     term: 'Access token',
-    definition: 'Short-lived JWT (15 min–1 hour) attached to API requests to prove identity.',
+    definition: 'Short-lived JWT (15 minâ€“1 hour) attached to API requests to prove identity.',
   },
   {
     term: 'Refresh token',
@@ -1060,12 +1060,12 @@ const glossary = [
   {
     term: 'APNs',
     definition:
-      "Apple Push Notification service — Apple's infrastructure for delivering push notifications to iOS/macOS devices.",
+      "Apple Push Notification service â€” Apple's infrastructure for delivering push notifications to iOS/macOS devices.",
   },
   {
     term: 'FCM',
     definition:
-      "Firebase Cloud Messaging — Google's unified push delivery API for Android and iOS (wraps APNs for iOS).",
+      "Firebase Cloud Messaging â€” Google's unified push delivery API for Android and iOS (wraps APNs for iOS).",
   },
   {
     term: 'Device token',
@@ -1110,7 +1110,7 @@ const glossary = [
   {
     term: 'ATT',
     definition:
-      'App Tracking Transparency — iOS 14.5+ requirement to request user permission before cross-app tracking.',
+      'App Tracking Transparency â€” iOS 14.5+ requirement to request user permission before cross-app tracking.',
   },
   {
     term: 'Fastlane',
@@ -1177,12 +1177,12 @@ const glossary = [
   },
 ]
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function MobileBackendAndServicesPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Mobile Backend and Services',
     defaultTab: 'big-picture',
@@ -1212,7 +1212,6 @@ export default function MobileBackendAndServicesPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Mobile Backend and Services</h1>
       <p>
@@ -1222,7 +1221,7 @@ export default function MobileBackendAndServicesPage(): JSX.Element {
         flags, API design, offline sync, and mobile release pipelines.
       </p>
 
-      {/* ── Big Picture ── */}
+      {/* â”€â”€ Big Picture â”€â”€ */}
       {activeTab === 'big-picture' && (
         <>
           <section id="bp-overview" className="bin98-section">
@@ -1272,7 +1271,7 @@ export default function MobileBackendAndServicesPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Core Concepts ── */}
+      {/* â”€â”€ Core Concepts â”€â”€ */}
       {activeTab === 'core-concepts' && (
         <>
           <section id="core-firebase" className="bin98-section">
@@ -1415,7 +1414,7 @@ export default function MobileBackendAndServicesPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Examples ── */}
+      {/* â”€â”€ Examples â”€â”€ */}
       {activeTab === 'examples' && (
         <>
           <section id="ex-pseudocode" className="bin98-section">
@@ -1503,7 +1502,7 @@ export default function MobileBackendAndServicesPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Glossary ── */}
+      {/* â”€â”€ Glossary â”€â”€ */}
       {activeTab === 'glossary' && (
         <section id="glossary-terms" className="bin98-section">
           <h2 className="bin98-heading">Glossary</h2>

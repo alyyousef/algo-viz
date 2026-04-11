@@ -65,7 +65,7 @@ const bigPictureSections = [
   {
     title: 'Tradeoffs',
     paragraphs: [
-      'Django usually feels more explicit and decomposed; Rails usually feels more convention-driven and integrated. That difference affects onboarding, debugging style, and how teams reason about “the right way” to add new features.',
+      'Django usually feels more explicit and decomposed; Rails usually feels more convention-driven and integrated. That difference affects onboarding, debugging style, and how teams reason about â€œthe right wayâ€ to add new features.',
       'Python is more widely adopted outside web development, which can make hiring or cross-functional collaboration easier in some organizations. Ruby often feels more expressive for framework-oriented DSLs, but that expressiveness can also feel less obvious to developers who prefer directness over magic.',
       'In practice, both frameworks are mature, production-proven, and capable of supporting large applications. The better choice depends less on raw capability and more on team fit, ecosystem priorities, and how much convention you want the framework to impose.',
     ],
@@ -114,7 +114,7 @@ const conceptSections = [
     title: 'Tooling and Ecosystem',
     paragraphs: [
       'Django benefits from the broader Python ecosystem, which matters when the application needs to connect naturally to analytics, data processing, scripting, or scientific libraries. This can reduce friction when web features and non-web workloads need to coexist.',
-      'Rails benefits from an ecosystem built specifically around Rails conventions and the Ruby community’s emphasis on elegant APIs. The gem ecosystem has long supported common product needs such as authentication, background jobs, administration, testing, and payments.',
+      'Rails benefits from an ecosystem built specifically around Rails conventions and the Ruby communityâ€™s emphasis on elegant APIs. The gem ecosystem has long supported common product needs such as authentication, background jobs, administration, testing, and payments.',
       'The practical decision is rarely about which ecosystem is bigger in the abstract. It is about whether the adjacent tools your team already uses are easier to integrate in Python or easier to use within the Rails way of working.',
     ],
   },
@@ -132,7 +132,7 @@ const conceptSections = [
     title: 'Performance and Scaling',
     paragraphs: [
       'For most business applications, architecture, query behavior, caching, and infrastructure decisions matter more than framework choice. Either Django or Rails can scale well when the application is designed carefully.',
-      'Django teams often benefit from Python’s interoperability with async tasks, data pipelines, and service decomposition. Rails teams often benefit from the speed of product iteration, which can matter more than micro-level request differences during early growth.',
+      'Django teams often benefit from Pythonâ€™s interoperability with async tasks, data pipelines, and service decomposition. Rails teams often benefit from the speed of product iteration, which can matter more than micro-level request differences during early growth.',
       'If performance is the deciding factor, the correct move is usually to benchmark realistic workloads and examine database access patterns, rendering costs, and background job throughput rather than assuming one framework is categorically faster.',
     ],
   },
@@ -225,7 +225,7 @@ const glossary = [
   },
   {
     term: 'MVT',
-    definition: 'Model-View-Template, a label often used for Django’s structural style.',
+    definition: 'Model-View-Template, a label often used for Djangoâ€™s structural style.',
   },
   {
     term: 'MVC',
@@ -240,7 +240,7 @@ const glossary = [
   {
     term: 'Active Record',
     definition:
-      'Rails’ ORM pattern and implementation, combining persistence and domain behavior in model classes.',
+      'Railsâ€™ ORM pattern and implementation, combining persistence and domain behavior in model classes.',
   },
   {
     term: 'Reusable app',
@@ -255,7 +255,7 @@ const glossary = [
 ]
 
 export default function DjangoVsRubyOnRailsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Django vs Ruby on Rails',
     defaultTab: 'big-picture',
@@ -268,7 +268,6 @@ export default function DjangoVsRubyOnRailsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Django vs Ruby on Rails</h1>
       <p>

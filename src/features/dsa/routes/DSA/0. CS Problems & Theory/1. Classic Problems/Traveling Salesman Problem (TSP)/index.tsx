@@ -602,7 +602,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function TspPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Traveling Salesman Problem (TSP)',
     defaultTab: 'big-picture',
@@ -638,7 +638,6 @@ export default function TspPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Traveling Salesman Problem (TSP)</h1>
       <p>

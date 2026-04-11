@@ -415,7 +415,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Expo Router',
         definition:
-          'Expo’s file-based routing system for organizing navigation and screen structure.',
+          'Expoâ€™s file-based routing system for organizing navigation and screen structure.',
       },
       {
         term: 'Expo module',
@@ -431,16 +431,16 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'EAS Build',
         definition:
-          'Expo’s build service for creating Android and iOS artifacts in a standardized workflow.',
+          'Expoâ€™s build service for creating Android and iOS artifacts in a standardized workflow.',
       },
       {
         term: 'EAS Submit',
         definition:
-          'Expo’s submission service for automating store-submission steps after builds are produced.',
+          'Expoâ€™s submission service for automating store-submission steps after builds are produced.',
       },
       {
         term: 'EAS Update',
-        definition: 'Expo’s update-delivery system for compatible JavaScript and asset changes.',
+        definition: 'Expoâ€™s update-delivery system for compatible JavaScript and asset changes.',
       },
       {
         term: 'Build profile',
@@ -481,7 +481,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Workflow fit',
         definition:
-          'Whether Expo’s abstractions and services match the product’s operational and technical needs.',
+          'Whether Expoâ€™s abstractions and services match the productâ€™s operational and technical needs.',
       },
       {
         term: 'OTA update',
@@ -614,7 +614,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function ExpoPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Expo',
     defaultTab: 'big-picture',
@@ -627,7 +627,6 @@ export default function ExpoPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Expo</h1>
       {introParagraphs.map((paragraph) => (

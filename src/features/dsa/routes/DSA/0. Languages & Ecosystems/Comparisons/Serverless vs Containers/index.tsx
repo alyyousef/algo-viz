@@ -376,7 +376,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ServerlessVsContainersPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Serverless vs Containers',
     defaultTab: 'big-picture',
@@ -389,7 +389,6 @@ export default function ServerlessVsContainersPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Serverless vs Containers</h1>
       <p className="serverless-containers-help-doc-subtitle">

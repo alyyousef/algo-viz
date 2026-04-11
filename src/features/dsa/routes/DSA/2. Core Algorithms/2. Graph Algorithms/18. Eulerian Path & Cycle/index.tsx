@@ -460,7 +460,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function EulerianPathCyclePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Eulerian Path &amp; Cycle',
     defaultTab: 'big-picture',
@@ -473,7 +473,6 @@ export default function EulerianPathCyclePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Eulerian Path &amp; Cycle</h1>
       <p>

@@ -544,7 +544,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MinimumSpanningTreePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Minimum Spanning Tree',
     defaultTab: 'big-picture',
@@ -557,7 +557,6 @@ export default function MinimumSpanningTreePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Minimum Spanning Tree</h1>
       <p>

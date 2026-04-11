@@ -323,7 +323,7 @@ const _glossaryBroken = [
   },
   {
     term: 'Approximation ratio',
-    definition: 'A bound comparing the quality of an algorithm’s answer to the optimum.',
+    definition: 'A bound comparing the quality of an algorithmâ€™s answer to the optimum.',
   },
   { term: 'Liveness', definition: 'A guarantee that useful progress eventually occurs.' },
   { term: 'Safety', definition: 'A guarantee that forbidden bad states do not occur.' },
@@ -400,7 +400,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function CSProblemsAndTheoryPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'CS Problems &amp; Theory',
     defaultTab: 'big-picture',
@@ -413,7 +413,6 @@ export default function CSProblemsAndTheoryPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">CS Problems &amp; Theory</h1>
       <p className="cst98-intro">

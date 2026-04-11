@@ -336,7 +336,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Shortest Path (Dijkstra-Bellman-Ford)',
     defaultTab: 'big-picture',
@@ -349,7 +349,6 @@ export default function ShortestPathDijkstraBellmanFordPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Shortest Path (Dijkstra-Bellman-Ford)</h1>
       <p>

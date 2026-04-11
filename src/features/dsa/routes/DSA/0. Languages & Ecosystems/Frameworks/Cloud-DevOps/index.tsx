@@ -577,7 +577,7 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
 }
 
 export default function CloudAndDevOpsFrameworksPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Cloud and DevOps Frameworks',
     defaultTab: 'big-picture',
@@ -590,7 +590,6 @@ export default function CloudAndDevOpsFrameworksPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Cloud and DevOps Frameworks</h1>
       <p className="cloud98-doc-subtitle">

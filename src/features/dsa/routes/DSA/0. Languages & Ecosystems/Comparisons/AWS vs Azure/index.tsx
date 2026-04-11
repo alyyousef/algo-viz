@@ -479,7 +479,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AwsVsAzurePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Aws Vs Azure Page',
     defaultTab: 'big-picture',
@@ -492,7 +492,6 @@ export default function AwsVsAzurePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="aws-azure-help-doc-subtitle">{pageSubtitle}</p>

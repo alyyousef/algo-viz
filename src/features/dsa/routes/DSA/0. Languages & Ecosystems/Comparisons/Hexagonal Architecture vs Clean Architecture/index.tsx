@@ -459,7 +459,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function HexagonalArchitectureVsCleanArchitecturePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Hexagonal Architecture vs Clean Architecture',
     defaultTab: 'big-picture',
@@ -472,7 +472,6 @@ export default function HexagonalArchitectureVsCleanArchitecturePage(): JSX.Elem
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Hexagonal Architecture vs Clean Architecture</h1>
       {introParagraphs.map((paragraph) => (

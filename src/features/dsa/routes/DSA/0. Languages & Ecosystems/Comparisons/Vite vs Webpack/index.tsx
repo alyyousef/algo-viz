@@ -742,7 +742,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function ViteVsWebpackPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Vite vs Webpack',
     defaultTab: 'big-picture',
@@ -755,7 +755,6 @@ export default function ViteVsWebpackPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Vite vs Webpack</h1>
       {introParagraphs.map((paragraph) => (

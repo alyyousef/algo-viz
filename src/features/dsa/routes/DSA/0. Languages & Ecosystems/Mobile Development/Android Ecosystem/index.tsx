@@ -5,7 +5,7 @@ import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
-// ─── Big Picture ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Big Picture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const bigPicture = [
   {
@@ -27,7 +27,7 @@ const bigPicture = [
     details:
       'Consumer apps, enterprise software, IoT, Android TV, Wear OS, Android Automotive, and ChromeOS. Google Play reaches over 2.5 billion active devices. Skills transfer across form factors with platform-specific adaptations.',
     notes:
-      'Kotlin Multiplatform (KMP) now allows sharing business logic between Android, iOS, desktop, and server — making Android Kotlin expertise increasingly cross-platform.',
+      'Kotlin Multiplatform (KMP) now allows sharing business logic between Android, iOS, desktop, and server â€” making Android Kotlin expertise increasingly cross-platform.',
   },
   {
     title: 'Platform history snapshot',
@@ -38,7 +38,7 @@ const bigPicture = [
   },
 ]
 
-// ─── Mental Model ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Mental Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const mentalModel = [
   {
@@ -54,7 +54,7 @@ const mentalModel = [
   {
     title: 'Single source of truth',
     detail:
-      'Each piece of data has exactly one authoritative owner — typically a Room database or remote API, mediated through a Repository. ViewModel reads from Repository; UI reads from ViewModel. No layer duplicates mutable state.',
+      'Each piece of data has exactly one authoritative owner â€” typically a Room database or remote API, mediated through a Repository. ViewModel reads from Repository; UI reads from ViewModel. No layer duplicates mutable state.',
   },
   {
     title: 'Coroutines as the async backbone',
@@ -73,7 +73,7 @@ const mentalModel = [
   },
 ]
 
-// ─── Android Components ───────────────────────────────────────────────────────
+// â”€â”€â”€ Android Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const androidComponents = [
   {
@@ -94,7 +94,7 @@ const androidComponents = [
   {
     title: 'BroadcastReceiver',
     detail:
-      'Listens for system or app-scoped broadcasts (network changes, boot complete, alarms). Should be lightweight — do not perform long work here. Register dynamically in code for runtime events; statically in Manifest for system events.',
+      'Listens for system or app-scoped broadcasts (network changes, boot complete, alarms). Should be lightweight â€” do not perform long work here. Register dynamically in code for runtime events; statically in Manifest for system events.',
   },
   {
     title: 'ContentProvider',
@@ -108,7 +108,7 @@ const androidComponents = [
   },
 ]
 
-// ─── Lifecycle ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const lifecycleStates = [
   {
@@ -124,12 +124,12 @@ const lifecycleStates = [
   {
     title: 'onResume / onPause',
     detail:
-      'onResume: Activity is interactive and in the foreground. onPause: Another Activity is coming into the foreground. Keep onPause fast — the system does not proceed until it returns.',
+      'onResume: Activity is interactive and in the foreground. onPause: Another Activity is coming into the foreground. Keep onPause fast â€” the system does not proceed until it returns.',
   },
   {
     title: 'onDestroy',
     detail:
-      'Called before the Activity is destroyed — either by the user finishing it or the system reclaiming memory. Do final cleanup. ViewModel survives this; UI state does not unless saved.',
+      'Called before the Activity is destroyed â€” either by the user finishing it or the system reclaiming memory. Do final cleanup. ViewModel survives this; UI state does not unless saved.',
   },
   {
     title: 'Configuration changes',
@@ -143,7 +143,7 @@ const lifecycleStates = [
   },
 ]
 
-// ─── Jetpack Libraries ────────────────────────────────────────────────────────
+// â”€â”€â”€ Jetpack Libraries â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const jetpackLibraries = [
   {
@@ -159,7 +159,7 @@ const jetpackLibraries = [
   {
     title: 'ViewModel',
     detail:
-      "Survives configuration changes. Holds UI state as StateFlow or LiveData. Created and scoped to an Activity or Fragment. Never hold references to Context, View, or Activity inside a ViewModel — they do not survive the owner's destruction.",
+      "Survives configuration changes. Holds UI state as StateFlow or LiveData. Created and scoped to an Activity or Fragment. Never hold references to Context, View, or Activity inside a ViewModel â€” they do not survive the owner's destruction.",
   },
   {
     title: 'Room',
@@ -193,7 +193,7 @@ const jetpackLibraries = [
   },
 ]
 
-// ─── Kotlin Coroutines ────────────────────────────────────────────────────────
+// â”€â”€â”€ Kotlin Coroutines â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const coroutineConcepts = [
   {
@@ -209,7 +209,7 @@ const coroutineConcepts = [
   {
     title: 'Dispatchers',
     detail:
-      'Dispatchers.Main — main thread for UI work. Dispatchers.IO — optimized pool for blocking I/O (network, disk). Dispatchers.Default — CPU-bound computation. Switch with withContext(Dispatchers.IO) { ... }.',
+      'Dispatchers.Main â€” main thread for UI work. Dispatchers.IO â€” optimized pool for blocking I/O (network, disk). Dispatchers.Default â€” CPU-bound computation. Switch with withContext(Dispatchers.IO) { ... }.',
   },
   {
     title: 'Flow',
@@ -228,7 +228,7 @@ const coroutineConcepts = [
   },
 ]
 
-// ─── Networking ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Networking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const networkingLayer = [
   {
@@ -254,11 +254,11 @@ const networkingLayer = [
   {
     title: 'NetworkBoundResource pattern',
     detail:
-      'Emit cached data immediately, trigger a network fetch in background, update Room with the response, which emits a new Flow event. UI always observes Room — the database is the single source of truth, not the network response.',
+      'Emit cached data immediately, trigger a network fetch in background, update Room with the response, which emits a new Flow event. UI always observes Room â€” the database is the single source of truth, not the network response.',
   },
 ]
 
-// ─── Architecture Patterns ────────────────────────────────────────────────────
+// â”€â”€â”€ Architecture Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const architecturePatterns = [
   {
@@ -274,7 +274,7 @@ const architecturePatterns = [
   {
     title: 'Clean Architecture (optional)',
     detail:
-      'Adds a Domain layer between ViewModel and Repository containing use-case classes. Each use case holds one operation (GetUserUseCase, SubmitOrderUseCase). Increases testability and separation but adds significant boilerplate — use only for large teams or complex domains.',
+      'Adds a Domain layer between ViewModel and Repository containing use-case classes. Each use case holds one operation (GetUserUseCase, SubmitOrderUseCase). Increases testability and separation but adds significant boilerplate â€” use only for large teams or complex domains.',
   },
   {
     title: 'UiState sealed class',
@@ -288,16 +288,16 @@ const architecturePatterns = [
   },
 ]
 
-// ─── Persistence ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Persistence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const persistenceLayer = [
   {
-    title: 'Room — when to use',
+    title: 'Room â€” when to use',
     detail:
       'Relational or structured data that benefits from SQL queries, joins, transactions, and reactive observation. Examples: messages, tasks, cached API responses, user records.',
   },
   {
-    title: 'DataStore — when to use',
+    title: 'DataStore â€” when to use',
     detail:
       'Small key-value settings: theme preference, language, last-seen timestamp, feature flags. Not designed for large datasets or relational queries.',
   },
@@ -318,7 +318,7 @@ const persistenceLayer = [
   },
 ]
 
-// ─── Background Processing ────────────────────────────────────────────────────
+// â”€â”€â”€ Background Processing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const backgroundProcessing = [
   {
@@ -343,7 +343,7 @@ const backgroundProcessing = [
   },
 ]
 
-// ─── Testing ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Testing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const testingLayer = [
   {
@@ -354,15 +354,15 @@ const testingLayer = [
   {
     title: 'Integration tests (JVM)',
     detail:
-      'Test Room DAOs with an in-memory database (Room.inMemoryDatabaseBuilder). No mocking needed — validates real SQL queries and migrations.',
+      'Test Room DAOs with an in-memory database (Room.inMemoryDatabaseBuilder). No mocking needed â€” validates real SQL queries and migrations.',
   },
   {
-    title: 'UI tests — Compose (instrumented)',
+    title: 'UI tests â€” Compose (instrumented)',
     detail:
       'Use ComposeTestRule.setContent{} to render a Composable in isolation. Assert with onNode(hasText("...")).assertIsDisplayed(). Run on device or emulator. No Activity required for most Composable tests.',
   },
   {
-    title: 'UI tests — Espresso (instrumented)',
+    title: 'UI tests â€” Espresso (instrumented)',
     detail:
       'For legacy View-based screens. Use ActivityScenario, onView(withId(...)), and perform(click()). Espresso automatically synchronizes with the main thread and AsyncTask.',
   },
@@ -378,7 +378,7 @@ const testingLayer = [
   },
 ]
 
-// ─── Permissions Model ────────────────────────────────────────────────────────
+// â”€â”€â”€ Permissions Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const permissionsModel = [
   {
@@ -403,7 +403,7 @@ const permissionsModel = [
   },
 ]
 
-// ─── Build System ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Build System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const buildSystem = [
   {
@@ -438,7 +438,7 @@ const buildSystem = [
   },
 ]
 
-// ─── App Signing and Release ──────────────────────────────────────────────────
+// â”€â”€â”€ App Signing and Release â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const releaseProcess = [
   {
@@ -468,7 +468,7 @@ const releaseProcess = [
   },
 ]
 
-// ─── Security Best Practices ──────────────────────────────────────────────────
+// â”€â”€â”€ Security Best Practices â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const securityPractices = [
   {
@@ -484,7 +484,7 @@ const securityPractices = [
   {
     title: 'Root and tamper detection',
     detail:
-      'Consider SafetyNet Attestation (deprecated) or Play Integrity API to detect rooted devices or modified APKs. Not a silver bullet — use for risk signals, not hard blocks.',
+      'Consider SafetyNet Attestation (deprecated) or Play Integrity API to detect rooted devices or modified APKs. Not a silver bullet â€” use for risk signals, not hard blocks.',
   },
   {
     title: 'Exported components',
@@ -498,7 +498,7 @@ const securityPractices = [
   },
 ]
 
-// ─── Performance Notes ────────────────────────────────────────────────────────
+// â”€â”€â”€ Performance Notes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const performanceNotes = [
   {
@@ -509,7 +509,7 @@ const performanceNotes = [
   {
     title: 'Compose recomposition scope',
     detail:
-      'Recomposition reruns only the Composables whose read state changed. Decompose large Composables. Use remember and derivedStateOf to memoize expensive calculations. Pass only what a Composable needs — avoid passing the whole UiState object everywhere.',
+      'Recomposition reruns only the Composables whose read state changed. Decompose large Composables. Use remember and derivedStateOf to memoize expensive calculations. Pass only what a Composable needs â€” avoid passing the whole UiState object everywhere.',
   },
   {
     title: 'Lazy lists for unbounded data',
@@ -519,7 +519,7 @@ const performanceNotes = [
   {
     title: 'Image loading',
     detail:
-      'Use Coil (Kotlin-native) or Glide for asynchronous image loading, caching (memory + disk), and format decoding. Never load large bitmaps on the main thread or hold them in a Map — leads to OOM.',
+      'Use Coil (Kotlin-native) or Glide for asynchronous image loading, caching (memory + disk), and format decoding. Never load large bitmaps on the main thread or hold them in a Map â€” leads to OOM.',
   },
   {
     title: 'APK / AAB size',
@@ -533,7 +533,7 @@ const performanceNotes = [
   },
 ]
 
-// ─── Compare and Contrast ─────────────────────────────────────────────────────
+// â”€â”€â”€ Compare and Contrast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const compareContrast = [
   {
@@ -569,11 +569,11 @@ const compareContrast = [
   {
     title: 'MVVM vs. MVI',
     detail:
-      'MVVM (StateFlow + events) is simpler and covers most Android use cases. MVI (model-view-intent) makes state transitions explicit via sealed intent classes — useful for complex state machines but adds overhead for simple screens.',
+      'MVVM (StateFlow + events) is simpler and covers most Android use cases. MVI (model-view-intent) makes state transitions explicit via sealed intent classes â€” useful for complex state machines but adds overhead for simple screens.',
   },
 ]
 
-// ─── Common Pitfalls ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Common Pitfalls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const lifecyclePitfalls = [
   {
@@ -618,7 +618,7 @@ const lifecyclePitfalls = [
   },
 ]
 
-// ─── FAQ ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const faq = [
   {
@@ -629,7 +629,7 @@ const faq = [
   {
     question: 'When should I use LiveData vs StateFlow?',
     answer:
-      'Prefer StateFlow for new code — it is coroutine-native and works in non-Android modules. Use LiveData only if you are extending existing code that already relies on it, or if you need its built-in main-thread observation without additional setup.',
+      'Prefer StateFlow for new code â€” it is coroutine-native and works in non-Android modules. Use LiveData only if you are extending existing code that already relies on it, or if you need its built-in main-thread observation without additional setup.',
   },
   {
     question: 'Is Hilt mandatory?',
@@ -644,7 +644,7 @@ const faq = [
   {
     question: 'How do I share data between two Fragments?',
     answer:
-      'Share a ViewModel scoped to the Activity (or the nav graph with by navGraphViewModels()). Never pass data between Fragments via callbacks or direct method calls — it creates tight coupling and lifecycle issues.',
+      'Share a ViewModel scoped to the Activity (or the nav graph with by navGraphViewModels()). Never pass data between Fragments via callbacks or direct method calls â€” it creates tight coupling and lifecycle issues.',
   },
   {
     question: 'Why is my background coroutine still running after the screen is gone?',
@@ -658,7 +658,7 @@ const faq = [
   },
 ]
 
-// ─── Debugging Checklist ──────────────────────────────────────────────────────
+// â”€â”€â”€ Debugging Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const debuggingChecklist = [
   {
@@ -693,11 +693,11 @@ const debuggingChecklist = [
   },
 ]
 
-// ─── Correctness Checklist ────────────────────────────────────────────────────
+// â”€â”€â”€ Correctness Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const correctnessChecklist = [
-  'Use ViewModel for all UI state — no state in Composables beyond transient input state.',
-  'Collect Flows with collectAsStateWithLifecycle() or repeatOnLifecycle(STARTED) — never raw collect in lifecycleScope without a lifecycle guard.',
+  'Use ViewModel for all UI state â€” no state in Composables beyond transient input state.',
+  'Collect Flows with collectAsStateWithLifecycle() or repeatOnLifecycle(STARTED) â€” never raw collect in lifecycleScope without a lifecycle guard.',
   'Every Room database version bump has a corresponding Migration.',
   'All long-running or blocking work runs on Dispatchers.IO or Dispatchers.Default.',
   'Sensitive data (tokens, keys) lives in EncryptedSharedPreferences or Android Keystore.',
@@ -708,7 +708,7 @@ const correctnessChecklist = [
   'All deep link intent data is validated before use.',
 ]
 
-// ─── Glossary ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Glossary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const quickGlossary = [
   {
@@ -751,12 +751,12 @@ const quickGlossary = [
   {
     term: 'APK',
     definition:
-      'Android Package — the installable app format for sideloading or direct device installation.',
+      'Android Package â€” the installable app format for sideloading or direct device installation.',
   },
   {
     term: 'AAB',
     definition:
-      'Android App Bundle — the upload format for the Play Store. Google generates per-device APKs from it.',
+      'Android App Bundle â€” the upload format for the Play Store. Google generates per-device APKs from it.',
   },
   {
     term: 'Gradle',
@@ -766,12 +766,12 @@ const quickGlossary = [
   {
     term: 'KSP',
     definition:
-      'Kotlin Symbol Processor — compile-time annotation processing. Faster replacement for KAPT.',
+      'Kotlin Symbol Processor â€” compile-time annotation processing. Faster replacement for KAPT.',
   },
   {
     term: 'Manifest',
     definition:
-      'AndroidManifest.xml — declares components, permissions, and metadata the OS needs at install.',
+      'AndroidManifest.xml â€” declares components, permissions, and metadata the OS needs at install.',
   },
   {
     term: 'Jetpack',
@@ -803,7 +803,7 @@ const quickGlossary = [
   {
     term: 'ART',
     definition:
-      'Android Runtime — the managed runtime that compiles and executes Kotlin/Java bytecode on device.',
+      'Android Runtime â€” the managed runtime that compiles and executes Kotlin/Java bytecode on device.',
   },
   {
     term: 'Deep link',
@@ -818,7 +818,7 @@ const quickGlossary = [
   {
     term: 'ANR',
     definition:
-      'Application Not Responding — triggered when the main thread is blocked for more than 5 seconds.',
+      'Application Not Responding â€” triggered when the main thread is blocked for more than 5 seconds.',
   },
   {
     term: 'minSdk',
@@ -832,7 +832,7 @@ const quickGlossary = [
   },
 ]
 
-// ─── Code Examples ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Code Examples â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const codeExamples = [
   {
@@ -847,7 +847,7 @@ const codeExamples = [
 
 data class CounterUiState(val count: Int = 0)`,
     explanation:
-      'MutableStateFlow is exposed as read-only StateFlow. UiState is a data class — copy() produces a new instance on every update, making state changes explicit and traceable.',
+      'MutableStateFlow is exposed as read-only StateFlow. UiState is a data class â€” copy() produces a new instance on every update, making state changes explicit and traceable.',
   },
   {
     title: 'Collect StateFlow in Compose',
@@ -897,7 +897,7 @@ interface NoteDao {
     suspend fun deleteAll()
 }`,
     explanation:
-      'observeAll() emits a new list every time the notes table changes — no manual refresh needed. @Transaction groups multiple operations atomically.',
+      'observeAll() emits a new list every time the notes table changes â€” no manual refresh needed. @Transaction groups multiple operations atomically.',
   },
   {
     title: 'Retrofit + OkHttp setup',
@@ -932,7 +932,7 @@ fun provideRetrofit(okHttp: OkHttpClient): GitHubApi = Retrofit.Builder()
     .build()
     .create(GitHubApi::class.java)`,
     explanation:
-      'The interceptor chain injects auth headers on every request without touching call sites. Never hardcode tokens in source — use BuildConfig fields populated from local.properties or CI secrets.',
+      'The interceptor chain injects auth headers on every request without touching call sites. Never hardcode tokens in source â€” use BuildConfig fields populated from local.properties or CI secrets.',
   },
   {
     title: 'Repository with NetworkBoundResource',
@@ -1023,16 +1023,16 @@ object DatabaseModule {
   },
 ]
 
-// ─── Lifecycle Walkthrough Scenarios ──────────────────────────────────────────
+// â”€â”€â”€ Lifecycle Walkthrough Scenarios â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const lifecycleScenarios = [
   {
     id: 'rotation',
     title: 'Screen rotation',
     steps: [
-      'User rotates device. System calls onPause() → onStop() → onDestroy() on current Activity instance.',
-      'A new Activity instance is created. onCreate() → onStart() → onResume() runs.',
-      "ViewModel is NOT recreated — it survives via ViewModelStore attached to the Activity's non-configuration state.",
+      'User rotates device. System calls onPause() â†’ onStop() â†’ onDestroy() on current Activity instance.',
+      'A new Activity instance is created. onCreate() â†’ onStart() â†’ onResume() runs.',
+      "ViewModel is NOT recreated â€” it survives via ViewModelStore attached to the Activity's non-configuration state.",
       'Compose UI recomposes from ViewModel state. UI is restored without a network call.',
       'Transient UI state (scroll position, text input) must be saved with rememberSaveable or onSaveInstanceState.',
     ],
@@ -1046,7 +1046,7 @@ const lifecycleScenarios = [
       'User navigates away from the app. Activity is stopped (onStop) but process may still be alive.',
       'OS is low on memory. It kills the process without calling onDestroy().',
       'User returns to the app. OS recreates the process and Activity from scratch.',
-      'ViewModel is gone — it did not survive process death. Instance state saved in onSaveInstanceState is available.',
+      'ViewModel is gone â€” it did not survive process death. Instance state saved in onSaveInstanceState is available.',
       'Network or Room data is refetched. ViewModel should reload from Repository on initialization.',
     ],
     summary:
@@ -1067,19 +1067,19 @@ const lifecycleScenarios = [
   },
 ]
 
-// ─── Pseudocode Patterns ──────────────────────────────────────────────────────
+// â”€â”€â”€ Pseudocode Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const pseudocodePatterns = [
   {
     title: 'MVVM data flow',
     code: `User taps button
-  → Composable calls viewModel.doSomething()
-  → ViewModel calls repository.fetch()
-  → Repository calls api.get() or dao.query()
-  → Data returns through suspend chain
-  → ViewModel updates _uiState.update { ... }
-  → StateFlow emits new UiState
-  → Composable recomposes with new state`,
+  â†’ Composable calls viewModel.doSomething()
+  â†’ ViewModel calls repository.fetch()
+  â†’ Repository calls api.get() or dao.query()
+  â†’ Data returns through suspend chain
+  â†’ ViewModel updates _uiState.update { ... }
+  â†’ StateFlow emits new UiState
+  â†’ Composable recomposes with new state`,
     explanation:
       'No state mutation in the UI layer. Every change originates in the data layer and flows up through ViewModel to the UI.',
   },
@@ -1124,7 +1124,7 @@ Button(onClick = {
   },
 ]
 
-// ─── Key Takeaways ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Key Takeaways â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const keyTakeaways = [
   'Android is Kotlin-first. Use coroutines and StateFlow; avoid callbacks, threads, and RxJava for new code.',
@@ -1133,11 +1133,11 @@ const keyTakeaways = [
   'The OS owns component lifetimes. Use ViewModel to survive configuration changes; SavedStateHandle to survive process death.',
   'Room and Retrofit are the standard persistence and networking layers, both natively coroutine-compatible.',
   'WorkManager is the correct API for guaranteed background work. Foreground Service is for ongoing visible operations.',
-  'Gradle and R8 are not optional — configure them correctly from day one to avoid APK size, performance, and signing surprises in production.',
+  'Gradle and R8 are not optional â€” configure them correctly from day one to avoid APK size, performance, and signing surprises in production.',
   'Security, permissions, and accessibility are first-class requirements, not post-launch add-ons.',
 ]
 
-// ─── Types and Constants ──────────────────────────────────────────────────────
+// â”€â”€â”€ Types and Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -1183,12 +1183,12 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Glossary Terms' }],
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function AndroidEcosystemPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Android Ecosystem',
     defaultTab: 'big-picture',
@@ -1219,17 +1219,16 @@ export default function AndroidEcosystemPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Android Ecosystem</h1>
       <p>
         Android is Google's open-source mobile platform. This document covers the full developer
         ecosystem: OS component model, lifecycle management, Jetpack libraries, Kotlin coroutines,
         networking, persistence, background processing, testing, build tooling, and publishing. The
-        goal is practical depth — what to use, why it works, and where it breaks.
+        goal is practical depth â€” what to use, why it works, and where it breaks.
       </p>
 
-      {/* ── Big Picture ── */}
+      {/* â”€â”€ Big Picture â”€â”€ */}
       {activeTab === 'big-picture' && (
         <>
           <section id="bp-overview" className="bin98-section">
@@ -1279,7 +1278,7 @@ export default function AndroidEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Core Concepts ── */}
+      {/* â”€â”€ Core Concepts â”€â”€ */}
       {activeTab === 'core-concepts' && (
         <>
           <section id="core-components" className="bin98-section">
@@ -1458,7 +1457,7 @@ export default function AndroidEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Examples ── */}
+      {/* â”€â”€ Examples â”€â”€ */}
       {activeTab === 'examples' && (
         <>
           <section id="ex-pseudocode" className="bin98-section">
@@ -1549,7 +1548,7 @@ export default function AndroidEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Glossary ── */}
+      {/* â”€â”€ Glossary â”€â”€ */}
       {activeTab === 'glossary' && (
         <section id="glossary-terms" className="bin98-section">
           <h2 className="bin98-heading">Glossary</h2>

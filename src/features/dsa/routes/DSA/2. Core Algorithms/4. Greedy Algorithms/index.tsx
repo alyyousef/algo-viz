@@ -16,7 +16,7 @@ const bigPicture = [
   {
     title: 'Why it matters',
     details:
-      'When applicable, greedy algorithms are fast — typically O(n log n) from a sort plus O(n) for the sweep — and simple to implement and reason about.',
+      'When applicable, greedy algorithms are fast â€” typically O(n log n) from a sort plus O(n) for the sweep â€” and simple to implement and reason about.',
     notes:
       'The challenge is proving correctness. Greedy fails silently when the required structural properties do not hold. Using it without proof is gambling.',
   },
@@ -53,12 +53,12 @@ const mentalModel = [
 ]
 
 const keyTakeaways = [
-  'Greedy is correct only when both the greedy choice property and optimal substructure hold — always prove this before trusting the algorithm.',
+  'Greedy is correct only when both the greedy choice property and optimal substructure hold â€” always prove this before trusting the algorithm.',
   'The most common proof technique is the exchange argument: show swapping any non-greedy choice for the greedy one does not worsen the result.',
   'Greedy fails on 0-1 knapsack (items cannot be fractioned) but works on fractional knapsack (items can be split).',
   'Sorting is the most common preprocessing step: sort by deadline, end time, ratio, or frequency before sweeping.',
   'Dijkstra and Prim are greedy algorithms on graphs; their correctness relies on non-negative weights.',
-  'When greedy gives wrong answers, the problem likely has overlapping subproblems — switch to dynamic programming.',
+  'When greedy gives wrong answers, the problem likely has overlapping subproblems â€” switch to dynamic programming.',
 ]
 
 const classicProblems = [
@@ -120,7 +120,7 @@ const classicProblems = [
     greedy:
       'Sort edges by weight. Add each edge to the MST if it does not form a cycle (using DSU for cycle detection).',
     why: 'The cut property of matroids guarantees that the minimum weight edge crossing any cut belongs to some MST.',
-    complexity: 'O(E log E) to sort edges, O(E α(V)) for DSU operations.',
+    complexity: 'O(E log E) to sort edges, O(E Î±(V)) for DSU operations.',
   },
   {
     title: 'Minimum Spanning Tree (Prim)',
@@ -171,7 +171,7 @@ const proofChecklist = [
 const codeExamples = [
   {
     title: 'Activity selection',
-    code: `// TypeScript — maximum non-overlapping intervals
+    code: `// TypeScript â€” maximum non-overlapping intervals
 function activitySelection(intervals: [number, number][]): [number, number][] {
   intervals.sort((a, b) => a[1] - b[1])  // sort by end time
   const result: [number, number][] = []
@@ -189,7 +189,7 @@ function activitySelection(intervals: [number, number][]): [number, number][] {
   },
   {
     title: 'Fractional knapsack',
-    code: `# Python — maximize value with capacity W
+    code: `# Python â€” maximize value with capacity W
 def fractional_knapsack(items: list[tuple[float, float]], W: float) -> float:
   # items: list of (value, weight)
   items.sort(key=lambda x: x[0] / x[1], reverse=True)
@@ -206,7 +206,7 @@ def fractional_knapsack(items: list[tuple[float, float]], W: float) -> float:
   },
   {
     title: 'Huffman coding',
-    code: `# Python — build Huffman tree and codes
+    code: `# Python â€” build Huffman tree and codes
 import heapq
 
 def huffman_codes(freq: dict[str, int]) -> dict[str, str]:
@@ -224,7 +224,7 @@ def huffman_codes(freq: dict[str, int]) -> dict[str, str]:
   },
   {
     title: 'Kruskal MST',
-    code: `// TypeScript — minimum spanning tree via Kruskal + DSU
+    code: `// TypeScript â€” minimum spanning tree via Kruskal + DSU
 type Edge = [number, number, number]  // [weight, u, v]
 
 class DSU {
@@ -257,7 +257,7 @@ function kruskal(n: number, edges: Edge[]): Edge[] {
   },
   {
     title: 'Job sequencing (minimize lateness)',
-    code: `# Python — earliest deadline first
+    code: `# Python â€” earliest deadline first
 def min_lateness(jobs: list[tuple[int, int]]) -> list[tuple[int, int]]:
   # jobs: list of (processing_time, deadline)
   jobs.sort(key=lambda j: j[1])  # sort by deadline
@@ -271,7 +271,7 @@ def min_lateness(jobs: list[tuple[int, int]]) -> list[tuple[int, int]]:
   },
   {
     title: 'Dijkstra shortest path',
-    code: `// TypeScript — greedy shortest path, non-negative weights
+    code: `// TypeScript â€” greedy shortest path, non-negative weights
 function dijkstra(graph: Map<number, [number, number][]>, src: number): Map<number, number> {
   const dist = new Map<number, number>()
   const heap: [number, number][] = [[0, src]]  // [dist, node]
@@ -299,7 +299,7 @@ const pitfalls = [
   {
     mistake: 'Applying greedy without proving correctness',
     description:
-      'Greedy algorithms are seductive because they are simple and often give right-looking answers. Testing on small inputs is not a proof — edge cases on large inputs will expose failures.',
+      'Greedy algorithms are seductive because they are simple and often give right-looking answers. Testing on small inputs is not a proof â€” edge cases on large inputs will expose failures.',
   },
   {
     mistake: 'Confusing fractional and 0-1 knapsack',
@@ -352,7 +352,7 @@ const languageMapping = [
   {
     title: 'JavaScript / TypeScript',
     detail:
-      'Array.prototype.sort() with comparator; no built-in priority queue — use a library or a simple sorted insertion for small inputs.',
+      'Array.prototype.sort() with comparator; no built-in priority queue â€” use a library or a simple sorted insertion for small inputs.',
   },
   {
     title: 'Go',
@@ -432,7 +432,7 @@ const compareContrast = [
   {
     title: 'Kruskal vs Prim',
     detail:
-      'Kruskal sorts all edges and uses DSU to avoid cycles — better for sparse graphs. Prim grows the MST from a source vertex using a priority queue — better for dense graphs or when an adjacency matrix is given.',
+      'Kruskal sorts all edges and uses DSU to avoid cycles â€” better for sparse graphs. Prim grows the MST from a source vertex using a priority queue â€” better for dense graphs or when an adjacency matrix is given.',
   },
   {
     title: 'Dijkstra vs Bellman-Ford',
@@ -476,7 +476,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function GreedyAlgorithmsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Greedy Algorithms',
     defaultTab: 'big-picture',
@@ -499,13 +499,12 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Greedy Algorithms</h1>
       <p>
         A greedy algorithm makes the locally optimal choice at each step. When the greedy choice
         property and optimal substructure both hold, this strategy produces a globally optimal
-        solution — and does so faster and more simply than dynamic programming. When those
+        solution â€” and does so faster and more simply than dynamic programming. When those
         properties do not hold, greedy gives wrong answers. The critical skill is knowing when to
         trust it.
       </p>
@@ -528,13 +527,13 @@ export default function GreedyAlgorithmsPage(): JSX.Element {
             <p>
               Greedy algorithms are among the most useful tools in algorithm design because they are
               fast and simple when correct. Activity scheduling, Huffman compression, and minimum
-              spanning trees are all solved optimally with greedy methods — O(n log n) against what
-              might naively seem like exponential search spaces.
+              spanning trees are all solved optimally with greedy methods â€” O(n log n) against
+              what might naively seem like exponential search spaces.
             </p>
             <p>
-              The danger is overconfidence. Greedy is not a general strategy — it is a special case
-              that requires proof. A common error in technical interviews and production code alike
-              is applying greedy to a problem that requires dynamic programming.
+              The danger is overconfidence. Greedy is not a general strategy â€” it is a special
+              case that requires proof. A common error in technical interviews and production code
+              alike is applying greedy to a problem that requires dynamic programming.
             </p>
           </section>
           <hr className="bin98-divider" />

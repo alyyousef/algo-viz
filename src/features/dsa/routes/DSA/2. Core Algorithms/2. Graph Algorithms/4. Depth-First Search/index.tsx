@@ -5,7 +5,7 @@ import type { JSX } from 'react'
 
 const historicalMilestones = [
   {
-    title: 'Trémaux tree origins (19th century)',
+    title: 'TrÃ©maux tree origins (19th century)',
     detail:
       'Early maze-solving strategies used depth-first exploration, later formalized as traversal trees for graphs.',
   },
@@ -488,7 +488,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function DepthFirstSearchPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Depth-First Search',
     defaultTab: 'big-picture',
@@ -501,7 +501,6 @@ export default function DepthFirstSearchPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Depth-First Search</h1>
       <p>

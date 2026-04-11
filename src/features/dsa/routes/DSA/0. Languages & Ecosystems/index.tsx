@@ -503,7 +503,7 @@ function toSectionRoute(name: string): string {
 }
 
 export default function LanguagesAndEcosystemsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Languages &amp; Ecosystems',
     defaultTab: 'big-picture',
@@ -516,7 +516,6 @@ export default function LanguagesAndEcosystemsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Languages &amp; Ecosystems</h1>
       <p className="lang98-intro">

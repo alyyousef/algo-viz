@@ -85,7 +85,7 @@ const bigPictureSections: readonly DocSection[] = [
     id: 'bp-decision-prompt',
     title: 'Decision Prompt',
     paragraphs: [
-      'The useful decision question is not merely “Do we like React?” The better question is whether the team wants a highly flexible UI library with a huge ecosystem and is prepared to define architecture around it.',
+      'The useful decision question is not merely â€œDo we like React?â€ The better question is whether the team wants a highly flexible UI library with a huge ecosystem and is prepared to define architecture around it.',
       'If the project needs stronger framework answers up front, the decision may actually be between different React-based frameworks or between React and a more integrated non-React framework.',
     ],
   },
@@ -482,7 +482,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function Counter(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'React',
     defaultTab: 'big-picture',
@@ -495,7 +495,6 @@ export default function Counter(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">React</h1>
       <p className="react-help-doc-subtitle">

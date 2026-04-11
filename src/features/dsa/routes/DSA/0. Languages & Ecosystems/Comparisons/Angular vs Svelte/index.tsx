@@ -409,7 +409,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AngularVsSveltePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Angular Vs Svelte Page',
     defaultTab: 'big-picture',
@@ -422,7 +422,6 @@ export default function AngularVsSveltePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="angular-svelte-help-doc-subtitle">{pageSubtitle}</p>

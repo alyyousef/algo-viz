@@ -406,7 +406,7 @@ const glossary = [
 ]
 
 export default function AzureStackPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Azure Stack',
     defaultTab: 'big-picture',
@@ -418,7 +418,6 @@ export default function AzureStackPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Azure Stack</h1>
       <p className="azure-stack-help-intro">

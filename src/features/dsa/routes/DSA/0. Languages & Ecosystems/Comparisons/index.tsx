@@ -475,7 +475,7 @@ function toComparisonRoute(name: string): string {
 }
 
 export default function ComparisonsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Comparisons',
     defaultTab: 'big-picture',
@@ -488,7 +488,6 @@ export default function ComparisonsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Comparisons</h1>
       <p className="cmp98-intro">

@@ -5,7 +5,7 @@ import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
-// ─── Big Picture ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Big Picture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const bigPicture = [
   {
@@ -20,7 +20,7 @@ const bigPicture = [
     details:
       "iOS development requires understanding Apple's tightly integrated stack: Swift language, UIKit or SwiftUI for UI, Foundation for data and networking, Combine or async/await for concurrency, Core Data or SwiftData for persistence, and the App Store review pipeline.",
     notes:
-      'Apple controls the entire platform — hardware, OS, SDK, and distribution. This integration enables performance and security guarantees unavailable on more open platforms, but it also means App Store policies govern what you can ship.',
+      'Apple controls the entire platform â€” hardware, OS, SDK, and distribution. This integration enables performance and security guarantees unavailable on more open platforms, but it also means App Store policies govern what you can ship.',
   },
   {
     title: 'Where it shows up',
@@ -38,7 +38,7 @@ const bigPicture = [
   },
 ]
 
-// ─── Mental Model ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Mental Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const mentalModel = [
   {
@@ -69,17 +69,17 @@ const mentalModel = [
   {
     title: 'The App Store review is part of the release process',
     detail:
-      'Every binary update goes through App Store review (typically 24–48 hours). App Store Connect manages builds, TestFlight beta distribution, metadata, pricing, and release scheduling. App Store guidelines govern what APIs you can use, what content is allowed, and what business models are permitted.',
+      'Every binary update goes through App Store review (typically 24â€“48 hours). App Store Connect manages builds, TestFlight beta distribution, metadata, pricing, and release scheduling. App Store guidelines govern what APIs you can use, what content is allowed, and what business models are permitted.',
   },
 ]
 
-// ─── Swift Language ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Swift Language â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const swiftConcepts = [
   {
     title: 'Type safety and inference',
     detail:
-      'Swift is strongly typed with full type inference. The compiler catches type mismatches at compile time. let declares immutable values; var declares mutable ones. Prefer let by default — mutability should be intentional.',
+      'Swift is strongly typed with full type inference. The compiler catches type mismatches at compile time. let declares immutable values; var declares mutable ones. Prefer let by default â€” mutability should be intentional.',
   },
   {
     title: 'Optionals',
@@ -89,7 +89,7 @@ const swiftConcepts = [
   {
     title: 'Value types vs reference types',
     detail:
-      'struct, enum, and tuples are value types — copies on assignment. class is a reference type — shared identity. Prefer struct for data models (immutable, thread-safe by nature). Use class when identity or inheritance is required.',
+      'struct, enum, and tuples are value types â€” copies on assignment. class is a reference type â€” shared identity. Prefer struct for data models (immutable, thread-safe by nature). Use class when identity or inheritance is required.',
   },
   {
     title: 'Protocols and generics',
@@ -113,7 +113,7 @@ const swiftConcepts = [
   },
 ]
 
-// ─── SwiftUI ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ SwiftUI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const swiftUIConcepts = [
   {
@@ -132,7 +132,7 @@ const swiftUIConcepts = [
       "The new Observation framework (Swift 5.9) replaces ObservableObject. Mark a class @Observable; SwiftUI automatically tracks which properties each view reads and rerenders only when those specific properties change. Granular rerendering reduces unnecessary work compared to ObservableObject's whole-object change notification.",
   },
   {
-    title: 'Navigation — NavigationStack',
+    title: 'Navigation â€” NavigationStack',
     detail:
       'NavigationStack (iOS 16+) replaces NavigationView. Push destinations using navigationDestination(for:) with typed path values. Store the navigation path as @State to enable programmatic navigation, deep links, and state restoration.',
   },
@@ -153,7 +153,7 @@ const swiftUIConcepts = [
   },
 ]
 
-// ─── UIKit (Legacy and Interop) ───────────────────────────────────────────────
+// â”€â”€â”€ UIKit (Legacy and Interop) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const uiKitConcepts = [
   {
@@ -179,11 +179,11 @@ const uiKitConcepts = [
   {
     title: 'Storyboards vs programmatic UI',
     detail:
-      'Storyboards define view hierarchies visually in Interface Builder. Programmatic UI defines views in code — more merge-friendly and easier to review. Both are valid UIKit approaches; modern teams often prefer programmatic. SwiftUI makes the question moot for new screens.',
+      'Storyboards define view hierarchies visually in Interface Builder. Programmatic UI defines views in code â€” more merge-friendly and easier to review. Both are valid UIKit approaches; modern teams often prefer programmatic. SwiftUI makes the question moot for new screens.',
   },
 ]
 
-// ─── Concurrency ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Concurrency â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const concurrencyConcepts = [
   {
@@ -199,7 +199,7 @@ const concurrencyConcepts = [
   {
     title: 'Actors',
     detail:
-      'Actors serialize access to their mutable state — only one caller can access actor state at a time. Calling actor methods from outside requires await. Use actors for shared mutable state instead of locks or serial DispatchQueues.',
+      'Actors serialize access to their mutable state â€” only one caller can access actor state at a time. Calling actor methods from outside requires await. Use actors for shared mutable state instead of locks or serial DispatchQueues.',
   },
   {
     title: 'MainActor',
@@ -209,7 +209,7 @@ const concurrencyConcepts = [
   {
     title: 'AsyncSequence and AsyncStream',
     detail:
-      'AsyncSequence is the async equivalent of Sequence — iterate with for await in. AsyncStream bridges callback-based APIs into an async sequence. Use for events, delegates, and notification center observations in Swift Concurrency code.',
+      'AsyncSequence is the async equivalent of Sequence â€” iterate with for await in. AsyncStream bridges callback-based APIs into an async sequence. Use for events, delegates, and notification center observations in Swift Concurrency code.',
   },
   {
     title: 'Combine (older pattern)',
@@ -223,7 +223,7 @@ const concurrencyConcepts = [
   },
 ]
 
-// ─── Networking ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Networking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const networkingLayer = [
   {
@@ -253,7 +253,7 @@ const networkingLayer = [
   },
 ]
 
-// ─── Architecture Patterns ────────────────────────────────────────────────────
+// â”€â”€â”€ Architecture Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const architecturePatterns = [
   {
@@ -288,7 +288,7 @@ const architecturePatterns = [
   },
 ]
 
-// ─── Persistence ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Persistence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const persistenceLayer = [
   {
@@ -323,7 +323,7 @@ const persistenceLayer = [
   },
 ]
 
-// ─── Background Processing ────────────────────────────────────────────────────
+// â”€â”€â”€ Background Processing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const backgroundProcessing = [
   {
@@ -339,7 +339,7 @@ const backgroundProcessing = [
   {
     title: 'Silent push notifications',
     detail:
-      'Push notifications with content-available: 1 wake the app briefly in background to fetch new data. The OS limits this to prevent battery drain. Use judiciously — the system may defer or suppress silent pushes under Low Power Mode or heavy usage.',
+      'Push notifications with content-available: 1 wake the app briefly in background to fetch new data. The OS limits this to prevent battery drain. Use judiciously â€” the system may defer or suppress silent pushes under Low Power Mode or heavy usage.',
   },
   {
     title: 'Local notifications',
@@ -348,7 +348,7 @@ const backgroundProcessing = [
   },
 ]
 
-// ─── Testing ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Testing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const testingLayer = [
   {
@@ -374,7 +374,7 @@ const testingLayer = [
   {
     title: 'Protocol-based mocking',
     detail:
-      'Define repository and service protocols. Inject concrete implementations in production; inject mock implementations in tests. Swift does not have a runtime mock framework like Mockito — mocks are written by hand or generated with Sourcery.',
+      'Define repository and service protocols. Inject concrete implementations in production; inject mock implementations in tests. Swift does not have a runtime mock framework like Mockito â€” mocks are written by hand or generated with Sourcery.',
   },
   {
     title: 'Snapshot testing',
@@ -383,7 +383,7 @@ const testingLayer = [
   },
 ]
 
-// ─── App Lifecycle ────────────────────────────────────────────────────────────
+// â”€â”€â”€ App Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const appLifecycle = [
   {
@@ -408,7 +408,7 @@ const appLifecycle = [
   {
     title: 'Suspended',
     detail:
-      'App is in memory but not executing code. The system can terminate it to reclaim memory without notice. Save state before entering background — do not rely on suspended state persisting.',
+      'App is in memory but not executing code. The system can terminate it to reclaim memory without notice. Save state before entering background â€” do not rely on suspended state persisting.',
   },
   {
     title: 'ScenePhase in SwiftUI',
@@ -417,7 +417,7 @@ const appLifecycle = [
   },
 ]
 
-// ─── Build System and Xcode ───────────────────────────────────────────────────
+// â”€â”€â”€ Build System and Xcode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const buildSystem = [
   {
@@ -448,11 +448,11 @@ const buildSystem = [
   {
     title: 'Bitcode (deprecated) and Privacy Manifests',
     detail:
-      'Bitcode was removed in Xcode 14. Privacy Manifests (PrivacyInfo.xcprivacy) are now required for apps using certain APIs. Declare which data types are collected and for what purpose — App Store review validates this from iOS 17 onwards.',
+      'Bitcode was removed in Xcode 14. Privacy Manifests (PrivacyInfo.xcprivacy) are now required for apps using certain APIs. Declare which data types are collected and for what purpose â€” App Store review validates this from iOS 17 onwards.',
   },
 ]
 
-// ─── App Store and Release ────────────────────────────────────────────────────
+// â”€â”€â”€ App Store and Release â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const releaseProcess = [
   {
@@ -473,32 +473,32 @@ const releaseProcess = [
   {
     title: 'App Store Connect',
     detail:
-      'Manages app metadata (screenshots, description, keywords), pricing, availability, in-app purchases, subscriptions, and release scheduling. Upload builds with Xcode Organizer or xcodebuild archive → xcodebuild -exportArchive. Validate and submit for review here.',
+      'Manages app metadata (screenshots, description, keywords), pricing, availability, in-app purchases, subscriptions, and release scheduling. Upload builds with Xcode Organizer or xcodebuild archive â†’ xcodebuild -exportArchive. Validate and submit for review here.',
   },
   {
     title: 'App Store review',
     detail:
-      'Average review time is 24–48 hours. Common rejection reasons: crashes, broken functionality, guideline violations (privacy, business model, UI quality). Submit with full functionality — demo modes and placeholder content lead to rejection.',
+      'Average review time is 24â€“48 hours. Common rejection reasons: crashes, broken functionality, guideline violations (privacy, business model, UI quality). Submit with full functionality â€” demo modes and placeholder content lead to rejection.',
   },
   {
     title: 'Version and build numbers',
     detail:
-      'CFBundleShortVersionString (e.g. "2.4.1") is the user-visible version. CFBundleVersion is the build number — must increment with every App Store Connect upload. Automate with agvtool or fastlane increment_build_number.',
+      'CFBundleShortVersionString (e.g. "2.4.1") is the user-visible version. CFBundleVersion is the build number â€” must increment with every App Store Connect upload. Automate with agvtool or fastlane increment_build_number.',
   },
 ]
 
-// ─── Security ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Security â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const securityPractices = [
   {
     title: 'App Transport Security (ATS)',
     detail:
-      'iOS enforces HTTPS for all network connections by default. HTTP connections require ATS exception keys in Info.plist. Never disable ATS globally — add exceptions only for specific domains that cannot serve HTTPS, and document the reason.',
+      'iOS enforces HTTPS for all network connections by default. HTTP connections require ATS exception keys in Info.plist. Never disable ATS globally â€” add exceptions only for specific domains that cannot serve HTTPS, and document the reason.',
   },
   {
     title: 'Keychain for credentials',
     detail:
-      'Store tokens, passwords, and cryptographic keys in the Keychain — never in UserDefaults, plist files, or NSLog output. Keychain items survive app reinstall (device-bound) and can be shared across an app group.',
+      'Store tokens, passwords, and cryptographic keys in the Keychain â€” never in UserDefaults, plist files, or NSLog output. Keychain items survive app reinstall (device-bound) and can be shared across an app group.',
   },
   {
     title: 'Certificate pinning',
@@ -518,11 +518,11 @@ const securityPractices = [
   {
     title: 'Jailbreak and integrity detection',
     detail:
-      'Jailbroken devices can bypass sandboxing and code signing. Detect common jailbreak artifacts (Cydia, unusual file paths) as a risk signal. Not a hard security control — treat it as a probabilistic indicator for fraud or abuse detection.',
+      'Jailbroken devices can bypass sandboxing and code signing. Detect common jailbreak artifacts (Cydia, unusual file paths) as a risk signal. Not a hard security control â€” treat it as a probabilistic indicator for fraud or abuse detection.',
   },
 ]
 
-// ─── Performance ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Performance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const performanceNotes = [
   {
@@ -533,10 +533,10 @@ const performanceNotes = [
   {
     title: 'SwiftUI rerendering',
     detail:
-      'SwiftUI rerenders only the Views that depend on changed state. Decompose large views to limit rerender scope. Avoid computing expensive values in body — use computed properties that depend on as little state as possible. @Observable provides more granular tracking than ObservableObject.',
+      'SwiftUI rerenders only the Views that depend on changed state. Decompose large views to limit rerender scope. Avoid computing expensive values in body â€” use computed properties that depend on as little state as possible. @Observable provides more granular tracking than ObservableObject.',
   },
   {
-    title: 'Memory management — retain cycles',
+    title: 'Memory management â€” retain cycles',
     detail:
       "Retain cycles prevent ARC from deallocating objects. Common sources: closures capturing self strongly, delegate properties that are strong instead of weak, and timer targets. Profile with Xcode's Memory Graph Debugger to find leaked allocations.",
   },
@@ -548,7 +548,7 @@ const performanceNotes = [
   {
     title: 'Instruments',
     detail:
-      'Xcode Instruments provides Time Profiler (CPU), Allocations (memory), Leaks, Core Animation (frame rendering), Network, and Energy Log tools. Profile on real hardware — simulator performance is not representative. Use XCTest performance tests for regression tracking in CI.',
+      'Xcode Instruments provides Time Profiler (CPU), Allocations (memory), Leaks, Core Animation (frame rendering), Network, and Energy Log tools. Profile on real hardware â€” simulator performance is not representative. Use XCTest performance tests for regression tracking in CI.',
   },
   {
     title: 'Launch time',
@@ -557,7 +557,7 @@ const performanceNotes = [
   },
 ]
 
-// ─── Compare and Contrast ─────────────────────────────────────────────────────
+// â”€â”€â”€ Compare and Contrast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const compareContrast = [
   {
@@ -568,7 +568,7 @@ const compareContrast = [
   {
     title: '@Observable vs ObservableObject',
     detail:
-      '@Observable (iOS 17+) provides granular per-property change tracking and simpler syntax. ObservableObject notifies on any @Published change. @Observable is preferred for new code; ObservableObject remains for iOS 13–16 support.',
+      '@Observable (iOS 17+) provides granular per-property change tracking and simpler syntax. ObservableObject notifies on any @Published change. @Observable is preferred for new code; ObservableObject remains for iOS 13â€“16 support.',
   },
   {
     title: 'async/await vs Combine',
@@ -592,7 +592,7 @@ const compareContrast = [
   },
 ]
 
-// ─── Common Pitfalls ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Common Pitfalls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const commonPitfalls = [
   {
@@ -637,7 +637,7 @@ const commonPitfalls = [
   },
 ]
 
-// ─── Debugging Checklist ──────────────────────────────────────────────────────
+// â”€â”€â”€ Debugging Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const debuggingChecklist = [
   {
@@ -663,7 +663,7 @@ const debuggingChecklist = [
   {
     title: 'Is a network request failing silently?',
     detail:
-      'Check for ATS violations (HTTP blocked by default). Inspect the URLError code — .notConnectedToInternet, .timedOut, .cannotFindHost each point to different root causes. Enable NSURLSession logging with CFNETWORK_DIAGNOSTICS=3 environment variable.',
+      'Check for ATS violations (HTTP blocked by default). Inspect the URLError code â€” .notConnectedToInternet, .timedOut, .cannotFindHost each point to different root causes. Enable NSURLSession logging with CFNETWORK_DIAGNOSTICS=3 environment variable.',
   },
   {
     title: 'Is a TestFlight build rejected or crashing?',
@@ -672,22 +672,22 @@ const debuggingChecklist = [
   },
 ]
 
-// ─── Correctness Checklist ────────────────────────────────────────────────────
+// â”€â”€â”€ Correctness Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const correctnessChecklist = [
-  'Use [weak self] in all escaping closures that reference self — especially in network callbacks and timer targets.',
+  'Use [weak self] in all escaping closures that reference self â€” especially in network callbacks and timer targets.',
   'Store tokens and credentials in the Keychain, never in UserDefaults or plist files.',
   'Mark ViewModels and UI-updating code @MainActor to enforce main-thread execution at compile time.',
   'Add NSUsageDescription keys to Info.plist for every protected API you access (camera, location, contacts, etc.).',
-  'Test on real devices running the minimum deployment target — not just the latest simulator.',
+  'Test on real devices running the minimum deployment target â€” not just the latest simulator.',
   'Use guard let or if let instead of force-unwrapping (!) for all optionals except those guaranteed by program logic.',
   'Run Instruments Leaks and Memory Graph Debugger before every major release to find retain cycles.',
-  'Enable App Transport Security — never disable ATS globally.',
+  'Enable App Transport Security â€” never disable ATS globally.',
   'Increment CFBundleVersion before every App Store Connect upload.',
-  'Declare data usage in PrivacyInfo.xcprivacy for iOS 17+ — App Store review validates this.',
+  'Declare data usage in PrivacyInfo.xcprivacy for iOS 17+ â€” App Store review validates this.',
 ]
 
-// ─── FAQ ──────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const faq = [
   {
@@ -703,7 +703,7 @@ const faq = [
   {
     question: 'When should I use @StateObject vs @ObservedObject?',
     answer:
-      '@StateObject creates and owns the ViewModel — use it in the view that instantiates the ViewModel. @ObservedObject receives a ViewModel from outside — use it in child views. Getting this wrong causes the ViewModel to be recreated on every parent rerender. In iOS 17+, @State and @Observable handle both cases.',
+      '@StateObject creates and owns the ViewModel â€” use it in the view that instantiates the ViewModel. @ObservedObject receives a ViewModel from outside â€” use it in child views. Getting this wrong causes the ViewModel to be recreated on every parent rerender. In iOS 17+, @State and @Observable handle both cases.',
   },
   {
     question: 'How do I share data between two SwiftUI views?',
@@ -723,24 +723,24 @@ const faq = [
   {
     question: 'How long does App Store review take?',
     answer:
-      'Average is 24–48 hours. First submissions and updates that add new features or request new permissions take longer. Expedited reviews can be requested for critical bug fixes. Plan release schedules with a buffer — never assume same-day approval.',
+      'Average is 24â€“48 hours. First submissions and updates that add new features or request new permissions take longer. Expedited reviews can be requested for critical bug fixes. Plan release schedules with a buffer â€” never assume same-day approval.',
   },
 ]
 
-// ─── Key Takeaways ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Key Takeaways â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const keyTakeaways = [
   'iOS development is Swift-first. Prefer async/await for concurrency, @Observable for state, and SwiftUI for new UI.',
-  'ARC manages memory, but you must prevent retain cycles — use [weak self] in escaping closures and weak for delegate references.',
+  'ARC manages memory, but you must prevent retain cycles â€” use [weak self] in escaping closures and weak for delegate references.',
   'MVVM + Repository is the standard architecture. Keep ViewModels @MainActor; keep data-layer details behind protocols.',
   'SwiftUI and UIKit are interoperable. Migrate incrementally via UIHostingController; do not rewrite everything at once.',
   'The Keychain is the only safe place for credentials and tokens. Never use UserDefaults for sensitive data.',
   'App Store review is mandatory for every binary release. Automate signing with Fastlane Match; automate uploads with Fastlane deliver or EAS Submit.',
   'Test on real hardware at the minimum deployment target. Instruments profiling should happen before every major release.',
-  'Privacy is enforced at the OS level — usage descriptions, PrivacyInfo.xcprivacy, and ATS are not optional.',
+  'Privacy is enforced at the OS level â€” usage descriptions, PrivacyInfo.xcprivacy, and ATS are not optional.',
 ]
 
-// ─── Pseudocode Patterns ──────────────────────────────────────────────────────
+// â”€â”€â”€ Pseudocode Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const pseudocodePatterns = [
   {
@@ -847,7 +847,7 @@ struct RootView: View {
   },
 ]
 
-// ─── Code Examples ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Code Examples â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const codeExamples = [
   {
@@ -967,7 +967,7 @@ enum KeychainError: Error {
     case loadFailed(OSStatus)
 }`,
     explanation:
-      'SecItemDelete before SecItemAdd handles the "already exists" case without separate check-then-add logic. The result pointer pattern is the raw Keychain API — wrap it for your app rather than calling it directly from business logic.',
+      'SecItemDelete before SecItemAdd handles the "already exists" case without separate check-then-add logic. The result pointer pattern is the raw Keychain API â€” wrap it for your app rather than calling it directly from business logic.',
   },
   {
     title: 'URLSession async networking',
@@ -1074,11 +1074,11 @@ struct MockUserRepository: UserRepository {
     }
 }`,
     explanation:
-      'async test functions need no XCTestExpectation — XCTest awaits them automatically. MockUserRepository is a hand-written fake, not a mock framework. Protocol injection enables fast, deterministic tests without network or disk I/O.',
+      'async test functions need no XCTestExpectation â€” XCTest awaits them automatically. MockUserRepository is a hand-written fake, not a mock framework. Protocol injection enables fast, deterministic tests without network or disk I/O.',
   },
 ]
 
-// ─── Lifecycle Scenarios ──────────────────────────────────────────────────────
+// â”€â”€â”€ Lifecycle Scenarios â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const lifecycleScenarios = [
   {
@@ -1099,14 +1099,14 @@ const lifecycleScenarios = [
     id: 'background',
     title: 'Moving to background and back',
     steps: [
-      'User presses Home or switches apps. applicationWillResignActive fires — pause timers, reduce frame rates.',
+      'User presses Home or switches apps. applicationWillResignActive fires â€” pause timers, reduce frame rates.',
       'applicationDidEnterBackground fires. Save state, finish critical uploads, cancel non-essential work. You have ~5 seconds before suspension.',
-      'App is suspended — process exists in memory but no code runs. System may terminate at any time.',
+      'App is suspended â€” process exists in memory but no code runs. System may terminate at any time.',
       'User returns to app. applicationWillEnterForeground fires. Reacquire resources, restart timers.',
       'applicationDidBecomeActive fires. Resume full operation. Refresh stale data.',
     ],
     summary:
-      'Apps can be terminated while suspended without notification. Save all state in applicationDidEnterBackground — do not rely on surviving suspension.',
+      'Apps can be terminated while suspended without notification. Save all state in applicationDidEnterBackground â€” do not rely on surviving suspension.',
   },
   {
     id: 'deep-link',
@@ -1119,11 +1119,11 @@ const lifecycleScenarios = [
       'The app parses the URL path and pushes the appropriate view onto the NavigationStack.',
     ],
     summary:
-      'Universal Links (HTTPS + AASA) are preferred over custom URL schemes — they cannot be hijacked by other apps and fall back to the website gracefully.',
+      'Universal Links (HTTPS + AASA) are preferred over custom URL schemes â€” they cannot be hijacked by other apps and fall back to the website gracefully.',
   },
 ]
 
-// ─── Types and constants ──────────────────────────────────────────────────────
+// â”€â”€â”€ Types and constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -1169,7 +1169,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Glossary Terms' }],
 }
 
-// ─── Glossary ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Glossary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const glossary = [
   {
@@ -1200,7 +1200,7 @@ const glossary = [
   {
     term: 'ARC',
     definition:
-      "Automatic Reference Counting — Swift's memory management model. The compiler inserts retain/release at compile time.",
+      "Automatic Reference Counting â€” Swift's memory management model. The compiler inserts retain/release at compile time.",
   },
   {
     term: 'Optional',
@@ -1210,7 +1210,7 @@ const glossary = [
   {
     term: 'Struct',
     definition:
-      'Swift value type. Copied on assignment. Preferred for data models — immutable and thread-safe by default.',
+      'Swift value type. Copied on assignment. Preferred for data models â€” immutable and thread-safe by default.',
   },
   {
     term: 'Protocol',
@@ -1294,7 +1294,8 @@ const glossary = [
   },
   {
     term: 'SPM',
-    definition: "Swift Package Manager — Apple's native dependency manager integrated into Xcode.",
+    definition:
+      "Swift Package Manager â€” Apple's native dependency manager integrated into Xcode.",
   },
   {
     term: 'CocoaPods',
@@ -1337,12 +1338,12 @@ const glossary = [
   },
 ]
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function IOSEcosystemPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'iOS Ecosystem',
     defaultTab: 'big-picture',
@@ -1373,17 +1374,16 @@ export default function IOSEcosystemPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">iOS Ecosystem</h1>
       <p>
         iOS is Apple's mobile platform for iPhone and iPad. This document covers the full developer
         ecosystem: Swift language, SwiftUI and UIKit, Swift Concurrency, networking, persistence,
         background processing, app lifecycle, testing, build tooling, App Store, and security. The
-        goal is practical depth — what to use, why it works, and where it breaks.
+        goal is practical depth â€” what to use, why it works, and where it breaks.
       </p>
 
-      {/* ── Big Picture ── */}
+      {/* â”€â”€ Big Picture â”€â”€ */}
       {activeTab === 'big-picture' && (
         <>
           <section id="bp-overview" className="bin98-section">
@@ -1412,8 +1412,8 @@ export default function IOSEcosystemPage(): JSX.Element {
             <p>
               iOS development rewards deep understanding of Apple's stack. Surface-level knowledge
               gets you to a working prototype; platform mastery determines app quality, stability,
-              and App Store success. The most common failure modes — retain cycles, threading
-              violations, signing issues, rejection — each require understanding a different layer
+              and App Store success. The most common failure modes â€” retain cycles, threading
+              violations, signing issues, rejection â€” each require understanding a different layer
               of the system.
             </p>
             <p>
@@ -1435,7 +1435,7 @@ export default function IOSEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Core Concepts ── */}
+      {/* â”€â”€ Core Concepts â”€â”€ */}
       {activeTab === 'core-concepts' && (
         <>
           <section id="core-swift" className="bin98-section">
@@ -1614,7 +1614,7 @@ export default function IOSEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Examples ── */}
+      {/* â”€â”€ Examples â”€â”€ */}
       {activeTab === 'examples' && (
         <>
           <section id="ex-pseudocode" className="bin98-section">
@@ -1702,7 +1702,7 @@ export default function IOSEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* ── Glossary ── */}
+      {/* â”€â”€ Glossary â”€â”€ */}
       {activeTab === 'glossary' && (
         <section id="glossary-terms" className="bin98-section">
           <h2 className="bin98-heading">Glossary</h2>

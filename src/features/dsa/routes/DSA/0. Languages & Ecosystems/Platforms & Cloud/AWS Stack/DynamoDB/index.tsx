@@ -456,7 +456,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AwsDynamoDbPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Aws Dynamo Db Page',
     defaultTab: 'big-picture',
@@ -469,7 +469,6 @@ export default function AwsDynamoDbPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="dynamo-help98-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>

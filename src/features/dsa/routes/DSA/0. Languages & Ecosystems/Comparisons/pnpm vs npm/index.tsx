@@ -133,7 +133,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-strictness',
     title: 'Dependency Strictness',
     paragraphs: [
-      'One of pnpm’s most important characteristics is that it tends to prevent packages from casually reaching undeclared dependencies. That is useful because it aligns runtime access more closely with what the manifest actually says.',
+      'One of pnpmâ€™s most important characteristics is that it tends to prevent packages from casually reaching undeclared dependencies. That is useful because it aligns runtime access more closely with what the manifest actually says.',
       'npm has historically been more permissive because of hoisting and flatter install structures. That permissiveness can reduce friction in the short term, but it can also hide weak dependency hygiene. The team may not notice a problem until the layout changes, a tool upgrades, or a different environment resolves dependencies slightly differently.',
     ],
   },
@@ -292,7 +292,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'package-lock.json',
         definition:
-          'npm’s lockfile that records the exact dependency tree used for reproducible installs.',
+          'npmâ€™s lockfile that records the exact dependency tree used for reproducible installs.',
       },
       {
         term: 'Hoisting',
@@ -318,7 +318,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'pnpm-lock.yaml',
         definition:
-          'pnpm’s lockfile that records exact dependency resolution for reproducible installations.',
+          'pnpmâ€™s lockfile that records exact dependency resolution for reproducible installations.',
       },
       {
         term: 'Content-Addressable Store',
@@ -447,7 +447,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function PnpmVsNpmPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'pnpm vs npm',
     defaultTab: 'big-picture',
@@ -460,7 +460,6 @@ export default function PnpmVsNpmPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">pnpm vs npm</h1>
       {introParagraphs.map((paragraph) => (

@@ -394,7 +394,7 @@ function toExecutionModelRoute(name: string): string {
 }
 
 export default function ExecutionModelsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Execution Models',
     defaultTab: 'big-picture',
@@ -407,7 +407,6 @@ export default function ExecutionModelsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Execution Models</h1>
       <p className="exec98-intro">

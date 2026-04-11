@@ -339,7 +339,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MinimumNumberOfPlatformsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Minimum Number of Platforms',
     defaultTab: 'big-picture',
@@ -352,7 +352,6 @@ export default function MinimumNumberOfPlatformsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Minimum Number of Platforms</h1>
       <p>

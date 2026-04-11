@@ -355,7 +355,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ActivitySelectionIntervalSchedulingPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Activity Selection (Interval Scheduling)',
     defaultTab: 'big-picture',
@@ -368,7 +368,6 @@ export default function ActivitySelectionIntervalSchedulingPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Activity Selection (Interval Scheduling)</h1>
       <p>

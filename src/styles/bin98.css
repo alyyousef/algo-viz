@@ -69,10 +69,20 @@
   cursor: pointer;
 }
 
+.bin98-tabs-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px 0;
+}
+
 .bin98-tabs {
   display: flex;
   gap: 1px;
-  padding: 6px 8px 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .bin98-tab {
@@ -133,6 +143,33 @@
 .bin98-content {
   padding: 14px 20px 20px;
   overflow: auto;
+}
+
+.bin98-page-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 0 0 1px;
+  flex: 0 0 auto;
+}
+
+.bin98-page-nav-button {
+  min-width: 92px;
+  padding-inline: 12px;
+  white-space: nowrap;
+}
+
+.bin98-page-nav-button:disabled {
+  color: #808080;
+  background: #d4d0c8;
+  cursor: default;
+}
+
+.bin98-page-nav-button:disabled:active {
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
 }
 
 .bin98-doc-title {
@@ -325,9 +362,14 @@
     font-size: 13px;
   }
 
-  .bin98-tabs {
-    flex-wrap: wrap;
+  .bin98-tabs-row {
+    align-items: stretch;
+    gap: 6px;
     padding: 4px 6px 0;
+    flex-wrap: wrap;
+  }
+
+  .bin98-tabs {
     gap: 2px;
   }
 
@@ -338,6 +380,16 @@
 
   .bin98-content {
     padding: 10px 14px 16px;
+  }
+
+  .bin98-page-nav {
+    gap: 4px;
+    margin-bottom: 1px;
+  }
+
+  .bin98-page-nav-button {
+    min-width: 0;
+    padding-inline: 10px;
   }
 }
 
@@ -356,6 +408,10 @@
 
   .bin98-doc-title {
     font-size: 17px;
+  }
+
+  .bin98-tabs-row {
+    gap: 4px;
   }
 }
 
@@ -381,6 +437,16 @@
     padding: 8px 10px 14px;
   }
 
+  .bin98-page-nav {
+    width: 100%;
+    justify-content: flex-end;
+    margin-bottom: 0;
+  }
+
+  .bin98-page-nav-button {
+    flex: 0 1 auto;
+  }
+
   .bin98-doc-title {
     font-size: 15px;
   }
@@ -401,8 +467,12 @@
 
 /* Very small phones (<=360px) - extra-compact tabs */
 @media (max-width: 360px) {
-  .bin98-tabs {
+  .bin98-tabs-row {
     padding: 3px 4px 0;
+    gap: 2px;
+  }
+
+  .bin98-tabs {
     gap: 1px;
   }
 

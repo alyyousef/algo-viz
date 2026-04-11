@@ -299,7 +299,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Tight Coupling',
         definition:
-          'A condition where many parts of the system depend directly on each other’s internal details.',
+          'A condition where many parts of the system depend directly on each otherâ€™s internal details.',
       },
       {
         term: 'Shared Data Layer',
@@ -444,7 +444,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function MonolithVsModularMonolithPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Monolith vs Modular Monolith',
     defaultTab: 'big-picture',
@@ -457,7 +457,6 @@ export default function MonolithVsModularMonolithPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Monolith vs Modular Monolith</h1>
       {introParagraphs.map((paragraph) => (

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { dsaLegacyRedirectEntries, dsaRouteDefinitions } from '@/features/dsa/routeManifest'
+import {
+  dsaLegacyRedirectEntries,
+  dsaOrderedRouteDefinitions,
+  dsaRouteDefinitions,
+  getAdjacentDsaRoutes,
+} from '@/features/dsa/routeManifest'
 
 describe('dsaRouteDefinitions', () => {
   it('builds route paths from DSA route files', () => {
@@ -31,6 +36,52 @@ describe('dsaRouteDefinitions', () => {
     ])
 
     expect(new Set(publicPaths).size).toBe(publicPaths.length)
+  })
+
+  it('orders sibling pages using natural numeric route order', () => {
+    const paradigmChildren = dsaOrderedRouteDefinitions
+      .filter(({ segments }) => segments[0] === '3. Algorithmic Paradigms' && segments.length === 2)
+      .map(({ path }) => path)
+
+    expect(paradigmChildren).toEqual([
+      '/dsa/3-algorithmic-paradigms/1-brute-force',
+      '/dsa/3-algorithmic-paradigms/2-divide-and-conquer',
+      '/dsa/3-algorithmic-paradigms/3-greedy-algorithms',
+      '/dsa/3-algorithmic-paradigms/4-dynamic-programming',
+      '/dsa/3-algorithmic-paradigms/5-backtracking',
+      '/dsa/3-algorithmic-paradigms/6-randomized-algorithms',
+      '/dsa/3-algorithmic-paradigms/7-branch-and-bound',
+      '/dsa/3-algorithmic-paradigms/8-meet-in-the-middle',
+      '/dsa/3-algorithmic-paradigms/9-two-pointers-and-sliding-window',
+      '/dsa/3-algorithmic-paradigms/10-greedy-proof-techniques-exchange-argument',
+    ])
+  })
+})
+
+describe('getAdjacentDsaRoutes', () => {
+  it('returns the previous and next route for a topic page', () => {
+    expect(
+      getAdjacentDsaRoutes('/dsa/3-algorithmic-paradigms/9-two-pointers-sliding-window'),
+    ).toMatchObject({
+      previous: { path: '/dsa/3-algorithmic-paradigms/8-meet-in-the-middle' },
+      next: { path: '/dsa/3-algorithmic-paradigms/10-greedy-proof-techniques-exchange-argument' },
+    })
+  })
+
+  it('recognizes alternate paths when resolving the current route', () => {
+    expect(getAdjacentDsaRoutes('/dsa/0-languages-ecosystems').current?.path).toBe(
+      '/dsa/0-languages-and-ecosystems',
+    )
+  })
+
+  it('omits missing neighbors at the ends of the sequence', () => {
+    const firstPath = dsaOrderedRouteDefinitions[0]?.path
+    const lastPath = dsaOrderedRouteDefinitions.at(-1)?.path
+
+    expect(firstPath).toBeDefined()
+    expect(lastPath).toBeDefined()
+    expect(getAdjacentDsaRoutes(firstPath ?? '')).toMatchObject({ previous: null })
+    expect(getAdjacentDsaRoutes(lastPath ?? '')).toMatchObject({ next: null })
   })
 })
 

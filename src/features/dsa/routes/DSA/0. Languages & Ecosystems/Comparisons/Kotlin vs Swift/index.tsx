@@ -118,15 +118,15 @@ const coreConceptSectionsBase: ContentSection[] = [
     title: 'Language Design and Philosophy',
     paragraphs: [
       'Kotlin is highly pragmatic. It was designed to improve developer productivity while remaining deeply interoperable with Java and the JVM. That pragmatism shows up in features like null safety, concise data classes, extension functions, and a relatively smooth migration path from older codebases.',
-      'Swift is also modern and safety-oriented, but it is more tightly tied to Apple’s platform vision. It is expressive, often elegant, and designed to feel native in Apple’s frameworks and tooling. The language evolution is closely aligned with the needs of the Apple ecosystem.',
+      'Swift is also modern and safety-oriented, but it is more tightly tied to Appleâ€™s platform vision. It is expressive, often elegant, and designed to feel native in Appleâ€™s frameworks and tooling. The language evolution is closely aligned with the needs of the Apple ecosystem.',
     ],
   },
   {
     id: 'core-platform-alignment',
     title: 'Platform Alignment',
     paragraphs: [
-      'Kotlin’s center of gravity is Android plus the JVM world. Even when it is used beyond Android, its design and ecosystem leverage are strongly shaped by its relationship to Java, JVM tooling, and Android app development.',
-      'Swift’s center of gravity is the Apple platform family. It is the natural language for building native applications that feel deeply integrated with Apple hardware, system services, and UI conventions.',
+      'Kotlinâ€™s center of gravity is Android plus the JVM world. Even when it is used beyond Android, its design and ecosystem leverage are strongly shaped by its relationship to Java, JVM tooling, and Android app development.',
+      'Swiftâ€™s center of gravity is the Apple platform family. It is the natural language for building native applications that feel deeply integrated with Apple hardware, system services, and UI conventions.',
     ],
   },
   {
@@ -134,7 +134,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     title: 'Tooling and Developer Experience',
     paragraphs: [
       'Kotlin development typically flows through Android Studio or IntelliJ-based workflows. The tooling is powerful and mature, especially in Android projects and JVM-heavy environments. Interoperability with Java codebases is a major practical advantage.',
-      'Swift development is strongly centered around Xcode and Apple’s SDK stack. The workflow is highly integrated with Apple platform development, which can feel cohesive and efficient when the team is fully inside that ecosystem.',
+      'Swift development is strongly centered around Xcode and Appleâ€™s SDK stack. The workflow is highly integrated with Apple platform development, which can feel cohesive and efficient when the team is fully inside that ecosystem.',
     ],
   },
   {
@@ -149,7 +149,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-interoperability',
     title: 'Interoperability and Legacy Leverage',
     paragraphs: [
-      'Kotlin’s interoperability story is a major strategic strength. It can work alongside Java cleanly, which makes it highly practical in mature Android and enterprise environments where a greenfield rewrite is unrealistic.',
+      'Kotlinâ€™s interoperability story is a major strategic strength. It can work alongside Java cleanly, which makes it highly practical in mature Android and enterprise environments where a greenfield rewrite is unrealistic.',
       'Swift can interoperate with older Apple ecosystem code as well, but its broader strategic value comes more from leading modern Apple development than from participating in a large cross-platform runtime like the JVM.',
     ],
   },
@@ -193,7 +193,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-tradeoffs',
     title: 'Tradeoffs',
     paragraphs: [
-      'Kotlin often wins on JVM leverage, Java interoperability, and strategic flexibility across Android and other JVM-adjacent contexts. Swift often wins on Apple-platform alignment, native polish, and the coherence of Apple’s integrated development model.',
+      'Kotlin often wins on JVM leverage, Java interoperability, and strategic flexibility across Android and other JVM-adjacent contexts. Swift often wins on Apple-platform alignment, native polish, and the coherence of Appleâ€™s integrated development model.',
       'The mistake is to treat either language as universally superior in isolation. In real teams, the decision is usually downstream of platform strategy, app audience, design requirements, QA reality, and how much the organization values native integration over cross-ecosystem flexibility.',
     ],
     bullets: [
@@ -326,7 +326,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'SwiftUI',
         definition:
-          'Apple’s declarative UI framework for modern app development across its platforms.',
+          'Appleâ€™s declarative UI framework for modern app development across its platforms.',
       },
       {
         term: 'Async and Await',
@@ -451,7 +451,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function KotlinVsSwiftPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Kotlin vs Swift',
     defaultTab: 'big-picture',
@@ -464,7 +464,6 @@ export default function KotlinVsSwiftPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Kotlin vs Swift</h1>
       {introParagraphs.map((paragraph) => (

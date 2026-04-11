@@ -448,7 +448,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function NestJsVsExpressJsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'NestJS vs Express.js',
     defaultTab: 'big-picture',
@@ -461,7 +461,6 @@ export default function NestJsVsExpressJsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">NestJS vs Express.js</h1>
       {introParagraphs.map((paragraph) => (

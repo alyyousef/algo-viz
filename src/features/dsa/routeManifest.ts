@@ -12,6 +12,12 @@ export interface DsaRouteDefinition {
   factory: DsaModuleFactory
 }
 
+export interface AdjacentDsaRoutes {
+  current: DsaRouteDefinition | null
+  previous: DsaRouteDefinition | null
+  next: DsaRouteDefinition | null
+}
+
 interface LegacyRouteMapping {
   oldSegments: string[]
   newSegments: string[]
@@ -24,6 +30,7 @@ export interface LegacyRedirectEntry {
 }
 
 const ROUTE_FILE_PREFIX = './routes/DSA/'
+const routeOrderCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
 const dsaModuleFactories = import.meta.glob<{ default: ComponentType<Record<string, unknown>> }>(
   './routes/DSA/**/index.tsx',
@@ -40,6 +47,18 @@ const arraysEqual = (left: string[], right: string[]): boolean =>
 
 const hasPrefix = (segments: string[], prefix: string[]): boolean =>
   prefix.length <= segments.length && prefix.every((segment, index) => segment === segments[index])
+
+export const compareDsaRouteSegments = (left: string[], right: string[]): number => {
+  const maxLength = Math.min(left.length, right.length)
+  for (let index = 0; index < maxLength; index += 1) {
+    const comparison = routeOrderCollator.compare(left[index]!, right[index]!)
+    if (comparison !== 0) {
+      return comparison
+    }
+  }
+
+  return left.length - right.length
+}
 
 const legacyRouteMappings: LegacyRouteMapping[] = [
   {
@@ -208,6 +227,33 @@ export const dsaRouteDefinitions: DsaRouteDefinition[] = Object.entries(dsaModul
     }
   },
 )
+
+export const dsaOrderedRouteDefinitions: DsaRouteDefinition[] = [...dsaRouteDefinitions].sort(
+  (left, right) => compareDsaRouteSegments(left.segments, right.segments),
+)
+
+const dsaRouteIndexByPath = new Map<string, number>()
+
+dsaOrderedRouteDefinitions.forEach((route, index) => {
+  dsaRouteIndexByPath.set(route.path, index)
+  route.alternatePaths.forEach((alternatePath) => {
+    dsaRouteIndexByPath.set(alternatePath, index)
+  })
+})
+
+export const getAdjacentDsaRoutes = (pathname: string): AdjacentDsaRoutes => {
+  const currentIndex = dsaRouteIndexByPath.get(pathname)
+
+  if (currentIndex === undefined) {
+    return { current: null, previous: null, next: null }
+  }
+
+  return {
+    current: dsaOrderedRouteDefinitions[currentIndex] ?? null,
+    previous: dsaOrderedRouteDefinitions[currentIndex - 1] ?? null,
+    next: dsaOrderedRouteDefinitions[currentIndex + 1] ?? null,
+  }
+}
 
 export const dsaLegacyRedirectEntries: LegacyRedirectEntry[] = (() => {
   const redirects = new Map<string, string>()

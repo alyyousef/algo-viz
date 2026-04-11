@@ -609,7 +609,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function RubyOnRailsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Ruby on Rails',
     defaultTab: 'big-picture',
@@ -622,7 +622,6 @@ export default function RubyOnRailsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Ruby on Rails</h1>
       <p className="postgres-help-doc-subtitle">

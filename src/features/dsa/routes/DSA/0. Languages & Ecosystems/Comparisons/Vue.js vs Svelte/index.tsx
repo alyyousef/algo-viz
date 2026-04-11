@@ -241,7 +241,7 @@ const coreConceptSections: ContentSection[] = [
     paragraphs: [
       'Vue is excellent for local form state. `v-model` is one of the most successful pieces of framework ergonomics in frontend development because it makes common binding flows concise without hiding what is happening. Form-heavy interfaces often feel very natural in Vue components.',
       'Svelte is equally compelling for local forms because `bind:value` and direct component state are lightweight. Where Svelte becomes especially distinctive is at the application level through SvelteKit form actions, which make request-response form workflows feel integrated rather than bolted on.',
-      'For local client-side forms, both frameworks are strong. For server-aware form workflows, the comparison often becomes Vue ecosystem conventions versus SvelteKit’s more built-in path.',
+      'For local client-side forms, both frameworks are strong. For server-aware form workflows, the comparison often becomes Vue ecosystem conventions versus SvelteKitâ€™s more built-in path.',
     ],
   },
   {
@@ -848,7 +848,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function VueJsVsSveltePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Vue.js vs Svelte',
     defaultTab: 'big-picture',
@@ -861,7 +861,6 @@ export default function VueJsVsSveltePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Vue.js vs Svelte</h1>
       {introParagraphs.map((paragraph) => (

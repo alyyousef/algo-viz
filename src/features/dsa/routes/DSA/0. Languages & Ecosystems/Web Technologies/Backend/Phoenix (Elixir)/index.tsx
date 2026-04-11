@@ -397,7 +397,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function PhoenixElixirPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Phoenix (Elixir) (Backend)',
     defaultTab: 'big-picture',
@@ -410,7 +410,6 @@ export default function PhoenixElixirPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Phoenix (Elixir) (Backend)</h1>
       <p className="phx98-intro">

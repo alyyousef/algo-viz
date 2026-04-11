@@ -291,7 +291,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MultiCloudStrategyPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Multi-Cloud Strategy',
     defaultTab: 'big-picture',
@@ -304,7 +304,6 @@ export default function MultiCloudStrategyPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Multi-Cloud Strategy</h1>
       {introParagraphs.map((paragraph) => (

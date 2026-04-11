@@ -426,7 +426,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function SqlVsNosqlPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'SQL vs NoSQL',
     defaultTab: 'big-picture',
@@ -439,7 +439,6 @@ export default function SqlVsNosqlPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">SQL vs NoSQL</h1>
       <p className="sql-nosql-help-doc-subtitle">

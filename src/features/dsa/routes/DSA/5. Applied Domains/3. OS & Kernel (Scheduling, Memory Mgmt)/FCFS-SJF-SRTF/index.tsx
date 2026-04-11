@@ -367,7 +367,7 @@ const advancedInsights = [
   },
   {
     title: 'Aging as fairness control',
-    detail: 'Increase a job’s priority the longer it waits to prevent starvation.',
+    detail: 'Increase a jobâ€™s priority the longer it waits to prevent starvation.',
   },
 ]
 
@@ -437,7 +437,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function FCFSSJFSRTFPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'FCFS / SJF / SRTF',
     defaultTab: 'big-picture',
@@ -450,7 +450,6 @@ export default function FCFSSJFSRTFPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">FCFS / SJF / SRTF</h1>
       <p>

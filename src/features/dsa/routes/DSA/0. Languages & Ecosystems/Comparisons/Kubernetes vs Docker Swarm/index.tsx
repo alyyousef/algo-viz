@@ -52,7 +52,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Overview',
     paragraphs: [
       'Kubernetes is the dominant cloud-native orchestration platform. It provides a rich control plane, declarative resource model, self-healing behavior, scheduling, service discovery, rollout management, policy integration, and a broad ecosystem of tools built around it.',
-      'Docker Swarm is a simpler orchestrator integrated with Docker’s workflow and concepts. It is easier to understand quickly and often easier to stand up for straightforward clustered container deployments, but it offers a smaller ecosystem and less operational depth than Kubernetes.',
+      'Docker Swarm is a simpler orchestrator integrated with Dockerâ€™s workflow and concepts. It is easier to understand quickly and often easier to stand up for straightforward clustered container deployments, but it offers a smaller ecosystem and less operational depth than Kubernetes.',
     ],
   },
   {
@@ -440,7 +440,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function KubernetesVsDockerSwarmPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Kubernetes vs Docker Swarm',
     defaultTab: 'big-picture',
@@ -453,7 +453,6 @@ export default function KubernetesVsDockerSwarmPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Kubernetes vs Docker Swarm</h1>
       {introParagraphs.map((paragraph) => (

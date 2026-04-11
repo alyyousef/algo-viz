@@ -271,7 +271,7 @@ const glossary = [
 ]
 
 export default function GitHubActionsVsGitLabCIPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'GitHub Actions vs GitLab CI',
     defaultTab: 'big-picture',
@@ -283,7 +283,6 @@ export default function GitHubActionsVsGitLabCIPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">GitHub Actions vs GitLab CI</h1>
       <p className="gha-glci-help-intro">

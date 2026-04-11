@@ -452,7 +452,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function RoundRobinSchedulingPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Round Robin Scheduling',
     defaultTab: 'big-picture',
@@ -465,7 +465,6 @@ export default function RoundRobinSchedulingPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Round Robin Scheduling</h1>
       <p className="rr-help-intro">

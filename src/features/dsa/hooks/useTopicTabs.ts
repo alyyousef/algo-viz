@@ -1,10 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-
-import {
-  upsertMinimizedHelpTask,
-  navigateToDesktopOrHistory,
-} from '@/features/dsa/utils/topicPageState'
+import { useSearchParams } from 'react-router-dom'
 
 export interface TopicTab<T extends string = string> {
   id: T
@@ -21,7 +16,6 @@ interface UseTopicTabsOptions<T extends string> {
 interface UseTopicTabsResult<T extends string> {
   activeTab: T
   setActiveTab: (tab: T) => void
-  handleMinimize: () => void
 }
 
 /**
@@ -30,16 +24,12 @@ interface UseTopicTabsResult<T extends string> {
  * - Reads initial tab from the `?tab=` search param.
  * - Keeps the URL search param in sync with the active tab (replace-mode, no history entry).
  * - Updates `document.title` on tab change.
- * - Provides a `handleMinimize` that pushes the page to the Win96 taskbar via localStorage
- *   and navigates back to the desktop.
  */
 export function useTopicTabs<T extends string>({
   tabs,
   pageTitle,
   defaultTab,
 }: UseTopicTabsOptions<T>): UseTopicTabsResult<T> {
-  const location = useLocation()
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const firstTabId = tabs[0]?.id
@@ -64,12 +54,5 @@ export function useTopicTabs<T extends string>({
     document.title = activeTabLabel ? `${pageTitle} - ${activeTabLabel}` : pageTitle
   }, [activeTab, activeTabLabel, pageTitle, searchParams, setSearchParams])
 
-  const handleMinimize = () => {
-    const taskId = `help:${location.pathname}`
-    const taskUrl = `${location.pathname}${location.search}${location.hash}`
-    upsertMinimizedHelpTask({ id: taskId, title: pageTitle, url: taskUrl, kind: 'help' })
-    navigateToDesktopOrHistory(navigate)
-  }
-
-  return { activeTab, setActiveTab, handleMinimize }
+  return { activeTab, setActiveTab }
 }

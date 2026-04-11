@@ -412,7 +412,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ]
 
 export default function DashboardPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Frameworks',
     defaultTab: 'big-picture',
@@ -425,7 +425,6 @@ export default function DashboardPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={[]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Frameworks</h1>
       <p className="fw98-intro">

@@ -43,7 +43,7 @@ const bigPictureSections = [
     paragraphs: [
       'Docker Compose and Kubernetes both run containerized applications, but they solve different levels of the problem. Docker Compose focuses on defining and starting multi-container applications, usually on a single machine or in straightforward development and test workflows.',
       'Kubernetes is a full orchestration platform for scheduling, networking, scaling, updating, and healing containers across a cluster of machines. It is designed for distributed systems operations rather than simple local composition.',
-      'The comparison is not really “small vs large” in a vague sense. It is “service composition on a host” versus “declarative cluster orchestration with operational control planes.” That difference affects setup cost, team skill requirements, failure handling, and day-two operations.',
+      'The comparison is not really â€œsmall vs largeâ€ in a vague sense. It is â€œservice composition on a hostâ€ versus â€œdeclarative cluster orchestration with operational control planes.â€ That difference affects setup cost, team skill requirements, failure handling, and day-two operations.',
     ],
   },
   {
@@ -269,7 +269,7 @@ const glossary = [
 ]
 
 export default function DockerComposeVsKubernetesPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Docker Compose vs Kubernetes',
     defaultTab: 'big-picture',
@@ -282,7 +282,6 @@ export default function DockerComposeVsKubernetesPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Docker Compose vs Kubernetes</h1>
       <p>

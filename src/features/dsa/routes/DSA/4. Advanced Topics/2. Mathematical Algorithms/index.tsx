@@ -328,7 +328,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MathematicalAlgorithmsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Mathematical Algorithms',
     defaultTab: 'big-picture',
@@ -341,7 +341,6 @@ export default function MathematicalAlgorithmsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Mathematical Algorithms</h1>
       <p className="bin98-doc-subtitle">Number theory, combinatorics, and algebraic power tools.</p>

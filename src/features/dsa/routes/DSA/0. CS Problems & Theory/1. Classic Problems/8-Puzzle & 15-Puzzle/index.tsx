@@ -495,7 +495,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function EightPuzzlePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: '8-Puzzle &amp; 15-Puzzle',
     defaultTab: 'big-picture',
@@ -508,7 +508,6 @@ export default function EightPuzzlePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">8-Puzzle &amp; 15-Puzzle</h1>
       <p>

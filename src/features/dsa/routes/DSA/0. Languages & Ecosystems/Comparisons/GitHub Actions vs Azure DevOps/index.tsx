@@ -275,7 +275,7 @@ const glossary = [
 ]
 
 export default function GitHubActionsVsAzureDevOpsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'GitHub Actions vs Azure DevOps',
     defaultTab: 'big-picture',
@@ -287,7 +287,6 @@ export default function GitHubActionsVsAzureDevOpsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">GitHub Actions vs Azure DevOps</h1>
       <p className="gha-azdo-help-intro">

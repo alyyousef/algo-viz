@@ -426,7 +426,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function BankersAlgorithmPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Banker&apos;s Algorithm',
     defaultTab: 'big-picture',
@@ -439,7 +439,6 @@ export default function BankersAlgorithmPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Banker&apos;s Algorithm</h1>
       <p>

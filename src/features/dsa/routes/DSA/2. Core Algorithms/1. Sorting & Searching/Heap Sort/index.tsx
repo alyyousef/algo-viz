@@ -444,7 +444,8 @@ const glossary = [
   },
   {
     term: 'Heapify',
-    definition: 'Build a valid heap from an array, typically in linear time with Floyd’s method.',
+    definition:
+      'Build a valid heap from an array, typically in linear time with Floydâ€™s method.',
   },
   { term: 'Heap boundary', definition: 'Active unsorted prefix currently treated as the heap.' },
   {
@@ -454,7 +455,7 @@ const glossary = [
 ]
 
 export default function HeapSortPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Heap Sort',
     defaultTab: 'big-picture',
@@ -467,7 +468,6 @@ export default function HeapSortPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Heap Sort</h1>
       <p>

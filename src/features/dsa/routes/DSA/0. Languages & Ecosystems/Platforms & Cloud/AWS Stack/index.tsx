@@ -421,7 +421,7 @@ const glossary = [
 ]
 
 export default function AwsStackPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'AWS Stack',
     defaultTab: 'big-picture',
@@ -433,7 +433,6 @@ export default function AwsStackPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">AWS Stack</h1>
       <p className="aws-stack-help-intro">

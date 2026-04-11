@@ -1,3 +1,5 @@
+import TopicPageNavigation from '@/features/dsa/components/TopicPageNavigation'
+
 import type { TopicTab } from '@/features/dsa/hooks/useTopicTabs'
 import type { JSX, ReactNode } from 'react'
 
@@ -14,20 +16,19 @@ interface TopicPageShellProps<T extends string> {
   onTabChange: (tab: T) => void
   /** Section anchor links shown in the left-hand TOC for the current tab */
   tocLinks: SectionLink[]
-  onMinimize: () => void
   children: ReactNode
 }
 
 /**
  * Shared Win98 help-page chrome used by all DSA topic pages.
  *
- * Renders: title bar (minimize + close), tab bar, TOC sidebar, content area.
+ * Renders: title bar (close), tab bar with page navigation, TOC sidebar, content area.
  * Styles come from src/styles/bin98.css (imported once in main.tsx).
  *
  * Usage:
  *   <TopicPageShell title="Binary Search" tabs={tabs} activeTab={activeTab}
  *                   onTabChange={setActiveTab} tocLinks={sectionLinks[activeTab]}
- *                   onMinimize={handleMinimize}>
+ *   >
  *     {activeTab === 'big-picture' && <BigPictureContent />}
  *     {activeTab === 'examples' && <ExamplesContent />}
  *   </TopicPageShell>
@@ -38,7 +39,6 @@ export default function TopicPageShell<T extends string>({
   activeTab,
   onTabChange,
   tocLinks,
-  onMinimize,
   children,
 }: TopicPageShellProps<T>): JSX.Element {
   return (
@@ -50,14 +50,6 @@ export default function TopicPageShell<T extends string>({
             <button
               className="bin98-control"
               type="button"
-              aria-label="Minimize"
-              onClick={onMinimize}
-            >
-              _
-            </button>
-            <button
-              className="bin98-control"
-              type="button"
               aria-label="Close"
               data-return-target="history-or-desktop"
             >
@@ -66,19 +58,22 @@ export default function TopicPageShell<T extends string>({
           </div>
         </header>
 
-        <div className="bin98-tabs" role="tablist" aria-label="Sections">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`bin98-tab${activeTab === tab.id ? ' active' : ''}`}
-              onClick={() => onTabChange(tab.id)}
-              role="tab"
-              aria-selected={activeTab === tab.id}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="bin98-tabs-row">
+          <div className="bin98-tabs" role="tablist" aria-label="Sections">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`bin98-tab${activeTab === tab.id ? ' active' : ''}`}
+                onClick={() => onTabChange(tab.id)}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <TopicPageNavigation />
         </div>
 
         <div className="bin98-main">

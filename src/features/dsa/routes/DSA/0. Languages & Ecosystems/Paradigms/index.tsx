@@ -394,7 +394,7 @@ function toParadigmRoute(name: string): string {
 }
 
 export default function ParadigmsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Paradigms',
     defaultTab: 'big-picture',
@@ -407,7 +407,6 @@ export default function ParadigmsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Paradigms</h1>
       <p className="par98-intro">

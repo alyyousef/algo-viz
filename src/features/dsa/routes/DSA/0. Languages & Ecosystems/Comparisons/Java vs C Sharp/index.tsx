@@ -470,7 +470,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function JavaVsCSharpPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Java vs C#',
     defaultTab: 'big-picture',
@@ -483,7 +483,6 @@ export default function JavaVsCSharpPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Java vs C#</h1>
       {introParagraphs.map((paragraph) => (

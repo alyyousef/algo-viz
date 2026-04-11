@@ -320,7 +320,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ContainersAndOrchestrationPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Containers and Orchestration',
     defaultTab: 'big-picture',
@@ -333,7 +333,6 @@ export default function ContainersAndOrchestrationPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Containers and Orchestration</h1>
       {introParagraphs.map((paragraph) => (

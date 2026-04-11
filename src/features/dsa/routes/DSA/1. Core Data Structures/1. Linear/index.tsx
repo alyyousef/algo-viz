@@ -11,7 +11,7 @@ const bigPicture = [
     details:
       'Linear structures are containers where elements are arranged in a sequential order. Each element has at most one predecessor and one successor.',
     notes:
-      'They are the foundation of nearly every algorithm and program — from call stacks to print queues to undo history.',
+      'They are the foundation of nearly every algorithm and program â€” from call stacks to print queues to undo history.',
   },
   {
     title: 'Why it matters',
@@ -184,7 +184,7 @@ const commonPatterns = [
   {
     title: 'Two-pointer technique',
     detail:
-      'Use two indices into an array — one at each end, or both moving forward at different speeds — to solve sorted-array and cycle-detection problems in O(n).',
+      'Use two indices into an array â€” one at each end, or both moving forward at different speeds â€” to solve sorted-array and cycle-detection problems in O(n).',
   },
   {
     title: 'Undo/Redo buffer',
@@ -228,38 +228,38 @@ const pitfalls = [
 
 const codeExamples = [
   {
-    title: 'Dynamic array — append and index',
+    title: 'Dynamic array â€” append and index',
     code: `// Rust
 let mut v: Vec<i32> = Vec::new();
 v.push(10);       // O(1) amortized
 v.push(20);
-println!("{}", v[1]); // O(1) → 20`,
+println!("{}", v[1]); // O(1) â†’ 20`,
     explanation:
       'Vec grows by doubling capacity. Indexing is bounds-checked and panics on out-of-bounds in debug mode.',
   },
   {
-    title: 'Stack — push and pop',
+    title: 'Stack â€” push and pop',
     code: `// Python
 stack = []
 stack.append(1)   # push
 stack.append(2)
-top = stack.pop() # pop → 2`,
+top = stack.pop() # pop â†’ 2`,
     explanation:
       'A Python list used as a stack. append() and pop() from the end are both O(1) amortized.',
   },
   {
-    title: 'Queue — enqueue and dequeue',
+    title: 'Queue â€” enqueue and dequeue',
     code: `// Python (deque for O(1) front-remove)
 from collections import deque
 q = deque()
 q.append(1)       # enqueue back
 q.append(2)
-front = q.popleft() # dequeue front → 1`,
+front = q.popleft() # dequeue front â†’ 1`,
     explanation:
       'collections.deque uses a doubly-linked list of fixed-size blocks. popleft() is O(1), unlike list.pop(0) which is O(n).',
   },
   {
-    title: 'Singly linked list — node definition',
+    title: 'Singly linked list â€” node definition',
     code: `// TypeScript
 type ListNode<T> = {
   value: T
@@ -273,7 +273,7 @@ function prepend<T>(head: ListNode<T> | null, value: T): ListNode<T> {
       'Prepending to a singly-linked list is O(1) because only the new node and the head pointer change.',
   },
   {
-    title: 'Ring buffer — wrap-around indexing',
+    title: 'Ring buffer â€” wrap-around indexing',
     code: `// C
 #define CAP 8
 int buf[CAP];
@@ -295,7 +295,7 @@ int dequeue() {
       'Modular arithmetic keeps head and tail within the array bounds. Full/empty detection requires tracking size or leaving one slot unused.',
   },
   {
-    title: 'Monotonic stack — next greater element',
+    title: 'Monotonic stack â€” next greater element',
     code: `// Python
 def next_greater(arr):
   n = len(arr)
@@ -404,14 +404,14 @@ const quickGlossary = [
 ]
 
 const choiceChecklist = [
-  'Need O(1) random access? → Array or dynamic array.',
-  'Need O(1) insert/delete at both ends? → Deque or doubly-linked list.',
-  'Need O(1) insert/delete at a known interior position? → Doubly linked list.',
-  'LIFO semantics only? → Stack (backed by dynamic array).',
-  'FIFO semantics only? → Queue (backed by ring buffer or linked list).',
-  'Iterating in order with no random access? → Linked list or array (prefer array for cache).',
-  'Fixed max size and frequent wrap-around? → Ring buffer.',
-  'General purpose, unknown access pattern? → Dynamic array as default.',
+  'Need O(1) random access? â†’ Array or dynamic array.',
+  'Need O(1) insert/delete at both ends? â†’ Deque or doubly-linked list.',
+  'Need O(1) insert/delete at a known interior position? â†’ Doubly linked list.',
+  'LIFO semantics only? â†’ Stack (backed by dynamic array).',
+  'FIFO semantics only? â†’ Queue (backed by ring buffer or linked list).',
+  'Iterating in order with no random access? â†’ Linked list or array (prefer array for cache).',
+  'Fixed max size and frequent wrap-around? â†’ Ring buffer.',
+  'General purpose, unknown access pattern? â†’ Dynamic array as default.',
 ]
 
 const compareContrast = [
@@ -467,7 +467,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function LinearStructuresPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Linear Structures',
     defaultTab: 'big-picture',
@@ -490,7 +490,6 @@ export default function LinearStructuresPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Linear Structures</h1>
       <p>
@@ -522,8 +521,8 @@ export default function LinearStructuresPage(): JSX.Element {
               when a ring buffer would do.
             </p>
             <p>
-              Understanding the constant-time boundaries of each structure — and the cost of
-              operations that cross those boundaries — is prerequisite knowledge for writing
+              Understanding the constant-time boundaries of each structure â€” and the cost of
+              operations that cross those boundaries â€” is prerequisite knowledge for writing
               software that behaves well under load.
             </p>
           </section>

@@ -16,7 +16,7 @@ const bigPicture = [
   {
     title: 'Why it matters',
     details:
-      'Many important problems — constraint satisfaction, combinatorial optimization, game solving, parsing — have no known polynomial-time algorithm. Backtracking is often the only practical exact method, and good pruning can make it fast enough for real inputs.',
+      'Many important problems â€” constraint satisfaction, combinatorial optimization, game solving, parsing â€” have no known polynomial-time algorithm. Backtracking is often the only practical exact method, and good pruning can make it fast enough for real inputs.',
     notes:
       'The difference between a naive O(n!) search and a well-pruned backtracking solution on the same problem can be several orders of magnitude in practice.',
   },
@@ -55,17 +55,17 @@ const mentalModel = [
 const keyTakeaways = [
   'Backtracking is DFS on a state space tree with constraint-based pruning of invalid branches.',
   'The choose/explore/unchoose pattern ensures all choices are tried and the state is correctly restored after each branch.',
-  'Pruning is the key to efficiency — check constraints as early as possible before recursing deeper.',
+  'Pruning is the key to efficiency â€” check constraints as early as possible before recursing deeper.',
   'Backtracking is worst-case exponential; pruning, constraint propagation, and good variable ordering can make it polynomial in practice on many instances.',
   'Memoization can be added on top of backtracking when sub-problems overlap, turning it into dynamic programming.',
-  'State restoration (undo) must mirror every state mutation exactly — a missed undo corrupts all subsequent branches.',
+  'State restoration (undo) must mirror every state mutation exactly â€” a missed undo corrupts all subsequent branches.',
 ]
 
 const classicProblems = [
   {
     title: 'N-Queens',
     description:
-      'Place N queens on an N×N chessboard such that no two queens attack each other (no shared row, column, or diagonal).',
+      'Place N queens on an NÃ—N chessboard such that no two queens attack each other (no shared row, column, or diagonal).',
     approach:
       'Place one queen per row. For each row, try every column; skip if the column or either diagonal is already attacked. Prune immediately on conflict.',
     complexity:
@@ -74,9 +74,9 @@ const classicProblems = [
   {
     title: 'Sudoku Solver',
     description:
-      'Fill a 9×9 grid so that every row, column, and 3×3 box contains the digits 1–9 exactly once.',
+      'Fill a 9Ã—9 grid so that every row, column, and 3Ã—3 box contains the digits 1â€“9 exactly once.',
     approach:
-      'Find the next empty cell. Try digits 1–9; skip any that conflict with the current row, column, or box. Recurse. Backtrack if no digit fits.',
+      'Find the next empty cell. Try digits 1â€“9; skip any that conflict with the current row, column, or box. Recurse. Backtrack if no digit fits.',
     complexity:
       'Worst case O(9^81) but constraint propagation (naked singles, hidden singles) reduces it to near-linear on well-formed puzzles.',
   },
@@ -93,7 +93,7 @@ const classicProblems = [
     description: 'Generate all permutations of a sequence.',
     approach:
       'At each position, swap in each remaining element, recurse on the rest of the sequence, then swap back (unchoose).',
-    complexity: 'O(n! · n) to generate all n! permutations, each of length n.',
+    complexity: 'O(n! Â· n) to generate all n! permutations, each of length n.',
   },
   {
     title: 'Combinations / Subsets',
@@ -108,7 +108,7 @@ const classicProblems = [
       'Assign one of k colors to each vertex of a graph such that no two adjacent vertices share a color.',
     approach:
       'Assign colors to vertices in order. For each vertex, try every color; skip if a neighbor already has that color. Backtrack on failure.',
-    complexity: 'O(k^V) worst case. The problem is NP-complete for general k ≥ 3.',
+    complexity: 'O(k^V) worst case. The problem is NP-complete for general k â‰¥ 3.',
   },
   {
     title: 'Hamiltonian Path',
@@ -123,7 +123,7 @@ const classicProblems = [
       'Given a 2D character grid and a word, determine if the word can be spelled by a path of adjacent cells (no reuse).',
     approach:
       'For each cell matching the first character, DFS in all 4 directions. Mark cells visited; unmark on backtrack.',
-    complexity: 'O(M·N·4^L) where M×N is the grid size and L is the word length.',
+    complexity: 'O(MÂ·NÂ·4^L) where MÃ—N is the grid size and L is the word length.',
   },
 ]
 
@@ -169,7 +169,7 @@ const pitfalls = [
   {
     mistake: 'Pruning too late',
     description:
-      'Checking constraints only at leaf nodes means the full tree is explored — no better than brute force. Move constraint checks as early as possible, before recursing.',
+      'Checking constraints only at leaf nodes means the full tree is explored â€” no better than brute force. Move constraint checks as early as possible, before recursing.',
   },
   {
     mistake: 'No base case',
@@ -196,7 +196,7 @@ const pitfalls = [
 const codeExamples = [
   {
     title: 'N-Queens',
-    code: `# Python — all solutions
+    code: `# Python â€” all solutions
 def n_queens(n: int) -> list[list[int]]:
   results: list[list[int]] = []
   cols, diag1, diag2 = set(), set(), set()
@@ -225,7 +225,7 @@ def n_queens(n: int) -> list[list[int]]:
   },
   {
     title: 'Sudoku solver',
-    code: `# Python — solve in-place
+    code: `# Python â€” solve in-place
 def solve_sudoku(board: list[list[str]]) -> bool:
   for r in range(9):
     for c in range(9):
@@ -237,7 +237,7 @@ def solve_sudoku(board: list[list[str]]) -> bool:
           if solve_sudoku(board):
             return True
           board[r][c] = '.'        # unchoose
-      return False                 # no digit fits — backtrack
+      return False                 # no digit fits â€” backtrack
   return True                      # all cells filled
 
 def is_valid(board, r, c, d):
@@ -252,7 +252,7 @@ def is_valid(board, r, c, d):
   },
   {
     title: 'Subsets',
-    code: `// TypeScript — all subsets of an array
+    code: `// TypeScript â€” all subsets of an array
 function subsets(nums: number[]): number[][] {
   const result: number[][] = []
   const current: number[] = []
@@ -274,7 +274,7 @@ function subsets(nums: number[]): number[][] {
   },
   {
     title: 'Permutations',
-    code: `// TypeScript — all permutations
+    code: `// TypeScript â€” all permutations
 function permutations(nums: number[]): number[][] {
   const result: number[][] = []
 
@@ -294,11 +294,11 @@ function permutations(nums: number[]): number[][] {
   return result
 }`,
     explanation:
-      'In-place swap avoids extra memory. Swapping back restores the array for the next iteration — the unchoose step.',
+      'In-place swap avoids extra memory. Swapping back restores the array for the next iteration â€” the unchoose step.',
   },
   {
     title: 'Word search',
-    code: `// TypeScript — does word exist in grid?
+    code: `// TypeScript â€” does word exist in grid?
 function exist(board: string[][], word: string): boolean {
   const rows = board.length, cols = board[0].length
 
@@ -326,7 +326,7 @@ function exist(board: string[][], word: string): boolean {
   },
   {
     title: 'Combination sum',
-    code: `# Python — all combinations summing to target (reuse allowed)
+    code: `# Python â€” all combinations summing to target (reuse allowed)
 def combination_sum(candidates: list[int], target: int) -> list[list[int]]:
   results: list[list[int]] = []
   candidates.sort()
@@ -354,12 +354,12 @@ const languageMapping = [
   {
     title: 'Python',
     detail:
-      'Lists as mutable state with append/pop for O(1) undo. Sets for O(1) conflict checks. Recursion limit (~1000) can be hit on deep searches — use sys.setrecursionlimit or convert to iterative.',
+      'Lists as mutable state with append/pop for O(1) undo. Sets for O(1) conflict checks. Recursion limit (~1000) can be hit on deep searches â€” use sys.setrecursionlimit or convert to iterative.',
   },
   {
     title: 'TypeScript / JavaScript',
     detail:
-      'Arrays with push/pop for undo. Spread ([...arr]) for snapshot copies at solution nodes. Call stack depth ~10k in V8 — explicit stack needed for very deep searches.',
+      'Arrays with push/pop for undo. Spread ([...arr]) for snapshot copies at solution nodes. Call stack depth ~10k in V8 â€” explicit stack needed for very deep searches.',
   },
   {
     title: 'C++',
@@ -369,7 +369,7 @@ const languageMapping = [
   {
     title: 'Rust',
     detail:
-      'Vec<T> with push/pop. HashSet for conflict tracking. No default stack size increase — use stacker or iterative form for deep recursion.',
+      'Vec<T> with push/pop. HashSet for conflict tracking. No default stack size increase â€” use stacker or iterative form for deep recursion.',
   },
   {
     title: 'Java',
@@ -422,7 +422,7 @@ const quickGlossary = [
   {
     term: 'MRV (Minimum Remaining Values)',
     definition:
-      'A variable-ordering heuristic that selects the variable with the fewest remaining legal values — the "fail-first" principle.',
+      'A variable-ordering heuristic that selects the variable with the fewest remaining legal values â€” the "fail-first" principle.',
   },
   {
     term: 'LCV (Least Constraining Value)',
@@ -449,7 +449,7 @@ const compareContrast = [
   {
     title: 'Backtracking vs brute force',
     detail:
-      'Brute force generates all candidates and checks each. Backtracking checks constraints during construction and abandons invalid branches before they are complete — often exponentially faster.',
+      'Brute force generates all candidates and checks each. Backtracking checks constraints during construction and abandons invalid branches before they are complete â€” often exponentially faster.',
   },
   {
     title: 'Backtracking vs dynamic programming',
@@ -497,7 +497,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function BacktrackingPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Backtracking',
     defaultTab: 'big-picture',
@@ -520,7 +520,6 @@ export default function BacktrackingPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Backtracking</h1>
       <p>
@@ -548,8 +547,8 @@ export default function BacktrackingPage(): JSX.Element {
             <p>
               Many problems in combinatorics, logic, and constraint satisfaction have no known
               polynomial-time solution. For these, backtracking is often the only exact method
-              available. Understanding its structure — the state space tree, the
-              choose/explore/unchoose pattern, and the role of pruning — is the foundation for
+              available. Understanding its structure â€” the state space tree, the
+              choose/explore/unchoose pattern, and the role of pruning â€” is the foundation for
               implementing correct and efficient solvers.
             </p>
             <p>

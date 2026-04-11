@@ -127,7 +127,7 @@ const queryTypes = [
     heading: 'Range assignment / addition',
     bullets: [
       'Lazy propagation handles bulk updates without touching every element.',
-      'Common in interval scheduling, “paint” problems, and batch adjustments.',
+      'Common in interval scheduling, â€œpaintâ€ problems, and batch adjustments.',
     ],
   },
   {
@@ -420,7 +420,7 @@ const decisionGuidance = [
   'Need range updates and range queries: segment tree with lazy propagation is the right fit.',
   'Need immutable history or time travel queries: consider a persistent segment tree.',
   'Need range queries over sparse or huge coordinates: combine with coordinate compression.',
-  'Need many offline queries: consider Mo’s algorithm or prefix arrays if updates are rare.',
+  'Need many offline queries: consider Moâ€™s algorithm or prefix arrays if updates are rare.',
 ]
 
 const advancedInsights = [
@@ -503,7 +503,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Segment Tree Use Cases (Range Queries)',
     defaultTab: 'big-picture',
@@ -516,7 +516,6 @@ export default function SegmentTreeUseCasesRangeQueriesPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Segment Tree Use Cases (Range Queries)</h1>
       <p>

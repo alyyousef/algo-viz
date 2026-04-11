@@ -590,7 +590,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function CPlusPlusPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'C++',
     defaultTab: 'big-picture',
@@ -603,7 +603,6 @@ export default function CPlusPlusPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">C++</h1>
       <p className="cpp98-doc-subtitle">Object-oriented power with systems-level performance</p>

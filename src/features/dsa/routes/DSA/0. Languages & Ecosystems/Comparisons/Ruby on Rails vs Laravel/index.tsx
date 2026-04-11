@@ -371,7 +371,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function RubyOnRailsVsLaravelPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Ruby on Rails vs Laravel',
     defaultTab: 'big-picture',
@@ -384,7 +384,6 @@ export default function RubyOnRailsVsLaravelPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Ruby on Rails vs Laravel</h1>
       <p className="rails-laravel-help-doc-subtitle">

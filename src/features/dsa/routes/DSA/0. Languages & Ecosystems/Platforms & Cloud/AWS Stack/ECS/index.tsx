@@ -466,7 +466,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function AwsEcsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Aws Ecs Page',
     defaultTab: 'big-picture',
@@ -479,7 +479,6 @@ export default function AwsEcsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="ecs-help-title-main">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>

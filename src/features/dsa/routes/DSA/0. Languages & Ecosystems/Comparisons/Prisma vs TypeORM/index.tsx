@@ -375,7 +375,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function PrismaVsTypeOrmPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Prisma vs TypeORM',
     defaultTab: 'big-picture',
@@ -388,7 +388,6 @@ export default function PrismaVsTypeOrmPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Prisma vs TypeORM</h1>
       <p className="prisma-typeorm-help-doc-subtitle">

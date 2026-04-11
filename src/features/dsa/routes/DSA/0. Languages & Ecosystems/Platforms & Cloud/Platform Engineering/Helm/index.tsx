@@ -68,7 +68,7 @@ const bigPicture: SectionNote[] = [
 const keyTakeaways = [
   'Helm packages Kubernetes resources into charts and installs them as versioned releases.',
   'Values files and template functions make environment-specific rendering possible without copying entire manifest sets.',
-  'Release history, upgrade, rollback, and dependency handling are part of Helm’s real operational value.',
+  'Release history, upgrade, rollback, and dependency handling are part of Helmâ€™s real operational value.',
   'Helm is powerful, but over-templating can make charts hard to reason about and harder to debug.',
   'Helm often works best as one layer in a broader platform workflow rather than as the only deployment control plane.',
 ]
@@ -77,7 +77,7 @@ const packagingSections: NarrativeSection[] = [
   {
     title: 'Packaging model',
     paragraphs: [
-      'A chart is Helm’s unit of packaging. It contains chart metadata, templates, default values, and optional helper files. The output of a chart is ordinary Kubernetes YAML, but Helm gives that YAML structure, parameters, and versioning.',
+      'A chart is Helmâ€™s unit of packaging. It contains chart metadata, templates, default values, and optional helper files. The output of a chart is ordinary Kubernetes YAML, but Helm gives that YAML structure, parameters, and versioning.',
       'This matters because platform teams rarely manage one manifest in isolation. They manage related resources that should move through environments together: Deployments, Services, ConfigMaps, Ingresses, RBAC objects, jobs, and policies that belong to one application or platform component.',
     ],
   },
@@ -147,7 +147,7 @@ const operationsSections: NarrativeSection[] = [
     title: 'Release lifecycle',
     paragraphs: [
       'When Helm installs a chart, it creates a release record and applies the rendered manifests to the cluster. Future upgrades compare the next rendered output against the existing release state, and rollback can target a previous release revision.',
-      'That release model is one of Helm’s most practical features. Operators can track versioned upgrades and failures at the application-package level instead of dealing only with a directory of YAML files and shell history.',
+      'That release model is one of Helmâ€™s most practical features. Operators can track versioned upgrades and failures at the application-package level instead of dealing only with a directory of YAML files and shell history.',
     ],
   },
   {
@@ -370,7 +370,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function HelmPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Helm',
     defaultTab: 'big-picture',
@@ -383,7 +383,6 @@ export default function HelmPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Helm</h1>
       {introParagraphs.map((paragraph) => (

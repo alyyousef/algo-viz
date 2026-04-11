@@ -515,7 +515,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function FirebaseForMobilePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Firebase For Mobile Page',
     defaultTab: 'big-picture',
@@ -528,7 +528,6 @@ export default function FirebaseForMobilePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">{PAGE_TITLE}</h1>
       {introParagraphs.map((paragraph) => (

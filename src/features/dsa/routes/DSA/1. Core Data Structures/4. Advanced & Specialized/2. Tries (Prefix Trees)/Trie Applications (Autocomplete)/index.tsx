@@ -562,7 +562,7 @@ const glossaryTerms = [
 ]
 
 export default function TrieApplicationsAutocompletePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Trie Applications (Autocomplete)',
     defaultTab: 'big-picture',
@@ -575,7 +575,6 @@ export default function TrieApplicationsAutocompletePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Trie Applications (Autocomplete)</h1>
       <p>

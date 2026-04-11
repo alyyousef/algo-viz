@@ -310,7 +310,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'vi',
         definition:
-          'Vitest’s mocking and utility namespace, analogous to jest in many testing patterns.',
+          'Vitestâ€™s mocking and utility namespace, analogous to jest in many testing patterns.',
       },
       {
         term: 'Vite Integration',
@@ -442,7 +442,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function JestVsVitestPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Jest vs Vitest',
     defaultTab: 'big-picture',
@@ -455,7 +455,6 @@ export default function JestVsVitestPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Jest vs Vitest</h1>
       {introParagraphs.map((paragraph) => (

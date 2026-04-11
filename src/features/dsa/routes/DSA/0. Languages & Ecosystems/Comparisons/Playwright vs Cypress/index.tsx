@@ -133,7 +133,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-browser-support',
     title: 'Browser Support',
     paragraphs: [
-      'One of Playwright’s strongest advantages is its support for multiple browser engines, including Chromium, Firefox, and WebKit. That matters when teams want confidence across environments rather than confidence only in a Chromium-like world.',
+      'One of Playwrightâ€™s strongest advantages is its support for multiple browser engines, including Chromium, Firefox, and WebKit. That matters when teams want confidence across environments rather than confidence only in a Chromium-like world.',
       'Cypress has browser support too, but Playwright is more strongly associated with serious cross-browser testing strategy. If WebKit coverage matters because of Safari risk, Playwright is often the more compelling choice.',
     ],
   },
@@ -173,7 +173,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-architecture',
     title: 'Test Architecture and Maintainability',
     paragraphs: [
-      'The better tool for maintainability is not just the one with nicer syntax. It is the one whose model best matches the suite’s long-term complexity. A Cypress suite that constantly fights framework assumptions can become brittle. A Playwright suite with no clear fixture or page-object discipline can also become messy.',
+      'The better tool for maintainability is not just the one with nicer syntax. It is the one whose model best matches the suiteâ€™s long-term complexity. A Cypress suite that constantly fights framework assumptions can become brittle. A Playwright suite with no clear fixture or page-object discipline can also become messy.',
       'Teams should therefore judge each tool not only by how pleasant the first ten tests feel, but by how cleanly the hundredth or thousandth test can still be structured.',
     ],
   },
@@ -450,7 +450,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function PlaywrightVsCypressPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Playwright vs Cypress',
     defaultTab: 'big-picture',
@@ -463,7 +463,6 @@ export default function PlaywrightVsCypressPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Playwright vs Cypress</h1>
       {introParagraphs.map((paragraph) => (

@@ -378,7 +378,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ClosestPairOfPointsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Closest Pair of Points',
     defaultTab: 'big-picture',
@@ -391,7 +391,6 @@ export default function ClosestPairOfPointsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="closest-help98-title">Closest Pair of Points</h1>
       <p>

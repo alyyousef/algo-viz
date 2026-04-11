@@ -593,7 +593,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function DjangoRestFrameworkPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Django REST Framework',
     defaultTab: 'big-picture',
@@ -606,7 +606,6 @@ export default function DjangoRestFrameworkPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Django REST Framework</h1>
       <p className="postgres-help-doc-subtitle">

@@ -390,7 +390,7 @@ function toLanguageLevelRoute(name: string): string {
 }
 
 export default function LanguageLevelsPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Language Levels',
     defaultTab: 'big-picture',
@@ -403,7 +403,6 @@ export default function LanguageLevelsPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Language Levels</h1>
       <p className="lvl98-intro">

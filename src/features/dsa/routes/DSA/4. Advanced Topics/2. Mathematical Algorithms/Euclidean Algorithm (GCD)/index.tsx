@@ -303,7 +303,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function EuclideanAlgorithmGCDPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Euclidean Algorithm (GCD)',
     defaultTab: 'big-picture',
@@ -316,7 +316,6 @@ export default function EuclideanAlgorithmGCDPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Euclidean Algorithm (GCD)</h1>
       <p className="euclid98-intro">

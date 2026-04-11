@@ -141,7 +141,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-mutations',
     title: 'Mutations and Forms',
     paragraphs: [
-      'One of Remix’s strongest ideas is that writes should feel like the web. Forms submit to route actions, servers process mutations, and the framework revalidates the right data. This keeps a strong connection between application behavior and ordinary browser semantics.',
+      'One of Remixâ€™s strongest ideas is that writes should feel like the web. Forms submit to route actions, servers process mutations, and the framework revalidates the right data. This keeps a strong connection between application behavior and ordinary browser semantics.',
       'Next.js can absolutely handle forms and mutations well, but the experience often depends more on which stack conventions the team adopts. Server actions, route handlers, client libraries, or custom APIs may all be involved. This offers flexibility, but it also means there is more architectural choice to manage.',
     ],
   },
@@ -190,7 +190,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Team Fit',
     paragraphs: [
       'Next.js fits teams that want the broad default choice and can absorb a larger framework platform. It is especially appealing when many developers will rotate across codebases and the organization wants familiarity and ecosystem reach.',
-      'Remix fits teams that want a more deliberate full-stack web architecture and are willing to embrace the framework’s stronger philosophical stance on loaders, actions, and the web request lifecycle.',
+      'Remix fits teams that want a more deliberate full-stack web architecture and are willing to embrace the frameworkâ€™s stronger philosophical stance on loaders, actions, and the web request lifecycle.',
     ],
   },
   {
@@ -453,7 +453,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function Route(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Next.js vs Remix',
     defaultTab: 'big-picture',
@@ -466,7 +466,6 @@ export default function Route(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Next.js vs Remix</h1>
       {introParagraphs.map((paragraph) => (

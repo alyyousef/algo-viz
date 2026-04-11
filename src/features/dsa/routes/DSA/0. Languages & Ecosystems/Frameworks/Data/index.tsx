@@ -552,7 +552,7 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
 }
 
 export default function DataAndMlFrameworksPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Data and ML Frameworks',
     defaultTab: 'big-picture',
@@ -565,7 +565,6 @@ export default function DataAndMlFrameworksPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Data and ML Frameworks</h1>
       <p className="data98-doc-subtitle">

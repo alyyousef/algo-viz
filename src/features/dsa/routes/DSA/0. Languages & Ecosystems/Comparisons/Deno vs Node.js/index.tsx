@@ -389,7 +389,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function DenoVsNodePage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Deno Vs Node Page',
     defaultTab: 'big-picture',
@@ -402,7 +402,6 @@ export default function DenoVsNodePage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="deno-node-help-doc-subtitle">{pageSubtitle}</p>

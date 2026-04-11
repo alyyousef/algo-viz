@@ -337,7 +337,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function MatrixChainMultiplicationPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Matrix Chain Multiplication',
     defaultTab: 'big-picture',
@@ -350,7 +350,6 @@ export default function MatrixChainMultiplicationPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Matrix Chain Multiplication</h1>
       <p>

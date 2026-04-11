@@ -9,7 +9,7 @@ type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 
 const pageTitle = 'Elasticsearch vs OpenSearch'
 const pageSubtitle =
-  'Comparing Elastic’s current search platform with the Apache-2.0 OpenSearch fork.'
+  'Comparing Elasticâ€™s current search platform with the Apache-2.0 OpenSearch fork.'
 const bigPictureSections = [
   {
     title: 'What both products are',
@@ -21,14 +21,14 @@ const bigPictureSections = [
   {
     title: 'Why this comparison is tricky',
     paragraphs: [
-      'There are really three different things people often blur together: older Apache-2.0 Elasticsearch OSS releases up to 7.10.2, Elastic’s current Elasticsearch distributions and source licensing model, and the OpenSearch project that forked from the last Apache-2.0 Elasticsearch OSS code line.',
+      'There are really three different things people often blur together: older Apache-2.0 Elasticsearch OSS releases up to 7.10.2, Elasticâ€™s current Elasticsearch distributions and source licensing model, and the OpenSearch project that forked from the last Apache-2.0 Elasticsearch OSS code line.',
       'If those distinctions are not made explicitly, architecture discussions become confused. A team may think it is comparing two search engines when it is actually comparing a commercial distribution strategy, an open-source project, and a migration path that depends heavily on which version family is currently in production.',
     ],
   },
   {
     title: 'What changed historically',
     paragraphs: [
-      'In 2021, Elastic changed the licensing approach for Elasticsearch and Kibana source code beginning with version 7.11. Elastic’s official FAQ states that the Apache-2.0-licensed source code moved to dual licensing under SSPL 1.0 and Elastic License 2.0, while the default distribution continued under Elastic License 2.0.',
+      'In 2021, Elastic changed the licensing approach for Elasticsearch and Kibana source code beginning with version 7.11. Elasticâ€™s official FAQ states that the Apache-2.0-licensed source code moved to dual licensing under SSPL 1.0 and Elastic License 2.0, while the default distribution continued under Elastic License 2.0.',
       'OpenSearch was announced in January 2021 as an open-source fork of Elasticsearch and Kibana, and the OpenSearch project states that OpenSearch 1.0 was released in July 2021 under Apache License 2.0. That fork point matters because it explains why older APIs and concepts overlap while newer features, clients, plugins, and ecosystem assumptions continue to diverge.',
     ],
   },
@@ -36,7 +36,7 @@ const bigPictureSections = [
     title: 'What changed again in 2024',
     paragraphs: [
       'On August 29, 2024, Elastic announced that it was adding AGPLv3 as an option for the free portions of the Elasticsearch and Kibana source code. Elastic also states that this did not change the licensing of its default binary distributions, which remain under Elastic License 2.0.',
-      'This means the old oversimplified statement that “Elasticsearch is not open source anymore” is no longer precise enough. The current reality is more nuanced: portions of the source code are available under AGPLv3, SSPL, and ELv2, while the default distributions still follow Elastic’s distribution model rather than Apache 2.0.',
+      'This means the old oversimplified statement that â€œElasticsearch is not open source anymoreâ€ is no longer precise enough. The current reality is more nuanced: portions of the source code are available under AGPLv3, SSPL, and ELv2, while the default distributions still follow Elasticâ€™s distribution model rather than Apache 2.0.',
     ],
   },
   {
@@ -49,7 +49,7 @@ const bigPictureSections = [
   {
     title: 'Short version',
     paragraphs: [
-      'Choose Elasticsearch when you want to align directly with Elastic’s current product direction, client ecosystem, search and AI feature packaging, and commercial platform model. Choose OpenSearch when you want an Apache-2.0 project, Linux Foundation governance, and a roadmap centered on OpenSearch and its surrounding open ecosystem.',
+      'Choose Elasticsearch when you want to align directly with Elasticâ€™s current product direction, client ecosystem, search and AI feature packaging, and commercial platform model. Choose OpenSearch when you want an Apache-2.0 project, Linux Foundation governance, and a roadmap centered on OpenSearch and its surrounding open ecosystem.',
       'The wrong way to decide is to treat this as a minor syntax comparison. The important question is which project model, compatibility story, and long-term operating environment your team actually wants to live with.',
     ],
   },
@@ -57,7 +57,8 @@ const bigPictureSections = [
 
 const decisionGuide: Array<{ title: string; choice: string }> = [
   {
-    title: 'Need direct alignment with Elastic’s current distributions, docs, and official clients',
+    title:
+      'Need direct alignment with Elasticâ€™s current distributions, docs, and official clients',
     choice: 'Prefer Elasticsearch.',
   },
   {
@@ -110,8 +111,8 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
 const historyAndDirection: string[] = [
   'Elasticsearch OSS up to 7.10.2 and OpenSearch share a common technical ancestry, which is why much terminology and many APIs still feel familiar across both systems.',
   'The fork happened in 2021, so compatibility assumptions weaken the farther you move away from that point. Newer client libraries, plugins, security features, vector workflows, and administrative tooling should not be assumed to be interchangeable.',
-  'Elastic’s 2024 AGPL move materially changed the licensing conversation around source availability, but it did not remove the need to distinguish source-code licensing from default-distribution licensing.',
-  'OpenSearch’s Linux Foundation support and Apache-2.0 positioning make it attractive for teams whose platform strategy is driven by governance and redistribution freedom as much as by raw search capability.',
+  'Elasticâ€™s 2024 AGPL move materially changed the licensing conversation around source availability, but it did not remove the need to distinguish source-code licensing from default-distribution licensing.',
+  'OpenSearchâ€™s Linux Foundation support and Apache-2.0 positioning make it attractive for teams whose platform strategy is driven by governance and redistribution freedom as much as by raw search capability.',
 ]
 
 const decisionQuestions: string[] = [
@@ -136,7 +137,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-governance',
     heading: 'Governance and Project Control',
     paragraphs: [
-      'Elasticsearch is developed by Elastic and follows Elastic’s product strategy, release packaging, and licensing decisions. That can be beneficial when a team wants a strong single-vendor story, clear product ownership, and direct alignment with Elastic’s broader platform direction.',
+      'Elasticsearch is developed by Elastic and follows Elasticâ€™s product strategy, release packaging, and licensing decisions. That can be beneficial when a team wants a strong single-vendor story, clear product ownership, and direct alignment with Elasticâ€™s broader platform direction.',
       'OpenSearch is presented as a community-driven project. The OpenSearch site states that the OpenSearch Software Foundation is part of the Linux Foundation and that technical governance is handled through project governance rather than vendor-only control. Teams that care about neutral project stewardship often see this as a major differentiator.',
     ],
   },
@@ -144,8 +145,8 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-licensing',
     heading: 'Licensing and Distribution Reality',
     paragraphs: [
-      'Licensing is where many superficial comparisons fail. Elasticsearch source code history and Elasticsearch distribution history are not identical. Elastic’s FAQ explains that in 2021 source code moved away from Apache 2.0, and in 2024 AGPLv3 was added as an option for the free portions of the source code. Elastic also explicitly states that the default distribution remains under Elastic License 2.0.',
-      'OpenSearch presents a simpler story: the project and distribution are Apache 2.0. If your organization needs a clean Apache-2.0 distribution story, OpenSearch is easier to reason about. If your organization is comfortable with Elastic’s licensing and wants Elastic’s current distribution, then Elasticsearch remains a straightforward choice.',
+      'Licensing is where many superficial comparisons fail. Elasticsearch source code history and Elasticsearch distribution history are not identical. Elasticâ€™s FAQ explains that in 2021 source code moved away from Apache 2.0, and in 2024 AGPLv3 was added as an option for the free portions of the source code. Elastic also explicitly states that the default distribution remains under Elastic License 2.0.',
+      'OpenSearch presents a simpler story: the project and distribution are Apache 2.0. If your organization needs a clean Apache-2.0 distribution story, OpenSearch is easier to reason about. If your organization is comfortable with Elasticâ€™s licensing and wants Elasticâ€™s current distribution, then Elasticsearch remains a straightforward choice.',
     ],
   },
   {
@@ -160,7 +161,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-api',
     heading: 'API Compatibility and Divergence',
     paragraphs: [
-      'Many common REST patterns still look familiar across both systems because the fork started from a shared codebase. That can make early proofs of concept deceptively easy. However, OpenSearch’s current client documentation warns that although older Elasticsearch OSS clients may work with OpenSearch 1.x, no Elasticsearch clients are fully compatible with OpenSearch 2.0 and later.',
+      'Many common REST patterns still look familiar across both systems because the fork started from a shared codebase. That can make early proofs of concept deceptively easy. However, OpenSearchâ€™s current client documentation warns that although older Elasticsearch OSS clients may work with OpenSearch 1.x, no Elasticsearch clients are fully compatible with OpenSearch 2.0 and later.',
       'This means teams should not treat apparent API similarity as a long-term contract. For greenfield systems, the safer practice is to use Elasticsearch clients with Elasticsearch and OpenSearch clients with OpenSearch.',
     ],
   },
@@ -184,7 +185,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-vector',
     heading: 'Vector Search and AI Direction',
     paragraphs: [
-      'Both products now position vector search as a major part of their roadmap. Elastic’s documentation highlights `dense_vector`, `sparse_vector`, and `semantic_text`, and describes vector search as part of modern AI-driven retrieval. Elastic also highlights ELSER and higher-level semantic workflows.',
+      'Both products now position vector search as a major part of their roadmap. Elasticâ€™s documentation highlights `dense_vector`, `sparse_vector`, and `semantic_text`, and describes vector search as part of modern AI-driven retrieval. Elastic also highlights ELSER and higher-level semantic workflows.',
       'OpenSearch documentation positions vector search as a complete vector database solution and uses features such as neural queries, ML model integration, and hybrid search. The practical takeaway is not that one side has vectors and the other does not. The practical takeaway is that each ecosystem is evolving its own AI-search conventions, APIs, and surrounding tooling.',
     ],
   },
@@ -201,7 +202,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'Operations, Backups, and Cluster Management',
     paragraphs: [
       'Both systems require serious operational discipline. Shard design, cluster sizing, hot spots, index lifecycle strategy, snapshot repositories, disaster recovery, upgrades, and query performance tuning still matter regardless of branding.',
-      'Elastic’s snapshot documentation stresses that snapshots are the supported backup mechanism and that filesystem-level copies are not a supported recovery path. OpenSearch likewise documents structured migration and upgrade paths. Operationally, neither product should be treated as a zero-admin black box just because the API looks familiar.',
+      'Elasticâ€™s snapshot documentation stresses that snapshots are the supported backup mechanism and that filesystem-level copies are not a supported recovery path. OpenSearch likewise documents structured migration and upgrade paths. Operationally, neither product should be treated as a zero-admin black box just because the API looks familiar.',
     ],
   },
   {
@@ -217,7 +218,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'Migration Paths and Upgrade Reality',
     paragraphs: [
       'OpenSearch documentation provides practical migration guidance for Elasticsearch OSS 5.x, 6.x, and 7.x, and also describes migration approaches for post-fork Elasticsearch versions using tools such as Logstash and Migration Assistant. That is useful, but it should not be misread as a guarantee that migration is trivial.',
-      'Migration across the fork is usually part data move, part API verification, part client replacement, part operational re-learning, and part ecosystem cleanup. The cluster can migrate faster than the organization’s habits, dashboards, pipelines, and incident response workflows.',
+      'Migration across the fork is usually part data move, part API verification, part client replacement, part operational re-learning, and part ecosystem cleanup. The cluster can migrate faster than the organizationâ€™s habits, dashboards, pipelines, and incident response workflows.',
     ],
   },
   {
@@ -233,14 +234,14 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'Cost, Procurement, and Organizational Fit',
     paragraphs: [
       'The cost story is not only about infrastructure. It also includes legal review, procurement friction, migration effort, existing staff familiarity, client-library churn, plugin replacements, and the amount of platform-specific knowledge the team must maintain.',
-      'Some organizations save money by aligning tightly with Elastic’s integrated platform. Others save money by standardizing on an Apache-2.0 stack and keeping more control over redistribution and platform choice. The correct answer depends on which costs dominate in your environment.',
+      'Some organizations save money by aligning tightly with Elasticâ€™s integrated platform. Others save money by standardizing on an Apache-2.0 stack and keeping more control over redistribution and platform choice. The correct answer depends on which costs dominate in your environment.',
     ],
   },
   {
     id: 'core-recommendations',
     heading: 'What Usually Matters Most',
     paragraphs: [
-      'For most real teams, the deciding factors are not whether both products can run a term query or an aggregation. The deciding factors are current version lineage, legal and governance requirements, ecosystem lock-in tolerance, migration appetite, and whether the team wants to follow Elastic’s roadmap or the OpenSearch roadmap.',
+      'For most real teams, the deciding factors are not whether both products can run a term query or an aggregation. The deciding factors are current version lineage, legal and governance requirements, ecosystem lock-in tolerance, migration appetite, and whether the team wants to follow Elasticâ€™s roadmap or the OpenSearch roadmap.',
       'Once those questions are answered honestly, the technical choice often becomes much clearer than the internet debate makes it seem.',
     ],
   },
@@ -250,12 +251,12 @@ const operatingNotes: Array<{ title: string; detail: string }> = [
   {
     title: 'Version names are not enough',
     detail:
-      'When someone says “we use Elasticsearch,” the first follow-up should be which exact version family and distribution they mean. That answer changes the migration and compatibility discussion immediately.',
+      'When someone says â€œwe use Elasticsearch,â€ the first follow-up should be which exact version family and distribution they mean. That answer changes the migration and compatibility discussion immediately.',
   },
   {
     title: 'Source-code openness and distribution openness are different questions',
     detail:
-      'Elastic’s 2024 AGPL change matters, but it does not erase the need to distinguish source-code licensing from the default Elasticsearch distribution model.',
+      'Elasticâ€™s 2024 AGPL change matters, but it does not erase the need to distinguish source-code licensing from the default Elasticsearch distribution model.',
   },
   {
     title: 'Shared ancestry does not guarantee future compatibility',
@@ -314,7 +315,7 @@ const workloadFitCases: Array<{ title: string; detail: string }> = [
 ]
 
 const pitfalls: string[] = [
-  'Using “Elasticsearch” to mean both older Elasticsearch OSS and current Elastic distributions without distinguishing the difference.',
+  'Using â€œElasticsearchâ€ to mean both older Elasticsearch OSS and current Elastic distributions without distinguishing the difference.',
   'Assuming Elasticsearch and OpenSearch are still close enough that client compatibility can be treated as a minor issue.',
   'Reducing the decision to licensing slogans without checking how your organization actually uses server binaries, source code, plugins, or managed services.',
   'Assuming a successful `_search` smoke test proves production compatibility.',
@@ -340,7 +341,7 @@ query styles:
   sparse_vector
   semantic`,
     explanation:
-      'Elastic’s current docs present multiple vector and semantic retrieval paths rather than a single one-size-fits-all API.',
+      'Elasticâ€™s current docs present multiple vector and semantic retrieval paths rather than a single one-size-fits-all API.',
   },
   {
     id: 'ex-opensearch-neural',
@@ -412,7 +413,7 @@ Do not assume:
   ad hoc node-level backups
   untested disaster recovery`,
     explanation:
-      'Elastic’s documentation is explicit that snapshots are the supported backup path, and the same disciplined mindset applies when operating OpenSearch.',
+      'Elasticâ€™s documentation is explicit that snapshots are the supported backup path, and the same disciplined mindset applies when operating OpenSearch.',
   },
 ]
 
@@ -425,7 +426,7 @@ const glossaryTerms: Array<{ term: string; definition: string }> = [
   {
     term: 'Elastic License 2.0 (ELv2)',
     definition:
-      'Elastic’s default distribution license for current Elasticsearch distributions. It is distinct from Apache 2.0 and distinct from the newer AGPL option for parts of the source code.',
+      'Elasticâ€™s default distribution license for current Elasticsearch distributions. It is distinct from Apache 2.0 and distinct from the newer AGPL option for parts of the source code.',
   },
   {
     term: 'AGPLv3',
@@ -551,7 +552,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function ElasticsearchVsOpenSearchPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Elasticsearch Vs Open Search Page',
     defaultTab: 'big-picture',
@@ -564,7 +565,6 @@ export default function ElasticsearchVsOpenSearchPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>

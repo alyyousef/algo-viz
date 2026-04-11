@@ -189,7 +189,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-cost',
     title: 'Operational and Organizational Cost',
     paragraphs: [
-      'Node.js can reduce training and collaboration cost when the whole product organization already knows JavaScript or TypeScript. That is a real advantage, not a cosmetic one. But the ecosystem’s openness can create consistency costs if the organization does not standardize architecture and tooling carefully.',
+      'Node.js can reduce training and collaboration cost when the whole product organization already knows JavaScript or TypeScript. That is a real advantage, not a cosmetic one. But the ecosystemâ€™s openness can create consistency costs if the organization does not standardize architecture and tooling carefully.',
       '.NET can increase language diversity in a product org that is otherwise web-centric, but it often reduces ambiguity at the platform level because the stack offers stronger defaults. That can produce lower maintenance cost over time in larger backend-heavy organizations.',
     ],
   },
@@ -444,7 +444,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function NodeJsVsDotNetPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Node.js vs .NET',
     defaultTab: 'big-picture',
@@ -457,7 +457,6 @@ export default function NodeJsVsDotNetPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Node.js vs .NET</h1>
       {introParagraphs.map((paragraph) => (

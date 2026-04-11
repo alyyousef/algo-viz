@@ -143,14 +143,14 @@ const coreConceptSectionsBase: ContentSection[] = [
     title: 'Routing and Topology',
     paragraphs: [
       'RabbitMQ has a richer broker-style routing model out of the box through exchanges and bindings. This makes it attractive when the application needs direct, topic, fanout, or pattern-based routing with a message-broker mindset.',
-      'Kafka’s routing model is more stream-oriented. Producers write to topics and partitions, and consumer groups process streams. This is simpler and more durable for event pipelines, but less broker-flexible than RabbitMQ’s classic routing patterns.',
+      'Kafkaâ€™s routing model is more stream-oriented. Producers write to topics and partitions, and consumer groups process streams. This is simpler and more durable for event pipelines, but less broker-flexible than RabbitMQâ€™s classic routing patterns.',
     ],
   },
   {
     id: 'core-retention-replay',
     title: 'Retention and Replay',
     paragraphs: [
-      'Kafka’s retention and replay model is one of its defining strategic strengths. Events remain in the log for a configured window, and consumers can re-read them. That enables rebuilding projections, recovering downstream systems, and onboarding new consumers to existing history.',
+      'Kafkaâ€™s retention and replay model is one of its defining strategic strengths. Events remain in the log for a configured window, and consumers can re-read them. That enables rebuilding projections, recovering downstream systems, and onboarding new consumers to existing history.',
       'RabbitMQ is not generally chosen for replayable historical streams. Its default mental model is successful delivery and acknowledgement, not long-lived retained event history for many future readers.',
     ],
   },
@@ -195,7 +195,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Tradeoffs',
     paragraphs: [
       'Kafka often wins on throughput, stream retention, replay, and fan-out consumption over time. RabbitMQ often wins on routing flexibility, work-queue clarity, and a more direct broker mental model. These are different strengths, not versions of the same strength.',
-      'The main mistake is using Kafka just to move background jobs because it is fashionable, or using RabbitMQ for event-stream history and replay when the architecture actually wants a durable log. Good choices come from matching the system’s messaging shape to the platform’s native model.',
+      'The main mistake is using Kafka just to move background jobs because it is fashionable, or using RabbitMQ for event-stream history and replay when the architecture actually wants a durable log. Good choices come from matching the systemâ€™s messaging shape to the platformâ€™s native model.',
     ],
     bullets: [
       'Choose Kafka for streams, retention, and replay.',
@@ -451,7 +451,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function KafkaVsRabbitMqPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Kafka vs RabbitMQ',
     defaultTab: 'big-picture',
@@ -464,7 +464,6 @@ export default function KafkaVsRabbitMqPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Kafka vs RabbitMQ</h1>
       {introParagraphs.map((paragraph) => (

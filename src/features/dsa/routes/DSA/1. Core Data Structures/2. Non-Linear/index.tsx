@@ -11,14 +11,14 @@ const bigPicture = [
     details:
       'Non-linear structures are containers where elements can have more than one predecessor or successor. Trees, graphs, heaps, and tries all belong to this family.',
     notes:
-      'Unlike linear structures, traversal order is not predetermined — it depends on the algorithm and the shape of the data.',
+      'Unlike linear structures, traversal order is not predetermined â€” it depends on the algorithm and the shape of the data.',
   },
   {
     title: 'Why it matters',
     details:
       'Hierarchical and networked data is inherently non-linear. File systems, DOM trees, dependency graphs, social networks, and route maps cannot be modeled efficiently with arrays or linked lists alone.',
     notes:
-      'The right non-linear structure can turn an O(n) operation into O(log n) or O(1) — the difference between a program that scales and one that does not.',
+      'The right non-linear structure can turn an O(n) operation into O(log n) or O(1) â€” the difference between a program that scales and one that does not.',
   },
   {
     title: 'Where it shows up',
@@ -54,7 +54,7 @@ const mentalModel = [
 
 const keyTakeaways = [
   'Trees are the go-to structure for hierarchical data; graphs generalize trees by allowing cycles and multiple parents.',
-  'Binary search trees give O(log n) search, insert, and delete — but only when balanced.',
+  'Binary search trees give O(log n) search, insert, and delete â€” but only when balanced.',
   'Heaps give O(1) peek and O(log n) push/pop, making them ideal for priority queues.',
   'Tries give O(k) search (k = key length) independent of the number of stored keys.',
   'Graph traversal (BFS/DFS) is the backbone of pathfinding, cycle detection, and topological sort.',
@@ -90,7 +90,7 @@ const structures = [
   {
     title: 'Heap (Binary Heap)',
     detail:
-      'A complete binary tree satisfying the heap property: each node is ≥ (max-heap) or ≤ (min-heap) all its children. Backed by an array for cache efficiency.',
+      'A complete binary tree satisfying the heap property: each node is â‰¥ (max-heap) or â‰¤ (min-heap) all its children. Backed by an array for cache efficiency.',
   },
   {
     title: 'Trie (Prefix Tree)',
@@ -152,7 +152,7 @@ const complexityTable = [
     search: 'O(k)',
     insert: 'O(k)',
     delete: 'O(k)',
-    space: 'O(n·k)',
+    space: 'O(nÂ·k)',
     note: 'k = key length',
   },
   {
@@ -165,11 +165,11 @@ const complexityTable = [
   },
   {
     structure: 'DSU',
-    search: 'O(α(n))',
-    insert: 'O(α(n))',
+    search: 'O(Î±(n))',
+    insert: 'O(Î±(n))',
     delete: 'N/A',
     space: 'O(n)',
-    note: 'α = inverse Ackermann, near O(1)',
+    note: 'Î± = inverse Ackermann, near O(1)',
   },
 ]
 
@@ -246,7 +246,7 @@ const pitfalls = [
 
 const codeExamples = [
   {
-    title: 'BST — insert and search',
+    title: 'BST â€” insert and search',
     code: `// TypeScript
 type BSTNode = { value: number; left: BSTNode | null; right: BSTNode | null }
 
@@ -266,7 +266,7 @@ function search(root: BSTNode | null, value: number): boolean {
       'Each call descends one level, giving O(h) time where h is the tree height. In a balanced tree h = O(log n).',
   },
   {
-    title: 'Binary Heap — push and pop (min-heap)',
+    title: 'Binary Heap â€” push and pop (min-heap)',
     code: `# Python (using heapq)
 import heapq
 
@@ -274,7 +274,7 @@ heap = []
 heapq.heappush(heap, 5)   # O(log n)
 heapq.heappush(heap, 1)
 heapq.heappush(heap, 3)
-minimum = heapq.heappop(heap)  # O(log n) → 1
+minimum = heapq.heappop(heap)  # O(log n) â†’ 1
 
 # Heapify from existing list in O(n)
 data = [5, 1, 3, 2, 4]
@@ -283,7 +283,7 @@ heapq.heapify(data)`,
       "Python's heapq is a min-heap. For a max-heap, negate values before pushing and after popping.",
   },
   {
-    title: 'Graph BFS — shortest path',
+    title: 'Graph BFS â€” shortest path',
     code: `// TypeScript
 function bfs(graph: Map<number, number[]>, start: number, target: number): number {
   const visited = new Set<number>()
@@ -305,7 +305,7 @@ function bfs(graph: Map<number, number[]>, start: number, target: number): numbe
       'BFS processes nodes in order of distance from the source. The first time the target is reached, dist is the shortest path length.',
   },
   {
-    title: 'DFS — topological sort',
+    title: 'DFS â€” topological sort',
     code: `# Python
 def topological_sort(graph: dict[int, list[int]]) -> list[int]:
   visited, result = set(), []
@@ -325,7 +325,7 @@ def topological_sort(graph: dict[int, list[int]]) -> list[int]:
       'Nodes are appended after all their dependencies are processed. Reversing the post-order list gives a valid topological ordering.',
   },
   {
-    title: 'Trie — insert and search',
+    title: 'Trie â€” insert and search',
     code: `// TypeScript
 type TrieNode = { children: Map<string, TrieNode>; isEnd: boolean }
 
@@ -352,7 +352,7 @@ function search(root: TrieNode, word: string): boolean {
       'Each character of the word is consumed in one step, giving O(k) time where k is the word length.',
   },
   {
-    title: 'DSU — union and find',
+    title: 'DSU â€” union and find',
     code: `// TypeScript
 class DSU {
   parent: number[]
@@ -430,7 +430,7 @@ const quickGlossary = [
   },
   {
     term: 'Heap property',
-    definition: 'Every node is ≥ (max-heap) or ≤ (min-heap) all of its children.',
+    definition: 'Every node is â‰¥ (max-heap) or â‰¤ (min-heap) all of its children.',
   },
   {
     term: 'Heapify',
@@ -473,7 +473,7 @@ const quickGlossary = [
   },
   {
     term: 'Adjacency matrix',
-    definition: 'Graph representation as a V×V boolean matrix. O(V²) space; O(1) edge lookup.',
+    definition: 'Graph representation as a VÃ—V boolean matrix. O(VÂ²) space; O(1) edge lookup.',
   },
   {
     term: 'Tree rotation',
@@ -483,22 +483,22 @@ const quickGlossary = [
 ]
 
 const choiceChecklist = [
-  'Need sorted iteration with O(log n) insert/delete? → BST (Red-Black or AVL).',
-  'Need the minimum or maximum repeatedly? → Binary heap (priority queue).',
-  'Need fast prefix search or autocomplete? → Trie.',
-  'Modeling relationships with no hierarchy? → Graph (adjacency list for sparse, matrix for dense).',
-  'Need shortest path on unweighted graph? → BFS.',
-  'Need shortest path on weighted graph? → Dijkstra (heap) or Bellman-Ford.',
-  'Need to detect cycles or topological order in a DAG? → DFS.',
-  'Need to group or merge elements into sets dynamically? → DSU.',
-  'Need range queries with point updates on an array? → Segment tree or Fenwick tree.',
+  'Need sorted iteration with O(log n) insert/delete? â†’ BST (Red-Black or AVL).',
+  'Need the minimum or maximum repeatedly? â†’ Binary heap (priority queue).',
+  'Need fast prefix search or autocomplete? â†’ Trie.',
+  'Modeling relationships with no hierarchy? â†’ Graph (adjacency list for sparse, matrix for dense).',
+  'Need shortest path on unweighted graph? â†’ BFS.',
+  'Need shortest path on weighted graph? â†’ Dijkstra (heap) or Bellman-Ford.',
+  'Need to detect cycles or topological order in a DAG? â†’ DFS.',
+  'Need to group or merge elements into sets dynamically? â†’ DSU.',
+  'Need range queries with point updates on an array? â†’ Segment tree or Fenwick tree.',
 ]
 
 const compareContrast = [
   {
     title: 'AVL vs Red-Black Tree',
     detail:
-      'AVL trees are more strictly balanced (height difference ≤ 1), giving slightly faster lookups. Red-Black trees allow more imbalance but require fewer rotations on insert/delete, making them preferred in standard libraries.',
+      'AVL trees are more strictly balanced (height difference â‰¤ 1), giving slightly faster lookups. Red-Black trees allow more imbalance but require fewer rotations on insert/delete, making them preferred in standard libraries.',
   },
   {
     title: 'Heap vs BST',
@@ -518,7 +518,7 @@ const compareContrast = [
   {
     title: 'Adjacency list vs matrix',
     detail:
-      'List uses O(V+E) space and is faster to iterate over neighbors. Matrix uses O(V²) space but gives O(1) edge existence checks.',
+      'List uses O(V+E) space and is faster to iterate over neighbors. Matrix uses O(VÂ²) space but gives O(1) edge existence checks.',
   },
 ]
 
@@ -552,7 +552,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function NonLinearStructuresPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'Non-Linear Structures',
     defaultTab: 'big-picture',
@@ -575,14 +575,13 @@ export default function NonLinearStructuresPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">Non-Linear Structures</h1>
       <p>
         Non-linear structures organize elements in hierarchies and networks rather than sequences.
         Trees, graphs, heaps, and tries each impose a different set of constraints on edges,
         enabling efficient algorithms that are impossible on flat arrays. Choosing the right
-        non-linear structure is often the difference between an O(n²) solution and an O(n log n) or
+        non-linear structure is often the difference between an O(nÂ²) solution and an O(n log n) or
         O(n) one.
       </p>
 
@@ -648,7 +647,7 @@ export default function NonLinearStructuresPage(): JSX.Element {
           <section id="core-complexity" className="bin98-section">
             <h2 className="bin98-heading">Complexity Overview</h2>
             <p>
-              V = vertices, E = edges, k = key length, α = inverse Ackermann function
+              V = vertices, E = edges, k = key length, Î± = inverse Ackermann function
               (near-constant).
             </p>
             <table className="bin98-table">

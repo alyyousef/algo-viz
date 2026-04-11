@@ -678,7 +678,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function PostgreSqlPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'PostgreSQL',
     defaultTab: 'big-picture',
@@ -691,7 +691,6 @@ export default function PostgreSqlPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">PostgreSQL</h1>
       <p className="postgres-help-doc-subtitle">

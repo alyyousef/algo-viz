@@ -452,7 +452,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 }
 
 export default function GrpcVsGraphqlPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'gRPC vs GraphQL',
     defaultTab: 'big-picture',
@@ -465,7 +465,6 @@ export default function GrpcVsGraphqlPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">gRPC vs GraphQL</h1>
       {introParagraphs.map((paragraph) => (

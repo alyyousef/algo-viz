@@ -103,7 +103,7 @@ const coreSections: Array<
     paragraphs: [
       'Cloud Run exposes multiple workload types, but the two most important are services and jobs. Services are long-lived serverless endpoints that respond to requests. Jobs are task-oriented containers that run to completion and do not behave like HTTP services.',
       'The main operational resources are service definitions, revisions, traffic assignments, jobs, executions, service accounts, and container images. Together they describe how an application is packaged, deployed, invoked, and observed.',
-      'The architectural consequence is that Cloud Run is more than “run this image.” It is a managed application platform with release units, identity, scaling rules, and integration points that shape how the software behaves in production.',
+      'The architectural consequence is that Cloud Run is more than â€œrun this image.â€ It is a managed application platform with release units, identity, scaling rules, and integration points that shape how the software behaves in production.',
     ],
   },
   {
@@ -121,7 +121,7 @@ const coreSections: Array<
     paragraphs: [
       'Cloud Run services create revisions on deployment. Each revision represents a specific deployable version of the container plus its runtime configuration.',
       "Traffic management is one of Cloud Run's most important ideas. Teams can send traffic to the latest revision, split traffic between revisions, or roll back by shifting traffic back to a prior known-good release.",
-      'This gives Cloud Run a stronger release model than a simple “replace the running app” workflow. Revisions make progressive delivery and rollback much easier to reason about.',
+      'This gives Cloud Run a stronger release model than a simple â€œreplace the running appâ€ workflow. Revisions make progressive delivery and rollback much easier to reason about.',
     ],
   },
   {
@@ -408,7 +408,7 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 }
 
 export default function GCPCloudRunPage(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: 'GCP Cloud Run',
     defaultTab: 'big-picture',
@@ -421,7 +421,6 @@ export default function GCPCloudRunPage(): JSX.Element {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
-      onMinimize={handleMinimize}
     >
       <h1 className="bin98-doc-title">GCP Cloud Run</h1>
       <p className="cloudrun-help-doc-subtitle">

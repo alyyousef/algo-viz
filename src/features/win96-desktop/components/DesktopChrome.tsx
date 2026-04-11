@@ -6,9 +6,8 @@ import Button97 from '@/systems/win97/components/Button97'
 import Taskbar97 from '@/systems/win97/components/Taskbar97'
 
 import DesktopSearch96 from './DesktopSearch96'
-import { FolderIcon, VisualizationIcon } from './DesktopShellIcons'
+import { FolderIcon } from './DesktopShellIcons'
 import StartMenu96 from './StartMenu96'
-import { useMinimizedTasks } from '../hooks/useMinimizedTasks'
 
 function DesktopClock(): JSX.Element {
   const [now, setNow] = useState(() => new Date())
@@ -34,7 +33,6 @@ export default function DesktopChrome(): JSX.Element {
   } = useWin96WindowManager()
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const { tasks: minimizedHelpTasks, removeTask } = useMinimizedTasks()
 
   const orderedWindows = useMemo(() => [...windows].sort((a, b) => a.zIndex - b.zIndex), [windows])
 
@@ -79,22 +77,6 @@ export default function DesktopChrome(): JSX.Element {
     )
   })
 
-  const minimizedHelpButtons = minimizedHelpTasks.map((task) => (
-    <Button97
-      key={task.id}
-      size="sm"
-      className="win96-taskbar__button win96-taskbar__button--minimized"
-      data-state="minimized"
-      onClick={() => {
-        removeTask(task.id)
-        void navigate(task.url)
-      }}
-      iconLeft={<VisualizationIcon size="sm" />}
-    >
-      {task.title}
-    </Button97>
-  ))
-
   return (
     <div className="win96-desktop-chrome">
       <DesktopSearch96
@@ -134,7 +116,6 @@ export default function DesktopChrome(): JSX.Element {
               Find
             </Button97>
             {runningItemsContent}
-            {minimizedHelpButtons}
           </div>
         }
         tray={<DesktopClock />}
