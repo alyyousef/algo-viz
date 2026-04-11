@@ -68,7 +68,7 @@
   font-size: 0.875rem;
   line-height: 1;
   cursor: pointer;
-  min-width: 72px;
+  min-width: 0;
   user-select: none;
   text-decoration: none;
 }
@@ -142,6 +142,10 @@
 
 .btn-97__label {
   display: inline-block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .input-97,
@@ -679,8 +683,10 @@
   align-items: center;
   gap: 4px;
   flex: 1 1 auto;
+  min-width: 0;
   height: 100%;
   padding: 0 4px;
+  overflow: hidden;
 }
 
 .taskbar-97__tray {
@@ -688,8 +694,10 @@
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
+  min-width: 0;
   height: 100%;
   padding: 0 4px;
+  overflow: hidden;
 }
 
 .taskbar-97__placeholder {
@@ -763,6 +771,23 @@
     height: 36px;
     padding: 0 0.625rem;
     font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .taskbar-97 {
+    gap: 4px;
+    padding: 3px 6px;
+  }
+
+  .start-button-97 {
+    padding: 0 0.875rem;
+    font-size: 14px;
+  }
+
+  .btn-97--sm {
+    padding: 0 0.5rem;
+    font-size: 12px;
   }
 }
 

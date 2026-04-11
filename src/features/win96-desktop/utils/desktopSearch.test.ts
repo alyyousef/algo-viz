@@ -22,6 +22,10 @@ describe('desktopSearchEntries', () => {
 })
 
 describe('searchDesktopEntries', () => {
+  it('returns the full route list when no query is provided', () => {
+    expect(searchDesktopEntries('')).toHaveLength(desktopSearchEntries.length)
+  })
+
   it('finds route matches by topic name', () => {
     const [firstResult] = searchDesktopEntries('binary search', 5)
 

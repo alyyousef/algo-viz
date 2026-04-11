@@ -63,7 +63,7 @@ export function useViewportScale({
     const applyScale = () => {
       const viewport = getViewportSize()
       const isMobile = viewport.width < mobileBreakpoint
-      const baseW = isMobile ? mobileWidth : desktopWidth
+      const baseW = isMobile ? mobileWidth : Math.max(desktopWidth, viewport.width)
       const baseH = isMobile ? mobileHeight : desktopHeight
       const availableHeight = Math.max(viewport.height - getTaskbarHeight(), 0)
       const widthScale = viewport.width / baseW

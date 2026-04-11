@@ -48,6 +48,14 @@ export const desktopSearchEntries: DesktopSearchEntry[] = dsaRouteDefinitions
   })
   .sort(compareEntries)
 
+const applyLimit = (entries: DesktopSearchEntry[], limit?: number): DesktopSearchEntry[] => {
+  if (limit === undefined) {
+    return entries
+  }
+
+  return entries.slice(0, limit)
+}
+
 const scoreEntry = (entry: DesktopSearchEntry, tokens: string[]): number => {
   const normalizedTitle = normalizeText(entry.title)
   const normalizedBreadcrumb = normalizeText(entry.breadcrumb)
@@ -86,24 +94,26 @@ const scoreEntry = (entry: DesktopSearchEntry, tokens: string[]): number => {
   return score - entry.breadcrumb.length
 }
 
-export const searchDesktopEntries = (rawQuery: string, limit = 10): DesktopSearchEntry[] => {
+export const searchDesktopEntries = (rawQuery: string, limit?: number): DesktopSearchEntry[] => {
   const normalizedQuery = normalizeText(rawQuery)
   if (!normalizedQuery) {
-    return desktopSearchEntries.slice(0, limit)
+    return applyLimit(desktopSearchEntries, limit)
   }
 
   const tokens = normalizedQuery.split(/\s+/).filter(Boolean)
 
-  return desktopSearchEntries
-    .map((entry) => ({ entry, score: scoreEntry(entry, tokens) }))
-    .filter((candidate) => candidate.score >= 0)
-    .sort((left, right) => {
-      if (left.score !== right.score) {
-        return right.score - left.score
-      }
+  return applyLimit(
+    desktopSearchEntries
+      .map((entry) => ({ entry, score: scoreEntry(entry, tokens) }))
+      .filter((candidate) => candidate.score >= 0)
+      .sort((left, right) => {
+        if (left.score !== right.score) {
+          return right.score - left.score
+        }
 
-      return compareEntries(left.entry, right.entry)
-    })
-    .slice(0, limit)
-    .map(({ entry }) => entry)
+        return compareEntries(left.entry, right.entry)
+      })
+      .map(({ entry }) => entry),
+    limit,
+  )
 }
