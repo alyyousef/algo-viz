@@ -37,10 +37,7 @@ const isEditableTarget = (target: EventTarget | null): boolean => {
   return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'))
 }
 
-export const eventPathIncludes = (
-  event: Pick<PointerEvent, 'composedPath'>,
-  element: Element | null,
-) => {
+const eventPathIncludes = (event: Pick<PointerEvent, 'composedPath'>, element: Element | null) => {
   if (!element || typeof event.composedPath !== 'function') {
     return false
   }
@@ -48,7 +45,7 @@ export const eventPathIncludes = (
   return event.composedPath().includes(element)
 }
 
-export const isSearchInteraction = (
+const isSearchInteraction = (
   event: Pick<PointerEvent, 'target' | 'composedPath'>,
   searchRoot: HTMLDivElement | null,
 ): boolean => {
@@ -60,9 +57,7 @@ export const isSearchInteraction = (
   return eventPathIncludes(event, searchRoot)
 }
 
-export const isTaskbarSearchInteraction = (
-  event: Pick<PointerEvent, 'target' | 'composedPath'>,
-) => {
+const isTaskbarSearchInteraction = (event: Pick<PointerEvent, 'target' | 'composedPath'>) => {
   const target = event.target
   if (target instanceof Element && target.closest('.win96-taskbar__search-button')) {
     return true
