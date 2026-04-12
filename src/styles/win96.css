@@ -359,7 +359,9 @@
   overscroll-behavior: none;
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  /* Keep the scaled desktop pinned to the left so viewport-height scaling
+     does not create large empty gutters on wider displays. */
+  justify-content: flex-start;
   background: linear-gradient(135deg, #008080 0%, #000080 100%);
 }
 
