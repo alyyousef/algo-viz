@@ -285,7 +285,7 @@ export default function GitHubActionsVsGitLabCIPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GitHub Actions vs GitLab CI</h1>
-      <p className="gha-glci-help-intro">
+      <p className="bin98-doc-subtitle">
         This page compares two CI and delivery platforms across the dimensions that usually matter
         in real engineering decisions: repository integration, pipeline model, runner strategy,
         security workflow, deployment semantics, ecosystem, team fit, and long-term operational

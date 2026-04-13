@@ -536,7 +536,7 @@ export default function ProbabilisticDataStructuresPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Probabilistic Data Structures</h1>
-      <p className="prob-help-intro">
+      <p className="bin98-doc-subtitle">
         Probabilistic data structures make impossible exact workloads feasible by trading a small,
         explicit error budget for large gains in memory, speed, and mergeability. This page
         preserves the original material while presenting it as a Windows-style help document focused

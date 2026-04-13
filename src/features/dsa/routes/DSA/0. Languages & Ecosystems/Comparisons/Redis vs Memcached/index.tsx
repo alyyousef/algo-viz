@@ -345,7 +345,7 @@ export default function RedisVsMemcachedPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Redis vs Memcached</h1>
-      <p className="redis-memcached-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of cache philosophy, data model, persistence, and practical
         in-memory tradeoffs.
       </p>

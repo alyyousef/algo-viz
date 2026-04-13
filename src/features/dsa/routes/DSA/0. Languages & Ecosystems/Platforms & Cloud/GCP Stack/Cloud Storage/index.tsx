@@ -388,7 +388,7 @@ export default function GCPCloudStoragePage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP Cloud Storage</h1>
-      <p className="cloudstorage-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Managed object storage for files, blobs, archives, assets, and data lake workloads
       </p>
       <p>

@@ -420,20 +420,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function CassandraVsMongoPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Cassandra Vs Mongo Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Cassandra Vs Mongo Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="cassandra-mongo-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Cassandra and MongoDB as real database architecture choices rather than
         as generic NoSQL labels. The point is to make the tradeoffs explicit: data model, query

@@ -489,7 +489,7 @@ export default function BellmanFordPage(): JSX.Element {
         making it a trusted baseline for constraint systems, routing, and graph analytics.
       </p>
       <p>
-        <Link to="/algoViz" className="bell-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           Back to Catalog
         </Link>
       </p>

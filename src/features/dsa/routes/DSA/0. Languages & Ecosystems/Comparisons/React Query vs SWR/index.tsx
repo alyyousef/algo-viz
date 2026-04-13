@@ -379,7 +379,7 @@ export default function ReactQueryVsSwrPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">React Query vs SWR</h1>
-      <p className="rq-swr-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of server-state philosophy, cache behavior, mutations, and practical
         React tradeoffs.
       </p>

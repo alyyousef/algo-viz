@@ -627,13 +627,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AWSRdsPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'A W S Rds Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="A W S Rds Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

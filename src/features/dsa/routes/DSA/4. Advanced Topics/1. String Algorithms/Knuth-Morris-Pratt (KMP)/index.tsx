@@ -302,7 +302,7 @@ export default function KnuthMorrisPrattKMPPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Knuth-Morris-Pratt (KMP)</h1>
-      <p className="kmp-help-intro">
+      <p className="bin98-doc-subtitle">
         KMP solves single-pattern search by precomputing how the pattern overlaps with itself. This
         page keeps the original material intact, but presents it as a Windows-style help document
         focused on the LPS table, mismatch fallback, and the practical cases where linear worst-case

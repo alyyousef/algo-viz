@@ -351,7 +351,7 @@ export default function SuffixArrayPage(): JSX.Element {
       <p>
         This page keeps the material as a help document: use the tabs to switch sections, the
         contents pane to jump within the current tab, or return to the{' '}
-        <Link to="/algoViz" className="sa-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           catalog
         </Link>
         .

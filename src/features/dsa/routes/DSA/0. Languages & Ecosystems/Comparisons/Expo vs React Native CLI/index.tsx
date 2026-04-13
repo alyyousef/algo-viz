@@ -13,7 +13,7 @@ const bigPictureSections: Array<{ title: string; paragraphs: string[] }> = [
   {
     title: 'What the comparison really means now',
     paragraphs: [
-      'This topic is commonly phrased as â€œExpo vs React Native CLI,â€ but the current React Native documentation is more precise: React Native recommends using a framework such as Expo for most new apps, and the alternative path is â€œReact Native without a framework,â€ which uses the Community CLI rather than the old global `react-native-cli` package.',
+      'This topic is commonly phrased as ?Expo vs React Native CLI,? but the current React Native documentation is more precise: React Native recommends using a framework such as Expo for most new apps, and the alternative path is ?React Native without a framework,? which uses the Community CLI rather than the old global `react-native-cli` package.',
       'That wording matters because many older blog posts still frame the decision as managed Expo versus fully native React Native. That is no longer a good mental model. Expo today can include custom native code, local native modules, development builds, and prebuild-driven native projects.',
     ],
   },
@@ -21,7 +21,7 @@ const bigPictureSections: Array<{ title: string; paragraphs: string[] }> = [
     title: 'What Expo is',
     paragraphs: [
       'Expo is a framework and toolchain around React Native. It provides project scaffolding, dev tooling, APIs, app services, web support, routing options, update workflows, and a development model that aims to remove a large amount of mobile build-system friction.',
-      'The React Native framework page currently says, â€œTo build a new app with React Native, we recommend a framework like Expo.â€ That is the clearest current signal from the React Native docs about where most teams should start.',
+      'The React Native framework page currently says, ?To build a new app with React Native, we recommend a framework like Expo.? That is the clearest current signal from the React Native docs about where most teams should start.',
     ],
   },
   {
@@ -34,14 +34,14 @@ const bigPictureSections: Array<{ title: string; paragraphs: string[] }> = [
   {
     title: 'What people often get wrong',
     paragraphs: [
-      'The old claim that Expo is only for simple apps is outdated. Expoâ€™s current docs explicitly cover development builds, adding custom native code, local Expo modules, prebuild, and even brownfield integration patterns.',
+      'The old claim that Expo is only for simple apps is outdated. Expo?s current docs explicitly cover development builds, adding custom native code, local Expo modules, prebuild, and even brownfield integration patterns.',
       'The old claim that React Native CLI is always more professional is also shallow. The real question is not professionalism. The real question is whether your team benefits more from a framework that standardizes the workflow or from owning the native project surface directly from day one.',
     ],
   },
   {
     title: 'Short version',
     paragraphs: [
-      'Choose Expo when you want the recommended modern React Native framework path, faster onboarding, less build-system friction, and a stronger default developer experience. Choose the no-framework Community CLI path when you know you need direct native project ownership, unusual native setup, or a workflow that does not fit Expoâ€™s framework assumptions.',
+      'Choose Expo when you want the recommended modern React Native framework path, faster onboarding, less build-system friction, and a stronger default developer experience. Choose the no-framework Community CLI path when you know you need direct native project ownership, unusual native setup, or a workflow that does not fit Expo?s framework assumptions.',
       'For many teams in 2026, Expo is the right default and the no-framework path is the deliberate exception, not the prestige option.',
     ],
   },
@@ -66,7 +66,7 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
     choice: 'Prefer the no-framework path unless Expo prebuild or modules clearly cover it.',
   },
   {
-    title: 'Need Expoâ€™s tooling, services, development builds, updates, and polished DX',
+    title: 'Need Expo?s tooling, services, development builds, updates, and polished DX',
     choice: 'Prefer Expo.',
   },
   {
@@ -96,8 +96,8 @@ const decisionGuide: Array<{ title: string; choice: string }> = [
 const historyAndDirection: string[] = [
   'The React Native docs now explicitly recommend using a framework like Expo for new apps, which is a major shift from older community narratives where raw CLI setup was often treated as the default.',
   'Expo has moved far beyond the old managed-workflow stereotype. Development builds, prebuild, local Expo modules, and custom native code support have narrowed the gap between Expo and the no-framework path.',
-  'The phrase â€œReact Native CLIâ€ is historically sticky but technically imprecise now. The current React Native docs describe the alternative path as â€œwithout a framework,â€ centered on the Community CLI and direct native tooling ownership.',
-  'Because of that shift, the modern decision is less about whether Expo is too limited and more about whether the team actually needs to bypass Expoâ€™s framework layer.',
+  'The phrase ?React Native CLI? is historically sticky but technically imprecise now. The current React Native docs describe the alternative path as ?without a framework,? centered on the Community CLI and direct native tooling ownership.',
+  'Because of that shift, the modern decision is less about whether Expo is too limited and more about whether the team actually needs to bypass Expo?s framework layer.',
 ]
 
 const decisionQuestions: string[] = [
@@ -114,8 +114,8 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-terminology',
     heading: 'Terminology Matters',
     paragraphs: [
-      'The phrase â€œReact Native CLIâ€ is still useful as shorthand, but it can hide the current architecture of the ecosystem. The React Native site now divides the world into framework-based development and â€œwithout a frameworkâ€ development, and it explicitly recommends the framework path for most new projects.',
-      'That means a current comparison should really be read as â€œExpo framework versus React Native without a framework.â€ If teams do not update that mental model, they often make decisions using 2020-era assumptions about what Expo can and cannot do.',
+      'The phrase ?React Native CLI? is still useful as shorthand, but it can hide the current architecture of the ecosystem. The React Native site now divides the world into framework-based development and ?without a framework? development, and it explicitly recommends the framework path for most new projects.',
+      'That means a current comparison should really be read as ?Expo framework versus React Native without a framework.? If teams do not update that mental model, they often make decisions using 2020-era assumptions about what Expo can and cannot do.',
     ],
   },
   {
@@ -130,7 +130,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-native',
     heading: 'Native Code and Native Modules',
     paragraphs: [
-      'The old idea that Expo means â€œno native codeâ€ is outdated. Expoâ€™s documentation covers adding custom native code, creating local Expo modules, using development builds, and generating native projects through prebuild. Expo Go has limitations, but Expo as a framework does not stop at Expo Go.',
+      'The old idea that Expo means ?no native code? is outdated. Expo?s documentation covers adding custom native code, creating local Expo modules, using development builds, and generating native projects through prebuild. Expo Go has limitations, but Expo as a framework does not stop at Expo Go.',
       'The no-framework path still provides the most direct route when the team wants to edit native projects without any framework mediation. If your workflow depends on deep custom native wiring from the beginning, that directness may still matter.',
     ],
   },
@@ -154,7 +154,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-updates',
     heading: 'Updates, Delivery, and Operational Model',
     paragraphs: [
-      'Expoâ€™s ecosystem includes a clearer story for over-the-air JavaScript and asset updates, environment management, and deployment ergonomics. That is part of why it feels more like a framework than a thin wrapper.',
+      'Expo?s ecosystem includes a clearer story for over-the-air JavaScript and asset updates, environment management, and deployment ergonomics. That is part of why it feels more like a framework than a thin wrapper.',
       'The no-framework path can achieve similar product outcomes, but you assemble more of the operational workflow yourself. This is often acceptable for experienced teams and unnecessary overhead for smaller ones.',
     ],
   },
@@ -163,14 +163,14 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'Platform Coverage',
     paragraphs: [
       'Expo has strong Android, iOS, and web support and provides a cohesive workflow across those targets. For teams building one codebase across common consumer-platform surfaces, that coherence is a real advantage.',
-      'React Native without a framework can be the more direct path when a team needs platform targets or native customizations that sit outside Expoâ€™s core assumptions, or when the project needs tighter control over the native app shell for existing enterprise or platform-specific requirements.',
+      'React Native without a framework can be the more direct path when a team needs platform targets or native customizations that sit outside Expo?s core assumptions, or when the project needs tighter control over the native app shell for existing enterprise or platform-specific requirements.',
     ],
   },
   {
     id: 'core-dependencies',
     heading: 'Library Compatibility and Ecosystem Fit',
     paragraphs: [
-      'Expo works best when the dependency set fits within Expoâ€™s supported ecosystem or can be brought in through development builds and native modules cleanly. For most mainstream app stacks, that is increasingly fine.',
+      'Expo works best when the dependency set fits within Expo?s supported ecosystem or can be brought in through development builds and native modules cleanly. For most mainstream app stacks, that is increasingly fine.',
       'The no-framework path reduces the number of framework-level compatibility questions because you are closer to raw React Native integration. The cost is that you perform more integration work and own more native troubleshooting yourself.',
     ],
   },
@@ -178,7 +178,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-upgrades',
     heading: 'Upgrades and Version Discipline',
     paragraphs: [
-      'Expo upgrades tend to be organized around Expo SDK releases. That can make upgrades more coherent, but it also means the team often moves with Expoâ€™s release train rather than adopting every new React Native release the moment it lands.',
+      'Expo upgrades tend to be organized around Expo SDK releases. That can make upgrades more coherent, but it also means the team often moves with Expo?s release train rather than adopting every new React Native release the moment it lands.',
       'The no-framework path can adopt upstream React Native changes more directly. That sounds attractive until you remember that it also means your team absorbs more of the upgrade burden and native breakage risk directly.',
     ],
   },
@@ -210,7 +210,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     id: 'core-cost',
     heading: 'Cost and Ownership Tradeoff',
     paragraphs: [
-      'Expo often lowers the total engineering cost of shipping a normal app because it reduces mobile environment setup, release complexity, and general workflow variance. That matters more than ideological arguments about â€œpurity.â€',
+      'Expo often lowers the total engineering cost of shipping a normal app because it reduces mobile environment setup, release complexity, and general workflow variance. That matters more than ideological arguments about ?purity.?',
       'The no-framework path can be cheaper only when the extra control is actually used. If the team mostly builds standard product features, owning the entire native project surface can become expensive ceremony rather than useful freedom.',
     ],
   },
@@ -219,7 +219,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'What Usually Matters Most',
     paragraphs: [
       'For most teams, the choice turns on one question: do you need to own the native project surface directly right now, or do you mainly need a fast and maintainable way to build a React Native app? If it is the second case, Expo is usually the stronger answer.',
-      'The strongest reason to reject Expo is not pride. It is a concrete native requirement or workflow mismatch that Expoâ€™s framework model does not serve well enough for your project.',
+      'The strongest reason to reject Expo is not pride. It is a concrete native requirement or workflow mismatch that Expo?s framework model does not serve well enough for your project.',
     ],
   },
 ]
@@ -243,7 +243,7 @@ const operatingNotes: Array<{ title: string; detail: string }> = [
   {
     title: 'Upgrade control cuts both ways',
     detail:
-      'Being closer to upstream React Native gives you earlier access and earlier pain. Expoâ€™s release train can be a feature because it packages and stabilizes common workflow pieces.',
+      'Being closer to upstream React Native gives you earlier access and earlier pain. Expo?s release train can be a feature because it packages and stabilizes common workflow pieces.',
   },
   {
     title: 'Framework recommendation is now official',
@@ -292,7 +292,7 @@ const workloadFitCases: Array<{ title: string; detail: string }> = [
 
 const pitfalls: string[] = [
   'Using 2020-era arguments about Expo limitations without accounting for development builds, prebuild, and custom native code support.',
-  'Treating â€œReact Native CLIâ€ as if it still means the old global CLI package rather than the broader no-framework Community CLI path.',
+  'Treating ?React Native CLI? as if it still means the old global CLI package rather than the broader no-framework Community CLI path.',
   'Choosing the no-framework path for prestige rather than for concrete technical requirements.',
   'Choosing Expo and then assuming Expo Go limitations describe the whole framework.',
   'Underestimating how much native build-system work the no-framework path adds for ordinary product teams.',
@@ -318,7 +318,7 @@ npx expo start`,
 cd MyApp
 npx react-native run-android`,
     explanation:
-      'This is closer to the modern â€œwithout a frameworkâ€ path than the older shorthand phrase â€œReact Native CLIâ€ suggests.',
+      'This is closer to the modern ?without a framework? path than the older shorthand phrase ?React Native CLI? suggests.',
   },
   {
     id: 'ex-dev-build',
@@ -341,7 +341,7 @@ Expo development build
   -> ios/ and android/ native projects
   -> native build tooling continues from there`,
     explanation:
-      'Prebuild is why the modern Expo story is not accurately described as â€œno native projects.â€',
+      'Prebuild is why the modern Expo story is not accurately described as ?no native projects.?',
   },
   {
     id: 'ex-decision',
@@ -373,17 +373,17 @@ const glossaryTerms: Array<{ term: string; definition: string }> = [
   {
     term: 'Development build',
     definition:
-      'An Expo-built app shell that includes your own native code and libraries while keeping Expoâ€™s development tooling.',
+      'An Expo-built app shell that includes your own native code and libraries while keeping Expo?s development tooling.',
   },
   {
     term: 'Prebuild',
     definition:
-      'Expoâ€™s process for generating native iOS and Android projects from the app configuration and installed modules.',
+      'Expo?s process for generating native iOS and Android projects from the app configuration and installed modules.',
   },
   {
     term: 'Continuous Native Generation',
     definition:
-      'Expoâ€™s idea that native projects can be generated and kept reproducible from higher-level app configuration rather than being treated as manually curated first-class artifacts from day one.',
+      'Expo?s idea that native projects can be generated and kept reproducible from higher-level app configuration rather than being treated as manually curated first-class artifacts from day one.',
   },
   {
     term: 'React Native without a framework',
@@ -393,7 +393,7 @@ const glossaryTerms: Array<{ term: string; definition: string }> = [
   {
     term: 'Community CLI',
     definition:
-      'The current CLI path used for React Native without a framework. It is the practical modern replacement for what many people still casually call â€œReact Native CLI.â€',
+      'The current CLI path used for React Native without a framework. It is the practical modern replacement for what many people still casually call ?React Native CLI.?',
   },
   {
     term: 'Brownfield',
@@ -408,7 +408,7 @@ const glossaryTerms: Array<{ term: string; definition: string }> = [
   {
     term: 'EAS',
     definition:
-      'Expo Application Services, Expoâ€™s hosted service suite for building, updating, signing, and distributing apps.',
+      'Expo Application Services, Expo?s hosted service suite for building, updating, signing, and distributing apps.',
   },
 ]
 
@@ -469,13 +469,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function ExpoVsReactNativeCliPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Expo Vs React Native Cli Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Expo Vs React Native Cli Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
@@ -484,14 +484,14 @@ export default function ExpoVsReactNativeCliPage(): JSX.Element {
       <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>
       <p>
-        This page compares Expo with the path often called â€œReact Native CLI,â€ but the current
-        React Native docs frame that alternative more accurately as React Native without a
-        framework. The real question is whether your team benefits more from Expoâ€™s framework
-        layer or from direct ownership of the native project surface.
+        This page compares Expo with the path often called ?React Native CLI,? but the current React
+        Native docs frame that alternative more accurately as React Native without a framework. The
+        real question is whether your team benefits more from Expo?s framework layer or from direct
+        ownership of the native project surface.
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="expo-rncli-help-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.
@@ -608,12 +608,7 @@ export default function ExpoVsReactNativeCliPage(): JSX.Element {
           <ul>
             {pageSources.map((source) => (
               <li key={source}>
-                <a
-                  href={source}
-                  className="expo-rncli-help-inline-link"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
                   {source}
                 </a>
               </li>

@@ -416,7 +416,7 @@ export default function CryptographyPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Cryptography</h1>
-      <p className="crypto-help-intro">
+      <p className="bin98-doc-subtitle">
         Cryptography turns untrusted networks into workable systems by hiding data, detecting
         tampering, and binding identities. Real security comes from disciplined key handling, nonce
         hygiene, and protocols that treat failure as normal.

@@ -127,7 +127,7 @@ const queryTypes = [
     heading: 'Range assignment / addition',
     bullets: [
       'Lazy propagation handles bulk updates without touching every element.',
-      'Common in interval scheduling, â€œpaintâ€ problems, and batch adjustments.',
+      'Common in interval scheduling, ?paint? problems, and batch adjustments.',
     ],
   },
   {
@@ -420,7 +420,7 @@ const decisionGuidance = [
   'Need range updates and range queries: segment tree with lazy propagation is the right fit.',
   'Need immutable history or time travel queries: consider a persistent segment tree.',
   'Need range queries over sparse or huge coordinates: combine with coordinate compression.',
-  'Need many offline queries: consider Moâ€™s algorithm or prefix arrays if updates are rare.',
+  'Need many offline queries: consider Mo?s algorithm or prefix arrays if updates are rare.',
 ]
 
 const advancedInsights = [

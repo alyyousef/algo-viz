@@ -420,7 +420,7 @@ export default function AzureStackPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Azure Stack</h1>
-      <p className="azure-stack-help-intro">
+      <p className="bin98-doc-subtitle">
         Azure is broad enough that "the Azure stack" can mean a serverless application, an App
         Service deployment, a container platform, an enterprise identity-and-policy foundation, or a
         multi-subscription internal platform. This page treats Azure as a platform model: the major

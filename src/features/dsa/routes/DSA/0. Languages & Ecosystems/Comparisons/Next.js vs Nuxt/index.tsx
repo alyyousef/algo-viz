@@ -43,7 +43,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 
 const introParagraphs = [
   'Next.js and Nuxt occupy very similar positions in their respective ecosystems. Next.js is a major full-stack framework built around React, while Nuxt is a major full-stack framework built around Vue. Both handle routing, server rendering, static generation, data loading, layouts, deployment patterns, and modern application delivery concerns. That means the comparison is usually less about which framework can technically do more and more about which component model, ecosystem, and team mental model fit the organization better.',
-  'In practice, the strongest deciding factor is often upstream ecosystem choice: React and its surrounding culture versus Vue and its surrounding culture. Next.js benefits from the enormous gravity of React and the broader platform story around modern React application delivery. Nuxt benefits from Vueâ€™s ergonomics, a cohesive developer experience, and a framework model that many teams find especially approachable. The right choice usually depends on framework philosophy, organization skill set, and how much platform breadth versus framework coherence the team wants.',
+  'In practice, the strongest deciding factor is often upstream ecosystem choice: React and its surrounding culture versus Vue and its surrounding culture. Next.js benefits from the enormous gravity of React and the broader platform story around modern React application delivery. Nuxt benefits from Vue’s ergonomics, a cohesive developer experience, and a framework model that many teams find especially approachable. The right choice usually depends on framework philosophy, organization skill set, and how much platform breadth versus framework coherence the team wants.',
 ]
 
 const bigPictureSections: ContentSection[] = [
@@ -59,7 +59,7 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-core-difference',
     title: 'The Core Difference',
     paragraphs: [
-      'The core difference is not that one is full-stack and the other is not. Both are. The deeper difference is that each framework inherits the ideas and developer habits of its component ecosystem. Next.js inherits Reactâ€™s flexibility, large ecosystem, and evolving server-client model. Nuxt inherits Vueâ€™s emphasis on approachability, cohesive conventions, and a more guided application experience.',
+      'The core difference is not that one is full-stack and the other is not. Both are. The deeper difference is that each framework inherits the ideas and developer habits of its component ecosystem. Next.js inherits React’s flexibility, large ecosystem, and evolving server-client model. Nuxt inherits Vue’s emphasis on approachability, cohesive conventions, and a more guided application experience.',
       'This means the real comparison is often React-platform gravity versus Vue-framework coherence. Next.js usually wins when organizations want the broadest React ecosystem alignment. Nuxt usually wins when organizations want the Vue experience extended cleanly into full-stack application development.',
     ],
     bullets: [
@@ -88,7 +88,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'When Nuxt Is Usually the Better Fit',
     paragraphs: [
       'Nuxt is usually the better fit when the team prefers Vue, values a cohesive framework experience, or wants strong conventions around full-stack application structure without adopting the broader and sometimes more fragmented React platform world.',
-      'It is especially appealing for teams that like Vueâ€™s single-file component style, reactive mental model, and overall ergonomics, and want those strengths carried into SSR, routing, and server-side features.',
+      'It is especially appealing for teams that like Vue’s single-file component style, reactive mental model, and overall ergonomics, and want those strengths carried into SSR, routing, and server-side features.',
     ],
     bullets: [
       'Teams that prefer Vue as the frontend foundation.',
@@ -126,15 +126,15 @@ const coreConceptSections: ContentSection[] = [
     title: 'Ecosystem Center of Gravity',
     paragraphs: [
       'Next.js sits in the middle of the React ecosystem, which gives it access to enormous community momentum, many supporting libraries, and a very large talent pool. This is a major practical advantage when organizations want broad compatibility and easy hiring.',
-      'Nuxt sits in the Vue ecosystem, which is smaller than Reactâ€™s but often valued for its clarity and consistency. For teams already committed to Vue, this is not a disadvantage at all. It often means a more focused ecosystem with fewer competing patterns.',
+      'Nuxt sits in the Vue ecosystem, which is smaller than React’s but often valued for its clarity and consistency. For teams already committed to Vue, this is not a disadvantage at all. It often means a more focused ecosystem with fewer competing patterns.',
     ],
   },
   {
     id: 'core-component-model',
     title: 'Component and Developer Model',
     paragraphs: [
-      'Next.js inherits Reactâ€™s component model, including JSX or TSX, hooks, and the broader React mental model around composition and state. Teams comfortable in React often find this natural, especially when they already have reusable frontend patterns in place.',
-      'Nuxt inherits Vueâ€™s component model, including Vue single-file components, declarative templates, and Vueâ€™s reactive APIs. Many developers find Vue and Nuxt easier to reason about because the framework conventions feel more integrated and less open-ended.',
+      'Next.js inherits React’s component model, including JSX or TSX, hooks, and the broader React mental model around composition and state. Teams comfortable in React often find this natural, especially when they already have reusable frontend patterns in place.',
+      'Nuxt inherits Vue’s component model, including Vue single-file components, declarative templates, and Vue’s reactive APIs. Many developers find Vue and Nuxt easier to reason about because the framework conventions feel more integrated and less open-ended.',
     ],
   },
   {
@@ -182,7 +182,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Team Fit',
     paragraphs: [
       'Next.js fits teams that are already effective in React, want the largest ecosystem, or need a framework that aligns with the dominant frontend platform in many companies. It is especially strong when organizational scale and hiring flexibility matter.',
-      'Nuxt fits teams that prefer Vueâ€™s development style and want a full-stack framework that feels integrated rather than assembled. It is especially strong when developer experience and framework coherence are primary values.',
+      'Nuxt fits teams that prefer Vue’s development style and want a full-stack framework that feels integrated rather than assembled. It is especially strong when developer experience and framework coherence are primary values.',
     ],
   },
   {
@@ -198,12 +198,12 @@ const coreConceptSections: ContentSection[] = [
     title: 'Tradeoffs',
     paragraphs: [
       'Next.js usually wins on React ecosystem reach, community gravity, and platform breadth. Nuxt usually wins on Vue-aligned clarity, developer ergonomics, and a highly cohesive framework experience. Neither is universally better because they optimize different ecosystems and different team preferences.',
-      'The real mistake is pretending the framework decision is independent from the component ecosystem decision. In most cases, the framework is an expression of the teamâ€™s React-versus-Vue choice as much as it is a separate platform comparison.',
+      'The real mistake is pretending the framework decision is independent from the component ecosystem decision. In most cases, the framework is an expression of the team’s React-versus-Vue choice as much as it is a separate platform comparison.',
     ],
     bullets: [
       'Choose Next.js for React ecosystem scale and platform breadth.',
       'Choose Nuxt for Vue ergonomics and framework coherence.',
-      'Evaluate the teamâ€™s component-model preference honestly.',
+      'Evaluate the team’s component-model preference honestly.',
       'Standardize around the ecosystem the organization can support best.',
     ],
   },
@@ -248,7 +248,7 @@ layouts/
     id: 'examples-team-frame',
     title: 'Team Alignment Example',
     description: [
-      'The framework choice often follows the organizationâ€™s frontend ecosystem center of gravity.',
+      'The framework choice often follows the organization’s frontend ecosystem center of gravity.',
     ],
     code: `React-centered org
   -> Next.js usually fits naturally
@@ -395,8 +395,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="next-nuxt-help-section">
-      <h2 className="next-nuxt-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -407,19 +407,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="next-nuxt-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="next-nuxt-help-section">
-      <h2 className="next-nuxt-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="next-nuxt-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -427,21 +427,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="next-nuxt-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="next-nuxt-help-section">
-      <h2 className="next-nuxt-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="next-nuxt-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

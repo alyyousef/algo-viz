@@ -417,7 +417,7 @@ export default function AzureFunctionsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Azure Functions</h1>
-      <p className="azure-functions-help-intro">
+      <p className="bin98-doc-subtitle">
         Azure Functions is a serverless execution environment for event-driven workloads, but it
         only stays simple when the architecture respects its model. This page goes beyond the short
         definition and covers where the service fits, how triggers and bindings shape design, how

@@ -415,19 +415,19 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AwsEventBridgePage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Aws Event Bridge Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Aws Event Bridge Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
-      <h1 className="eventbridge-help-title-main">{pageTitle}</h1>
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>
       <p>
         This page treats EventBridge as an event platform rather than as a single AWS checkbox. The
@@ -437,7 +437,7 @@ export default function AwsEventBridgePage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="eventbridge-help-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.
@@ -560,12 +560,7 @@ export default function AwsEventBridgePage(): JSX.Element {
           <ul>
             {pageSources.map((source) => (
               <li key={source}>
-                <a
-                  href={source}
-                  className="eventbridge-help-inline-link"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
                   {source}
                 </a>
               </li>

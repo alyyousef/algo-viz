@@ -376,7 +376,7 @@ export default function ReduxVsZustandPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Redux vs Zustand</h1>
-      <p className="redux-zustand-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of global state architecture, middleware, devtools, and pragmatic
         React-state tradeoffs.
       </p>

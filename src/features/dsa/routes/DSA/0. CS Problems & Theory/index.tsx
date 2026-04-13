@@ -323,7 +323,7 @@ const _glossaryBroken = [
   },
   {
     term: 'Approximation ratio',
-    definition: 'A bound comparing the quality of an algorithmâ€™s answer to the optimum.',
+    definition: 'A bound comparing the quality of an algorithm’s answer to the optimum.',
   },
   { term: 'Liveness', definition: 'A guarantee that useful progress eventually occurs.' },
   { term: 'Safety', definition: 'A guarantee that forbidden bad states do not occur.' },

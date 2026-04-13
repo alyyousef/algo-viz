@@ -409,7 +409,7 @@ export default function GcpStackPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP Stack</h1>
-      <p className="gcp-stack-help-intro">
+      <p className="bin98-doc-subtitle">
         GCP is broad enough that "the GCP stack" can mean a serverless application, a Cloud Run
         platform, a Kubernetes environment, or a data-heavy analytics system. This page treats GCP
         as a platform model: the major layers, the service families, the tradeoffs, and the

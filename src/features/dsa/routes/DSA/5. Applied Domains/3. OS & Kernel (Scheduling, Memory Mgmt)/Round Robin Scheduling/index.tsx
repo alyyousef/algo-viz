@@ -467,7 +467,7 @@ export default function RoundRobinSchedulingPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Round Robin Scheduling</h1>
-      <p className="rr-help-intro">
+      <p className="bin98-doc-subtitle">
         Round robin scheduling gives each process a fixed time quantum, cycling through the ready
         queue in FIFO order. It is simple, fair, and predictable for interactive workloads, but its
         effectiveness depends heavily on quantum size and context-switch overhead.

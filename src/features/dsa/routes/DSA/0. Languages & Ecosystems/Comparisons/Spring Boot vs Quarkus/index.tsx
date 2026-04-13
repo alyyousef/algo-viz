@@ -400,7 +400,7 @@ export default function SpringBootVsQuarkusPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Spring Boot vs Quarkus</h1>
-      <p className="spring-quarkus-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of ecosystem breadth, build-time optimization, native-image fit, dev
         mode, and enterprise Java platform tradeoffs.
       </p>

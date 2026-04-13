@@ -466,7 +466,7 @@ export default function Counter(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Preact</h1>
-      <p className="preact-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, hooks, DOM alignment, native events, compat
         strategy, signals, tradeoffs, and practical examples.
       </p>

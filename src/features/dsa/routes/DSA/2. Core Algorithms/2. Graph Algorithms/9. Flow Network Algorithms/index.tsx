@@ -534,7 +534,7 @@ export default function FlowNetworkAlgorithms(): JSX.Element {
         cancellations.
       </p>
       <p>
-        <Link to="/algoViz" className="flow-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           Back to Catalog
         </Link>
       </p>

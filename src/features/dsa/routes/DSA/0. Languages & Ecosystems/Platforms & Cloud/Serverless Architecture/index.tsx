@@ -534,20 +534,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function ServerlessArchitecturePage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Serverless Architecture Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Serverless Architecture Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="serverless-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page is intentionally thorough. It is meant to read like a compact serverless
         architecture manual: execution model, triggers, state design, retries, workflow

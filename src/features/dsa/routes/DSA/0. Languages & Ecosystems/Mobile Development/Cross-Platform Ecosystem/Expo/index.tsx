@@ -415,7 +415,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Expo Router',
         definition:
-          'Expoâ€™s file-based routing system for organizing navigation and screen structure.',
+          'Expo’s file-based routing system for organizing navigation and screen structure.',
       },
       {
         term: 'Expo module',
@@ -431,16 +431,16 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'EAS Build',
         definition:
-          'Expoâ€™s build service for creating Android and iOS artifacts in a standardized workflow.',
+          'Expo’s build service for creating Android and iOS artifacts in a standardized workflow.',
       },
       {
         term: 'EAS Submit',
         definition:
-          'Expoâ€™s submission service for automating store-submission steps after builds are produced.',
+          'Expo’s submission service for automating store-submission steps after builds are produced.',
       },
       {
         term: 'EAS Update',
-        definition: 'Expoâ€™s update-delivery system for compatible JavaScript and asset changes.',
+        definition: 'Expo’s update-delivery system for compatible JavaScript and asset changes.',
       },
       {
         term: 'Build profile',
@@ -481,7 +481,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Workflow fit',
         definition:
-          'Whether Expoâ€™s abstractions and services match the productâ€™s operational and technical needs.',
+          'Whether Expo’s abstractions and services match the product’s operational and technical needs.',
       },
       {
         term: 'OTA update',
@@ -562,8 +562,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="expo-help-section">
-      <h2 className="expo-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -574,19 +574,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="expo-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="expo-help-section">
-      <h2 className="expo-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="expo-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -594,21 +594,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="expo-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="expo-help-section">
-      <h2 className="expo-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="expo-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

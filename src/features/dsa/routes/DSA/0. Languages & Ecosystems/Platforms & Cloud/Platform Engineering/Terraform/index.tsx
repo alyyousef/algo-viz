@@ -216,7 +216,7 @@ const glossary: GlossaryTerm[] = [
   {
     term: 'State',
     definition:
-      'Terraformâ€™s recorded model of managed infrastructure used to calculate diffs and drive updates.',
+      'Terraform’s recorded model of managed infrastructure used to calculate diffs and drive updates.',
   },
   {
     term: 'Backend',

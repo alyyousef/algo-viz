@@ -538,7 +538,7 @@ export default function JohnsonSAlgorithmPage(): JSX.Element {
         practical APSP method that stays fast without giving up correctness on negative edges.
       </p>
       <p>
-        <Link to="/algoViz" className="john-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           Back to Catalog
         </Link>
       </p>

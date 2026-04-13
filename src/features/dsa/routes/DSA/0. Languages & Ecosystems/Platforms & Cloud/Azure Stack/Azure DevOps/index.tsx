@@ -614,13 +614,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AzureDevOpsPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Azure Dev Ops Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Azure Dev Ops Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

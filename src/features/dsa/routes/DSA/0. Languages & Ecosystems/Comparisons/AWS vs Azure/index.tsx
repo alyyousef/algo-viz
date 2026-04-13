@@ -481,20 +481,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AwsVsAzurePage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Aws Vs Azure Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Aws Vs Azure Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="aws-azure-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares AWS and Azure as platform choices for real infrastructure, application,
         and organization design. The point is not to memorize service-name pairs. The point is to

@@ -615,13 +615,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AWSS3Page(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'A W S S3 Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="A W S S3 Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

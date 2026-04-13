@@ -471,7 +471,7 @@ export default function Counter(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">SolidJS</h1>
-      <p className="solid-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, signals, fine-grained reactivity, JSX authoring,
         app-framework layering, tradeoffs, and practical examples.
       </p>

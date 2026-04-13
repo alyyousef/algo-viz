@@ -52,7 +52,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Overview',
     paragraphs: [
       'Kubernetes is the dominant cloud-native orchestration platform. It provides a rich control plane, declarative resource model, self-healing behavior, scheduling, service discovery, rollout management, policy integration, and a broad ecosystem of tools built around it.',
-      'Docker Swarm is a simpler orchestrator integrated with Dockerâ€™s workflow and concepts. It is easier to understand quickly and often easier to stand up for straightforward clustered container deployments, but it offers a smaller ecosystem and less operational depth than Kubernetes.',
+      'Docker Swarm is a simpler orchestrator integrated with Docker’s workflow and concepts. It is easier to understand quickly and often easier to stand up for straightforward clustered container deployments, but it offers a smaller ecosystem and less operational depth than Kubernetes.',
     ],
   },
   {
@@ -388,8 +388,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="k8s-swarm-help-section">
-      <h2 className="k8s-swarm-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -400,19 +400,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="k8s-swarm-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="k8s-swarm-help-section">
-      <h2 className="k8s-swarm-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="k8s-swarm-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -420,21 +420,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="k8s-swarm-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="k8s-swarm-help-section">
-      <h2 className="k8s-swarm-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="k8s-swarm-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

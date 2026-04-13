@@ -444,7 +444,7 @@ export default function GCPCloudBuildPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP Cloud Build</h1>
-      <p className="cloudbuild-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Managed CI and build automation built around containerized pipeline steps
       </p>
       <p>

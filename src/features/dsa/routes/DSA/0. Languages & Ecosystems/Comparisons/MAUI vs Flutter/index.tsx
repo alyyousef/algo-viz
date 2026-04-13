@@ -51,8 +51,8 @@ const bigPictureSections: ContentSection[] = [
     id: 'bp-overview',
     title: 'Overview',
     paragraphs: [
-      'MAUI, short for .NET Multi-platform App UI, is Microsoftâ€™s cross-platform framework for building applications across mobile and desktop targets using the .NET ecosystem. It is a natural choice for teams already invested in C#, .NET tooling, and Microsoft platform workflows.',
-      'Flutter is Googleâ€™s UI toolkit for building cross-platform applications from a single codebase using Dart. It is known for fast iteration, a strong widget-based model, and a rendering approach that gives the framework a high degree of control over the visual layer across platforms.',
+      'MAUI, short for .NET Multi-platform App UI, is Microsoft’s cross-platform framework for building applications across mobile and desktop targets using the .NET ecosystem. It is a natural choice for teams already invested in C#, .NET tooling, and Microsoft platform workflows.',
+      'Flutter is Google’s UI toolkit for building cross-platform applications from a single codebase using Dart. It is known for fast iteration, a strong widget-based model, and a rendering approach that gives the framework a high degree of control over the visual layer across platforms.',
     ],
   },
   {
@@ -118,7 +118,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-ecosystem-center',
     title: 'Ecosystem Center of Gravity',
     paragraphs: [
-      'MAUI is centered on the .NET ecosystem. That means the frameworkâ€™s biggest strategic advantage is not merely UI sharing, but continuity with C#, .NET libraries, Microsoft tooling, and enterprise development habits that many organizations already use elsewhere.',
+      'MAUI is centered on the .NET ecosystem. That means the framework’s biggest strategic advantage is not merely UI sharing, but continuity with C#, .NET libraries, Microsoft tooling, and enterprise development habits that many organizations already use elsewhere.',
       'Flutter is centered on its own framework model and developer workflow. Its strategic advantage is less about fitting into an existing enterprise platform and more about offering a unified application-development experience with strong control over UI behavior.',
     ],
   },
@@ -134,7 +134,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-tooling',
     title: 'Tooling and Developer Experience',
     paragraphs: [
-      'MAUI is a natural extension of the Visual Studio and .NET workflow. For teams already fluent in that ecosystem, this can reduce adoption friction and keep mobile or desktop work aligned with the rest of the organizationâ€™s engineering platform.',
+      'MAUI is a natural extension of the Visual Studio and .NET workflow. For teams already fluent in that ecosystem, this can reduce adoption friction and keep mobile or desktop work aligned with the rest of the organization’s engineering platform.',
       'Flutter is known for an unusually pleasant developer loop, especially through hot reload and the clarity of its widget-driven UI model. This fast feedback cycle is one of its strongest selling points in product-centric development.',
     ],
   },
@@ -163,7 +163,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Native Integration and Platform Feel',
     paragraphs: [
       'MAUI often appeals to teams that want to remain close to native platform concepts while still benefiting from code sharing. The framework works best when teams are comfortable thinking in terms of platform integration and enterprise application structure rather than purely framework-owned UI abstraction.',
-      'Flutter can integrate with native capabilities effectively, but its center of gravity is the framework itself. It often feels strongest when the product team wants the framework to define much of the UI experience rather than adapting deeply to each platformâ€™s native visual identity.',
+      'Flutter can integrate with native capabilities effectively, but its center of gravity is the framework itself. It often feels strongest when the product team wants the framework to define much of the UI experience rather than adapting deeply to each platform’s native visual identity.',
     ],
   },
   {
@@ -209,7 +209,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Architecture Guidance',
     paragraphs: [
       'If the team already shares business logic, APIs, authentication models, and tooling across a .NET estate, MAUI can reduce the number of conceptual and operational systems the organization must maintain. That is often its strongest architectural argument.',
-      'If the team is building a product where the UI layer is central to differentiation and cross-platform consistency matters more than .NET alignment, Flutter is often the stronger architectural choice. The frameworkâ€™s ownership of rendering and UI structure becomes a strategic benefit rather than just an implementation detail.',
+      'If the team is building a product where the UI layer is central to differentiation and cross-platform consistency matters more than .NET alignment, Flutter is often the stronger architectural choice. The framework’s ownership of rendering and UI structure becomes a strategic benefit rather than just an implementation detail.',
     ],
   },
 ]
@@ -231,7 +231,7 @@ Dart
 Flutter engine and widget system
 Flutter tooling workflow`,
     notes: [
-      'This is often the real first decision: stay in .NET or adopt Flutterâ€™s own framework stack.',
+      'This is often the real first decision: stay in .NET or adopt Flutter’s own framework stack.',
       'The rest of the architecture usually follows from that ecosystem choice.',
     ],
   },
@@ -293,17 +293,17 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'MAUI',
         definition:
-          'Microsoftâ€™s .NET Multi-platform App UI framework for building cross-platform apps.',
+          'Microsoft’s .NET Multi-platform App UI framework for building cross-platform apps.',
       },
       {
         term: '.NET',
         definition:
-          'Microsoftâ€™s broader application platform and runtime ecosystem, including C# and related tooling.',
+          'Microsoft’s broader application platform and runtime ecosystem, including C# and related tooling.',
       },
       {
         term: 'Visual Studio Workflow',
         definition:
-          'The development experience centered on Microsoftâ€™s IDE, project system, and debugging tools.',
+          'The development experience centered on Microsoft’s IDE, project system, and debugging tools.',
       },
       {
         term: 'Platform Integration',
@@ -318,8 +318,7 @@ const glossarySections: GlossarySection[] = [
     terms: [
       {
         term: 'Flutter',
-        definition:
-          'Googleâ€™s cross-platform UI toolkit for building apps from a shared codebase.',
+        definition: 'Google’s cross-platform UI toolkit for building apps from a shared codebase.',
       },
       {
         term: 'Dart',
@@ -399,8 +398,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="maui-flutter-help-section">
-      <h2 className="maui-flutter-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -411,19 +410,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="maui-flutter-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="maui-flutter-help-section">
-      <h2 className="maui-flutter-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="maui-flutter-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -431,21 +430,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="maui-flutter-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="maui-flutter-help-section">
-      <h2 className="maui-flutter-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="maui-flutter-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

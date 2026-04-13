@@ -521,12 +521,12 @@ export default function SatAndThreeSatPage(): JSX.Element {
               Flip variables and see how clauses and the full formula evaluate. This models the SAT
               decision question.
             </p>
-            <div className="sat-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {variableSet.map((variable) => (
                 <button
                   key={variable}
                   type="button"
-                  className={`sat-help-push${assignment[variable] ? ' active' : ''}`}
+                  className={`bin98-push${assignment[variable] ? ' active' : ''}`}
                   onClick={() => toggleVariable(variable)}
                 >
                   {variable}: {assignment[variable] ? 'true' : 'false'}
@@ -546,12 +546,12 @@ export default function SatAndThreeSatPage(): JSX.Element {
             <p>
               Inspect a single clause and see whether it is satisfied under the current assignment.
             </p>
-            <div className="sat-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {clauseExamples.map((clause) => (
                 <button
                   key={clause.id}
                   type="button"
-                  className={`sat-help-push${clause.id === selectedClauseId ? ' active' : ''}`}
+                  className={`bin98-push${clause.id === selectedClauseId ? ' active' : ''}`}
                   onClick={() => setSelectedClauseId(clause.id)}
                 >
                   {clause.id.toUpperCase()}

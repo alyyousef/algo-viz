@@ -418,19 +418,19 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AwsLambdaPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Aws Lambda Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Aws Lambda Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
-      <h1 className="lambda-help-title-main">{pageTitle}</h1>
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>
       <p>
         This page focuses on Lambda as an execution platform rather than as a simple handler
@@ -439,7 +439,7 @@ export default function AwsLambdaPage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="lambda-help-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.
@@ -562,12 +562,7 @@ export default function AwsLambdaPage(): JSX.Element {
           <ul>
             {pageSources.map((source) => (
               <li key={source}>
-                <a
-                  href={source}
-                  className="lambda-help-inline-link"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
                   {source}
                 </a>
               </li>

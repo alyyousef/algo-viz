@@ -367,7 +367,7 @@ const advancedInsights = [
   },
   {
     title: 'Aging as fairness control',
-    detail: 'Increase a jobâ€™s priority the longer it waits to prevent starvation.',
+    detail: 'Increase a job’s priority the longer it waits to prevent starvation.',
   },
 ]
 

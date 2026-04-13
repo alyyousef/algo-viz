@@ -118,8 +118,8 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-data-model',
     title: 'Data Model',
     paragraphs: [
-      'MongoDBâ€™s data model is centered on collections of documents. A single document can contain nested arrays and nested objects, which can make the data feel close to application structures and reduce the need for joins in document-oriented use cases.',
-      'PostgreSQLâ€™s data model is centered on normalized tables, keys, and relationships. This model is especially effective when data integrity, cross-entity relationships, and long-term consistency matter. It asks the team to model structure more explicitly.',
+      'MongoDB’s data model is centered on collections of documents. A single document can contain nested arrays and nested objects, which can make the data feel close to application structures and reduce the need for joins in document-oriented use cases.',
+      'PostgreSQL’s data model is centered on normalized tables, keys, and relationships. This model is especially effective when data integrity, cross-entity relationships, and long-term consistency matter. It asks the team to model structure more explicitly.',
     ],
   },
   {
@@ -150,7 +150,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-scaling',
     title: 'Scaling and Operational Shape',
     paragraphs: [
-      'MongoDB is often discussed in terms of horizontal scaling through sharding and the operational fit of document-oriented workloads. This can be useful when the systemâ€™s access patterns align with document partitioning and high-volume aggregate reads.',
+      'MongoDB is often discussed in terms of horizontal scaling through sharding and the operational fit of document-oriented workloads. This can be useful when the system’s access patterns align with document partitioning and high-volume aggregate reads.',
       'PostgreSQL can scale impressively as well, but it is often chosen first for correctness and query power rather than because teams want a document-style distributed model. Many systems succeed with PostgreSQL far longer than teams initially expect when the schema and indexing are designed well.',
     ],
   },
@@ -179,7 +179,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Team and Organization Fit',
     paragraphs: [
       'MongoDB tends to fit teams that are comfortable designing around document aggregates and enforcing structural discipline in application code or schema governance practices above the database. It rewards teams that truly understand their aggregate boundaries.',
-      'PostgreSQL tends to fit teams that want the database itself to enforce more of the applicationâ€™s structural truth. It often aligns naturally with teams that value explicit schema review, migration discipline, and relational correctness.',
+      'PostgreSQL tends to fit teams that want the database itself to enforce more of the application’s structural truth. It often aligns naturally with teams that value explicit schema review, migration discipline, and relational correctness.',
     ],
   },
   {
@@ -391,8 +391,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="mongo-pg-help-section">
-      <h2 className="mongo-pg-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -403,19 +403,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="mongo-pg-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="mongo-pg-help-section">
-      <h2 className="mongo-pg-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="mongo-pg-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -423,21 +423,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="mongo-pg-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="mongo-pg-help-section">
-      <h2 className="mongo-pg-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="mongo-pg-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

@@ -441,7 +441,7 @@ export default function SqlVsNosqlPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">SQL vs NoSQL</h1>
-      <p className="sql-nosql-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of relational modeling, non-relational data families, consistency,
         scaling, and access-pattern tradeoffs.
       </p>

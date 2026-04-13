@@ -392,7 +392,7 @@ export default function ClosestPairOfPointsPage(): JSX.Element {
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
-      <h1 className="closest-help98-title">Closest Pair of Points</h1>
+      <h1 className="bin98-doc-title">Closest Pair of Points</h1>
       <p>
         The closest pair of points problem asks for the two points in a set with the smallest
         Euclidean distance. A naive all-pairs check is quadratic, but the classic divide-and-conquer
@@ -406,7 +406,7 @@ export default function ClosestPairOfPointsPage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="closest-help98-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.

@@ -712,12 +712,12 @@ export default function ReadersWritersPage(): JSX.Element {
               Choose a scheduling policy and then enqueue readers and writers. Use Start Next to see
               how the policy schedules work.
             </p>
-            <div className="readers-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {policyCards.map((card) => (
                 <button
                   key={card.id}
                   type="button"
-                  className={`readers-help-push ${policy === card.id ? 'active' : ''}`}
+                  className={`bin98-push ${policy === card.id ? 'active' : ''}`}
                   onClick={() => setPolicy(card.id as Policy)}
                   aria-pressed={policy === card.id}
                 >
@@ -735,14 +735,14 @@ export default function ReadersWritersPage(): JSX.Element {
               Add reader or writer requests to the waiting queue. The queue is used for fair
               scheduling and for visualization.
             </p>
-            <div className="readers-help-formline">
-              <button type="button" className="readers-help-push" onClick={() => enqueue('R')}>
+            <div className="bin98-formline">
+              <button type="button" className="bin98-push" onClick={() => enqueue('R')}>
                 ADD READER
               </button>
-              <button type="button" className="readers-help-push" onClick={() => enqueue('W')}>
+              <button type="button" className="bin98-push" onClick={() => enqueue('W')}>
                 ADD WRITER
               </button>
-              <button type="button" className="readers-help-push" onClick={reset}>
+              <button type="button" className="bin98-push" onClick={reset}>
                 RESET
               </button>
             </div>
@@ -771,14 +771,14 @@ export default function ReadersWritersPage(): JSX.Element {
               <strong>Active writer:</strong> {activeWriter ? 'Yes' : 'No'}
             </p>
             <p>{statusText}</p>
-            <div className="readers-help-formline">
-              <button type="button" className="readers-help-push" onClick={startNext}>
+            <div className="bin98-formline">
+              <button type="button" className="bin98-push" onClick={startNext}>
                 START NEXT
               </button>
-              <button type="button" className="readers-help-push" onClick={finishReader}>
+              <button type="button" className="bin98-push" onClick={finishReader}>
                 FINISH READER
               </button>
-              <button type="button" className="readers-help-push" onClick={finishWriter}>
+              <button type="button" className="bin98-push" onClick={finishWriter}>
                 FINISH WRITER
               </button>
             </div>

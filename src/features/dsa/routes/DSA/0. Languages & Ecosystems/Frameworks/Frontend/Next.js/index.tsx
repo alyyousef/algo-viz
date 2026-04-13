@@ -527,7 +527,7 @@ export default function Counter(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Next.js</h1>
-      <p className="next-js-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, App Router, server and client components, route
         handlers, caching, rendering strategies, tradeoffs, and practical examples.
       </p>

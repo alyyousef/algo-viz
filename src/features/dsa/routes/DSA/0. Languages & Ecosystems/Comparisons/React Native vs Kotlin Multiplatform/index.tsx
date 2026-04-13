@@ -383,7 +383,7 @@ export default function ReactNativeVsKotlinMultiplatformPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">React Native vs Kotlin Multiplatform</h1>
-      <p className="rn-kmp-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of shared UI, shared logic, platform ownership, and long-term mobile
         architecture tradeoffs.
       </p>

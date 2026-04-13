@@ -386,7 +386,7 @@ export default function RubyOnRailsVsLaravelPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Ruby on Rails vs Laravel</h1>
-      <p className="rails-laravel-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of convention-driven development, Ruby-versus-PHP ecosystem gravity,
         ORM style, scaffolding, and full-stack productivity tradeoffs.
       </p>

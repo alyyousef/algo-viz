@@ -74,7 +74,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'When Laravel Is Usually the Better Fit',
     paragraphs: [
       'Laravel is often the better fit when the team is already comfortable with PHP or wants a framework that emphasizes smooth developer experience and product-building speed. It is especially appealing for startups, internal tools, SaaS products, and teams that value expressive syntax and a strong ecosystem around common web product needs.',
-      'It is also attractive when the broader PHP hosting and deployment story is already familiar to the organization or when the team values Laravelâ€™s cohesive ecosystem of adjacent tools and conventions.',
+      'It is also attractive when the broader PHP hosting and deployment story is already familiar to the organization or when the team values Laravel’s cohesive ecosystem of adjacent tools and conventions.',
     ],
     bullets: [
       'PHP-first teams or organizations.',
@@ -119,7 +119,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     title: 'Language and Ecosystem Context',
     paragraphs: [
       'Laravel lives inside the PHP ecosystem. Its strengths are inseparable from the maturity of modern PHP, the familiarity of PHP hosting patterns, and the ecosystem of tools and services that surround Laravel-based application development.',
-      'Django lives inside the Python ecosystem. Its strengths are inseparable from Pythonâ€™s readability, its broad backend usage, and the wider ecosystem around automation, data work, scientific tooling, and general-purpose server-side programming.',
+      'Django lives inside the Python ecosystem. Its strengths are inseparable from Python’s readability, its broad backend usage, and the wider ecosystem around automation, data work, scientific tooling, and general-purpose server-side programming.',
     ],
   },
   {
@@ -151,7 +151,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     title: 'Tooling and Workflow',
     paragraphs: [
       'Laravel benefits from the broader ecosystem of PHP tooling plus framework-specific conventions, scaffolding, and adjacent services that make common product development tasks easier. The workflow often feels oriented around shipping web products quickly.',
-      'Django benefits from Pythonâ€™s tooling culture and the simplicity of operating inside a general-purpose backend language. The workflow often feels especially natural for teams that combine web development with scripting, automation, background jobs, or data-oriented work.',
+      'Django benefits from Python’s tooling culture and the simplicity of operating inside a general-purpose backend language. The workflow often feels especially natural for teams that combine web development with scripting, automation, background jobs, or data-oriented work.',
     ],
   },
 ]
@@ -178,7 +178,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-scaling-teams',
     title: 'Team Scaling and Maintainability',
     paragraphs: [
-      'Laravel teams often benefit from a strong shared framework culture and a relatively smooth path to productivity for developers who understand modern PHP application structure. The frameworkâ€™s ergonomics help keep many common tasks readable and fast to implement.',
+      'Laravel teams often benefit from a strong shared framework culture and a relatively smooth path to productivity for developers who understand modern PHP application structure. The framework’s ergonomics help keep many common tasks readable and fast to implement.',
       'Django teams often benefit from explicit conventions and a strong project layout that can make applications predictable over time. For large teams, this kind of disciplined structure can reduce ambiguity about where common concerns belong.',
     ],
   },
@@ -300,16 +300,16 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Eloquent',
         definition:
-          'Laravelâ€™s ORM and model system for interacting with relational data in an object-oriented style.',
+          'Laravel’s ORM and model system for interacting with relational data in an object-oriented style.',
       },
       {
         term: 'Artisan',
         definition:
-          'Laravelâ€™s command-line tooling for development, scaffolding, and framework tasks.',
+          'Laravel’s command-line tooling for development, scaffolding, and framework tasks.',
       },
       {
         term: 'Blade',
-        definition: 'Laravelâ€™s templating engine for server-rendered views.',
+        definition: 'Laravel’s templating engine for server-rendered views.',
       },
       {
         term: 'PHP Ecosystem',
@@ -325,17 +325,17 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Django Admin',
         definition:
-          'Djangoâ€™s built-in administrative interface generated around configured models and permissions.',
+          'Django’s built-in administrative interface generated around configured models and permissions.',
       },
       {
         term: 'ORM',
         definition:
-          'Djangoâ€™s object-relational mapping layer for defining and querying data models.',
+          'Django’s object-relational mapping layer for defining and querying data models.',
       },
       {
         term: 'MVT',
         definition:
-          'Model-View-Template, the architectural vocabulary often associated with Djangoâ€™s project structure.',
+          'Model-View-Template, the architectural vocabulary often associated with Django’s project structure.',
       },
       {
         term: 'Batteries Included',
@@ -408,8 +408,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="laravel-django-help-section">
-      <h2 className="laravel-django-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -420,19 +420,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="laravel-django-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="laravel-django-help-section">
-      <h2 className="laravel-django-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="laravel-django-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -440,21 +440,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="laravel-django-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="laravel-django-help-section">
-      <h2 className="laravel-django-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="laravel-django-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

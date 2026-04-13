@@ -776,12 +776,12 @@ export default function PebbleGamesMemoryRecursionPage(): JSX.Element {
               Select a DAG shape to review its structure and typical pebbling requirements. These
               examples are small, but they illustrate general behavior.
             </p>
-            <div className="pebble-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {graphCases.map((graph) => (
                 <button
                   key={graph.id}
                   type="button"
-                  className={`pebble-help-push ${selectedGraph.id === graph.id ? 'active' : ''}`}
+                  className={`bin98-push ${selectedGraph.id === graph.id ? 'active' : ''}`}
                   onClick={() => setSelectedGraphId(graph.id)}
                   aria-pressed={selectedGraph.id === graph.id}
                 >
@@ -811,12 +811,12 @@ export default function PebbleGamesMemoryRecursionPage(): JSX.Element {
               Choose a strategy and review the tradeoff profile. Real schedules often combine these
               ideas based on which subgraphs are reused the most.
             </p>
-            <div className="pebble-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {strategies.map((strategy) => (
                 <button
                   key={strategy.id}
                   type="button"
-                  className={`pebble-help-push ${selectedStrategy.id === strategy.id ? 'active' : ''}`}
+                  className={`bin98-push ${selectedStrategy.id === strategy.id ? 'active' : ''}`}
                   onClick={() => setSelectedStrategyId(strategy.id)}
                   aria-pressed={selectedStrategy.id === strategy.id}
                 >
@@ -843,13 +843,13 @@ export default function PebbleGamesMemoryRecursionPage(): JSX.Element {
               Adjust the pebble budget and compare feasibility for the selected graph under
               black-only and black-white rules.
             </p>
-            <div className="pebble-help-formline">
+            <div className="bin98-formline">
               <label htmlFor="pebble-budget">
                 <strong>Budget:</strong> {pebbleBudget} pebble(s)
               </label>
               <input
                 id="pebble-budget"
-                className="pebble-help-range"
+                className="bin98-range"
                 type="range"
                 min={1}
                 max={6}

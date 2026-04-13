@@ -444,8 +444,7 @@ const glossary = [
   },
   {
     term: 'Heapify',
-    definition:
-      'Build a valid heap from an array, typically in linear time with Floydâ€™s method.',
+    definition: 'Build a valid heap from an array, typically in linear time with Floyd’s method.',
   },
   { term: 'Heap boundary', definition: 'Active unsorted prefix currently treated as the heap.' },
   {

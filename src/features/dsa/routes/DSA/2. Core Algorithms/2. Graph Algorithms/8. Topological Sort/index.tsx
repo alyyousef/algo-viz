@@ -457,7 +457,7 @@ export default function TopologicalSortPage(): JSX.Element {
         finishing-order reversal both deliver linear-time solutions with built-in cycle detection.
       </p>
       <p>
-        <Link to="/algoViz" className="topo-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           Back to Catalog
         </Link>
       </p>

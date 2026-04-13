@@ -94,7 +94,7 @@ const bigPictureSections: ContentSection[] = [
       'Products targeting the broadest possible device footprint.',
       'Apps aimed at diverse global markets and price ranges.',
       'Use cases where hardware variety is a feature rather than a burden.',
-      'Distribution strategies that benefit from Androidâ€™s wider ecosystem.',
+      'Distribution strategies that benefit from Android’s wider ecosystem.',
     ],
   },
   {
@@ -125,7 +125,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-tooling',
     title: 'Tooling and Development Experience',
     paragraphs: [
-      'iOS development is centered around Xcode, Swift, and Appleâ€™s platform tooling. The environment is opinionated and tightly integrated, which many teams find productive once they are inside the Apple ecosystem.',
+      'iOS development is centered around Xcode, Swift, and Apple’s platform tooling. The environment is opinionated and tightly integrated, which many teams find productive once they are inside the Apple ecosystem.',
       'Android development is centered around Android Studio, Kotlin and Java, and a more open device and build landscape. It offers strong tooling as well, but the broader ecosystem means developers more often deal with a wider range of runtime and device scenarios.',
     ],
   },
@@ -133,7 +133,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-language-frameworks',
     title: 'Languages and Native Frameworks',
     paragraphs: [
-      'Modern iOS development is strongly associated with Swift and SwiftUI or UIKit, depending on app maturity and UI strategy. Swift is expressive and highly aligned with Appleâ€™s platform evolution.',
+      'Modern iOS development is strongly associated with Swift and SwiftUI or UIKit, depending on app maturity and UI strategy. Swift is expressive and highly aligned with Apple’s platform evolution.',
       'Modern Android development is strongly associated with Kotlin and Jetpack Compose or the traditional Android view system. Kotlin is expressive, pragmatic, and broadly admired for its balance of safety and productivity.',
     ],
   },
@@ -149,7 +149,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     id: 'core-release-review',
     title: 'Release Process and Store Review',
     paragraphs: [
-      'iOS distribution is shaped heavily by Appleâ€™s review process and platform policies. This can improve consistency and trust, but it also means teams must plan around stricter gatekeeping and less flexibility in some product decisions.',
+      'iOS distribution is shaped heavily by Apple’s review process and platform policies. This can improve consistency and trust, but it also means teams must plan around stricter gatekeeping and less flexibility in some product decisions.',
       'Android distribution through Google Play still involves review and policy requirements, but the broader ecosystem historically offers somewhat more distribution flexibility. The operational implication is that teams may experience fewer bottlenecks in some release scenarios, though policy compliance remains essential.',
     ],
   },
@@ -298,7 +298,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Swift',
         definition:
-          'Appleâ€™s modern programming language for iOS and other Apple-platform development.',
+          'Apple’s modern programming language for iOS and other Apple-platform development.',
       },
       {
         term: 'SwiftUI',
@@ -311,7 +311,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'App Review',
         definition:
-          'The approval process applied before distributing apps through Appleâ€™s store ecosystem.',
+          'The approval process applied before distributing apps through Apple’s store ecosystem.',
       },
     ],
   },
@@ -325,7 +325,7 @@ const glossarySections: GlossarySection[] = [
       },
       {
         term: 'Jetpack Compose',
-        definition: 'Androidâ€™s declarative UI toolkit for building native interfaces.',
+        definition: 'Android’s declarative UI toolkit for building native interfaces.',
       },
       {
         term: 'OEM',
@@ -351,7 +351,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'Native App',
         definition:
-          'An application built specifically for a platform using that platformâ€™s primary SDKs and runtime conventions.',
+          'An application built specifically for a platform using that platform’s primary SDKs and runtime conventions.',
       },
       {
         term: 'App Store Distribution',
@@ -403,8 +403,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="ios-android-help-section">
-      <h2 className="ios-android-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -415,19 +415,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="ios-android-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="ios-android-help-section">
-      <h2 className="ios-android-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="ios-android-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -435,21 +435,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="ios-android-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="ios-android-help-section">
-      <h2 className="ios-android-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="ios-android-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

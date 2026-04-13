@@ -510,13 +510,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function FirebaseVsSupabasePage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Firebase Vs Supabase Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Firebase Vs Supabase Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

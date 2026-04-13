@@ -441,20 +441,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function CloudSqlVsDynamoDbPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Cloud Sql Vs Dynamo Db Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Cloud Sql Vs Dynamo Db Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="cloudsql-dynamo-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Cloud SQL and DynamoDB as real architectural choices rather than generic
         managed databases. The point is to make the tradeoffs explicit: relational model versus

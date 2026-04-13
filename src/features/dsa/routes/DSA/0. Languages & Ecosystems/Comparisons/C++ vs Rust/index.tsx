@@ -462,20 +462,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function CppVsRustPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Cpp Vs Rust Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Cpp Vs Rust Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="cpp-rust-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares C++ and Rust as real systems-language choices rather than as community
         slogans. The point is to make the tradeoffs explicit: ownership, undefined behavior,

@@ -5,7 +5,7 @@ import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
 
 import type { JSX } from 'react'
 
-// â”€â”€â”€ Big Picture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Big Picture ──────────────────────────────────────────────────────────────
 
 const bigPicture = [
   {
@@ -38,7 +38,7 @@ const bigPicture = [
   },
 ]
 
-// â”€â”€â”€ Mental Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Mental Model ─────────────────────────────────────────────────────────────
 
 const mentalModel = [
   {
@@ -73,7 +73,7 @@ const mentalModel = [
   },
 ]
 
-// â”€â”€â”€ Flutter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Flutter ──────────────────────────────────────────────────────────────────
 
 const flutterConcepts = [
   {
@@ -113,18 +113,18 @@ const flutterConcepts = [
   },
 ]
 
-// â”€â”€â”€ React Native â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── React Native ─────────────────────────────────────────────────────────────
 
 const reactNativeConcepts = [
   {
-    title: 'Architecture â€” old vs new',
+    title: 'Architecture — old vs new',
     detail:
       'The original architecture used a JavaScript bridge with async JSON serialization between JS and native. The new architecture (React Native 0.68+) uses JSI (JavaScript Interface) for synchronous direct calls between JS and C++, eliminating the bridge bottleneck.',
   },
   {
     title: 'Native components',
     detail:
-      'React Native maps JavaScript component declarations to actual platform native views: View â†’ UIView/android.view.View, Text â†’ UILabel/TextView, etc. UI is rendered by the platform, not a custom engine. This gives authentic native look and feel.',
+      'React Native maps JavaScript component declarations to actual platform native views: View → UIView/android.view.View, Text → UILabel/TextView, etc. UI is rendered by the platform, not a custom engine. This gives authentic native look and feel.',
   },
   {
     title: 'Metro bundler',
@@ -139,7 +139,7 @@ const reactNativeConcepts = [
   {
     title: 'Native modules and Turbo Modules',
     detail:
-      'Legacy Native Modules communicate over the bridge. Turbo Modules use JSI for lazy, synchronous access. Writing a Turbo Module requires C++ and platform-specific code but yields near-native performance for JSâ†”native calls.',
+      'Legacy Native Modules communicate over the bridge. Turbo Modules use JSI for lazy, synchronous access. Writing a Turbo Module requires C++ and platform-specific code but yields near-native performance for JS↔native calls.',
   },
   {
     title: 'Fabric renderer',
@@ -153,13 +153,13 @@ const reactNativeConcepts = [
   },
 ]
 
-// â”€â”€â”€ Kotlin Multiplatform â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Kotlin Multiplatform ─────────────────────────────────────────────────────
 
 const kmpConcepts = [
   {
     title: 'What KMP shares',
     detail:
-      'Kotlin Multiplatform shares business logic, data models, networking (Ktor), serialization (kotlinx.serialization), and coroutines across Android, iOS, desktop, and server. UI is deliberately left to each platform â€” Compose for Android, SwiftUI for iOS.',
+      'Kotlin Multiplatform shares business logic, data models, networking (Ktor), serialization (kotlinx.serialization), and coroutines across Android, iOS, desktop, and server. UI is deliberately left to each platform — Compose for Android, SwiftUI for iOS.',
   },
   {
     title: 'expect / actual mechanism',
@@ -174,7 +174,7 @@ const kmpConcepts = [
   {
     title: 'Compose Multiplatform',
     detail:
-      "JetBrains' extension of Jetpack Compose that targets iOS, desktop (macOS, Windows, Linux), and web in addition to Android. Unlike Flutter, it uses Compose UI â€” familiar to Android developers. iOS support is in beta/production preview as of 2024.",
+      "JetBrains' extension of Jetpack Compose that targets iOS, desktop (macOS, Windows, Linux), and web in addition to Android. Unlike Flutter, it uses Compose UI — familiar to Android developers. iOS support is in beta/production preview as of 2024.",
   },
   {
     title: 'Ktor Client',
@@ -193,7 +193,7 @@ const kmpConcepts = [
   },
 ]
 
-// â”€â”€â”€ Ionic and Capacitor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Ionic and Capacitor ──────────────────────────────────────────────────────
 
 const ionicConcepts = [
   {
@@ -223,7 +223,7 @@ const ionicConcepts = [
   },
 ]
 
-// â”€â”€â”€ MAUI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── MAUI ─────────────────────────────────────────────────────────────────────
 
 const mauiConcepts = [
   {
@@ -239,7 +239,7 @@ const mauiConcepts = [
   {
     title: 'Blazor Hybrid',
     detail:
-      'MAUI can host Blazor components (Razor/C# web UI) inside a native app shell. This enables web teams to reuse Blazor components in mobile apps â€” a powerful option for organizations already invested in Blazor.',
+      'MAUI can host Blazor components (Razor/C# web UI) inside a native app shell. This enables web teams to reuse Blazor components in mobile apps — a powerful option for organizations already invested in Blazor.',
   },
   {
     title: 'Native controls',
@@ -248,7 +248,7 @@ const mauiConcepts = [
   },
 ]
 
-// â”€â”€â”€ Architecture Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Architecture Patterns ────────────────────────────────────────────────────
 
 const architecturePatterns = [
   {
@@ -283,7 +283,7 @@ const architecturePatterns = [
   },
 ]
 
-// â”€â”€â”€ Testing Strategies â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Testing Strategies ───────────────────────────────────────────────────────
 
 const testingStrategies = [
   {
@@ -299,7 +299,7 @@ const testingStrategies = [
   {
     title: 'React Native unit tests',
     detail:
-      'Jest is the standard. Use @testing-library/react-native for component tests that render without a device. Mock native modules with jest.mock(). Run in Node â€” fast.',
+      'Jest is the standard. Use @testing-library/react-native for component tests that render without a device. Mock native modules with jest.mock(). Run in Node — fast.',
   },
   {
     title: 'React Native E2E',
@@ -318,7 +318,7 @@ const testingStrategies = [
   },
 ]
 
-// â”€â”€â”€ Performance Comparison â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Performance Comparison ───────────────────────────────────────────────────
 
 const performanceNotes = [
   {
@@ -329,7 +329,7 @@ const performanceNotes = [
   {
     title: 'React Native (new architecture)',
     detail:
-      'JSI eliminates the async bridge for JSâ†”native calls. Native component rendering means the OS renders the UI, not JavaScript. Startup time depends on JS bundle parse time; code splitting and Hermes engine help.',
+      'JSI eliminates the async bridge for JS↔native calls. Native component rendering means the OS renders the UI, not JavaScript. Startup time depends on JS bundle parse time; code splitting and Hermes engine help.',
   },
   {
     title: 'KMP',
@@ -353,13 +353,13 @@ const performanceNotes = [
   },
 ]
 
-// â”€â”€â”€ Plugin / Native Module Ecosystem â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Plugin / Native Module Ecosystem ────────────────────────────────────────
 
 const pluginEcosystem = [
   {
     title: 'Flutter packages (pub.dev)',
     detail:
-      "pub.dev is Flutter's package registry. Packages are marked with Android and iOS compatibility scores. Dart-only packages work everywhere; plugin packages wrap native code. Quality varies â€” check pub points, popularity, and maintenance status.",
+      "pub.dev is Flutter's package registry. Packages are marked with Android and iOS compatibility scores. Dart-only packages work everywhere; plugin packages wrap native code. Quality varies — check pub points, popularity, and maintenance status.",
   },
   {
     title: 'React Native packages (npm)',
@@ -374,7 +374,7 @@ const pluginEcosystem = [
   {
     title: 'Capacitor plugins',
     detail:
-      'The official @capacitor/* plugin suite covers common needs. Community plugins extend coverage. Writing a custom plugin requires Swift (iOS) and Kotlin/Java (Android) â€” effectively native development.',
+      'The official @capacitor/* plugin suite covers common needs. Community plugins extend coverage. Writing a custom plugin requires Swift (iOS) and Kotlin/Java (Android) — effectively native development.',
   },
   {
     title: 'Evaluating a plugin',
@@ -383,7 +383,7 @@ const pluginEcosystem = [
   },
 ]
 
-// â”€â”€â”€ Build and CI/CD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Build and CI/CD ──────────────────────────────────────────────────────────
 
 const buildAndCICD = [
   {
@@ -394,7 +394,7 @@ const buildAndCICD = [
   {
     title: 'React Native / Expo builds',
     detail:
-      'Expo EAS Build runs cloud builds on managed macOS and Linux runners â€” no local Xcode required for iOS builds. EAS Submit automates App Store and Play Store uploads. Without Expo, use Fastlane for signing and deployment.',
+      'Expo EAS Build runs cloud builds on managed macOS and Linux runners — no local Xcode required for iOS builds. EAS Submit automates App Store and Play Store uploads. Without Expo, use Fastlane for signing and deployment.',
   },
   {
     title: 'KMP builds',
@@ -409,51 +409,51 @@ const buildAndCICD = [
   {
     title: 'OTA updates',
     detail:
-      'Expo EAS Update and CodePush (React Native) allow shipping JavaScript/Dart bundle updates without App Store/Play Store review. Native code changes always require a full binary release. OTA is governed by App Store guidelines â€” only JS/asset changes are permitted.',
+      'Expo EAS Update and CodePush (React Native) allow shipping JavaScript/Dart bundle updates without App Store/Play Store review. Native code changes always require a full binary release. OTA is governed by App Store guidelines — only JS/asset changes are permitted.',
   },
 ]
 
-// â”€â”€â”€ Compare and Contrast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Compare and Contrast ─────────────────────────────────────────────────────
 
 const compareContrast = [
   {
-    title: 'Flutter vs React Native â€” rendering',
+    title: 'Flutter vs React Native — rendering',
     detail:
       'Flutter owns its rendering pipeline (Impeller/Skia). React Native delegates to native platform views. Flutter gives consistent cross-platform UI; React Native gives authentic native-platform UI by default.',
   },
   {
-    title: 'Flutter vs React Native â€” language',
+    title: 'Flutter vs React Native — language',
     detail:
       'Flutter uses Dart: a typed, compiled language with sound null safety and ahead-of-time compilation. React Native uses JavaScript/TypeScript: the largest ecosystem, but dynamic and JIT-executed (though Hermes uses AOT bytecode).',
   },
   {
-    title: 'KMP vs Flutter â€” scope',
+    title: 'KMP vs Flutter — scope',
     detail:
       'KMP shares business logic and can optionally share UI via Compose Multiplatform. Flutter shares everything including UI via its own engine. KMP is additive (add to an existing app); Flutter typically requires a greenfield approach.',
   },
   {
-    title: 'KMP vs React Native â€” philosophy',
+    title: 'KMP vs React Native — philosophy',
     detail:
       'KMP is a library: you write native apps and add shared Kotlin modules. React Native is a framework: your app is a React app that renders native views. KMP maximizes native fidelity; React Native maximizes code sharing.',
   },
   {
-    title: 'Ionic vs Flutter/RN â€” target audience',
+    title: 'Ionic vs Flutter/RN — target audience',
     detail:
       'Ionic targets web developers who want mobile deployment without learning a new language or paradigm. Flutter and React Native are purpose-built mobile frameworks requiring mobile-oriented thinking.',
   },
   {
-    title: 'MAUI vs Flutter â€” ecosystem',
+    title: 'MAUI vs Flutter — ecosystem',
     detail:
       'MAUI targets the .NET/C# enterprise ecosystem. Flutter targets mobile-first product teams. MAUI wins for organizations standardized on Microsoft tech; Flutter wins for independent mobile-focused teams.',
   },
   {
-    title: 'Cross-platform vs native â€” when to choose native',
+    title: 'Cross-platform vs native — when to choose native',
     detail:
       'Choose native when: you need immediate access to new OS APIs, your app has complex platform-specific UI, your team already has native expertise, or performance headroom is critical (games, AR, real-time audio/video processing).',
   },
 ]
 
-// â”€â”€â”€ Common Pitfalls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Common Pitfalls ──────────────────────────────────────────────────────────
 
 const commonPitfalls = [
   {
@@ -498,7 +498,7 @@ const commonPitfalls = [
   },
 ]
 
-// â”€â”€â”€ Debugging Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Debugging Checklist ──────────────────────────────────────────────────────
 
 const debuggingChecklist = [
   {
@@ -533,14 +533,14 @@ const debuggingChecklist = [
   },
 ]
 
-// â”€â”€â”€ Correctness Checklist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Correctness Checklist ────────────────────────────────────────────────────
 
 const correctnessChecklist = [
-  'Test on real iOS and Android hardware before every release â€” simulators and emulators miss device-specific behavior.',
+  'Test on real iOS and Android hardware before every release — simulators and emulators miss device-specific behavior.',
   'Audit every third-party plugin for maintenance status, platform coverage, and new-architecture compatibility (React Native).',
-  'Never ship native code changes via OTA â€” only JS/asset bundle updates are permitted by App Store guidelines.',
+  'Never ship native code changes via OTA — only JS/asset bundle updates are permitted by App Store guidelines.',
   'Enforce consistent lock-file state (pubspec.lock, package-lock.json, or Gradle dependency lock) in CI to prevent version drift.',
-  'Run tests on both platforms in CI on every pull request â€” do not rely on local developer testing alone.',
+  'Run tests on both platforms in CI on every pull request — do not rely on local developer testing alone.',
   'For KMP: rebuild XCFramework after every shared module change before testing the iOS app.',
   'For React Native: verify Turbo Module and Fabric compatibility of all plugins before upgrading to the new architecture.',
   'For Flutter: run flutter analyze and dart fix before every release to catch deprecations early.',
@@ -548,7 +548,7 @@ const correctnessChecklist = [
   'For OTA-enabled apps: test that the fallback to the last good bundle works correctly on network failure.',
 ]
 
-// â”€â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── FAQ ──────────────────────────────────────────────────────────────────────
 
 const faq = [
   {
@@ -559,7 +559,7 @@ const faq = [
   {
     question: 'Can KMP replace React Native or Flutter?',
     answer:
-      'KMP is not a direct replacement â€” it has a different scope. KMP shares logic; Flutter and React Native share logic and UI. Use KMP when your existing iOS and Android apps should share a common data/business layer. Use Flutter or RN when you want a single UI codebase.',
+      'KMP is not a direct replacement — it has a different scope. KMP shares logic; Flutter and React Native share logic and UI. Use KMP when your existing iOS and Android apps should share a common data/business layer. Use Flutter or RN when you want a single UI codebase.',
   },
   {
     question: 'Is React Native still relevant after Flutter?',
@@ -588,11 +588,11 @@ const faq = [
   },
 ]
 
-// â”€â”€â”€ Key Takeaways â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Key Takeaways ────────────────────────────────────────────────────────────
 
 const keyTakeaways = [
   'No framework eliminates platform-specific work. Budget for platform channels, native modules, and OS-specific behavior in every project.',
-  'Flutter owns its rendering engine â€” consistent UI, no native look by default. React Native maps to native components â€” authentic look, bridge overhead.',
+  'Flutter owns its rendering engine — consistent UI, no native look by default. React Native maps to native components — authentic look, bridge overhead.',
   'KMP is additive: share logic, keep native UI. Best for teams with existing native apps who want code sharing without a full rewrite.',
   'Expo dramatically reduces React Native operational overhead. Start there unless you have a specific reason to go bare.',
   'Test on both platforms in CI. A cross-platform framework does not guarantee cross-platform correctness.',
@@ -601,7 +601,7 @@ const keyTakeaways = [
   'Ionic fits web teams deploying to mobile. It is not competitive with Flutter or React Native for performance-sensitive or complex-UI apps.',
 ]
 
-// â”€â”€â”€ Pseudocode Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Pseudocode Patterns ──────────────────────────────────────────────────────
 
 const pseudocodePatterns = [
   {
@@ -616,8 +616,8 @@ class UserRepository(private val api: UserApi, private val db: UserDb) {
     }
 }
 
-// androidMain â€” consumed by Android ViewModel
-// iosMain â€” consumed by Swift via generated framework`,
+// androidMain — consumed by Android ViewModel
+// iosMain — consumed by Swift via generated framework`,
     explanation:
       'The Repository lives in commonMain. Both Android (Compose ViewModel) and iOS (Swift ObservableObject) consume the same Flow/suspend functions. No networking or caching logic is duplicated.',
   },
@@ -692,7 +692,7 @@ class CounterPage extends ConsumerWidget {
   },
 ]
 
-// â”€â”€â”€ Code Examples â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Code Examples ────────────────────────────────────────────────────────────
 
 const codeExamples = [
   {
@@ -808,7 +808,7 @@ export function PostsScreen() {
   );
 }`,
     explanation:
-      'FlatList is the React Native equivalent of LazyColumn/LazyRow â€” it virtualizes the list and only renders visible items. Always provide keyExtractor for stable rendering.',
+      'FlatList is the React Native equivalent of LazyColumn/LazyRow — it virtualizes the list and only renders visible items. Always provide keyExtractor for stable rendering.',
   },
   {
     title: 'Capacitor plugin call',
@@ -829,7 +829,7 @@ async function takePicture() {
   },
 ]
 
-// â”€â”€â”€ Framework Scenarios (interactive) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Framework Scenarios (interactive) ───────────────────────────────────────
 
 const frameworkScenarios = [
   {
@@ -878,7 +878,7 @@ const frameworkScenarios = [
   },
 ]
 
-// â”€â”€â”€ Glossary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Glossary ─────────────────────────────────────────────────────────────────
 
 const glossary = [
   {
@@ -897,7 +897,7 @@ const glossary = [
   {
     term: 'KMP',
     definition:
-      "Kotlin Multiplatform â€” JetBrains' approach to sharing Kotlin code across Android, iOS, desktop, and server.",
+      "Kotlin Multiplatform — JetBrains' approach to sharing Kotlin code across Android, iOS, desktop, and server.",
   },
   {
     term: 'Ionic / Capacitor',
@@ -907,7 +907,7 @@ const glossary = [
   {
     term: 'MAUI',
     definition:
-      ".NET Multi-platform App UI â€” Microsoft's cross-platform framework for Android, iOS, macOS, and Windows.",
+      ".NET Multi-platform App UI — Microsoft's cross-platform framework for Android, iOS, macOS, and Windows.",
   },
   {
     term: 'Platform channel',
@@ -920,12 +920,12 @@ const glossary = [
   {
     term: 'Turbo Module',
     definition:
-      'New-architecture React Native module using JSI for synchronous, type-safe JSâ†”native calls.',
+      'New-architecture React Native module using JSI for synchronous, type-safe JS↔native calls.',
   },
   {
     term: 'JSI',
     definition:
-      "JavaScript Interface â€” React Native's new-architecture C++ layer enabling direct JSâ†”native calls without the async bridge.",
+      "JavaScript Interface — React Native's new-architecture C++ layer enabling direct JS↔native calls without the async bridge.",
   },
   {
     term: 'Fabric',
@@ -953,7 +953,7 @@ const glossary = [
   },
   {
     term: 'EAS',
-    definition: 'Expo Application Services â€” cloud builds, submissions, and OTA update delivery.',
+    definition: 'Expo Application Services — cloud builds, submissions, and OTA update delivery.',
   },
   {
     term: 'OTA update',
@@ -994,7 +994,7 @@ const glossary = [
   },
 ]
 
-// â”€â”€â”€ Types and constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types and constants ──────────────────────────────────────────────────────
 
 type TabId = 'big-picture' | 'core-concepts' | 'examples' | 'glossary'
 const tabs: Array<{ id: TabId; label: string }> = [
@@ -1036,9 +1036,9 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
   glossary: [{ id: 'glossary-terms', label: 'Glossary Terms' }],
 }
 
-// â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
-// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CrossPlatformEcosystemPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
@@ -1076,13 +1076,13 @@ export default function CrossPlatformEcosystemPage(): JSX.Element {
       <h1 className="bin98-doc-title">Cross-Platform Mobile Ecosystem</h1>
       <p>
         Cross-platform frameworks let a single codebase target iOS, Android, and beyond. This
-        document covers the five major frameworks â€” Flutter, React Native, Kotlin Multiplatform,
-        Ionic/Capacitor, and .NET MAUI â€” along with architecture patterns, testing, performance,
+        document covers the five major frameworks — Flutter, React Native, Kotlin Multiplatform,
+        Ionic/Capacitor, and .NET MAUI — along with architecture patterns, testing, performance,
         build pipelines, and decision guidance. The goal is to understand what each framework trades
         away and for what gain.
       </p>
 
-      {/* â”€â”€ Big Picture â”€â”€ */}
+      {/* ── Big Picture ── */}
       {activeTab === 'big-picture' && (
         <>
           <section id="bp-overview" className="bin98-section">
@@ -1133,7 +1133,7 @@ export default function CrossPlatformEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* â”€â”€ Core Concepts â”€â”€ */}
+      {/* ── Core Concepts ── */}
       {activeTab === 'core-concepts' && (
         <>
           <section id="core-flutter" className="bin98-section">
@@ -1276,7 +1276,7 @@ export default function CrossPlatformEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* â”€â”€ Examples â”€â”€ */}
+      {/* ── Examples ── */}
       {activeTab === 'examples' && (
         <>
           <section id="ex-pseudocode" className="bin98-section">
@@ -1366,7 +1366,7 @@ export default function CrossPlatformEcosystemPage(): JSX.Element {
         </>
       )}
 
-      {/* â”€â”€ Glossary â”€â”€ */}
+      {/* ── Glossary ── */}
       {activeTab === 'glossary' && (
         <section id="glossary-terms" className="bin98-section">
           <h2 className="bin98-heading">Glossary</h2>

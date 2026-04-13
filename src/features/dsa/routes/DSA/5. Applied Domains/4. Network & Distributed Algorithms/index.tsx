@@ -446,7 +446,7 @@ export default function NetworkDistributedAlgorithmsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Network &amp; Distributed Algorithms</h1>
-      <p className="net-help-intro">
+      <p className="bin98-doc-subtitle">
         Networks drop and delay packets; distributed systems crash, partition, and diverge.
         Algorithms for transport, routing, and consensus turn these realities into manageable
         failure modes. The craft is in pacing, quorum rules, and defaults that prevent cascades when

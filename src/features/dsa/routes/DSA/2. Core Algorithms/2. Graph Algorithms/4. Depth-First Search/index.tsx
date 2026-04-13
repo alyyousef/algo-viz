@@ -5,7 +5,7 @@ import type { JSX } from 'react'
 
 const historicalMilestones = [
   {
-    title: 'TrÃ©maux tree origins (19th century)',
+    title: 'Trémaux tree origins (19th century)',
     detail:
       'Early maze-solving strategies used depth-first exploration, later formalized as traversal trees for graphs.',
   },

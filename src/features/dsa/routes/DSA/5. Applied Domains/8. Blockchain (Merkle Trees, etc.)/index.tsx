@@ -405,7 +405,7 @@ export default function BlockchainPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Blockchain (Merkle Trees, etc.)</h1>
-      <p className="blockchain-help-intro">
+      <p className="bin98-doc-subtitle">
         Blockchains combine hash commitments, deterministic execution, consensus, and data
         availability into a ledger that strangers can verify. This page keeps the original material
         intact, but presents it as a Windows-style help document: a manual focused on how the pieces

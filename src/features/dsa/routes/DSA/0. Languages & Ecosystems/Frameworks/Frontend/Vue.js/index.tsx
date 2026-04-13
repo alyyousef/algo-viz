@@ -513,7 +513,7 @@ export default function VueJsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Vue.js</h1>
-      <p className="vue-js-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, templates, reactivity, component authoring,
         ecosystem shape, SSR story, tradeoffs, and practical examples.
       </p>

@@ -141,7 +141,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-mutations',
     title: 'Mutations and Forms',
     paragraphs: [
-      'One of Remixâ€™s strongest ideas is that writes should feel like the web. Forms submit to route actions, servers process mutations, and the framework revalidates the right data. This keeps a strong connection between application behavior and ordinary browser semantics.',
+      'One of Remix’s strongest ideas is that writes should feel like the web. Forms submit to route actions, servers process mutations, and the framework revalidates the right data. This keeps a strong connection between application behavior and ordinary browser semantics.',
       'Next.js can absolutely handle forms and mutations well, but the experience often depends more on which stack conventions the team adopts. Server actions, route handlers, client libraries, or custom APIs may all be involved. This offers flexibility, but it also means there is more architectural choice to manage.',
     ],
   },
@@ -190,7 +190,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Team Fit',
     paragraphs: [
       'Next.js fits teams that want the broad default choice and can absorb a larger framework platform. It is especially appealing when many developers will rotate across codebases and the organization wants familiarity and ecosystem reach.',
-      'Remix fits teams that want a more deliberate full-stack web architecture and are willing to embrace the frameworkâ€™s stronger philosophical stance on loaders, actions, and the web request lifecycle.',
+      'Remix fits teams that want a more deliberate full-stack web architecture and are willing to embrace the framework’s stronger philosophical stance on loaders, actions, and the web request lifecycle.',
     ],
   },
   {
@@ -401,8 +401,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="next-remix-help-section">
-      <h2 className="next-remix-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -413,19 +413,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="next-remix-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="next-remix-help-section">
-      <h2 className="next-remix-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="next-remix-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -433,21 +433,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="next-remix-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="next-remix-help-section">
-      <h2 className="next-remix-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="next-remix-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

@@ -647,13 +647,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function ArgoCdPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Argo Cd Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Argo Cd Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

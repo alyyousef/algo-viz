@@ -464,7 +464,7 @@ export default function GameDevelopmentPathfindingPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Game Development (Pathfinding, etc.)</h1>
-      <p className="game-help-intro">
+      <p className="bin98-doc-subtitle">
         From tile puzzles to open worlds, navigation blends global planning with local steering
         under tight frame budgets. The best systems keep paths stable, motion natural, and
         performance predictable.

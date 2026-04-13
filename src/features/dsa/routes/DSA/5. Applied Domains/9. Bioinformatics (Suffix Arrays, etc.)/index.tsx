@@ -642,7 +642,7 @@ export default function BioinformaticsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Bioinformatics (Suffix Arrays, etc.)</h1>
-      <p className="bio-help-intro">
+      <p className="bin98-doc-subtitle">
         Bioinformatics pipelines turn long biological strings into searchable, alignable, and
         auditable evidence. This page keeps the original concepts intact, but presents them in a
         Windows-style help document focused on succinct indexes, alignment mechanics, assembly

@@ -355,15 +355,30 @@ function extractContentChildren(content) {
 // ─── Apply class name substitutions ───────────────────────────────────────────
 
 function applyClassSubstitutions(content) {
-  // Replace page-specific CSS class names with the shared bin98-* equivalents.
-  // Examples:
-  //   "dd-help-section"          → "bin98-section"
-  //   "win98-help-heading"       → "bin98-heading"
-  //   "brute-force-help-codebox" → "bin98-codebox"
-  //   "sat-doc-title"            → "bin98-doc-title"
-  return content.replace(
-    /className="[a-z0-9-]+-(?:help-)?(section|heading|subheading|doc-title|codebox|divider|table|mono)"/g,
-    (_, suffix) => `className="bin98-${suffix}"`,
+  const substitutions = [
+    [/\bnlbin98-inline-buttons\b/g, 'bin98-inline-buttons'],
+    [/\bnlbin98-push\b/g, 'bin98-push'],
+    [/\b[a-z0-9-]+-help(?:98)?-section\b/g, 'bin98-section'],
+    [/\b[a-z0-9-]+-help(?:98)?-heading\b/g, 'bin98-heading'],
+    [/\b[a-z0-9-]+-help(?:98)?-subheading\b/g, 'bin98-subheading'],
+    [/\b[a-z0-9-]+-help(?:98)?-divider\b/g, 'bin98-divider'],
+    [/\b[a-z0-9-]+-help(?:98)?-codebox\b/g, 'bin98-codebox'],
+    [/\b[a-z0-9-]+-help(?:98)?-glossary\b/g, 'bin98-glossary'],
+    [/\b[a-z0-9-]+-help-doc-subtitle\b/g, 'bin98-doc-subtitle'],
+    [/\b[a-z0-9-]+-help-intro\b/g, 'bin98-doc-subtitle'],
+    [/\b[a-z0-9-]+-help(?:98)?-inline-link\b/g, 'bin98-inline-link'],
+    [/\b[a-z0-9-]+-help-link\b/g, 'bin98-inline-link'],
+    [/\b[a-z0-9-]+-help(?:98)?-title(?:-main)?\b/g, 'bin98-doc-title'],
+    [/\b[a-z0-9-]+-help-formline\b/g, 'bin98-formline'],
+    [/\b[a-z0-9-]+-help-inline-buttons\b/g, 'bin98-inline-buttons'],
+    [/\b[a-z0-9-]+-help-push\b/g, 'bin98-push'],
+    [/\b[a-z0-9-]+-help-range\b/g, 'bin98-range'],
+    [/\b[a-z0-9-]+-help-status\b/g, 'bin98-status'],
+  ]
+
+  return substitutions.reduce(
+    (nextContent, [pattern, replacement]) => nextContent.replace(pattern, replacement),
+    content,
   )
 }
 
@@ -565,7 +580,7 @@ function buildNewComponent(
   const tocLinksExpr = sectionLinksVar ? `${sectionLinksVar}[activeTab]` : '[]'
 
   return `export default function ${funcName}(): JSX.Element {
-  const { activeTab, setActiveTab, handleMinimize } = useTopicTabs({
+  const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
     pageTitle: '${safeTitle}',
     defaultTab: '${defaultTab}',
@@ -578,7 +593,6 @@ ${extraBody}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={${tocLinksExpr}}
-      onMinimize={handleMinimize}
     >
 ${children}
     </TopicPageShell>

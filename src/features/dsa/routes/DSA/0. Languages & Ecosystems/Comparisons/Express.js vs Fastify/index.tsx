@@ -29,13 +29,13 @@ const bigPictureSections: Array<{ title: string; paragraphs: string[] }> = [
     title: 'What Fastify optimizes for',
     paragraphs: [
       'Fastify positions itself around low overhead, high performance, schema-driven development, and plugin-based encapsulation. The official docs repeatedly emphasize speed, serialization and validation efficiency, and a strongly structured plugin model.',
-      'That means Fastify is usually not just â€œExpress but faster.â€ It is a framework with more opinion about how routes, schemas, decorators, and plugin boundaries should be organized.',
+      'That means Fastify is usually not just ?Express but faster.? It is a framework with more opinion about how routes, schemas, decorators, and plugin boundaries should be organized.',
     ],
   },
   {
     title: 'What teams often oversimplify',
     paragraphs: [
-      'The shallow internet summary is â€œuse Express for simplicity and Fastify for performance.â€ That is incomplete. Express can be the simpler operational choice because everyone knows it. Fastify can be the simpler architecture choice because schemas, type-provider workflows, and encapsulation reduce ad hoc patterns in larger services.',
+      'The shallow internet summary is ?use Express for simplicity and Fastify for performance.? That is incomplete. Express can be the simpler operational choice because everyone knows it. Fastify can be the simpler architecture choice because schemas, type-provider workflows, and encapsulation reduce ad hoc patterns in larger services.',
       'Likewise, raw benchmark wins do not automatically make Fastify the better framework for every product. If the bottleneck is database latency, external APIs, or team throughput, framework overhead may matter less than API design, caching, or developer familiarity.',
     ],
   },
@@ -43,7 +43,7 @@ const bigPictureSections: Array<{ title: string; paragraphs: string[] }> = [
     title: 'Short version',
     paragraphs: [
       'Choose Express when you want maximal familiarity, a minimal core, and the broadest ecosystem of examples and middleware. Choose Fastify when you want a more structured backend framework with strong schema support, cleaner plugin boundaries, and performance-aware defaults.',
-      'If the team already knows Express well and does not need Fastifyâ€™s model, Express remains a rational choice. If you are designing a modern API platform and want conventions that scale better, Fastify often earns its extra structure.',
+      'If the team already knows Express well and does not need Fastify?s model, Express remains a rational choice. If you are designing a modern API platform and want conventions that scale better, Fastify often earns its extra structure.',
     ],
   },
 ]
@@ -140,7 +140,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'Plugins and Encapsulation',
     paragraphs: [
       'Express usually scales by layering routers, middleware, service modules, and conventions chosen by the team. That can work very well, but the architectural discipline comes from your codebase patterns more than from the framework.',
-      'Fastifyâ€™s plugin system is intentionally central, and encapsulation is one of its defining ideas. Plugins can register routes, decorators, and hooks in bounded scopes, which helps prevent every concern from leaking into the global app context.',
+      'Fastify?s plugin system is intentionally central, and encapsulation is one of its defining ideas. Plugins can register routes, decorators, and hooks in bounded scopes, which helps prevent every concern from leaking into the global app context.',
     ],
   },
   {
@@ -148,7 +148,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'TypeScript and Type Shape',
     paragraphs: [
       'Express works with TypeScript, but the experience is often a layered one: framework types plus middleware types plus your own request augmentation conventions. This is manageable, but it can get messy if the project extends request and response objects heavily.',
-      'Fastifyâ€™s design often feels friendlier to a typed API style because schemas, decorators, and type providers fit more naturally into the framework model. That does not make it magically type-safe by default, but it does align better with teams that want typed contracts to be part of the route definition story.',
+      'Fastify?s design often feels friendlier to a typed API style because schemas, decorators, and type providers fit more naturally into the framework model. That does not make it magically type-safe by default, but it does align better with teams that want typed contracts to be part of the route definition story.',
     ],
   },
   {
@@ -164,7 +164,7 @@ const coreConceptSections: Array<{ id: string; heading: string; paragraphs: stri
     heading: 'Ecosystem and Community Gravity',
     paragraphs: [
       'Express still wins on sheer ecosystem gravity. Middleware examples, hosting tutorials, older stack integrations, and institutional familiarity are all easier to find. That matters because boring infrastructure decisions often benefit from the largest body of existing operational knowledge.',
-      'Fastifyâ€™s ecosystem is smaller but more intentionally shaped around the frameworkâ€™s design. If you adopt Fastify, you are often buying into a cleaner local ecosystem, not necessarily the broadest one.',
+      'Fastify?s ecosystem is smaller but more intentionally shaped around the framework?s design. If you adopt Fastify, you are often buying into a cleaner local ecosystem, not necessarily the broadest one.',
     ],
   },
   {
@@ -213,7 +213,7 @@ const operatingNotes: Array<{ title: string; detail: string }> = [
   {
     title: 'Benchmark wins are real but limited',
     detail:
-      'Fastifyâ€™s performance advantages are most meaningful when framework overhead is actually part of the problem. Do not treat synthetic benchmark results as a substitute for testing your real workload.',
+      'Fastify?s performance advantages are most meaningful when framework overhead is actually part of the problem. Do not treat synthetic benchmark results as a substitute for testing your real workload.',
   },
   {
     title: 'Express minimalism shifts responsibility to the team',
@@ -376,7 +376,7 @@ const glossaryTerms: Array<{ term: string; definition: string }> = [
   {
     term: 'Encapsulation',
     definition:
-      'Fastifyâ€™s plugin-scoping model, where decorations, hooks, and routes can be registered in bounded contexts instead of leaking globally.',
+      'Fastify?s plugin-scoping model, where decorations, hooks, and routes can be registered in bounded contexts instead of leaking globally.',
   },
   {
     term: 'Decorator',
@@ -457,13 +457,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function ExpressVsFastifyPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Express Vs Fastify Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Express Vs Fastify Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
@@ -478,7 +478,7 @@ export default function ExpressVsFastifyPage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="express-fastify-help-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.
@@ -595,12 +595,7 @@ export default function ExpressVsFastifyPage(): JSX.Element {
           <ul>
             {pageSources.map((source) => (
               <li key={source}>
-                <a
-                  href={source}
-                  className="express-fastify-help-inline-link"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
                   {source}
                 </a>
               </li>

@@ -420,20 +420,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function DjangoVsFastApiPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Django Vs Fast Api Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Django Vs Fast Api Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="django-fastapi-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Django and FastAPI as real backend engineering choices rather than as
         Python brand labels. The goal is to make the practical tradeoffs explicit: framework

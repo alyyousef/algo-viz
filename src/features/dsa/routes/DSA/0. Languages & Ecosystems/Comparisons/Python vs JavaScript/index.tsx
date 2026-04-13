@@ -362,7 +362,7 @@ export default function PythonVsJavaScriptPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Python vs JavaScript</h1>
-      <p className="python-js-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of runtime context, ecosystem direction, execution model, and
         practical tradeoffs.
       </p>

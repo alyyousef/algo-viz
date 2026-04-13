@@ -424,19 +424,19 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AwsEksPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Aws Eks Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Aws Eks Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
-      <h1 className="eks-help-title-main">{pageTitle}</h1>
+      <h1 className="bin98-doc-title">{pageTitle}</h1>
       <p className="bin98-subheading">{pageSubtitle}</p>
       <p>
         This page focuses on EKS as a platform choice rather than as a marketing label: what AWS
@@ -446,7 +446,7 @@ export default function AwsEksPage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="eks-help-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.
@@ -569,7 +569,7 @@ export default function AwsEksPage(): JSX.Element {
           <ul>
             {pageSources.map((source) => (
               <li key={source}>
-                <a href={source} className="eks-help-inline-link" target="_blank" rel="noreferrer">
+                <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
                   {source}
                 </a>
               </li>

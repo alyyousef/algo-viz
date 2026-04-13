@@ -467,8 +467,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="app-store-connect-help98-section">
-      <h2 className="app-store-connect-help98-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -479,19 +479,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {!isLast ? <hr className="app-store-connect-help98-divider" /> : null}
+      {!isLast ? <hr className="bin98-divider" /> : null}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="app-store-connect-help98-section">
-      <h2 className="app-store-connect-help98-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="app-store-connect-help98-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -499,16 +499,16 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {!isLast ? <hr className="app-store-connect-help98-divider" /> : null}
+      {!isLast ? <hr className="bin98-divider" /> : null}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="app-store-connect-help98-section">
-      <h2 className="app-store-connect-help98-heading">{section.title}</h2>
-      <dl className="app-store-connect-help98-glossary">
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
+      <dl className="bin98-glossary">
         {section.terms.map((item) => (
           <div key={item.term}>
             <dt>{item.term}</dt>
@@ -516,7 +516,7 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
           </div>
         ))}
       </dl>
-      {!isLast ? <hr className="app-store-connect-help98-divider" /> : null}
+      {!isLast ? <hr className="bin98-divider" /> : null}
     </section>
   )
 }
@@ -524,13 +524,13 @@ function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.E
 export default function AppStoreConnectPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'App Store Connect Page',
+    pageTitle: PAGE_TITLE,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="App Store Connect Page"
+      title={PAGE_TITLE}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

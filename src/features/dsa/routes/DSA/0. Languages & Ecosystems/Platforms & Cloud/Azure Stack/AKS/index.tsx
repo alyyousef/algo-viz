@@ -580,13 +580,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AzureAKSPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Azure A K S Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Azure A K S Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

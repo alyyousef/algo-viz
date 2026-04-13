@@ -520,7 +520,7 @@ export default function AStarSearchPage(): JSX.Element {
         optimal, making it the go-to algorithm for routing, games, robotics, and puzzle solving.
       </p>
       <p>
-        <Link to="/algoViz" className="astar-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           Back to Catalog
         </Link>
       </p>

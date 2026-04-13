@@ -52,16 +52,14 @@ const hierarchy = {
     '5. Backtracking': {},
     '6. Randomized Algorithms': {},
   },
-  '4. Domain-Specific & Advanced': {
+  '4. Advanced Topics': {
     '1. String Algorithms': {},
     '2. Mathematical Algorithms': {},
     '3. Computational Geometry': {},
-    '4. Advanced Graph Theory': {},
-    '5. Probabilistic DS (Bloom Filters, etc.)': {},
-    '6. Concurrent & Parallel DS & Algorithms': {},
+    '4. Systems & Concurrency': {},
   },
-  '5. Specialized Applications': {
-    '1. System Design (Caches, LRU, etc.)': {},
+  '5. Applied Domains': {
+    '1. Systems Design & Architecture': {},
     '2. Database & Indexing (B+ Trees, LSM Trees)': {},
     '3. OS & Kernel (Scheduling, Memory Mgmt)': {},
     '4. Network & Distributed Algorithms': {},
@@ -75,28 +73,63 @@ const hierarchy = {
 
 const { promises: fsPromises } = fs
 
-const componentTemplate = (routeTitle) => `export default function Page(): JSX.Element {
+const escapeForTemplate = (value) => value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+
+const componentTemplate = (routeTitle) => {
+  const safeTitle = escapeForTemplate(routeTitle)
+
+  return `import TopicPageShell from '@/features/dsa/components/TopicPageShell'
+import { useTopicTabs } from '@/features/dsa/hooks/useTopicTabs'
+
+import type { JSX } from 'react'
+
+type TabId = 'big-picture'
+
+const tabs: Array<{ id: TabId; label: string }> = [{ id: 'big-picture', label: 'Overview' }]
+
+const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
+  'big-picture': [{ id: 'overview', label: 'Overview' }],
+}
+
+export default function Page(): JSX.Element {
+  const { activeTab, setActiveTab } = useTopicTabs({
+    tabs,
+    pageTitle: '${safeTitle}',
+    defaultTab: 'big-picture',
+  })
+
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">${routeTitle}</h1>
-      <p className="opacity-80">This is a placeholder page for <strong>${routeTitle}</strong>.</p>
-      <ul className="list-disc pl-6 space-y-1">
-        <li>Explain core ideas and definitions.</li>
-        <li>Add visualizer hooks/components if applicable.</li>
-        <li>Link to related topics and practice problems.</li>
-      </ul>
-    </div>
+    <TopicPageShell
+      title="${safeTitle}"
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      tocLinks={sectionLinks[activeTab]}
+    >
+      <h1 className="bin98-doc-title">${safeTitle}</h1>
+      <p className="bin98-doc-subtitle">Scaffolded topic page. Replace this placeholder with real content.</p>
+
+      <section id="overview" className="bin98-section">
+        <h2 className="bin98-heading">Implementation Checklist</h2>
+        <ul>
+          <li>Explain the core concepts and where they matter.</li>
+          <li>Add concrete examples, tradeoffs, and glossary entries.</li>
+          <li>Hook up any interactive visualizers or simulators that belong on the page.</li>
+        </ul>
+      </section>
+    </TopicPageShell>
   )
 }
 `
-
-const ensureDirectory = async (dirPath) => {
-  await fsPromises.mkdir(dirPath, { recursive: true })
 }
 
 const toRouteTitle = (dirPath) => {
   const relativePath = path.relative(ROUTES_ROOT, dirPath)
-  return relativePath.split(path.sep).join('/')
+  if (!relativePath) {
+    return 'DSA'
+  }
+
+  return path.basename(relativePath).replace(/^\d+\.\s*/, '')
 }
 
 const createIndexComponent = async (dirPath) => {
@@ -111,7 +144,10 @@ const createIndexComponent = async (dirPath) => {
       return
     }
 
-    if (existingContent.includes('Content coming soon.')) {
+    if (
+      existingContent.includes('Content coming soon.') ||
+      existingContent.includes('This is a placeholder page for')
+    ) {
       await fsPromises.writeFile(filePath, fileContents, 'utf8')
     }
   } catch (error) {
@@ -121,6 +157,10 @@ const createIndexComponent = async (dirPath) => {
 
     await fsPromises.writeFile(filePath, fileContents, 'utf8')
   }
+}
+
+const ensureDirectory = async (dirPath) => {
+  await fsPromises.mkdir(dirPath, { recursive: true })
 }
 
 const traverseHierarchy = async (currentPath, node) => {

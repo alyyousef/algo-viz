@@ -133,7 +133,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-strictness',
     title: 'Dependency Strictness',
     paragraphs: [
-      'One of pnpmâ€™s most important characteristics is that it tends to prevent packages from casually reaching undeclared dependencies. That is useful because it aligns runtime access more closely with what the manifest actually says.',
+      'One of pnpm’s most important characteristics is that it tends to prevent packages from casually reaching undeclared dependencies. That is useful because it aligns runtime access more closely with what the manifest actually says.',
       'npm has historically been more permissive because of hoisting and flatter install structures. That permissiveness can reduce friction in the short term, but it can also hide weak dependency hygiene. The team may not notice a problem until the layout changes, a tool upgrades, or a different environment resolves dependencies slightly differently.',
     ],
   },
@@ -292,7 +292,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'package-lock.json',
         definition:
-          'npmâ€™s lockfile that records the exact dependency tree used for reproducible installs.',
+          'npm’s lockfile that records the exact dependency tree used for reproducible installs.',
       },
       {
         term: 'Hoisting',
@@ -318,7 +318,7 @@ const glossarySections: GlossarySection[] = [
       {
         term: 'pnpm-lock.yaml',
         definition:
-          'pnpmâ€™s lockfile that records exact dependency resolution for reproducible installations.',
+          'pnpm’s lockfile that records exact dependency resolution for reproducible installations.',
       },
       {
         term: 'Content-Addressable Store',
@@ -395,8 +395,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="pnpm-npm-help-section">
-      <h2 className="pnpm-npm-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -407,19 +407,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="pnpm-npm-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="pnpm-npm-help-section">
-      <h2 className="pnpm-npm-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="pnpm-npm-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -427,21 +427,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="pnpm-npm-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="pnpm-npm-help-section">
-      <h2 className="pnpm-npm-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="pnpm-npm-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

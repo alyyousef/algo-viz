@@ -531,13 +531,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AWSStepFunctionsPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'A W S Step Functions Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="A W S Step Functions Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

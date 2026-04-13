@@ -364,7 +364,7 @@ export default function LineSweepPage(): JSX.Element {
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
-      <h1 className="linesweep-help98-title">Line Sweep</h1>
+      <h1 className="bin98-doc-title">Line Sweep</h1>
       <p>
         Line sweep algorithms move a conceptual line across the plane, processing geometric events
         in order while maintaining an active data structure. This pattern turns intersection
@@ -377,7 +377,7 @@ export default function LineSweepPage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="linesweep-help98-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.

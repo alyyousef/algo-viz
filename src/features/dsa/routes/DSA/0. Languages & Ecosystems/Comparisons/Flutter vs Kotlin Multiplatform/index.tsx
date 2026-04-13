@@ -374,20 +374,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function FlutterVsKotlinMultiplatformPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Flutter Vs Kotlin Multiplatform Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Flutter Vs Kotlin Multiplatform Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="flutter-kmp-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Flutter and Kotlin Multiplatform as real cross-platform product
         strategies rather than as two interchangeable mobile buzzwords. The point is to make the

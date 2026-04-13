@@ -380,7 +380,7 @@ export default function SwiftUiVsJetpackComposePage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">SwiftUI vs Jetpack Compose</h1>
-      <p className="swiftui-compose-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of declarative native UI, state flow, previews, and
         Apple-versus-Android platform tradeoffs.
       </p>

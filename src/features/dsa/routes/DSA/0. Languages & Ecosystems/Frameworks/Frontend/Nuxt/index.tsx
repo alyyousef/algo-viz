@@ -502,7 +502,7 @@ export default function NuxtPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Nuxt</h1>
-      <p className="nuxt-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, file routing, auto-imports, async data, Nitro,
         rendering modes, modules, tradeoffs, and practical examples.
       </p>

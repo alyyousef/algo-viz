@@ -435,7 +435,7 @@ export default function GCPCloudFunctionsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP Cloud Functions</h1>
-      <p className="cloudfunctions-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Event-driven serverless functions for small focused backend logic
       </p>
       <p>

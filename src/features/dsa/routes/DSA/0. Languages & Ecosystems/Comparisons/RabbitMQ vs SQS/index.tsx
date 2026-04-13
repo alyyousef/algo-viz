@@ -379,7 +379,7 @@ export default function RabbitMqVsSqsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">RabbitMQ vs SQS</h1>
-      <p className="rabbitmq-sqs-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of broker architecture, managed queueing, delivery semantics, and
         operational tradeoffs.
       </p>

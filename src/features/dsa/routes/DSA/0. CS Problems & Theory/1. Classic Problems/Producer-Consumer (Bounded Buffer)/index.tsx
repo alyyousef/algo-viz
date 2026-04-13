@@ -656,12 +656,12 @@ export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
               Select a buffer size and observe how capacity affects waiting behavior. This is a
               conceptual simulator for intuition, not a real thread scheduler.
             </p>
-            <div className="producer-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {bufferCases.map((buffer) => (
                 <button
                   key={buffer.id}
                   type="button"
-                  className={`producer-help-push ${selectedBuffer.id === buffer.id ? 'active' : ''}`}
+                  className={`bin98-push ${selectedBuffer.id === buffer.id ? 'active' : ''}`}
                   onClick={() => {
                     setSelectedBufferId(buffer.id)
                     setBufferCount(0)
@@ -685,12 +685,12 @@ export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
               Compare producer and consumer rates. Apply a step to see how the buffer count changes
               under that profile.
             </p>
-            <div className="producer-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {rateProfiles.map((profile) => (
                 <button
                   key={profile.id}
                   type="button"
-                  className={`producer-help-push ${selectedProfile.id === profile.id ? 'active' : ''}`}
+                  className={`bin98-push ${selectedProfile.id === profile.id ? 'active' : ''}`}
                   onClick={() => setSelectedProfileId(profile.id)}
                   aria-pressed={selectedProfile.id === profile.id}
                 >
@@ -721,15 +721,11 @@ export default function ProducerConsumerBoundedBufferPage(): JSX.Element {
               <strong>Capacity:</strong> {capacity}
             </p>
             <p>{statusText}</p>
-            <div className="producer-help-formline">
-              <button type="button" className="producer-help-push" onClick={applyProfile}>
+            <div className="bin98-formline">
+              <button type="button" className="bin98-push" onClick={applyProfile}>
                 APPLY STEP
               </button>
-              <button
-                type="button"
-                className="producer-help-push"
-                onClick={() => setBufferCount(0)}
-              >
+              <button type="button" className="bin98-push" onClick={() => setBufferCount(0)}>
                 RESET
               </button>
             </div>

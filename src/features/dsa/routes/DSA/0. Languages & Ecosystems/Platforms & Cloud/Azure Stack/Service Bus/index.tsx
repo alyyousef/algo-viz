@@ -556,13 +556,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AzureServiceBusPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Azure Service Bus Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Azure Service Bus Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

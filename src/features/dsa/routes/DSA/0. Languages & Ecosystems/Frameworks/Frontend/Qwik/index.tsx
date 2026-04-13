@@ -170,7 +170,7 @@ const coreConceptSections: readonly DocSection[] = [
     title: 'Rendering and Execution Model',
     paragraphs: [
       'Qwik is optimized around delaying client-side execution until user interaction or other real need forces it. The rendered output arrives from the server, and the browser then resumes specific work rather than replaying broad initialization logic.',
-      "This execution model is one of the framework's strongest architectural differentiators. It changes how teams think about startup cost, event binding, and what â€œinteractiveâ€ means during page boot.",
+      "This execution model is one of the framework's strongest architectural differentiators. It changes how teams think about startup cost, event binding, and what ?interactive? means during page boot.",
     ],
   },
   {
@@ -576,7 +576,7 @@ export default function QwikPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Qwik</h1>
-      <p className="qwik-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, resumability, signals, QRLs, dollar boundaries,
         Qwik City, SSR strategy, tradeoffs, and practical examples.
       </p>

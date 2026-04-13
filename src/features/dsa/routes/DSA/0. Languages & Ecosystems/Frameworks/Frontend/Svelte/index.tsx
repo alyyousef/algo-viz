@@ -444,7 +444,7 @@ export default function SveltePage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Svelte</h1>
-      <p className="svelte-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, compiler model, reactivity, SvelteKit, forms,
         routing, team fit, tradeoffs, and examples.
       </p>

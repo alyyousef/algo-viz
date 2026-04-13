@@ -1272,7 +1272,9 @@
   white-space: nowrap;
 }
 
-.win96-taskbar__button.btn-97--sm {
+.win96-taskbar__button.btn-97--sm,
+.win96-taskbar__button.btn-97--md,
+.taskbar-97__quick-launch .btn-97 {
   height: 100%;
   align-self: stretch;
   padding-top: 0;
@@ -1281,6 +1283,13 @@
 
 .win96-taskbar__search-button {
   min-width: 74px;
+}
+
+@media (max-width: 440px) {
+  .win96-taskbar__search-button {
+    min-width: 48px;
+    font-size: 11px;
+  }
 }
 
 .win96-taskbar__button--active {
@@ -1297,4 +1306,30 @@
   color: var(--win97-text);
   padding: 2px 8px;
   white-space: nowrap;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.win96-taskbar__clock__date {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .win96-taskbar__clock {
+    font-size: 11px;
+    padding: 2px 4px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 440px) {
+  .win96-taskbar__clock__date {
+    display: none;
+  }
+
+  .win96-taskbar__clock {
+    font-size: 11px;
+  }
 }

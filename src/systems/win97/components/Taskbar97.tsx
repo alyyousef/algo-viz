@@ -5,12 +5,21 @@ import StartButton97, { type StartButton97Props } from './StartButton97'
 
 export interface Taskbar97Props extends HTMLAttributes<HTMLElement> {
   startButtonProps?: StartButton97Props
+  quickLaunch?: ReactNode
   runningItems?: ReactNode
   tray?: ReactNode
 }
 
 const Taskbar97 = forwardRef(function Taskbar97(
-  { className, startButtonProps, runningItems, tray, children, ...rest }: Taskbar97Props,
+  {
+    className,
+    startButtonProps,
+    quickLaunch,
+    runningItems,
+    tray,
+    children,
+    ...rest
+  }: Taskbar97Props,
   ref: Ref<HTMLElement>,
 ) {
   const composedClassName = ['taskbar-97', className].filter(Boolean).join(' ')
@@ -20,6 +29,7 @@ const Taskbar97 = forwardRef(function Taskbar97(
       <div className="taskbar-97__start">
         <StartButton97 {...startButtonProps} />
       </div>
+      {quickLaunch != null && <div className="taskbar-97__quick-launch">{quickLaunch}</div>}
       <div className="taskbar-97__items" aria-label="Running tasks">
         {runningItems ?? children ?? null}
       </div>

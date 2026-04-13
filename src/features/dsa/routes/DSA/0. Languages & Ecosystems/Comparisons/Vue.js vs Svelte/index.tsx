@@ -241,7 +241,7 @@ const coreConceptSections: ContentSection[] = [
     paragraphs: [
       'Vue is excellent for local form state. `v-model` is one of the most successful pieces of framework ergonomics in frontend development because it makes common binding flows concise without hiding what is happening. Form-heavy interfaces often feel very natural in Vue components.',
       'Svelte is equally compelling for local forms because `bind:value` and direct component state are lightweight. Where Svelte becomes especially distinctive is at the application level through SvelteKit form actions, which make request-response form workflows feel integrated rather than bolted on.',
-      'For local client-side forms, both frameworks are strong. For server-aware form workflows, the comparison often becomes Vue ecosystem conventions versus SvelteKitâ€™s more built-in path.',
+      'For local client-side forms, both frameworks are strong. For server-aware form workflows, the comparison often becomes Vue ecosystem conventions versus SvelteKit’s more built-in path.',
     ],
   },
   {
@@ -791,8 +791,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="vue-svelte-help-section">
-      <h2 className="vue-svelte-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -803,24 +803,24 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="vue-svelte-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="vue-svelte-help-section">
-      <h2 className="vue-svelte-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <h3 className="vue-svelte-help-subheading">Vue</h3>
-      <div className="vue-svelte-help-codebox">
+      <h3 className="bin98-subheading">Vue</h3>
+      <div className="bin98-codebox">
         <code>{section.vueCode.trim()}</code>
       </div>
-      <h3 className="vue-svelte-help-subheading">Svelte</h3>
-      <div className="vue-svelte-help-codebox">
+      <h3 className="bin98-subheading">Svelte</h3>
+      <div className="bin98-codebox">
         <code>{section.svelteCode.trim()}</code>
       </div>
       <ul>
@@ -828,21 +828,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="vue-svelte-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="vue-svelte-help-section">
-      <h2 className="vue-svelte-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="vue-svelte-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

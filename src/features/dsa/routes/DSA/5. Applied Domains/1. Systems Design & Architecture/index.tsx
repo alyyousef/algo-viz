@@ -464,7 +464,7 @@ export default function SystemDesignCachesPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Systems Design & Architecture</h1>
-      <p className="sd-help-intro">
+      <p className="bin98-doc-subtitle">
         Caching is a system design lever for latency and load. The craft lies in picking interaction
         patterns, eviction and admission rules, sharding strategy, and coherence mechanisms that fit
         your truth source and risk tolerance.

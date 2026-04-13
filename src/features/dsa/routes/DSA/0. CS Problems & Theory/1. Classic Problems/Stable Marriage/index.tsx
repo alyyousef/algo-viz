@@ -40,7 +40,7 @@ const problemSetup = [
   {
     title: 'Stability condition',
     detail:
-      'No blocking pair (m, w) exists such that m prefers w over mâ€™s match and w prefers m over wâ€™s match.',
+      'No blocking pair (m, w) exists such that m prefers w over m’s match and w prefers m over w’s match.',
   },
   {
     title: 'Goal',
@@ -150,7 +150,7 @@ const invariants = [
   },
   {
     title: 'Invariant 2: Best-so-far',
-    detail: 'A receiverâ€™s tentative match is always the best proposer seen so far.',
+    detail: 'A receiver’s tentative match is always the best proposer seen so far.',
   },
   {
     title: 'Invariant 3: Monotone proposals',
@@ -195,8 +195,7 @@ const complexity = [
 const dataStructures = [
   {
     title: 'Preference arrays',
-    detail:
-      'Store each proposerâ€™s ordered list and a pointer to the next receiver to propose to.',
+    detail: 'Store each proposer’s ordered list and a pointer to the next receiver to propose to.',
   },
   {
     title: 'Rank lookup',

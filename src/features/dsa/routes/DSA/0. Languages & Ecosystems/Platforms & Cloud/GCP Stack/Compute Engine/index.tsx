@@ -405,7 +405,7 @@ export default function GCPComputeEnginePage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP Compute Engine</h1>
-      <p className="compute-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Managed cloud virtual machines for workloads that need OS and VM-level control
       </p>
       <p>

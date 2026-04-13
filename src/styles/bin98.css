@@ -266,6 +266,25 @@
   text-align: left;
 }
 
+.bin98-glossary {
+  margin: 0 0 10px;
+}
+
+.bin98-glossary div {
+  margin: 0 0 10px;
+}
+
+.bin98-glossary dt {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bin98-glossary dd {
+  margin: 2px 0 0 16px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 /* Interactive widget classes (buttons, step controls, inline helpers) */
 
 .bin98-doc-subtitle {
@@ -322,6 +341,19 @@
   border-bottom: 2px solid #ffffff;
 }
 
+.bin98-button.active,
+.bin98-button.is-active,
+.bin98-button[aria-pressed='true'],
+.bin98-push.active,
+.bin98-push.is-active,
+.bin98-push[aria-pressed='true'] {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  background: #d4d0c8;
+}
+
 .bin98-button-row,
 .bin98-inline-buttons {
   display: flex;
@@ -338,6 +370,31 @@
 
 .bin98-inline-link:hover {
   color: #0000cc;
+}
+
+.bin98-formline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 10px;
+}
+
+.bin98-formline label {
+  font-size: 12px;
+}
+
+.bin98-range {
+  flex: 1 1 180px;
+  min-width: 160px;
+  accent-color: #000080;
+}
+
+.bin98-status {
+  border: 1px solid #808080;
+  background: #f2f2f2;
+  padding: 6px 8px;
+  margin: 6px 0 10px;
 }
 
 .bin98-step-box {

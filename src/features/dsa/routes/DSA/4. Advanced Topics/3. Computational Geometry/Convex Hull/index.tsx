@@ -339,7 +339,7 @@ export default function ConvexHullPage(): JSX.Element {
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
-      <h1 className="convex-help98-title">Convex Hull</h1>
+      <h1 className="bin98-doc-title">Convex Hull</h1>
       <p>
         The convex hull of a set of points is the minimal convex polygon that contains every point.
         It is a foundational construct in computational geometry, enabling collision detection,
@@ -352,7 +352,7 @@ export default function ConvexHullPage(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="convex-help98-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.

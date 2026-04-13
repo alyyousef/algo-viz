@@ -48,25 +48,25 @@ const mentalModel = [
   {
     title: 'Asymptotic complexity is not the whole story',
     detail:
-      'O(n log n) in theory can be slower than O(nÂ²) in practice for small n due to constant factors and cache behavior. Always measure before micro-optimizing.',
+      'O(n log n) in theory can be slower than O(n²) in practice for small n due to constant factors and cache behavior. Always measure before micro-optimizing.',
   },
 ]
 
 const keyTakeaways = [
   'Sorting underlies searching, merging, deduplication, and most database operations. Know at least merge sort, quicksort, and heapsort.',
-  'Binary search is not just for sorted arrays â€” it applies anywhere the search space can be halved by a monotone predicate.',
+  'Binary search is not just for sorted arrays — it applies anywhere the search space can be halved by a monotone predicate.',
   'Graph traversal (BFS/DFS) is the backbone of pathfinding, cycle detection, topological sort, and connected component analysis.',
   'Dynamic programming solves problems with overlapping subproblems by trading recomputation for memory.',
   'Greedy algorithms make locally optimal choices and are correct only when the greedy choice property and optimal substructure both hold.',
   'Backtracking is structured brute force: build candidates incrementally and abandon branches that cannot lead to valid solutions.',
-  'Divide and conquer splits a problem, solves sub-problems recursively, and merges results â€” giving O(n log n) for many problems that are O(nÂ²) naively.',
+  'Divide and conquer splits a problem, solves sub-problems recursively, and merges results — giving O(n log n) for many problems that are O(n²) naively.',
 ]
 
 const algorithmFamilies = [
   {
     title: 'Sorting',
     detail:
-      'Arrange elements in a defined order. Comparison sorts are bounded by Î©(n log n); non-comparison sorts (counting, radix) can be O(n) under constraints.',
+      'Arrange elements in a defined order. Comparison sorts are bounded by Ω(n log n); non-comparison sorts (counting, radix) can be O(n) under constraints.',
     examples: 'Merge sort, quicksort, heapsort, timsort, counting sort, radix sort.',
   },
   {
@@ -98,7 +98,7 @@ const algorithmFamilies = [
   {
     title: 'Divide and Conquer',
     detail:
-      'Split the input, solve each half recursively, and combine results. Analysis via Master Theorem. Often yields O(n log n) from O(nÂ²) naive approaches.',
+      'Split the input, solve each half recursively, and combine results. Analysis via Master Theorem. Often yields O(n log n) from O(n²) naive approaches.',
     examples:
       'Merge sort, quicksort, binary search, Karatsuba multiplication, closest pair of points.',
   },
@@ -114,17 +114,17 @@ const sortingComparison = [
   {
     name: 'Bubble Sort',
     best: 'O(n)',
-    average: 'O(nÂ²)',
-    worst: 'O(nÂ²)',
+    average: 'O(n²)',
+    worst: 'O(n²)',
     space: 'O(1)',
     stable: 'Yes',
     note: 'Didactic only; not used in practice',
   },
   {
     name: 'Selection Sort',
-    best: 'O(nÂ²)',
-    average: 'O(nÂ²)',
-    worst: 'O(nÂ²)',
+    best: 'O(n²)',
+    average: 'O(n²)',
+    worst: 'O(n²)',
     space: 'O(1)',
     stable: 'No',
     note: 'Minimal swaps; poor overall',
@@ -132,8 +132,8 @@ const sortingComparison = [
   {
     name: 'Insertion Sort',
     best: 'O(n)',
-    average: 'O(nÂ²)',
-    worst: 'O(nÂ²)',
+    average: 'O(n²)',
+    worst: 'O(n²)',
     space: 'O(1)',
     stable: 'Yes',
     note: 'Fast on nearly-sorted data; used in Timsort',
@@ -151,7 +151,7 @@ const sortingComparison = [
     name: 'Quick Sort',
     best: 'O(n log n)',
     average: 'O(n log n)',
-    worst: 'O(nÂ²)',
+    worst: 'O(n²)',
     space: 'O(log n)',
     stable: 'No',
     note: 'Best practical sort; worst case avoided with randomized pivot',
@@ -209,7 +209,7 @@ const shortestPathComparison = [
   },
   {
     name: 'Floyd-Warshall',
-    complexity: 'O(VÂ³)',
+    complexity: 'O(V³)',
     weighted: 'Yes',
     negativeEdges: 'Yes',
     note: 'All-pairs shortest path; dense graphs',
@@ -242,7 +242,7 @@ const dpPatterns = [
   {
     title: 'Rolling array',
     detail:
-      'If the DP only looks back one or two rows, keep only those rows in memory, reducing O(nÂ²) space to O(n).',
+      'If the DP only looks back one or two rows, keep only those rows in memory, reducing O(n²) space to O(n).',
   },
   {
     title: 'Identifying subproblems',
@@ -255,7 +255,7 @@ const commonPatterns = [
   {
     title: 'Two pointers',
     detail:
-      'Maintain two indices into a sorted array â€” converging or sliding â€” to solve sum, palindrome, and merge problems in O(n).',
+      'Maintain two indices into a sorted array — converging or sliding — to solve sum, palindrome, and merge problems in O(n).',
   },
   {
     title: 'Sliding window',
@@ -313,7 +313,7 @@ const pitfalls = [
   {
     mistake: 'Using Floyd-Warshall on sparse graphs',
     description:
-      'Floyd-Warshall is O(VÂ³) and practical only for dense or small graphs. Use Dijkstra from each source for sparse graphs.',
+      'Floyd-Warshall is O(V³) and practical only for dense or small graphs. Use Dijkstra from each source for sparse graphs.',
   },
   {
     mistake: 'Integer overflow in cumulative sums',
@@ -325,7 +325,7 @@ const pitfalls = [
 const codeExamples = [
   {
     title: 'Binary search',
-    code: `// TypeScript â€” find index of target in sorted array, or -1
+    code: `// TypeScript — find index of target in sorted array, or -1
 function binarySearch(arr: number[], target: number): number {
   let lo = 0, hi = arr.length - 1
   while (lo <= hi) {
@@ -341,7 +341,7 @@ function binarySearch(arr: number[], target: number): number {
   },
   {
     title: 'Merge sort',
-    code: `# Python â€” stable O(n log n) sort
+    code: `# Python — stable O(n log n) sort
 def merge_sort(arr):
   if len(arr) <= 1:
     return arr
@@ -359,11 +359,11 @@ def merge(a, b):
       result.append(b[j]); j += 1
   return result + a[i:] + b[j:]`,
     explanation:
-      'Splitting is O(log n) levels deep; merging is O(n) per level â€” total O(n log n). Stable because equal elements from the left half are always placed first.',
+      'Splitting is O(log n) levels deep; merging is O(n) per level — total O(n log n). Stable because equal elements from the left half are always placed first.',
   },
   {
     title: 'Quicksort (randomized)',
-    code: `// TypeScript â€” O(n log n) average, in-place
+    code: `// TypeScript — O(n log n) average, in-place
 function quicksort(arr: number[], lo = 0, hi = arr.length - 1): void {
   if (lo >= hi) return
   const pivotIdx = lo + Math.floor(Math.random() * (hi - lo + 1))
@@ -377,11 +377,11 @@ function quicksort(arr: number[], lo = 0, hi = arr.length - 1): void {
   quicksort(arr, p + 1, hi)
 }`,
     explanation:
-      'Random pivot selection makes worst-case O(nÂ²) extremely unlikely. Average case is O(n log n) with small constants and good cache behavior.',
+      'Random pivot selection makes worst-case O(n²) extremely unlikely. Average case is O(n log n) with small constants and good cache behavior.',
   },
   {
-    title: 'Dynamic programming â€” coin change',
-    code: `# Python â€” minimum coins to make amount
+    title: 'Dynamic programming — coin change',
+    code: `# Python — minimum coins to make amount
 def coin_change(coins: list[int], amount: int) -> int:
   dp = [float('inf')] * (amount + 1)
   dp[0] = 0
@@ -394,8 +394,8 @@ def coin_change(coins: list[int], amount: int) -> int:
       'dp[a] = minimum coins for amount a. Base case dp[0] = 0. Each amount is computed from smaller amounts, building bottom-up.',
   },
   {
-    title: 'Backtracking â€” N-Queens',
-    code: `# Python â€” all solutions for N-Queens
+    title: 'Backtracking — N-Queens',
+    code: `# Python — all solutions for N-Queens
 def n_queens(n: int) -> list[list[int]]:
   results, cols, diag1, diag2 = [], set(), set(), set()
   board: list[int] = []
@@ -418,8 +418,8 @@ def n_queens(n: int) -> list[list[int]]:
       'At each row we try every column. Three sets track attacked columns and diagonals, giving O(1) conflict checks. We prune entire subtrees before recursing.',
   },
   {
-    title: 'Greedy â€” activity selection',
-    code: `// TypeScript â€” max non-overlapping intervals
+    title: 'Greedy — activity selection',
+    code: `// TypeScript — max non-overlapping intervals
 function activitySelection(intervals: [number, number][]): [number, number][] {
   intervals.sort((a, b) => a[1] - b[1])  // sort by end time
   const result: [number, number][] = []
@@ -436,8 +436,8 @@ function activitySelection(intervals: [number, number][]): [number, number][] {
       'Choosing the activity that ends earliest is the greedy choice. It provably leaves the maximum remaining time for subsequent activities, making this globally optimal.',
   },
   {
-    title: 'Prefix sums â€” range query',
-    code: `// TypeScript â€” O(1) range sum after O(n) build
+    title: 'Prefix sums — range query',
+    code: `// TypeScript — O(1) range sum after O(n) build
 function buildPrefix(arr: number[]): number[] {
   const prefix = [0]
   for (const x of arr) prefix.push(prefix[prefix.length - 1] + x)
@@ -555,18 +555,18 @@ const quickGlossary = [
 ]
 
 const choiceChecklist = [
-  'General-purpose sort, stability not required? â†’ Quicksort (or introsort/pdqsort in practice).',
-  'Sort must be stable? â†’ Merge sort or Timsort.',
-  'Sort integers in a bounded range? â†’ Counting sort or radix sort.',
-  'Find element in sorted array? â†’ Binary search.',
-  'Shortest path, unweighted graph? â†’ BFS.',
-  'Shortest path, non-negative weights? â†’ Dijkstra.',
-  'Shortest path, negative weights or cycle detection? â†’ Bellman-Ford.',
-  'All-pairs shortest path? â†’ Floyd-Warshall (small/dense) or repeated Dijkstra (sparse).',
-  'Optimal solution over choices with no overlap and greedy property? â†’ Greedy.',
-  'Optimal solution with overlapping subproblems? â†’ Dynamic programming.',
-  'Enumerate all valid configurations with constraints? â†’ Backtracking.',
-  'Need range queries after preprocessing? â†’ Prefix sums (sum) or segment tree (general).',
+  'General-purpose sort, stability not required? → Quicksort (or introsort/pdqsort in practice).',
+  'Sort must be stable? → Merge sort or Timsort.',
+  'Sort integers in a bounded range? → Counting sort or radix sort.',
+  'Find element in sorted array? → Binary search.',
+  'Shortest path, unweighted graph? → BFS.',
+  'Shortest path, non-negative weights? → Dijkstra.',
+  'Shortest path, negative weights or cycle detection? → Bellman-Ford.',
+  'All-pairs shortest path? → Floyd-Warshall (small/dense) or repeated Dijkstra (sparse).',
+  'Optimal solution over choices with no overlap and greedy property? → Greedy.',
+  'Optimal solution with overlapping subproblems? → Dynamic programming.',
+  'Enumerate all valid configurations with constraints? → Backtracking.',
+  'Need range queries after preprocessing? → Prefix sums (sum) or segment tree (general).',
 ]
 
 const compareContrast = [
@@ -583,7 +583,7 @@ const compareContrast = [
   {
     title: 'Merge sort vs quicksort',
     detail:
-      'Merge sort is guaranteed O(n log n) and stable but uses O(n) extra space. Quicksort is in-place with small constants and O(n log n) average, but O(nÂ²) worst case without randomization.',
+      'Merge sort is guaranteed O(n log n) and stable but uses O(n) extra space. Quicksort is in-place with small constants and O(n log n) average, but O(n²) worst case without randomization.',
   },
   {
     title: 'BFS vs Dijkstra',
@@ -680,10 +680,10 @@ export default function CoreAlgorithmsPage(): JSX.Element {
             <p>
               Without a working knowledge of core algorithms, every problem looks novel. With it,
               most problems reduce to a known pattern with known complexity bounds. This is not
-              about memorizing code â€” it is about recognizing structure.
+              about memorizing code — it is about recognizing structure.
             </p>
             <p>
-              The difference between a correct O(nÂ²) solution and an O(n log n) one is often just
+              The difference between a correct O(n²) solution and an O(n log n) one is often just
               recognizing that the problem is a sorting or searching problem in disguise. The
               difference between an exponential and a polynomial solution is recognizing that
               subproblems overlap, enabling dynamic programming.
@@ -835,12 +835,12 @@ export default function CoreAlgorithmsPage(): JSX.Element {
         <section id="ex-code" className="bin98-section">
           <h2 className="bin98-heading">Code Examples</h2>
           <p>Select a scenario to view an annotated code sample.</p>
-          <div className="cabin98-inline-buttons">
+          <div className="bin98-inline-buttons">
             {codeExamples.map((ex) => (
               <button
                 key={ex.title}
                 type="button"
-                className="cabin98-push"
+                className="bin98-push"
                 onClick={() => setSelectedExampleTitle(ex.title)}
               >
                 {ex.title}

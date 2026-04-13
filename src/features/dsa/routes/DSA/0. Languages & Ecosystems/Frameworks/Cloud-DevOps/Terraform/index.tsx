@@ -391,8 +391,8 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 
 function renderSection(section: Section, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="terraform-help98-section">
-      <h2 className="terraform-help98-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -403,19 +403,19 @@ function renderSection(section: Section, isLast: boolean): JSX.Element {
           ))}
         </ul>
       ) : null}
-      {!isLast ? <hr className="terraform-help98-divider" /> : null}
+      {!isLast ? <hr className="bin98-divider" /> : null}
     </section>
   )
 }
 
 function renderExample(section: Example, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="terraform-help98-section">
-      <h2 className="terraform-help98-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="terraform-help98-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -423,16 +423,16 @@ function renderExample(section: Example, isLast: boolean): JSX.Element {
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {!isLast ? <hr className="terraform-help98-divider" /> : null}
+      {!isLast ? <hr className="bin98-divider" /> : null}
     </section>
   )
 }
 
 function renderGlossary(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="terraform-help98-section">
-      <h2 className="terraform-help98-heading">{section.title}</h2>
-      <dl className="terraform-help98-glossary">
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
+      <dl className="bin98-glossary">
         {section.terms.map((item) => (
           <div key={item.term}>
             <dt>{item.term}</dt>
@@ -440,7 +440,7 @@ function renderGlossary(section: GlossarySection, isLast: boolean): JSX.Element 
           </div>
         ))}
       </dl>
-      {!isLast ? <hr className="terraform-help98-divider" /> : null}
+      {!isLast ? <hr className="bin98-divider" /> : null}
     </section>
   )
 }
@@ -448,13 +448,13 @@ function renderGlossary(section: GlossarySection, isLast: boolean): JSX.Element 
 export default function TerraformPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Terraform Page',
+    pageTitle: PAGE_TITLE,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Terraform Page"
+      title={PAGE_TITLE}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

@@ -521,13 +521,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AzureBlobStoragePage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Azure Blob Storage Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Azure Blob Storage Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

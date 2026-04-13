@@ -416,7 +416,7 @@ export default function AIMLPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">AI &amp; ML (Search, GNNs, etc.)</h1>
-      <p className="ai-help-intro">
+      <p className="bin98-doc-subtitle">
         Search and ML work best together: search provides structure, models provide heuristics and
         representations. Production systems succeed when data hygiene, latency budgets, and
         guardrails are treated as algorithmic requirements.

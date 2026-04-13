@@ -439,20 +439,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AwsVsGcpPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Aws Vs Gcp Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Aws Vs Gcp Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="aws-gcp-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares AWS and GCP as platform choices for real infrastructure, application, and
         organization design. The point is not to memorize product names. The point is to understand

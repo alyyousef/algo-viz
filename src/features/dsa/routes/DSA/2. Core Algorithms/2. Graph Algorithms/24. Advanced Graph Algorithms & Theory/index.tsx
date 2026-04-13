@@ -557,7 +557,7 @@ export default function AdvancedGraphTheoryPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Advanced Graph Theory</h1>
-      <p className="graph-help-intro">
+      <p className="bin98-doc-subtitle">
         Hard graph problems become manageable when the structure is explicit: condense cycles,
         certify duals, separate critical cuts, and choose algorithms that preserve the right
         invariants. This page keeps the original material intact while presenting it as a

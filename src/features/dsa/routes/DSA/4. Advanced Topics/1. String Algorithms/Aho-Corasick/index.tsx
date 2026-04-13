@@ -644,7 +644,7 @@ export default function AhoCorasickPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Aho-Corasick</h1>
-      <p className="aho-help-intro">
+      <p className="bin98-doc-subtitle">
         Aho-Corasick compiles a dictionary of patterns into one automaton, then scans text in a
         single forward pass without backtracking. This page keeps the original material intact, but
         presents it as a Windows-style help document focused on failure links, reporting, and the

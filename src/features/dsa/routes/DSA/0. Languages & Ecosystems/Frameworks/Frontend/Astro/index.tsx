@@ -489,7 +489,7 @@ export default function AstroPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Astro</h1>
-      <p className="astro-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, islands architecture, rendering modes,
         integrations, content workflows, tradeoffs, and practical examples.
       </p>

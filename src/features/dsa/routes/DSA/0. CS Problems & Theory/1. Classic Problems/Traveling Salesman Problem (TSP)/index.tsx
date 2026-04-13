@@ -836,16 +836,16 @@ export default function TspPage(): JSX.Element {
               Number of distinct tours grows as (n-1)! / 2 for symmetric TSP. This shows why brute
               force is infeasible.
             </p>
-            <p className="tsp-help-status">
+            <p className="bin98-status">
               <strong>Cities:</strong> {cityCount} <strong>Approx tours:</strong>{' '}
               {approxTours === null ? 'Too large to compute' : approxTours.toLocaleString()}
             </p>
-            <div className="tsp-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {[4, 5, 6, 7, 8, 9, 10].map((value) => (
                 <button
                   key={value}
                   type="button"
-                  className={`tsp-help-push ${cityCount === value ? 'is-active' : ''}`}
+                  className={`bin98-push ${cityCount === value ? 'is-active' : ''}`}
                   onClick={() => setCityCount(value)}
                   aria-pressed={cityCount === value}
                 >
@@ -858,12 +858,12 @@ export default function TspPage(): JSX.Element {
           <section id="ex-stepper" className="bin98-section">
             <h2 className="bin98-heading">Algorithm Stepper</h2>
             <p>Step through core ideas behind exact, approximation, and heuristic approaches.</p>
-            <div className="tsp-help-inline-buttons">
+            <div className="bin98-inline-buttons">
               {timelineScenarios.map((scenario) => (
                 <button
                   key={scenario.id}
                   type="button"
-                  className={`tsp-help-push ${selectedScenarioId === scenario.id ? 'is-active' : ''}`}
+                  className={`bin98-push ${selectedScenarioId === scenario.id ? 'is-active' : ''}`}
                   onClick={() => {
                     setSelectedScenarioId(scenario.id)
                     setStepIndex(0)
@@ -881,20 +881,20 @@ export default function TspPage(): JSX.Element {
             <p>
               <strong>Summary:</strong> {selectedScenario.summary}
             </p>
-            <div className="tsp-help-inline-buttons">
-              <button type="button" className="tsp-help-push" onClick={() => setStepIndex(0)}>
+            <div className="bin98-inline-buttons">
+              <button type="button" className="bin98-push" onClick={() => setStepIndex(0)}>
                 Reset
               </button>
               <button
                 type="button"
-                className="tsp-help-push"
+                className="bin98-push"
                 onClick={() => setStepIndex((prev) => Math.max(0, prev - 1))}
               >
                 Back
               </button>
               <button
                 type="button"
-                className="tsp-help-push"
+                className="bin98-push"
                 onClick={() => {
                   if (canStepForward) {
                     setStepIndex((prev) => prev + 1)

@@ -529,13 +529,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function GcpIamPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Gcp Iam Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Gcp Iam Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

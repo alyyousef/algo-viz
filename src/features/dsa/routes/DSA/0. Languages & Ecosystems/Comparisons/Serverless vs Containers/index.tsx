@@ -391,7 +391,7 @@ export default function ServerlessVsContainersPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Serverless vs Containers</h1>
-      <p className="serverless-containers-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of operational ownership, runtime control, scaling behavior,
         portability, and cloud-platform tradeoffs.
       </p>

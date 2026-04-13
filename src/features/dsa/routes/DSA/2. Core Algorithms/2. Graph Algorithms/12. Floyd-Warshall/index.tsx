@@ -527,7 +527,7 @@ export default function FloydWarshallPage(): JSX.Element {
         unlocks instant queries.
       </p>
       <p>
-        <Link to="/algoViz" className="fw-help-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           Back to Catalog
         </Link>
       </p>

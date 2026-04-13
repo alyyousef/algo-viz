@@ -549,7 +549,7 @@ export default function ConcurrentParallelPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Concurrent &amp; Parallel DS/Algorithms</h1>
-      <p className="con-help-intro">
+      <p className="bin98-doc-subtitle">
         Concurrency hides latency, while parallelism splits work across cores. This page keeps the
         original content intact but presents it as a Windows-style help manual focused on ownership,
         progress guarantees, memory ordering, and the operational discipline needed to scale safely.

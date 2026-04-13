@@ -482,7 +482,7 @@ export default function GCPBigQueryPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP BigQuery</h1>
-      <p className="bigquery-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Managed analytical warehouse and SQL platform for large-scale data work
       </p>
       <p>

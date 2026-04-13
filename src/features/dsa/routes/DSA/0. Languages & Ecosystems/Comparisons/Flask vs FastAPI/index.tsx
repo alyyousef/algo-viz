@@ -437,20 +437,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function FlaskVsFastApiPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Flask Vs Fast Api Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Flask Vs Fast Api Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="flask-fastapi-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Flask and FastAPI as real backend framework choices rather than as
         generic Python brands. The point is to make the practical tradeoffs explicit: flexibility

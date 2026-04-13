@@ -133,7 +133,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-browser-support',
     title: 'Browser Support',
     paragraphs: [
-      'One of Playwrightâ€™s strongest advantages is its support for multiple browser engines, including Chromium, Firefox, and WebKit. That matters when teams want confidence across environments rather than confidence only in a Chromium-like world.',
+      'One of Playwright’s strongest advantages is its support for multiple browser engines, including Chromium, Firefox, and WebKit. That matters when teams want confidence across environments rather than confidence only in a Chromium-like world.',
       'Cypress has browser support too, but Playwright is more strongly associated with serious cross-browser testing strategy. If WebKit coverage matters because of Safari risk, Playwright is often the more compelling choice.',
     ],
   },
@@ -173,7 +173,7 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-architecture',
     title: 'Test Architecture and Maintainability',
     paragraphs: [
-      'The better tool for maintainability is not just the one with nicer syntax. It is the one whose model best matches the suiteâ€™s long-term complexity. A Cypress suite that constantly fights framework assumptions can become brittle. A Playwright suite with no clear fixture or page-object discipline can also become messy.',
+      'The better tool for maintainability is not just the one with nicer syntax. It is the one whose model best matches the suite’s long-term complexity. A Cypress suite that constantly fights framework assumptions can become brittle. A Playwright suite with no clear fixture or page-object discipline can also become messy.',
       'Teams should therefore judge each tool not only by how pleasant the first ten tests feel, but by how cleanly the hundredth or thousandth test can still be structured.',
     ],
   },
@@ -398,8 +398,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="play-cypress-help-section">
-      <h2 className="play-cypress-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -410,19 +410,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="play-cypress-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="play-cypress-help-section">
-      <h2 className="play-cypress-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="play-cypress-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -430,21 +430,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="play-cypress-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="play-cypress-help-section">
-      <h2 className="play-cypress-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="play-cypress-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

@@ -493,13 +493,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AzureVirtualMachinesPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Azure Virtual Machines Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Azure Virtual Machines Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

@@ -391,20 +391,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function BunVsNodePage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Bun Vs Node Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Bun Vs Node Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="bun-node-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Bun and Node.js as real runtime choices rather than as benchmark slogans.
         The point is to make the practical tradeoffs explicit: compatibility, module semantics,

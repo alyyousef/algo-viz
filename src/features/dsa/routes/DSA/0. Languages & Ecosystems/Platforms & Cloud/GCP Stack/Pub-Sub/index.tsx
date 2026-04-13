@@ -563,13 +563,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function GcpPubSubPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Gcp Pub Sub Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Gcp Pub Sub Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}

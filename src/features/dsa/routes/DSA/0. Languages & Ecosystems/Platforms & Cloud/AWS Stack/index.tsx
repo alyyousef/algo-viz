@@ -435,7 +435,7 @@ export default function AwsStackPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">AWS Stack</h1>
-      <p className="aws-stack-help-intro">
+      <p className="bin98-doc-subtitle">
         AWS is broad enough that "the AWS stack" can mean a serverless app, a fleet of EC2
         instances, a container platform, an analytics pipeline, or an enterprise landing zone. This
         page treats AWS as a platform model: how its major layers fit together, why teams choose

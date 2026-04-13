@@ -52,7 +52,7 @@ const bigPictureSections: ContentSection[] = [
     title: 'Overview',
     paragraphs: [
       'Microservices break an application into separately deployable services, usually aligned to business capabilities or bounded contexts. Each service can have its own lifecycle, runtime, deployment cadence, and team ownership. The cost is distributed-system complexity: networking, observability, resilience, consistency, and coordination become harder.',
-      'Serverless shifts more operational work to the platform provider. Functions, managed APIs, event triggers, managed messaging, and managed storage allow teams to focus more on application code and less on provisioning or scaling servers directly. The cost is reduced control, platform constraints, and often more dependence on a specific cloud providerâ€™s execution model.',
+      'Serverless shifts more operational work to the platform provider. Functions, managed APIs, event triggers, managed messaging, and managed storage allow teams to focus more on application code and less on provisioning or scaling servers directly. The cost is reduced control, platform constraints, and often more dependence on a specific cloud provider’s execution model.',
     ],
   },
   {
@@ -150,7 +150,7 @@ const coreConceptSectionsBase: ContentSection[] = [
     title: 'Scaling Model',
     paragraphs: [
       'Microservices allow different services to scale independently based on their own resource profiles, which can be valuable in systems where workloads differ sharply across business capabilities.',
-      'Serverless often provides highly elastic scaling behavior out of the box, which is valuable for unpredictable or bursty workloads. The tradeoff is that the team accepts the platformâ€™s execution constraints, lifecycle model, and provider limits as part of the design.',
+      'Serverless often provides highly elastic scaling behavior out of the box, which is valuable for unpredictable or bursty workloads. The tradeoff is that the team accepts the platform’s execution constraints, lifecycle model, and provider limits as part of the design.',
     ],
   },
   {
@@ -178,7 +178,7 @@ const coreConceptSections: ContentSection[] = [
     title: 'Platform Coupling and Lock-In',
     paragraphs: [
       'Microservices often increase dependence on internal platform tooling and organizational capabilities, but they do not necessarily force a very specific managed execution environment. Teams usually retain more control over runtime and hosting decisions.',
-      'Serverless often increases coupling to the providerâ€™s event model, deployment model, service integrations, and operational constraints. That can be completely acceptable if the platform leverage is worth it, but it should be an explicit tradeoff rather than an accidental one.',
+      'Serverless often increases coupling to the provider’s event model, deployment model, service integrations, and operational constraints. That can be completely acceptable if the platform leverage is worth it, but it should be an explicit tradeoff rather than an accidental one.',
     ],
   },
   {
@@ -207,8 +207,8 @@ const coreConceptSections: ContentSection[] = [
     id: 'core-architecture-guidance',
     title: 'Architecture Guidance',
     paragraphs: [
-      'If the applicationâ€™s main need is splitting large business capabilities across independent teams and runtimes, start by reasoning about service boundaries. That may lead to microservices, whether they run on containers, VMs, or serverless infrastructure.',
-      'If the applicationâ€™s main need is reducing infrastructure burden for APIs, event handlers, scheduled work, and asynchronous workflows, start by reasoning about managed execution. That may lead to serverless, whether the application remains monolithic, modular, or service-oriented.',
+      'If the application’s main need is splitting large business capabilities across independent teams and runtimes, start by reasoning about service boundaries. That may lead to microservices, whether they run on containers, VMs, or serverless infrastructure.',
+      'If the application’s main need is reducing infrastructure burden for APIs, event handlers, scheduled work, and asynchronous workflows, start by reasoning about managed execution. That may lead to serverless, whether the application remains monolithic, modular, or service-oriented.',
       'Good architecture comes from matching the decomposition model and the execution model separately instead of forcing one label to answer both questions.',
     ],
   },
@@ -396,8 +396,8 @@ const sectionLinks: Record<TabId, SectionLink[]> = {
 
 function renderContentSection(section: ContentSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="micro-serverless-help-section">
-      <h2 className="micro-serverless-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.paragraphs.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
@@ -408,19 +408,19 @@ function renderContentSection(section: ContentSection, isLast: boolean): JSX.Ele
           ))}
         </ul>
       ) : null}
-      {isLast ? null : <hr className="micro-serverless-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="micro-serverless-help-section">
-      <h2 className="micro-serverless-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.description.map((paragraph) => (
         <p key={paragraph}>{paragraph}</p>
       ))}
-      <div className="micro-serverless-help-codebox">
+      <div className="bin98-codebox">
         <code>{section.code.trim()}</code>
       </div>
       <ul>
@@ -428,21 +428,21 @@ function renderExampleSection(section: ExampleSection, isLast: boolean): JSX.Ele
           <li key={note}>{note}</li>
         ))}
       </ul>
-      {isLast ? null : <hr className="micro-serverless-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }
 
 function renderGlossarySection(section: GlossarySection, isLast: boolean): JSX.Element {
   return (
-    <section key={section.id} id={section.id} className="micro-serverless-help-section">
-      <h2 className="micro-serverless-help-heading">{section.title}</h2>
+    <section key={section.id} id={section.id} className="bin98-section">
+      <h2 className="bin98-heading">{section.title}</h2>
       {section.terms.map((item) => (
         <p key={item.term}>
           <strong>{item.term}:</strong> {item.definition}
         </p>
       ))}
-      {isLast ? null : <hr className="micro-serverless-help-divider" />}
+      {isLast ? null : <hr className="bin98-divider" />}
     </section>
   )
 }

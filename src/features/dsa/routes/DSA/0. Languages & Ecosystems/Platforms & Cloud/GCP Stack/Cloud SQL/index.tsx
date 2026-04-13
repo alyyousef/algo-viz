@@ -49,7 +49,7 @@ const bigPictureSections: Array<
     paragraphs: [
       'A common workflow is to create an instance, choose engine and sizing, configure backups and high availability, connect an application through private IP or secure connectors, and then manage schema and query behavior through ordinary database tooling.',
       'Another common pattern is to use Cloud SQL as the primary transactional database behind a Cloud Run or GKE service, with read replicas for reporting or read-heavy application paths and automated backups for recovery.',
-      'This matters because Cloud SQL is not just â€œdatabase hosting.â€ It is managed relational operations combined with application-focused connectivity and lifecycle tooling.',
+      'This matters because Cloud SQL is not just ?database hosting.? It is managed relational operations combined with application-focused connectivity and lifecycle tooling.',
     ],
   },
   {
@@ -409,7 +409,7 @@ export default function GCPCloudSQLPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GCP Cloud SQL</h1>
-      <p className="cloudsql-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Managed relational databases for MySQL, PostgreSQL, and SQL Server workloads
       </p>
       <p>

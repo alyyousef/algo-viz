@@ -489,7 +489,7 @@ export default function UsersRoute(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Remix</h1>
-      <p className="remix-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, route modules, loaders, actions, nested routing,
         progressive enhancement, ecosystem shape, tradeoffs, and examples.
       </p>

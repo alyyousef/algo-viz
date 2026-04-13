@@ -410,7 +410,7 @@ export default function SpringBootVsAspNetCorePage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Spring Boot vs ASP.NET Core</h1>
-      <p className="spring-aspnet-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of ecosystem gravity, dependency injection, middleware, hosting,
         operations, and Java-versus-.NET platform tradeoffs.
       </p>

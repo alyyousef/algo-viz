@@ -558,13 +558,13 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function AwsEc2Page(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Aws Ec2 Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Aws Ec2 Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
@@ -580,7 +580,7 @@ export default function AwsEc2Page(): JSX.Element {
       </p>
       <p>
         The title-bar minimize control returns to the previous page when possible, or to{' '}
-        <Link to="/algoViz" className="ec2-help-inline-link">
+        <Link to="/algoViz" className="bin98-inline-link">
           /algoViz
         </Link>{' '}
         when there is no prior history entry.
@@ -709,7 +709,7 @@ export default function AwsEc2Page(): JSX.Element {
           <ul>
             {pageSources.map((source) => (
               <li key={source}>
-                <a href={source} className="ec2-help-inline-link" target="_blank" rel="noreferrer">
+                <a href={source} className="bin98-inline-link" target="_blank" rel="noreferrer">
                   {source}
                 </a>
               </li>

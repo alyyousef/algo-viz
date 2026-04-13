@@ -390,7 +390,7 @@ export default function PrismaVsTypeOrmPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Prisma vs TypeORM</h1>
-      <p className="prisma-typeorm-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of schema ownership, query style, typing model, and long-term
         maintenance tradeoffs.
       </p>

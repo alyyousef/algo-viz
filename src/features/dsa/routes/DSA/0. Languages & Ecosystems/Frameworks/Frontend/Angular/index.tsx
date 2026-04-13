@@ -563,7 +563,7 @@ export default function AngularPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Angular</h1>
-      <p className="angular-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style reference covering overview, standalone APIs, templates, signals, dependency
         injection, routing, forms, SSR story, tradeoffs, and practical examples.
       </p>

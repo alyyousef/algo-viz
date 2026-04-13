@@ -431,20 +431,20 @@ const sectionLinks: Record<TabId, Array<{ id: string; label: string }>> = {
 export default function CloudRunVsAwsLambdaPage(): JSX.Element {
   const { activeTab, setActiveTab } = useTopicTabs({
     tabs,
-    pageTitle: 'Cloud Run Vs Aws Lambda Page',
+    pageTitle,
     defaultTab: 'big-picture',
   })
 
   return (
     <TopicPageShell
-      title="Cloud Run Vs Aws Lambda Page"
+      title={pageTitle}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">{pageTitle}</h1>
-      <p className="cloudrun-lambda-help-doc-subtitle">{pageSubtitle}</p>
+      <p className="bin98-doc-subtitle">{pageSubtitle}</p>
       <p>
         This page compares Cloud Run and AWS Lambda as two different ways to do serverless compute.
         The point is not to memorize product marketing. The point is to understand the deeper

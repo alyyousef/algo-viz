@@ -289,7 +289,7 @@ export default function GitHubActionsVsAzureDevOpsPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">GitHub Actions vs Azure DevOps</h1>
-      <p className="gha-azdo-help-intro">
+      <p className="bin98-doc-subtitle">
         This page compares two software delivery platforms across the dimensions that usually matter
         in real engineering decisions: repository integration, pipeline model, deployment control,
         approvals, governance, execution infrastructure, ecosystem, team fit, and long-term

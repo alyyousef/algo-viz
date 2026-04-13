@@ -13,12 +13,26 @@ function DesktopClock(): JSX.Element {
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 60_000)
+    const timer = window.setInterval(() => setNow(new Date()), 1_000)
     return () => window.clearInterval(timer)
   }, [])
 
-  const timeLabel = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  return <div className="win96-taskbar__clock">{timeLabel}</div>
+  const timeLabel = now.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+  const dateLabel = now.toLocaleDateString([], {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  })
+  return (
+    <div className="win96-taskbar__clock">
+      <span className="win96-taskbar__clock__date">{dateLabel}</span>
+      <span>{timeLabel}</span>
+    </div>
+  )
 }
 
 export default function DesktopChrome(): JSX.Element {
@@ -106,18 +120,15 @@ export default function DesktopChrome(): JSX.Element {
           'aria-expanded': isStartMenuOpen,
           'aria-haspopup': 'menu',
         }}
-        runningItems={
-          <div className="win96-taskbar__items">
-            <Button97
-              size="sm"
-              className={`win96-taskbar__button win96-taskbar__search-button${isSearchOpen ? ' win96-taskbar__button--active' : ''}`}
-              onClick={() => handleOpenSearch(!isSearchOpen)}
-            >
-              Find
-            </Button97>
-            {runningItemsContent}
-          </div>
+        quickLaunch={
+          <Button97
+            className={`win96-taskbar__button win96-taskbar__search-button${isSearchOpen ? ' win96-taskbar__button--active' : ''}`}
+            onClick={() => handleOpenSearch(!isSearchOpen)}
+          >
+            Find
+          </Button97>
         }
+        runningItems={<div className="win96-taskbar__items">{runningItemsContent}</div>}
         tray={<DesktopClock />}
       />
     </div>

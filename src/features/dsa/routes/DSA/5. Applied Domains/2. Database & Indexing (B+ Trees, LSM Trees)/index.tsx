@@ -536,7 +536,7 @@ export default function DatabaseIndexingPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">Database &amp; Indexing (B+ Trees, LSM Trees)</h1>
-      <p className="db-help-intro">
+      <p className="bin98-doc-subtitle">
         Storage engines trade off read latency, write throughput, and space efficiency. B+ trees
         provide stable read and range-scan performance; LSM trees optimize ingest by batching and
         merging. The right choice comes from workload shape, amplification budgets, and durability

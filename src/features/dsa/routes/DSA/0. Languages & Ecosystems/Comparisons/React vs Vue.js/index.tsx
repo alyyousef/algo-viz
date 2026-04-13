@@ -386,7 +386,7 @@ export default function Counter(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">React vs Vue.js</h1>
-      <p className="react-vue-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of framework scope, reactivity, component ergonomics, and long-term
         frontend tradeoffs.
       </p>

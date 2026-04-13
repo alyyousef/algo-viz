@@ -405,7 +405,7 @@ export default function Counter(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">React vs Angular</h1>
-      <p className="react-angular-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of framework scope, state model, ecosystem shape, and long-term
         front-end tradeoffs.
       </p>

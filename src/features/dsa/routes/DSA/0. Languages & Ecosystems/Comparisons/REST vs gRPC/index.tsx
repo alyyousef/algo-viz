@@ -377,7 +377,7 @@ export default function RestVsGrpcPage(): JSX.Element {
       tocLinks={sectionLinks[activeTab]}
     >
       <h1 className="bin98-doc-title">REST vs gRPC</h1>
-      <p className="rest-grpc-help-doc-subtitle">
+      <p className="bin98-doc-subtitle">
         Manual-style comparison of resource-oriented HTTP APIs, contract-first RPC, streaming, and
         service-platform tradeoffs.
       </p>
