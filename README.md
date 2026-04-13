@@ -17,17 +17,17 @@
 
 </div>
 
-AlgoViz is a single-page application that wraps a 437-page DSA knowledge base inside a Windows 96-style desktop experience. Every topic — from primitive types to bioinformatics — lives as a lazily loaded route behind a folder window, navigable from a taskbar-driven Start menu or a full-text search panel.
+AlgoViz is a single-page application that wraps a 437-page DSA knowledge base inside a Windows 96-style desktop experience. Every topic, from primitive types to bioinformatics, lives as a lazily loaded route behind a folder window, navigable from a taskbar-driven Start menu or a full-text search panel.
 
 ## Motivation
 
 Learning DSA is hard enough without fighting a bloated interface. Most references are either dry textbook PDFs, scattered Stack Overflow threads, or LeetCode editorials that assume you already know the answer. Nothing ties the full landscape together in one place with consistent depth.
 
-AlgoViz is built to fix that — a single destination where every data structure, algorithm, paradigm, and applied domain is covered with the same structure and the same level of care, wrapped in an interface that's actually enjoyable to explore.
+AlgoViz is built to fix that: a single destination where every data structure, algorithm, paradigm, and applied domain is covered with the same structure and the same level of care, wrapped in an interface that's actually enjoyable to explore.
 
 - Covers everything from Big O fundamentals to bioinformatics and blockchain in one repo
 - Every page follows the same structure: big picture, core concepts, examples, glossary
-- Navigation mirrors a real filesystem — browse by folder or search across all 437 topics instantly
+- Navigation mirrors a real filesystem: browse by folder or search across all 437 topics instantly
 - Retro Win96 aesthetic makes it feel like an app, not a wall of markdown
 
 ## What's Inside
@@ -49,23 +49,23 @@ AlgoViz is built to fix that — a single destination where every data structure
 
 **Core:**
 
-- **React 19** — UI framework with functional components and hooks
-- **React Router 7** — file-system-driven lazy route registration via `import.meta.glob`
-- **Vite 7** — dev server and production bundler
-- **TypeScript 5** — strict typing throughout
+- **React 19**: UI framework with functional components and hooks
+- **React Router 7**: file-system-driven lazy route registration via `import.meta.glob`
+- **Vite 7**: dev server and production bundler
+- **TypeScript 5**: strict typing throughout
 
 **Styling:**
 
-- **Tailwind CSS 4** — utility classes for layout
-- **Custom CSS** — hand-crafted Win96/Win97 desktop chrome, window chrome, taskbar, and DSA help-page shell
+- **Tailwind CSS 4**: utility classes for layout
+- **Custom CSS**: hand-crafted Win96/Win97 desktop chrome, window chrome, taskbar, and DSA help-page shell
 
 **Quality:**
 
-- **Vitest** — unit and integration tests
-- **ESLint** — zero-warning policy enforced in CI
-- **Prettier** — consistent formatting
-- **Husky + lint-staged** — pre-commit gate (lint + format on staged files)
-- **`validate:repo` script** — custom structural checks on the route/content tree
+- **Vitest**: unit and integration tests
+- **ESLint**: zero-warning policy enforced in CI
+- **Prettier**: consistent formatting
+- **Husky + lint-staged**: pre-commit gate (lint + format on staged files)
+- **`validate:repo` script**: custom structural checks on the route/content tree
 
 ## Repo Structure
 
@@ -92,11 +92,11 @@ scripts/                        # Repo maintenance and generation scripts
 
 ### Route Discovery
 
-Routes are auto-registered — no manual route list to maintain. `routeManifest.ts` runs `import.meta.glob('./routes/DSA/**/index.tsx', { eager: false })` and derives slugified URL paths from the directory names. Adding a new topic page is as simple as creating a folder with an `index.tsx`.
+Routes are auto-registered; no manual route list to maintain. `routeManifest.ts` runs `import.meta.glob('./routes/DSA/**/index.tsx', { eager: false })` and derives slugified URL paths from the directory names. Adding a new topic page is as simple as creating a folder with an `index.tsx`.
 
 ### Desktop Window Manager
 
-The Win96 desktop is powered by a reducer-backed context in `src/systems/win96/context/Win96WindowManager.tsx`. It tracks open windows, z-index ordering, minimize state, and folder hierarchy — all in local React state with no external state library.
+The Win96 desktop is powered by a reducer-backed context in `src/systems/win96/context/Win96WindowManager.tsx`. It tracks open windows, z-index ordering, minimize state, and folder hierarchy, all in local React state with no external state library.
 
 ### Topic Page Shell
 
@@ -106,9 +106,9 @@ Every topic page uses `TopicPageShell` with `useTopicTabs` for tabbed navigation
 
 The taskbar (`Taskbar97`) is composed of three zones:
 
-- **Start** — opens the folder-based Start Menu
-- **Quick Launch** — Find button for full-text search across all 437 pages
-- **Tray** — live clock showing local date, time, and seconds (timezone-aware)
+- **Start**: opens the folder-based Start Menu
+- **Quick Launch**: Find button for full-text search across all 437 pages
+- **Tray**: live clock showing local date, time, and seconds (timezone-aware)
 
 ## Development
 
@@ -159,14 +159,14 @@ Pre-commit hooks (Husky + lint-staged) run lint and format automatically on stag
 
 **TypeScript:**
 
-- Strict mode enabled — no `any`, no implicit returns
+- Strict mode enabled; no `any`, no implicit returns
 - Named exports preferred; default exports for route components only
 - Types colocated with the files that own them
 
 **React:**
 
 - Functional components only with hooks
-- No external state library — React context + reducers for shared state
+- No external state library: React context + reducers for shared state
 - `JSX.Element` return types on all components
 
 **CSS:**
@@ -179,7 +179,7 @@ Pre-commit hooks (Husky + lint-staged) run lint and format automatically on stag
 
 - Files: `PascalCase.tsx` for components, `camelCase.ts` for utilities
 - CSS classes: `kebab-case` with feature prefix (`win96-`, `win97-`, `bin98-`, `dsa-`)
-- Route directories: `N. Title Case` — the number prefix controls sort order
+- Route directories: `N. Title Case`, where the number prefix controls sort order
 
 ## Code Examples
 
@@ -262,12 +262,12 @@ What does not ship yet:
 
 **Tools & open-source libraries that made this possible:**
 
-- [React](https://react.dev) — UI framework
-- [Vite](https://vite.dev) — build tooling
-- [React Router](https://reactrouter.com) — routing
-- [Tailwind CSS](https://tailwindcss.com) — utility styling
-- [Vitest](https://vitest.dev) — testing
-- [Inter](https://rsms.me/inter/) — typeface
+- [React](https://react.dev): UI framework
+- [Vite](https://vite.dev): build tooling
+- [React Router](https://reactrouter.com): routing
+- [Tailwind CSS](https://tailwindcss.com): utility styling
+- [Vitest](https://vitest.dev): testing
+- [Inter](https://rsms.me/inter/): typeface
 
 ---
 
