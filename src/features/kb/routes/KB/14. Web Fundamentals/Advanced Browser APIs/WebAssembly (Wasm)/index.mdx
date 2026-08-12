@@ -1,0 +1,32 @@
+---
+title: WebAssembly (Wasm)
+description: A low-level binary instruction format that allows languages like C++, Rust, and Go to run inside the web browser at near-native speeds.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="WebAssembly (Wasm)">
+
+For 25 years, JavaScript was the only programming language that could natively execute inside a web browser. 
+While V8 makes JS incredibly fast, JS is fundamentally a dynamic, garbage-collected language. It can never achieve the raw, predictable performance of C++ required for 3D video games, physics simulations, or video encoding.
+
+In 2017, the major browser vendors released **WebAssembly (Wasm)**.
+
+## What is WebAssembly?
+
+WebAssembly is **not** a programming language that you write by hand. It is a **binary compilation target**.
+
+Instead of writing JS, you write a high-performance video encoder in Rust. You then run the Rust compiler, but instead of compiling to Windows `.exe` or Linux `.elf`, you compile it to a `.wasm` binary file.
+
+You then load that `.wasm` file into the browser using JavaScript. The browser's Wasm virtual machine executes the binary instructions at near-native CPU speeds.
+
+## The Wasm Sandbox
+WebAssembly does **not** replace JavaScript; they work together.
+Wasm executes inside a completely isolated, secure sandbox. It mathematically **cannot** touch the DOM, and it cannot make HTTP requests. 
+If Wasm needs to change the color of a button, it must pass a message back to JavaScript, and JavaScript updates the DOM.
+
+**Typical Use Cases:**
+- Porting legacy desktop apps to the web (e.g., AutoCAD, Figma).
+- Heavy cryptographic calculations.
+- Real-time video/audio processing.
+
+</ConceptTemplate>

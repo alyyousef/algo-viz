@@ -1,0 +1,27 @@
+---
+title: IPv4
+description: The foundational Layer 3 logical addressing protocol that established the global internet, utilizing 32-bit addresses.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="IPv4">
+
+The **Internet Protocol version 4 (IPv4)** is the fundamental routing language of the Internet, operating at Layer 3 (Network). It is responsible for providing logical, hierarchical addressing, allowing routers to calculate the fastest path to move a packet from New York to Tokyo.
+
+## The 32-Bit Limit
+
+An IPv4 address is mathematically a 32-bit binary number (e.g., `11000000.10101000.00000001.00001010`). 
+Because humans cannot read binary efficiently, it is represented as four decimal numbers separated by dots (Dotted Decimal Notation): **`192.168.1.10`**.
+
+Because it is strictly 32 bits long, IPv4 is mathematically limited to exactly **4,294,967,296** unique IP addresses.
+When the Internet was invented, 4 billion addresses seemed infinite. By the 2010s, thanks to smartphones and IoT devices, the world officially ran out of IPv4 addresses (IPv4 Exhaustion).
+
+## The Time-To-Live (TTL) Field
+An IP packet can occasionally get stuck in a routing loop, bouncing infinitely between three broken routers forever, consuming bandwidth.
+To prevent this, the IPv4 Header includes a **TTL** field (usually starting at 64). Every time a router processes the packet, it subtracts 1 from the TTL. If the TTL hits 0, the router permanently deletes the packet and sends an ICMP "Time Exceeded" error back to the sender.
+
+<Callout icon="info" title="Private IPv4 (RFC 1918)">
+  To delay IPv4 exhaustion, engineers designated specific blocks of IP addresses as "Private" (e.g., `192.168.x.x` or `10.x.x.x`). These addresses are legally banned from the open internet. Millions of homes can reuse the exact same `192.168.1.x` network internally, relying on NAT (Network Address Translation) at the router to translate them into one single public IP address when accessing the internet.
+</Callout>
+
+</ConceptTemplate>

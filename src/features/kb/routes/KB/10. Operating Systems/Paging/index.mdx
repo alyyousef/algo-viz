@@ -1,0 +1,33 @@
+---
+title: Paging
+description: The mechanical implementation of Virtual Memory, chopping RAM into tiny, manageable blocks to eliminate fragmentation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Paging">
+
+How does the Operating System actually map 16 Exabytes of fake Virtual Memory down to 8 Gigabytes of real Physical RAM? It uses a system called **Paging**.
+
+Instead of trying to map memory byte-by-byte (which would require a map larger than the RAM itself), the OS chops all of memory into identical, fixed-size blocks called **Pages**. 
+On almost all modern systems, a Page is exactly **4 Kilobytes**.
+
+## The Page Table
+
+The OS Kernel maintains a massive dictionary in RAM called the **Page Table**. 
+The Page Table maps *Virtual Pages* to *Physical Frames*.
+
+1. When a program asks for 12 KB of memory, the OS allocates three 4KB Virtual Pages.
+2. The OS finds three empty 4KB Physical Frames on the RAM sticks. (Crucially, these physical frames do *not* need to be next to each other).
+3. The OS writes the translation into the Page Table.
+
+<Callout icon="warning" title="The TLB (Translation Lookaside Buffer)">
+  Because every single memory read requires a lookup in the Page Table, memory speeds would theoretically be cut in half. To fix this, CPUs have a highly specialized hardware cache called the **TLB**. The TLB stores the 100 most recent Page Table translations directly inside the CPU silicon, allowing translation to happen in zero clock cycles.
+</Callout>
+
+## Eliminating Fragmentation
+
+Historically, memory suffered from **External Fragmentation**. If a program needed a 10MB chunk of RAM, the OS had to find a contiguous 10MB empty space. If the RAM was scattered with tiny gaps, the allocation would fail, even if there was 100MB of total free space.
+
+Paging permanently solves this. Because Virtual Memory is an illusion, the OS can take 2,500 heavily scattered 4KB physical frames, map them consecutively in the Page Table, and the program will see a perfectly contiguous 10MB block of Virtual Memory.
+
+</ConceptTemplate>

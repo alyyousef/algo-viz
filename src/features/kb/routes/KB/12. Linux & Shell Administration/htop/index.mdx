@@ -1,0 +1,27 @@
+---
+title: htop
+description: An interactive, colorful, and heavily upgraded process viewer that serves as the modern replacement for the classic 'top' command.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="htop">
+
+While the ancient `top` command is installed on every Linux system, it is visually messy and difficult to use. 
+**`htop`** is a third-party, ncurses-based task manager that sysadmins almost immediately install on fresh servers.
+
+It provides a live, continuously updating dashboard of the server's vitals.
+
+## The Interface
+
+When you run `htop`, the screen splits into two main sections:
+1. **The Header**: Displays beautiful ASCII bar graphs representing CPU utilization (for every single CPU core), RAM usage, and Swap space usage.
+2. **The Process List**: A sortable list of every running process, showing exactly who owns it, how much RAM it is consuming (RES/VIRT), and its CPU percentage.
+
+<Callout icon="success" title="Interactive Management">
+  The biggest advantage of `htop` over `top` is interactivity. You can use your keyboard arrows (or your mouse!) to scroll through the process list, press F6 to instantly sort by Memory usage, select a rogue database query, and press F9 to instantly kill it—all without typing a single PID number.
+</Callout>
+
+## Tree View
+By pressing F5 in `htop`, you enable **Tree View**. This visually nests child processes under their parent processes. This is absolutely critical for debugging web servers like Nginx or Apache, allowing you to see the main master process and all of its spawned worker threads.
+
+</ConceptTemplate>

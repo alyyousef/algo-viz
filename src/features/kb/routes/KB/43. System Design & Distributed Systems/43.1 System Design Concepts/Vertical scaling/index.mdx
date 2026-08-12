@@ -1,0 +1,28 @@
+---
+title: Vertical Scaling (Scaling Up)
+description: Scaling a system by adding more power (CPU, RAM) to an existing machine.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Vertical Scaling">
+
+**Vertical Scaling** (also known as "Scaling Up") is the process of increasing a system's capacity by upgrading the hardware components of a single computer. This usually means installing a faster CPU, adding more RAM, or upgrading from HDDs to NVMe SSDs.
+
+<Callout icon="info" title="The Simplicity Tax">
+  Vertical scaling is the easiest way to solve a performance problem. You don't have to rewrite any code, you don't need load balancers, and you don't have to worry about distributed data consistency. You just pay AWS to upgrade your instance from `t3.medium` (2 vCPUs) to `m5.24xlarge` (96 vCPUs).
+</Callout>
+
+## Advantages
+
+1. **Zero Code Changes**: The application remains a monolith. There is no network latency between nodes or complex distributed transactions.
+2. **Easy Administration**: You only have one operating system to patch, secure, and monitor.
+3. **Strong Consistency**: Since all data resides in one machine's memory/disk, you never have to worry about stale data or replication lag.
+
+## Limitations
+
+1. **The Hardware Ceiling**: There is a strict physical limit to how powerful a single machine can be. Once you buy the most expensive mainframe available, you cannot scale any further.
+2. **Single Point of Failure (SPOF)**: If your entire application runs on one massive server, and the power supply on that server blows out, your entire company is offline until the hardware is replaced. There is no redundancy.
+3. **Downtime**: Upgrading hardware often requires shutting down the server, replacing the RAM/CPU, and rebooting, resulting in unavoidable downtime for users.
+4. **Diminishing Returns**: Upgrading from 4GB to 8GB of RAM might cost $20. Upgrading from 1TB to 2TB of RAM on a specialized enterprise server might cost $20,000. Hardware costs scale exponentially at the high end.
+
+</ConceptTemplate>

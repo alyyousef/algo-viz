@@ -1,0 +1,28 @@
+---
+title: Concurrency
+description: The ability of different parts or units of a program to be executed out-of-order or in partial order.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Concurrency">
+
+Concurrency is the execution of multiple instruction sequences at the same time. It happens in the operating system when there are several process threads running in parallel.
+
+<Callout icon="error" title="Concurrency vs Parallelism">
+  Rob Pike famously said: "Concurrency is about dealing with a lot of things at once. Parallelism is about doing a lot of things at once."
+  
+  A single-core CPU can be **Concurrent** (by rapidly switching between two tasks so fast it *looks* simultaneous). Only a multi-core CPU can be **Parallel** (literally executing two tasks at the exact same physical nanosecond).
+</Callout>
+
+## Concurrency Models
+
+<ComparisonTable 
+  headers={['Model', 'Description']}
+  rows={[
+    ['Shared Memory (Threads)', 'Multiple threads read and write to the same memory space. Requires strict locking (Mutexes). Fast but prone to Deadlocks.'],
+    ['Actor Model (Erlang/Akka)', 'Independent "Actors" hold their own private state and only communicate by passing immutable messages to each other. No locks required.'],
+    ['CSP (Go Channels)', 'Communicating Sequential Processes. "Do not communicate by sharing memory; instead, share memory by communicating."']
+  ]}
+/>
+
+</TechnologyTemplate>

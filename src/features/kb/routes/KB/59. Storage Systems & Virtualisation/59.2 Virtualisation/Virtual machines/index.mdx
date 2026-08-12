@@ -1,0 +1,25 @@
+---
+title: Virtual Machines (VMs)
+description: The emulation of a computer system based on computer architectures and provide functionality of a physical computer.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Virtual Machines (VMs)">
+
+A virtual machine (VM) is the virtualization/emulation of a computer system. Virtual machines are based on computer architectures and provide functionality of a physical computer. Their implementations may involve specialized hardware, software, or a combination.
+
+<Callout icon="info" title="The Hypervisor">
+  A Hypervisor (or Virtual Machine Monitor) is the software that sits between the physical hardware and the Virtual Machines. It slices up the physical RAM and CPU and tricks each VM into thinking it is running on a dedicated physical box.
+</Callout>
+
+## Types of Hypervisors
+
+<ComparisonTable 
+  headers={['Type', 'Description', 'Examples']}
+  rows={[
+    ['Type 1 (Bare-Metal)', 'Runs directly on the physical hardware. Highly performant. This is what powers AWS, Azure, and Enterprise data centers.', 'VMware ESXi, Microsoft Hyper-V, KVM.'],
+    ['Type 2 (Hosted)', 'Runs as an application inside a host operating system (like Windows or macOS). Much slower, used mostly for desktop testing.', 'VirtualBox, VMware Workstation.']
+  ]}
+/>
+
+</TechnologyTemplate>

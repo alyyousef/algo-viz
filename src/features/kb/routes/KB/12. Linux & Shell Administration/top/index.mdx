@@ -1,0 +1,27 @@
+---
+title: top
+description: The classic, default, real-time system monitor installed on virtually every Unix and Linux machine in existence.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="top">
+
+Before `htop` existed, there was **`top`**. 
+
+It is a command-line utility that provides a dynamic, real-time view of a running system. It is installed by default on everything from macOS to Alpine Linux containers. If you SSH into a highly restricted enterprise server where you cannot install custom software, `top` is your best friend.
+
+## Reading the Output
+
+The top half of the screen shows global system metrics:
+- **Uptime**: How long the server has been running.
+- **Load Average**: Three numbers representing the system load over the last 1, 5, and 15 minutes. (A load of 1.00 on a single-core CPU means the CPU is at exactly 100% capacity).
+- **CPU States**: Breaks down CPU usage by `us` (User processes), `sy` (System/Kernel), and `id` (Idle).
+
+The bottom half shows the process list, sorted by default by CPU usage.
+
+<Callout icon="info" title="Interactive Commands">
+  While not as pretty as `htop`, `top` is interactive. 
+  While it is running, press **`M`** (Shift+M) to instantly resort the list by Memory usage, or press **`k`** to prompt for a PID to kill.
+</Callout>
+
+</ConceptTemplate>

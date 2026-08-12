@@ -1,0 +1,38 @@
+---
+title: sed (Stream Editor)
+description: The notoriously cryptic but insanely powerful Unix utility used for on-the-fly text substitution and manipulation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="sed (Stream Editor)">
+
+If you want to open a file, find a word, and replace it, you usually use a GUI text editor like VS Code or a terminal editor like Nano. 
+
+But what if you need to perform a Find & Replace inside an automated bash script? You use **`sed` (Stream Editor)**. 
+`sed` reads a stream of text (from a pipe or a file), manipulates it entirely in memory based on a set of rules, and spits the modified text out to the screen.
+
+## The Substitution Command
+
+99% of `sed` usage revolves around the **Substitution (s)** command.
+The syntax uses slashes as delimiters: `sed 's/SEARCH_TERM/REPLACE_TERM/g'`
+
+```bash
+# Replace the first instance of 'apple' with 'orange' on every line
+echo "I like apples" | sed 's/apple/orange/'
+
+# The 'g' (Global) flag replaces EVERY instance on the line, not just the first
+cat config.txt | sed 's/localhost/127.0.0.1/g'
+```
+
+<Callout icon="warning" title="In-Place Editing (-i)">
+  By default, `sed` does not modify the original file; it just prints the altered text to the terminal.
+  If you want to permanently modify the file on the hard drive, you use the dangerous **`-i` (In-Place)** flag.
+  `sed -i 's/Port 22/Port 2222/' /etc/ssh/sshd_config`
+</Callout>
+
+## Advanced Deletions
+Because `sed` supports Regex, you can use it to strip unwanted lines from files.
+For example, to print a configuration file but automatically delete every single line that starts with a comment (`#`) or is completely blank:
+`sed -e '/^#/d' -e '/^$/d' /etc/nginx/nginx.conf`
+
+</ConceptTemplate>

@@ -1,0 +1,27 @@
+---
+title: AlmaLinux
+description: A community-driven, 1:1 enterprise-grade clone of RHEL created to fill the void left by the death of traditional CentOS.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="AlmaLinux">
+
+When Red Hat controversially discontinued traditional CentOS in 2020 (replacing it with the rolling-release CentOS Stream), the enterprise server world panicked. Millions of servers relied on the free, rock-solid, 10-year lifecycle of CentOS.
+
+**AlmaLinux** was rapidly created by the web hosting company CloudLinux to fill this exact void.
+
+## The Bug-For-Bug Promise
+
+Like Rocky Linux, AlmaLinux's singular goal is to be a 100% bug-for-bug compatible drop-in replacement for Red Hat Enterprise Linux (RHEL). 
+
+If a piece of enterprise database software is certified to run on RHEL 9, it is mathematically guaranteed to run identically on AlmaLinux 9. 
+
+<Callout icon="info" title="The Non-Profit Foundation">
+  To ensure AlmaLinux can never be bought out or corporately shifted (like CentOS was), it is governed by the AlmaLinux OS Foundation, an independent 501(c)(6) non-profit organization. It is funded by heavyweights like AMD, AWS, and Microsoft to ensure the internet always has a free enterprise OS.
+</Callout>
+
+## The Source Code Pivot
+
+In 2023, Red Hat aggressively restricted public access to the RHEL source code, trying to kill downstream clones like AlmaLinux. In response, AlmaLinux brilliantly pivoted from being a "downstream clone of RHEL" to an "Application Binary Interface (ABI) compatible fork", utilizing CentOS Stream source code to build an OS that perfectly mimics RHEL without violating Red Hat's paywalls.
+
+</ConceptTemplate>

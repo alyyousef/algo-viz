@@ -1,0 +1,28 @@
+---
+title: Android
+description: The world's most widely used operating system, utilizing the Linux kernel beneath a massive Java-based user space.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Android">
+
+Developed by Google, **Android** is the most widely used operating system on Earth, powering billions of smartphones, tablets, and televisions. 
+
+While it is technically a "Linux Distribution" (because it uses the Linux Kernel to talk to the phone's hardware), it shares absolutely zero user-space DNA with desktop Linux. 
+
+## The Architecture Stack
+
+Android is built in highly distinct layers:
+1. **The Linux Kernel**: Handles memory management, CPU scheduling, and hardware drivers (camera, bluetooth).
+2. **Hardware Abstraction Layer (HAL)**: C/C++ libraries that allow the higher levels to talk to proprietary hardware without knowing the specific driver details.
+3. **Android Runtime (ART)**: A highly specialized Virtual Machine designed for low-power mobile devices. 
+4. **The Framework**: The massive Java/Kotlin API that provides UI buttons, location services, and notifications.
+
+<Callout icon="success" title="The Application Sandbox">
+  In desktop Linux, apps generally share the same user permissions. In Android, every single application is assigned its own unique Linux User ID (UID). Because the Linux Kernel strictly isolates memory between different users, this guarantees that a malicious flashlight app physically cannot read the RAM of your banking app.
+</Callout>
+
+## Dalvik to ART
+Historically, Android compiled Java code into Dalvik bytecode and interpreted it Just-In-Time (JIT) while the app was running, which drained battery. Modern Android uses **ART (Android Runtime)**, which performs Ahead-Of-Time (AOT) compilation—translating the app into native machine code the moment you install it from the Play Store, resulting in massive performance gains.
+
+</ConceptTemplate>

@@ -12,7 +12,11 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 
-import { desktopSearchEntries, searchDesktopEntries } from '../utils/desktopSearch'
+import {
+  desktopSearchEntries,
+  searchDesktopEntries,
+  loadDesktopSearchEntries,
+} from '../utils/desktopSearch'
 
 interface DesktopSearch96Props {
   isOpen: boolean
@@ -78,6 +82,7 @@ export default function DesktopSearch96({
 }: DesktopSearch96Props): JSX.Element | null {
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
+  const [indexLoaded, setIndexLoaded] = useState(false)
   const deferredQuery = useDeferredValue(query)
   const searchRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -91,7 +96,8 @@ export default function DesktopSearch96({
     scrollTop: 0,
   })
 
-  const results = useMemo(() => searchDesktopEntries(deferredQuery), [deferredQuery])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const results = useMemo(() => searchDesktopEntries(deferredQuery), [deferredQuery, indexLoaded])
   const activeResult = results[activeIndex] ?? null
   const canScroll = scrollMetrics.scrollHeight > scrollMetrics.clientHeight + 1
   const maxScrollTop = Math.max(scrollMetrics.scrollHeight - scrollMetrics.clientHeight, 0)
@@ -172,9 +178,15 @@ export default function DesktopSearch96({
       return
     }
 
+    if (!indexLoaded) {
+      void loadDesktopSearchEntries()
+        .then(() => setIndexLoaded(true))
+        .catch(console.error)
+    }
+
     inputRef.current?.focus()
     inputRef.current?.select()
-  }, [isOpen])
+  }, [isOpen, indexLoaded])
 
   useLayoutEffect(() => {
     if (!isOpen) {

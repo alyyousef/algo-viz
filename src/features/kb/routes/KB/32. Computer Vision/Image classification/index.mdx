@@ -1,0 +1,59 @@
+---
+title: Image Classification
+description: The task of assigning a label or class to an entire image.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Image Classification">
+
+Image Classification is one of the most fundamental tasks in Computer Vision. Given an image, the goal of an image classification algorithm is to predict a single label (or a probability distribution of labels) that best describes the entire image. 
+
+<Callout icon="info" title="The Hello World of CV">
+  Classifying handwritten digits (0-9) from the **MNIST dataset** is universally considered the "Hello World" of Machine Learning and Computer Vision.
+</Callout>
+
+## How Computers See Images
+
+To a human, an image is a dog. To a computer, an image is a massive 3D matrix (tensor) of numbers. 
+
+A 1024x1024 color image is represented as a matrix of `1024 (Height) x 1024 (Width) x 3 (RGB Color Channels)`. This results in over 3 million individual numbers (pixel intensities ranging from 0 to 255) that the neural network must process.
+
+## Convolutional Neural Networks (CNNs)
+
+Historically, passing 3 million pixels into a standard neural network required too much compute and ignored the spatial relationship between pixels. This was solved by **CNNs**.
+
+<ComparisonTable 
+  headers={['Layer', 'Purpose']}
+  rows={[
+    ['Convolutional Layer', 'Slides small "filters" (like a magnifying glass) over the image to extract features like edges, curves, and textures.'],
+    ['Pooling Layer (Max Pooling)', 'Downsamples the image, reducing its size drastically while keeping the most important features. Helps prevent overfitting.'],
+    ['Fully Connected Layer', 'At the very end, flattens the extracted features into a standard neural network to output the final classification probabilities.']
+  ]}
+/>
+
+## Architecture of a Classifier
+
+<ArchitectureDiagram chart={`
+graph LR
+  Input[Raw Image\n(Cat)]
+  
+  Conv1[Conv Layer\n(Finds Edges)]
+  Pool1[Max Pool\n(Shrinks)]
+  
+  Conv2[Conv Layer\n(Finds Ears/Eyes)]
+  Pool2[Max Pool\n(Shrinks)]
+  
+  FC[Fully Connected\nNetwork]
+  Softmax[Softmax]
+  
+  Out1[Cat: 94%]
+  Out2[Dog: 5%]
+  Out3[Car: 1%]
+  
+  Input --> Conv1 --> Pool1 --> Conv2 --> Pool2 --> FC --> Softmax
+  Softmax --> Out1
+  Softmax --> Out2
+  Softmax --> Out3
+`} />
+
+</TechnologyTemplate>

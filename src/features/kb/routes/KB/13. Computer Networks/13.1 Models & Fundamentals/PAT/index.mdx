@@ -1,0 +1,30 @@
+---
+title: PAT (Port Address Translation)
+description: The specific extension of NAT that allows hundreds of devices to share exactly one single Public IP address simultaneously.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="PAT (Port Address Translation)">
+
+Strict, one-to-one NAT (Static NAT) takes one Private IP and translates it to one Public IP. If your office has 500 computers, you would have to buy 500 expensive Public IP addresses from your ISP. This defeats the purpose of conserving IPv4 addresses.
+
+What we use today in every home and office is **PAT (Port Address Translation)**, also known as NAT Overload. PAT allows 500 computers to share exactly **one single Public IP address**.
+
+## The Port Magic
+
+How can 500 computers share one IP without the traffic getting mixed up? By abusing Layer 4 Ports.
+
+1. **Laptop A** (`192.168.1.50`) sends a packet to Google from Source Port 10001.
+2. **Laptop B** (`192.168.1.60`) sends a packet to Google from Source Port 10001.
+
+When the Router intercepts the packets, it strips the Private IPs and replaces them with its one Public IP (`203.0.113.5`). However, if both packets go to Google with the same Public IP and the same Source Port (10001), when Google replies, the router won't know which laptop to send the reply to.
+
+So, PAT dynamically overwrites the **Source Ports**:
+- It translates Laptop A's packet to: `203.0.113.5:50001`
+- It translates Laptop B's packet to: `203.0.113.5:50002`
+
+<Callout icon="success" title="The Translation Table">
+  The router maintains a massive NAT/PAT translation table in RAM. When Google replies to Port 50001, the router checks the table, instantly sees that 50001 belongs to Laptop A, rewrites the packet back to its original Private IP and original port (10001), and delivers it flawlessly.
+</Callout>
+
+</ConceptTemplate>

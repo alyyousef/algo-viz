@@ -1,0 +1,27 @@
+---
+title: Single Sign-On (SSO)
+description: An authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Single Sign-On (SSO)">
+
+Single sign-on (SSO) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. True single sign-on allows the user to log in once and access services without re-entering authentication factors.
+
+<Callout icon="success" title="Enterprise Security">
+  SSO is mandatory for large enterprises. Instead of an employee having 50 different passwords for Jira, Slack, Zoom, and Workday, they log into the Identity Provider (Okta, Azure AD) once. If the employee is fired, IT disables the central account, instantly revoking access to all 50 apps.
+</Callout>
+
+## Underlying Protocols
+
+SSO is not a protocol itself; it is a concept implemented using specific protocols:
+
+<ComparisonTable 
+  headers={['Protocol', 'Best For', 'Format']}
+  rows={[
+    ['SAML (Security Assertion Markup Language)', 'Legacy Enterprise Apps, XML-based. Very heavy but extremely secure.', 'XML'],
+    ['OpenID Connect (OIDC)', 'Modern Web Apps and Mobile Apps. Built on top of OAuth 2.0. Lightweight.', 'JSON / JWT']
+  ]}
+/>
+
+</TechnologyTemplate>

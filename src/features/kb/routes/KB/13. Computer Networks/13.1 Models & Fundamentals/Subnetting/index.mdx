@@ -1,0 +1,38 @@
+---
+title: Subnetting
+description: The mathematical process of carving a single massive IP network into smaller, logically isolated sub-networks to improve security and performance.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Subnetting">
+
+If a company is assigned the `10.0.0.0` network, that single network can hold 16.7 million computers. 
+If all 16 million computers were on the same network, a single ARP broadcast would instantly crash the entire infrastructure under the weight of network traffic.
+
+**Subnetting** is the process of stealing bits from the "Host" portion of an IP address and giving them to the "Network" portion, mathematically dividing the massive network into hundreds of smaller, manageable networks.
+
+## The Subnet Mask
+
+To understand Subnetting, you must understand the **Subnet Mask**. 
+An IP address is just a number. The computer does not know which part of the number represents the Network, and which part represents the Host. 
+The Subnet Mask tells the computer exactly where to draw the line.
+
+```text
+IP Address:   192.168.1.50   (11000000.10101000.00000001 . 00110010)
+Subnet Mask:  255.255.255.0  (11111111.11111111.11111111 . 00000000)
+                              [------ NETWORK PORTION ------]   [HOST]
+```
+
+Everywhere the Subnet Mask has a binary `1`, that part of the IP address is locked. It is the Network ID. 
+Everywhere the Mask has a binary `0`, that represents the available Host IPs.
+
+## The Magic of ANDing
+When a computer wants to send a packet to `192.168.1.99`, it runs a binary math operation (Logical AND) between the destination IP and its own Subnet Mask. 
+- If the resulting Network ID matches its own Network ID, the computer knows the target is in the same room, and it uses ARP to find the MAC address.
+- If the Network IDs do NOT match, the computer knows the target is in another building, and immediately forwards the packet to its Default Gateway (the Router).
+
+<Callout icon="warning" title="Subnet Boundaries">
+  Every subnet physically burns two IP addresses that can never be assigned to a computer. The very first address (all Host bits are 0) is reserved as the **Network Address**, identifying the subnet itself. The very last address (all Host bits are 1) is reserved as the **Broadcast Address**, used to shout to everyone in that specific subnet.
+</Callout>
+
+</ConceptTemplate>

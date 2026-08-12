@@ -1,0 +1,62 @@
+---
+title: WebGL
+description: A JavaScript API for rendering high-performance interactive 3D and 2D graphics within any compatible web browser.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="WebGL">
+
+WebGL (Web Graphics Library) is a JavaScript API for rendering high-performance interactive 3D and 2D graphics within any compatible web browser without the use of plug-ins. WebGL is fully integrated with other web standards, allowing GPU-accelerated usage of physics and image processing and effects as part of the web page canvas.
+
+<Callout icon="info" title="It's just OpenGL ES">
+  WebGL 1.0 is almost a direct port of **OpenGL ES 2.0** (the mobile version of OpenGL) into JavaScript. WebGL 2.0 brings it up to parity with OpenGL ES 3.0.
+</Callout>
+
+## Three.js & Frameworks
+
+Because raw WebGL requires hundreds of lines of boilerplate just to draw a single colored triangle, almost no one writes raw WebGL. Instead, developers use wrapper libraries.
+
+<ComparisonTable 
+  headers={['Library', 'Use Case']}
+  rows={[
+    ['Three.js', 'The absolute industry standard for 3D web graphics. Handles scene graphs, cameras, and lighting.'],
+    ['PixiJS', 'Highly optimized 2D WebGL renderer, often used for 2D browser games.'],
+    ['Babylon.js', 'A powerful 3D engine created by Microsoft, often used for complex games and enterprise simulations.']
+  ]}
+/>
+
+## Example: WebGL via Three.js
+
+A minimal example of spinning a green cube using Three.js.
+
+```javascript
+import * as THREE from 'three';
+
+// 1. Setup Scene, Camera, and WebGL Renderer
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+document.body.appendChild(renderer.domElement);
+
+// 2. Create Geometry and Material
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+camera.position.z = 5;
+
+// 3. Render Loop
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Rotate cube every frame
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    
+    renderer.render(scene, camera);
+}
+animate();
+```
+
+</TechnologyTemplate>

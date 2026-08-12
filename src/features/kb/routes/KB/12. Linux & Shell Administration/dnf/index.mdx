@@ -1,0 +1,29 @@
+---
+title: dnf (Dandified YUM)
+description: The modern, dependency-resolving package manager used by Red Hat Enterprise Linux, Fedora, and CentOS.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="dnf (Dandified YUM)">
+
+For over a decade, Red Hat and CentOS systems used a package manager called `yum`. However, `yum` was notoriously slow, consumed massive amounts of RAM, and had a poor dependency resolution algorithm.
+
+In 2015, Fedora introduced **`dnf`** (Dandified YUM), a complete rewrite of YUM using a state-of-the-art C++ dependency solver called `hawkey`. Today, `dnf` is the absolute standard across the entire RHEL ecosystem.
+
+## Basic Usage
+
+`dnf` works exactly like `apt` in Debian/Ubuntu, but is often considered more stable and transaction-oriented.
+
+- **`sudo dnf update`**: Updates all software on the system.
+- **`sudo dnf install nginx`**: Installs Nginx and automatically calculates and downloads all required dependencies.
+- **`sudo dnf remove httpd`**: Uninstalls Apache.
+
+<Callout icon="success" title="The History and Rollback Feature">
+  Because `dnf` treats every action as a strict transaction, it maintains a history log. 
+  If you install a complex database cluster and it breaks your server, you can simply run `dnf history` to find the transaction ID, and then run `dnf history undo <ID>` to completely roll back every single file and dependency installed during that specific command.
+</Callout>
+
+## Modules and Application Streams
+A major feature of `dnf` in RHEL 8+ is **AppStreams**. It allows the OS to host multiple versions of the same software (e.g., Node.js 14, 16, and 18) in the repository simultaneously. Sysadmins can use `dnf module enable nodejs:18` to cleanly lock the server to a specific major version without dependency hell.
+
+</ConceptTemplate>

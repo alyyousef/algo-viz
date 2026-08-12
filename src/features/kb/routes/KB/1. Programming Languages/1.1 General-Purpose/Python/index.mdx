@@ -1,0 +1,33 @@
+---
+title: Python
+description: An interpreted, high-level, general-purpose programming language known for its extreme readability and massive ecosystem.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="Python" 
+  category="Programming Languages" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"
+>
+
+Created by Guido van Rossum in 1991, **Python** is an interpreted, dynamically typed language that prioritizes developer experience, extreme readability, and rapid prototyping. Its syntax heavily uses whitespace indentation rather than curly braces to define code blocks.
+
+<Callout icon="info" title="The Python Paradox (Slow but Popular)">
+  Because Python is interpreted dynamically at runtime and lacks true multi-threading (due to the Global Interpreter Lock - GIL), it is notoriously **slow** compared to C++ or Java. 
+  However, it is the most popular language in the world for AI because Python acts as "glue." The heavy math is executed by highly optimized C/C++ libraries running under the hood (like NumPy or PyTorch), while the developer gets to write the high-level logic in beautiful, simple Python.
+</Callout>
+
+## Key Characteristics
+
+1. **Batteries Included**: The Python Standard Library is massive, offering built-in modules for everything from parsing JSON to launching a local HTTP server.
+2. **Dynamically Typed**: You do not declare variable types (e.g., `x = 10`). The interpreter figures out the type at runtime. This speeds up writing code but makes large codebases harder to refactor.
+3. **Multi-Paradigm**: Supports Procedural, Object-Oriented, and Functional programming styles.
+4. **Interpreted**: You run the source code directly (`python script.py`) without a separate compilation step.
+
+## Where is it used?
+
+- **Artificial Intelligence & Data Science**: The undisputed king. TensorFlow, PyTorch, Pandas, and Scikit-Learn make Python mandatory for Machine Learning.
+- **Backend Web Development**: Frameworks like Django and FastAPI power massive websites (e.g., Instagram, Spotify).
+- **Automation & Scripting**: The go-to language for DevOps engineers and system administrators to automate cloud infrastructure and CI/CD pipelines.
+
+</TechnologyTemplate>

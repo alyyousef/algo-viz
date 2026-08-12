@@ -1,0 +1,42 @@
+---
+title: Prompt Engineering
+description: The practice of designing and refining inputs to guide generative AI models to produce desired outputs.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Prompt Engineering">
+
+Prompt Engineering is the practice of designing, refining, and optimizing inputs (prompts) to effectively communicate with Large Language Models (LLMs) and other generative AI systems to elicit the desired output.
+
+While it is often described casually as "talking to AI," professional prompt engineering involves understanding the underlying mechanics of how LLMs predict tokens and leveraging specific structural techniques to bound their behavior.
+
+<Callout icon="tip" title="The Golden Rule">
+  An LLM is a next-token prediction engine, not a human. It does not "understand" intent. The more explicit context, constraints, and examples you provide, the higher the probability the model will traverse the latent space to your desired output.
+</Callout>
+
+## Core Techniques
+
+<ComparisonTable 
+  headers={['Technique', 'Description']}
+  rows={[
+    ['Zero-Shot Prompting', 'Asking the model to perform a task without providing any examples. Relies entirely on the model\'s pre-training.'],
+    ['Few-Shot Prompting', 'Providing 2-5 examples of the desired input-output format within the prompt to establish a clear pattern for the model to follow.'],
+    ['System Prompts', 'A meta-prompt that defines the persona, overarching rules, and constraints for the model before the user interaction begins (e.g., "You are a senior Python developer...").']
+  ]}
+/>
+
+## Advanced Strategies
+
+### Chain-of-Thought (CoT)
+Introduced in 2022, Chain-of-Thought prompting simply asks the model to "think step by step." By forcing the model to generate the intermediate reasoning steps *before* outputting the final answer, it dedicates more computational cycles (tokens) to the problem, drastically reducing logical errors and hallucinations in complex reasoning tasks.
+
+### Retrieval-Augmented Generation (RAG)
+Prompt engineering is limited by the model's training data cutoff. RAG involves dynamically injecting retrieved documents (from a database or search engine) directly into the prompt context window before asking the question, grounding the model in external, up-to-date facts.
+
+### XML/Markdown Framing
+LLMs are heavily trained on code and markup languages. Using XML tags (like `<instructions>` or `<output_format>`) or Markdown headers helps the model structurally parse complex, multi-part prompts much better than a wall of conversational text.
+
+## Prompt Injection (Security)
+As prompt engineering has evolved, so has **Prompt Injection**—a cybersecurity vulnerability where an attacker embeds malicious instructions within the user input to override the system prompt and hijack the AI's behavior. Defending against this requires robust boundary delineation in prompt design.
+
+</TechnologyTemplate>

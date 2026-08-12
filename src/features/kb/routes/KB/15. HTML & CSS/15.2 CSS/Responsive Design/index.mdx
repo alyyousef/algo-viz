@@ -1,0 +1,43 @@
+---
+title: Responsive Design & Media Queries
+description: The architectural philosophy and CSS mechanics required to ensure web applications automatically adapt to smartphones, tablets, and 4K monitors.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Responsive Design & Media Queries">
+
+In the early 2000s, companies built two entirely separate websites: `www.example.com` for desktops, and `m.example.com` for flip-phones. This was a maintenance nightmare.
+
+In 2010, Ethan Marcotte coined **Responsive Web Design**. The philosophy dictates that there should be exactly one HTML codebase, and CSS should mathematically fluidly adapt the layout based on the user's screen size.
+
+## Media Queries
+The core technology behind Responsive Design is the **Media Query**. It acts as an IF-statement in CSS.
+
+```css
+/* Mobile-First Base Styles */
+.sidebar {
+  display: none; 
+}
+
+/* Tablet & Desktop Override */
+@media (min-width: 768px) {
+  .sidebar {
+    display: block; 
+  }
+}
+```
+
+## Mobile-First Architecture
+Modern web development strictly adheres to the "Mobile-First" philosophy. 
+You write the default CSS targeting the narrowest smartphone screen (stacking elements vertically). Then, you use `min-width` media queries to progressively enhance the layout as the screen gets wider (converting the vertical stack into a horizontal CSS Grid).
+
+This is drastically more performant because smartphones (which have weaker CPUs) do not have to download and parse complex desktop layout rules only to override them.
+
+## The Viewport Meta Tag
+If you forget this tag, Responsive Design will completely fail:
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
+Without this, iPhones will assume your website is a legacy 1999 desktop site, and will violently zoom out, rendering the text at an unreadable microscopic size.
+
+</ConceptTemplate>

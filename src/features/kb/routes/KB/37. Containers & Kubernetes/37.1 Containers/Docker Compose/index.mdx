@@ -1,0 +1,56 @@
+---
+title: Docker Compose
+description: A tool for defining and running multi-container Docker applications using a single YAML file.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="Docker Compose" 
+  category="DevOps & Infrastructure" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg"
+>
+
+**Docker Compose** is a powerful orchestration tool designed for local development. While the standard \`docker run\` command is great for spinning up a single container, modern applications usually consist of multiple interacting services (e.g., a React frontend, a Node.js API, a PostgreSQL database, and a Redis cache).
+
+Running four massive \`docker run\` commands with complex port-mapping and networking flags is tedious. Docker Compose allows you to define this entire multi-container architecture in a single, declarative \`docker-compose.yml\` file.
+
+<Callout icon="success" title="The Magic of 'docker compose up'">
+  Once you define your architecture in the YAML file, a developer simply clones the repository and types \`docker compose up\`. Compose will automatically build the images, create an isolated virtual network, boot all four containers in the correct order, and stream their combined logs to the terminal.
+</Callout>
+
+## The \`docker-compose.yml\` File
+
+A standard Compose file defines **Services**, **Networks**, and **Volumes**:
+
+\`\`\`yaml
+version: '3.8'
+
+services:
+  api:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://user:pass@db:5432/mydb
+
+  db:
+    image: postgres:15
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=pass
+
+volumes:
+  pgdata:
+\`\`\`
+
+## Internal Networking and DNS
+
+The most powerful feature of Docker Compose is its automatic internal DNS. 
+Notice in the YAML above that the \`api\` service connects to the database using the hostname \`@db\`. 
+
+When Compose spins up the environment, it creates a private bridge network. The Node.js API does not need to know the random IP address assigned to the PostgreSQL container. It simply makes a request to \`http://db:5432\`, and Docker's internal DNS server perfectly resolves it to the correct container.
+
+</TechnologyTemplate>

@@ -1,0 +1,28 @@
+---
+title: Ubuntu
+description: The most famous Linux distribution on Earth, heavily responsible for making Linux accessible to normal human beings.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Ubuntu">
+
+Funded by Canonical Ltd. and first released in 2004, **Ubuntu** is the most widely known Linux distribution in the world. 
+
+Before Ubuntu, installing Linux on a laptop was a brutal, highly technical process. Ubuntu's explicit goal was "Linux for Human Beings." It provided a beautiful graphical installer, automatically configured Wi-Fi drivers, and shipped with a fully functional desktop environment out of the box.
+
+## The Debian Foundation
+
+Ubuntu is heavily based on **Debian**. 
+Canonical takes the massive, notoriously slow-moving Debian software repository, aggressively updates the software to newer versions, polishes the user interface, and releases it on a strict, predictable schedule.
+
+<Callout icon="success" title="The LTS Release Cycle">
+  Ubuntu's immense popularity in the enterprise world is due to its **LTS (Long Term Support)** cycle. 
+  Every 2 years (in April of even-numbered years, like 22.04 or 24.04), Canonical releases an LTS version. They mathematically guarantee that they will provide free security patches for that specific OS version for **5 years**. This allows companies to build massive server farms without fearing sudden, breaking OS upgrades.
+</Callout>
+
+## Snaps vs Flatpaks
+
+Recently, Ubuntu has aggressively pushed its proprietary package management system called **Snap**. 
+Unlike traditional `.deb` packages (which scatter files across the OS), a Snap is a massive, containerized zip file that contains the application *and all of its dependencies*. This prevents "Dependency Hell", but is highly controversial in the Linux community because Canonical maintains strict, closed-source control over the Snap Store server backend.
+
+</ConceptTemplate>

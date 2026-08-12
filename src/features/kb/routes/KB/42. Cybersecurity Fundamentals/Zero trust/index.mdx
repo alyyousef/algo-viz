@@ -1,0 +1,52 @@
+---
+title: Zero Trust Architecture
+description: A security framework requiring all users to be authenticated, authorized, and continuously validated.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Zero Trust Architecture">
+
+Zero Trust is a strategic cybersecurity model designed to protect modern digital environments by eliminating the concept of trust from an organization's network architecture. Its core motto is: **"Never trust, always verify."**
+
+<Callout icon="info" title="The Death of the Perimeter">
+  Historically, IT security was a "Castle and Moat" model. Once you bypassed the firewall (the moat) and entered the corporate network (the castle), you were trusted implicitly. 
+  
+  Zero Trust assumes the network is *already compromised* and that the moat is useless in a modern era of remote work, BYOD, and cloud apps.
+</Callout>
+
+## Core Principles of Zero Trust
+
+<ComparisonTable 
+  headers={['Principle', 'Description']}
+  rows={[
+    ['Verify Explicitly', 'Always authenticate and authorize based on all available data points (User identity, location, device health, service workload).'],
+    ['Use Least Privilege Access', 'Limit user access with Just-In-Time (JIT) and Just-Enough-Access (JEA) policies. Give them exactly what they need, exactly when they need it, and nothing more.'],
+    ['Assume Breach', 'Minimize blast radius by segmenting networks. Use end-to-end encryption. Use analytics to detect anomalous behavior in real-time.']
+  ]}
+/>
+
+## Beyond the VPN
+
+In a traditional setup, remote employees use a VPN to connect to the corporate network, gaining broad access. In a Zero Trust environment, VPNs are often replaced with Zero Trust Network Access (ZTNA) solutions, which grant access on a per-application basis, not a per-network basis.
+
+<ArchitectureDiagram chart={`
+graph TD
+  User[Remote Employee]
+  Device[Laptop\n(Checked for Antivirus/Updates)]
+  
+  Policy{Zero Trust Policy Engine}
+  
+  AppA[HR Application]
+  AppB[Finance Application]
+  AppC[Source Code Repo]
+  
+  User --> Device
+  Device -- Requests Access to HR App --> Policy
+  
+  Policy -- Context: Identity Verified,\nDevice Healthy,\nLocation Normal --> AppA
+  
+  Policy -. Denies access to Finance\n(Not Authorized) .-> AppB
+  Policy -. Denies access to Repo\n(Not Authorized) .-> AppC
+`} />
+
+</TechnologyTemplate>

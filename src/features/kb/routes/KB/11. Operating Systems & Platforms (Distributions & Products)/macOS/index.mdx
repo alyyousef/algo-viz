@@ -1,0 +1,30 @@
+---
+title: macOS
+description: Apple's primary desktop operating system, built on a certified Unix foundation (Darwin) with a highly polished proprietary GUI (Aqua).
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="macOS">
+
+**macOS** (formerly Mac OS X) is the operating system that powers Apple's Mac computers. It represents one of the most successful marriages of open-source engineering and closed-source proprietary design in software history.
+
+## The Unix Foundation (Darwin)
+
+Underneath the beautiful, user-friendly graphical interface, macOS is a hardcore, certified Unix operating system.
+
+The core of macOS is called **Darwin**. Darwin is an open-source operating system created by Apple, heavily derived from **FreeBSD** and the **Mach microkernel**. 
+Because it is a certified Unix OS, developers can open the macOS Terminal and natively use standard Unix utilities (like `grep`, `bash`, and `ssh`) exactly as they would on Linux, without needing virtual machines or translation layers.
+
+<Callout icon="success" title="The XNU Kernel">
+  The specific kernel powering Darwin (and therefore macOS) is called **XNU** (X is Not Unix). 
+  XNU is a highly unusual **Hybrid Kernel**. It attempts to combine the extreme speed of a Monolithic Kernel (like Linux) with the modular security of a Microkernel (Mach), resulting in a unique, highly performant architecture.
+</Callout>
+
+## The Proprietary Layers
+
+While the Darwin foundation is open-source, everything sitting on top of it is closed-source and fiercely protected by Apple:
+- **Aqua**: The iconic, hardware-accelerated graphical user interface.
+- **Cocoa**: The massive, object-oriented API framework (originally written in Objective-C, now heavily transitioning to Swift) that developers use to write native Mac apps.
+- **Metal**: Apple's proprietary, low-overhead hardware graphics API, designed as a direct competitor to Vulkan and DirectX.
+
+</ConceptTemplate>

@@ -1,0 +1,33 @@
+---
+title: Consensus Algorithms
+description: Protocols used by distributed systems to agree on a single data value or network state, even in the presence of node failures.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Consensus Algorithms">
+
+In distributed systems, a **Consensus Algorithm** is a complex mathematical protocol that allows a cluster of independent computers to agree on a single truth, even if network cables are unplugged, servers crash, or messages are delayed.
+
+<Callout icon="info" title="The Problem of Agreement">
+  Imagine a 5-node database cluster. The user sends a command: `SET x = 10`. Node A receives it, but before it can tell the others, it crashes. Did the write happen? Node B thinks `x=5`. Node C thinks `x=10`. If they don't agree, the database is corrupted. Consensus algorithms ensure that the cluster moves forward as a single, unified entity.
+</Callout>
+
+## The Goal: Replicated State Machines
+
+Most consensus algorithms are designed to build a **Replicated State Machine**. The goal is to ensure that every server in the cluster executes the exact same sequence of commands, in the exact same order. If they all start at the same state and execute the same commands in the same order, they will all end up with perfectly identical data.
+
+## Paxos (The Pioneer)
+
+Invented by Leslie Lamport in 1989, **Paxos** is the theoretical grandfather of all consensus algorithms. It mathematically proved that consensus is possible in asynchronous networks. 
+However, Paxos is notoriously difficult to understand and even harder to implement correctly in code. It relies on Proposers, Acceptors, and Learners passing multiple rounds of complex messages.
+
+## Raft (The Industry Standard)
+
+Because Paxos was so incredibly difficult to implement, researchers at Stanford created **Raft** in 2013, designed explicitly for "understandability." Raft is now the industry standard, powering systems like Kubernetes (etcd), MongoDB, and Consul.
+
+Raft achieves consensus by dividing the problem into three pieces:
+1. **Leader Election**: The cluster automatically holds an election. One node becomes the Leader. The others become Followers. If the Leader crashes, the Followers detect the timeout and immediately elect a new Leader.
+2. **Log Replication**: All user writes are sent exclusively to the Leader. The Leader appends the command to its log and sends it to the Followers.
+3. **Safety (Quorum)**: The Leader only commits the write to the database *after* a majority (Quorum) of the Followers reply that they have successfully logged the command. This guarantees that even if a minority of servers explode, the data is safe.
+
+</ConceptTemplate>

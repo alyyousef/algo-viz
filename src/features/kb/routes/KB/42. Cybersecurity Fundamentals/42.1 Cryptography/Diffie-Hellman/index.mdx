@@ -1,0 +1,46 @@
+---
+title: Diffie-Hellman Key Exchange
+description: A method of securely exchanging cryptographic keys over a public channel.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Diffie-Hellman Key Exchange">
+
+The Diffie-Hellman (DH) key exchange was the first published public-key algorithm (invented by Whitfield Diffie and Martin Hellman in 1976). It solved a problem that had plagued cryptography for millennia: **How do two people, who have never met, agree on a secret key over a public network where everyone is listening?**
+
+<Callout icon="success" title="The Paint Mixing Analogy">
+  Imagine Alice and Bob want to agree on a secret color.
+  1. They agree publicly on a common paint color (Yellow).
+  2. They each choose a secret color (Alice chooses Red, Bob chooses Blue). They never reveal this to anyone.
+  3. They mix their secret color with the public color. (Alice gets Orange. Bob gets Green).
+  4. They exchange their mixed colors over the public internet. (A hacker intercepts Orange and Green, but un-mixing paint is practically impossible).
+  5. Alice adds her secret Red to Bob's Green. Bob adds his secret Blue to Alice's Orange.
+  6. **They both arrive at the exact same final color: Brown.** They now have a shared secret key.
+</Callout>
+
+## The Mathematics (Discrete Logarithms)
+
+Instead of mixing paint, Diffie-Hellman mixes massive prime numbers using modular arithmetic. 
+The system relies on the **Discrete Logarithm Problem**: it is computationally simple to calculate $g^x \pmod{p}$, but if you are given the result, it is computationally impossible to figure out what $x$ was.
+
+### The Protocol Steps:
+1. **Public Agreement**: Alice and Bob publicly agree on a prime number ($p$) and a generator base ($g$). The hacker knows $p$ and $g$.
+2. **Private Values**: Alice chooses a secret integer ($a$). Bob chooses a secret integer ($b$).
+3. **Public Mixing**: 
+   - Alice calculates $A = g^a \pmod{p}$ and sends $A$ to Bob.
+   - Bob calculates $B = g^b \pmod{p}$ and sends $B$ to Alice.
+4. **Shared Secret**:
+   - Alice takes Bob's $B$ and calculates: $Secret = B^a \pmod{p}$
+   - Bob takes Alice's $A$ and calculates: $Secret = A^b \pmod{p}$
+
+Because of the associative properties of exponents, $(g^a)^b$ is exactly the same as $(g^b)^a$. They both independently calculate the exact same secret number, without ever transmitting it across the network.
+
+## The Flaw: Man-in-the-Middle
+
+While Diffie-Hellman brilliantly solves key exchange, it provides **zero authentication**. 
+
+If a hacker intercepts the connection, they can intercept Alice's public mix, reply with their own mix pretending to be Bob, and establish a shared secret with Alice. They do the same with Bob, establishing a second shared secret. The hacker now secretly decrypts, reads, and re-encrypts all traffic passing between them.
+
+To solve this, DH is almost always paired with Digital Signatures (like RSA or ECDSA) to authenticate the identities of the parties before exchanging the DH parameters.
+
+</TechnologyTemplate>

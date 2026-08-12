@@ -1,0 +1,33 @@
+---
+title: Supervised Learning
+description: A machine learning paradigm where the model is trained on a labeled dataset.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Supervised Learning">
+
+Supervised learning is the machine learning task of learning a function that maps an input to an output based on example input-output pairs. It infers a function from *labeled* training data consisting of a set of training examples.
+
+<Callout icon="info" title="The Teacher Metaphor">
+  It is called "supervised" because the process of an algorithm learning from the training dataset can be thought of as a teacher supervising the learning process. We know the correct answers; the algorithm iteratively makes predictions on the training data and is corrected by the teacher.
+</Callout>
+
+## Classification vs Regression
+
+Supervised learning problems can be further grouped into two main categories:
+
+<ComparisonTable 
+  headers={['Type', 'Description', 'Example']}
+  rows={[
+    ['Classification', 'The output variable is a category (discrete).', '"Is this email Spam or Not Spam?"'],
+    ['Regression', 'The output variable is a real value (continuous).', '"What will the price of this house be in dollars?"']
+  ]}
+/>
+
+## Common Algorithms
+- Linear Regression
+- Logistic Regression
+- Support Vector Machines (SVM)
+- Random Forests
+
+</TechnologyTemplate>

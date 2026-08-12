@@ -1,0 +1,26 @@
+---
+title: Singleton Pattern
+description: A creational design pattern that lets you ensure that a class has only one instance, while providing a global access point to this instance.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Singleton Pattern">
+
+The Singleton pattern is a software design pattern that restricts the instantiation of a class to one "single" instance. This is useful when exactly one object is needed to coordinate actions across the system.
+
+<Callout icon="warning" title="The Anti-Pattern Debate">
+  Many modern developers consider the Singleton an anti-pattern. It is essentially a glorified Global Variable, which makes unit testing extremely difficult because tests can bleed state into each other through the shared Singleton. Modern Dependency Injection (DI) is preferred.
+</Callout>
+
+## Common Use Cases
+
+<ComparisonTable 
+  headers={['Use Case', 'Why Singleton?']}
+  rows={[
+    ['Database Connections', 'Opening a connection to PostgreSQL is extremely slow. A Singleton ensures you open it exactly once, and all classes share that one open pipe.'],
+    ['Logging Services', 'You want a single file lock on the `server.log` file, and you want any class anywhere to be able to call `Logger.info()`.'],
+    ['Hardware Interfaces', 'If you have a robot arm, you only want one class controlling it. If two instances tried to send instructions to the arm simultaneously, it would crash.']
+  ]}
+/>
+
+</TechnologyTemplate>

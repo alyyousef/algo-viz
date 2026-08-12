@@ -1,0 +1,40 @@
+---
+title: chmod
+description: The fundamental command used to change the read, write, and execute permissions of files and directories.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="chmod">
+
+The **`chmod`** (Change Mode) command is one of the most frequently used commands in Linux. It modifies the permission bits (Read, Write, Execute) for the Owner, Group, and Others.
+
+## Octal (Numeric) Mode
+
+The most common and fastest way to use `chmod` is using Octal numbers, where:
+- **4** = Read
+- **2** = Write
+- **1** = Execute
+
+You provide a 3-digit number representing the Owner, the Group, and Others.
+
+```bash
+# Owner gets Read/Write/Execute (7). Everyone else gets Read/Execute (5).
+chmod 755 script.sh
+
+# Owner gets Read/Write (6). Everyone else gets absolutely nothing (0).
+chmod 600 private_key.pem
+```
+
+## Symbolic Mode
+
+If you don't want to calculate numbers, you can use symbolic math using `u` (User), `g` (Group), `o` (Others), and `a` (All).
+
+- **Add Execute permission for everyone**: `chmod +x script.sh`
+- **Remove Write permission for Others**: `chmod o-w public.txt`
+- **Explicitly set Group to Read-only**: `chmod g=r public.txt`
+
+<Callout icon="warning" title="Directories and Execute">
+  Remember that for a directory, the "Execute" bit means "Allow the user to CD into this directory". If you remove the Execute bit from a directory (`chmod -x`), no one will be able to open it, even if they have Read permission!
+</Callout>
+
+</ConceptTemplate>

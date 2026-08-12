@@ -1,0 +1,61 @@
+---
+title: React Native
+description: A framework for building native apps using React.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="React Native">
+
+React Native is an open-source UI software framework created by Meta Platforms, Inc. It is used to develop applications for Android, Android TV, iOS, macOS, tvOS, Web, Windows and UWP by enabling developers to use the React framework along with native platform capabilities.
+
+<Callout icon="info" title="Not Just Web Views">
+  Unlike Cordova or Ionic, React Native doesn't render web views inside a native shell. It actually translates your React components into truly native UI blocks (like `UIView` on iOS and `View` on Android).
+</Callout>
+
+## Architecture: The Bridge vs Fabric
+
+Historically, React Native used an asynchronous "Bridge" to serialize JSON messages between the JavaScript thread and the Native (Java/Objective-C) thread. 
+
+Recently, the **New Architecture (Fabric)** introduced JSI (JavaScript Interface), allowing JS to hold references to C++ objects and communicate synchronously with Native code, eliminating the JSON serialization bottleneck.
+
+<ComparisonTable 
+  headers={['Architecture', 'Communication Method', 'Performance']}
+  rows={[
+    ['Old (The Bridge)', 'Asynchronous JSON Serialization', 'Slower, especially for heavy animations.'],
+    ['New (Fabric & JSI)', 'Synchronous C++ References', 'Blazing fast, closer to pure native.']
+  ]}
+/>
+
+## Example: A Simple React Native Component
+
+React Native looks almost identical to React for the web, but uses native primitives like `View` instead of `div`.
+
+```javascript
+import React, { useState } from 'react';
+import { Text, View, Button, StyleSheet } from 'react-native';
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>You clicked {count} times</Text>
+      <Button onPress={() => setCount(count + 1)} title="Click Me" />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 20,
+  }
+});
+```
+
+</TechnologyTemplate>

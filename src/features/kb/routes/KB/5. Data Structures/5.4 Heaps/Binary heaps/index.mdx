@@ -1,0 +1,42 @@
+---
+title: Binary Heaps
+description: A complete binary tree that satisfies the heap property, commonly used for priority queues.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Binary Heaps">
+
+A **Binary Heap** is a specialized tree-based data structure that satisfies two specific properties: the Shape Property and the Heap Property. It is the most common implementation of a **Priority Queue**.
+
+## The Two Rules of a Heap
+
+1. **Shape Property (Complete Binary Tree)**: The tree is completely filled on all levels except possibly the lowest, which is filled from left to right. This guarantees the tree is perfectly balanced and its height is exactly $\log_2(n)$.
+2. **Heap Property**: 
+   - **Max-Heap**: The key of a node is always $\ge$ the keys of its children. The absolute largest element is always at the root.
+   - **Min-Heap**: The key of a node is always $\le$ the keys of its children. The absolute smallest element is always at the root.
+
+<Callout icon="info" title="The Array Implementation">
+  Because a binary heap is a *complete* tree, it is almost never implemented with node objects and pointers. It is implemented flatly inside a standard **Array**.
+  For an element at index $i$:
+  - Left child is at index $2i + 1$
+  - Right child is at index $2i + 2$
+  - Parent is at index $\lfloor (i - 1) / 2 \rfloor$
+</Callout>
+
+## Operations
+
+### Insert: $O(\log n)$
+1. Add the new element to the very end of the array (bottom-right of the tree).
+2. **"Bubble Up" (Heapify-up)**: Compare the new element with its parent. If it violates the heap property (e.g., it is larger than its parent in a Max-Heap), swap them. Repeat until the property is restored.
+
+### Extract Max/Min: $O(\log n)$
+1. Remove the root element (index 0).
+2. Take the very last element in the array and move it to the root.
+3. **"Bubble Down" (Heapify-down)**: Compare the new root with its children. Swap it with the larger child (in a Max-Heap). Repeat until the property is restored.
+
+## The Genius of Heapify: $O(n)$
+
+If you have an unsorted array of $n$ elements and you want to turn it into a heap, you could insert them one by one, taking $O(n \log n)$ time.
+However, there is an algorithm called **Floyd's `build_heap`** which can take an entire unsorted array and reorganize it into a valid heap in strictly **$O(n)$ time** by running "Bubble Down" on internal nodes starting from the bottom up. This is a common technical interview trivia point.
+
+</ConceptTemplate>

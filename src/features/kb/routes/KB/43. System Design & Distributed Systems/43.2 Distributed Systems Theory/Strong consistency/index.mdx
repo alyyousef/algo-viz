@@ -1,0 +1,39 @@
+---
+title: Strong Consistency
+description: A consistency model guaranteeing that any read operation will always return the value of the most recently completed write operation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Strong Consistency">
+
+**Strong Consistency** (often referred to as Linearizability in theoretical computer science) is the most intuitive and strict data consistency model. It provides a simple guarantee: once a write operation is successfully acknowledged to the user, any subsequent read operation, from anywhere in the world, will return that updated value.
+
+<Callout icon="success" title="The Illusion of a Single Server">
+  The goal of Strong Consistency is to make a massive, globally distributed cluster of 100 database servers behave exactly as if it were just one single machine sitting on your desk. There are no "stale reads," no "propagation delays," and no "conflict resolutions."
+</Callout>
+
+## How is it achieved? (Synchronous Replication)
+
+To guarantee that no user ever reads stale data, the database must use **Synchronous Replication** or **Consensus Algorithms** (like Raft or Paxos).
+
+When a user updates a bank balance on the Primary Node:
+1. The Primary Node locks the row.
+2. The Primary Node sends the new balance to all Replica Nodes.
+3. The Primary Node **halts and waits**.
+4. The Replica Nodes write the data and send an acknowledgement back.
+5. Only after a majority (quorum) of replicas have confirmed the write does the Primary Node tell the user "Success" and unlock the row.
+
+## The Cost of Strong Consistency
+
+According to the PACELC theorem, Strong Consistency comes with severe architectural penalties:
+
+1. **Massive Latency**: Because the Primary Node must wait for network acknowledgements from other servers (potentially across oceans), write operations are inherently slow. You cannot beat the speed of light.
+2. **Reduced Availability**: If a network cable is cut and the Primary Node cannot reach the Replicas to form a quorum, it mathematically cannot guarantee consistency. Therefore, it must refuse all write requests and go offline (favoring Consistency over Availability).
+
+## Use Cases
+
+Strong consistency is mandatory when data correctness is critical and human lives, money, or inventory are at stake:
+- **Banking & Finance**: You cannot have an eventually consistent bank ledger where an ATM reads a stale balance and dispenses cash you don't have.
+- **E-Commerce Inventory**: If there is only 1 concert ticket left, 10,000 people clicking "Buy" simultaneously must be strictly serialized to ensure only one person gets it.
+
+</ConceptTemplate>

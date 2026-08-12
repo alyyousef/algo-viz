@@ -1,0 +1,33 @@
+---
+title: Factory Method Pattern
+description: A creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Factory Method Pattern">
+
+The Factory Method pattern is a creational pattern that uses factory methods to deal with the problem of creating objects without having to specify the exact class of the object that will be created.
+
+<Callout icon="tip" title="Decoupling Creation">
+  Instead of using `new Car()`, you call `VehicleFactory.create("car")`. This means if you later want to change the underlying implementation to a `FastCar`, you only have to change the factory, not the 100 places in your code that called `new`.
+</Callout>
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  Client[Client Code]
+  Factory[VehicleFactory]
+  
+  subgraph Products
+    Car[Car]
+    Truck[Truck]
+    Bike[Bike]
+  end
+  
+  Client -- "create('truck')" --> Factory
+  Factory -. Instantiates .-> Truck
+  Truck -. Returns Instance .-> Client
+`} />
+
+</TechnologyTemplate>

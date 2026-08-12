@@ -1,0 +1,29 @@
+---
+title: Ethernet (IEEE 802.3)
+description: The undisputed global standard for wired Layer 2 networking, defining both the physical cables and the digital frame structures.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Ethernet (IEEE 802.3)">
+
+**Ethernet** is not just a cable; it is a massive family of technologies standardized as **IEEE 802.3**. It dictates exactly how devices in a local area network (LAN) format data for transmission and how they negotiate access to the physical wire.
+
+Ethernet dominates both Layer 1 (Physical Cables) and Layer 2 (Data Link Frames).
+
+## The Ethernet Frame
+
+When a computer sends an IP packet across a LAN, it cannot just send raw IP data. It must wrap (encapsulate) the IP packet inside a Layer 2 **Ethernet Frame**.
+
+A standard frame consists of:
+1. **Preamble**: A specific pattern of bits that tells the receiving network card, "Wake up, data is coming."
+2. **Destination MAC Address**: Who this frame is going to.
+3. **Source MAC Address**: Who sent the frame.
+4. **EtherType**: A code indicating what kind of data is inside (e.g., 0x0800 means an IPv4 packet is inside).
+5. **Payload (Data)**: The actual Layer 3 IP packet.
+6. **FCS (Frame Check Sequence)**: A cryptographic hash (CRC32) calculated at the end. If the cable is slightly damaged and a single bit flips during transit, the receiving computer will recalculate the hash, realize it doesn't match, and silently delete the corrupted frame.
+
+<Callout icon="info" title="CSMA/CD (Collision Detection)">
+  In the 1990s, networks used Hubs. Only one computer could talk at a time. If two computers transmitted simultaneously, the electricity collided and destroyed the data. Ethernet used CSMA/CD to listen for collisions, tell both computers to wait a random number of milliseconds, and try again. Modern Switches have entirely eliminated collisions, rendering CSMA/CD obsolete.
+</Callout>
+
+</ConceptTemplate>

@@ -1,0 +1,66 @@
+---
+title: Svelte
+description: Cybernetically enhanced web apps.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Svelte">
+
+Svelte is a free and open-source front end component framework and language created by Rich Harris. Unlike traditional frameworks like React and Vue, which do the bulk of their work in the browser, Svelte shifts that work into a **compile step** that happens when you build your app.
+
+<Callout icon="warning" title="No Virtual DOM">
+  Svelte does not use a Virtual DOM. Instead, it compiles your code into tiny, framework-less vanilla JavaScript that surgically updates the DOM exactly when the state changes.
+</Callout>
+
+## Why Compile?
+
+By moving the framework to the compiler, Svelte achieves two massive benefits:
+1. **Zero Runtime:** There is no heavy "Svelte engine" shipped to the user's browser. Bundle sizes are drastically smaller.
+2. **Performance:** Updating the DOM via compiled direct DOM references is generally faster than running a Virtual DOM diffing algorithm.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Source[Svelte Component\n(.svelte)]
+  Compiler[Svelte Compiler\n(Build Step)]
+  
+  subgraph Browser
+    Vanilla[Pure Vanilla JS\ndocument.createElement()]
+    DOM[Real Browser DOM]
+  end
+  
+  Source --> Compiler
+  Compiler -- Output --> Vanilla
+  Vanilla -- Surgical Updates --> DOM
+`} />
+
+## Example: Built-in Reactivity
+
+Svelte's syntax is arguably the most concise of all modern frameworks. State is just a standard JavaScript variable (using `let`), and reactivity is triggered on assignment.
+
+```html
+<script>
+  let count = 0;
+  
+  // A reactive statement (computed property)
+  $: doubled = count * 2;
+
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<button on:click={increment}>
+  Clicked {count} {count === 1 ? 'time' : 'times'}
+</button>
+
+<p>{count} doubled is {doubled}</p>
+
+<style>
+  button {
+    background: #ff3e00;
+    color: white;
+  }
+</style>
+```
+
+</TechnologyTemplate>

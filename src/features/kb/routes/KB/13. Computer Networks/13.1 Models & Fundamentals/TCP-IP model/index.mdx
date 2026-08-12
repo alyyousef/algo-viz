@@ -1,0 +1,30 @@
+---
+title: TCP/IP Model
+description: The concise, practical 4-layer network model that the modern Internet is actually built upon, favored by the Department of Defense.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="TCP/IP Model">
+
+While the 7-layer OSI model is the gold standard for academic teaching and network troubleshooting, the Internet is not actually built on the OSI model. 
+
+The Internet was built by DARPA (the U.S. Department of Defense) using the **TCP/IP Model** (sometimes called the DoD Model). It is a much simpler, highly practical 4-layer architecture.
+
+## The 4 Layers
+
+The TCP/IP model condenses the verbose OSI model down to its absolute essentials:
+
+1. **Network Access Layer (OSI Layers 1 & 2)**: 
+   Combines the Physical and Data Link layers. It handles everything required to move raw bits across local hardware (Ethernet, Wi-Fi, MAC addresses).
+2. **Internet Layer (OSI Layer 3)**: 
+   Maps perfectly to the OSI Network layer. It is responsible for global routing across disparate networks using the Internet Protocol (IP).
+3. **Transport Layer (OSI Layer 4)**: 
+   Maps perfectly to the OSI Transport layer. It handles reliable (TCP) and unreliable (UDP) data delivery.
+4. **Application Layer (OSI Layers 5, 6, & 7)**: 
+   TCP/IP condenses Session, Presentation, and Application into one massive layer. The philosophy is that if an application (like a web browser) needs encryption or session tracking, it should build it into the software itself (HTTPS), rather than relying on the operating system.
+
+<Callout icon="success" title="Why TCP/IP Won">
+  The OSI model was heavily bureaucratic, trying to define perfect standards for every possible edge case before a single piece of hardware was built. The TCP/IP model was built by engineers trying to solve immediate problems. They built working code (TCP and IP protocols) first, and defined the model based on what actually survived in the real world.
+</Callout>
+
+</ConceptTemplate>

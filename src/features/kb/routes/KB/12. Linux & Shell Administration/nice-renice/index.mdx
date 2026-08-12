@@ -1,0 +1,31 @@
+---
+title: nice & renice
+description: The commands used to alter the CPU scheduling priority of a process, making it "nicer" to other applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="nice & renice">
+
+In Linux, the Kernel's CPU Scheduler uses a complex algorithm to decide which process gets access to the CPU in any given millisecond. 
+
+You can influence this scheduler using the **`nice`** value. It is literally a measure of how "nice" a process is to the rest of the system. 
+- A **highly nice** process will step aside and let other programs use the CPU first. 
+- A **very mean** (negative nice) process will aggressively hog the CPU, ignoring everyone else.
+
+## The Nice Scale
+
+Nice values range from **-20 (Highest Priority, Most Aggressive)** to **+19 (Lowest Priority, Nicest)**.
+By default, every standard program you launch starts with a nice value of **0**.
+
+- `nice -n 15 tar -czf backup.tar.gz /var`
+  This launches a massive, CPU-heavy backup script, but tells it to be very nice (+15). If the web server suddenly gets a spike in traffic, the backup will pause and give the web server the CPU.
+
+<Callout icon="warning" title="Negative Nice Values">
+  Any standard user can make their programs "nicer" (0 to 19). However, only the `root` user (via `sudo`) is legally allowed to assign a negative nice value (-1 to -20) to prevent standard users from maliciously hoarding the CPU.
+</Callout>
+
+## renice
+While `nice` sets the priority of a process *before* it launches, **`renice`** allows you to alter the priority of a process that is *already running*.
+`sudo renice -n -10 -p 4591` (Makes PID 4591 highly aggressive).
+
+</ConceptTemplate>

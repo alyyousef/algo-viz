@@ -1,0 +1,36 @@
+---
+title: CPU Registers
+description: The smallest, fastest, and most expensive tier of memory, located directly on the CPU die.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CPU Registers">
+
+While RAM provides gigabytes of storage, the CPU cannot do math directly on data sitting in RAM. The data must first be pulled all the way across the motherboard and placed directly inside the CPU. 
+The holding cells where this data sits are called **Registers**.
+
+Registers are the absolute top of the memory hierarchy. They are built out of Flip-Flop circuits, meaning they can be read from and written to in a single tick of the CPU clock (zero latency). Because they are so large and expensive to manufacture, a standard CPU only has a few dozen registers, often holding just 64 bits (8 bytes) of data each.
+
+<Callout icon="success" title="The 64-Bit Architecture">
+  When you download a "64-bit" operating system or program, it means the software is specifically compiled to utilize a CPU where the General Purpose Registers are exactly 64 bits wide. This allows the CPU to process massively larger numbers in a single cycle compared to older 32-bit architecture.
+</Callout>
+
+## Types of Registers
+
+Registers are divided into two main categories: those the programmer can use, and those the CPU uses internally.
+
+### General Purpose Registers (GPR)
+These are the temporary scratchpads used by the ALU to do math. In x86 assembly language, you will see these named things like \`RAX\`, \`RBX\`, \`RCX\`. If you want to add 5 and 3, you move \`5\` into \`RAX\`, move \`3\` into \`RBX\`, and tell the ALU to add them.
+
+### Special Purpose Registers
+These are internal state-trackers critical to the CPU's operation.
+- **Program Counter (PC) / Instruction Pointer (IP)**: Holds the exact memory address in RAM of the *next* instruction to be executed.
+- **Instruction Register (IR)**: Holds the actual binary instruction that is *currently* being decoded by the Control Unit.
+- **Stack Pointer (SP)**: Points to the top of the Call Stack in RAM, crucial for keeping track of function calls and local variables.
+- **Status Register / Flags**: A collection of 1-bit booleans updated by the ALU (e.g., "Was the last calculation zero?", "Did the last calculation overflow?").
+
+## The Assembly Bottleneck
+
+Because there are only ~16 to 32 General Purpose Registers, compiler engineers spend massive amounts of time writing "Register Allocation" algorithms. The goal of a C++ or Rust compiler is to intelligently juggle variables in and out of these 16 registers to ensure the CPU never wastes time waiting for data to fetch from RAM.
+
+</ConceptTemplate>

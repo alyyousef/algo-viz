@@ -1,0 +1,31 @@
+---
+title: Load Balancing (L4 vs L7)
+description: The architecture used to distribute massive amounts of incoming internet traffic evenly across a fleet of backend servers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Load Balancing (L4 vs L7)">
+
+If Amazon has 10 million users logging in on Black Friday, a single server will instantly melt down. They need 5,000 servers. But how do you distribute the users evenly across 5,000 servers when there is only one domain name (`amazon.com`)?
+
+You use a **Load Balancer**. It sits at the edge of the network, receives all incoming traffic, and mathematically distributes it to the backend servers using algorithms like Round-Robin or Least-Connections.
+
+## Layer 4 Load Balancing (Network)
+
+A **Layer 4 (L4)** Load Balancer operates strictly at the Transport layer (TCP/UDP). 
+- It only looks at the Source IP, Destination IP, and Ports. 
+- It does **not** look at the HTTP payload. 
+- Because it is blind to the content, it requires virtually zero CPU power and can route millions of packets per second with microscopic latency. It simply acts as a high-speed traffic cop.
+
+## Layer 7 Load Balancing (Application)
+
+A **Layer 7 (L7)** Load Balancer (often an Nginx Reverse Proxy) operates at the Application layer.
+- It fully terminates the TLS connection and reads the actual HTTP headers and JSON payload.
+- Because it can read the HTTP request, it can make highly intelligent routing decisions.
+- **Example**: If the HTTP URL contains `/api/video/`, the L7 balancer routes the traffic to the massive GPU video-processing servers. If the URL contains `/api/login/`, it routes the traffic to the highly secure authentication servers.
+
+<Callout icon="success" title="Health Checks">
+  A critical feature of any Load Balancer is Health Checking. The Load Balancer constantly pings the backend servers every 5 seconds. If Server #3 crashes and stops responding, the Load Balancer instantly removes it from the rotation, ensuring no users are routed to a dead server.
+</Callout>
+
+</ConceptTemplate>

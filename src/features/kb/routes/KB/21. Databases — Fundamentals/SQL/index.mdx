@@ -1,0 +1,65 @@
+---
+title: SQL
+description: Structured Query Language for managing and manipulating relational databases.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="SQL (Structured Query Language)">
+
+SQL (Structured Query Language) is the standard language used to communicate with Relational Database Management Systems (RDBMS). It is used to create, read, update, and delete (CRUD) data within tabular structures.
+
+<Callout icon="tip" title="Declarative Nature">
+  SQL is a declarative language. You tell the database *what* data you want (e.g., `SELECT name FROM users`), not *how* to go fetch it. The database engine's query optimizer handles the execution plan.
+</Callout>
+
+## Types of SQL Commands
+
+<ComparisonTable 
+  headers={['Category', 'Acronym', 'Purpose', 'Commands']}
+  rows={[
+    ['Data Query Language', 'DQL', 'Retrieve data from the database.', 'SELECT'],
+    ['Data Manipulation Language', 'DML', 'Modify data within tables.', 'INSERT, UPDATE, DELETE'],
+    ['Data Definition Language', 'DDL', 'Define database schema structure.', 'CREATE, ALTER, DROP'],
+    ['Data Control Language', 'DCL', 'Manage access permissions.', 'GRANT, REVOKE']
+  ]}
+/>
+
+## Relational Joins
+
+<ArchitectureDiagram chart={`
+graph LR
+  subgraph Inner Join
+    A1((Table A)) ---|Match| B1((Table B))
+  end
+  
+  subgraph Left Join
+    A2((Table A)) -->|Match + Nulls| B2((Table B))
+  end
+  
+  subgraph Full Outer
+    A3((Table A)) <-->|All Records| B3((Table B))
+  end
+`} />
+
+## Essential Syntax
+
+```text
+-- Basic SELECT with filtering and sorting
+SELECT first_name, last_name, age 
+FROM employees 
+WHERE department = 'Engineering' 
+ORDER BY age DESC;
+
+-- Aggregation with GROUP BY
+SELECT department, COUNT(*) as employee_count, AVG(salary) 
+FROM employees 
+GROUP BY department 
+HAVING COUNT(*) > 5;
+
+-- INNER JOIN between two tables
+SELECT orders.id, customers.name 
+FROM orders
+INNER JOIN customers ON orders.customer_id = customers.id;
+```
+
+</ConceptTemplate>

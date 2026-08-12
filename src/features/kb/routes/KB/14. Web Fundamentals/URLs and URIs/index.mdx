@@ -1,0 +1,30 @@
+---
+title: URLs and URIs
+description: The foundational addressing system of the web, mathematically defining how resources are located and identified across the global internet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="URLs and URIs">
+
+You use URLs every single day, but their mathematical structure dictates exactly how browsers, proxies, and web servers process requests.
+
+## The Hierarchy
+
+- **URI (Uniform Resource Identifier)**: The master umbrella term. Any string of characters that identifies a resource. (e.g., an ISBN number for a book is a URI, but it doesn't tell you *where* the book is).
+- **URL (Uniform Resource Locator)**: A specific type of URI that not only identifies the resource, but provides the exact network protocol to retrieve it. (All URLs are URIs, but not all URIs are URLs).
+- **URN (Uniform Resource Name)**: A specific type of URI that uses a persistent namespace.
+
+## Anatomy of a URL
+
+Let's dissect: `https://admin:pass@www.example.com:8080/path/to/page?search=hello#section3`
+
+1. **Protocol (Scheme)**: `https://` (Tells the browser to open a TLS encrypted tunnel).
+2. **Credentials (Deprecated)**: `admin:pass@` (Do not use this. It transmits passwords in plain text in the URL).
+3. **Subdomain**: `www.` (Optional, routes to a specific sub-application).
+4. **Domain (Host)**: `example.com` (The registered top-level domain).
+5. **Port**: `:8080` (Optional. Defaults to 80 for HTTP, 443 for HTTPS).
+6. **Path**: `/path/to/page` (The specific route on the server).
+7. **Query String**: `?search=hello` (Key-value parameters passed to the backend server. Separated by `&`).
+8. **Fragment (Hash)**: `#section3` (Points to an anchor ID on the page. **Crucially, the fragment is NEVER sent to the server.** It is processed entirely client-side by the browser to scroll down the page).
+
+</ConceptTemplate>

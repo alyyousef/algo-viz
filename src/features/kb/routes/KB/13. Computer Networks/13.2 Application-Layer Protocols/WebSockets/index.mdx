@@ -1,0 +1,29 @@
+---
+title: WebSockets
+description: A persistent, bi-directional communication protocol designed to allow real-time data streaming between a browser and a server.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="WebSockets">
+
+HTTP was designed to be strictly unidirectional: The Client asks a question, and the Server answers. The Server can **never** initiate contact with the Client.
+
+If you are building a real-time Chat app, or a live Stock Market ticker, how does the Server push new messages to the Client without the Client constantly mashing the refresh button? 
+Historically, developers used horrible hacks like "Long Polling" (holding an HTTP connection open indefinitely). 
+
+**WebSockets** solved this permanently.
+
+## The Connection Upgrade
+
+A WebSocket starts its life as a completely normal HTTP GET request, but it includes a special header:
+`Connection: Upgrade`
+`Upgrade: websocket`
+
+If the Server supports it, it replies with a `101 Switching Protocols` status code.
+The HTTP protocol is instantly terminated, but the underlying TCP connection remains open. The tunnel transforms into a persistent, raw, bidirectional binary stream.
+
+<Callout icon="success" title="True Full-Duplex">
+  Because the tunnel is raw TCP, it is Full-Duplex. The server can push 10 stock price updates to the browser at the exact same millisecond the browser is pushing a chat message to the server, with virtually zero latency and none of the massive HTTP header overhead.
+</Callout>
+
+</ConceptTemplate>

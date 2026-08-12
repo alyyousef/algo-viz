@@ -1,0 +1,31 @@
+---
+title: apk (Alpine Package Manager)
+description: The lightning-fast, ultra-lightweight package manager built specifically for Alpine Linux and heavily used in Docker containers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="apk (Alpine Package Manager)">
+
+The **apk (Alpine Package Keeper)** is the default package manager for Alpine Linux. 
+
+Because Alpine Linux is overwhelmingly used as the foundational base image for Docker containers, `apk` is one of the most frequently executed package managers in the world, usually seen inside `Dockerfile` build scripts.
+
+## The Design Philosophy
+
+While Debian's `apt` and RHEL's `dnf` are massive, complex pieces of software written in Python or C++, `apk` is designed with the exact same philosophy as Alpine itself: **Extreme Minimalism and Speed**. 
+
+`apk` is compiled as a tiny, statically-linked binary. It executes instantly, consumes virtually no RAM, and does not leave bloated cache files on the hard drive (unless explicitly requested).
+
+<Callout icon="success" title="Common Docker Usage">
+  When building a Docker image, you want the image to be as small as possible. The most common `apk` command you will see is:
+  `apk add --no-cache curl python3`
+  The `--no-cache` flag brilliantly downloads the packages into RAM, installs them, and discards the repository index immediately, ensuring your Docker image doesn't waste 20MB of disk space storing a text list of package names.
+</Callout>
+
+## Basic Commands
+- **`apk update`**: Fetches the latest list of available software from the Alpine repositories.
+- **`apk add <package>`**: Installs a new piece of software.
+- **`apk del <package>`**: Removes a piece of software.
+- **`apk info <package>`**: Displays details about what exactly an installed package is doing.
+
+</ConceptTemplate>

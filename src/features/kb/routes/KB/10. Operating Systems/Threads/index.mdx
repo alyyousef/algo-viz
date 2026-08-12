@@ -1,0 +1,35 @@
+---
+title: Threads
+description: The smallest unit of execution within an operating system, allowing a single process to do multiple things simultaneously.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Threads">
+
+A Process is a heavy, isolated container. However, what if a single program (like a Web Browser) needs to do two things at once? It needs to render the webpage on the screen, while simultaneously downloading a file in the background. 
+
+If it creates a second Process to handle the download, the two processes are violently isolated from each other. They cannot easily share variables or memory. 
+
+The solution is **Threads**. A Thread is a lightweight unit of execution that lives *inside* a Process. 
+
+<Callout icon="success" title="Shared Memory">
+  While multiple Processes share nothing, multiple Threads *inside the same process* share everything. They share the same Code, the same open files, and crucially, the same Heap memory. 
+</Callout>
+
+## The Anatomy of a Thread
+
+If a Process has 3 threads, what do those threads actually own individually?
+Every thread gets its own:
+1. **Program Counter**: Thread 1 might be executing line 50, while Thread 2 is executing line 500.
+2. **CPU Registers**: The thread's current mathematical calculations.
+3. **The Stack**: Every thread gets its own private Stack memory to keep track of its own local function calls and local variables.
+
+## Concurrency vs Parallelism
+
+Threads allow for two distinct behaviors:
+- **Concurrency (Single-Core CPU)**: The OS rapidly switches the CPU between Thread 1 and Thread 2 thousands of times a second. They aren't actually running at the exact same time, but the switching is so fast it creates the illusion of simultaneous execution.
+- **Parallelism (Multi-Core CPU)**: The OS schedules Thread 1 to run physically on Core A, and Thread 2 to run physically on Core B. They execute at the exact same nanosecond.
+
+Because threads share the same Heap memory, programming with them is incredibly dangerous. If Thread 1 and Thread 2 try to modify the same variable in memory at the exact same time, data corruption (a Race Condition) occurs. 
+
+</ConceptTemplate>

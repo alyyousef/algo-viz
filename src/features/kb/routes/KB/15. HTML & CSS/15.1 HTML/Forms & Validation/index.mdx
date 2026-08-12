@@ -1,0 +1,31 @@
+---
+title: Forms & Input Validation
+description: The native HTML mechanisms for capturing user input securely, including built-in browser validation and varied input types.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Forms & Input Validation">
+
+The `<form>` element is the primary mechanism for receiving user data. 
+
+Before modern JavaScript frameworks (React/Vue) took over, HTML forms natively handled HTTP POST requests. When a user clicked "Submit", the browser would automatically gather all the input data, serialize it, and send a hard page-refresh POST request to the backend server.
+
+Today, we almost always intercept this using JavaScript (`e.preventDefault()`) and send the data via `fetch()`.
+
+## The `<input>` Ecosystem
+HTML5 introduced powerful new input types that trigger specialized mobile keyboards on iOS and Android:
+- `<input type="email">`: Triggers a mobile keyboard with the `@` symbol.
+- `<input type="number">`: Triggers the mobile numpad.
+- `<input type="date">`: Triggers the native OS calendar picker.
+
+## Native Browser Validation
+You do not need massive Javascript libraries to perform basic validation. HTML5 includes native validation constraints that will block form submission and display localized error popups:
+- `required`: The field cannot be empty.
+- `minlength="8"`: Enforces a minimum character count.
+- `pattern="[0-9]{5}"`: Enforces a strict Regex pattern (e.g., exactly 5 digits for a US ZIP code).
+
+<Callout icon="warning" title="Client-Side Validation is a UX Feature">
+  HTML/Javascript validation is purely a User Experience (UX) feature to help legitimate users catch typos instantly. **It provides zero security.** A hacker can easily bypass the browser and send raw malicious HTTP requests via Postman. **All validation MUST be duplicated on the backend server.**
+</Callout>
+
+</ConceptTemplate>

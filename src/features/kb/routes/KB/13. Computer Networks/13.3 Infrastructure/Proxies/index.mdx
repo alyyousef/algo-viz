@@ -1,0 +1,29 @@
+---
+title: Forward Proxies
+description: Intermediary servers that sit inside a corporate network, intercepting outbound employee traffic to provide security, caching, and content filtering.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Forward Proxies">
+
+In a standard home network, your laptop talks directly to the internet. 
+In a high-security corporate environment, employee laptops are legally banned from touching the internet. Instead, they must route all their requests through a **Forward Proxy**.
+
+## How a Forward Proxy Works
+
+1. **The Request**: An employee opens Chrome and types `reddit.com`.
+2. **The Interception**: The laptop does not connect to Reddit. It connects to the Corporate Proxy Server and says, *"Please fetch reddit.com for me."*
+3. **The Proxy Action**: The Proxy Server, acting as a middleman, connects to Reddit, downloads the webpage, and hands it back to the employee.
+
+Reddit never sees the employee's IP address. It only sees the Proxy Server's IP address.
+
+## Why Enterprises Use Them
+
+- **Content Filtering**: The Proxy checks the requested URL against a master database. If the URL is flagged as "Social Media" or "Malware," the Proxy instantly returns an Access Denied page to the employee.
+- **Caching**: If 500 employees all load the exact same 100MB Windows Update file at 9:00 AM, the Proxy downloads the file *once* from Microsoft, stores it in its local RAM, and instantly serves the cached copy to the other 499 employees, saving 50GB of internet bandwidth.
+
+<Callout icon="warning" title="SSL/TLS Inspection">
+  Because 95% of the internet is encrypted (HTTPS), Proxies cannot see what URLs the employees are visiting. To fix this, corporations forcefully install a custom Root Certificate onto every employee laptop. This allows the Proxy to perform an authorized Man-In-The-Middle attack, intercepting and decrypting all employee HTTPS traffic (including banking passwords) in real-time before re-encrypting it and sending it to the destination.
+</Callout>
+
+</ConceptTemplate>

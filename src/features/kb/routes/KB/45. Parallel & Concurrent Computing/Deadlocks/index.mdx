@@ -1,0 +1,33 @@
+---
+title: Deadlocks
+description: A state in which each member of a group is waiting for another member, including itself, to take action.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Deadlocks">
+
+A deadlock is a situation in computer science where a set of processes or threads are blocked because each process is holding a resource and waiting for another resource acquired by some other process.
+
+<Callout icon="warning" title="The Traffic Jam Metaphor">
+  Imagine four cars arrive at a 4-way stop at the exact same time. Car 1 waits for Car 2, Car 2 waits for Car 3, Car 3 waits for Car 4, and Car 4 waits for Car 1. No one can move. They are deadlocked.
+</Callout>
+
+## The Four Coffman Conditions
+
+A deadlock CANNOT occur unless ALL FOUR of these conditions hold true simultaneously:
+
+<ComparisonTable 
+  headers={['Condition', 'Description']}
+  rows={[
+    ['1. Mutual Exclusion', 'At least one resource must be held in a non-shareable mode (only one thread can use it at a time).'],
+    ['2. Hold and Wait', 'A thread is currently holding at least one resource and requesting additional resources held by others.'],
+    ['3. No Preemption', 'A resource cannot be forcibly taken away from a thread; it must be released voluntarily.'],
+    ['4. Circular Wait', 'Thread A waits for Thread B, which waits for Thread C, which waits for Thread A.']
+  ]}
+/>
+
+## Deadlock Prevention
+
+To prevent a deadlock, you simply ensure that at least one of the four Coffman conditions is never met. The easiest to break is usually **Circular Wait**: by forcing all threads to always request locks in the exact same alphabetical or numerical order, a circle can never form.
+
+</TechnologyTemplate>

@@ -1,0 +1,47 @@
+---
+title: Scoped CSS (Modules & CSS-in-JS)
+description: The architectural shift driven by React to mathematically scope styling locally to a specific component, preventing global CSS leaks.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Scoped CSS (Modules & CSS-in-JS)">
+
+The greatest architectural flaw of standard CSS is that everything operates in a single, global namespace.
+If Developer A writes `.card { padding: 20px; }` on the homepage, and Developer B writes `.card { padding: 50px; }` on the dashboard, the entire application will catastrophically explode due to a global cascade collision.
+
+When the industry shifted to Component-Based Architecture (React/Vue), they needed a way to strictly **Scope** CSS locally to a single component.
+
+## 1. CSS Modules
+A CSS Module is just a standard CSS file (e.g., `Button.module.css`).
+However, during the Webpack/Vite build process, the compiler mathematically hashes the class names to guarantee they are globally unique.
+
+```css
+/* Button.module.css */
+.btn { background: red; }
+```
+```tsx
+import styles from './Button.module.css';
+
+// Renders as: <button class="_btn_a89bc">
+export const Button = () => <button className={styles.btn}>Click</button>
+```
+This flawlessly solves the global collision problem while allowing developers to write standard CSS.
+
+## 2. CSS-in-JS (Styled Components / Emotion)
+Instead of writing separate CSS files, CSS-in-JS literally embeds the CSS directly inside the Javascript file using Tagged Template Literals.
+
+```tsx
+import styled from 'styled-components';
+
+const StyledButton = styled.button`
+  background-color: ${props => props.primary ? 'blue' : 'gray'};
+  padding: 10px;
+`;
+
+export const App = () => <StyledButton primary>Save</StyledButton>
+```
+
+**The Architectural Advantage**: You have absolute mathematical access to Javascript variables. You can pass React state or props directly into the CSS logic.
+**The Architectural Flaw**: The browser has to download, parse, and execute heavy Javascript to mathematically generate the CSS at runtime, which drastically hurts performance and Time-To-Interactive (TTI) compared to static CSS files.
+
+</ConceptTemplate>

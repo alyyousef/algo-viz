@@ -1,0 +1,29 @@
+---
+title: Web Accessibility (a11y)
+description: The engineering practice of ensuring web applications are fully usable by individuals relying on assistive technologies like screen readers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Web Accessibility (a11y)">
+
+**Web Accessibility** (numeronym: **a11y**, meaning an 'a', 11 letters, then a 'y') is the architectural requirement that your application must be usable by people with visual, motor, or cognitive disabilities.
+
+It is not just an ethical requirement; in many countries (like the US via the ADA), failing to make your enterprise website accessible exposes the company to massive lawsuits.
+
+## Semantic HTML (The Foundation)
+
+The easiest way to break accessibility is by using `<div>` for everything.
+If you build a button using `<div class="btn" onClick={submit}>Submit</div>`, a blind user's Screen Reader (like NVDA or VoiceOver) has no idea it is clickable. They cannot focus it with the keyboard, and they cannot activate it with the Enter key.
+
+You must use **Semantic HTML**. By using a real `<button>Submit</button>`, the browser automatically provides keyboard focus, Enter-key activation, and correctly announces "Button: Submit" to the Screen Reader natively.
+
+## ARIA (Accessible Rich Internet Applications)
+
+Sometimes, you have to build complex custom UI components (like a drag-and-drop modal) that have no native HTML equivalent. 
+In these cases, you use **ARIA attributes** to mathematically describe the state of the component to the Screen Reader.
+
+- `aria-hidden="true"`: Completely hides an irrelevant decorative icon from the screen reader.
+- `aria-expanded="true"`: Tells the screen reader that the accordion menu is currently open.
+- `aria-live="polite"`: If a background Javascript process finally finishes loading data, this attribute politely interrupts the screen reader to announce "Data loaded successfully" to the blind user.
+
+</ConceptTemplate>

@@ -1,0 +1,37 @@
+---
+title: Multi-Level Feedback Queue (MLFQ)
+description: The brilliant scheduling algorithm that learns the behavior of processes on the fly to optimize both responsiveness and throughput.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Multi-Level Feedback Queue (MLFQ)">
+
+While Linux historically used CFS, Windows and macOS historically relied on variations of the **Multi-Level Feedback Queue (MLFQ)**.
+
+The Scheduler has two conflicting goals:
+1. **Interactive Tasks (Keyboard/Mouse)**: Must respond in under 10ms, but they use very little total CPU time.
+2. **CPU-Bound Tasks (Video Rendering)**: Don't care about responsiveness, but they need massive amounts of total CPU time.
+
+Because the OS doesn't know if a new process is a video game or a video renderer, MLFQ is designed to **learn the behavior of the program on the fly**.
+
+## The Architecture of MLFQ
+
+MLFQ consists of multiple strict Priority Queues.
+- **Queue 1 (Highest Priority)**: Has a very small time slice (e.g., 10ms).
+- **Queue 2 (Medium Priority)**: Has a medium time slice (e.g., 50ms).
+- **Queue 3 (Lowest Priority)**: Has a massive time slice (e.g., 200ms).
+
+<Callout icon="info" title="The Rules of MLFQ">
+  1. **New processes start at the top**: When a program opens, the OS assumes it is highly interactive. It places it in Queue 1.
+  2. **The CPU Hog Penalty**: If the process uses its entire 10ms time slice without pausing, the OS realizes it is a CPU-hog (e.g., a video renderer). As punishment, it demotes the process down to Queue 2. If it hogs the CPU again, it gets demoted to Queue 3.
+  3. **The Interactive Reward**: If the process gives up the CPU *before* its time slice ends (e.g., it pauses to wait for a keyboard press), the OS rewards it by keeping it in the High Priority queue. 
+</Callout>
+
+## The Brilliant Result
+
+The result is magical. 
+Heavy, background rendering tasks are quickly filtered down to the bottom queue, where they are given massive 200ms time slices to efficiently crunch numbers without context-switching overhead. 
+
+Meanwhile, highly interactive tasks (like the UI thread of a web browser) stay at the very top queue. They get the CPU instantly the millisecond you click the mouse, ensuring the computer feels buttery smooth, even while rendering a video in the background.
+
+</ConceptTemplate>

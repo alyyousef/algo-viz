@@ -1,0 +1,25 @@
+---
+title: WebXR (VR & AR)
+description: The modern web standard designed to render 3D scenes to Virtual Reality headsets and Augmented Reality mobile devices directly from the browser.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="WebXR (VR & AR)">
+
+**WebXR** (Web Extended Reality) is the unified API that replaces the deprecated WebVR. It bridges the gap between the web browser and specialized stereoscopic hardware like the Meta Quest, Apple Vision Pro, and AR-capable smartphones.
+
+## How it Works
+
+WebXR does not draw graphics itself. It acts as the mathematical bridge between **WebGL** and the physical headset.
+
+1. **Session Request**: The webpage asks the browser to initiate an "immersive-vr" or "immersive-ar" session. (This usually triggers a prompt asking the user to put on their headset).
+2. **Tracking & Poses**: The WebXR API constantly polls the physical hardware to get the exact XYZ coordinates and rotation of the user's head and hands (controllers) at 90 frames per second.
+3. **Stereo Rendering**: The webpage feeds these coordinates into a WebGL framework (like Three.js). The framework must calculate and render the 3D scene *twice*—once from the perspective of the left eye, and once for the right eye.
+4. **Frame Presentation**: The dual-rendered frame is sent back through WebXR to the physical headset displays.
+
+## Augmented Reality (AR)
+In an `immersive-ar` session, WebXR also provides:
+- **Hit Testing**: Mathematically calculating where the user's camera is pointing relative to the physical floor, allowing you to "place" a virtual IKEA sofa onto a real-world rug.
+- **Environment Blending**: Using the device's passthrough cameras to composite the WebGL graphics seamlessly over the real world.
+
+</ConceptTemplate>

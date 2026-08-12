@@ -1,0 +1,34 @@
+---
+title: JavaScript
+description: A high-level, just-in-time compiled language that enables interactive web pages and is an essential part of web applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="JavaScript (JS)" 
+  category="Programming Languages" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
+>
+
+Created by Brendan Eich in just 10 days in 1995, **JavaScript** (no relation to Java) was designed as a simple scripting language to add basic interactivity (like form validation) to Netscape Navigator. 
+
+Today, it is the absolute monopoly language of the Web Browser, powering complex Single Page Applications (React, Vue), and has broken out of the browser to conquer the backend (Node.js).
+
+<Callout icon="warning" title="The Quirks of JS">
+  Because JS had to maintain 100% backwards compatibility for 30 years, it carries historical baggage and bizarre type-coercion rules. For example, `[] + [] === ""` and `0 == "0"` is true, but `0 === "0"` is false. 
+</Callout>
+
+## Key Characteristics
+
+1. **The Event Loop**: JS is single-threaded. It achieves incredibly high concurrency by being heavily asynchronous. Instead of waiting for a database to reply and freezing the thread, JS uses Callbacks/Promises and the Event Loop to handle other tasks while waiting.
+2. **First-Class Functions**: Functions are treated like any other variable. They can be passed as arguments into other functions (callbacks) and returned from functions.
+3. **Prototypal Inheritance**: Instead of traditional OOP classes, JS historically used prototypes (objects inheriting directly from other objects). (Modern JS added the `class` keyword as syntactic sugar over prototypes).
+4. **JIT Compiled**: Modern browser engines (like V8) do not interpret JS line-by-line. They use Just-In-Time compilation to instantly translate the JS into optimized machine code on the fly.
+
+## The Ecosystem
+
+- **Frontend**: The only language that natively runs in the browser. Powered by frameworks like React, Angular, and Svelte.
+- **Backend**: Node.js allows running JS on the server, perfect for highly concurrent, I/O bound APIs (like chat applications).
+- **NPM**: The Node Package Manager is the largest software registry in the world.
+
+</TechnologyTemplate>

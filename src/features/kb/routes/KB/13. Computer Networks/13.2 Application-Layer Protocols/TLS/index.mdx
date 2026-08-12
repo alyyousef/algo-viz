@@ -1,0 +1,24 @@
+---
+title: TLS (Transport Layer Security)
+description: The modern, cryptographically secure protocol that officially replaced SSL to provide encryption and authentication for the global internet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="TLS (Transport Layer Security)">
+
+When the IETF took over the development of SSL from Netscape in 1999, they completely overhauled the math, removed the proprietary code, and renamed it **TLS (Transport Layer Security)**.
+
+TLS 1.2 became the absolute gold standard for internet encryption for over a decade.
+
+## The TLS 1.3 Overhaul
+
+In 2018, **TLS 1.3** was released, completely revolutionizing how encryption handshakes are performed.
+
+1. **Massive Speed Increases**: TLS 1.2 required two full round-trips across the internet just to negotiate the encryption keys before a single byte of HTTP data could be sent. TLS 1.3 optimized the math, requiring only *one* round-trip (and supporting 0-RTT for returning visitors), drastically speeding up the loading time of secure websites.
+2. **Culling Weak Algorithms**: For backwards compatibility, TLS 1.2 supported ancient, broken encryption algorithms from the 1990s (like MD5 and DES). Hackers could launch "Downgrade Attacks," forcing a server to use broken math. TLS 1.3 violently purged all legacy algorithms, leaving only bleeding-edge, mathematically unbreakable ciphers (like ChaCha20 and AES-GCM).
+
+<Callout icon="success" title="Perfect Forward Secrecy">
+  Historically, if a hacker recorded 5 years of your encrypted traffic, and then managed to steal the server's master private key, they could retroactively decrypt all 5 years of history. TLS 1.3 mandates **Perfect Forward Secrecy (PFS)** using Ephemeral Diffie-Hellman math. The server generates a brand new, unique encryption key for *every single session*, and deletes it instantly when you disconnect, making retroactive decryption mathematically impossible.
+</Callout>
+
+</ConceptTemplate>

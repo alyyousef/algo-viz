@@ -1,0 +1,28 @@
+---
+title: HTTP/2
+description: The 2015 overhaul of HTTP that introduced binary framing and stream multiplexing to solve the latency problems of the modern web.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="HTTP/2">
+
+By 2015, modern webpages had become massive, requiring browsers to download hundreds of Javascript and CSS files simultaneously. HTTP/1.1, with its sequential processing and Head-of-Line blocking, was collapsing under the weight.
+
+Google developed an experimental protocol called SPDY, which the IETF eventually standardized into **HTTP/2**.
+
+## The Binary Revolution
+
+HTTP/1.1 was entirely plain text (you could read the headers with your eyes). 
+HTTP/2 is a **Binary** protocol. The client takes the HTTP request, compiles it into binary machine code, and breaks it into tiny, discrete "Frames".
+
+## Multiplexing (The Killer Feature)
+
+Because the requests are broken into binary frames, HTTP/2 can **Multiplex** data.
+You can send the 10MB Video and the 1KB CSS file *at the exact same time* over a single TCP connection. The server chops both files into tiny binary frames, mixes them together in the TCP pipe, and the browser mathematically reassembles them on the other side. 
+**Head-of-Line blocking was completely eliminated.**
+
+<Callout icon="success" title="Header Compression (HPACK)">
+  In HTTP/1.1, every single request re-sent the exact same massive headers (Cookies, User-Agents), wasting massive amounts of bandwidth. HTTP/2 introduced **HPACK**, which aggressively compresses headers, drastically reducing the size of the request payloads and speeding up mobile browsing significantly.
+</Callout>
+
+</ConceptTemplate>

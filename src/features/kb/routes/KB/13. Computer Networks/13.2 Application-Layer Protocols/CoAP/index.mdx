@@ -1,0 +1,23 @@
+---
+title: CoAP (Constrained Application Protocol)
+description: A specialized internet protocol designed to translate the familiar architecture of HTTP/REST into ultra-lightweight UDP packets for constrained IoT devices.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CoAP (Constrained Application Protocol)">
+
+While MQTT is perfect for Publish-Subscribe telemetry, many developers prefer the traditional REST API architecture (GET, POST, PUT, DELETE). 
+However, running a full HTTP web server on a smart lightbulb with 32KB of RAM is impossible.
+
+**CoAP** was designed to solve this. It provides the exact same REST architecture as HTTP, but it has been heavily optimized for constrained microcontrollers.
+
+## The Shift to UDP
+
+The biggest difference between HTTP and CoAP is that **CoAP runs on UDP**, not TCP.
+By abandoning the heavy TCP 3-way handshake and continuous connection tracking, the smart lightbulb can sleep for 23 hours, wake up, blast a single 4-byte UDP CoAP packet containing a `POST` request, and instantly go back to sleep to save battery.
+
+## Features Built for IoT
+1. **Confirmable Messages**: Because UDP is unreliable, CoAP implements its own tiny acknowledgment system (similar to MQTT QoS 1). The client can flag a packet as "Confirmable", forcing the server to send an ACK back.
+2. **Observe**: In standard HTTP, if a client wants to know if a temperature changed, it has to poll the server every 5 seconds. CoAP introduced the `Observe` flag. The client says "Observe this URL." The server then holds the relationship and proactively pushes UDP packets to the client only when the temperature actually changes.
+
+</ConceptTemplate>

@@ -1,0 +1,33 @@
+---
+title: NixOS
+description: A wildly innovative, declarative operating system where the entire machine is generated from a single configuration file.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="NixOS">
+
+**NixOS** is not just another Linux distribution; it is a fundamental rethinking of how operating systems should work. It applies the concepts of Functional Programming to operating system management.
+
+In a normal OS like Ubuntu, if you install Nginx, it drops files into `/usr/bin` and `/etc/nginx`. If you uninstall it, some configuration files might be left behind. Over years, the OS becomes a messy, mutated state of broken dependencies.
+
+## Declarative Configuration
+
+NixOS solves this by being **Declarative**. The entire operating system is defined by a single text file (`configuration.nix`).
+
+You write exactly what you want in that file:
+```nix
+environment.systemPackages = [ pkgs.firefox pkgs.git ];
+services.nginx.enable = true;
+```
+
+When you run `nixos-rebuild switch`, the Nix package manager reads that file and mathematically generates the *exact* OS state described. Nothing else exists.
+
+<Callout icon="success" title="Generations and Rollbacks">
+  Because packages in NixOS are stored in isolated, cryptographically hashed directories (e.g., `/nix/store/a5b8...-firefox-110`) rather than a global `/usr/bin` folder, the OS physically cannot suffer from Dependency Hell. 
+  Every time you change the config file, NixOS creates a new "Generation". If the new configuration breaks your computer, you simply reboot into Generation 4, and your OS is mathematically identical to how it was yesterday.
+</Callout>
+
+## The Learning Curve
+While NixOS is arguably the most robust Linux distribution ever created, its learning curve is notoriously vertical. Users must learn the completely custom, highly complex **Nix language** to do even simple tasks.
+
+</ConceptTemplate>

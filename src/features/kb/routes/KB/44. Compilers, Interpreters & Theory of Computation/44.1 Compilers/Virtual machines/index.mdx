@@ -1,0 +1,52 @@
+---
+title: Virtual Machines (Process vs System)
+description: The virtualization or emulation of a computer system.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Virtual Machines (Process vs System)">
+
+In computer science, the term "Virtual Machine" (VM) is heavily overloaded. It generally means an emulation of a computer system, but it is split into two wildly different categories: System Virtual Machines and Process Virtual Machines.
+
+<Callout icon="info" title="Write Once, Run Anywhere">
+  Java's famous slogan was based entirely on the Process Virtual Machine (the JVM). Because the JVM abstracts away the underlying hardware, a Java developer doesn't care if the server is running Linux, Windows, or Solaris.
+</Callout>
+
+## System VMs vs Process VMs
+
+<ComparisonTable 
+  headers={['Type', 'Description', 'Examples']}
+  rows={[
+    ['System Virtual Machine', 'Provides a complete substitute for a real machine. It runs a full operating system (Guest OS) on top of a Hypervisor. Used heavily in cloud computing.', 'VMware, VirtualBox, AWS EC2.'],
+    ['Process Virtual Machine', 'Designed to execute a single computer program by providing a platform-independent programming environment. It starts when the program starts, and dies when the program exits.', 'Java Virtual Machine (JVM), .NET Common Language Runtime (CLR), WebAssembly.']
+  ]}
+/>
+
+## Architecture of a System VM
+
+<ArchitectureDiagram chart={`
+graph TD
+  subgraph Physical Server
+    Hardware[Bare Metal Hardware\n(CPU, RAM)]
+    HostOS[Host Operating System]
+    Hypervisor[Hypervisor]
+    
+    subgraph VM 1
+      GuestOS1[Ubuntu Linux]
+      App1[Node.js App]
+      GuestOS1 --> App1
+    end
+    
+    subgraph VM 2
+      GuestOS2[Windows Server]
+      App2[IIS Web Server]
+      GuestOS2 --> App2
+    end
+    
+    Hardware --> HostOS --> Hypervisor
+    Hypervisor --> GuestOS1
+    Hypervisor --> GuestOS2
+  end
+`} />
+
+</TechnologyTemplate>

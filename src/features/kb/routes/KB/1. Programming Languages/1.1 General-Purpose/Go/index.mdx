@@ -1,0 +1,33 @@
+---
+title: Go (Golang)
+description: A statically typed, compiled programming language designed at Google for simplicity, speed, and massive concurrency.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="Go (Golang)" 
+  category="Programming Languages" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg"
+>
+
+Created by Google engineers (including UNIX legend Ken Thompson) in 2009, **Go** was designed to solve Google's massive backend scaling problems. They needed a language that was fast to compile (unlike C++), performant, safely garbage-collected, and ridiculously easy to write highly concurrent code for multi-core processors.
+
+<Callout icon="info" title="Brutally Simple">
+  Go's defining characteristic is its lack of features. It intentionally excludes inheritance, classes, exceptions, and map/filter functions. The creators believe that giving developers fewer ways to do things results in highly readable, uniform code across massive engineering teams.
+</Callout>
+
+## Key Characteristics
+
+1. **Goroutines (Concurrency)**: The crown jewel of Go. Instead of heavy OS threads, Go uses incredibly lightweight green threads called "Goroutines." You can easily spawn 100,000 Goroutines simultaneously on a standard laptop by simply putting the word `go` in front of a function call.
+2. **Channels**: Instead of sharing memory and dealing with dangerous Mutex locks, Goroutines communicate by passing messages through "Channels." (*"Do not communicate by sharing memory; instead, share memory by communicating."*)
+3. **Lightning Fast Compilation**: Go compiles directly to statically linked, native machine code binaries (no JVM required). It compiles so fast it feels like a scripting language.
+4. **Garbage Collected**: Unlike Rust or C++, Go manages memory for you, accepting a tiny latency hit in exchange for massive developer productivity.
+
+## Where is it used?
+
+Go is the undisputed language of the **Cloud and Microservices**:
+- **Docker and Kubernetes**: The core infrastructure of the modern cloud is written entirely in Go.
+- **Backend Microservices**: Uber, Twitch, and Netflix use Go to write highly concurrent APIs that route millions of network requests per second.
+- **CLI Tools**: Because it compiles down to a single, portable executable binary, it is perfect for terminal applications (like Terraform).
+
+</TechnologyTemplate>

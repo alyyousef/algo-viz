@@ -1,0 +1,40 @@
+---
+title: ConfigMaps
+description: An API object used to store non-confidential data in key-value pairs, decoupling environment configuration from container images.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="ConfigMaps">
+
+A core tenet of modern software engineering (The Twelve-Factor App) is that you should separate configuration from code. You should not hardcode environment variables, URLs, or database connection strings into your Docker image. 
+
+In Kubernetes, **ConfigMaps** are the mechanism for injecting this configuration data into your Pods at runtime.
+
+<Callout icon="info" title="The Power of Portability">
+  By keeping the configuration outside the image, you can build a single Docker Image for your application (\`myapp:v1\`). You can deploy that exact same image to the Staging cluster (injecting a Staging ConfigMap) and the Production cluster (injecting a Production ConfigMap), ensuring perfect parity between environments.
+</Callout>
+
+## How to use a ConfigMap
+
+A ConfigMap is a simple YAML object containing key-value pairs or entire configuration files:
+
+\`\`\`yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+data:
+  LOG_LEVEL: "debug"
+  CACHE_ENDPOINT: "redis-service:6379"
+\`\`\`
+
+You can inject this data into a Pod in two ways:
+
+1. **Environment Variables**: You can configure the Pod's Deployment YAML to map the \`LOG_LEVEL\` key directly into an environment variable inside the container. The Node.js app can then access it via \`process.env.LOG_LEVEL\`.
+2. **Volume Mounts**: You can mount the entire ConfigMap as a physical file inside the container's file system. (e.g., mounting an \`nginx.conf\` text file directly into \`/etc/nginx/conf.d/\`). If you update the ConfigMap in Kubernetes, the physical file inside the running container is automatically updated!
+
+## Limitations
+
+ConfigMaps are stored as pure, unencrypted plaintext inside the Kubernetes \`etcd\` database. **You must never store passwords, API keys, or database credentials in a ConfigMap.** For sensitive data, you must use Kubernetes **Secrets**.
+
+</ConceptTemplate>

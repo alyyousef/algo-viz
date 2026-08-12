@@ -1,0 +1,29 @@
+---
+title: Signals
+description: A primitive, violent form of IPC used to send abrupt software interrupts to processes, typically to force them to shut down or reload.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Signals">
+
+Not all Inter-Process Communication is used for sending data. Sometimes, the OS (or another program) just needs to violently poke a process to get its attention. This is done using **Signals**.
+
+A Signal is a software interrupt. When a process receives a signal, the OS violently pauses the process's normal execution and forces it to run a specific "Signal Handler" function.
+
+## Common Signals
+
+There are standard signals defined by the POSIX specification:
+- `SIGINT` (Signal Interrupt): Sent when you press `Ctrl+C` in the terminal. Asks the program to shut down cleanly.
+- `SIGTERM` (Signal Terminate): The standard signal sent by the `kill` command. A polite request to exit.
+- `SIGSEGV` (Segmentation Fault): Sent by the OS hardware when a program tries to read illegal memory. Causes instant death.
+
+<Callout icon="warning" title="SIGKILL (The Unstoppable Assassin)">
+  A process is allowed to write custom code to "catch" or ignore almost any signal. For example, a web server can catch `SIGTERM` and delay its shutdown until it finishes serving its current users.
+  However, `SIGKILL` (Kill -9) cannot be caught or ignored. If the OS sends a `SIGKILL`, the Kernel bypasses the program entirely and instantly destroys it without mercy.
+</Callout>
+
+## The Limitations
+
+Signals are incredibly fast, but they carry exactly zero data. You cannot send a string or a JSON payload through a Signal; you can only send the signal ID number (e.g., Signal 15). They are strictly used for control flow, not data transfer.
+
+</ConceptTemplate>

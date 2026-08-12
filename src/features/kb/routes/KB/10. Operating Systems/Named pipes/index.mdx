@@ -1,0 +1,28 @@
+---
+title: Named Pipes (FIFOs)
+description: An extension of standard Pipes that exist as visible files on the filesystem, allowing completely unrelated processes to communicate.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Named Pipes (FIFOs)">
+
+Standard Pipes are incredibly useful, but they have a fatal limitation: they can only connect related processes (like a parent and child). If you launch a Database on Monday, and a Web Server on Tuesday, they cannot use an Anonymous Pipe to talk to each other.
+
+To solve this, operating systems provide **Named Pipes** (also known as FIFOs - First In, First Out).
+
+## The Filesystem Illusion
+
+A Named Pipe appears as an actual, physical file sitting on your hard drive (e.g., `/tmp/my_pipe`). 
+
+<Callout icon="warning" title="It's not a real file!">
+  Although you can see it with the `ls` command, a Named Pipe does not consume any space on your hard drive. The file is merely a visible anchor point. When processes read or write to it, the data is entirely handled in RAM by the Kernel.
+</Callout>
+
+## How it works
+1. **Creation**: You create a Named Pipe using a command like `mkfifo /tmp/my_pipe`.
+2. **Writing**: Process A (the database) opens the file in "Write" mode and starts dumping data into it.
+3. **Reading**: Process B (the web server) opens the exact same file in "Read" mode and streams the data out.
+
+Because the Named Pipe exists on the filesystem, *any* process with the correct file permissions can open it, allowing completely unrelated applications to establish high-speed IPC.
+
+</ConceptTemplate>

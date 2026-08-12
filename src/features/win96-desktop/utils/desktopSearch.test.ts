@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
-import { dsaRouteDefinitions } from '@/features/dsa/routeManifest'
+import { kbRouteDefinitions } from '@/features/kb/routeManifest'
 
 import { desktopSearchEntries, searchDesktopEntries } from './desktopSearch'
 
 describe('desktopSearchEntries', () => {
   it('creates one searchable entry per DSA route', () => {
-    expect(desktopSearchEntries).toHaveLength(dsaRouteDefinitions.length)
+    expect(desktopSearchEntries).toHaveLength(kbRouteDefinitions.length)
   })
 
   it('strips numeric prefixes from the display title', () => {
     const binarySearch = desktopSearchEntries.find(
-      (entry) => entry.route === '/dsa/2-core-algorithms/1-sorting-and-searching/binary-search',
+      (entry) => entry.route === '/kb/2-core-algorithms/1-sorting-and-searching/binary-search',
     )
 
     expect(binarySearch).toMatchObject({
@@ -29,7 +29,7 @@ describe('searchDesktopEntries', () => {
   it('finds route matches by topic name', () => {
     const [firstResult] = searchDesktopEntries('binary search', 5)
 
-    expect(firstResult?.route).toBe('/dsa/2-core-algorithms/1-sorting-and-searching/binary-search')
+    expect(firstResult?.route).toBe('/kb/2-core-algorithms/1-sorting-and-searching/binary-search')
   })
 
   it('matches across breadcrumb labels, not just page titles', () => {

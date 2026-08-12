@@ -1,0 +1,44 @@
+---
+title: AVL Trees
+description: The first invented self-balancing binary search tree, optimized for fast lookups.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="AVL Trees">
+
+Invented in 1962 by Adelson-Velsky and Landis (hence "AVL"), the **AVL Tree** was the first data structure designed to solve the problem of unbalanced binary search trees.
+
+An AVL tree is a self-balancing binary search tree where the difference in heights between the left and right subtrees of *any* node is at most 1.
+
+<Callout icon="info" title="The Balance Factor">
+  Every node in an AVL tree maintains a "Balance Factor," which is calculated as:
+  `BalanceFactor = Height(Left Subtree) - Height(Right Subtree)`
+  In a valid AVL tree, the Balance Factor of every node must be either -1, 0, or 1.
+</Callout>
+
+## How it Maintains Balance (Rotations)
+
+When a node is inserted or deleted, the heights of the ancestors are updated. If any ancestor's Balance Factor becomes -2 or +2, the tree is unbalanced and must immediately fix itself using **Tree Rotations**.
+
+There are four cases of imbalance, solved by four specific rotations:
+1. **Left-Left (LL) Case**: Solved by a single Right Rotation.
+2. **Right-Right (RR) Case**: Solved by a single Left Rotation.
+3. **Left-Right (LR) Case**: Solved by a Left Rotation on the child, followed by a Right Rotation on the parent.
+4. **Right-Left (RL) Case**: Solved by a Right Rotation on the child, followed by a Left Rotation on the parent.
+
+## AVL vs. Red-Black Trees
+
+Both AVL and Red-Black trees provide $O(\log n)$ worst-case time complexity, but they are used in different scenarios based on their structural strictness.
+
+<ComparisonTable 
+  headers={['Feature', 'AVL Trees', 'Red-Black Trees']}
+  rows={[
+    ['Balancing Strictness', 'Very strict (height diff max 1).', 'Less strict (longest path max 2x shortest).'],
+    ['Lookup Speed', 'Faster (due to stricter balance/shorter depth).', 'Slightly slower.'],
+    ['Insert/Delete Speed', 'Slower (requires more rotations to maintain strict balance).', 'Faster (requires fewer rotations).'],
+    ['Memory Overhead', 'Requires storing an integer (height) per node.', 'Requires storing a single bit (color) per node.'],
+    ['Ideal Use Case', 'Read-heavy applications (e.g., dictionaries).', 'Write-heavy applications (e.g., OS schedulers).']
+  ]}
+/>
+
+</ConceptTemplate>

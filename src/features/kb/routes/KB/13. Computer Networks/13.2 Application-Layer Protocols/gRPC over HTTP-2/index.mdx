@@ -1,0 +1,30 @@
+---
+title: gRPC (over HTTP/2)
+description: Google's ultra-fast, binary Remote Procedure Call framework that leverages HTTP/2 to outperform traditional REST APIs in microservice architectures.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="gRPC (over HTTP/2)">
+
+For a decade, microservices communicated using **REST APIs** over HTTP/1.1, transferring data using large, plain-text JSON payloads. While JSON is easy for humans to read, it is incredibly inefficient for computers to parse. 
+
+Google invented **gRPC** to solve the massive latency issues in their internal datacenters. 
+
+## Protocol Buffers (Protobuf)
+
+Instead of using JSON, gRPC uses **Protocol Buffers**. 
+You write a strict schema defining exactly what your data looks like. The gRPC compiler then generates native client code (in Python, Go, Java, etc.). 
+When the Python microservice wants to send data, it doesn't build a massive JSON string. It serializes the data into a microscopic, highly compressed binary payload. 
+
+## The HTTP/2 Requirement
+
+gRPC strictly requires **HTTP/2**. It cannot run on HTTP/1.1.
+Because it rides on HTTP/2, it inherits massive architectural benefits:
+1. **Multiplexing**: Thousands of gRPC calls can happen simultaneously over a single TCP connection.
+2. **Bi-Directional Streaming**: Unlike REST (which is strictly request/response), gRPC allows the server to stream a continuous flow of thousands of binary updates back to the client in real-time.
+
+<Callout icon="warning" title="The Browser Limitation">
+  Because gRPC requires deep, low-level access to HTTP/2 frames, web browsers cannot use pure gRPC directly (Javascript does not have the required APIs). To use gRPC from a React frontend, you must use a proxy translation layer called **gRPC-Web**.
+</Callout>
+
+</ConceptTemplate>

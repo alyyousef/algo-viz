@@ -1,0 +1,30 @@
+---
+title: Promises (Async/Await)
+description: An object representing the eventual completion or failure of an asynchronous operation.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Promises (Async/Await)">
+
+A Promise in JavaScript represents a value that may not be available yet, but will be resolved at some point in the future (or rejected with an error). It is the modern replacement for "Callback Hell".
+
+<Callout icon="success" title="Async / Await">
+  Introduced in ES2017, `async/await` is syntactic sugar on top of Promises. It allows you to write asynchronous, non-blocking code that *looks* exactly like synchronous, top-to-bottom code.
+</Callout>
+
+## The Three States of a Promise
+
+<ComparisonTable 
+  headers={['State', 'Description', 'Action']}
+  rows={[
+    ['Pending', 'The initial state. The operation has not completed yet.', 'Waiting...'],
+    ['Fulfilled', 'The operation completed successfully.', 'Triggers the `.then()` block.'],
+    ['Rejected', 'The operation failed (e.g., Network Error).', 'Triggers the `.catch()` block.']
+  ]}
+/>
+
+## Microtask Queue
+
+Promises have higher priority than standard `setTimeout` callbacks. When a Promise resolves, its `.then()` callback is pushed to the **Microtask Queue**, which the Event Loop empties completely before looking at the standard Task Queue.
+
+</TechnologyTemplate>

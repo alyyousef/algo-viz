@@ -1,4 +1,4 @@
-import { dsaRouteDefinitions } from '@/features/dsa/routeManifest'
+// Import removed because we load dynamically
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
@@ -10,8 +10,6 @@ export interface DesktopSearchEntry {
   routeLabel: string
   matchText: string
 }
-
-const cleanSegmentLabel = (segment: string): string => segment.replace(/^\d+\.\s*/, '').trim()
 
 const normalizeText = (value: string): string =>
   value
@@ -29,24 +27,21 @@ const compareEntries = (left: DesktopSearchEntry, right: DesktopSearchEntry): nu
   return collator.compare(left.title, right.title)
 }
 
-export const desktopSearchEntries: DesktopSearchEntry[] = dsaRouteDefinitions
-  .map(({ filePath, path, segments }) => {
-    const labels = segments.map(cleanSegmentLabel)
-    const title = labels[labels.length - 1] ?? path
-    const breadcrumb = labels.slice(0, -1).join(' / ')
-    const routeLabel = path.replace(/^\/dsa\//, 'dsa/')
-    const matchText = normalizeText(`${labels.join(' ')} ${path}`)
+export let desktopSearchEntries: DesktopSearchEntry[] = []
 
-    return {
-      id: filePath,
-      title,
-      breadcrumb,
-      route: path,
-      routeLabel,
-      matchText,
+export const loadDesktopSearchEntries = async (): Promise<void> => {
+  if (desktopSearchEntries.length > 0) {
+    return
+  }
+  try {
+    const response = await fetch('/search-index.json')
+    if (response.ok) {
+      desktopSearchEntries = (await response.json()) as DesktopSearchEntry[]
     }
-  })
-  .sort(compareEntries)
+  } catch (error) {
+    console.error('Failed to load search index:', error)
+  }
+}
 
 const applyLimit = (entries: DesktopSearchEntry[], limit?: number): DesktopSearchEntry[] => {
   if (limit === undefined) {

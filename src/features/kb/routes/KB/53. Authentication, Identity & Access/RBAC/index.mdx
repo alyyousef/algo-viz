@@ -1,0 +1,27 @@
+---
+title: Role-Based Access Control (RBAC)
+description: An approach to restricting system access to authorized users based on their role within an organization.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Role-Based Access Control (RBAC)">
+
+Role-based access control (RBAC) is a policy-neutral access-control mechanism defined around roles and privileges. The components of RBAC such as role-permissions, user-role and role-role relationships make it simple to perform user assignments.
+
+<Callout icon="info" title="Users vs Roles vs Permissions">
+  In RBAC, you never assign a Permission (e.g., "CanDeleteUser") directly to a User (e.g., "Alice").
+  
+  Instead, you assign the Permission to a Role ("Admin"), and you assign the User to the Role. This makes managing thousands of employees trivial.
+</Callout>
+
+## RBAC vs ABAC
+
+<ComparisonTable 
+  headers={['Model', 'Description', 'Example Rule']}
+  rows={[
+    ['RBAC (Role-Based)', 'Permissions are strictly tied to static Roles.', 'Only users with the "Manager" role can approve expenses.'],
+    ['ABAC (Attribute-Based)', 'Permissions are dynamically evaluated based on attributes of the user, the resource, and the environment.', 'Only users in the "Finance" department can approve expenses, AND only if they are accessing the system from the office IP address, AND only during business hours.']
+  ]}
+/>
+
+</TechnologyTemplate>

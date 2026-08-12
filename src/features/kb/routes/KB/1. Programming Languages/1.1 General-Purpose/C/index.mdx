@@ -1,0 +1,32 @@
+---
+title: C
+description: A foundational, low-level imperative programming language that powers modern operating systems.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="C Programming Language" 
+  category="Programming Languages" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg"
+>
+
+**C** is arguably the most important programming language in history. Created by Dennis Ritchie at Bell Labs in 1972 to build the UNIX operating system, it strikes a balance between low-level hardware control (like Assembly) and high-level human readability.
+
+<Callout icon="warning" title="With Great Power...">
+  C is famous for providing direct memory access via **Pointers** and manual memory management (using `malloc` and `free`). The compiler trusts the programmer completely. If you accidentally write data past the end of an array, C will not stop you; it will simply overwrite whatever happens to be in RAM at that location, leading to the infamous "Segmentation Fault" or severe security vulnerabilities.
+</Callout>
+
+## Key Characteristics
+
+- **Compiled and Procedural**: Code is compiled directly into raw machine code for a specific CPU architecture. It relies heavily on functions and structural blocks.
+- **Minimalist**: The language itself is extremely small, leaving tasks like string manipulation, math, and I/O to the Standard Library (`libc`).
+- **Zero Overhead**: C does not have a Garbage Collector. It has no hidden background processes running. What you write is exactly what the CPU executes, making it blazing fast.
+
+## Use Cases
+
+Despite its age, C is absolutely dominant today in areas where performance and resource constraints are critical:
+- **Operating Systems**: The Linux, Windows, and macOS kernels are predominantly written in C.
+- **Embedded Systems**: Microcontrollers in cars, microwaves, and pacemakers.
+- **Language Interpreters**: The Python interpreter (CPython) and Ruby interpreter are written in C.
+
+</TechnologyTemplate>

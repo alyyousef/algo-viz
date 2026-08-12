@@ -1,0 +1,36 @@
+---
+title: JIT Compilation (Just-In-Time)
+description: A way of executing computer code that involves compilation during execution of a program – at run time.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="JIT Compilation (Just-In-Time)">
+
+In computing, just-in-time (JIT) compilation (also known as dynamic translation or run-time compilation) is a way of executing computer code that involves compilation during the execution of a program (at run time) rather than before execution.
+
+<Callout icon="tip" title="The Best of Both Worlds">
+  **AOT (Ahead-of-Time) Compilers** like C++ are extremely fast but require the developer to compile a new binary for every OS (Windows, Mac, Linux). 
+  
+  **Interpreters** like Python are highly portable but painfully slow.
+  
+  **JIT Compilers** (Java JVM, C# CLR, JavaScript V8) combine both. The code is distributed as portable Bytecode. When the user runs the app, the JIT compiler instantly turns that Bytecode into blazing-fast machine code specifically optimized for that exact user's CPU.
+</Callout>
+
+## How JIT Works (The V8 Engine)
+
+Modern engines like Google Chrome's V8 use extremely advanced, multi-tier JIT systems.
+
+<ComparisonTable 
+  headers={['Component', 'Role']}
+  rows={[
+    ['Interpreter (Ignition)', 'Starts running the code instantly to get the web page loading. It is slow, but requires zero startup time.'],
+    ['Profiler', 'Silently watches the interpreter. It counts which functions are executed the most (identifying "Hot" code).'],
+    ['Optimizing JIT (TurboFan)', 'Takes the "Hot" code and spends CPU cycles to compile it into highly optimized, bare-metal Machine Code. Next time the function runs, it runs at C++ speeds.']
+  ]}
+/>
+
+## Deoptimization (Bailing Out)
+
+Because JavaScript is dynamically typed, the JIT might optimize a function assuming the variable `x` is always an Integer. If, 10 minutes later, you pass a String into that function, the JIT throws away the optimized machine code (Deoptimizes) and falls back to the slow interpreter.
+
+</TechnologyTemplate>

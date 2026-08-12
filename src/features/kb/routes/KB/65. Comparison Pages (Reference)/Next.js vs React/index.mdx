@@ -1,0 +1,29 @@
+---
+title: Next.js vs React
+description: Understanding the difference between a UI Library and a full Meta-Framework.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Next.js vs React">
+
+A common point of confusion for beginners is the relationship between React and Next.js. You do not use one *or* the other; you use React *inside* Next.js.
+
+<Callout icon="info" title="Library vs Framework">
+  **React** is just a library for rendering UI components. It doesn't care about routing, server-side rendering, or API endpoints.
+  
+  **Next.js** is a full Framework built *on top* of React. It provides the routing, the server, image optimization, and backend API routes out of the box.
+</Callout>
+
+## Detailed Comparison
+
+<ComparisonTable 
+  headers={['Feature', 'React (Client-Side)', 'Next.js (Meta-Framework)']}
+  rows={[
+    ['Rendering', 'Client-Side Rendering (CSR). The browser downloads a blank HTML file and uses JS to draw the page.', 'Server-Side Rendering (SSR) and Static Site Generation (SSG). The server pre-builds the HTML.'],
+    ['SEO (Search Engines)', 'Poor. Web crawlers often see a blank page before the JS executes.', 'Excellent. Crawlers instantly see the fully rendered HTML.'],
+    ['Routing', 'Requires third-party libraries like `react-router-dom`.', 'Built-in App Router (file-system based routing).'],
+    ['Backend', 'No backend. You must build a separate Node/Express server.', 'Includes Server Actions and API Routes, allowing you to write backend code in the same project.']
+  ]}
+/>
+
+</TechnologyTemplate>

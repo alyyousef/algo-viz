@@ -1,0 +1,43 @@
+---
+title: Declarative Programming
+description: A paradigm that focuses on WHAT the program should accomplish without specifying exactly HOW to achieve it.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Declarative Programming">
+
+**Declarative Programming** is an umbrella paradigm (which includes Functional and Logic programming) that stands in direct contrast to Imperative programming.
+
+In the declarative paradigm, the programmer writes code that describes **WHAT** the desired outcome is, leaving the complex, step-by-step implementation details (the "HOW") to the underlying language compiler or engine.
+
+<Callout icon="success" title="The Restaurant Analogy">
+  Declarative programming is like ordering at a restaurant. You tell the waiter: "I want a medium-rare steak with fries." (The **WHAT**). 
+  You do *not* go into the kitchen and tell the chef to turn the stove to 400 degrees, cook for 5 minutes, flip, and plate (The **HOW**).
+</Callout>
+
+## Classic Examples
+
+The most famous declarative languages are not general-purpose programming languages, but domain-specific ones:
+
+- **SQL**: You declare `SELECT * FROM users WHERE age > 18`. You don't write a `for` loop to iterate over the database sectors. The SQL engine figures out the fastest way to fetch it.
+- **HTML/CSS**: You declare `<button>Click</button>`. You don't write the imperative C++ code to draw a rectangle on the screen pixel-by-pixel.
+- **React**: Modern UI frameworks are declarative. You declare "When the state is X, the UI should look like Y." React automatically handles the complex DOM manipulations to make it happen.
+
+## Example
+
+Filtering an array of numbers to only include evens (Declarative approach using JavaScript's functional methods):
+
+```javascript
+const numbers = [1, 2, 3, 4];
+
+// We declare WHAT we want (filter for evens).
+// The JS engine handles the looping mechanism under the hood.
+const evens = numbers.filter(n => n % 2 === 0);
+```
+
+## Strengths and Weaknesses
+
+- **Strengths**: Code is significantly shorter, more readable, and less prone to off-by-one errors. It is highly composable and allows the underlying engine to aggressively optimize the execution.
+- **Weaknesses**: When performance is highly critical, or the underlying engine's abstraction "leaks," you may lose the fine-grained control needed to optimize the hardware usage.
+
+</ConceptTemplate>

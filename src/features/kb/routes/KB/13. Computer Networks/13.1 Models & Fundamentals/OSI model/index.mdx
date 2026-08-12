@@ -1,0 +1,29 @@
+---
+title: OSI Model
+description: The foundational 7-layer conceptual framework used to understand and standardize how different computer systems communicate.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="OSI Model">
+
+The **Open Systems Interconnection (OSI) Model** was developed by the ISO in 1984. It does not dictate exactly how hardware should be built; rather, it provides a universal, conceptual 7-layer framework to describe the functions of a networking system.
+
+If a network engineer says, *"We are experiencing a Layer 2 loop"*, every other engineer immediately knows exactly which hardware and protocols are involved.
+
+## The 7 Layers
+
+From bottom (hardware) to top (software):
+
+1. **Physical (Layer 1)**: The absolute raw hardware. Cables, electrical voltages, radio frequencies, and fiber optic light pulses. (Hubs, Cables).
+2. **Data Link (Layer 2)**: Node-to-node data transfer within the *same* local network. Handles physical addressing. (MAC Addresses, Switches, Ethernet).
+3. **Network (Layer 3)**: Routing data *between different* networks across the globe. Handles logical addressing. (IP Addresses, Routers).
+4. **Transport (Layer 4)**: Ensures data arrives reliably, in order, and assigns it to the correct application via Ports. (TCP, UDP).
+5. **Session (Layer 5)**: Establishes, manages, and terminates persistent connections between two computers.
+6. **Presentation (Layer 6)**: Formats, encrypts, and compresses data so the application can read it (e.g., SSL/TLS encryption, JPEG formatting).
+7. **Application (Layer 7)**: The software interface the user actually interacts with. (HTTP, FTP, SMTP, DNS).
+
+<Callout icon="info" title="Encapsulation (The Russian Doll)">
+  When you send an email (Layer 7), the data travels *down* the stack on your computer. Each layer adds its own specific "Header" to the data. By the time it hits Layer 1, it is a massive nested package (encapsulation). When the server receives it, the data travels *up* the stack, with each layer stripping off its respective header (decapsulation).
+</Callout>
+
+</ConceptTemplate>

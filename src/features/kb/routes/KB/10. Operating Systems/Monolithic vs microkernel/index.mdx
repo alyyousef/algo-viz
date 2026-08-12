@@ -1,0 +1,29 @@
+---
+title: Monolithic vs Microkernel
+description: The fundamental architectural debate regarding how much code should actually live inside the highly privileged Kernel Space.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Monolithic vs Microkernel">
+
+Since any bug in Kernel Space crashes the entire computer, OS architects face a massive design decision: *How much code should we actually put in the Kernel?*
+
+This resulted in a famous architectural war in the 1990s between Linus Torvalds (creator of Linux) and Andrew Tanenbaum (creator of MINIX).
+
+## 1. The Monolithic Kernel (Linux, Windows)
+In a Monolithic architecture, **everything** runs in Kernel Space (Ring 0). This includes the core scheduler, the memory manager, the file system drivers (NTFS, EXT4), and every single device driver (Graphics cards, USB controllers). 
+- **Pros**: It is blisteringly fast. Because everything is in the same memory space, the components can talk to each other instantly without overhead. 
+- **Cons**: It is incredibly dangerous. If a third-party USB mouse driver has a bug, it crashes the entire server because it is running in Ring 0. The kernel binary is massive (millions of lines of code).
+
+## 2. The Microkernel (MINIX, QNX, L4)
+In a Microkernel architecture, the Kernel is stripped down to the absolute bare minimum: just CPU scheduling and basic IPC (Inter-Process Communication). 
+Everything else—file systems, network stacks, and device drivers—runs as standard programs in **User Space (Ring 3)**.
+- **Pros**: It is virtually indestructible. If the graphics driver crashes, the system doesn't BSOD. The Microkernel just notices the driver died and restarts it, all while the rest of the OS continues running flawlessly.
+- **Cons**: It is slow. Because drivers and filesystems are in User Space, they must constantly use IPC to send messages to the microkernel and to each other, resulting in thousands of high-overhead context switches per second.
+
+<Callout icon="info" title="Who Won?">
+  For desktop and server computing, **Monolithic won**. Linux and Windows are monolithic (though Windows uses a hybrid approach to push some drivers to user-space). 
+  However, for mission-critical systems (like pacemakers, fighter jets, and the OS running inside Intel's Management Engine), **Microkernels won** due to their mathematical provability and supreme stability.
+</Callout>
+
+</ConceptTemplate>

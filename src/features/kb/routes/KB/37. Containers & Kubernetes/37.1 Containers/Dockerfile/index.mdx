@@ -1,0 +1,48 @@
+---
+title: Dockerfile
+description: A text document containing all the commands a user could call on the command line to assemble a Docker image.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Dockerfile">
+
+A **Dockerfile** is the blueprint for a container. It is a simple, declarative text file that tells the Docker Engine exactly how to construct a Docker Image, step-by-step. 
+
+<Callout icon="success" title="Infrastructure as Code">
+  The Dockerfile represents a massive leap forward in operations. Instead of a systems administrator manually typing commands into a server to configure a runtime environment, the entire environment is codified into a 10-line text file. This file is committed to Git, allowing the environment to be version-controlled, peer-reviewed, and perfectly reproduced by CI/CD pipelines.
+</Callout>
+
+## Anatomy of a Dockerfile
+
+Every instruction in a Dockerfile adds a new "Layer" to the final image. Common instructions include:
+
+- **\`FROM\`**: The foundation. Every Dockerfile must start with a base image (e.g., \`FROM node:18-alpine\` or \`FROM ubuntu:22.04\`).
+- **\`WORKDIR\`**: Sets the working directory inside the container for all subsequent commands.
+- **\`COPY\`**: Copies files from your local laptop/host machine into the container's file system. (e.g., \`COPY package.json .\`).
+- **\`RUN\`**: Executes a shell command inside the container *during the build process*. Used for installing dependencies. (e.g., \`RUN npm install\`).
+- **\`EXPOSE\`**: Documents which port the container will listen on. (Purely informational; it does not actually publish the port).
+- **\`CMD\`**: The default command that executes *when the container starts running*. (e.g., \`CMD ["npm", "start"]\`).
+
+## The Layer Caching System
+
+Docker builds images extremely fast using a caching system. Each line in the Dockerfile creates a read-only cryptographic layer.
+If you change line 8 of a Dockerfile, Docker perfectly caches and reuses lines 1 through 7, and only rebuilds line 8 and onwards.
+
+### The Dependency Anti-Pattern
+Because of caching, the *order* of instructions is critical. 
+A common mistake is copying the entire source code *before* installing dependencies:
+\`\`\`dockerfile
+COPY . .
+RUN npm install
+\`\`\`
+If you change a single CSS file in your source code, the \`COPY\` layer breaks the cache, forcing \`npm install\` to re-download 500MB of dependencies every single time you build.
+
+**The Correct Way:**
+\`\`\`dockerfile
+COPY package.json .
+RUN npm install
+COPY . .
+\`\`\`
+Now, the \`npm install\` cache is only broken if the \`package.json\` file actually changes!
+
+</ConceptTemplate>

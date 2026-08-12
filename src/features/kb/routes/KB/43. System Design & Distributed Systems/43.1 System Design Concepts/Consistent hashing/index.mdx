@@ -1,0 +1,35 @@
+---
+title: Consistent Hashing
+description: A distributed hashing scheme that minimizes data reorganization when servers are added or removed from a cluster.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Consistent Hashing">
+
+**Consistent Hashing** is an elegant algorithm used in distributed systems (like distributed caches or NoSQL databases) to distribute data evenly across a cluster of servers, while minimizing the disruption caused when servers crash or new servers are added.
+
+<Callout icon="error" title="The Problem with Standard Hashing">
+  Normally, to route a request for user `Bob` to a server, you hash his name and modulo the number of servers: `hash("Bob") % 4 servers = Server 2`. 
+  But what happens if you add a 5th server? The formula becomes `hash("Bob") % 5`. The result changes completely. Adding a single server causes nearly 100% of the data to remap to entirely different servers, resulting in a catastrophic cache miss storm.
+</Callout>
+
+## The Hash Ring
+
+Consistent Hashing solves this by mapping both the **Data Keys** and the **Servers** themselves onto a conceptual circle (the Hash Ring), typically representing the output range of a hash function (e.g., $0$ to $2^{32}-1$).
+
+1. **Place the Servers**: Hash the IP addresses of your 4 servers. Plot them as 4 points on the ring.
+2. **Place the Data**: Hash the key "Bob". Plot it on the same ring.
+3. **Routing Rule**: To find which server owns "Bob", start at Bob's position on the ring and move clockwise. The first Server you hit is the owner.
+
+## Handling Node Churn
+
+The brilliance of Consistent Hashing is revealed when the cluster changes:
+- **Adding a Server**: If a new server is added to the ring, it only takes over the keys that fall between it and the previous server counter-clockwise. Only a tiny fraction ($1/N$) of the data needs to move.
+- **Removing a Server**: If a server crashes, its data is naturally inherited by the next server clockwise on the ring. The rest of the cluster is entirely unaffected.
+
+## Virtual Nodes
+
+A raw hash ring can lead to uneven data distribution (e.g., servers randomly clustering together, leaving one server responsible for 50% of the ring). 
+To fix this, systems use **Virtual Nodes**. Instead of mapping Server A to the ring once, they map it 100 times (e.g., `hash(ServerA_1)`, `hash(ServerA_2)`). This interleaves the servers across the ring, guaranteeing a perfectly balanced load.
+
+</ConceptTemplate>

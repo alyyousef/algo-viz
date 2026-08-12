@@ -1,0 +1,37 @@
+---
+title: cron
+description: The legendary time-based job scheduler used to automate recurring background tasks on Unix systems.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="cron">
+
+If you need a script to run every single night at 2:00 AM, you do not write a script with an infinite loop and a `sleep` command. You use **`cron`**.
+
+The `crond` daemon wakes up every single minute, checks a set of configuration files called "crontabs", and executes any commands scheduled for that specific minute.
+
+## The Crontab Syntax
+
+You edit your user's scheduled jobs by typing `crontab -e`. 
+The syntax consists of 5 time fields followed by the command to execute:
+
+```text
+* * * * * command_to_execute
+| | | | |
+| | | | +-- Day of the Week (0 - 7) (Sunday=0 or 7)
+| | | +---- Month (1 - 12)
+| | +------ Day of the Month (1 - 31)
+| +-------- Hour (0 - 23)
++---------- Minute (0 - 59)
+```
+
+### Examples:
+- **`0 2 * * * /backup.sh`**: Runs exactly at 2:00 AM every single day.
+- **`*/5 * * * * /monitor.sh`**: Runs every 5 minutes, 24/7.
+- **`0 0 * * 5 /report.sh`**: Runs at midnight, only on Fridays.
+
+<Callout icon="warning" title="Cron Environment Variables">
+  `cron` runs in a heavily stripped-down, non-interactive environment. It does NOT load your `~/.bashrc` file. Therefore, commands that rely on your personal `$PATH` variable will fail. Always use absolute paths in cron jobs (e.g., `/usr/bin/node /home/user/script.js`).
+</Callout>
+
+</ConceptTemplate>

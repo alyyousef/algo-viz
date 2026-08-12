@@ -1,0 +1,28 @@
+---
+title: Horizontal Scaling (Scaling Out)
+description: Scaling a system by adding more independent machines to a resource pool.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Horizontal Scaling">
+
+**Horizontal Scaling** (also known as "Scaling Out") is the process of expanding a system's capacity by adding more distinct computers (nodes) to the cluster, rather than upgrading the hardware of a single computer.
+
+<Callout icon="success" title="The Cloud Native Way">
+  Horizontal scaling is the foundation of modern cloud architecture. If your web server is overwhelmed by traffic, you don't buy a $50,000 supercomputer. You spin up 10 cheap, generic Linux servers and put a Load Balancer in front of them.
+</Callout>
+
+## Advantages
+
+1. **Infinite Theoretical Capacity**: Unlike vertical scaling, which is limited by the maximum size of a motherboard, you can theoretically add an infinite number of servers to a cluster (like Google or Netflix do).
+2. **Fault Tolerance / High Availability**: If you have 50 servers and 2 of them experience hardware failures, the load balancer routes around them. The user experiences zero downtime.
+3. **Cost Elasticity**: You can automatically scale out (add servers) during Black Friday traffic spikes, and automatically scale in (destroy servers) at 3 AM to save money.
+
+## The Challenge: State
+
+Horizontal scaling is incredibly easy for **Stateless** applications (like a web server that just renders HTML). Because the servers don't store any data locally, a request can be sent to any server safely.
+
+However, horizontal scaling is incredibly difficult for **Stateful** applications (like Databases). 
+If you have 5 database servers, how do you ensure that data written to Server A is immediately visible to a user reading from Server B? This requires complex distributed systems engineering, such as Replication, Sharding, and Consensus Algorithms, which bring massive complexity and latency overhead.
+
+</ConceptTemplate>

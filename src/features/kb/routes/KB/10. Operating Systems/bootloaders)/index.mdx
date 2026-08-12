@@ -1,0 +1,27 @@
+---
+title: Bootloaders (GRUB & Bootmgr)
+description: The specialized software responsible for loading the massive OS Kernel into RAM and transitioning the CPU into protected mode.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Bootloaders">
+
+Once the motherboard's firmware (UEFI) finishes its hardware checks, it hands execution control over to the **Bootloader**. 
+
+The bootloader is a highly specialized piece of software (like **GRUB** for Linux, or **Windows Boot Manager**) that sits on a special partition of your hard drive (the EFI System Partition). 
+
+<Callout icon="info" title="Why do we need a Bootloader?">
+  The motherboard firmware is too simple to understand complex operating systems. It doesn't know what a Kernel is, and it doesn't know how to read advanced filesystems. The Bootloader acts as the crucial middleman: it is smart enough to read the hard drive's filesystem, find the massive OS Kernel file, and load it into RAM.
+</Callout>
+
+## The Bootloader's Job
+
+1. **Filesystem Drivers**: The bootloader contains just enough code to read basic filesystems (like FAT32 or EXT4). 
+2. **The Menu**: If you have multiple operating systems installed (e.g., Dual Booting Linux and Windows), the bootloader presents a menu allowing you to choose which OS to boot.
+3. **Loading the Kernel**: It locates the OS Kernel file (e.g., `vmlinuz` on Linux or `ntoskrnl.exe` on Windows) and copies it from the SSD into main RAM.
+4. **Setting up the Environment**: Historically, CPUs boot in 16-bit "Real Mode" for backwards compatibility. The bootloader is responsible for switching the CPU into 32-bit or 64-bit "Protected Mode" and enabling basic Paging.
+5. **The Handoff**: Once the Kernel is in RAM and the CPU is configured, the bootloader points the CPU's instruction pointer at the very first line of Kernel code and permanently exits. 
+
+From that millisecond forward, the Operating System Kernel is awake, in RAM, and in total control of the machine.
+
+</ConceptTemplate>

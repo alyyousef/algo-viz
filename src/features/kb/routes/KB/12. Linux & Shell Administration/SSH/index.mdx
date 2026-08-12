@@ -1,0 +1,29 @@
+---
+title: SSH (Secure Shell)
+description: The ubiquitous, cryptographically secure protocol used by administrators to remotely control Linux servers over the internet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="SSH (Secure Shell)">
+
+Before 1995, sysadmins logged into remote servers using protocols like Telnet. Telnet sent every keystroke (including the root password) over the internet in plain text, meaning anyone on the network could trivially intercept it.
+
+**SSH (Secure Shell)** was invented to solve this. It creates a cryptographically secure, encrypted tunnel between your laptop and a remote server. Today, SSH operates on **Port 22** and is the absolute foundation of modern cloud infrastructure management.
+
+## Public Key Authentication
+
+While you *can* log in via SSH using a password, it is highly discouraged due to brute-force attacks. The enterprise standard is **Public Key Authentication**.
+
+1. You run `ssh-keygen` on your laptop, generating two cryptographically linked files: a **Private Key** (which you never share) and a **Public Key**.
+2. You append your Public Key to the remote server's `~/.ssh/authorized_keys` file.
+3. When you run `ssh user@server`, the server sends a mathematical puzzle that can *only* be solved if you possess the Private Key. 
+4. Your laptop solves the puzzle in milliseconds, proving your identity, and the server lets you in without ever transmitting a password.
+
+<Callout icon="warning" title="Disabling Root Login">
+  A fundamental security practice on all public-facing Linux servers is modifying the `/etc/ssh/sshd_config` file to set `PermitRootLogin no`. This prevents hackers from directly brute-forcing the Root account. Admins must log in as a standard user first, and then use `sudo`.
+</Callout>
+
+## SSH Tunneling (Port Forwarding)
+Because SSH creates an unbreakable encrypted tunnel, you can force other network traffic through it. Using SSH Local Port Forwarding, you can securely access a private database running on a remote cloud server as if the database was running on `localhost` on your laptop.
+
+</ConceptTemplate>

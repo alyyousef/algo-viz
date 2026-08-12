@@ -1,0 +1,28 @@
+---
+title: MQTT (Message Queuing Telemetry Transport)
+description: An extremely lightweight, publish-subscribe messaging protocol designed specifically for IoT devices with terrible battery life and horrible internet connections.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="MQTT (Message Queuing Telemetry Transport)">
+
+If you have a smart-farm soil sensor running on a tiny solar panel, attempting to transmit data over a 2G cellular network with 80% packet loss, you cannot use HTTP. Setting up a TCP handshake, TLS encryption, and sending massive HTTP headers will instantly drain the battery and fail due to latency.
+
+You use **MQTT**. It is the undisputed king of IoT (Internet of Things) communication.
+
+## The Publish-Subscribe Architecture
+
+MQTT does not use client-server API endpoints. It uses a **Broker**.
+- The soil sensor **Publishes** a tiny message to a "Topic" on the Broker: `farm/field1/moisture = 45%`
+- The farmer's dashboard app **Subscribes** to `farm/#`. 
+- The moment the broker receives the tiny message from the sensor, it instantly pushes it to the farmer's dashboard.
+
+## Why it Dominates IoT
+1. **Microscopic Footprint**: The MQTT header is only **2 bytes** long (compared to HTTP's hundreds of bytes).
+2. **Quality of Service (QoS)**: MQTT allows the sensor to choose exactly how reliable the network needs to be. 
+   - **QoS 0**: "Fire and forget." (If the network drops it, whatever).
+   - **QoS 1**: "Guarantee it arrives at least once."
+   - **QoS 2**: "Mathematically guarantee it arrives exactly once."
+3. **Last Will and Testament**: If the battery on the sensor dies, it stops pinging the Broker. The Broker realizes the connection dropped and instantly broadcasts a "Last Will" message to the farmer's dashboard warning that the sensor has died.
+
+</ConceptTemplate>

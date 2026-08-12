@@ -1,0 +1,34 @@
+---
+title: Completely Fair Scheduler (CFS)
+description: The highly advanced, mathematically elegant CPU scheduling algorithm that powered the Linux Kernel from 2007 to 2023.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Completely Fair Scheduler (CFS)">
+
+The **Completely Fair Scheduler (CFS)**, written by Ingo Molnár, was the default CPU scheduler in the Linux Kernel from version 2.6.23 (2007) until version 6.6 (2023). 
+
+Unlike legacy schedulers that relied on complex heuristics, fixed time slices, and multiple priority queues, CFS used a mathematically pure approach based on an idealized concept of a "perfect multitasking CPU."
+
+<Callout icon="success" title="The Perfect CPU">
+  Imagine a perfect CPU. If there are 4 processes running, a perfect CPU wouldn't switch between them. It would run all 4 simultaneously, perfectly dividing its power so each gets exactly 25% of the CPU's processing power at all times. 
+  CFS attempts to emulate this perfect CPU on real hardware.
+</Callout>
+
+## How CFS Works (The Red-Black Tree)
+
+CFS does not use queues or fixed Time Quantums. Instead, it tracks a metric for every process called **vruntime (Virtual Runtime)**—the exact amount of nanoseconds a process has spent running on the CPU.
+
+1. CFS stores all runnable processes in a highly efficient **Red-Black Tree** (a self-balancing binary search tree), sorted by their `vruntime`. 
+2. The process that has spent the *least* amount of time on the CPU (the one that has been most starved) is always at the leftmost node of the tree.
+3. The Scheduler simply picks the leftmost node, runs it for a few milliseconds, and updates its `vruntime`. 
+4. Because its `vruntime` increased, it is mathematically re-inserted further to the right in the tree. The next most-starved process is now the new leftmost node.
+
+## Priority via Weights
+
+How does CFS handle Priority if it's "Completely Fair"? 
+It scales the flow of time. A high-priority task's `vruntime` increases *slower* than normal, keeping it on the left side of the tree and ensuring it gets picked by the scheduler much more frequently than a low-priority task.
+
+*(Note: In Linux 6.6, CFS was finally replaced by EEVDF (Earliest Eligible Virtual Deadline First) to better address latency issues on modern massive multi-core servers).*
+
+</ConceptTemplate>

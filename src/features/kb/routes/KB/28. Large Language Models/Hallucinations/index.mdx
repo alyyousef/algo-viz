@@ -1,0 +1,36 @@
+---
+title: Hallucinations
+description: Phenomenon where AI models confidently generate false or nonsensical information.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Hallucinations">
+
+In the context of Large Language Models (LLMs), a hallucination occurs when the model generates text that is grammatically correct and sounds confident, but is factually incorrect, nonsensical, or ungrounded in the provided source material.
+
+<Callout icon="warning" title="Not a Bug, A Feature">
+  Hallucinations are not a bug in the code; they are a fundamental feature of how generative AI works. LLMs are not databases looking up facts; they are probabilistic engines predicting the next most likely word. Sometimes, the most statistically likely sequence of words forms a factual lie.
+</Callout>
+
+## Why Hallucinations Happen
+
+1. **Training Data Gaps**: If the model was never trained on a specific niche topic, it will attempt to extrapolate based on similar words in its latent space, often resulting in plausible-sounding fiction.
+2. **Compression**: An LLM compresses terabytes of internet text into a few gigabytes of weights. Exact facts are lost, and only statistical relationships remain.
+3. **Sycophancy**: Models fine-tuned via RLHF (human feedback) are trained to be helpful and polite. They will often hallucinate to agree with a user's false premise rather than correct the user and risk a negative human rating.
+4. **Context Window Limitations**: If an prompt is too long, the model's attention mechanism may lose track of earlier constraints, causing it to drift off-topic and hallucinate.
+
+## Mitigation Strategies
+
+Because hallucinations cannot be 100% eliminated from the base architecture, engineers use external systems to bound the model's behavior.
+
+<ComparisonTable 
+  headers={['Strategy', 'Description']}
+  rows={[
+    ['RAG (Retrieval-Augmented Generation)', 'Providing the exact factual text in the prompt and strictly instructing the model: "Answer ONLY using the provided text."'],
+    ['Chain of Thought (CoT)', 'Forcing the model to write out its reasoning steps before providing an answer. This grounds the final token generation in the logic it just produced.'],
+    ['Temperature Control', 'Setting the API temperature parameter to 0.0 forces the model to always pick the most probable next token, reducing creative drift and hallucinations in factual tasks.'],
+    ['Self-Correction/Critique', 'Using a second LLM agent (or a second pass from the same model) to verify the output of the first model against a set of facts.']
+  ]}
+/>
+
+</TechnologyTemplate>

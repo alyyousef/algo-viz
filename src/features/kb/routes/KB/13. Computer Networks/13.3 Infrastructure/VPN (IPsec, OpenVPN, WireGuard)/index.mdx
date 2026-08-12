@@ -1,0 +1,26 @@
+---
+title: VPN (IPsec, OpenVPN, WireGuard)
+description: Technologies used to create mathematically encrypted, private network tunnels directly through the hostile, public internet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="VPN (IPsec, OpenVPN, WireGuard)">
+
+A **VPN (Virtual Private Network)** allows you to create a secure, encrypted tunnel across the public internet. 
+For example, if you are sitting in a Starbucks in New York, a VPN allows your laptop to securely tunnel into your corporate office in London. Your laptop receives a London Private IP address, and it behaves exactly as if you were physically plugged into the switch in the London office.
+
+## The Big Three Protocols
+
+There are three major VPN protocols used in modern infrastructure:
+
+### 1. IPsec (Internet Protocol Security)
+Built directly into the Linux Kernel, **IPsec** is the absolute enterprise standard for **Site-to-Site VPNs**. If you need to permanently connect an entire office building in Tokyo to an office building in Berlin, the two routers will use IPsec. It operates strictly at Layer 3. It is incredibly fast, but notoriously difficult to configure, requiring massive amounts of complex cryptographic negotiation (IKEv2).
+
+### 2. OpenVPN
+For decades, **OpenVPN** was the standard for **Client-to-Site** VPNs (e.g., a single employee logging into the office). It operates in "User Space" (Layer 7) and uses standard TLS/SSL for encryption. Because it can run on TCP Port 443, it perfectly mimics standard HTTPS web traffic, making it incredibly easy to punch through strict corporate firewalls. However, because it runs in User Space, it is notoriously slow and CPU-heavy.
+
+### 3. WireGuard
+**WireGuard** is the modern revolution. Added directly into the Linux Kernel in 2020, it is a devastatingly simple, ultra-fast VPN protocol. 
+While OpenVPN has 100,000+ lines of bloated C code, WireGuard has roughly 4,000. It abandons all legacy cryptographic algorithms in favor of a single, highly optimized, state-of-the-art math cipher (ChaCha20). It is significantly faster than OpenVPN, consumes barely any battery on mobile devices, and connects instantly.
+
+</ConceptTemplate>

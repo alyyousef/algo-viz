@@ -1,0 +1,28 @@
+---
+title: AWS vs Google Cloud Platform (GCP)
+description: Comparing the market leader against the king of data and machine learning.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="AWS vs Google Cloud Platform (GCP)">
+
+While AWS is the dominant market leader for general compute, Google Cloud Platform (GCP) has carved out a massive niche by exposing the internal tools Google built to run Search and YouTube to the public.
+
+<Callout icon="success" title="The Google Advantage">
+  If your startup is heavily focused on Big Data analytics (BigQuery) or Machine Learning (TensorFlow/Vertex AI), GCP is often considered far superior to AWS. Furthermore, because Google created Kubernetes, their managed GKE service is widely considered the best in the industry.
+</Callout>
+
+## Service Equivalents
+
+<ComparisonTable 
+  headers={['Category', 'AWS', 'GCP']}
+  rows={[
+    ['Virtual Machines', 'EC2', 'Compute Engine'],
+    ['Object Storage', 'S3', 'Cloud Storage'],
+    ['Data Warehouse', 'Redshift', 'BigQuery'],
+    ['Managed Kubernetes', 'EKS', 'Google Kubernetes Engine (GKE)'],
+    ['Serverless Container', 'Fargate', 'Cloud Run']
+  ]}
+/>
+
+</TechnologyTemplate>

@@ -1,0 +1,44 @@
+---
+title: Disjoint Sets (Union-Find)
+description: A data structure that tracks a set of elements partitioned into a number of disjoint (non-overlapping) subsets.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Disjoint Sets (Union-Find)">
+
+The **Disjoint Set** data structure (often called the **Union-Find** data structure) is a specialized tool used to keep track of a set of elements partitioned into non-overlapping subsets. It provides near-instantaneous answers to the question: "Are these two items in the same group?"
+
+<Callout icon="info" title="The Core Operations">
+  The structure is defined by two primary operations:
+  1. **Find**: Determine which subset a particular element is in. This is usually implemented by returning a "representative" or "root" element of that subset.
+  2. **Union**: Join two subsets into a single subset.
+</Callout>
+
+## How it Works (Tree Representation)
+
+Unlike traditional trees, Union-Find is often implemented using a simple flat array where `parent[i]` points to the parent of node `i`.
+- Initially, every element is in its own subset, so `parent[i] = i` (every node is its own root).
+- To **Union** $A$ and $B$, you find the root of $A$'s tree, and point it to the root of $B$'s tree.
+
+## The Two Crucial Optimizations
+
+A naive Union-Find implementation can degrade into a linked list, making operations $O(n)$. However, two brilliant optimizations make the time complexity practically constant.
+
+### 1. Path Compression (Optimizing `Find`)
+When you execute `Find(x)`, the algorithm traverses up the tree to find the root. **Path Compression** modifies the tree during this traversal: every node visited along the way is directly reattached to the root node. The next time you call `Find` on any of those nodes, it takes $O(1)$ time.
+
+### 2. Union by Rank (Optimizing `Union`)
+When joining two trees, if you attach a tall tree under a short tree, the overall height increases. **Union by Rank** keeps track of the depth (rank) of each tree. It always attaches the root of the shorter tree to the root of the taller tree, ensuring the tree remains as flat as possible.
+
+## Time Complexity (Inverse Ackermann)
+
+By combining Path Compression and Union by Rank, the time complexity of operations becomes $O(\alpha(n))$, where $\alpha$ is the **Inverse Ackermann function**.
+This function grows so incredibly slowly that for all practical values of $n$ (even the number of atoms in the universe), $\alpha(n) < 5$. Therefore, the operations take **amortized $O(1)$ time**.
+
+## Practical Use Cases
+
+1. **Kruskal's Algorithm**: Finding the Minimum Spanning Tree of a graph. Union-Find is used to quickly check if adding an edge will create a cycle.
+2. **Cycle Detection**: Quickly detecting cycles in an undirected graph.
+3. **Image Processing**: Finding connected components (like the "paint bucket" fill tool in Photoshop).
+
+</ConceptTemplate>

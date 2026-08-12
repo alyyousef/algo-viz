@@ -1,0 +1,28 @@
+---
+title: Message Queues
+description: A form of asynchronous service-to-service communication used in serverless and microservices architectures.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Message Queues">
+
+Message queues provide an asynchronous communications protocol, meaning that the sender and receiver of the message do not need to interact with the message queue at the same time. Messages placed onto the queue are stored until the recipient retrieves them.
+
+<Callout icon="success" title="Traffic Spikes">
+  If you sell Taylor Swift tickets, 1 million people will hit "Buy" at exactly 9:00 AM. If your database processes 1,000 orders/sec, it will instantly crash.
+  
+  A Message Queue absorbs the 1 million requests instantly (because memory is fast), and then drips them to the database at a safe 1,000/sec over the next 15 minutes.
+</Callout>
+
+## Leading Technologies
+
+<ComparisonTable 
+  headers={['Queue', 'Characteristics']}
+  rows={[
+    ['RabbitMQ', 'The industry standard. Uses the AMQP protocol. Highly reliable, supports complex routing rules (exchanges).'],
+    ['AWS SQS', 'A fully managed queue by Amazon. Practically infinite scalability, but lacks complex routing logic.'],
+    ['Redis (Pub/Sub)', 'In-memory. Blisteringly fast, but if the Redis server reboots before the message is read, it is permanently lost.']
+  ]}
+/>
+
+</TechnologyTemplate>

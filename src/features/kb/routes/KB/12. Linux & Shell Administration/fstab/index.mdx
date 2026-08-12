@@ -1,0 +1,34 @@
+---
+title: fstab (File System Table)
+description: The critical system configuration file that dictates which hard drives are automatically mounted when the OS boots.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="fstab (File System Table)">
+
+In Linux, plugging a hard drive into the motherboard does not make it usable. You must physically "mount" the drive's filesystem (e.g., `/dev/sdb1`) to an empty directory in the root tree (e.g., `/mnt/database`).
+
+When the server reboots, all manual mounts are instantly forgotten. 
+To make a mount permanent, you must declare it in **`/etc/fstab`**.
+
+## The Syntax
+
+The `fstab` file uses a strict 6-column format:
+```text
+# Device/UUID      Mount_Point   Type   Options    Dump   Pass
+UUID=1a2b3c4d      /             ext4   defaults   0      1
+/dev/sdb1          /mnt/data     xfs    defaults   0      2
+10.0.0.5:/share    /mnt/nfs      nfs    ro         0      0
+```
+
+1. **Device**: The physical partition (or uniquely generated UUID).
+2. **Mount Point**: The directory where the drive should be attached.
+3. **Type**: The filesystem format (EXT4, XFS, NFS).
+4. **Options**: Mounting rules (e.g., `ro` for Read-Only, `noexec` to ban running scripts from the drive).
+5. **Dump & Pass**: Legacy fields for backup tools and filesystem checkers (`fsck`).
+
+<Callout icon="warning" title="The Boot-Loop Danger">
+  If you make a typo in `/etc/fstab` (e.g., spelling `ext4` as `ex4`), Linux will panic during the boot sequence because it cannot mount the drive, dropping the server into "Emergency Mode". You must always run `mount -a` immediately after editing the file to test the syntax before you ever reboot.
+</Callout>
+
+</ConceptTemplate>

@@ -1,0 +1,27 @@
+---
+title: Cloud Virtual Machines Comparison
+description: Comparing the foundational IaaS compute offerings across the major cloud providers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Cloud Virtual Machines Comparison">
+
+Infrastructure as a Service (IaaS) Virtual Machines are the absolute foundational building blocks of the cloud. You are renting a slice of a physical server in a massive data center.
+
+<Callout icon="tip" title="The Commodity Layer">
+  At the end of the day, a Linux VM is just a Linux VM. The actual compute performance across AWS, Azure, and GCP is nearly identical. The choice of provider usually comes down to pricing, billing flexibility, and integration with higher-level services.
+</Callout>
+
+## The Offerings
+
+<ComparisonTable 
+  headers={['Provider', 'Service Name', 'Key Differentiator']}
+  rows={[
+    ['Amazon Web Services', 'Amazon EC2', 'Incredible variety of instance types (Graviton ARM processors, massive GPU clusters). Very complex pricing.'],
+    ['Microsoft Azure', 'Azure Virtual Machines', 'Seamless integration with Windows Server licensing (Azure Hybrid Benefit saves massive costs).'],
+    ['Google Cloud (GCP)', 'Compute Engine', 'Custom Machine Types (you can request exactly 5 vCPUs and 13GB RAM, rather than paying for a pre-set size).'],
+    ['Oracle Cloud (OCI)', 'OCI Compute', 'Extremely aggressive pricing, often much cheaper for raw compute and outbound bandwidth than the Big Three.']
+  ]}
+/>
+
+</TechnologyTemplate>

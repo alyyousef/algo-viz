@@ -1,0 +1,46 @@
+---
+title: Pandas
+description: Open source data analysis and manipulation tool for Python.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Pandas">
+
+Pandas is a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, built on top of the Python programming language. It is the gold standard for data wrangling and preparation.
+
+<Callout icon="tip" title="Under the Hood">
+  Pandas is heavily dependent on NumPy. While NumPy provides the fundamental multi-dimensional array structures, Pandas provides high-level data structures like Series and DataFrames, along with SQL-like joining and filtering capabilities.
+</Callout>
+
+## Data Structures
+
+<ComparisonTable 
+  headers={['Structure', 'Dimensions', 'Description']}
+  rows={[
+    ['Series', '1D', 'A one-dimensional labeled array capable of holding any data type.'],
+    ['DataFrame', '2D', 'A two-dimensional, size-mutable, potentially heterogeneous tabular data structure (like a spreadsheet or SQL table).']
+  ]}
+/>
+
+## Common Operations
+
+```text
+{`import pandas as pd
+
+# Load data from a CSV file
+df = pd.read_csv('data.csv')
+
+# View the first 5 rows
+print(df.head())
+
+# Filter rows where age is greater than 30
+adults = df[df['age'] > 30]
+
+# Group by department and calculate the mean salary
+avg_salary = df.groupby('department')['salary'].mean()
+
+# Fill missing values
+df.fillna(0, inplace=True)`}
+```
+
+</TechnologyTemplate>

@@ -1,0 +1,29 @@
+---
+title: Authentication vs Authorization
+description: The fundamental difference between identity verification and access control.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Authentication vs Authorization">
+
+These two terms are constantly confused in cybersecurity, but they serve two entirely different, sequential purposes in system design.
+
+<Callout icon="info" title="The Airport Metaphor">
+  **Authentication (AuthN)** is showing your Passport at the TSA checkpoint. It proves *who you are*.
+  
+  **Authorization (AuthZ)** is handing your boarding pass to the flight attendant at the gate. It proves *what you are allowed to do* (board Flight 104 in Seat 12A).
+</Callout>
+
+## Detailed Comparison
+
+<ComparisonTable 
+  headers={['Aspect', 'Authentication (AuthN)', 'Authorization (AuthZ)']}
+  rows={[
+    ['Purpose', 'Verifies identity (Who is this?)', 'Verifies permissions (What can they do?)'],
+    ['Order of Operations', 'Always happens FIRST.', 'Always happens SECOND.'],
+    ['Common Technologies', 'Passwords, MFA, Biometrics, Passkeys.', 'RBAC, ABAC, JWT Scopes, OAuth 2.0.'],
+    ['Example Error Code', 'HTTP 401 Unauthorized (Technically means Unauthenticated).', 'HTTP 403 Forbidden.']
+  ]}
+/>
+
+</TechnologyTemplate>

@@ -1,0 +1,28 @@
+---
+title: Cookies
+description: The original, fundamental mechanism used to track state and remember users across the inherently stateless HTTP protocol.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Cookies">
+
+HTTP is mathematically stateless. Every request is completely isolated. If you log into Amazon, and then click "View Cart", the server has completely forgotten who you are.
+
+In 1994, Netscape invented **Cookies** to solve this.
+
+## How Cookies Work
+A Cookie is a tiny piece of text data (max 4KB) stored directly on the user's hard drive.
+
+1. **The Set-Cookie Header**: When you log in, the server generates a random Session ID (e.g., `xyz123`) and sends it in the HTTP Response header: 
+   `Set-Cookie: session=xyz123`
+2. **The Automatic Attachment**: The browser saves this cookie to disk. **Crucially, the browser will automatically inject this Cookie into the headers of every single future HTTP request sent to that specific domain.**
+3. **The Retrieval**: When you click "View Cart", the server reads the Cookie header, sees `session=xyz123`, checks its database, and remembers that you are Alice.
+
+## Critical Security Flags
+Because cookies contain authentication tokens, they are the primary target for hackers.
+
+- **HttpOnly**: By default, JavaScript can read cookies via `document.cookie`. If a hacker injects malicious JS into your site (XSS), they can steal the cookie. The `HttpOnly` flag completely bans JavaScript from touching the cookie. The browser will still attach it to network requests, but JS cannot read it.
+- **Secure**: Ensures the cookie is only ever transmitted over an encrypted HTTPS connection. If the user accidentally types `http://`, the browser will refuse to send the cookie, preventing packet sniffers from stealing it over open Wi-Fi.
+- **SameSite**: Defends against CSRF (Cross-Site Request Forgery) attacks by dictating exactly when cookies should be sent in cross-origin requests.
+
+</ConceptTemplate>

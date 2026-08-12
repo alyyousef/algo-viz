@@ -1,0 +1,27 @@
+---
+title: The Event Loop
+description: The secret to how JavaScript achieves asynchronous behavior on a single thread.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="The Event Loop">
+
+JavaScript is strictly a single-threaded language. It can only execute one line of code at a time. However, it can perform asynchronous operations (like waiting 5 seconds for a network request) without freezing the entire browser. This magic is handled by the Event Loop.
+
+<Callout icon="info" title="The Golden Rule">
+  **Never block the main thread.** If you run a `while(true)` loop in JavaScript, the Event Loop gets stuck. The browser cannot render pixels, handle clicks, or process network responses until that loop finishes.
+</Callout>
+
+## How it Works
+
+<ComparisonTable 
+  headers={['Component', 'Role']}
+  rows={[
+    ['Call Stack', 'Where your synchronous JS code actually runs. Functions are pushed on and popped off.'],
+    ['Web APIs', 'Provided by the Browser (or Node C++). `setTimeout` and `fetch` happen here, totally separate from the JS thread.'],
+    ['Callback Queue (Task Queue)', 'When a Web API finishes (e.g., the 5 seconds are up), it pushes the callback function into this queue.'],
+    ['The Event Loop', 'A continuous loop that looks at the Call Stack. If the Call Stack is EMPTY, it takes the first item from the Callback Queue and pushes it onto the Call Stack to execute.']
+  ]}
+/>
+
+</TechnologyTemplate>

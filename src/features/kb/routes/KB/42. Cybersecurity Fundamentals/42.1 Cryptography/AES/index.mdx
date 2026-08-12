@@ -1,0 +1,48 @@
+---
+title: Advanced Encryption Standard (AES)
+description: The global standard for symmetric block cipher encryption.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Advanced Encryption Standard (AES)">
+
+The Advanced Encryption Standard (AES) is a symmetric block cipher chosen by the U.S. government in 2001 to protect classified information. It is implemented in software and hardware throughout the world to encrypt sensitive data.
+
+<Callout icon="info" title="The Origins (Rijndael)">
+  In 1997, the NIST announced a global competition to find a replacement for the aging, easily broken DES (Data Encryption Standard). Two Belgian cryptographers, Joan Daemen and Vincent Rijmen, submitted a cipher called "Rijndael" (a portmanteau of their names). It won the competition and was renamed AES.
+</Callout>
+
+## How AES Works (Block Cipher)
+
+AES is a **symmetric** cipher, meaning it uses the exact same key to encrypt and decrypt. 
+It is a **block** cipher, meaning it doesn't encrypt data one letter at a time; it chops the data into fixed 128-bit blocks (16 bytes) and encrypts each block independently.
+
+AES supports three specific key lengths, which dictate the number of internal "rounds" (mathematical transformations) applied to the data:
+- **AES-128**: 128-bit key, 10 rounds.
+- **AES-192**: 192-bit key, 12 rounds.
+- **AES-256**: 256-bit key, 14 rounds. (Often mandated for Top Secret government data).
+
+### The Substitution-Permutation Network
+
+During each "round," AES applies four distinct mathematical operations to scramble the 128-bit block:
+1. **SubBytes**: Non-linear substitution (swapping bytes using a lookup table).
+2. **ShiftRows**: Cyclically shifting the rows of the data matrix.
+3. **MixColumns**: Combining the bytes in each column mathematically.
+4. **AddRoundKey**: XORing the data with a piece of the secret key.
+
+By repeating this chaos 10 to 14 times, the resulting ciphertext appears completely random and mathematically unrelated to the plaintext.
+
+## AES Modes of Operation
+
+Because AES only encrypts exactly 128 bits, we need a "Mode of Operation" to tell it how to handle a massive 1GB video file.
+
+<ComparisonTable 
+  headers={['Mode', 'Description', 'Verdict']}
+  rows={[
+    ['ECB (Electronic Codebook)', 'Encrypts every block identically. If two blocks have the same plaintext, they produce the same ciphertext. Creates visual patterns.', 'Insecure. Do not use.'],
+    ['CBC (Cipher Block Chaining)', 'XORs the previous ciphertext block into the next plaintext block before encrypting. Requires an Initialization Vector (IV).', 'Secure, but cannot be parallelized (slow).'],
+    ['GCM (Galois/Counter Mode)', 'Turns the block cipher into a stream cipher. Also provides built-in authentication (AEAD) to prove data wasn\'t tampered with.', 'The modern gold standard. Used in TLS/HTTPS.']
+  ]}
+/>
+
+</TechnologyTemplate>

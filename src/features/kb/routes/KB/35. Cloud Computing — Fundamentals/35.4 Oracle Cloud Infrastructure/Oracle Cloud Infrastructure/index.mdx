@@ -1,0 +1,55 @@
+---
+title: Oracle Cloud Infrastructure (OCI)
+description: Cloud computing platform offered by Oracle Corporation.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Oracle Cloud Infrastructure (OCI)">
+
+Oracle Cloud Infrastructure (OCI) is a deep and broad platform of public cloud services that enables customers to build and run a wide range of applications in a scalable, secure, highly available, and high-performance environment.
+
+<Callout icon="error" title="Market Position">
+  While not as large as the "Big 3" (AWS, Azure, GCP), OCI has carved out a massive niche for enterprises migrating extreme-performance legacy Oracle databases (Exadata) to the cloud, offering highly competitive pricing on bandwidth and compute.
+</Callout>
+
+## Core Compute Services
+
+<ComparisonTable 
+  headers={['Service', 'Description']}
+  rows={[
+    ['Compute Instances', 'Bare metal and virtual machine instances.'],
+    ['OKE (Oracle Kubernetes Engine)', 'Fully managed, scalable, and highly available service for deploying containerized applications.'],
+    ['Autonomous Database', 'Fully automated, self-driving database service optimized for transaction processing or data warehousing.']
+  ]}
+/>
+
+## Typical Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  subgraph VCN [Virtual Cloud Network]
+    LB(Load Balancer)
+    
+    subgraph App Subnet
+      App1(App Server 1)
+      App2(App Server 2)
+    end
+    
+    subgraph Data Subnet
+      ADW[(Autonomous Data Warehouse)]
+    end
+    
+    LB --> App1
+    LB --> App2
+    App1 --> ADW
+    App2 --> ADW
+  end
+  
+  Internet((Internet)) --> LB
+`} />
+
+## Pricing Advantage
+
+OCI is known for its aggressive pricing strategy, particularly regarding outbound data transfer (egress), which is notoriously expensive on AWS. OCI provides the first 10 TB of egress per month for free.
+
+</TechnologyTemplate>

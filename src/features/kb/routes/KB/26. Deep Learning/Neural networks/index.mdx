@@ -1,0 +1,57 @@
+---
+title: Neural Networks
+description: Computing systems inspired by the biological neural networks that constitute animal brains.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Neural Networks">
+
+An Artificial Neural Network (ANN) is a computational model inspired by the way biological neural networks in the human brain process information. It is the foundational architecture behind modern Deep Learning, allowing computers to "learn" from observational data.
+
+<Callout icon="info" title="The Universal Approximation Theorem">
+  A mathematically proven theorem stating that a neural network with just a single hidden layer containing a finite number of neurons can approximate *any* continuous function, given the right weights. In plain English: Neural networks can theoretically learn to solve any problem if given enough data and neurons.
+</Callout>
+
+## The Architecture of a Network
+
+Neural networks are composed of nodes (artificial neurons) arranged in distinct layers.
+
+<ComparisonTable 
+  headers={['Layer Type', 'Description']}
+  rows={[
+    ['Input Layer', 'Takes in raw data (e.g., the RGB values of pixels in an image).'],
+    ['Hidden Layers', 'The computational engine. The "Deep" in Deep Learning simply refers to having more than one Hidden Layer.'],
+    ['Output Layer', 'Produces the final prediction (e.g., "98% chance this image is a Cat").']
+  ]}
+/>
+
+## How Neurons Work
+
+Inside every single neuron, a simple mathematical operation occurs:
+1. It takes inputs from previous neurons and multiplies them by **Weights** (importance).
+2. It adds a **Bias** (an offset).
+3. It passes the sum through an **Activation Function** (like ReLU or Sigmoid) to introduce non-linearity, determining if the neuron should "fire" or not.
+
+<ArchitectureDiagram chart={`
+graph LR
+  X1[Input 1: 0.5]
+  X2[Input 2: 0.8]
+  X3[Input 3: 0.2]
+  
+  Neuron((Neuron))
+  
+  X1 -- "Weight: 0.4" --> Neuron
+  X2 -- "Weight: -0.2" --> Neuron
+  X3 -- "Weight: 0.9" --> Neuron
+  
+  Neuron -- "(Sum + Bias) -> Activation Function" --> Output[Output: 0.72]
+`} />
+
+## Training the Network
+
+Networks start completely randomized (dumb). They learn via:
+1. **Forward Propagation**: Passing data through to get a prediction.
+2. **Loss Function**: Calculating exactly how wrong the prediction was.
+3. **Backpropagation**: Going backward through the network, using calculus (Gradient Descent) to slightly adjust every single weight so the next prediction is less wrong.
+
+</TechnologyTemplate>

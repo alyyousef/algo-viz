@@ -1,0 +1,29 @@
+---
+title: zip & unzip
+description: The universally recognized, cross-platform archive format, primarily used to interface with Windows and macOS systems.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="zip & unzip">
+
+While Linux systems overwhelmingly prefer `.tar.gz` files, the rest of the computing world (Windows, macOS) uses **ZIP** files. 
+
+Because of this, the `zip` and `unzip` utilities are almost always installed on Linux servers to handle files uploaded by standard users.
+
+## How ZIP is Different from Gzip/Tar
+
+1. **All-in-One**: A single `.zip` file both bundles multiple files together (like `tar`) and compresses them (like `gzip`) simultaneously.
+2. **Individual Access**: If a Zip file contains 1,000 images, you can instantly extract exactly one specific image from it. A Tarball is a "Solid Archive", meaning to get the 1,000th image, the computer has to sequentially decompress the entire massive block from the very beginning.
+
+## Basic Usage
+
+- **Compressing a Directory (`-r` for Recursive)**:
+  `zip -r website_backup.zip /var/www/html/`
+- **Extracting a ZIP file**:
+  `unzip website_backup.zip -d /home/user/extracted/`
+
+<Callout icon="warning" title="Linux Metadata Loss">
+  Sysadmins never use ZIP files for internal Linux system backups. The ZIP format was originally designed for MS-DOS. It fundamentally does not understand advanced Linux filesystem metadata. If you ZIP a directory, it strips away File Ownership (UID/GID), advanced ACL permissions, and often breaks Symbolic Links, permanently destroying that metadata.
+</Callout>
+
+</ConceptTemplate>

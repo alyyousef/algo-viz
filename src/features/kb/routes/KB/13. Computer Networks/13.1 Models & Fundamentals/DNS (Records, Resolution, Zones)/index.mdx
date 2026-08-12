@@ -1,0 +1,33 @@
+---
+title: DNS (Records, Resolution, Zones)
+description: The Domain Name System, a hierarchical, distributed database that translates human-readable hostnames into machine-routable IP addresses.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="DNS (Records, Resolution, Zones)">
+
+Computers strictly route traffic using IP addresses. Humans are terrible at memorizing IP addresses, so we use domain names like `google.com`. 
+**DNS (Layer 7)** is the Phonebook of the Internet. It translates domains into IPs.
+
+## The Recursive Resolution Process
+
+When you type `amazon.com` into your browser, an incredibly complex lookup occurs in milliseconds:
+1. **Local Cache**: Your OS checks its local memory. If it doesn't know the IP, it asks your ISP's Recursive Resolver.
+2. **Root Servers**: The Resolver asks the global Root Servers (`.`). The Root server says, *"I don't know the IP, but I know who manages all `.com` domains. Ask the TLD server."*
+3. **TLD Servers**: The Resolver asks the `.com` Top-Level Domain server. The TLD says, *"I know who registered `amazon.com`. Ask their specific Authoritative Name Server."*
+4. **Authoritative Server**: The Resolver asks Amazon's server, which finally replies: *"The IP for `amazon.com` is 54.239.28.85."*
+
+## DNS Records
+
+An Authoritative Zone file contains different types of records:
+- **A Record**: Maps a domain directly to an **IPv4** address.
+- **AAAA Record**: Maps a domain directly to an **IPv6** address.
+- **CNAME**: An Alias. It maps a domain to another domain (e.g., `www.example.com` points to `example.com`). *A CNAME can never point directly to an IP.*
+- **MX (Mail Exchange)**: Tells the world exactly which server handles incoming emails for this domain.
+- **TXT**: Plain text records used heavily today to prove domain ownership and implement email anti-spam security (SPF, DKIM, DMARC).
+
+<Callout icon="warning" title="DNS Propagation">
+  Because DNS is distributed globally, resolvers cache answers for a set amount of time known as **TTL (Time to Live)**. If Amazon changes their IP address, but your ISP has a cached TTL of 24 hours, you will be routed to the dead IP address for 24 hours until the cache expires. Admins must lower the TTL to 5 minutes *before* migrating servers.
+</Callout>
+
+</ConceptTemplate>

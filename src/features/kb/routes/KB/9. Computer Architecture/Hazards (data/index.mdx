@@ -1,0 +1,43 @@
+---
+title: Data Hazards
+description: Conflicts in a pipelined CPU that occur when an instruction depends on the result of a previous instruction that hasn't finished executing yet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Data Hazards">
+
+While Pipelining allows a CPU to overlap multiple instructions simultaneously, it introduces severe synchronization problems known as **Hazards**. 
+
+A **Data Hazard** occurs when an instruction relies on a piece of data (usually sitting in a Register) that is currently being modified by a previous instruction still moving through the pipeline.
+
+<Callout icon="warning" title="The Race Condition">
+  Imagine these two assembly instructions:
+  1. `ADD RAX, RBX` (Add RBX to RAX, and save the result in RAX)
+  2. `SUB RCX, RAX` (Subtract RAX from RCX)
+
+  In a 5-stage pipeline, Instruction 2 enters the "Decode/Read Registers" stage *before* Instruction 1 has reached the "Write Back" stage. Instruction 2 will read the **old, stale value** of RAX, resulting in a completely corrupted math calculation.
+</Callout>
+
+## Types of Data Hazards
+
+There are three classic dependencies that cause data hazards (often referred to by the acronyms read/write):
+
+1. **RAW (Read After Write)**: (True Dependency). Instruction 2 needs to read a register that Instruction 1 hasn't written to yet. (Most common).
+2. **WAR (Write After Read)**: (Anti-Dependency). Instruction 2 needs to write to a register, but Instruction 1 hasn't read the old value yet.
+3. **WAW (Write After Write)**: (Output Dependency). Both instructions are writing to the same register, but Instruction 2 finishes first, leaving the older value in the register permanently.
+
+## Solutions to Data Hazards
+
+Hardware engineers use three primary techniques to fix data hazards without crashing the program:
+
+### 1. Pipeline Stalling (Bubbles)
+The simplest solution. The Control Unit detects the dependency and simply pauses Instruction 2 (injecting empty "bubbles" or NOPs into the pipeline) until Instruction 1 finishes writing. This guarantees correctness but wastes clock cycles, hurting performance.
+
+### 2. Forwarding (Bypassing)
+The brilliant hardware solution. The CPU realizes that Instruction 1 calculates the correct answer in the ALU during Stage 3 (Execute), even though it won't officially save the answer to the Register until Stage 5 (Write Back). 
+Forwarding physically wires the output of the ALU *directly back into the input of the ALU*. Instruction 2 can instantly use the answer from Instruction 1 without waiting for it to be saved to the register!
+
+### 3. Out-of-Order Execution
+If Instruction 2 is stuck waiting for Instruction 1, the CPU looks ahead at Instruction 3. If Instruction 3 doesn't depend on anything, the CPU will execute Instruction 3 *before* Instruction 2, keeping the pipeline perfectly full.
+
+</ConceptTemplate>

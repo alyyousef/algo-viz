@@ -1,0 +1,53 @@
+---
+title: Scikit-learn
+description: Machine learning library for the Python programming language.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Scikit-learn">
+
+Scikit-learn (formerly scikits.learn) is a free software machine learning library for the Python programming language. It features various classification, regression and clustering algorithms including support-vector machines, random forests, gradient boosting, and k-means.
+
+<Callout icon="tip" title="Classical Machine Learning">
+  While TensorFlow and PyTorch are the kings of Deep Learning, Scikit-learn remains the absolute standard for **Classical Machine Learning** on structured/tabular data. If you don't need a neural network, use Scikit-learn.
+</Callout>
+
+## Core API Design
+
+Scikit-learn is famous for its clean, uniform API. Almost all objects share a common interface:
+
+<ComparisonTable 
+  headers={['Method', 'Purpose', 'Object Types']}
+  rows={[
+    ['fit(X, y)', 'Trains the algorithm on the training data.', 'Estimators, Transformers'],
+    ['predict(X)', 'Predicts target values for new data.', 'Estimators'],
+    ['transform(X)', 'Transforms data (e.g., scaling, PCA).', 'Transformers'],
+    ['fit_transform(X)', 'Fits the model and transforms the data in one step.', 'Transformers']
+  ]}
+/>
+
+## Example Pipeline
+
+```text
+{`from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.datasets import load_iris
+
+# Load sample dataset
+X, y = load_iris(return_X_y=True)
+
+# Build a pipeline with scaling and classification
+pipe = Pipeline([
+    ('scaler', StandardScaler()),
+    ('rf', RandomForestClassifier(n_estimators=100))
+])
+
+# Train the model
+pipe.fit(X, y)
+
+# Predict on new data
+predictions = pipe.predict(X[:5])`}
+```
+
+</TechnologyTemplate>

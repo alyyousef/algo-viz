@@ -1,0 +1,28 @@
+---
+title: ARP (Address Resolution Protocol)
+description: The critical Layer 2 protocol used to mathematically translate a known Layer 3 IP address into an unknown Layer 2 MAC address.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="ARP (Address Resolution Protocol)">
+
+Your computer knows it wants to talk to a printer at IP address `192.168.1.50`. 
+However, Switches (Layer 2) do not understand IP addresses. They only understand MAC addresses. 
+
+Your computer cannot put the IP packet onto the Ethernet cable until it knows the exact, physical MAC address of the printer. 
+It uses **ARP (Address Resolution Protocol)** to find it.
+
+## The ARP Process
+
+1. **The ARP Request (Broadcast)**: 
+   Your computer blasts a message to every single device on the local network (using the broadcast MAC address `FF:FF:FF:FF:FF:FF`). It yells: *"WHO HAS IP 192.168.1.50? PLEASE TELL ME YOUR MAC ADDRESS."*
+2. **The ARP Reply (Unicast)**: 
+   Every computer ignores the shout except the printer. The printer replies directly back to your computer: *"I have 192.168.1.50! My MAC address is 00:1A:2B:3C:4D:5E."*
+3. **The ARP Cache**: 
+   Your computer saves this answer in its local RAM (the ARP Table) for a few minutes so it doesn't have to keep shouting every time it wants to print a page.
+
+<Callout icon="warning" title="ARP Spoofing (Poisoning)">
+  ARP was designed in the 1980s. It has zero authentication. If your computer asks "Who has the Router's IP?", a hacker on the same Wi-Fi network can instantly reply, *"I am the Router! Give me your traffic!"* Your computer will unquestioningly overwrite its ARP table, sending all its Internet traffic (and passwords) directly to the hacker. This is the foundation of Man-In-The-Middle (MITM) attacks.
+</Callout>
+
+</ConceptTemplate>

@@ -1,0 +1,41 @@
+---
+title: Instruction Set Architecture (ISA)
+description: The critical bridge between hardware and software, defining the exact vocabulary of commands a specific CPU understands.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Instruction Set Architecture (ISA)">
+
+A CPU is just a rock of silicon that reacts to electrical pulses. It does not understand C++, Python, or Java. It only understands raw binary \`1\`s and \`0\`s. 
+
+But *which* binary patterns mean what? If you send the binary \`10101010\` to the CPU, does it add two numbers, or does it reboot the computer? 
+The answer is defined by the **Instruction Set Architecture (ISA)**.
+
+<Callout icon="info" title="The Contract">
+  The ISA is the ultimate contract between software engineers and hardware engineers. 
+  Hardware engineers agree: "If you build your silicon to react to these specific binary patterns, it will run the code."
+  Software engineers (Compiler writers) agree: "If we compile our C++ code into these specific binary patterns, the hardware will execute it correctly."
+</Callout>
+
+## What does an ISA define?
+
+An ISA serves as the API for the hardware. It explicitly defines:
+1. **The Instructions**: The exact list of commands the CPU can execute (e.g., \`ADD\`, \`SUB\`, \`JUMP\`, \`LOAD\`, \`STORE\`).
+2. **The Registers**: How many General Purpose Registers exist, and how large they are (e.g., 16 registers, 64-bit wide).
+3. **Addressing Modes**: The specific rules for how the CPU can interact with RAM (e.g., can it read directly from RAM, or must it load data into a register first?).
+4. **Data Types**: Whether the hardware natively understands floating-point decimals, or only integers.
+
+## Assembly Language
+
+Because humans cannot read raw binary (\`10001011 01000101...\`), we created **Assembly Language**. Assembly is simply a human-readable text representation of the ISA. Every single Assembly command (like \`MOV EAX, 1\`) maps 1-to-1 to a raw binary instruction.
+
+Because different ISAs have different vocabularies, Assembly code is *not* portable. Assembly written for an Intel CPU (x86) will look completely different and fail to run on an Apple Silicon CPU (ARM).
+
+## The Big Two ISAs
+
+Today, the entire world is dominated by two primary ISAs, representing two entirely different design philosophies:
+
+1. **x86-64 (Intel & AMD)**: The absolute king of Desktop PCs, Laptops, and Cloud Servers. It is a **CISC** (Complex Instruction Set Computer) architecture, containing thousands of complex instructions.
+2. **ARM (Apple, Qualcomm, Samsung)**: The absolute king of Mobile Phones, IoT devices, and increasingly MacBooks (Apple Silicon). It is a **RISC** (Reduced Instruction Set Computer) architecture, focusing on power efficiency and simplicity.
+
+</ConceptTemplate>

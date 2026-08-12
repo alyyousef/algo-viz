@@ -1,0 +1,31 @@
+---
+title: Containers
+description: A standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Containers">
+
+A **Container** is an isolated, lightweight, and portable execution environment that bundles a software application along with all of its dependencies, libraries, and configuration files.
+
+<Callout icon="success" title="The 'It Works on My Machine' Solution">
+  Before containers, a developer would write Python code on a Mac, push it to a Linux server, and the server would crash because it had the wrong version of a C library installed. 
+  Containers solve this entirely. Because the container includes the exact OS libraries and dependencies the code needs, if it runs on the developer's laptop, it is mathematically guaranteed to run identically on the production server.
+</Callout>
+
+## Virtual Machines vs. Containers
+
+To understand containers, you must understand how they differ from traditional Virtual Machines (VMs).
+
+- **Virtual Machines**: A hypervisor allocates physical hardware to run a completely independent, full-blown "Guest Operating System" (like Windows or Ubuntu) for every single VM. This is extremely heavy. A VM might consume 2GB of RAM just to boot the OS, before running any application code.
+- **Containers**: Containers do **not** contain a full operating system. Instead, all containers running on a machine share the exact same underlying Host OS Kernel. The container only holds the application code and the specific user-space binaries it needs. This makes containers incredibly lightweight. They boot in milliseconds and consume only megabytes of RAM.
+
+## How do they work? (Linux Primitives)
+
+Containers are essentially an illusion created using three core features of the Linux Kernel:
+
+1. **Namespaces**: Provide isolation. They trick a process into thinking it is the only process running on the computer. A process in a container cannot see processes, network interfaces, or mount points outside of its namespace.
+2. **cgroups (Control Groups)**: Provide resource limits. They prevent a single container from consuming 100% of the CPU or RAM and starving the rest of the system.
+3. **Union File Systems (OverlayFS)**: Provide layered image management. They allow the container to share common base files (like the Ubuntu root filesystem) with other containers to save massive amounts of disk space.
+
+</ConceptTemplate>

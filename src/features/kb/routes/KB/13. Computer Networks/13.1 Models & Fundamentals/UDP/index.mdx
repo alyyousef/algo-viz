@@ -1,0 +1,32 @@
+---
+title: UDP (User Datagram Protocol)
+description: The blazing fast, connectionless Layer 4 protocol that sacrifices reliability in exchange for absolute minimum latency.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="UDP (User Datagram Protocol)">
+
+TCP is perfect, but perfection takes time. The 3-way handshake, sequence tracking, and retransmissions introduce heavy latency. 
+If you are playing a fast-paced multiplayer video game or on a live Zoom call, you do not want perfection. If a frame of video is dropped by a router, you don't want TCP to pause the video stream for 500ms to re-download the old frame; you want to immediately see the next frame.
+
+You use **UDP (User Datagram Protocol)**.
+
+## Fire and Forget
+
+UDP is a "Connectionless" protocol. There is no 3-way handshake. There are no sequence numbers. There are no Acknowledgments.
+
+If a server wants to send data via UDP, it simply slaps an IP address on the packet and blasts it onto the network. It has no idea if the packet arrived, if it arrived in the wrong order, or if the destination computer is even turned on. It is "Fire and Forget."
+
+## Primary Use Cases
+
+Because the UDP header is microscopic (8 bytes vs TCP's 20+ bytes), and it requires zero tracking overhead, it is used where speed is the only metric that matters:
+
+1. **Real-Time Streaming**: Voice over IP (VoIP), Zoom, Twitch streaming, and Multiplayer Gaming.
+2. **Micro-Transactions**: DNS uses UDP for lookups. When you ask for the IP of `google.com`, setting up a complex TCP handshake would take longer than the actual question. The computer just blasts the UDP question; if it doesn't get an answer in 2 seconds, it blasts it again.
+3. **Network Discovery**: DHCP uses UDP to blast its broadcast packets across the local subnet.
+
+<Callout icon="success" title="Application-Layer Reliability">
+  Just because UDP is "unreliable" doesn't mean your app is broken. Modern protocols (like the revolutionary **QUIC/HTTP3** protocol built by Google) actually use UDP at Layer 4 for massive speed gains, and then manually implement highly optimized error-checking and reliability directly inside the Application Layer (Layer 7).
+</Callout>
+
+</ConceptTemplate>

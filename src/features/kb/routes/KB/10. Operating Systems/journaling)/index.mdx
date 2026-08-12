@@ -1,0 +1,32 @@
+---
+title: Filesystem Journaling
+description: A catastrophic-recovery mechanism that prevents filesystems from corrupting when the computer violently loses power mid-write.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Filesystem Journaling">
+
+Saving a file is a highly complex operation. If you save a new photo to your desktop, the Filesystem must perform multiple physical writes to the hard drive:
+1. Write the actual image data to empty Data Blocks.
+2. Write a new Inode with the file's metadata.
+3. Update the Directory file to add the name "photo.jpg".
+4. Update the Superblock's free-space bitmap to mark the data blocks as taken.
+
+**The Danger:** What happens if the power goes out *exactly* after step 2, but before step 3? 
+The hard drive is now in a corrupt, inconsistent state. The data blocks are taken, but there is no file name pointing to them. The hard drive is permanently bleeding storage space (an Orphaned Inode).
+
+## The Solution: The Journal
+
+In the 1990s, recovering from this required running `fsck` (Filesystem Check), which would take hours to manually scan the entire 100GB hard drive looking for inconsistencies.
+
+Modern filesystems (NTFS, EXT4, APFS) solve this using a **Journal**. 
+The Journal is a small, dedicated scratchpad area on the hard drive. 
+
+<Callout icon="success" title="Write-Ahead Logging">
+  Before the filesystem modifies the actual hard drive, it writes a "Note to Self" in the Journal: *"I am about to write photo.jpg to Inode 50 and Data Block 99."*
+  Only after the Journal entry is safely saved to the disk does the filesystem actually perform the real writes. Once the real writes are finished, it crosses the note out of the Journal.
+</Callout>
+
+If the power violently goes out mid-write, the OS simply reboots, looks at the tiny Journal, sees the unfinished task, and either instantly finishes it or instantly rolls it back. The filesystem recovers from corruption in milliseconds, rather than hours.
+
+</ConceptTemplate>

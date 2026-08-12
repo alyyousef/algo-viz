@@ -1,0 +1,32 @@
+---
+title: Same-Origin Policy (SOP)
+description: The absolute foundational security mechanism of the web, preventing malicious websites from silently reading data from your banking tabs.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Same-Origin Policy (SOP)">
+
+If you log into your bank at `chase.com`, your browser saves an authentication cookie. 
+If you then open a new tab and visit `malicious-hacker.com`, what stops the hacker's JavaScript from running `fetch('https://chase.com/api/balance')`, reading the response, and stealing your money?
+
+The **Same-Origin Policy (SOP)**. 
+It is the absolute bedrock of web security.
+
+## The Definition of an "Origin"
+
+An "Origin" is mathematically defined as the exact combination of three things:
+1. **Protocol** (e.g., `https://`)
+2. **Domain** (e.g., `www.example.com`)
+3. **Port** (e.g., `:443`)
+
+If **any** of those three things differ, it is a Cross-Origin request.
+- `http://example.com` and `https://example.com` are different origins (different protocol).
+- `api.example.com` and `www.example.com` are different origins (different domain).
+
+## The Strict Rule
+
+The SOP strictly dictates: **JavaScript running on Origin A is completely banned from reading data from Origin B.**
+
+When `malicious-hacker.com` attempts to fetch your bank balance, the browser executes the network request, but when the data comes back, the browser intercepts it, checks the SOP rules, realizes the origins don't match, and aggressively blocks the JavaScript from reading the response.
+
+</ConceptTemplate>

@@ -1,0 +1,27 @@
+---
+title: systemd
+description: The massive, monolithic system and service manager that has become the default architecture for almost all modern Linux distributions.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="systemd">
+
+**systemd** is the software suite that fundamentally replaced the ancient SysVinit architecture. It is assigned **PID 1**, meaning it is the very first process launched by the Kernel, and it is responsible for booting the rest of the operating system.
+
+## The Architecture of Units
+
+Unlike legacy init systems that used messy bash scripts, `systemd` uses declarative, INI-style configuration files called **Units**. 
+There are multiple types of Units:
+- **`.service`**: Defines a background daemon (like Nginx or SSH).
+- **`.timer`**: The modern replacement for `cron`. It triggers other units at specific times.
+- **`.mount`**: Mounts filesystems (slowly replacing `/etc/fstab`).
+
+<Callout icon="success" title="Advanced Process Tracking (cgroups)">
+  In the old SysVinit days, if a web server spawned a child process, and then the parent crashed, the child process would become a "Zombie" floating invisibly in RAM forever. 
+  `systemd` solves this using Kernel **cgroups**. It places every service into an isolated tracking group. If you run `systemctl stop nginx`, `systemd` guarantees that the parent and every single child process it ever spawned are instantly executed.
+</Callout>
+
+## The Monolith
+`systemd` is highly controversial because it has absorbed massive amounts of OS functionality. It now handles system logging (`journald`), network configuration (`systemd-networkd`), DNS resolution (`systemd-resolved`), and even user login management (`systemd-logind`). 
+
+</ConceptTemplate>

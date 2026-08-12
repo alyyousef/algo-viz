@@ -1,0 +1,27 @@
+---
+title: JavaScript vs TypeScript
+description: A comparison between the dynamic web language and its strictly typed superset.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="JavaScript vs TypeScript">
+
+TypeScript is a syntactic superset of JavaScript, developed by Microsoft, which adds static typing to the language. Every valid JavaScript file is a valid TypeScript file, but TypeScript requires a compiler (`tsc`) to strip away the types and output raw JavaScript for the browser to run.
+
+<Callout icon="success" title="The Industry Standard">
+  TypeScript has essentially won the enterprise web development war. Catching type errors at compile-time (in VS Code) rather than at runtime (crashing in the user's browser) saves thousands of hours of debugging.
+</Callout>
+
+## Detailed Comparison
+
+<ComparisonTable 
+  headers={['Feature', 'JavaScript', 'TypeScript']}
+  rows={[
+    ['Typing', 'Dynamic. A variable can be a string, and then changed to a number later.', 'Static. If a variable is declared as a `string`, assigning a number throws an error.'],
+    ['Execution', 'Runs directly in any web browser or Node.js.', 'Must be compiled/transpiled down to JavaScript first.'],
+    ['Learning Curve', 'Easy for beginners to pick up and prototype quickly.', 'Steeper. Requires understanding Interfaces, Generics, and Union types.'],
+    ['Refactoring', 'Dangerous in large codebases. Changing an object property might silently break code 10 files away.', 'Extremely safe. The compiler instantly highlights every file where the changed property was used.']
+  ]}
+/>
+
+</TechnologyTemplate>

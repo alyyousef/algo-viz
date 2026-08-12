@@ -1,0 +1,41 @@
+---
+title: Container Queries
+description: The next evolution of Responsive Design, allowing elements to adapt based on the size of their parent container rather than the global viewport.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Container Queries">
+
+For a decade, Media Queries (`@media`) were the only way to build responsive layouts. However, Media Queries have a massive architectural flaw: they can only check the width of the **entire screen (the viewport)**.
+
+In modern Component-Based Architecture (React/Vue), you build reusable widgets (like a `ProductCard`). 
+If you put the `ProductCard` in a wide main section, it should look horizontal. If you put that exact same `ProductCard` into a narrow sidebar, it should look vertical. A Media Query cannot solve this, because the global screen size hasn't changed!
+
+## The Solution: @container
+
+Released in 2022, **Container Queries** solve this massive problem. They allow a component to query the width of its *immediate parent container*, rather than the global screen.
+
+1. First, you must explicitly declare the parent as a container:
+```css
+.sidebar {
+  container-type: inline-size;
+}
+```
+
+2. Then, you write a container query inside the child component:
+```css
+.product-card {
+  display: flex; /* Default Horizontal */
+}
+
+/* IF the parent container is narrower than 400px, snap to vertical */
+@container (max-width: 400px) {
+  .product-card {
+    flex-direction: column;
+  }
+}
+```
+
+This revolutionizes component reusability. The `ProductCard` is now 100% context-aware and will perfectly adapt its layout regardless of where you place it in the DOM.
+
+</ConceptTemplate>

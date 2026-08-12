@@ -1,0 +1,48 @@
+---
+title: OpenGL
+description: A cross-language, cross-platform API for rendering 2D and 3D vector graphics.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="OpenGL">
+
+OpenGL (Open Graphics Library) is a cross-language, cross-platform application programming interface (API) for rendering 2D and 3D vector graphics. The API is typically used to interact with a Graphics Processing Unit (GPU), to achieve hardware-accelerated rendering.
+
+<Callout icon="warning" title="Legacy Status">
+  While OpenGL is still widely used in older games and educational software, Apple has deprecated it in favor of Metal, and the Khronos Group (creators of OpenGL) have created **Vulkan** as its modern, low-overhead successor. 
+</Callout>
+
+## The Graphics Pipeline
+
+OpenGL is a state machine. You set the state (bind textures, load shaders, set buffers), and then issue a draw call. The data then flows through the programmable graphics pipeline.
+
+<ComparisonTable 
+  headers={['Pipeline Stage', 'Type', 'Purpose']}
+  rows={[
+    ['Vertex Shader', 'Programmable', 'Transforms 3D coordinates into 2D screen coordinates.'],
+    ['Primitive Assembly', 'Fixed', 'Connects vertices into triangles or lines.'],
+    ['Rasterization', 'Fixed', 'Converts triangles into fragments (pixels).'],
+    ['Fragment Shader', 'Programmable', 'Calculates the final color and lighting of each pixel.']
+  ]}
+/>
+
+## Architecture
+
+OpenGL uses a client-server architecture where your C++ program is the client, and the GPU is the server.
+
+<ArchitectureDiagram chart={`
+graph LR
+  CPU[CPU (C++ Program)]
+  RAM[System RAM]
+  VRAM[(GPU VRAM)]
+  GPU[GPU Cores]
+  Screen[Display]
+  
+  CPU -- Load Vertices --> RAM
+  CPU -- glBufferData --> VRAM
+  CPU -- glDrawArrays --> GPU
+  VRAM -. Read Data .-> GPU
+  GPU -- Rasterize --> Screen
+`} />
+
+</TechnologyTemplate>

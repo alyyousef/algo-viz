@@ -1,0 +1,43 @@
+---
+title: Embeddings
+description: Dense vector representations of data in a continuous vector space where semantic similarities are preserved.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Embeddings">
+
+In machine learning and NLP, an embedding is a mapping of discrete categorical variables (like words, sentences, or images) to a continuous vector of continuous numbers. It is the fundamental way that neural networks "understand" language.
+
+<Callout icon="success" title="The Math of Meaning">
+  Embeddings translate human meaning into spatial geometry. If you plot word embeddings on a 3D graph, words with similar meanings (e.g., "dog", "puppy", "hound") physically cluster closely together in that space.
+</Callout>
+
+## The Problem with One-Hot Encoding
+
+Before embeddings, words were represented by "one-hot encoding"—a massive array of zeros with a single '1' representing the word's index in the vocabulary. 
+- A vocabulary of 50,000 words meant every word was a 50,000-dimensional vector.
+- One-hot vectors contain **zero semantic information**. The vector for "King" is mathematically just as far away from "Queen" as it is from "Apple."
+
+## Dense Vectors
+
+Embeddings solve this by creating dense vectors (typically 300 to 4096 dimensions) where every dimension represents a learned, abstract semantic feature (e.g., gender, royalty, plurality, color).
+
+The classic demonstration of the power of word embeddings (specifically Word2Vec) is vector arithmetic:
+**Vector("King") - Vector("Man") + Vector("Woman") = Vector("Queen")**
+
+## How Embeddings are Used Today
+
+While early embeddings (Word2Vec, GloVe) mapped a single word to a static vector, modern LLMs use contextual embeddings (where the vector for "bank" changes depending on the surrounding sentence).
+
+Beyond LLM internals, embedding models are heavily used as standalone tools for **Semantic Search and RAG**.
+
+<ComparisonTable 
+  headers={['Use Case', 'How it works']}
+  rows={[
+    ['Semantic Search', 'Instead of keyword matching, a user\'s search query is turned into an embedding vector. The database is searched for documents whose vectors are mathematically closest (via Cosine Similarity) to the query vector.'],
+    ['Clustering', 'Grouping thousands of customer reviews by finding distinct clusters of embedding vectors in high-dimensional space.'],
+    ['RAG', 'Retrieval-Augmented Generation relies on a vector database of embedded documents to quickly find the exact paragraphs needed to answer a user\'s prompt.']
+  ]}
+/>
+
+</TechnologyTemplate>

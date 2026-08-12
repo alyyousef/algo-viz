@@ -1,0 +1,35 @@
+---
+title: Standard Permissions
+description: The classic Unix Read, Write, and Execute bits that govern exactly who can interact with a file.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Standard Permissions">
+
+Every single file and directory in Linux has a strict set of permissions that dictate exactly what can be done to it. 
+
+If you run `ls -l`, you will see a 10-character permission string on the far left, looking something like this: **`-rwxr-xr--`**
+
+## The Permission Triads
+
+The 10 characters are broken down into a type indicator, followed by three sets of "Triads" (groups of 3 characters):
+1. **Type**: The very first character. `-` means it's a file. `d` means it's a directory.
+2. **User (Owner)**: The permissions for the specific User who owns the file.
+3. **Group**: The permissions for anyone in the Group that owns the file.
+4. **Others**: The permissions for every single other person on the server.
+
+Inside each Triad, there are three possible bits:
+- **r (Read)**: Can view the contents of the file. (For directories: can list the files inside).
+- **w (Write)**: Can modify the file. (For directories: can create/delete files inside).
+- **x (Execute)**: Can run the file as a program. (For directories: can `cd` into the directory).
+
+<Callout icon="success" title="Numeric (Octal) Notation">
+  Permissions are commonly represented as a 3-digit Octal number, where **Read=4**, **Write=2**, and **Execute=1**. 
+  - `chmod 755 script.sh` gives the Owner (4+2+1=7) full control, while giving the Group (4+0+1=5) and Others (4+0+1=5) read and execute only.
+  - `chmod 600 key.pem` gives the Owner (4+2=6) read/write, and completely locks out everyone else (0, 0).
+</Callout>
+
+## The Root Exception
+The `root` user entirely ignores these permission strings. The kernel grants Root the ability to read, write, or delete any file on the system, regardless of what the permission bits say.
+
+</ConceptTemplate>

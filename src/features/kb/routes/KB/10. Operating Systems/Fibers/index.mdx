@@ -1,0 +1,29 @@
+---
+title: Fibers (Green Threads)
+description: Ultra-lightweight threads managed entirely by user-space software rather than the OS kernel, allowing for massive concurrency.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Fibers (Green Threads)">
+
+Standard threads (Kernel Threads) are powerful, but they are heavy. If you try to spawn 100,000 standard threads in Java or C++, your computer will crash. The OS kernel requires massive amounts of RAM to track 100,000 thread states, and the CPU will spend 99% of its time performing expensive Context Switches rather than actually doing work.
+
+To solve this, developers use **Fibers** (also known as Green Threads, Coroutines, or Goroutines).
+
+<Callout icon="info" title="The Key Difference">
+  - **Kernel Threads**: Managed by the OS Kernel in Ring 0. Heavy, true parallel execution.
+  - **Fibers**: Managed by a software runtime (like the Go runtime) in User Space (Ring 3). The OS Kernel has no idea they exist.
+</Callout>
+
+## How Fibers Work
+
+Imagine a Go program spawns 10,000 Goroutines (Fibers). 
+The OS Kernel only sees the Go program as a standard Process with maybe 4 standard Kernel Threads. 
+The Go runtime includes its own mini-scheduler in User Space. It multiplexes those 10,000 Fibers onto the 4 Kernel Threads. 
+
+If Fiber #1 makes a network request and has to wait for a response, the Go runtime instantly pauses Fiber #1, saves its tiny state, and swaps Fiber #2 onto the Kernel thread to do work. 
+
+## Advantages
+Because Fibers are managed in User Space, swapping between them does not require a System Call or a Context Switch into Ring 0. The swap takes nanoseconds instead of microseconds. Furthermore, a Fiber only requires a few kilobytes of RAM for its stack, whereas a Kernel thread requires Megabytes. This allows modern languages (like Go, Erlang, or Kotlin with Coroutines) to easily handle millions of concurrent connections on a single server.
+
+</ConceptTemplate>

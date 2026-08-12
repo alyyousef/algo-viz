@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const PROJECT_ROOT = path.resolve(__dirname, '..')
-const ROUTES_ROOT = path.join(PROJECT_ROOT, 'src', 'features', 'dsa', 'routes', 'DSA')
+const ROUTES_ROOT = path.join(PROJECT_ROOT, 'src', 'features', 'kb', 'routes', 'KB')
 
 const MOJIBAKE_MARKERS = [
   '\u00c3',

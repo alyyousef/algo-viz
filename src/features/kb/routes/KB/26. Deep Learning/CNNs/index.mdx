@@ -1,0 +1,47 @@
+---
+title: Convolutional Neural Networks (CNNs)
+description: Specialized deep learning models for processing grid-like data such as images.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Convolutional Neural Networks (CNNs)">
+
+A Convolutional Neural Network (CNN or ConvNet) is a class of artificial neural network most commonly applied to analyze visual imagery. They are explicitly designed to process data that has a known grid-like topology, such as 2D images (pixels) or 1D time-series data.
+
+<Callout icon="info" title="Biological Inspiration">
+  The architecture of a CNN is inspired by the organization of the animal visual cortex. Individual cortical neurons respond to stimuli only in a restricted region of the visual field known as the receptive field.
+</Callout>
+
+## Core Operations
+
+Unlike traditional multi-layer perceptrons, CNNs use three main operations to drastically reduce the number of parameters and capture spatial hierarchies:
+
+<ComparisonTable 
+  headers={['Operation', 'Description']}
+  rows={[
+    ['Convolution', 'Applies a filter (kernel) over the input to produce a feature map, detecting edges, colors, or textures.'],
+    ['Pooling (Subsampling)', 'Reduces the spatial dimensions (width and height) of the input, making the detection of features invariant to scale and orientation.'],
+    ['Fully Connected', 'Standard neural network layers at the end that use the extracted features for the final classification task.']
+  ]}
+/>
+
+### The Convolution Layer
+
+The convolution layer is the core building block of a CNN. It consists of a set of learnable filters. Each filter is spatially small (e.g., 3x3 or 5x5 pixels) but extends through the full depth of the input volume. 
+
+During the forward pass, each filter is convolved across the width and height of the input volume, computing the dot product between the entries of the filter and the input. This produces a 2D activation map that gives the responses of that filter at every spatial position.
+
+<Callout icon="tip" title="Parameter Sharing">
+  CNNs achieve efficiency through parameter sharing. A feature (like an edge) that is useful in one part of the image is likely useful elsewhere. By applying the same filter across the entire image, the model drastically reduces the number of weights it needs to learn.
+</Callout>
+
+## Common Architectures
+
+Over the years, several landmark CNN architectures have been developed, usually competing in the ImageNet Large Scale Visual Recognition Challenge (ILSVRC).
+
+1. **LeNet-5 (1998)**: One of the earliest CNNs, used for recognizing handwritten digits.
+2. **AlexNet (2012)**: Popularized CNNs by winning ILSVRC 2012 by a huge margin, utilizing GPUs for training.
+3. **VGGNet (2014)**: Showed that simply using very small (3x3) convolution filters across the entire network works very well if the network is deep enough.
+4. **ResNet (2015)**: Introduced residual connections (skip connections) to train extremely deep networks (152 layers) without suffering from the vanishing gradient problem.
+
+</TechnologyTemplate>

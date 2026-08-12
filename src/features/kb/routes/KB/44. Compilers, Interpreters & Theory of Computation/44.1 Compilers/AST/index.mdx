@@ -1,0 +1,56 @@
+---
+title: Abstract Syntax Trees (AST)
+description: A tree representation of the abstract syntactic structure of source code written in a programming language.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Abstract Syntax Trees (AST)">
+
+In computer science, an abstract syntax tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language. Each node of the tree denotes a construct occurring in the source code. 
+
+The syntax is "abstract" in the sense that it does not represent every detail appearing in the real syntax, but rather just the structural or content-related details. For instance, grouping parentheses are implicit in the tree structure, so they do not need to be represented as separate nodes.
+
+<Callout icon="info" title="The Backbone of Tooling">
+  ASTs are the magic behind virtually every developer tool you use. When you run Prettier, it parses your code into an AST, ignores your formatting, and prints the AST back out with perfect formatting. When you use ESLint, it traverses the AST looking for nodes that violate rules.
+</Callout>
+
+## The Compilation Pipeline
+
+Where does the AST fit into a compiler (like GCC or V8)?
+
+<ComparisonTable 
+  headers={['Phase', 'Action']}
+  rows={[
+    ['1. Lexical Analysis', 'The Lexer takes raw text (e.g., `let x = 5;`) and turns it into a flat array of Tokens ([`KEYWORD_LET`, `IDENTIFIER_X`, `EQUALS`, `NUMBER_5`]).'],
+    ['2. Syntax Analysis', 'The Parser takes the flat array of Tokens and builds the 3D Abstract Syntax Tree, ensuring the grammar is valid.'],
+    ['3. Semantic Analysis', 'The compiler walks the AST to check for type errors (e.g., trying to add a string to a boolean).'],
+    ['4. Code Generation', 'The compiler traverses the validated AST and spits out Machine Code or Bytecode.']
+  ]}
+/>
+
+## Architecture of an AST
+
+For the simple code: `while (x < 10) { x = x + 1; }`
+
+<ArchitectureDiagram chart={`
+graph TD
+  While[WhileStatement]
+  Cond[BinaryExpression: <]
+  Body[BlockStatement]
+  
+  While --> Cond
+  While --> Body
+  
+  Cond --> X1[Identifier: x]
+  Cond --> Num10[Literal: 10]
+  
+  Body --> Assign[AssignmentExpression: =]
+  
+  Assign --> X2[Identifier: x]
+  Assign --> Add[BinaryExpression: +]
+  
+  Add --> X3[Identifier: x]
+  Add --> Num1[Literal: 1]
+`} />
+
+</TechnologyTemplate>

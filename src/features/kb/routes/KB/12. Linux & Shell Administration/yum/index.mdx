@@ -1,0 +1,21 @@
+---
+title: YUM (Yellowdog Updater, Modified)
+description: The legendary, albeit legacy, package manager that powered the Red Hat and CentOS ecosystems for over a decade.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="YUM (Yellowdog Updater, Modified)">
+
+Before `dnf` existed, the Red Hat Enterprise Linux (RHEL) ecosystem was entirely managed by **YUM**. 
+
+YUM was a massive leap forward from manually installing raw `.rpm` files. Like Debian's APT, YUM could reach out to remote repositories over HTTP, automatically calculate dependency chains, and install an entire software stack in a single command.
+
+## The Legacy of YUM
+
+While `yum` is officially deprecated and replaced by `dnf` in RHEL 8+, its legacy is so massive that the command still exists on modern systems. If you type `yum install nginx` on a brand new Rocky Linux 9 server, it will work perfectly (because the OS secretly symlinks the `yum` command directly to the `dnf` binary in the background).
+
+<Callout icon="info" title="The Flaws of YUM">
+  YUM was eventually replaced because it was written heavily in Python, consumed massive amounts of RAM (often crashing tiny 512MB cloud servers during updates), and its dependency resolution algorithm was notoriously slow and sometimes mathematically inaccurate. `dnf` solved all of these issues by rewriting the core logic in C++.
+</Callout>
+
+</ConceptTemplate>

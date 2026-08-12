@@ -1,0 +1,25 @@
+---
+title: Web Browsers
+description: Massively complex software applications designed to request, decrypt, parse, and render HTML/CSS/JS into visual, interactive applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Web Browsers">
+
+A modern Web Browser is essentially a complete operating system running inside your computer. 
+Its sole purpose is to securely execute untrusted code downloaded from the internet, rendering it visually while preventing that code from destroying your local machine.
+
+## The Browser Architecture
+
+1. **The User Interface**: The address bar, back buttons, and bookmarks.
+2. **The Browser Engine**: The core director that marshals actions between the UI and the rendering engine.
+3. **The Rendering Engine**: The mathematical core that parses HTML/CSS and paints pixels on the screen (e.g., Blink, WebKit, Gecko).
+4. **The JavaScript Engine**: The ultra-fast V8/SpiderMonkey compiler that converts JS text into machine code in real-time.
+5. **The Networking Layer**: Handles DNS lookups, TCP handshakes, TLS encryption, and HTTP requests.
+6. **Data Storage**: Manages Cookies, LocalStorage, and IndexedDB on your hard drive.
+
+## Multi-Process Architecture
+In modern browsers like Chrome, every single tab runs in a completely isolated, sandboxed OS-level process. 
+If a malicious website in Tab 1 contains a critical memory leak that crashes its rendering engine, Tab 1 will die (Aw Snap!), but Tab 2 and the main browser UI will remain completely unaffected. This requires massive amounts of RAM, but guarantees extreme stability and security.
+
+</ConceptTemplate>

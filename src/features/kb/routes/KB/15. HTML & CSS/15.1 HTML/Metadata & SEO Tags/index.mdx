@@ -1,0 +1,42 @@
+---
+title: Metadata & SEO Tags
+description: Invisible HTML tags stored in the document head that dictate how the page is indexed by search engines and displayed on social media.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Metadata & SEO Tags">
+
+The `<head>` of an HTML document contains data *about* the data (Metadata). This information is invisible to the human user but is critical for Search Engines, Twitter, and Facebook.
+
+## The Title and Description
+The absolute most important tags for SEO. These directly control how your website appears in Google Search results.
+```html
+<title>Buy Cheap Sneakers</title>
+<meta name="description" content="Shop the best collection of affordable sneakers. Free shipping on all orders over $50.">
+```
+
+## Open Graph (Social Media Tags)
+When you paste a link into iMessage, Twitter, or Slack, the app instantly displays a rich preview card with a title, description, and hero image. This is powered by **Open Graph** tags (originally invented by Facebook).
+
+```html
+<meta property="og:title" content="My Awesome Blog Post" />
+<meta property="og:image" content="https://example.com/hero.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+```
+
+## Structured Data (Schema.org / JSON-LD)
+To get "Rich Snippets" on Google (e.g., your recipe showing 5-star ratings and cooking time directly in the search results), you must inject mathematical **Structured Data** into the head. 
+Today, this is done using JSON-LD (JSON for Linking Data) based on the `Schema.org` standard.
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  "name": "Perfect Chocolate Chip Cookies",
+  "cookTime": "PT15M"
+}
+</script>
+```
+
+</ConceptTemplate>

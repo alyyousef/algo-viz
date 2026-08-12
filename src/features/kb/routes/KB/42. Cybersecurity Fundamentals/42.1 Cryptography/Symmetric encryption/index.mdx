@@ -1,0 +1,40 @@
+---
+title: Symmetric Encryption
+description: A cryptographic algorithm that uses the exact same key to both encrypt and decrypt data.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Symmetric Encryption">
+
+Symmetric encryption (or secret-key cryptography) is the oldest and most straightforward encryption method. The core defining feature is that the **same key** is used for both encrypting the plaintext and decrypting the ciphertext.
+
+<Callout icon="info" title="The Padlock Analogy">
+  Think of symmetric encryption like a padlock on a diary. If Alice locks the diary with her physical key, Bob cannot read it unless Alice travels to Bob and physically hands him an identical copy of that exact same key.
+</Callout>
+
+## How it Works
+
+The algorithm takes a plaintext message (e.g., "HELLO") and applies a complex mathematical transformation using the secret key (e.g., "MYSECRETKEY") to produce scrambled ciphertext (e.g., "X9QZP").
+
+To reverse the process, the exact same mathematical transformation is run in reverse, requiring the exact same key. If a hacker intercepts the ciphertext but doesn't have the key, the math is designed to be virtually impossible to reverse.
+
+## Block vs. Stream Ciphers
+
+Symmetric algorithms are generally categorized into two types:
+1. **Block Ciphers**: The algorithm splits the data into fixed-size chunks (e.g., 128-bit blocks) and encrypts each block independently. *Example: AES.*
+2. **Stream Ciphers**: The algorithm encrypts data one bit or byte at a time, generating a continuous "keystream" that is XORed against the plaintext. *Example: ChaCha20.*
+
+## Strengths and Weaknesses
+
+<ComparisonTable 
+  headers={['Pros', 'Cons']}
+  rows={[
+    ['Extremely Fast: Mathematically simple, easily accelerated by hardware CPUs.', 'The Key Distribution Problem: How do you safely get the secret key to the other person without someone stealing it in transit?'],
+    ['High Security: Modern algorithms like AES-256 are currently unbroken.', 'Scalability: If 100 people need to talk to each other securely, you need 4,950 unique keys.'],
+    ['Great for Data at Rest: Perfect for encrypting your local hard drive where you are both the sender and receiver.', 'No Non-Repudiation: Since both parties have the same key, you cannot prove *which* party encrypted a specific message.']
+  ]}
+/>
+
+Because of the Key Distribution Problem, symmetric encryption is rarely used alone on the Internet. It is usually paired with Asymmetric Encryption (which solves key exchange) to form hybrid systems like TLS.
+
+</TechnologyTemplate>

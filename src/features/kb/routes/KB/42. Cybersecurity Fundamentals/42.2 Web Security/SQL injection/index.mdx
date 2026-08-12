@@ -1,0 +1,32 @@
+---
+title: SQL Injection (SQLi)
+description: A code injection technique that might destroy your database.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="SQL Injection (SQLi)">
+
+SQL Injection (SQLi) is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database. It generally allows an attacker to view data that they are not normally able to retrieve. This might include data belonging to other users, or any other data that the application itself is able to access.
+
+<Callout icon="error" title="The Cause: String Concatenation">
+  SQL Injection ONLY happens when you build SQL queries by manually concatenating user input as strings. 
+  
+  `"SELECT * FROM Users WHERE name = '" + userInput + "';"`
+</Callout>
+
+## The Exploit
+
+If the `userInput` is exactly: `' OR '1'='1`
+
+The resulting query executed on the database becomes:
+`SELECT * FROM Users WHERE name = '' OR '1'='1';`
+
+Because '1'='1' is always true, the database returns **every single user in the table**, bypassing authentication completely.
+
+## The Solution: Parameterized Queries (Prepared Statements)
+
+Never concatenate strings. Always use Prepared Statements. The database driver sends the SQL logic and the user data to the database engine separately. The database engine treats the data strictly as a literal string, refusing to execute it as code.
+
+`db.query('SELECT * FROM Users WHERE name = ?', [userInput]);`
+
+</TechnologyTemplate>

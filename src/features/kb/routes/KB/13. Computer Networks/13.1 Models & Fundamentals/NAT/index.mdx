@@ -1,0 +1,29 @@
+---
+title: NAT (Network Address Translation)
+description: The Layer 3 mechanism used by routers to translate Private IP addresses into Public IP addresses, which saved the IPv4 internet from exhaustion.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="NAT (Network Address Translation)">
+
+In the 1990s, the Internet was rapidly running out of the 4 billion available IPv4 addresses. 
+The solution was to designate certain blocks of IPs as "Private" (e.g., `192.168.0.0/16` or `10.0.0.0/8`). You can assign Private IPs to every computer in your house, but Private IPs are legally banned from the public Internet. If a router sees a packet destined for a Private IP, it instantly drops it.
+
+So, how do computers in your house browse the web? **NAT (Network Address Translation)**.
+
+## How NAT Works
+
+When your laptop (`192.168.1.50`) tries to load Google, it sends the packet to your home Router.
+The Router performs NAT:
+1. It intercepts the packet.
+2. It completely strips off the Source IP (`192.168.1.50`).
+3. It replaces the Source IP with the Router's own singular **Public IP Address** (e.g., `203.0.113.5`).
+4. It forwards the disguised packet to Google.
+
+When Google replies, it replies to the Router's Public IP. The Router intercepts the reply, checks its internal **NAT Table**, remembers that the original request came from your laptop, translates the destination IP back to `192.168.1.50`, and delivers it to you.
+
+<Callout icon="info" title="The Unintended Security Benefit">
+  NAT was designed solely to conserve IP addresses, but it accidentally became one of the greatest security features in networking history. Because your laptop has a Private IP, a hacker in Russia literally cannot mathematically route a packet directly to your laptop. It acts as a perfect default firewall, dropping all unsolicited incoming traffic at the Router.
+</Callout>
+
+</ConceptTemplate>

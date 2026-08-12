@@ -1,0 +1,29 @@
+---
+title: grep
+description: The most famous Linux text processing tool, used to search streams of text for lines matching regular expressions.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="grep">
+
+**`grep`** (Global Regular Expression Print) is the ultimate search tool. It takes a stream of text (either from a file or piped from another command), scans every single line, and outputs only the lines that match your search pattern.
+
+## Core Usage
+
+You will use `grep` thousands of times in your career to filter through massive, messy log files.
+
+- **Basic Search**: `grep "ERROR" /var/log/syslog` (Prints every line containing the word ERROR).
+- **Case Insensitive (`-i`)**: `grep -i "error" /var/log/syslog`.
+- **Invert Match (`-v`)**: `grep -v "DEBUG" /var/log/syslog` (Prints everything EXCEPT lines containing DEBUG).
+- **Recursive Directory Search (`-r`)**: `grep -r "password123" /etc/` (Searches every single file inside the `/etc` folder).
+
+<Callout icon="success" title="Piping with Grep">
+  The true power of `grep` comes from the Unix Pipe (`|`). 
+  If you run `ps aux`, it prints 500 running processes to your screen. 
+  By running `ps aux | grep nginx`, you force the output of `ps` directly into `grep`, instantly filtering the screen to only show you the Nginx processes.
+</Callout>
+
+## Regular Expressions
+`grep` gets its name from Regular Expressions. You can use complex regex to find dynamic patterns, such as extracting IP addresses or valid email formats from a million-line database dump. (Using `grep -E` or the `egrep` alias enables Extended Regex for modern syntax).
+
+</ConceptTemplate>

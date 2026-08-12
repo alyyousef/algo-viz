@@ -1,0 +1,24 @@
+---
+title: WebGL and WebGPU
+description: The low-level graphics APIs that allow the browser to communicate directly with the local machine's Graphics Processing Unit (GPU).
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="WebGL and WebGPU">
+
+By default, the browser uses the CPU to parse HTML and paint CSS. But if you want to render a massive, fully interactive 3D video game running at 60 FPS in a web tab, the CPU will instantly melt. You must offload the mathematical matrix transformations to the **GPU**.
+
+## WebGL (Web Graphics Library)
+Released in 2011, WebGL is a JavaScript API based on the ancient OpenGL ES 2.0 standard.
+It allows you to write C-like "Shader" programs (GLSL) that execute directly on the user's GPU. 
+
+While extremely powerful, the raw WebGL API is incredibly verbose and mathematically complex. To draw a single colored triangle requires hundreds of lines of boilerplate code. Therefore, 99% of developers use abstraction libraries like **Three.js** or **Babylon.js** which wrap WebGL in a clean, object-oriented API.
+
+## The Future: WebGPU
+WebGL is fundamentally based on OpenGL, which was designed in the 1990s. Modern GPUs (architected around DirectX 12, Vulkan, and Apple Metal) operate very differently today.
+
+**WebGPU** is the modern successor to WebGL. 
+- **Compute Shaders**: While WebGL can only render graphics, WebGPU exposes "Compute Shaders"—allowing you to use the user's GPU to perform massive parallel calculations (like training AI models or simulating fluid dynamics) completely unrelated to drawing pixels.
+- **Lower Overhead**: WebGPU maps much closer to modern GPU architectures, drastically reducing CPU overhead and unlocking console-quality graphics inside the browser.
+
+</ConceptTemplate>

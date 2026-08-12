@@ -1,0 +1,25 @@
+---
+title: HTTP/1.1
+description: The massively successful 1997 revision of HTTP that introduced Keep-Alive connections, serving as the standard for two decades.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="HTTP/1.1">
+
+In 1991, the original HTTP/1.0 was incredibly inefficient. Every single time a browser wanted to download a file (an image, a CSS file), it had to open a brand new TCP connection, perform the slow 3-way handshake, download the file, and immediately kill the connection. 
+If a webpage had 50 images, the browser had to open and close 50 completely separate TCP connections.
+
+## The HTTP/1.1 Revolution
+
+Released in 1997, **HTTP/1.1** introduced two massive architectural changes that saved the web.
+
+1. **Persistent Connections (Keep-Alive)**:
+   By default, HTTP/1.1 connections remain open. The browser performs the slow TCP handshake exactly once, and then rapidly shoots 50 GET requests for all 50 images through that single, established tunnel.
+2. **The Host Header**:
+   HTTP/1.0 did not require a `Host: example.com` header. If a server hosted 100 different websites on the same IP address, it had no idea which website the client wanted. HTTP/1.1 mandated the Host header, making shared web hosting (Virtual Hosts) mathematically possible.
+
+<Callout icon="warning" title="Head-of-Line Blocking">
+  HTTP/1.1 had a fatal flaw. While it reused a single TCP connection, requests had to be processed sequentially. If you requested a massive 10MB Video, and then requested a tiny 1KB CSS file, the CSS file was physically blocked in the queue, forced to wait for the video to finish downloading completely. This is called Head-of-Line Blocking, and it forced developers to invent insane hacks like "Domain Sharding" to bypass it.
+</Callout>
+
+</ConceptTemplate>

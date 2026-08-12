@@ -1,0 +1,38 @@
+---
+title: The Halting Problem
+description: The problem of determining, from a description of an arbitrary computer program and an input, whether the program will finish running or continue to run forever.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="The Halting Problem">
+
+In computability theory, the halting problem is the problem of determining, from a description of an arbitrary computer program and an input, whether the program will finish running, or continue to run forever. 
+
+Alan Turing proved in 1936 that a general algorithm to solve the halting problem for *all* possible program-input pairs **cannot exist**.
+
+<Callout icon="error" title="Mathematically Impossible">
+  It is mathematically proven that you cannot write a program (a compiler, a linter, an AI) that can look at *any* arbitrary piece of code and guarantee 100% whether that code will eventually finish, or get stuck in an infinite loop.
+</Callout>
+
+## The Proof by Contradiction
+
+Turing proved this using a brilliant paradox.
+
+1. Assume there exists a perfect function called `halts(program)` that returns `true` if the program finishes, and `false` if it loops forever.
+2. Now, write a malicious new program called `paradox()`:
+
+```python
+def paradox():
+    if halts(paradox) == true:
+        while True: pass # If halts() says we finish, we loop forever!
+    else:
+        return # If halts() says we loop forever, we finish!
+```
+
+3. What happens if you run `halts(paradox)`? 
+   - If `halts` says it finishes, the code hits the `while True` and loops forever. (`halts` is wrong).
+   - If `halts` says it loops forever, the code hits `return` and finishes. (`halts` is wrong).
+
+Because the perfect `halts()` function can be used to contradict itself, it is mathematically proven that the perfect `halts()` function cannot exist in this universe.
+
+</TechnologyTemplate>

@@ -1,0 +1,28 @@
+---
+title: Multi-Factor Authentication (MFA)
+description: An electronic authentication method in which a user is granted access only after successfully presenting two or more pieces of evidence.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Multi-Factor Authentication (MFA)">
+
+Multi-factor authentication (MFA) is an electronic authentication method in which a computer user is granted access to a website or application only after successfully presenting two or more pieces of evidence (or factors) to an authentication mechanism.
+
+<Callout icon="success" title="99.9% Protection">
+  Microsoft reported that enabling MFA blocks 99.9% of all automated, mass-scale account compromise attacks. If a hacker guesses your password, they are still stopped dead without your phone.
+</Callout>
+
+## The Three Factors
+
+To be true MFA, you must require elements from at least TWO DIFFERENT categories below (Requiring two passwords is just Single-Factor Authentication done twice).
+
+<ComparisonTable 
+  headers={['Factor', 'Description', 'Examples']}
+  rows={[
+    ['Knowledge (Something you know)', 'Information only the user possesses.', 'Passwords, PINs, Security Questions.'],
+    ['Possession (Something you have)', 'A physical object the user carries.', 'Smartphone (Google Authenticator TOTP), Hardware Security Key (YubiKey), Smartcard.'],
+    ['Inherence (Something you are)', 'Biological characteristics of the user.', 'Fingerprint, FaceID, Retina Scan.']
+  ]}
+/>
+
+</TechnologyTemplate>

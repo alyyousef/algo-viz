@@ -1,0 +1,28 @@
+---
+title: SOLID Principles
+description: Five design principles intended to make software designs more understandable, flexible, and maintainable.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="SOLID Principles">
+
+In software engineering, SOLID is an acronym for five design principles intended to make software designs more understandable, flexible, and maintainable. Promoted by Robert C. Martin (Uncle Bob), they form the core philosophy of object-oriented design.
+
+<Callout icon="info" title="Why use SOLID?">
+  Without these principles, codebases often rot into a "Big Ball of Mud", where changing one line of code in the User class inexplicably breaks the Billing system. SOLID enforces strict decoupling.
+</Callout>
+
+## The Five Principles
+
+<ComparisonTable 
+  headers={['Letter', 'Principle', 'Meaning']}
+  rows={[
+    ['S', 'Single Responsibility (SRP)', 'A class should have one, and only one, reason to change. (A User class should not handle database connections).'],
+    ['O', 'Open-Closed (OCP)', 'Software entities should be open for extension, but closed for modification. (Add new features by writing new classes, not editing existing ones).'],
+    ['L', 'Liskov Substitution (LSP)', 'If S is a subtype of T, then objects of type T may be replaced with objects of type S without altering the correctness of the program.'],
+    ['I', 'Interface Segregation (ISP)', 'Clients should not be forced to depend on interfaces they do not use. (Don\'t put `fly()` and `swim()` in an `IAnimal` interface if a Dog class has to implement it).'],
+    ['D', 'Dependency Inversion (DIP)', 'High-level modules should not depend on low-level modules. Both should depend on abstractions (interfaces).']
+  ]}
+/>
+
+</TechnologyTemplate>

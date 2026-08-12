@@ -1,0 +1,29 @@
+---
+title: Condition Variables
+description: A signaling mechanism that allows a thread to safely go to sleep inside a Monitor until a specific state becomes true.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Condition Variables">
+
+A Mutex solves the problem of protecting shared data. But what if a thread needs to wait for a specific *state* to change? 
+
+Imagine a Producer-Consumer scenario using a shared `Queue` protected by a Mutex.
+A Consumer thread locks the Mutex, looks at the Queue, and sees that it is empty. What does it do?
+- It cannot Spinlock (burn CPU) while holding the Mutex, because then the Producer can never get the Mutex to add data to the Queue.
+- It must release the Mutex and go to sleep. But how does it know when to wake up?
+
+This is solved using a **Condition Variable**.
+
+## Wait() and Signal()
+
+A Condition Variable is always paired directly with a Mutex. It provides a way for a thread to say: *"I have the lock, but the data isn't ready. Put me to sleep, release the lock so others can work, and wake me up when things change."*
+
+1. **`Wait(Condition, Mutex)`**: The OS atomically puts the thread to sleep AND unlocks the Mutex at the exact same nanosecond.
+2. **`Signal(Condition)`**: Later, a Producer thread acquires the Mutex, adds data to the Queue, and calls `Signal`. The OS wakes up the sleeping Consumer. Before the Consumer is allowed to actually resume executing, the OS automatically re-acquires the Mutex for it.
+
+<Callout icon="warning" title="Spurious Wakeups">
+  Because of the complex way multi-core OS schedulers work, a thread sleeping on a Condition Variable can occasionally wake up *even if nobody signaled it* (a Spurious Wakeup). Therefore, a `Wait()` call must **always** be placed inside a `while` loop that re-checks the condition upon waking.
+</Callout>
+
+</ConceptTemplate>

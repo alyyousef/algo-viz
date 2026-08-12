@@ -1,0 +1,46 @@
+---
+title: B-Trees
+description: A self-balancing search tree optimized for systems that read and write large blocks of data, like databases and file systems.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="B-Trees">
+
+A **B-Tree** is a generalized self-balancing search tree. Unlike a standard Binary Search Tree where each node has at most two children, a node in a B-Tree can have a large, variable number of keys and children (often hundreds or thousands).
+
+<Callout icon="info" title="The Disk Optimization">
+  B-Trees were explicitly invented to solve the "Disk I/O problem." Reading from a physical hard drive is incredibly slow compared to reading from RAM. A standard binary search tree is deep, requiring many separate disk reads. A B-Tree is extremely wide and shallow, allowing massive amounts of data to be searched with very few disk reads.
+</Callout>
+
+## Properties of a B-Tree
+
+A B-Tree of order $m$ satisfies the following properties:
+1. **Node Capacity**: Every node has at most $m$ children.
+2. **Minimum Capacity**: Every internal node (except the root) has at least $\lceil m/2 \rceil$ children.
+3. **Key Count**: A node with $k$ children contains exactly $k-1$ sorted keys.
+4. **Leaf Depth**: All leaf nodes appear on the exact same level (the tree is perfectly balanced).
+
+## How Searching Works
+
+Searching a B-Tree is similar to a binary search tree, just generalized:
+1. Start at the root node.
+2. Compare your target value to the sorted keys in the current node.
+3. If the value matches a key, return it.
+4. If the value is less than the first key, follow the leftmost child pointer.
+5. If the value falls between two keys, follow the pointer between them.
+6. Repeat until the value is found or you hit a leaf node and the value isn't there.
+
+## Time Complexity
+
+<ComparisonTable 
+  headers={['Operation', 'Average Case', 'Worst Case']}
+  rows={[
+    ['Search', '$O(\log n)$', '$O(\log n)$'],
+    ['Insert', '$O(\log n)$', '$O(\log n)$'],
+    ['Delete', '$O(\log n)$', '$O(\log n)$']
+  ]}
+/>
+
+*(Note: The base of the logarithm is the branching factor of the tree, which is often very large, making the tree depth extremely shallow).*
+
+</ConceptTemplate>

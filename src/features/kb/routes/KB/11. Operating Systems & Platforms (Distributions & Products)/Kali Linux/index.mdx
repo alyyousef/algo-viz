@@ -1,0 +1,28 @@
+---
+title: Kali Linux
+description: A specialized Debian-based distribution pre-loaded with hundreds of advanced penetration testing and ethical hacking tools.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Kali Linux">
+
+Developed and maintained by Offensive Security, **Kali Linux** is not designed for daily desktop use or web servers. It is a highly specialized tactical weapon used exclusively by Cybersecurity professionals, Penetration Testers, and Ethical Hackers.
+
+## The Arsenal
+
+Kali is essentially a standard Debian Linux installation, but it comes pre-configured with over 600 advanced security tools, categorized for specific phases of a cyber attack:
+- **Information Gathering**: Nmap, Wireshark, Maltego
+- **Vulnerability Analysis**: OpenVAS, Nikto
+- **Web Applications**: Burp Suite, SQLmap
+- **Password Attacks**: Hashcat, John the Ripper
+- **Exploitation**: Metasploit Framework
+
+<Callout icon="info" title="The Custom Kernel">
+  Aside from the software, Kali includes a heavily modified Linux kernel patched for wireless injection. This allows Kali users to use specific Wi-Fi adapters to inject packets into networks they are not connected to, a critical requirement for auditing wireless security protocols like WPA2.
+</Callout>
+
+## Usage Model
+
+Kali is rarely installed permanently on a hard drive. It is designed to be highly ephemeral. Security engineers usually boot Kali from a live USB stick or run it inside a temporary Virtual Machine, execute their attack simulation, generate a report, and immediately delete the VM.
+
+</ConceptTemplate>

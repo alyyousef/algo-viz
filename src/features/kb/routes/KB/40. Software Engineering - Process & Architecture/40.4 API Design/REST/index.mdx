@@ -1,0 +1,36 @@
+---
+title: REST (Representational State Transfer)
+description: A software architectural style that was created to guide the design and development of the architecture for the World Wide Web.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="REST (Representational State Transfer)">
+
+Representational state transfer (REST) is a software architectural style that describes a uniform interface between physically separate components, often across the Internet in a Client-Server architecture.
+
+<Callout icon="info" title="Statelessness">
+  The core constraint of REST is that it is **Stateless**. The server must not store any state about the client session on the server-side. Every single request from the client must contain all the information necessary for the server to understand and process the request (like a JWT token).
+</Callout>
+
+## HTTP Methods
+
+REST relies heavily on standard HTTP verbs to describe the action being taken on a Resource (a URL).
+
+<ComparisonTable 
+  headers={['Method', 'CRUD Operation', 'Idempotent?']}
+  rows={[
+    ['GET', 'Read a resource', 'Yes (Calling it 100 times has the exact same result as calling it 1 time)'],
+    ['POST', 'Create a new resource', 'No (Calling it 100 times creates 100 records)'],
+    ['PUT', 'Completely replace a resource', 'Yes'],
+    ['PATCH', 'Partially update a resource', 'No'],
+    ['DELETE', 'Delete a resource', 'Yes']
+  ]}
+/>
+
+## REST URL Design Guidelines
+
+1. **Use Nouns, Not Verbs**: `/users/123`, not `/getUserById/123`
+2. **Use Plurals**: `/users`, not `/user`
+3. **Nest Logically**: `/users/123/posts/456`
+
+</TechnologyTemplate>

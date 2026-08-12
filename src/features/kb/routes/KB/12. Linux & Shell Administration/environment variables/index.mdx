@@ -1,0 +1,28 @@
+---
+title: Environment Variables
+description: Dynamic key-value pairs stored in the shell's memory that define the behavior of the system and user-space applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Environment Variables">
+
+When you type `ls`, how does the Shell know that the `ls` binary is located in `/usr/bin/ls`? It uses an **Environment Variable**.
+
+Environment Variables are simple Key-Value pairs that live in the background memory of your Shell. They are used to pass configuration data to applications without hardcoding values into scripts.
+
+## Core Variables
+
+You can view all current variables by running the `env` or `printenv` command.
+- **`$PATH`**: A colon-separated list of directories. When you type a command, the shell searches these exact directories from left to right to find the binary.
+- **`$HOME`**: The absolute path to your current user's home directory.
+- **`$USER`**: Your current username.
+
+<Callout icon="success" title="The Power of Export">
+  If you set a variable like `API_KEY=123` in Bash, it is only available to that specific shell. If you run a Python script, the script cannot see the `API_KEY`. 
+  You must use the `export` command (`export API_KEY=123`). This forces Bash to pass a copy of the variable down to all child processes spawned from that terminal.
+</Callout>
+
+## Configuring Twelve-Factor Apps
+Modern cloud applications (like Node.js or Docker containers) follow the "Twelve-Factor App" methodology, which mandates that ALL configuration (Database passwords, API endpoints, Port numbers) must be injected via Environment Variables at runtime, completely avoiding hardcoded configuration files.
+
+</ConceptTemplate>

@@ -1,0 +1,29 @@
+---
+title: Content Delivery Networks (CDNs)
+description: A geographically distributed network of proxy servers and their data centers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Content Delivery Networks (CDNs)">
+
+A content delivery network (CDN) is a geographically distributed network of proxy servers and their data centers. The goal is to provide high availability and performance by distributing the service spatially relative to end users.
+
+<Callout icon="tip" title="Defeating the Speed of Light">
+  If your main server is in New York, and a user in Tokyo requests a 5MB image, the data literally has to travel through fiber optic cables across the ocean, taking 200+ milliseconds. 
+  
+  A CDN copies that image to a server in Tokyo. The user requests it, and the Tokyo server responds in 5 milliseconds.
+</Callout>
+
+## How it Works
+
+<ComparisonTable 
+  headers={['Component', 'Description']}
+  rows={[
+    ['Origin Server', 'Your actual server (e.g., an AWS S3 bucket in New York). This holds the absolute truth.'],
+    ['Edge Server (PoP)', 'The CDN servers scattered in 100+ cities worldwide (Point of Presence).'],
+    ['Cache Miss', 'User in Paris requests an image. The Paris Edge Server doesn\'t have it. It asks the Origin Server in NY, serves it to the user, and caches a copy.'],
+    ['Cache Hit', 'The next user in Paris requests the same image. The Paris Edge Server instantly returns the cached copy, completely bypassing the NY Origin server.']
+  ]}
+/>
+
+</TechnologyTemplate>

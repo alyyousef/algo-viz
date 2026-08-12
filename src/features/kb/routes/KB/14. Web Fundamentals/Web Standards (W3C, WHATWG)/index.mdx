@@ -1,0 +1,27 @@
+---
+title: Web Standards (W3C, WHATWG)
+description: The organizations responsible for defining the strict rules, HTML elements, and CSS properties that browsers must mathematically implement.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Web Standards (W3C, WHATWG)">
+
+If Apple invents a cool new HTML tag for Safari, but Google Chrome doesn't know how to render it, the web breaks. 
+To ensure the web is universal, every browser vendor on Earth must agree to a strict set of architectural rules called **Web Standards**.
+
+## The W3C (World Wide Web Consortium)
+
+Founded by Tim Berners-Lee in 1994, the W3C historically governed all web standards. They are responsible for standardizing HTML (up to HTML4), CSS, and XML. 
+Their goal was to ensure maximum accessibility, internationalization, and platform independence. 
+
+## The WHATWG Rebellion
+
+In 2004, a massive philosophical war broke out. 
+The W3C wanted to push the web toward XHTML (an incredibly strict, unforgiving, XML-based language where a single missing closing tag would instantly crash the entire webpage). 
+
+The engineers building Chrome, Safari, and Firefox (Google, Apple, Mozilla) hated this. They wanted HTML to be forgiving, dynamic, and focused on building Web Applications, not static XML documents. 
+They rebelled and formed the **WHATWG (Web Hypertext Application Technology Working Group)**.
+
+The WHATWG unilaterally created **HTML5**, defining modern APIs like `<video>`, `<canvas>`, and WebSockets. Their standard was so overwhelmingly successful that the W3C surrendered in 2019. Today, the WHATWG is the sole official maintainer of the HTML and DOM standards.
+
+</ConceptTemplate>

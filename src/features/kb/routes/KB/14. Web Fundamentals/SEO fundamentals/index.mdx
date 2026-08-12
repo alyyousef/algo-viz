@@ -1,0 +1,26 @@
+---
+title: SEO Fundamentals
+description: The technical architecture required to ensure web crawler bots can successfully discover, parse, and rank your application in search engine results.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="SEO Fundamentals">
+
+**SEO (Search Engine Optimization)** is not just marketing; it is a hard engineering problem. 
+If your web application is built incorrectly, the Googlebot crawler will physically be unable to read it, resulting in a ranking of zero.
+
+## The JavaScript Rendering Problem
+
+Historically, Googlebot was a simple script that downloaded an HTML file and read the text. 
+Modern SPA frameworks (like React or Vue) send an empty HTML file (`<div id="root"></div>`) and require JavaScript to build the page. 
+While Googlebot *can* execute JavaScript today, it is incredibly slow and expensive. If you rely on client-side JavaScript to render your blog posts, you will suffer severe indexing delays. 
+**Solution**: Critical content must be rendered on the server (SSR - Server Side Rendering) or pre-generated at build time (SSG - Static Site Generation) so the bot receives fully populated HTML instantly.
+
+## Core Technical SEO Requirements
+
+1. **Semantic HTML**: Google ranks pages based on strict heading hierarchies. You must have exactly one `<h1>` per page representing the core topic, followed by properly nested `<h2>` and `<h3>` tags.
+2. **robots.txt**: A text file at the root of your domain that dictates exactly which directories the crawler is legally allowed to index, and which it must ignore (like `/admin-panel`).
+3. **sitemap.xml**: A mathematically structured XML file that provides the crawler with a complete map of every valid URL on your site, prioritizing which pages are most important.
+4. **Canonical URLs**: If you have 5 different URLs that point to the exact same product page, Google will penalize you for duplicate content. You must inject a `<link rel="canonical" href="..."/>` tag to tell the bot which URL is the "Master" version.
+
+</ConceptTemplate>

@@ -1,0 +1,33 @@
+---
+title: VLAN (Virtual LAN)
+description: A technology that logically splits a single physical switch into multiple isolated, independent virtual networks.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="VLAN (Virtual LAN)">
+
+Imagine an enterprise office with 100 employees: 50 in HR, and 50 in Engineering. 
+For security, HR computers should never be able to talk to Engineering computers. 
+
+Historically, you would have to buy two physical Switches and run two completely separate wiring infrastructures. **VLANs (Virtual Local Area Networks - IEEE 802.1Q)** solve this in software.
+
+## How VLANs Work
+
+You can take a single 48-port physical switch and logically slice it in half.
+- You assign Ports 1-24 to **VLAN 10 (HR)**.
+- You assign Ports 25-48 to **VLAN 20 (Engineering)**.
+
+If a computer on Port 5 (HR) tries to send a broadcast message to the entire office, the switch's internal logic will trap that message and *only* send it to other ports inside VLAN 10. The switch guarantees that Layer 2 traffic cannot cross VLAN boundaries.
+
+## Trunking (802.1Q)
+
+What if the HR department spans across three different floors, using three different physical switches? You don't want to run 10 separate cables between the switches for each VLAN.
+
+You use a **Trunk Port**.
+A Trunk is a single physical cable connecting two switches. When data leaves a switch via a Trunk, the switch forcibly injects a **4-byte VLAN Tag** into the middle of the Ethernet frame. The receiving switch reads the tag (e.g., "This data belongs to VLAN 10"), strips the tag off, and forwards the data to the correct HR computer.
+
+<Callout icon="info" title="Inter-VLAN Routing">
+  VLANs provide perfect Layer 2 isolation. If a manager in HR legitimately needs to send a file to Engineering, they cannot do it through the switch. The traffic must be sent up to a **Layer 3 Router** (often using a "Router on a Stick" topology or a Layer 3 Switch). The router inspects the IP addresses, applies firewall rules, and routes the traffic down into the other VLAN.
+</Callout>
+
+</ConceptTemplate>

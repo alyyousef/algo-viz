@@ -1,0 +1,29 @@
+---
+title: OAuth 2.0
+description: The industry-standard protocol for authorization.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="OAuth 2.0">
+
+OAuth 2.0 is the industry-standard protocol for authorization. It allows a user to grant a third-party website or application access to their protected resources, without necessarily revealing their long-term credentials or even their identity.
+
+<Callout icon="success" title="The Problem it Solves">
+  Before OAuth, if you wanted a new app to read your Google Contacts, you literally had to give the app your Google Password. The app could then read your emails, delete your photos, or lock you out.
+  
+  OAuth fixes this by issuing a **scopable, revocable Access Token** (e.g., "This token can ONLY read contacts, and expires in 1 hour").
+</Callout>
+
+## The Four Roles
+
+<ComparisonTable 
+  headers={['Role', 'Description', 'Example']}
+  rows={[
+    ['Resource Owner', 'The user who authorizes an application to access their account.', 'You.'],
+    ['Client', 'The application making the request on behalf of the Resource Owner.', 'Spotify (wanting to post to your Facebook timeline).'],
+    ['Authorization Server', 'The server issuing access tokens to the client after successfully authenticating the resource owner.', 'accounts.google.com'],
+    ['Resource Server', 'The server hosting the protected resources, capable of accepting and responding to protected resource requests using access tokens.', 'The Google Contacts API.']
+  ]}
+/>
+
+</TechnologyTemplate>

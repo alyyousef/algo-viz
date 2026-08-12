@@ -1,0 +1,36 @@
+---
+title: Redirection (>, <)
+description: The fundamental shell operator used to capture output text and permanently write it to files.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Redirection (>, <)">
+
+While Pipes (`|`) send data to other *programs*, **Redirection (`>`)** sends data directly to *files* on the hard drive.
+
+## The Three Data Streams
+
+Every Linux program has three invisible data streams:
+1. **Standard Input (stdin / File Descriptor 0)**: Where it reads data from (usually the keyboard).
+2. **Standard Output (stdout / File Descriptor 1)**: Where it prints normal text (the screen).
+3. **Standard Error (stderr / File Descriptor 2)**: Where it prints error messages (the screen).
+
+## Output Redirection (`>` and `>>`)
+
+- **Single Bracket (`>`)**: Captures Standard Output, creates a file, and **overwrites** everything in it.
+  `echo "Hello World" > output.txt`
+- **Double Bracket (`>>`)**: Captures Standard Output and safely **appends** it to the bottom of the file (perfect for logs).
+  `echo "Error 500" >> server.log`
+
+<Callout icon="warning" title="Redirecting Errors (2>)">
+  By default, `>` only captures File Descriptor 1 (Normal output). If a command fails, the error message bypasses the redirect and prints to your screen. 
+  To capture errors into a file, you must explicitly tell the shell to redirect File Descriptor 2:
+  `find / -name "secret" 2> errors.log`
+  *(To redirect BOTH normal output and errors to the same place, use the magic syntax `&>` or `2>&1`).*
+</Callout>
+
+## The Black Hole (/dev/null)
+If you are running a script and you want to completely silence all of its output (ignoring both normal text and errors), you redirect it to the Kernel's legendary black hole:
+`./noisy_script.sh &> /dev/null`
+
+</ConceptTemplate>

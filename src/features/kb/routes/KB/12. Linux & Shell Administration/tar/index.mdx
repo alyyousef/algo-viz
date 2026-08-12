@@ -1,0 +1,30 @@
+---
+title: tar (Tape Archive)
+description: The ancient but ubiquitous utility used to bundle thousands of files into a single solid block of data, known as a Tarball.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="tar (Tape Archive)">
+
+The **`tar`** command was originally created in 1979 to sequentially write data onto physical magnetic tape drives. 
+Today, it is the absolute standard for archiving data in Linux.
+
+Because the standard Linux compressor (`gzip`) can only compress *one single file at a time*, sysadmins use `tar` to bundle 1,000 files into a single, uncompressed `.tar` block. They then pass that single block to `gzip`, resulting in a **.tar.gz** file (a Tarball).
+
+## The Famous Command Flags
+
+The `tar` flags are notoriously difficult to memorize. You almost always use four flags clustered together:
+
+- **Create an Archive (`-czvf`)**: 
+  `tar -czvf backup.tar.gz /var/www/html/`
+  *(c = Create, z = Compress with Gzip, v = Verbose output, f = The filename of the archive).*
+
+- **Extract an Archive (`-xzvf`)**: 
+  `tar -xzvf backup.tar.gz`
+  *(x = eXtract).*
+
+<Callout icon="warning" title="The Order of 'f'">
+  The `f` flag must **always** be the absolute last flag in the cluster. The `f` flag tells the command "the very next word I type is the filename". If you type `tar -cfzv archive.tar.gz`, the command will literally try to create a file named "zv".
+</Callout>
+
+</ConceptTemplate>

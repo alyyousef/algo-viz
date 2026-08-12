@@ -1,0 +1,32 @@
+---
+title: Networking Basics (ip & ss)
+description: The modern iproute2 suite of tools used to configure IP addresses, view routing tables, and analyze open sockets.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Networking Basics (ip & ss)">
+
+For decades, Linux administrators used tools like `ifconfig` (to view IP addresses) and `netstat` (to view open ports). 
+These tools are technically obsolete and missing from many modern distributions. They have been replaced by the **iproute2** suite, primarily the `ip` and `ss` commands.
+
+## The 'ip' Command
+
+The `ip` command is incredibly powerful, managing everything from basic addressing to complex BGP routing tables.
+
+- **View your IP Addresses**: `ip addr show` (or simply `ip a`).
+- **View your Routing Table**: `ip route` (Shows you exactly where traffic goes, including your Default Gateway router).
+- **Bring an interface online**: `sudo ip link set eth0 up`.
+
+<Callout icon="info" title="Ephemeral Configuration">
+  It is critical to remember that if you assign an IP address using the `ip` command (e.g., `ip addr add 192.168.1.50/24 dev eth0`), that configuration lives entirely in RAM. The second the server reboots, the IP address vanishes. Permanent IP configuration must be handled by daemons like NetworkManager or systemd-networkd.
+</Callout>
+
+## The 'ss' Command (Socket Statistics)
+`ss` is the modern replacement for `netstat`. Sysadmins use it constantly to determine what ports are open on a server.
+- **`ss -tulpn`**: The golden command. 
+  - **t/u**: Show TCP and UDP sockets.
+  - **l**: Show only Listening (open server) sockets.
+  - **p**: Show the exact Process Name (Nginx/SSH) attached to that socket.
+  - **n**: Show raw numeric IP addresses, bypassing slow DNS resolution.
+
+</ConceptTemplate>

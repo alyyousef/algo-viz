@@ -1,0 +1,72 @@
+---
+title: Google Cloud Platform (GCP)
+description: Suite of cloud computing services provided by Google.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Google Cloud Platform (GCP)">
+
+Google Cloud Platform (GCP) is a suite of cloud computing services that runs on the same infrastructure that Google uses internally for its end-user products, such as Google Search, Gmail, file storage, and YouTube.
+
+<Callout icon="info" title="Data Analytics and AI Leader">
+  GCP is widely recognized as the industry leader in machine learning, artificial intelligence, and big data analytics, largely due to products like BigQuery, TensorFlow, and custom TPU (Tensor Processing Unit) hardware.
+</Callout>
+
+## Core Compute Services
+
+<ComparisonTable 
+  headers={['Service', 'Type', 'Equivalent in AWS']}
+  rows={[
+    ['Compute Engine (GCE)', 'IaaS / VMs', 'Amazon EC2'],
+    ['Google Kubernetes Engine (GKE)', 'Containers (CaaS)', 'Amazon EKS'],
+    ['Cloud Run', 'Serverless Containers', 'AWS Fargate']
+  ]}
+/>
+
+## Architecture (Data Analytics Pipeline)
+
+<ArchitectureDiagram chart={`
+graph LR
+  subgraph Ingestion
+    PubSub(Cloud Pub/Sub)
+  end
+  
+  subgraph Processing
+    Dataflow(Cloud Dataflow)
+  end
+  
+  subgraph Storage & Analytics
+    BigQuery[(BigQuery)]
+    GCS[(Cloud Storage)]
+  end
+  
+  subgraph Presentation
+    Looker(Looker / Data Studio)
+  end
+  
+  PubSub -->|Streaming Events| Dataflow
+  Dataflow -->|Cleaned Data| BigQuery
+  Dataflow -->|Raw Backup| GCS
+  BigQuery --> Looker
+`} />
+
+## Cloud Run & GKE
+
+Google originally developed Kubernetes (Borg), and GKE is considered the most mature managed Kubernetes service. **Cloud Run** takes containerization a step further by offering fully serverless container execution.
+
+```text
+# gcloud CLI: Authenticate
+gcloud auth login
+
+# Set active project
+gcloud config set project my-gcp-project
+
+# Deploy a container to Cloud Run
+gcloud run deploy my-service \
+  --image gcr.io/my-project/my-image \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+```
+
+</TechnologyTemplate>

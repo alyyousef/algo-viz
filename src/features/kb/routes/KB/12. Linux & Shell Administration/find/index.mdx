@@ -1,0 +1,30 @@
+---
+title: find
+description: The incredibly powerful, recursive search utility used to locate files and directories based on extreme edge-case criteria.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="find">
+
+If you want to quickly locate a file by its name, you can use `locate`. However, if you need to execute a complex, hyper-specific query across the entire filesystem, you use **`find`**.
+
+`find` physically crawls the hard drive in real-time, checking the metadata of every single file against your conditions.
+
+## Syntax and Conditions
+
+The syntax is: `find [starting_directory] [conditions]`.
+
+- **By Name**: `find /var/log -name "*.log"`
+- **By Size**: `find / -size +1G` (Finds all files larger than 1 Gigabyte).
+- **By Age (Mtime)**: `find /tmp -mtime +7` (Finds files modified more than 7 days ago).
+- **By Permissions**: `find /etc -perm 777` (Finds files with incredibly insecure permissions).
+
+<Callout icon="warning" title="The Exec Flag (Danger!)">
+  The true power of `find` is the `-exec` flag, which allows you to execute a command on every single file it finds.
+  
+  `find /var/log -name "*.old" -exec rm {} ;`
+  
+  This command finds all `.old` files and instantly passes them (represented by `{}`) into the `rm` command. Be extremely careful; running this as Root can delete thousands of files in milliseconds.
+</Callout>
+
+</ConceptTemplate>

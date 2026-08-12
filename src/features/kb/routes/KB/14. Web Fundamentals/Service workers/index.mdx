@@ -1,0 +1,28 @@
+---
+title: Service Workers
+description: A powerful background JavaScript process that acts as a programmable network proxy, enabling offline functionality and background sync.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Service Workers">
+
+A **Service Worker** is the technological engine that makes PWAs possible. 
+
+Normally, JavaScript runs on the main thread and dies the moment the user closes the tab. 
+A Service Worker is completely different. It is a standalone script that runs in the background, completely separate from the webpage. It has no access to the DOM, but it has ultimate power over the network.
+
+## The Programmable Proxy
+
+Once installed, a Service Worker acts as a Man-In-The-Middle proxy for your own application. 
+Every single time your React app attempts to fetch an image, a CSS file, or an API endpoint, the Service Worker intercepts the request.
+
+Using the `fetch` event listener, the Service Worker can run custom logic:
+1. **Network-First**: Try to fetch the data from the internet. If the user is offline, serve a fallback file from the local Cache API.
+2. **Cache-First**: Instantly serve the logo from the local Cache API, completely bypassing the internet for extreme performance.
+
+## Background Superpowers
+Because the Service Worker runs independently of the browser tab, it enables native-app features:
+- **Push Notifications**: The server can wake up the Service Worker in the background to display an OS-level push notification, even if the user hasn't visited the website in weeks.
+- **Background Sync**: If a user writes an email while offline, the Service Worker saves it to IndexedDB. When the phone regains cellular service hours later, the OS wakes the Service Worker, which automatically syncs the email to the backend.
+
+</ConceptTemplate>

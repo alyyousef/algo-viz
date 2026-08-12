@@ -1,0 +1,46 @@
+---
+title: Password Hashing
+description: Specialized cryptographic hashing designed specifically to protect passwords stored in databases.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Password Hashing">
+
+When a user creates an account, a secure application never stores their plaintext password (e.g., `password123`) in the database. If the database is breached, the hackers would immediately have everyone's passwords.
+
+Instead, the application hashes the password and stores only the hash. When the user attempts to log in, the application hashes their input and checks if it matches the stored hash.
+
+<Callout icon="error" title="Why standard hashes fail for passwords">
+  Algorithms like **SHA-256** are explicitly designed to be **incredibly fast**. A modern GPU cluster can calculate *billions* of SHA-256 hashes per second. If a hacker steals a database of SHA-256 password hashes, they can simply brute-force them (guess every possible password, hash it, and see if it matches) in a matter of minutes.
+</Callout>
+
+## The Solution: Key Derivation Functions (KDFs)
+
+To protect passwords, we do not use standard cryptographic hashes. We use specialized algorithms called **Key Derivation Functions (KDFs)** or Password Hashing Algorithms. 
+
+These algorithms are intentionally designed to be **computationally expensive and slow**.
+
+If an algorithm is designed to take exactly 0.5 seconds to compute:
+- **For the user**: Logging in takes 0.5 seconds. They won't notice.
+- **For the hacker**: Trying to guess 100 million dictionary words will take 1.5 years instead of 3 seconds. The brute-force attack is neutralized.
+
+## Features of a Password Hashing Algorithm
+
+Modern password hashing algorithms must include two features:
+
+1. **Salting**: Automatically injecting a massive random string into the password before hashing it. This entirely prevents "Rainbow Table" attacks (pre-computed databases of billions of hashes).
+2. **Work Factor (Cost)**: A configurable setting that determines how many thousands of iterations of math the CPU must do to generate the hash. As computers get faster in the future (Moore's Law), administrators simply increase the Work Factor to ensure the hash always takes 0.5 seconds to compute.
+
+## Modern Password Algorithms
+
+<ComparisonTable 
+  headers={['Algorithm', 'Description']}
+  rows={[
+    ['PBKDF2', 'The oldest standard. Simply runs a fast algorithm (like SHA-256) thousands of times in a loop. Secure, but vulnerable to GPU/ASIC hardware acceleration.'],
+    ['bcrypt', 'The industry workhorse since 1999. Incredibly resilient. It demands rapid random access to memory, making it highly resistant to GPU acceleration.'],
+    ['scrypt', 'Designed to be explicitly "memory-hard". It requires massive amounts of RAM to compute, meaning hackers cannot run it efficiently on GPUs.'],
+    ['Argon2', 'The winner of the 2015 Password Hashing Competition. The absolute cutting-edge standard. It allows you to configure CPU time, Memory cost, and Parallelism independently.']
+  ]}
+/>
+
+</TechnologyTemplate>

@@ -1,0 +1,68 @@
+---
+title: Godot
+description: A free and open-source game engine.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Godot">
+
+The Godot Engine is a free, all-in-one, cross-platform game engine that makes it easy for developers to create 2D and 3D games. It is completely open-source under the MIT license, meaning no royalties, no subscription fees, and no strings attached.
+
+<Callout icon="tip" title="The Node Tree Paradigm">
+  Unlike Unity's component-based system, Godot uses an object-oriented approach where everything is a **Node**. Nodes are arranged in a tree structure. A Scene is just a tree of Nodes, and Scenes can be nested inside other Scenes endlessly.
+</Callout>
+
+## GDScript
+
+While Godot supports C# and C++ (via GDExtension), its primary language is **GDScript**, a Python-like dynamically typed language built specifically for the engine. It is tightly integrated, meaning no compile times and instant hot-reloading.
+
+<ComparisonTable 
+  headers={['Language', 'Integration', 'Use Case']}
+  rows={[
+    ['GDScript', 'Native, seamless', 'Gameplay logic, UI, rapid prototyping.'],
+    ['C#', '.NET module', 'Heavy computational tasks, existing enterprise developers.'],
+    ['C++ / Rust', 'GDExtension', 'Maximum performance, engine modification, custom physics.']
+  ]}
+/>
+
+## Example: A Simple Godot Script
+
+Scripts are attached directly to Nodes. This script moves a Node to the right.
+
+```gdscript
+extends CharacterBody2D
+
+var speed: float = 400.0
+
+func _ready():
+    print("Node is ready and entered the scene tree!")
+
+func _physics_process(delta: float):
+    # Get input direction (-1, 0, or 1)
+    var direction = Input.get_axis("ui_left", "ui_right")
+    
+    # Update velocity
+    velocity.x = direction * speed
+    
+    # Built-in function to handle collision and movement
+    move_and_slide()
+```
+
+## Architecture & Signals
+
+Godot uses the Observer pattern extensively via **Signals**. Instead of Nodes tightly coupling and calling functions on each other directly, they emit Signals (events) that other Nodes can listen to.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Button[Button Node]
+  Player[Player Node]
+  Audio[AudioStreamPlayer Node]
+  
+  Button -- emits "pressed" signal --> Player
+  Button -- emits "pressed" signal --> Audio
+  
+  Player -. _on_button_pressed() .-> Action[Jumps]
+  Audio -. _on_button_pressed() .-> Sound[Plays "Click.wav"]
+`} />
+
+</TechnologyTemplate>

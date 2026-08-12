@@ -1,0 +1,32 @@
+---
+title: x86 Architecture
+description: The dominant CISC architecture powering the vast majority of the world's desktop PCs, laptops, and cloud infrastructure.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="x86 Architecture">
+
+The **x86** architecture is the most successful and enduring Instruction Set Architecture (ISA) in the history of computing. Developed by Intel in 1978 with the release of the 16-bit 8086 processor, it has evolved into the absolute monopoly of the PC and Server markets, jointly controlled today by Intel and AMD.
+
+<Callout icon="warning" title="The Burden of Backwards Compatibility">
+  The defining characteristic of x86 is its unwavering commitment to backwards compatibility. If you take a compiled \`.exe\` program from 1985 written for MS-DOS, it will run natively on a modern 24-core Intel i9 processor. The silicon physically retains all the legacy instructions, quirks, and memory addressing modes from the last 40 years.
+</Callout>
+
+## The Evolution of x86
+
+- **16-bit Era (1978)**: The original Intel 8086. It introduced the foundational architecture and the famous registers still used today (AX, BX, CX, DX).
+- **32-bit Era (x86-32 / IA-32) (1985)**: Introduced with the Intel 80386. It expanded the registers to 32 bits (EAX, EBX) and introduced proper Virtual Memory, ushering in the modern era of computing and Windows 95.
+- **64-bit Era (x86-64 / AMD64) (2003)**: In a shocking twist, AMD beat Intel to the 64-bit market. Intel tried to release a brand new, non-compatible 64-bit architecture called Itanium, which failed spectacularly. AMD simply extended the existing x86 architecture to 64-bit (expanding registers to RAX, RBX). Intel was forced to license AMD's design, which is why 64-bit Windows installers are still named \`amd64.exe\` regardless of whether you have an Intel or AMD chip.
+
+## Under the Hood: CISC masking as RISC
+
+x86 is deeply rooted in the **CISC** (Complex Instruction Set) philosophy. It has thousands of massive, variable-length instructions ranging from 1 to 15 bytes long. 
+
+However, complex instructions are impossible to run efficiently at high clock speeds. Therefore, modern x86 processors (since the Pentium Pro in 1995) perform a magic trick in hardware:
+When the CPU fetches a complex x86 instruction, a massive hardware decoder instantly breaks it apart into tiny, simple, RISC-like instructions called **Micro-Ops**. The internal execution engine of an Intel or AMD chip is actually a highly advanced RISC processor, hiding behind an incredibly complex x86 translator!
+
+## The Duopoly
+
+Building a high-performance x86 processor is incredibly difficult due to the sheer complexity of the decoder, and legally impossible for most companies because Intel and AMD hold a cross-licensing duopoly on the patents. If a company like Google or Amazon wants to build their own custom cloud processors, they cannot build x86 chips—which is exactly why the industry is shifting rapidly toward ARM.
+
+</ConceptTemplate>

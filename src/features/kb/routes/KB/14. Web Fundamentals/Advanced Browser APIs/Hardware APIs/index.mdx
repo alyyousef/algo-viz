@@ -1,0 +1,27 @@
+---
+title: Hardware APIs (Bluetooth, USB, NFC)
+description: Experimental, highly restricted browser APIs that allow web applications to communicate directly with physical hardware devices.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Hardware APIs (Bluetooth, USB, NFC)">
+
+Historically, if a medical company wanted to build software that communicated with a specialized heart-rate monitor via Bluetooth, they were forced to write a native desktop application in C# or Swift.
+
+Modern Chromium-based browsers (Chrome, Edge) have introduced powerful APIs to bring hardware control to the Web. 
+*(Note: Apple's Safari vehemently opposes these APIs due to security/fingerprinting concerns, so they are not universally supported).*
+
+## The APIs
+
+- **Web Bluetooth**: Allows a web page to scan for nearby Bluetooth Low Energy (BLE) devices, pair with them, and read/write GATT characteristics. (e.g., A web app reading data from a smartwatch).
+- **WebUSB**: Allows direct communication with USB devices plugged into the computer. (e.g., Flashing firmware onto an Arduino microcontroller directly from a browser tab).
+- **WebNFC**: Allows Android browsers to read and write to NFC tags simply by tapping the phone against them.
+
+## The Security Model
+Giving a webpage access to your physical USB ports is an extreme security risk. 
+To mitigate this, the browser strictly enforces:
+1. The site **must** be served over HTTPS.
+2. The site **cannot** scan for devices silently in the background. It must be triggered by a direct user gesture (like clicking a "Connect Device" button).
+3. The browser will spawn an OS-level prompt forcing the human user to explicitly select the specific hardware device they want to grant the website access to.
+
+</ConceptTemplate>

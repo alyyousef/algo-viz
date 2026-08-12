@@ -1,0 +1,40 @@
+---
+title: Selectors & Specificity
+description: The pattern-matching engine of CSS and the complex mathematical scoring algorithm that resolves styling conflicts.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Selectors & Specificity">
+
+CSS stands for Cascading Style Sheets. The "Cascade" is a complex mathematical algorithm the browser uses to decide which style wins when multiple conflicting rules apply to the exact same HTML element.
+
+## The Specificity Score
+
+When a conflict occurs, the browser calculates a 3-column score: `(ID, CLASS, TAG)`. The highest score wins.
+
+1. **Tag Selectors** (`div`, `p`, `h1`): Lowest power. Score: `(0, 0, 1)`.
+2. **Class Selectors** (`.btn`, `.header`): Medium power. Score: `(0, 1, 0)`.
+3. **ID Selectors** (`#login-form`): Extreme power. Score: `(1, 0, 0)`.
+
+If you write:
+```css
+/* Score: (0, 0, 1) */
+button { color: red; } 
+
+/* Score: (0, 1, 0) - This Wins! */
+.submit-btn { color: blue; } 
+```
+
+Because the Class selector has a higher mathematical score, the button will be blue, regardless of which order the rules are written in the file.
+
+## The Nuclear Option (!important)
+If you append `!important` to a rule (e.g., `color: green !important;`), it mathematically bypasses the entire specificity scoring system and instantly wins. 
+
+Using `!important` is generally considered a massive anti-pattern and a sign of architectural failure. If you use it, you break the Cascade, making the codebase nearly impossible to override or maintain in the future.
+
+## Combinators
+CSS allows complex pattern matching:
+- **Descendant** (`div p`): Selects *any* paragraph inside the div, no matter how deeply nested.
+- **Direct Child** (`div > p`): Selects *only* paragraphs that are immediate, first-generation children of the div.
+
+</ConceptTemplate>

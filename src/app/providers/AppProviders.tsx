@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom'
 
-import { navigateToDesktopOrHistory } from '@/features/dsa/utils/topicPageState'
+import { navigateToDesktopOrHistory } from '@/features/kb/utils/topicPageState'
 
 export interface AppProvidersProps {
   children: ReactNode

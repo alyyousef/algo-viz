@@ -1,0 +1,28 @@
+---
+title: umask (User File-Creation Mode Mask)
+description: The hidden system setting that dictates the default, base permissions granted to any new file or directory upon creation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="umask (User File-Creation Mode Mask)">
+
+When you create a brand new file using `touch secret.txt`, what permissions does it get? 
+Linux doesn't ask you. It calculates the default permissions dynamically using a mechanism called the **umask**.
+
+## The Subtraction Logic
+
+In Linux, the maximum base permission for a Directory is **777** (Read/Write/Execute for everyone). 
+The maximum base permission for a File is **666** (Read/Write for everyone; standard files do not get Execute permissions by default).
+
+The **umask** is a 3-digit octal number that is *subtracted* from those maximums.
+
+If your system's umask is configured to **022**:
+- **New Directories**: 777 - 022 = **755** (Owner gets full control, everyone else can only Read/Execute).
+- **New Files**: 666 - 022 = **644** (Owner gets Read/Write, everyone else can only Read).
+
+<Callout icon="success" title="Enterprise Security (Umask 027)">
+  By default, most consumer Linux distributions use a umask of `022`, which means any file you create is globally readable by every other user on the server. 
+  In high-security enterprise environments, the default umask is often changed in `/etc/profile` to **027**. This subtracts 7 from the "Others" column, guaranteeing that new files are permanently locked to the Owner and Group, with zero access for anyone else.
+</Callout>
+
+</ConceptTemplate>

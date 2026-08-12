@@ -1,0 +1,30 @@
+---
+title: Shared Memory
+description: The absolute fastest form of IPC, where the OS maps the same block of physical RAM into the virtual memory spaces of two distinct processes.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Shared Memory">
+
+Standard IPC (like Pipes or Sockets) is slow because every message must be copied from Process A, into the Kernel, and then into Process B. 
+
+**Shared Memory** is a highly specialized OS feature that bypasses this limitation, making it the absolute fastest form of Inter-Process Communication available.
+
+## How It Works
+
+1. Process A asks the OS to create a Shared Memory segment.
+2. The OS allocates a block of physical RAM.
+3. Crucially, the OS programs the CPU's Memory Management Unit (MMU) to map this specific physical block into Process A's Virtual Memory space, AND simultaneously maps it into Process B's Virtual Memory space.
+
+<Callout icon="success" title="Zero-Copy Communication">
+  Once the memory is mapped, the OS gets completely out of the way. 
+  When Process A writes a byte to the shared memory, it is instantly visible to Process B. There are no System Calls, no Context Switches, and no data copying. The speed is limited only by the physical clock speed of the RAM chips.
+</Callout>
+
+## The Fatal Flaw
+
+Because Shared Memory behaves exactly like two threads sharing a Heap, it re-introduces the nightmare of **Race Conditions**. 
+
+If Process A and Process B attempt to modify the shared memory at the exact same nanosecond, the data will be silently corrupted. Therefore, developers using Shared Memory must also use strict Synchronization mechanisms (like cross-process Mutexes or Semaphores) to lock the memory during writes, which adds complexity back into the system.
+
+</ConceptTemplate>

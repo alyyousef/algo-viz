@@ -1,0 +1,40 @@
+---
+title: Virtual Memory
+description: The operating system abstraction that gives every program the illusion it has a massive, contiguous block of RAM entirely to itself.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Virtual Memory">
+
+In the early days of computing, if you opened a program, it was loaded directly into physical RAM. If Program A was loaded at address \`0\` and Program B was loaded at address \`1000\`, a bug in Program A could easily overwrite Program B's data, causing the entire computer to crash. Furthermore, if you only had 16 MB of RAM, and you tried to open 20 MB of programs, the OS would simply refuse.
+
+**Virtual Memory** is arguably the most brilliant abstraction in operating system design, completely solving both of these problems.
+
+<Callout icon="success" title="The Grand Illusion">
+  With Virtual Memory, a program never touches actual physical RAM. Instead, the OS lies to every program, giving it a "Virtual Address Space" starting at address 0. Program A thinks it owns all the memory in the world. Program B thinks it owns all the memory in the world. The hardware secretly translates these fake virtual addresses into real physical addresses on the fly.
+</Callout>
+
+## Paging and the Page Table
+
+The OS chops the Virtual Memory and Physical RAM into fixed-size chunks called **Pages** (typically 4 KB each). 
+
+The OS maintains a massive dictionary in RAM called the **Page Table**. 
+When Program A asks to read from Virtual Address \`0x0000\`, the CPU pauses, looks up \`0x0000\` in the Page Table, discovers it actually maps to Physical RAM Address \`0x8F00\`, and transparently routes the request there. 
+
+### Security via Isolation
+If Program A tries to read from a virtual address that the OS hasn't mapped, or tries to read memory belonging to Program B, the CPU hardware triggers a fatal exception (a **Segmentation Fault**) and instantly kills the malicious program, keeping the rest of the OS perfectly safe.
+
+## Swapping (Paging to Disk)
+
+What happens if you have 16 GB of physical RAM, but you open 30 GB of Google Chrome tabs? 
+
+Because of Virtual Memory, the OS doesn't crash. Instead, it looks at the Page Table and finds "Cold Pages" — data belonging to programs you haven't clicked on in a while. The OS copies those 4 KB pages out of RAM and saves them onto your slow Hard Drive (the Swap File / Pagefile). It then hands that newly freed physical RAM to your active Chrome tab.
+
+If you switch back to the old program, the CPU suffers a **Page Fault**. The OS pauses the program, reads the data off the hard drive back into RAM, updates the Page Table, and resumes the program. This allows you to run far more software than your physical RAM could ever hold, albeit at the cost of hard drive latency.
+
+## The TLB (Translation Lookaside Buffer)
+
+Translating a Virtual Address to a Physical Address requires looking up the Page Table. But the Page Table is stored in RAM! This means every memory request would require *two* trips to RAM (one to translate the address, one to fetch the actual data), slashing performance in half. 
+To fix this, the CPU has a specialized hardware cache called the **TLB (Translation Lookaside Buffer)**. The TLB caches recent translations. If the translation is in the TLB (a TLB Hit), the CPU resolves the address instantly without checking the Page Table.
+
+</ConceptTemplate>

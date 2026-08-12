@@ -1,0 +1,44 @@
+---
+title: GitHub
+description: Internet hosting service for software development and version control using Git.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="GitHub">
+
+GitHub is a web-based interface that uses Git, the open source version control software that lets multiple people make separate changes to web pages at the same time. Acquired by Microsoft in 2018, it is the world's largest repository of source code.
+
+<Callout icon="info" title="Git != GitHub">
+  Remember: **Git** is the local version control tool. **GitHub** is the cloud-based hosting service and collaboration platform built around Git.
+</Callout>
+
+## The GitHub Flow
+
+<ArchitectureDiagram chart={`
+sequenceDiagram
+    participant Dev as Developer
+    participant Branch as Feature Branch
+    participant PR as Pull Request
+    participant Master as Main Branch
+    
+    Dev->>Branch: Commits code
+    Dev->>PR: Opens Pull Request
+    Note over PR: Code Review & CI Checks
+    PR-->>Dev: Feedback
+    Dev->>PR: Fixes & Push
+    PR->>Master: Merge Pull Request
+`} />
+
+## Key Features
+
+<ComparisonTable 
+  headers={['Feature', 'Purpose']}
+  rows={[
+    ['Pull Requests', 'The core collaboration mechanism. Propose changes, review code, and merge into the main branch.'],
+    ['GitHub Actions', 'Integrated CI/CD pipelines defined in YAML files.'],
+    ['GitHub Issues', 'Integrated project management and bug tracking.'],
+    ['GitHub Copilot', 'AI pair programmer integrated into the IDE, trained on public GitHub repositories.']
+  ]}
+/>
+
+</TechnologyTemplate>

@@ -1,0 +1,81 @@
+---
+title: Unity
+description: A cross-platform game engine developed by Unity Technologies.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Unity">
+
+Unity is a cross-platform game engine developed by Unity Technologies. It is the most popular game engine in the world for indie games, mobile games, and AR/VR development. It uses C# as its primary scripting language.
+
+<Callout icon="info" title="Component-Based Architecture">
+  Unity uses an Entity-Component-System (ECS) heavily inspired pattern. In Unity, everything in the scene is a `GameObject` (the Entity). To give a GameObject behavior (like physics, rendering, or custom logic), you attach `Components` (like a `Rigidbody` or a custom C# `MonoBehaviour`).
+</Callout>
+
+## The Unity Editor & Workflow
+
+Unity provides a visual editor where you drag-and-drop assets, build scenes, and configure components via the Inspector.
+
+<ComparisonTable 
+  headers={['Window', 'Purpose']}
+  rows={[
+    ['Scene View', 'Where you visually construct your game levels.'],
+    ['Game View', 'Simulates what the player will see through the main camera.'],
+    ['Hierarchy', 'A tree list of every GameObject currently in the active Scene.'],
+    ['Inspector', 'Shows the properties and attached Components of the currently selected GameObject.']
+  ]}
+/>
+
+## Example: A Simple Player Controller
+
+A standard Unity script inherits from `MonoBehaviour`, giving it access to lifecycle hooks like `Start()` and `Update()`.
+
+```csharp
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    public float speed = 5.0f;
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Get input from WASD or Arrow Keys (-1 to 1)
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        // Calculate movement vector
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+
+        // Apply movement scaled by time to ensure smooth framerate-independent speed
+        transform.Translate(movement * speed * Time.deltaTime);
+    }
+}
+```
+
+## Unity Build Pipeline
+
+Unity handles compiling your C# code and packaging your assets for over 20 different platforms.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Source[C# Scripts & Assets]
+  Engine[Unity Engine\n(C++ Core)]
+  IL2CPP[IL2CPP Compiler]
+  
+  subgraph Target Platforms
+    iOS[iOS / App Store]
+    Android[Android / Google Play]
+    PC[Windows / Steam]
+    Console[Xbox / PlayStation]
+  end
+  
+  Source --> Engine
+  Engine -- Converts C# to C++ --> IL2CPP
+  IL2CPP -- Native Compilation --> iOS
+  IL2CPP -- Native Compilation --> Android
+  IL2CPP -- Native Compilation --> PC
+  IL2CPP -- Native Compilation --> Console
+`} />
+
+</TechnologyTemplate>

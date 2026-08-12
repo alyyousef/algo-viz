@@ -1,0 +1,29 @@
+---
+title: Network Ports
+description: The 16-bit virtual endpoints at Layer 4 (TCP/UDP) used to route incoming network traffic to the correct software application.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Network Ports">
+
+An IP address gets a packet to the correct physical computer. But a modern server might be running a Web Server, an Email Server, and an SSH Server all at the same time. 
+How does the OS know which application should receive the incoming packet? 
+
+It uses **Layer 4 Ports**.
+
+## The Port Concept
+
+A Port is a 16-bit number, ranging from **1 to 65,535**. It is essentially an apartment number added to the IP address (e.g., `192.168.1.50:80`).
+
+- **Well-Known Ports (0 - 1023)**: Tightly controlled standard ports.
+  - **22**: SSH
+  - **53**: DNS
+  - **80**: HTTP
+  - **443**: HTTPS
+- **Ephemeral Ports (49152 - 65535)**: Temporary ports assigned dynamically to client applications (like your web browser) when they initiate a connection.
+
+<Callout icon="info" title="The Web Browser Example">
+  When you open Chrome and go to Google, Chrome asks the OS for a random Ephemeral Port (e.g., `52000`). Chrome builds a packet with a Source Port of `52000` and a Destination Port of `443` (HTTPS), and sends it to Google. Google receives it on Port 443, processes the webpage, and replies back to your IP on Port `52000`. Your OS receives the reply, sees Port `52000`, and knows exactly which Chrome tab to deliver the HTML to.
+</Callout>
+
+</ConceptTemplate>

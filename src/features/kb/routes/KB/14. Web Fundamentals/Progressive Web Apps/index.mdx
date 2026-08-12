@@ -1,0 +1,24 @@
+---
+title: Progressive Web Apps (PWAs)
+description: A modern paradigm where standard web applications leverage advanced browser APIs to look, feel, and function exactly like native mobile applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Progressive Web Apps (PWAs)">
+
+Historically, if a company wanted a mobile app, they had to hire Objective-C developers for iOS, Java developers for Android, and submit the apps to heavily taxed, strictly controlled App Stores.
+
+**Progressive Web Apps (PWAs)** are standard web applications (built with React/Vue) that utilize modern browser APIs to bypass the App Store entirely, functioning exactly like a native app.
+
+## The Three Pillars of a PWA
+
+To be officially recognized by the browser as a PWA, a web app must implement three things:
+
+1. **HTTPS**: PWAs have access to dangerous APIs (like Geolocation and Background Sync), so they absolutely require a secure TLS connection.
+2. **Web Manifest**: A simple JSON file that dictates exactly how the app should look when installed to the user's home screen (the icon, the theme color, and hiding the browser's URL bar).
+3. **Service Worker**: A background JavaScript process that intercepts network requests, allowing the application to cache data and function completely offline without an internet connection.
+
+If these three conditions are met, Chrome/Safari will natively prompt the user: *"Add this app to your Home Screen?"* 
+The app installs instantly, bypassing the App Store, and runs in a full-screen, standalone window.
+
+</ConceptTemplate>

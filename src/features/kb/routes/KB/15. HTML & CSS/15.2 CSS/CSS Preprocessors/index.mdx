@@ -1,0 +1,41 @@
+---
+title: CSS Preprocessors (Sass, Less, Stylus)
+description: The first major evolution of CSS tooling, introducing variables, nesting, and mathematical functions to styling.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CSS Preprocessors">
+
+In the late 2000s, writing pure CSS was a nightmare. The language lacked variables, you couldn't write functions, and you had to rewrite massive selector chains repeatedly. 
+To solve this, developers created **Preprocessors**—new styling languages that compiled mathematically down into standard CSS before being shipped to the browser.
+
+## The Big Three
+
+### 1. Sass / SCSS (Syntactically Awesome Style Sheets)
+The absolute king of preprocessors, primarily utilizing the `.scss` syntax. It brought programmable logic to CSS.
+- **Variables**: `$primary-color: #3bbfce;` (Note: This predates native CSS Custom Properties).
+- **Nesting**: You could nest selectors hierarchically, avoiding massive repetition.
+- **Mixins**: Reusable blocks of code that could accept arguments.
+
+```scss
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+
+.box { @include border-radius(10px); }
+```
+
+### 2. Less (Leaner Style Sheets)
+Heavily popularized by the original Bootstrap framework. It functioned very similarly to Sass but was written natively in Javascript (whereas original Sass was Ruby-based). It used `@` for variables instead of `$`.
+
+### 3. Stylus
+The most minimalist preprocessor. It allowed developers to completely omit colons, semicolons, and curly braces if they desired, relying strictly on python-esque indentation.
+
+## Modern Relevance
+Today, native CSS has caught up. We have native CSS Variables, and native CSS Nesting is now universally supported in modern browsers. 
+Because of this, the usage of heavy preprocessors like Sass has significantly declined in favor of PostCSS and Tailwind.
+
+</ConceptTemplate>

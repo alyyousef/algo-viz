@@ -1,0 +1,37 @@
+---
+title: Directed Acyclic Graphs (DAGs)
+description: A directed graph with no directed cycles, fundamentally used for modeling dependencies and topological sorting.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Directed Acyclic Graphs (DAGs)">
+
+A **Directed Acyclic Graph (DAG)** is a specific type of Directed Graph that has absolutely **no directed cycles**. This means if you start at any vertex $v$ and follow the one-way edges, it is mathematically impossible to ever loop back to vertex $v$.
+
+<Callout icon="success" title="The Dependency Structure">
+  DAGs are the ultimate data structure for modeling **dependencies**. If Task A must be done before Task B, you draw an arrow A -> B. Because it is a DAG, you are guaranteed that there are no circular dependencies (e.g., A needs B, B needs C, C needs A), which would make execution impossible.
+</Callout>
+
+## Topological Sorting
+
+The defining algorithm associated with DAGs is the **Topological Sort**. 
+
+A topological sort takes a DAG and produces a linear, flat list of the vertices such that for every directed edge $u \to v$, vertex $u$ comes before vertex $v$ in the list.
+
+- **Example**: If the DAG represents a university course prerequisite structure, the topological sort gives you the exact order you should take the classes semester by semester to graduate.
+- **Note**: A topological sort is *only possible* if the graph is a DAG. If a cycle exists, the sort is impossible.
+
+## Real-World Use Cases
+
+DAGs are everywhere in modern software engineering:
+
+1. **Git Version Control**: The history of Git commits forms a DAG. Branches diverge and merge, but time only flows forward; a commit cannot be its own ancestor.
+2. **Build Systems (Make, Webpack, Maven)**: When you compile code, the build tool creates a DAG of file dependencies to figure out exactly which order to compile the files.
+3. **Data Engineering Pipelines**: Tools like Apache Airflow explicitly use DAGs to orchestrate ETL jobs (Extract, Transform, Load).
+4. **Spreadsheets**: When you type a formula in Excel, it builds a DAG of cell dependencies to know what other cells need to be recalculated when one changes. (If you create a circular dependency, Excel throws an error).
+
+## Finding Cycles
+
+To verify if a directed graph is a valid DAG, you use **Depth-First Search (DFS)**. During the traversal, you keep track of the current path in a "recursion stack." If you ever encounter a node that is already currently in the recursion stack, you have found a back-edge, proving a cycle exists and the graph is not a DAG.
+
+</ConceptTemplate>

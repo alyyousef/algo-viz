@@ -1,0 +1,42 @@
+---
+title: Race Conditions
+description: A catastrophic software bug that occurs when the timing of multi-threaded execution alters the behavior and output of a program.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Race Conditions">
+
+A **Race Condition** is the specific bug that occurs when Synchronization is not implemented correctly. It happens when two threads "race" to access the same shared variable, and the final output of the program depends entirely on which thread happened to win the race.
+
+Race conditions are notoriously difficult to debug because they are non-deterministic. A program might run flawlessly 9,999 times in a row, and crash on the 10,000th time simply because a background CPU interrupt caused Thread A to be delayed by a single nanosecond.
+
+## The Classic `i++` Example
+
+Imagine a bank account with a shared variable `balance = 100`.
+Thread 1 and Thread 2 both execute the code: `balance = balance + 50`.
+The final balance should be `200`.
+
+However, the CPU does not execute `balance = balance + 50` in one step. It translates it into three machine instructions:
+1. **LOAD** `balance` from RAM into a CPU Register.
+2. **ADD** 50 to the Register.
+3. **STORE** the Register back into RAM.
+
+### The Catastrophic Interleaving
+Because the OS Scheduler can Context Switch a thread at *any* moment, the execution can interleave like this:
+
+- **Thread 1:** executes **LOAD**. (Reads `100` into its register).
+- *(Context Switch! The OS forcefully pauses Thread 1)*
+- **Thread 2:** executes **LOAD**. (Reads `100` from RAM into its register).
+- **Thread 2:** executes **ADD 50**. (Its register is now `150`).
+- **Thread 2:** executes **STORE**. (RAM is updated to `150`).
+- *(Context Switch! The OS resumes Thread 1)*
+- **Thread 1:** resumes where it left off. It executes **ADD 50** to *its* saved register. (100 + 50 = `150`).
+- **Thread 1:** executes **STORE**. (Overwrites RAM with `150`).
+
+**The final balance is 150, not 200.** Thread 2's deposit was completely erased because Thread 1 was holding a stale value in its register during the context switch.
+
+<Callout icon="success" title="The Fix">
+  To prevent this, the three instructions (LOAD, ADD, STORE) must be executed **Atomically** (meaning they cannot be interrupted mid-execution). This is achieved by wrapping the code in a Mutex lock.
+</Callout>
+
+</ConceptTemplate>

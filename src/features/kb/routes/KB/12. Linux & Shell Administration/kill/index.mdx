@@ -1,0 +1,24 @@
+---
+title: kill
+description: The primary command used to send software Signals to running processes, asking them to shut down or reload.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="kill">
+
+The **`kill`** command is poorly named. It does not actually kill processes; it simply sends **Signals** to them. It is entirely up to the process (or the Kernel) to decide how to respond to that Signal.
+
+## The Most Common Signals
+
+When you run `kill <PID>`, you are actually sending a specific numerical signal.
+
+1. **SIGTERM (Signal 15 - Terminate)**: This is the default signal. It is a polite request. It tells a web server, "Please stop accepting new connections, save your database writes, and shut down." The application can completely ignore this if it is frozen.
+2. **SIGKILL (Signal 9 - Kill)**: `kill -9 <PID>`. This is the nuclear option. The signal never even reaches the application; it goes directly to the Kernel, and the Kernel instantly deletes the process from memory. Open files are corrupted, and data is lost.
+3. **SIGHUP (Signal 1 - Hangup)**: `kill -1 <PID>`. Originally used to tell a program the phone line hung up. Today, daemons (like Nginx) interpret this as "Reload your configuration files from disk without actually dropping active connections."
+
+<Callout icon="success" title="killall and pkill">
+  If you have 50 Google Chrome processes running, finding their PIDs and typing `kill` 50 times is a nightmare.
+  Use **`killall chrome`** to instantly send a SIGTERM to every single process named "chrome", or **`pkill -f "python script.py"`** to kill processes matching a specific text pattern.
+</Callout>
+
+</ConceptTemplate>

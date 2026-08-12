@@ -1,0 +1,26 @@
+---
+title: Windows
+description: The dominant desktop operating system on Earth, powered by the incredibly robust, proprietary Windows NT Kernel.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Windows">
+
+Microsoft **Windows** is the undisputed king of the consumer and enterprise desktop market, holding roughly 70% global market share. 
+
+While the early versions of Windows (Windows 95, 98) were famously unstable graphical shells built on top of the ancient DOS operating system, modern Windows (XP, 7, 10, 11) is built on an entirely different foundation: the **Windows NT Kernel**.
+
+## The NT Kernel Architecture
+
+The NT (New Technology) Kernel is a proprietary, highly advanced **Hybrid Kernel**. 
+
+Unlike Linux (which is heavily focused on the POSIX/Unix philosophy), the NT architecture is completely unique:
+1. **The Registry**: Instead of storing configuration in thousands of scattered text files (like Linux's `/etc` directory), Windows stores all OS and Application configuration in a massive, centralized, hierarchical binary database called the Windows Registry.
+2. **Drive Letters**: Instead of a single root filesystem tree (`/`), Windows abstracts physical drives into distinct lettered volumes (`C:`, `D:`).
+3. **The Win32 API**: The massive C-based API that has maintained incredible backward compatibility. A program written for Windows 95 using Win32 will often still execute perfectly on Windows 11.
+
+<Callout icon="success" title="The WSL Revolution">
+  Recognizing the massive popularity of Linux for software development, Microsoft introduced **WSL2 (Windows Subsystem for Linux)**. Rather than trying to emulate Linux, Windows 11 now literally ships with a real, Microsoft-compiled Linux kernel running seamlessly alongside the NT kernel inside a lightweight hypervisor, allowing developers to run native Ubuntu directly inside Windows.
+</Callout>
+
+</ConceptTemplate>

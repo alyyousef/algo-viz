@@ -1,0 +1,72 @@
+---
+title: Mocking
+description: Creating fake versions of external dependencies so that you can unit test code in complete isolation.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Mocking">
+
+Mocking is a process used in unit testing where the unit being tested has external dependencies. The purpose of mocking is to isolate and focus on the code being tested and not on the behavior or state of external dependencies. In mocking, the dependencies are replaced by closely controlled replacements objects that simulate the behavior of the real ones.
+
+<Callout icon="tip" title="Why Mock?">
+  If you are testing a function that sends an email to a user, you DO NOT want your test suite to actually send thousands of spam emails every time it runs. You mock the email service so it just *pretends* to send the email and returns a success code.
+</Callout>
+
+## Types of Test Doubles
+
+"Test Double" is the generic term for any fake object (like a stunt double in a movie). Mocks are just one type.
+
+<ComparisonTable 
+  headers={['Type', 'Description']}
+  rows={[
+    ['Dummy', 'Objects that are passed around but never actually used. Usually just used to fill parameter lists.'],
+    ['Stub', 'Provides canned, hard-coded answers to calls made during the test (e.g., `return true`).'],
+    ['Spy', 'A stub that also records some information based on how it was called (e.g., "Was I called exactly 3 times?").'],
+    ['Mock', 'Pre-programmed with expectations which form a specification of the calls they are expected to receive.']
+  ]}
+/>
+
+## Example: Mocking an API Call
+
+Instead of waiting for a slow API over the internet, we force the fake API to return exactly what we want instantly.
+
+```javascript
+import { fetchUserData } from './api';
+import { displayUser } from './ui';
+
+// Tell Jest to replace the real file with a fake one
+jest.mock('./api');
+
+test('displays user name', async () => {
+  // Arrange: Force the mock to return specific data
+  fetchUserData.mockResolvedValue({ name: 'Alice' });
+  
+  // Act
+  const uiText = await displayUser(123);
+  
+  // Assert
+  expect(uiText).toBe('Hello, Alice');
+  expect(fetchUserData).toHaveBeenCalledWith(123); // Spy behavior
+});
+```
+
+## Architecture of a Mock
+
+<ArchitectureDiagram chart={`
+graph LR
+  Test[Unit Test]
+  
+  Func[Business Logic]
+  
+  subgraph Dependency Injection
+    Real[Real Email Service\n(Sends real emails)]
+    Mock[Mock Email Service\n(Does nothing, returns True)]
+  end
+  
+  Test -- Tests --> Func
+  Test -- Injects Mock --> Func
+  Func --> Mock
+  Func -.-x Real
+`} />
+
+</TechnologyTemplate>

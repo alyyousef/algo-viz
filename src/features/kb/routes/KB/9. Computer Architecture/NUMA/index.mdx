@@ -1,0 +1,35 @@
+---
+title: Non-Uniform Memory Access (NUMA)
+description: A multiprocessor architecture where memory access times vary depending on whether a CPU core is accessing its own local memory or another processor's memory.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Non-Uniform Memory Access (NUMA)">
+
+In a standard consumer PC, there is one CPU socket and a set of RAM sticks. All CPU cores share the exact same physical distance and connection (the memory bus) to the RAM. Because the latency to access RAM is identical for all cores, this is called **UMA (Uniform Memory Access)**.
+
+However, in massive enterprise servers (like a 4-socket motherboard running 4 massive Intel Xeon processors), UMA becomes physically impossible.
+
+<Callout icon="warning" title="The Traffic Jam">
+  If 128 cores across 4 separate physical CPU sockets all try to communicate with a single centralized bank of RAM over a single shared bus, the bus becomes incredibly congested. The memory controller becomes a severe bottleneck, crippling the server's performance.
+</Callout>
+
+## The NUMA Architecture
+
+To solve the bottleneck, engineers invented **NUMA (Non-Uniform Memory Access)**.
+Instead of one central pool of RAM, the RAM is physically divided and bolted directly to each individual CPU socket. 
+- **CPU 1** has its own dedicated 128GB of RAM.
+- **CPU 2** has its own dedicated 128GB of RAM.
+The CPUs are connected to each other via an ultra-fast interconnect (like Intel QPI or AMD Infinity Fabric).
+
+### The Latency Cost
+The total system still presents as 256GB of unified memory to the Operating System. However, the access times are now **Non-Uniform**:
+- **Local Access**: If CPU 1 needs data stored in CPU 1's RAM, it accesses it instantly (extremely fast).
+- **Remote Access**: If CPU 1 needs data stored in CPU 2's RAM, it must send a request across the QPI interconnect, asking CPU 2 to fetch the data and send it back. This takes significantly longer (high latency).
+
+## NUMA-Aware Software
+
+Because of this severe latency penalty, software running on enterprise servers must be **NUMA-Aware**. 
+The Operating System's scheduler is specifically programmed to pin a thread to CPU 1, and ensure that any memory allocated by that thread is physically placed in CPU 1's local RAM bank. High-performance databases (like SQL Server or Redis) explicitly manage their memory allocations on a per-NUMA-node basis to prevent crippling cross-socket remote memory requests.
+
+</ConceptTemplate>

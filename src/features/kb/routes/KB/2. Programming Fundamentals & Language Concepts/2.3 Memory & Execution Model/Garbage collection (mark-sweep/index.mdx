@@ -1,0 +1,27 @@
+---
+title: Garbage Collection (Mark and Sweep)
+description: A form of automatic memory management.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Garbage Collection (Mark and Sweep)">
+
+In computer science, garbage collection (GC) is a form of automatic memory management. The garbage collector attempts to reclaim garbage, or memory occupied by objects that are no longer in use by the program.
+
+<Callout icon="warning" title="Stop-the-World Pauses">
+  In heavy applications, the Garbage Collector occasionally has to freeze the entire application ("stop-the-world") for a few milliseconds to safely scan memory and delete dead objects. This can cause stuttering in high-performance games or trading systems.
+</Callout>
+
+## The Mark and Sweep Algorithm
+
+The most common GC algorithm works in two distinct phases:
+
+<ComparisonTable 
+  headers={['Phase', 'Action']}
+  rows={[
+    ['1. Mark', 'The GC starts at the "Roots" (global variables, active stack frames) and traverses all references, marking every object it can reach as "Alive".'],
+    ['2. Sweep', 'The GC scans the entire Heap memory. Any object that is NOT marked as "Alive" is immediately deleted and its memory is reclaimed for future use.']
+  ]}
+/>
+
+</TechnologyTemplate>

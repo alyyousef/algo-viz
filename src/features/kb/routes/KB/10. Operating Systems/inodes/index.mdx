@@ -1,0 +1,31 @@
+---
+title: Inodes (Index Nodes)
+description: The hidden metadata database entries that actually define a file, completely independent of the file's human-readable name.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Inodes (Index Nodes)">
+
+In Unix-based filesystems (like EXT4 on Linux), a file is not defined by its name. A file is defined by its **Inode** (Index Node).
+
+An Inode is a fixed-size data structure (usually 256 bytes) stored in a massive table on the hard drive. Every single file and folder on your computer has exactly one corresponding Inode.
+
+## What is inside an Inode?
+The Inode stores all the Metadata about the file, including:
+- **File Size**: (e.g., 50 Kilobytes).
+- **Permissions**: (e.g., Read/Write for Admin, Read-Only for Users).
+- **Timestamps**: Creation time, Last Modified time.
+- **Data Pointers**: The exact physical block numbers on the hard drive where the file's actual data is stored.
+
+<Callout icon="warning" title="The Missing Piece">
+  Notice what is *not* in the Inode: **The File Name**. 
+  Inodes do not know the name of the file. The human-readable name (like `resume.pdf`) is stored in the Directory (Folder) file, which simply points to the Inode number.
+</Callout>
+
+## Hard Links
+
+Because the name is decoupled from the Inode, you can have multiple different File Names pointing to the exact same Inode! This is called a **Hard Link**.
+
+You can have `/documents/resume.pdf` and `/desktop/work.pdf` both pointing to Inode #555. They are not copies of the file; they are literally the exact same file on the hard drive. If you edit one, the other instantly changes. The file is only physically deleted from the hard drive when *all* names pointing to the Inode are deleted, dropping the Inode's reference count to zero.
+
+</ConceptTemplate>

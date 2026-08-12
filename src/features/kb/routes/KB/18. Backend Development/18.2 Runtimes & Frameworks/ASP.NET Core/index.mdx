@@ -1,0 +1,59 @@
+---
+title: ASP.NET Core
+description: A cross-platform, high-performance, open-source framework for building modern, cloud-enabled, Internet-connected apps.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="ASP.NET Core">
+
+ASP.NET Core is a free, cross-platform, and open-source web framework created by Microsoft. It is a complete redesign of ASP.NET that unites the previously separate ASP.NET MVC and ASP.NET Web API into a single programming model.
+
+<Callout icon="tip" title="Blazing Fast">
+  ASP.NET Core consistently ranks among the fastest web frameworks in the world in the TechEmpower benchmarks, often outperforming Node.js, Java Spring, and Go in raw request-per-second throughput.
+</Callout>
+
+## Key Benefits
+
+<ComparisonTable 
+  headers={['Benefit', 'Description']}
+  rows={[
+    ['Cross-Platform', 'Runs on Windows, macOS, and Linux.'],
+    ['Unified MVC & Web API', 'Use the same controllers and routing for HTML views and JSON APIs.'],
+    ['Dependency Injection', 'Built-in DI container out of the box.'],
+    ['Kestrel Web Server', 'Includes Kestrel, a highly optimized cross-platform web server.']
+  ]}
+/>
+
+## Example: Minimal API
+
+With recent versions (C# 10 / .NET 6+), ASP.NET Core introduced **Minimal APIs**, stripping away the boilerplate of traditional controllers to compete with the simplicity of Node.js/Express.
+
+```csharp
+using Microsoft.AspNetCore.Builder;
+
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+app.MapGet("/hello", () => "Hello World from ASP.NET Core!");
+
+app.Run();
+```
+
+## Typical Architecture (Clean Architecture)
+
+Enterprise ASP.NET Core applications often follow a layered architecture to separate concerns.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Web[Web API Layer\n(Controllers / Endpoints)]
+  App[Application Layer\n(Interfaces / MediatR)]
+  Domain[Domain Layer\n(Entities / Value Objects)]
+  Infra[Infrastructure Layer\n(EF Core / DB Context)]
+  
+  Web --> App
+  App --> Domain
+  Infra --> App
+  Infra --> Domain
+`} />
+
+</TechnologyTemplate>

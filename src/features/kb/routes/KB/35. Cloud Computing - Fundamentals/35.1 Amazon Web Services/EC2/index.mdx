@@ -1,0 +1,40 @@
+---
+title: Amazon EC2
+description: Elastic Compute Cloud, Amazon's foundational service providing resizable compute capacity in the cloud.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="Amazon EC2 (Elastic Compute Cloud)" 
+  category="Cloud Computing" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/b/b2/Amazon_Web_Services_Logo.svg"
+>
+
+**Amazon EC2 (Elastic Compute Cloud)** is the absolute backbone of AWS. It provides raw, virtualized servers (called "Instances") in the cloud. When you launch an EC2 instance, you are renting a slice of a massive physical server sitting in an Amazon data center.
+
+<Callout icon="info" title="IaaS Pioneer">
+  EC2 is the quintessential example of **Infrastructure as a Service (IaaS)**. You get a virtual machine with a fresh Linux or Windows installation. From there, you are 100% responsible for patching the OS, installing runtimes (like Node.js or Python), and configuring networking.
+</Callout>
+
+## Instance Families
+
+AWS offers hundreds of different EC2 instance types, categorized by what they are optimized to do. They use a naming convention like \`t3.micro\` or \`m5.large\`:
+- **General Purpose (T, M)**: Balanced CPU, memory, and networking. (e.g., web servers).
+- **Compute Optimized (C)**: High-performance processors for compute-intensive workloads (e.g., video encoding, scientific modeling).
+- **Memory Optimized (R, X)**: Massive amounts of RAM for memory-intensive workloads (e.g., in-memory databases like Redis).
+- **Accelerated Computing (P, G)**: Equipped with physical GPUs for Machine Learning and 3D rendering.
+
+## Purchasing Options
+
+How you pay for EC2 dictates your cloud architecture:
+1. **On-Demand**: Pay by the second with zero long-term commitment. Most expensive, but maximum flexibility.
+2. **Reserved Instances**: Commit to a 1-year or 3-year contract for a specific instance type. Offers a massive discount (up to 72%). Best for predictable, baseline traffic.
+3. **Spot Instances**: Bid on unused Amazon server capacity. Offers the absolute cheapest price (up to 90% off), but **Amazon can terminate your server with only 2 minutes of warning** if they need the capacity back. Used for batch processing and fault-tolerant workloads.
+
+## AMIs and EBS
+
+When launching an EC2 instance, you must configure two critical components:
+- **AMI (Amazon Machine Image)**: The template that contains the software configuration (OS, application server, and applications) required to launch your instance.
+- **EBS (Elastic Block Store)**: The virtual hard drive attached to your EC2 instance. If you terminate an EC2 instance, the local ephemeral storage is permanently deleted, but you can configure the EBS volume to survive.
+
+</TechnologyTemplate>

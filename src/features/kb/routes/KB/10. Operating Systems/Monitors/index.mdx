@@ -1,0 +1,39 @@
+---
+title: Monitors
+description: A high-level, object-oriented synchronization construct that automatically wraps data and methods in a hidden Mutex lock.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Monitors">
+
+Using raw Mutexes and Semaphores in C code is highly error-prone. If a developer forgets to call `unlock()`, or if the code throws an Exception and crashes before reaching the `unlock()` line, the Mutex remains permanently locked, freezing the entire application forever (a Deadlock).
+
+To prevent human error, language designers invented the **Monitor**.
+
+<Callout icon="success" title="The Object-Oriented Lock">
+  A Monitor is not a raw OS system call; it is a high-level programming language construct. It is an Object (or Class) where every single method is automatically wrapped in a hidden Mutex lock by the compiler.
+</Callout>
+
+## How Monitors Work (The Java Implementation)
+
+Java natively builds Monitor functionality into the language using the `synchronized` keyword.
+
+```java
+public class BankAccount {
+    private int balance = 100;
+
+    // The 'synchronized' keyword turns this method into a Monitor
+    public synchronized void deposit(int amount) {
+        balance += amount;
+    }
+}
+```
+
+Behind the scenes, the Java Virtual Machine automatically creates a hidden Mutex for the `BankAccount` object. 
+When Thread A calls `deposit()`, the JVM automatically acquires the lock. 
+If Thread B tries to call `deposit()` on the same object, it is blocked.
+When Thread A finishes the method, the JVM *automatically* releases the lock. Even if Thread A throws a massive Exception and crashes midway through the method, the JVM guarantees the lock will be safely released.
+
+By hiding the raw `lock()` and `unlock()` boilerplate from the developer, Monitors eliminate entire classes of synchronization bugs.
+
+</ConceptTemplate>

@@ -1,0 +1,35 @@
+---
+title: Arithmetic Logic Unit (ALU)
+description: The digital circuit within the CPU that performs all arithmetic and bitwise logical operations.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Arithmetic Logic Unit (ALU)">
+
+The **Arithmetic Logic Unit (ALU)** is the computational heart of the CPU. While the Control Unit handles moving data around, the ALU is the component that actually *does the math*. It is a complex digital circuit composed entirely of basic logic gates (\`AND\`, \`OR\`, \`NOT\`) configured into adders, multiplexers, and shifters.
+
+<Callout icon="success" title="Everything is Math">
+  Under the hood, almost all computational tasks reduce down to simple integer mathematics and bit-shifting. Moving a window across your screen, rendering text, or encrypting a password all eventually rely on the ALU crunching raw binary numbers.
+</Callout>
+
+## The Two Halves of the ALU
+
+As its name suggests, the ALU handles two distinct types of operations:
+
+1. **Arithmetic Operations**: Addition, subtraction, and sometimes multiplication/division. (Note: Many modern CPUs offload complex floating-point decimals to a specialized FPU — Floating-Point Unit).
+2. **Logical Operations**: Bitwise operations like \`AND\`, \`OR\`, \`XOR\`, and \`NOT\`, as well as bit-shifting (moving all 1s and 0s to the left or right, which is a highly optimized way to multiply or divide by 2).
+
+## How the ALU Operates
+
+The ALU takes in three primary inputs:
+- **Operands**: The two pieces of data being calculated (e.g., the number \`5\` and the number \`3\`), usually pulled directly from the CPU's Registers.
+- **Opcode (Operation Code)**: A binary signal from the Control Unit telling the ALU exactly *what* to do with the operands (e.g., \`001\` might mean ADD, while \`010\` might mean subtract).
+
+It produces two outputs:
+- **Result**: The mathematical answer (e.g., \`8\`), which is immediately stored back into a register.
+- **Status Flags**: A set of 1-bit indicators that inform the Control Unit about the result. Common flags include:
+  - **Zero Flag (Z)**: Set to \`1\` if the result of the calculation was exactly zero. (Used constantly in \`if/else\` statements).
+  - **Negative Flag (N)**: Set to \`1\` if the result was a negative number.
+  - **Overflow Flag (V)**: Set to \`1\` if the result was too large to fit in the physical hardware (e.g., trying to store \`300\` in an 8-bit register that maxes out at \`255\`).
+
+</ConceptTemplate>

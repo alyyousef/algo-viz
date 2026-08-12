@@ -1,0 +1,31 @@
+---
+title: Users
+description: The fundamental identity and permission entities in Linux, governed by the UID system.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Users">
+
+Linux is fundamentally a multi-user operating system. The concept of "Users" is deeply baked into the Linux Kernel to ensure extreme isolation and security.
+
+## The User ID (UID)
+
+The Linux Kernel does not understand human names like "alice" or "bob". It only understands integers. Every user is assigned a unique **UID (User ID)**.
+
+- **UID 0 (Root)**: The superuser. UID 0 has absolute, unrestricted power over the entire system. It can bypass all permission checks, overwrite the kernel in memory, and instantly delete the entire hard drive.
+- **UID 1 - 999 (System Users)**: Accounts created specifically for software to run securely. For example, the Nginx web server runs as a system user so that if it gets hacked, the hacker doesn't get Root access. These users usually cannot log in.
+- **UID 1000+ (Human Users)**: Standard accounts created for actual humans to log into the system.
+
+<Callout icon="info" title="The /etc/passwd File">
+  The mapping between human names and UIDs is stored in plain text in `/etc/passwd`. 
+  A line looks like this: `alice:x:1001:1001:Alice Smith:/home/alice:/bin/bash`. 
+  (The "x" means the actual encrypted password hash is securely stored in a different file called `/etc/shadow`, which only Root can read).
+</Callout>
+
+## User Management Commands
+- `useradd <name>`: Creates a new user.
+- `usermod -aG <group> <name>`: Modifies a user (e.g., adding them to a new group).
+- `userdel <name>`: Deletes a user.
+- `su <name>`: Switch User. Allows you to instantly switch your current terminal session to become another user, assuming you know their password.
+
+</ConceptTemplate>

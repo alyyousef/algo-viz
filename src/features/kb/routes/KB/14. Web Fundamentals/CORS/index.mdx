@@ -1,0 +1,29 @@
+---
+title: CORS (Cross-Origin Resource Sharing)
+description: The controlled bypass mechanism that allows legitimate frontend applications to securely bypass the Same-Origin Policy and access external APIs.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CORS (Cross-Origin Resource Sharing)">
+
+The Same-Origin Policy (SOP) is brilliant for security, but it breaks modern web development. 
+If your React frontend is hosted on `https://my-app.com`, and your Node.js backend is hosted on `https://api.my-app.com`, they are different origins. The SOP will violently block the React app from reading its own API!
+
+To fix this, the backend server uses **CORS (Cross-Origin Resource Sharing)** to explicitly grant permission to the frontend.
+
+## The CORS Headers
+
+When the React app (`my-app.com`) attempts to fetch data from the API, the API server must include a specific HTTP Response Header:
+`Access-Control-Allow-Origin: https://my-app.com`
+
+When the browser receives this response, it checks the header. Because the header explicitly matches the React app's origin, the browser bypasses the SOP and allows the JavaScript to read the data. (If you want a public API that anyone can access, you set it to the wildcard `*`).
+
+## The Preflight Request (OPTIONS)
+
+If the React app tries to do something dangerous (like sending a `DELETE` request, or attaching custom `Authorization` headers), the browser will panic. 
+Before sending the actual request, the browser will silently send an invisible **Preflight Request** using the HTTP `OPTIONS` method. 
+
+The browser asks the backend, *"Hey, my-app.com wants to send a DELETE request. Is that allowed?"*
+The backend must respond with `Access-Control-Allow-Methods: GET, POST, DELETE`. Only after receiving this permission will the browser send the actual DELETE request.
+
+</ConceptTemplate>

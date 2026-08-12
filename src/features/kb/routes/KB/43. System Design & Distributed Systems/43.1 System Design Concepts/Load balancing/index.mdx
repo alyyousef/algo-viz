@@ -1,0 +1,33 @@
+---
+title: Load Balancing
+description: The process of distributing incoming network traffic across multiple servers to ensure high availability and reliability.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Load Balancing">
+
+**Load Balancing** is the critical networking technique of distributing incoming user traffic across a pool of backend servers (a "server farm"). It ensures that no single server bears too much demand, improving responsiveness and maximizing application availability.
+
+<Callout icon="info" title="The Traffic Cop">
+  Think of a Load Balancer as a traffic cop standing in front of 5 toll booths. As cars (web requests) arrive, the cop directs each car to the toll booth with the shortest line. If a toll booth breaks down, the cop immediately stops sending cars to it.
+</Callout>
+
+## Load Balancing Algorithms
+
+How does the load balancer decide which server gets the next request?
+- **Round Robin**: Requests are distributed sequentially. Server A, then B, then C, then back to A.
+- **Least Connections**: Sends the request to the server with the fewest active, open connections. Best for long-lived connections (like WebSockets).
+- **IP Hash**: The client's IP address is mathematically hashed to consistently map them to a specific server. Useful if you need "sticky sessions" (ensuring the user always hits the server holding their session data).
+
+## Layer 4 vs. Layer 7 Load Balancing
+
+Load balancers operate at different layers of the OSI model:
+
+- **Layer 4 (Transport Layer)**: Routes traffic based purely on network data (IP addresses and TCP ports). It is blazingly fast because it does not inspect the contents of the HTTP request. It simply forwards the raw packets. (e.g., AWS Network Load Balancer).
+- **Layer 7 (Application Layer)**: Inspects the actual contents of the HTTP/HTTPS request. It can route traffic based on the URL path, HTTP headers, or cookies. For example, it can send all requests for `/api/video` to a cluster of powerful video-encoding servers, and `/api/text` to cheaper servers. (e.g., NGINX, AWS Application Load Balancer).
+
+## Health Checks
+
+A load balancer continuously pings its backend servers (usually by hitting a `/health` endpoint). If a server fails to respond within a timeout, the load balancer removes it from the pool, ensuring user traffic is never routed to a dead server.
+
+</ConceptTemplate>

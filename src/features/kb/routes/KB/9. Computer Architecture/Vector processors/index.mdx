@@ -1,0 +1,38 @@
+---
+title: Vector Processors
+description: Specialized CPU architectures explicitly designed to execute mathematical operations on massive, one-dimensional arrays (vectors) of data at blazing speeds.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Vector Processors">
+
+While modern CPUs use **SIMD** (Single Instruction, Multiple Data) to process small batches of data in parallel, **Vector Processors** take this concept to its absolute extreme. 
+
+Historically dominating the world of supercomputers in the 1980s and 1990s (most notably the famous Cray supercomputers), vector processing is the architecture of choice for scientific computing, weather forecasting, and fluid dynamics.
+
+<Callout icon="info" title="Scalar vs. Vector">
+  - **Scalar Processor (Standard CPU)**: Operates on one piece of data at a time. `C = A + B`.
+  - **Vector Processor**: Operates on an entire array of data simultaneously. `Array_C = Array_A + Array_B`. The hardware handles the looping, fetching, and math across thousands of elements automatically.
+</Callout>
+
+## How Vector Processing Differs from SIMD
+
+While they sound similar, true Vector Processors and x86 SIMD extensions (like AVX) are architecturally distinct:
+
+1. **Register Length**: A SIMD AVX register is fixed at 512 bits (holding maybe 16 integers). A true Vector Machine has vector registers that can hold thousands of elements, and the length of the vector is abstracted away from the instruction set.
+2. **Execution Strategy**: 
+   - **SIMD** is fully parallel. It takes 16 numbers and pushes them through 16 ALUs at the exact same time.
+   - **Vector Processors** are deeply **pipelined**. If you ask a vector machine to add two arrays of 1,000 numbers, it doesn't have 1,000 ALUs. Instead, it streams the data from memory into a massive, heavily optimized ALU pipeline. Once the pipeline fills up, it outputs one finished calculation every fraction of a nanosecond, hiding the massive latency of RAM.
+
+## The Memory Bandwidth Challenge
+
+The primary bottleneck of a Vector Processor is not the math—it's feeding the beast. A vector ALU can crunch data so incredibly fast that standard RAM cannot keep up. 
+To solve this, Vector Processors utilize **Vector Memory Architectures**, which use highly interleaved memory banks. Instead of asking one RAM chip for 1000 numbers sequentially, the processor asks 100 separate RAM chips for 10 numbers each, simultaneously.
+
+## The Modern Resurgence
+
+Pure vector processors fell out of favor in the 2000s as standard x86 CPUs became fast enough to handle most workloads. However, the architecture has seen a massive resurgence today in two specific areas:
+1. **GPUs**: Modern Graphics Processing Units are essentially massive, modern implementations of vector processing principles, adapted to handle rendering and AI.
+2. **RISC-V Vector Extension (RVV)**: The open-source RISC-V architecture includes a highly praised Vector extension that behaves like a true vector machine (length-agnostic), completely abandoning the fixed-width register philosophy of Intel's AVX.
+
+</ConceptTemplate>

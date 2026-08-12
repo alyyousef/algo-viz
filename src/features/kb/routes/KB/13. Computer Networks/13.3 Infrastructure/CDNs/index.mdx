@@ -1,0 +1,27 @@
+---
+title: CDNs (Content Delivery Networks)
+description: Massive, globally distributed networks of proxy servers designed to physically cache heavy content as close to the end user as mathematically possible.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CDNs (Content Delivery Networks)">
+
+If your primary web server is physically located in New York, users in New York will experience blazing fast 10ms loading times. 
+However, users in Sydney, Australia will experience terrible 250ms loading times, because the light literally has to travel through fiber optic cables across the Pacific Ocean.
+
+You cannot defeat the speed of light. You must move the data closer to the user. You use a **CDN (Content Delivery Network)** like Cloudflare, Akamai, or AWS CloudFront.
+
+## The Edge Cache Architecture
+
+A CDN company deploys thousands of highly optimized "Edge Servers" in every major city on Earth.
+
+1. You point your DNS records to the CDN, not your actual server.
+2. An Australian user requests your website. The Anycast routing protocol sends their request to the CDN Edge Server located in Sydney.
+3. The Sydney server checks its RAM. It doesn't have the files, so it reaches across the ocean to your New York server, downloads the massive 5MB hero image, and saves a copy to its local RAM.
+4. When the *next* 10,000 Australian users request your website, the Sydney CDN server instantly serves the 5MB image directly from its local RAM. 
+
+## The Benefits
+- **Extreme Speed**: The heavy images and videos are served locally, providing instant load times globally.
+- **Cost Reduction**: You pay your cloud provider for outgoing bandwidth. If the CDN serves 95% of your traffic directly from its cache, your New York server never even sees the traffic, drastically reducing your AWS bandwidth bill.
+
+</ConceptTemplate>

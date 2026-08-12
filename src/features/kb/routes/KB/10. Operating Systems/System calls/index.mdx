@@ -1,0 +1,28 @@
+---
+title: System Calls (Syscalls)
+description: The secure API that User Space programs use to request privileged operations from the Kernel.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="System Calls">
+
+A **System Call (Syscall)** is the only legal way for a User Space program (Ring 3) to ask the Kernel (Ring 0) to do something privileged, like reading a file, opening a network socket, or allocating more RAM.
+
+<Callout icon="warning" title="Crossing the Boundary">
+  You cannot simply execute a standard function call (like `goto` or `call`) into Kernel memory. The CPU's hardware will block it with a Segmentation Fault. The boundary must be crossed using a highly orchestrated hardware trap.
+</Callout>
+
+## The Anatomy of a Syscall
+
+Imagine a C program calls `write(fd, "Hello", 5)`. Here is what actually happens:
+
+1. **The Wrapper**: The C Standard Library (glibc) prepares the request. It puts the arguments (the file descriptor, the text pointer, the length) into specific CPU registers.
+2. **The Syscall Number**: glibc places the exact ID number of the `write` syscall (e.g., ID `1`) into the `RAX` register.
+3. **The Trap (`SYSCALL`)**: The program executes a special assembly instruction (`SYSCALL` on modern x86, or `INT 0x80` historically).
+4. **Hardware Switch**: The CPU completely suspends the program. It elevates its privilege level to Ring 0 (Kernel Mode) and jumps to a specific, predefined memory address (The Syscall Handler).
+5. **Validation and Execution**: The Kernel looks at the `RAX` register, sees ID `1` (`write`), validates that the file descriptor is valid, and executes the physical hard drive write.
+6. **Return (`SYSRET`)**: The Kernel places the result code (e.g., bytes written) into a register, drops its privileges back to Ring 3, and resumes the user program exactly where it left off.
+
+This process is inherently slow. A single System Call takes hundreds of clock cycles due to the massive context switch and hardware state changes required. High-performance software goes to great lengths to batch operations to minimize syscall overhead.
+
+</ConceptTemplate>

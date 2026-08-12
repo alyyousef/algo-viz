@@ -1,0 +1,26 @@
+---
+title: Serverless Architecture
+description: A cloud computing execution model in which the cloud provider dynamically manages the allocation and provisioning of servers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Serverless Architecture">
+
+Serverless computing is a cloud computing execution model in which the cloud provider dynamically manages the allocation and provisioning of servers. A serverless application runs in stateless compute containers that are event-triggered, ephemeral (may last for one invocation), and fully managed by the cloud provider.
+
+<Callout icon="warning" title="Cold Starts">
+  If no one has called your Serverless Function in 15 minutes, the Cloud Provider shuts it down to save money. The next user who calls it will experience a "Cold Start"—a 1 to 3 second delay while the provider boots up a fresh container just for them.
+</Callout>
+
+## Key Characteristics
+
+<ComparisonTable 
+  headers={['Characteristic', 'Description']}
+  rows={[
+    ['No Server Management', 'You do not patch Linux, configure SSH, or worry about hard drive space. You just upload your code.'],
+    ['Pay-as-you-go', 'You are billed down to the millisecond of actual compute time used. If your app gets 0 traffic at 3 AM, you pay exactly $0.00.'],
+    ['Auto-scaling', 'If 10,000 people click a button at once, the cloud provider instantly spins up 10,000 isolated instances of your function.']
+  ]}
+/>
+
+</TechnologyTemplate>

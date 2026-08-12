@@ -1,0 +1,31 @@
+---
+title: Canvas API
+description: An HTML element and JavaScript API used to draw 2D graphics, raster images, and animations directly onto a bitmap surface.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Canvas API">
+
+The DOM is great for laying out buttons and text. But if you want to build an interactive charting library, a 2D platformer game (like Mario), or a photo editing tool, manipulating thousands of DOM `<div>` nodes will cause the browser to crash.
+
+HTML5 introduced the `<canvas>` element to solve this.
+
+## The Bitmap Surface
+
+A Canvas is essentially a blank, rasterized bitmap image sitting on your webpage. It has absolutely no DOM nodes inside it. 
+Using JavaScript, you acquire the **2D Context** of the canvas and mathematically draw pixels onto it.
+
+```javascript
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+// Draw a red rectangle
+ctx.fillStyle = 'red';
+ctx.fillRect(10, 10, 150, 100);
+```
+
+## Canvas vs SVG
+- **SVG (Scalable Vector Graphics)**: SVGs are XML-based. Every circle or line in an SVG is a real DOM node. SVGs are resolution-independent and perfect for logos, but terrible for rendering 10,000 moving particles (because maintaining 10,000 DOM nodes destroys performance).
+- **Canvas**: Canvas is immediate-mode rendering. Once you draw a red square, the canvas completely forgets it's a "square"—it just remembers the red pixels. This makes it blisteringly fast for rendering tens of thousands of dynamic sprites per frame.
+
+</ConceptTemplate>

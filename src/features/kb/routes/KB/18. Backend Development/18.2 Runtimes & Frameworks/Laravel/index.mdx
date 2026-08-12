@@ -1,0 +1,67 @@
+---
+title: Laravel
+description: The PHP Framework for Web Artisans.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Laravel">
+
+Laravel is a free, open-source PHP web framework created by Taylor Otwell. It is intended for the development of web applications following the model–view–controller (MVC) architectural pattern. Laravel heavily modernized the PHP ecosystem by providing an elegant, expressive syntax and a massive ecosystem of first-party tools.
+
+<Callout icon="info" title="The Ecosystem King">
+  Laravel is renowned for its immense first-party ecosystem. Tools like Forge (server management), Vapor (serverless), Nova (admin panel), and Livewire (dynamic UI without JS) make it a complete powerhouse for solo developers and agencies.
+</Callout>
+
+## Core Features
+
+<ComparisonTable 
+  headers={['Feature', 'Description']}
+  rows={[
+    ['Eloquent ORM', 'An advanced, beautiful Active Record implementation.'],
+    ['Blade Templating', 'A simple, yet powerful templating engine.'],
+    ['Artisan CLI', 'A powerful command-line interface for scaffolding and tasks.'],
+    ['Routing', 'Expressive and simple routing definition.']
+  ]}
+/>
+
+## Example: Eloquent ORM & Routing
+
+Laravel's syntax is designed to be highly readable.
+
+```php
+// routes/web.php
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/active-users', function () {
+    // Eloquent ORM makes database queries read like English
+    $users = User::where('active', 1)
+                 ->orderBy('created_at', 'desc')
+                 ->take(10)
+                 ->get();
+                 
+    return view('users.index', ['users' => $users]);
+});
+```
+
+## Architecture
+
+Laravel relies heavily on its **Service Container** (for Dependency Injection) and **Service Providers** to bootstrap the application.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Request[HTTP Request]
+  Router[Laravel Router]
+  Middleware[Middleware (Auth/CORS)]
+  Controller[Controller]
+  Eloquent[Eloquent ORM]
+  DB[(MySQL / PostgreSQL)]
+  
+  Request --> Router
+  Router --> Middleware
+  Middleware --> Controller
+  Controller --> Eloquent
+  Eloquent --> DB
+`} />
+
+</TechnologyTemplate>

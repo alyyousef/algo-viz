@@ -1,0 +1,28 @@
+---
+title: MAC Addresses
+description: The permanent, physical hardware serial numbers burned into every network card, operating exclusively at Layer 2.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="MAC Addresses">
+
+If an IP address is a computer's mailing address (which changes when you move to a new house), a **MAC Address** (Media Access Control) is the computer's social security number. It is permanent.
+
+A MAC address operates exclusively at **Layer 2 (Data Link)**. It is a 48-bit hexadecimal number physically burned into the silicon of every Network Interface Card (NIC) at the factory.
+
+## Format and Structure
+
+A MAC address looks like this: **`00:1A:2B:3C:4D:5E`**
+
+It is divided into two distinct halves:
+1. **OUI (Organizationally Unique Identifier)**: The first 24 bits (e.g., `00:1A:2B`). This is a registered manufacturer code. You can look this code up online to instantly determine if the hardware was built by Apple, Intel, or Cisco.
+2. **NIC Specific**: The last 24 bits (e.g., `3C:4D:5E`). This is a unique serial number assigned by the manufacturer, ensuring that no two network cards on Earth have the exact same MAC address.
+
+<Callout icon="warning" title="MAC Spoofing">
+  While a MAC address is physically burned into the hardware, operating systems load it into RAM when the computer boots. This allows malicious hackers (and privacy-conscious users) to easily change their MAC address in software (MAC Spoofing) to bypass airport Wi-Fi time limits or evade network tracking.
+</Callout>
+
+## The Role of MAC Addresses
+MAC addresses are only used for local communication. When your laptop talks to a printer on the same Wi-Fi network, the traffic is routed entirely via MAC addresses. **MAC addresses never pass through a router.** Once a packet leaves your house and hits the open Internet, your MAC address is stripped away and replaced by your router's MAC address.
+
+</ConceptTemplate>

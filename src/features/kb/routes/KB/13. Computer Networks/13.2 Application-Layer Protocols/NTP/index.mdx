@@ -1,0 +1,26 @@
+---
+title: NTP (Network Time Protocol)
+description: The critical infrastructure protocol used to keep the system clocks of millions of computers synchronized down to the millisecond.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="NTP (Network Time Protocol)">
+
+If the clock on your server is wrong by exactly 3 minutes, it doesn't sound like a big deal. 
+In reality, a 3-minute clock skew will instantly destroy your entire infrastructure:
+- **Cryptography fails**: TLS certificates and Kerberos authentication tokens are mathematically tied to timestamps. If the server thinks the token is from "the future", it will instantly reject the login.
+- **Databases corrupt**: Distributed databases (like Cassandra or Spanner) rely on timestamps to figure out which data was written first. If the clocks are wrong, old data might accidentally overwrite new data.
+
+To solve this, the internet relies on **NTP** (UDP Port 123).
+
+## The Stratum Hierarchy
+
+NTP relies on a hierarchical system of trust known as **Stratums**:
+- **Stratum 0**: Not computers. These are physical Atomic Clocks, GPS satellites, and radio clocks. They represent absolute, flawless time.
+- **Stratum 1**: Highly secure servers physically hardwired directly to Stratum 0 atomic clocks.
+- **Stratum 2**: Public NTP servers (like `pool.ntp.org` or Google's `time.google.com`) that query the Stratum 1 servers over the internet.
+- **Stratum 3**: Your company's internal router, which syncs from Stratum 2, and then provides time to your laptop (Stratum 4).
+
+Because NTP operates over UDP, it constantly measures the network latency to the server, mathematically subtracting the latency to guarantee the clock is accurate to within a few milliseconds.
+
+</ConceptTemplate>

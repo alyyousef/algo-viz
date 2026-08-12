@@ -1,0 +1,51 @@
+---
+title: Self-Attention
+description: A mechanism relating different positions of a single sequence to compute a representation of the sequence.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Self-Attention">
+
+Self-Attention is the core mathematical mechanism that powers the Transformer architecture and, by extension, all modern Large Language Models (LLMs). It allows a model to weigh the importance of different words in an input sequence when encoding a specific word.
+
+<Callout icon="info" title="Context is Everything">
+  Consider the sentences: "The bank of the river" and "The bank on the corner." The word "bank" means entirely different things. Self-attention allows the model to look at "river" or "corner" to contextualize and adjust the mathematical representation of the word "bank."
+</Callout>
+
+## How it Works: The QKV System
+
+Self-attention uses a database retrieval analogy involving **Queries (Q)**, **Keys (K)**, and **Values (V)**. For every token (word piece) in an input sequence, the model creates three distinct vectors by multiplying the token's embedding by three learned weight matrices.
+
+1. **Query**: What I am looking for (as a token).
+2. **Key**: What I have to offer (to other tokens).
+3. **Value**: What I actually am (the core semantic meaning).
+
+### The Mathematical Process
+
+To compute the self-attention for a specific token (let's say the word "bank" in a sentence):
+
+1. **Dot Product**: Take the Query vector of "bank" and calculate the dot product with the Key vector of *every* word in the sentence (including itself). A higher dot product means the words are highly related in this context.
+2. **Scale**: Divide the results by the square root of the dimension size to stabilize gradients (Scaled Dot-Product Attention).
+3. **Softmax**: Pass the scores through a Softmax function so they are all positive and sum to 1.0. This is the **Attention Matrix**.
+4. **Weighted Sum**: Multiply every token's Value vector by its Softmax score, and sum them up.
+
+The final output is a new, contextualized vector for the word "bank" that has absorbed information from the relevant words around it.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Q[Queries] --> MatMul
+  K[Keys] --> MatMul
+  MatMul[Matrix Multiplication] --> Scale[Scale / sqrt(d_k)]
+  Scale --> Softmax[Softmax]
+  Softmax --> ResultMatMul
+  V[Values] --> ResultMatMul[Matrix Multiplication]
+  ResultMatMul --> Output[Contextualized Output]
+`} />
+
+## Multi-Head Attention
+
+Instead of performing a single self-attention function, Transformers use **Multi-Head Attention**. 
+
+The Q, K, and V vectors are split into multiple "heads" (e.g., 8 or 12 heads), and attention is computed independently for each. This allows different heads to learn to focus on different linguistic phenomena simultaneously—for example, one head might track pronouns referring to nouns, while another tracks adjectives modifying subjects. The results from all heads are then concatenated back together.
+
+</TechnologyTemplate>

@@ -1,0 +1,31 @@
+---
+title: Processes
+description: A running instance of a computer program, acting as an isolated container for code, memory, and resources.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Processes">
+
+When you write a Python script or compile a C++ `.exe`, that file is just a static collection of bytes sitting dormant on your hard drive. It is a **Program**.
+
+When you double-click that file and the OS loads it into RAM to execute it, it becomes a **Process**. A Process is an *active, running instance* of a program. 
+
+<Callout icon="success" title="The Container Illusion">
+  A Process is fundamentally a container. The OS provides each process with the illusion that it is the only program running on the computer. It believes it has the CPU all to itself, and it believes it has a massive, empty RAM space all to itself.
+</Callout>
+
+## What is inside a Process?
+
+The OS tracks every process using a massive data structure called the **Process Control Block (PCB)**. A process contains:
+1. **Memory Space**: Its own private Virtual Memory, divided into the Code (Text), Data, Heap (dynamic memory), and Stack (function calls).
+2. **Execution State**: The current values of all CPU registers and the Program Counter (exactly which line of code it is currently executing).
+3. **Resources**: A list of open file descriptors, network sockets, and permissions.
+
+## Process Isolation
+
+The most important feature of a process is **Isolation**. 
+Because every process has its own Virtual Memory space (managed by hardware Paging), it is physically impossible for Process A to read or overwrite the memory of Process B. 
+
+If you open two instances of Notepad, they are two completely separate Processes. If one instance encounters a fatal error and crashes, the other instance is completely unaffected because their memory spaces are violently isolated by the Kernel.
+
+</ConceptTemplate>

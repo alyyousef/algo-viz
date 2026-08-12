@@ -1,0 +1,51 @@
+---
+title: Integration Testing
+description: Testing how different components or systems work together.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Integration Testing">
+
+Integration testing is the phase in software testing in which individual software modules are combined and tested as a group. While unit tests verify that a function works in perfect isolation, integration tests verify that the function still works when hooked up to a real database, a real file system, or another service.
+
+<Callout icon="warning" title="The Integration Hell">
+  Historically, teams would write thousands of unit tests in isolation, assume everything was fine, and then try to wire everything together at the very end of the project. This led to "Integration Hell"—where nothing actually worked together. Modern CI/CD practices enforce continuous integration testing to prevent this.
+</Callout>
+
+## Unit vs Integration
+
+<ComparisonTable 
+  headers={['Trait', 'Unit Tests', 'Integration Tests']}
+  rows={[
+    ['Scope', 'A single function or class', 'Multiple components working together'],
+    ['Speed', 'Extremely fast (milliseconds)', 'Slower (seconds or minutes)'],
+    ['Dependencies', 'Mocks and Stubs only', 'Real Databases, Files, or external modules'],
+    ['Reliability', 'Highly deterministic', 'Prone to flakiness (e.g. network timeouts)']
+  ]}
+/>
+
+## Architecture
+
+In an integration test, you actively want to test the *boundaries* between systems.
+
+<ArchitectureDiagram chart={`
+graph LR
+  Test[Integration Test]
+  
+  subgraph System Under Test
+    Service[User Service]
+    DB[(Test Database)]
+    
+    Service <--> DB
+  end
+  
+  Test -- "1. Seed Data" --> DB
+  Test -- "2. Call Service" --> Service
+  Test -- "3. Verify DB State" --> DB
+`} />
+
+## Test Containers
+
+A modern best practice for integration testing is using **Testcontainers**. Instead of mocking a database or relying on a fragile shared staging database, the test suite spins up a lightweight, ephemeral Docker container (like a real PostgreSQL instance), runs the tests against it, and instantly destroys the container when finished.
+
+</TechnologyTemplate>

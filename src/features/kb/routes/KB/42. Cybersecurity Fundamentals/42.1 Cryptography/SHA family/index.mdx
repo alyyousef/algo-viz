@@ -1,0 +1,42 @@
+---
+title: SHA Family (Secure Hash Algorithm)
+description: The prevailing suite of cryptographic hash functions published by the NIST.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="SHA Family (Secure Hash Algorithm)">
+
+The Secure Hash Algorithm (SHA) is a family of cryptographic hash functions published by the National Institute of Standards and Technology (NIST) as a U.S. Federal Information Processing Standard (FIPS). Over the decades, as computational power increased and cryptographic vulnerabilities were discovered, the family evolved.
+
+## Evolution of the Family
+
+### SHA-0 (1993)
+The original version. It was withdrawn shortly after publication due to an undisclosed "significant flaw" and replaced by SHA-1.
+
+### SHA-1 (1995)
+Produced a 160-bit hash value. It was the absolute standard of the internet for over a decade, heavily used in SSL/TLS certificates and Git version control.
+- **Status**: **BROKEN**. In 2017, Google researchers executed the first successful "collision attack" against SHA-1 (producing two different PDF files that resulted in the exact same SHA-1 hash). It is officially deprecated and insecure for cryptography.
+
+### SHA-2 (2001)
+A family of two similar hash functions with different block sizes: **SHA-256** and **SHA-512**. 
+- **Status**: **SECURE**. This is the current global standard. SHA-256 is ubiquitous across the modern internet. It is used to secure HTTPS certificates, verify software downloads, and is the core hashing algorithm that runs the Bitcoin blockchain.
+
+### SHA-3 (2015)
+Produced by a public competition (won by an algorithm named Keccak). 
+- **Status**: **SECURE**. Unlike SHA-1 and SHA-2, which use a Merkle-Damgård construction, SHA-3 uses a completely different internal structure called a "sponge construction." It was standardized not because SHA-2 was broken, but as a backup plan in case a catastrophic math flaw is ever discovered in the SHA-2 architecture.
+
+## Visualizing the Output
+
+Because hashes are raw binary data, they are almost always represented to humans as hexadecimal (hex) strings (using numbers 0-9 and letters a-f).
+
+<ComparisonTable 
+  headers={['Algorithm', 'Bit Length', 'Hex Character Length', 'Status']}
+  rows={[
+    ['MD5 (Not SHA)', '128 bits', '32 characters', 'Critically Broken'],
+    ['SHA-1', '160 bits', '40 characters', 'Broken'],
+    ['SHA-256', '256 bits', '64 characters', 'Highly Secure (Current Standard)'],
+    ['SHA-512', '512 bits', '128 characters', 'Highly Secure (Used for extreme security)']
+  ]}
+/>
+
+</TechnologyTemplate>

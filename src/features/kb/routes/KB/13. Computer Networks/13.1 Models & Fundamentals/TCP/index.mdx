@@ -1,0 +1,32 @@
+---
+title: TCP (Transmission Control Protocol)
+description: The highly reliable, connection-oriented Layer 4 protocol that guarantees the perfect delivery of data across the Internet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="TCP (Transmission Control Protocol)">
+
+When you load a banking website, you cannot have random bits of HTML or JavaScript go missing in transit, or the page will corrupt. You need absolute reliability.
+
+**TCP (Layer 4)** is a connection-oriented protocol that sacrifices speed for absolute perfection. It tracks every single byte of data sent across the network. If a router drops a packet, TCP realizes it is missing, pauses the stream, and forces the sender to retransmit the missing data before continuing.
+
+## The 3-Way Handshake
+
+Before a single byte of application data (like a webpage) can be sent, TCP must establish a strict, synchronized connection using the famous 3-Way Handshake:
+
+1. **SYN (Synchronize)**: The Client sends a packet to the Server requesting a connection.
+2. **SYN-ACK (Synchronize-Acknowledge)**: The Server acknowledges the request and sends its own synchronization request back.
+3. **ACK (Acknowledge)**: The Client acknowledges the Server's request. 
+
+The connection is now established, and data can flow.
+
+<Callout icon="warning" title="SYN Flood Attacks">
+  Because the Server must allocate RAM to remember every half-open connection while waiting for the final ACK, hackers weaponized this. In a SYN Flood attack, a botnet sends millions of SYN requests to a server but never sends the final ACK. The server's RAM fills up with half-open connections, and it crashes, resulting in a Denial of Service (DDoS).
+</Callout>
+
+## Sequencing and Flow Control
+TCP is brilliant. It numbers every packet using **Sequence Numbers**. If packets arrive completely out of order (because they took different routes across the internet), TCP holds them in RAM and mathematically reassembles them in perfect order before handing them to the Application. 
+
+TCP also utilizes **Windowing** (Flow Control). If the Client is a slow smartphone and the Server is blasting data too fast, the Client will dynamically shrink its "TCP Window", commanding the Server to slow down to prevent data loss.
+
+</ConceptTemplate>

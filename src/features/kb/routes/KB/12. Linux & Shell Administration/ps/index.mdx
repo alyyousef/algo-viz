@@ -1,0 +1,32 @@
+---
+title: ps (Process Status)
+description: The fundamental command used to capture a static, instantaneous snapshot of all running processes on the system.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="ps (Process Status)">
+
+While tools like `htop` provide a live, continuously updating dashboard of running applications, the **`ps` (Process Status)** command takes a static, one-time snapshot of the Kernel's process table.
+
+Because it simply prints text and exits, `ps` is overwhelmingly used in bash scripts and piped into `grep` for text processing.
+
+## The Legendary "aux"
+
+The `ps` command has the most chaotic flag syntax in all of Linux, due to decades of wars between the Unix (System V) and BSD development camps. 
+Today, almost all administrators use the BSD syntax format: **`ps aux`**
+
+- **a**: Show processes for ALL users (not just the current user).
+- **u**: Display the output in a user-oriented format (shows the username, CPU%, and Memory%).
+- **x**: Show processes that are NOT attached to a terminal (e.g., background daemons like Nginx).
+
+<Callout icon="info" title="The Process Hierarchy">
+  If you want to see exactly who spawned who, you can use `ps -ef --forest`. This generates a beautiful ASCII tree, visually linking child processes directly to their parent's PID.
+</Callout>
+
+## Common Columns
+When you run `ps aux`, you will see several columns:
+- **USER / PID**: Who owns it, and its exact Process ID.
+- **VSZ / RSS**: Virtual Memory Size (everything the app has requested) vs Resident Set Size (the actual physical RAM it is actively consuming).
+- **STAT**: The current state (e.g., `S` for Sleeping, `R` for Running, `Z` for Zombie).
+
+</ConceptTemplate>

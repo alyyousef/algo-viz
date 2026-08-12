@@ -1,0 +1,68 @@
+---
+title: Microsoft Azure
+description: Microsoft's public cloud computing platform.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Microsoft Azure">
+
+Microsoft Azure is a cloud computing platform operated by Microsoft for application management via global data centers. It provides software as a service (SaaS), platform as a service (PaaS) and infrastructure as a service (IaaS).
+
+<Callout icon="tip" title="Enterprise Integration">
+  Azure's biggest strength is its deep integration with the existing Microsoft enterprise ecosystem (Active Directory, Windows Server, .NET, Office 365), making it the default choice for many legacy enterprises migrating to the cloud.
+</Callout>
+
+## Core Compute Services
+
+<ComparisonTable 
+  headers={['Service', 'Type', 'Equivalent in AWS']}
+  rows={[
+    ['Azure Virtual Machines', 'IaaS / VMs', 'Amazon EC2'],
+    ['Azure Kubernetes Service (AKS)', 'Containers (CaaS)', 'Amazon EKS'],
+    ['Azure Functions', 'Serverless (FaaS)', 'AWS Lambda']
+  ]}
+/>
+
+## Architecture (Standard Hub and Spoke)
+
+<ArchitectureDiagram chart={`
+graph TD
+  User((User)) --> AFD(Azure Front Door)
+  AFD --> AppGateway(Application Gateway)
+  
+  subgraph Hub VNet
+    AppGateway --> Firewall(Azure Firewall)
+    Firewall --> VPN(VPN Gateway to On-Prem)
+  end
+  
+  subgraph Spoke VNet 1 (Prod)
+    Firewall --> AKS(Azure Kubernetes Service)
+    AKS --> SQL[(Azure SQL Database)]
+  end
+  
+  subgraph Spoke VNet 2 (Dev)
+    Firewall --> VM(Dev VMs)
+  end
+`} />
+
+## Active Directory Integration
+
+Azure Active Directory (Azure AD) is heavily utilized for identity and access management (IAM). It allows single sign-on (SSO) across Azure services and external applications.
+
+```text
+# Azure CLI: Login to Azure
+az login
+
+# Azure CLI: Create a resource group
+az group create --name myResourceGroup --location eastus
+
+# Azure CLI: Create a basic Virtual Machine
+az vm create \
+  --resource-group myResourceGroup \
+  --name myVM \
+  --image Ubuntu2204 \
+  --admin-username azureuser \
+  --generate-ssh-keys
+```
+
+</TechnologyTemplate>

@@ -1,0 +1,36 @@
+---
+title: Multicore and Manycore Design
+description: The architectural shift from increasing single-core clock speeds to placing dozens or hundreds of independent processing cores onto a single silicon die.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Multicore and Manycore Design">
+
+For the first 30 years of microprocessor history, the primary way to make a computer faster was simply to increase the clock speed (from 10 MHz to 3.8 GHz). However, in 2004, the industry hit the **Power Wall**. 
+Because power consumption and heat generation scale exponentially with frequency, pushing a CPU past 4 GHz caused the silicon to literally melt.
+
+To continue increasing performance (adhering to Moore's Law), engineers fundamentally shifted their strategy: instead of making one core ridiculously fast, they placed **multiple independent cores on the same chip**.
+
+<Callout icon="success" title="The Multicore Era">
+  A multicore processor is essentially gluing two complete, independent CPUs (each with their own ALUs, Control Units, and L1/L2 caches) onto a single piece of silicon, allowing the operating system to run two entirely separate programs perfectly simultaneously.
+</Callout>
+
+## Multicore (2 to 64 Cores)
+
+Modern consumer CPUs (like Intel Core i9 or AMD Ryzen) are **multicore**. They feature a small number of incredibly powerful, highly superscalar cores.
+- **Shared L3 Cache**: While each core has its own private L1 and L2 cache, they all share a massive L3 cache. This allows Core 1 to pass data to Core 2 without writing out to the slow motherboard RAM.
+- **Cache Coherence**: Because multiple cores are working independently, a severe problem arises: if Core 1 modifies variable `X` in its private L1 cache, Core 2's cached version of `X` is now stale and invalid. CPUs use complex **Cache Coherence Protocols (like MESI)** to constantly snoop on each other and ensure all cores have a synchronized view of memory.
+
+## Manycore (100+ Cores)
+
+While multicore processors optimize for high single-thread performance (each core is a genius), **Manycore** processors optimize for massive throughput (hundreds of mediocre workers).
+
+- **Intel Xeon Phi**: An early attempt at manycore design, placing 60+ simple x86 cores on a single PCIe card for supercomputing.
+- **Network on Chip (NoC)**: When you have 128 cores on a single chip, connecting them all with a shared bus is impossible (traffic jam). Manycore chips use a literal microscopic internet router system (a 2D mesh network) etched into the silicon, where Core 1 sends "data packets" through routers to reach Core 64.
+
+## Amdahl's Law
+
+The painful reality of multicore design is governed by **Amdahl's Law**. It states that the performance benefit of adding more cores is strictly limited by the portion of the program that *cannot* be parallelized. 
+If 20% of your software relies on sequential logic (e.g., waiting for user input or writing to a file in order), no matter if you have 10 cores or 10,000 cores, the maximum theoretical speedup of your program is capped at 5x. This is why 64-core processors don't make video games run 64 times faster.
+
+</ConceptTemplate>

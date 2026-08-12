@@ -1,0 +1,34 @@
+---
+title: Virtual Memory
+description: The ultimate abstraction that gives every single process the illusion that it has an infinite, empty RAM space all to itself.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Virtual Memory">
+
+**Virtual Memory** is arguably the most brilliant abstraction in all of computer science. 
+
+When you write a C program and print the memory address of a variable, it might say `0x0000FFFF`. **This is a lie.** 
+That variable is not actually located at physical RAM chip address `0x0000FFFF`. The Operating System is lying to your program.
+
+## The Illusion
+
+The OS gives every single process its own massive, private, contiguous block of fake memory called Virtual Memory. 
+On a 64-bit OS, every single process genuinely believes it has access to **16 Exabytes** of empty RAM, even if your laptop only physically has 8 Gigabytes.
+
+<Callout icon="success" title="The Translation Layer">
+  When your program tries to save data to its fake Virtual Address `0x0000FFFF`, the CPU's hardware **Memory Management Unit (MMU)** intercepts the request. 
+  The MMU looks at a secret map created by the OS Kernel, translates the fake Virtual Address into a real Physical Address (e.g., `0x99990000`), and writes the data to the physical RAM chip. Your program has no idea this translation occurred.
+</Callout>
+
+## Security Through Deception
+
+Because every process lives in its own fake Virtual reality, **Isolation is mathematically guaranteed**. 
+
+Process A might store a password at Virtual Address `0x1000`. 
+Process B might store an image at Virtual Address `0x1000`. 
+Because the MMU translates Process A's `0x1000` to Physical Address `0x5555`, and translates Process B's `0x1000` to Physical Address `0x9999`, they never collide. 
+
+Process A physically cannot steal Process B's data, because Process A literally has no way to express or calculate the physical location of Process B's memory.
+
+</ConceptTemplate>

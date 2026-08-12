@@ -1,0 +1,62 @@
+---
+title: Vue
+description: The Progressive JavaScript Framework.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Vue">
+
+Vue is an open-source model–view–viewmodel (MVVM) front end JavaScript framework for building user interfaces and single-page applications. It was created by Evan You and is maintained by him and the rest of the active core team members.
+
+<Callout icon="tip" title="The Middle Ground">
+  Vue is often described as the perfect middle ground between Angular (highly structured, steep learning curve) and React (highly flexible, relies heavily on JavaScript). Vue provides an elegant templating syntax while remaining incredibly lightweight.
+</Callout>
+
+## The Composition API vs Options API
+
+Vue 3 introduced the Composition API, fundamentally changing how Vue components are authored to solve logic-reuse problems found in large Vue 2 codebases.
+
+<ComparisonTable 
+  headers={['Paradigm', 'How it works', 'Pros']}
+  rows={[
+    ['Options API', 'Group logic by option type (data, methods, mounted).', 'Very easy to read for beginners. Highly structured.'],
+    ['Composition API', 'Group logic by feature using setup().', 'Excellent TypeScript support and logic reuse (Composables).']
+  ]}
+/>
+
+## Example: Single-File Component (SFC)
+
+Vue's signature feature is the Single-File Component, containing HTML, JS, and scoped CSS in a single `.vue` file.
+
+```html
+<script setup>
+import { ref, computed } from 'vue'
+
+// Reactive state
+const count = ref(0)
+const increment = () => count.value++
+
+// Computed property
+const isEven = computed(() => count.value % 2 === 0)
+</script>
+
+<template>
+  <button @click="increment">
+    Count is: {{ count }}
+  </button>
+  <p>The count is {{ isEven ? 'even' : 'odd' }}</p>
+</template>
+
+<style scoped>
+button {
+  font-weight: bold;
+  color: blue;
+}
+</style>
+```
+
+## Reactivity System
+
+Unlike React's explicit `setState`, Vue uses JavaScript Proxies to automatically track dependencies. If you mutate a ref, Vue instantly knows exactly which components rely on that ref and updates them efficiently.
+
+</TechnologyTemplate>

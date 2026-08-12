@@ -1,0 +1,30 @@
+---
+title: Direct Memory Access (DMA)
+description: A hardware feature that allows external devices to read and write directly to main memory without waking up the CPU.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Direct Memory Access (DMA)">
+
+In early computers, if the hard drive needed to load a 10 MB file into RAM, the CPU had to execute an instruction to read a byte from the drive, and then execute another instruction to write that byte into RAM. It had to do this 10 million times, completely freezing the computer until the transfer was finished (Programmed I/O).
+
+**Direct Memory Access (DMA)** is the solution. It is a specialized, mini-processor on the motherboard whose *only* job is moving data between peripherals and RAM.
+
+<Callout icon="success" title="The CPU's Secretary">
+  Instead of doing the work itself, the CPU sends a command to the DMA Controller: "Read 10 Megabytes from Hard Drive sector 42 into RAM address 0x1000, and let me know when you're done." The CPU immediately goes back to rendering your video game, while the DMA chip silently moves the massive payload in the background.
+</Callout>
+
+## How DMA Works
+
+When the DMA controller receives a command, it literally takes over the System Bus. 
+Because both the CPU and the DMA controller need to use the memory wires, they must share. 
+- **Cycle Stealing**: The DMA controller sneaks its memory transfers in during the exact clock cycles when the CPU is busy doing math in the ALU and isn't using the memory bus.
+- **Burst Mode**: The DMA controller forcefully pauses the CPU for a microsecond and rapidly blasts a massive block of data into RAM, then gives the bus back to the CPU.
+
+## Modern DMA (PCIe Bus Mastering)
+
+In modern systems, there isn't a single DMA controller on the motherboard. Instead, every high-speed peripheral (GPUs, NVMe SSDs, Gigabit Network Cards) has its own internal DMA engine (called **Bus Mastering**). 
+
+When a network card receives a packet from the internet, it doesn't bother the CPU. It uses PCIe Bus Mastering to directly inject that packet straight into the system RAM, and then fires a quick hardware Interrupt to tell the CPU the data is ready to be processed.
+
+</ConceptTemplate>

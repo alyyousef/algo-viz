@@ -1,0 +1,31 @@
+---
+title: Filesystem Hierarchy Standard (FHS)
+description: The strict, standardized directory structure that dictates exactly where files must live on a Linux system.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Filesystem Hierarchy Standard (FHS)">
+
+Unlike Windows (which splits drives into `C:` and `D:`), Linux uses a single, unified, upside-down tree structure starting at the **Root Directory (`/`)**. 
+
+To ensure that software works across different Linux distributions, the **Filesystem Hierarchy Standard (FHS)** strictly defines what every folder in the root directory is used for.
+
+## The Core Directories
+
+Here are the most critical directories you must know as a Linux Administrator:
+
+- `/bin`: Essential user command binaries (e.g., `ls`, `cat`, `bash`). 
+- `/boot`: Static files required to boot the system, including the actual compiled Linux kernel (`vmlinuz`) and the GRUB bootloader.
+- `/dev`: Device nodes. In Linux, "Everything is a file". Your primary hard drive is exposed here as a file (e.g., `/dev/sda`).
+- `/etc`: System-wide configuration files (Host-specific). If you need to configure an Nginx server, the config file goes here.
+- `/home`: Personal directories for standard users (e.g., `/home/alice`).
+- `/root`: The personal home directory for the all-powerful `root` superuser.
+- `/lib`: Shared C libraries (similar to `.dll` files in Windows) required by the binaries in `/bin`.
+- `/var`: Variable data files that constantly change while the system is running (e.g., system logs in `/var/log`, or databases).
+- `/tmp`: Temporary files. This directory is usually completely wiped empty every time the server reboots.
+
+<Callout icon="info" title="The /usr Directory">
+  The FHS is historically messy. Originally, `/usr` stood for "User Services and Routines". Today, it acts as a secondary hierarchy. Most modern Linux distributions use systemd to physically symlink `/bin` directly to `/usr/bin` to clean up the ancient FHS design.
+</Callout>
+
+</ConceptTemplate>

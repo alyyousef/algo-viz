@@ -1,0 +1,27 @@
+---
+title: Reverse Proxies
+description: The critical architecture where a proxy sits in front of a web server, protecting it from the public internet while providing TLS termination and load balancing.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Reverse Proxies">
+
+A Forward Proxy protects the *Client* from the internet. 
+A **Reverse Proxy** protects the *Server* from the internet.
+
+You should never expose a raw Node.js or Python application directly to the open internet (Port 80/443). They are not designed to handle massive DDoS attacks or slow, malicious client connections. 
+Instead, you place a highly optimized Reverse Proxy (like **Nginx** or **HAProxy**) in front of them.
+
+## The Architecture
+
+1. A user attempts to connect to your website. 
+2. They do not hit your Python app. They hit the Nginx Reverse Proxy.
+3. Nginx analyzes the HTTP request, ensures it is not malicious, and then silently forwards the request to the Python app running safely on an internal Private IP (e.g., `localhost:3000`).
+4. Python processes the data, hands it back to Nginx, and Nginx delivers it to the user.
+
+## Core Responsibilities
+
+- **TLS Termination**: Managing SSL/TLS certificates and encrypting traffic requires heavy CPU math. The Reverse Proxy handles 100% of the cryptographic math (TLS Termination), sending the decrypted, plain-text request to the internal Python app. This frees up the Python app to focus purely on business logic.
+- **Static Asset Serving**: Python is slow at reading images off a hard drive. Nginx is written in C and can serve images 50x faster. The Reverse Proxy is configured to instantly serve all `.jpg` and `.css` files directly from its own cache, completely bypassing the backend application.
+
+</ConceptTemplate>

@@ -1,0 +1,52 @@
+---
+title: Von Neumann vs Harvard Architecture
+description: The two foundational paradigms of computer architecture dictating how instructions and data are stored and accessed in memory.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Von Neumann vs Harvard Architecture">
+
+At the dawn of computing, engineers had to solve a fundamental problem: A computer needs to store two entirely different things to function:
+1. **Instructions**: The actual code/program telling the computer what to do.
+2. **Data**: The variables, strings, and numbers being manipulated.
+
+How should this memory be physically wired? This debate birthed two distinct architectures that still dictate modern hardware design today.
+
+---
+
+## The Von Neumann Architecture
+
+Defined by John von Neumann in 1945, this architecture is brilliantly simple: **Instructions and Data share the exact same memory space and the exact same data bus.**
+
+If you look at the RAM in your laptop, it contains both your compiled C++ code and the images you are editing. 
+
+### Advantages:
+- **Simplicity & Cost**: You only need one physical memory chip and one set of wires (bus) connecting the CPU to the RAM.
+- **Flexibility**: If your program is small, you have massive amounts of RAM left over for data. If your program is huge, you can sacrifice data space. The system dynamically adapts.
+
+### The Von Neumann Bottleneck:
+Because both instructions and data share a single wire to the CPU, the CPU can only fetch *either* an instruction *or* a piece of data at any given microsecond. It cannot fetch both simultaneously. As CPUs became blisteringly fast, this shared bus became the ultimate bottleneck, starving the CPU of data.
+
+---
+
+## The Harvard Architecture
+
+Developed around the same time for the Harvard Mark I, this architecture enforces strict physical separation. **There is one physical memory chip for Instructions, and a completely separate physical memory chip for Data.** 
+
+### Advantages:
+- **Zero Bottleneck**: The CPU has two separate wires (buses). It can fetch the next instruction from the Instruction Memory *at the exact same time* it fetches a variable from the Data Memory, effectively doubling throughput.
+- **Security**: Because the Data Memory is physically disconnected from the Instruction Memory, it is impossible for a hacker to trick the CPU into executing a malicious variable as code (preventing many Buffer Overflow attacks).
+
+### Disadvantages:
+- **Rigidity**: If you have 10 MB of Instruction Memory and 10 MB of Data Memory, and you write a program that is 11 MB of code, it will crash. It does not matter that the Data Memory is completely empty; the spaces cannot be shared.
+
+---
+
+## The Modern Compromise: Modified Harvard Architecture
+
+If you look at modern Intel/AMD processors, they use a brilliant hybrid approach called the **Modified Harvard Architecture**.
+
+- **Main Memory (RAM)**: Out in the motherboard, the system uses the cheap, flexible **Von Neumann** architecture. All code and data share your 16 GB of RAM.
+- **L1 CPU Cache**: Deep inside the CPU silicon, where speed is critical, the architecture splits into strict **Harvard**. The L1 cache is explicitly divided into an \`L1i\` (Instruction Cache) and an \`L1d\` (Data Cache). This allows the CPU execution core to fetch instructions and data simultaneously at lightning speed, getting the best of both worlds!
+
+</ConceptTemplate>

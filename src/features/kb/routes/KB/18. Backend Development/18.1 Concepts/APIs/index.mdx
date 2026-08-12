@@ -1,0 +1,38 @@
+---
+title: APIs (Application Programming Interfaces)
+description: The foundational concept of how different software systems communicate and exchange data with one another.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="APIs (Application Programming Interfaces)">
+
+An **API (Application Programming Interface)** is a set of rules and protocols that allows one software application to talk to another. It abstracts away the complex internal logic of a system, providing a clean, predictable "interface" for other developers to use.
+
+<Callout icon="info" title="The Waiter Analogy">
+  Think of an API as a waiter in a restaurant. You (the client) sit at the table with a menu (the API Documentation). You cannot go into the kitchen (the database/backend) to cook the food yourself. Instead, you give your order (the Request) to the waiter (the API). The waiter takes it to the kitchen, the chef cooks it, and the waiter brings you the food (the Response). 
+</Callout>
+
+## Types of APIs
+
+While "API" is most commonly used today to describe web services, the concept is much broader:
+
+1. **Hardware/OS APIs**: When you write a Python script to save a file, Python calls the Operating System's file-system API.
+2. **Library APIs**: When you use a library like React or Lodash, the functions they expose for you to use are their API.
+3. **Web APIs**: Interfaces accessible over the internet using HTTP. This is how a mobile app fetches your bank balance from the bank's servers.
+
+## Anatomy of a Web API
+
+A modern Web API (often returning JSON) is defined by a few core concepts:
+
+- **Endpoints**: The specific URLs where the API can be accessed (e.g., `https://api.github.com/users`).
+- **Methods**: The HTTP verbs indicating the action (GET to read, POST to create, DELETE to remove).
+- **Headers**: Metadata sent with the request (e.g., an Authorization token to prove who you are).
+- **Payload/Body**: The actual data sent to the API (e.g., a JSON object containing a new user's username and password).
+- **Response**: The data returned by the server, along with a Status Code (e.g., `200 OK` or `404 Not Found`).
+
+## The Importance of the Contract
+
+An API represents a strict **Contract** between the provider and the consumer. If Stripe provides an API for charging credit cards, thousands of businesses write code relying on that exact URL structure and JSON format. 
+If Stripe decides to suddenly change the name of the `amount_usd` field to `total_dollars`, thousands of businesses will instantly break. Because of this, API design and **Versioning** (e.g., `/api/v1/...` vs `/api/v2/...`) are critical software engineering disciplines.
+
+</ConceptTemplate>

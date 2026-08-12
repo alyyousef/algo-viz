@@ -1,0 +1,29 @@
+---
+title: Thread Synchronization
+description: The mechanisms and rules required to safely coordinate multiple threads accessing the exact same shared memory.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Thread Synchronization">
+
+Because all Threads within a Process share the exact same Heap Memory, multi-threaded programming is incredibly dangerous.
+
+If Thread A and Thread B are running on two different CPU cores, and they both try to read, modify, and write to the same variable in RAM at the exact same nanosecond, the data will be silently corrupted. 
+
+**Synchronization** is the set of tools (Locks, Mutexes, Semaphores) provided by the Operating System to strictly control which thread is allowed to access shared memory at any given time.
+
+## The Critical Section
+
+The piece of code where a thread accesses shared memory (like updating a global counter, or modifying a shared linked list) is called the **Critical Section**.
+
+A proper synchronization mechanism must enforce three absolute rules for the Critical Section:
+
+1. **Mutual Exclusion**: If Thread A is currently inside the critical section, Thread B *must absolutely not* be allowed to enter it. Thread B must wait outside.
+2. **Progress**: If the critical section is currently empty, and Thread A wants to enter, it should be allowed to enter immediately.
+3. **Bounded Waiting (No Starvation)**: If Thread A is waiting to enter the critical section, there must be a mathematical guarantee that it will eventually get in, rather than waiting infinitely while other threads cut the line.
+
+<Callout icon="warning" title="The Cost of Synchronization">
+  Synchronization destroys Parallelism. If you have 8 CPU cores, but all 8 threads are waiting in line to access a single Mutex lock, your program is effectively running on 1 core. The other 7 cores are paused, completely wasting their processing power.
+</Callout>
+
+</ConceptTemplate>

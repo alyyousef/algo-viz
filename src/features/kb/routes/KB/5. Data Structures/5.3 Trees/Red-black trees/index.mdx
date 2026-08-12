@@ -1,0 +1,46 @@
+---
+title: Red-Black Trees
+description: A self-balancing binary search tree that ensures $O(\log n)$ operations using color properties.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Red-Black Trees">
+
+A **Red-Black Tree** is a sophisticated type of self-balancing binary search tree. In a standard binary search tree, inserting sorted data can cause the tree to degrade into a linked list, ruining performance to $O(n)$. Red-Black Trees solve this by strictly enforcing a set of coloring rules that guarantee the tree remains relatively balanced.
+
+<Callout icon="info" title="Industry Adoption">
+  Red-Black trees are one of the most practically used data structures in computer science. They are the underlying implementation for the `std::map` and `std::set` in C++, the `TreeMap` in Java, and the Completely Fair Scheduler (CFS) used in the Linux Kernel.
+</Callout>
+
+## The 5 Rules of Red-Black Trees
+
+Every node in the tree contains an extra bit of data denoting its color (Red or Black). The tree maintains its balance by rigorously enforcing these rules during every insertion and deletion:
+
+1. Every node is colored either **Red** or **Black**.
+2. The root node is always **Black**.
+3. All leaf nodes (NIL nodes) are considered **Black**.
+4. If a node is **Red**, both of its children must be **Black**. *(No two consecutive red nodes on a path).*
+5. Every path from a node to any of its descendant NIL leaves must contain the **exact same number of Black nodes**. (This is called the "Black Depth").
+
+## Balancing Operations
+
+When you insert a new node, it is initially colored Red. If this violates Rule 4 (its parent is also Red), the tree must rebalance itself using two operations:
+1. **Recoloring**: Flipping the colors of the parent, uncle, and grandparent nodes.
+2. **Rotations**: Changing the structural pointers (Left-Rotate or Right-Rotate) to restructure the tree while preserving binary search ordering.
+
+## Time Complexity
+
+Because of Rule 4 and Rule 5, the longest possible path from the root to a leaf is no more than twice as long as the shortest possible path. Therefore, the tree is guaranteed to be $O(\log n)$ in depth.
+
+<ComparisonTable 
+  headers={['Operation', 'Worst-Case Time Complexity']}
+  rows={[
+    ['Search', '$O(\log n)$'],
+    ['Insert', '$O(\log n)$'],
+    ['Delete', '$O(\log n)$']
+  ]}
+/>
+
+Compared to AVL Trees, Red-Black Trees are slightly less strictly balanced. This means searches might take slightly longer, but insertions and deletions are faster because fewer structural rotations are required.
+
+</ConceptTemplate>

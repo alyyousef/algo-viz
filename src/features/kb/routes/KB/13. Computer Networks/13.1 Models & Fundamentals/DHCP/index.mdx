@@ -1,0 +1,29 @@
+---
+title: DHCP (Dynamic Host Configuration Protocol)
+description: The automated service that leases IP addresses, Subnet Masks, and DNS configurations to devices the moment they join a network.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="DHCP (Dynamic Host Configuration Protocol)">
+
+If you connect to an airport Wi-Fi, you do not have to open your computer settings and manually type in an IP address, Subnet Mask, and Default Gateway Router. 
+
+This automation is handled by **DHCP** (Operating at Layer 7, via UDP Ports 67/68).
+
+## The D.O.R.A. Process
+
+When a device connects to a network without an IP address, it initiates a 4-step negotiation called D.O.R.A.:
+
+1. **Discover (Broadcast)**: The laptop has no IP, so it screams a broadcast to the entire network: *"Are there any DHCP Servers out there?"*
+2. **Offer (Unicast/Broadcast)**: The DHCP Server hears the scream, looks at its pool of available IP addresses, and replies: *"Yes! I can offer you 192.168.1.50."*
+3. **Request (Broadcast)**: The laptop officially replies to the network: *"I accept the offer for 192.168.1.50!"*
+4. **Acknowledge (Unicast/Broadcast)**: The server formally locks the IP in its database and sends the final ACK, containing the Subnet Mask, Default Gateway, and DNS server IPs.
+
+<Callout icon="info" title="IP Leasing">
+  DHCP does not give you an IP address permanently; it **Leases** it to you. A lease might last 24 hours. At the 12-hour mark (50% of the lease), your laptop will silently contact the DHCP server and ask to renew the lease. If you leave the airport, the lease eventually expires, and the server reclaims the IP address to give to a new passenger.
+</Callout>
+
+## Static Assignments (Reservations)
+Servers and Printers should never change their IP addresses. Instead of manually configuring them, Admins create **DHCP Reservations**. They tell the DHCP server: *"If you ever see a request from MAC Address AA:BB:CC, ALWAYS offer it 192.168.1.100."* This centralizes all IP management into the DHCP server.
+
+</ConceptTemplate>

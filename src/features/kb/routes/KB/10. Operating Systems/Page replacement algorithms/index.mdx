@@ -1,0 +1,26 @@
+---
+title: Page Replacement Algorithms
+description: The difficult decisions the OS must make when the physical RAM is 100% full and a new program demands memory.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Page Replacement Algorithms">
+
+What happens when your computer only has 8GB of physical RAM, but you open 15 tabs in Google Chrome, a video editor, and a video game, demanding a total of 12GB of RAM?
+
+The system does not crash. Instead, the OS Kernel utilizes the hard drive as an emergency overflow for RAM (a process called Swapping/Paging Out). 
+To make room for the video game, the OS must brutally evict some of Chrome's memory from the physical RAM sticks and write it to the slow SSD. 
+
+But *which* 4KB Page of memory should the OS evict? This is decided by **Page Replacement Algorithms**.
+
+<Callout icon="warning" title="The Cost of a Bad Guess">
+  If the OS evicts a memory page that Chrome needs to use 10 milliseconds from now, Chrome will freeze while the OS painstakingly reads that page back from the slow SSD (a Page Fault). If the OS guesses wrong constantly, the system enters **Thrashing**, where the computer spends 100% of its time moving data to and from the SSD, bringing the machine to a halt.
+</Callout>
+
+## Common Algorithms
+
+1. **FIFO (First-In, First-Out)**: The OS evicts the oldest page in RAM. (Terrible idea. The oldest page might be the core OS kernel code that is used every second).
+2. **LRU (Least Recently Used)**: The OS tracks exactly when every page was last read. It evicts the page that hasn't been touched in the longest time. (Excellent algorithm, but computationally impossible to perfectly track in real-time).
+3. **Clock (Second Chance)**: The algorithm actually used by modern OSs. It approximates LRU using a single hardware bit. The OS sweeps through memory like the hand of a clock. If a page has been used recently, it clears the bit (giving it a second chance). If it sweeps again and the bit is still clear, it evicts the page. It is incredibly fast and highly accurate.
+
+</ConceptTemplate>

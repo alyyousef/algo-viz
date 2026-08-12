@@ -1,0 +1,37 @@
+---
+title: Translation Lookaside Buffer (TLB)
+description: A highly specialized, ultra-fast hardware cache located inside the MMU that drastically accelerates Virtual Memory translation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Translation Lookaside Buffer (TLB)">
+
+Because modern operating systems use **Paging** to implement Virtual Memory, every single memory access a program makes requires a translation. 
+
+If your code says \`return myArray[0]\`, the CPU generates a Virtual Address. To find the actual physical silicon chip that holds that array, the CPU must look up the translation in the **Page Table**, which is stored in main RAM. 
+
+<Callout icon="warning" title="The Virtual Memory Bottleneck">
+  This introduces a catastrophic performance penalty. To read 1 variable from RAM, the CPU must actually perform **two** RAM reads:
+  1. Read the Page Table in RAM to find the translation.
+  2. Read the actual data from RAM using the translated address.
+  Virtual Memory effectively cuts the speed of RAM in half.
+</Callout>
+
+## The TLB to the Rescue
+
+Hardware engineers solved this by adding a microscopic, ultra-fast SRAM cache directly inside the CPU's Memory Management Unit (MMU). This is the **Translation Lookaside Buffer (TLB)**. 
+
+The TLB's only job is to cache the most recently used Page Table translations. 
+
+When the CPU generates a Virtual Address, the MMU checks the TLB first (which takes less than 1 clock cycle). 
+- **TLB Hit**: The translation is found instantly. The MMU generates the Physical Address and requests the data from the L1 Cache. No extra RAM reads are required.
+- **TLB Miss**: The translation is not in the TLB. The CPU is forced to pause (a "Page Walk"), reach out to main RAM, read the massive Page Table, find the translation, pull it into the TLB, and then finally resume execution. 
+
+## The High Cost of Context Switches
+
+The TLB is incredibly small (usually holding only 64 to 1024 entries) because SRAM is expensive and the lookup must happen instantaneously. 
+
+When the Operating System performs a **Context Switch** (pausing Google Chrome to run Spotify), Chrome's virtual addresses mean something completely different than Spotify's virtual addresses. Because of this, the OS must historically **flush (erase) the entire TLB**. 
+When Spotify resumes, its first few hundred memory accesses will all result in agonizingly slow TLB Misses as it rebuilds the cache. This is the primary reason why rapidly switching between threads/processes kills CPU performance.
+
+</ConceptTemplate>

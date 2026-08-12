@@ -1,0 +1,44 @@
+---
+title: Merge Sort
+description: An efficient, general-purpose, and comparison-based sorting algorithm using Divide and Conquer.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Merge Sort">
+
+Merge Sort is a classic Divide and Conquer algorithm. It divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves. The `merge()` function is the key process that assumes the two halves are already sorted and merges them together.
+
+<Callout icon="tip" title="Stability">
+  Merge Sort is a **Stable** sort, meaning that two identical elements will retain their original relative order. This is highly desirable when sorting complex objects (e.g., sorting users by age, and maintaining their alphabetical order if ages match).
+</Callout>
+
+## Time and Space Complexity
+
+<ComparisonTable 
+  headers={['Metric', 'Complexity', 'Explanation']}
+  rows={[
+    ['Time (Worst/Avg/Best)', 'O(n log n)', 'It ALWAYS divides the array in half (log n), and ALWAYS merges them (n).'],
+    ['Space', 'O(n)', 'Requires a temporary array of the exact same size as the input to perform the merge.'],
+    ['Stable?', 'Yes', 'Maintains relative order of equal elements.']
+  ]}
+/>
+
+## Architecture: Divide and Conquer
+
+<ArchitectureDiagram chart={`
+graph TD
+  A("[38, 27, 43, 3]") --> B("[38, 27]")
+  A --> C("[43, 3]")
+  
+  B --> D("[38]")
+  B --> E("[27]")
+  C --> F("[43]")
+  C --> G("[3]")
+  
+  D & E --> H("[27, 38]")
+  F & G --> I("[3, 43]")
+  
+  H & I --> J("[3, 27, 38, 43]")
+`} />
+
+</TechnologyTemplate>

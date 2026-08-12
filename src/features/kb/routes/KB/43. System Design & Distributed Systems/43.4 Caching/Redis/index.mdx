@@ -1,0 +1,29 @@
+---
+title: Redis
+description: An open-source, in-memory data structure store, used as a database, cache, and message broker.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Redis (Remote Dictionary Server)">
+
+Redis is an open-source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker. It supports data structures such as strings, hashes, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs, geospatial indexes, and streams.
+
+<Callout icon="info" title="In-Memory Speed">
+  Because Redis stores all data directly in RAM, it responds to queries in sub-milliseconds. It is commonly used as a caching layer in front of a slow SQL database to store highly accessed data (like user session tokens or top 10 leaderboards).
+</Callout>
+
+## Data Structures
+
+Redis is not just a simple string Key-Value store; it supports complex structures:
+
+<ComparisonTable 
+  headers={['Structure', 'Use Case']}
+  rows={[
+    ['Strings', 'Caching raw JSON payloads, incrementing view counters.'],
+    ['Lists', 'A queue system, storing a timeline of recent events.'],
+    ['Hashes', 'Storing object data (e.g., a User object with `name`, `email`, `age` fields).'],
+    ['Sorted Sets', 'Automatically sorting data by a score. Perfect for gaming Leaderboards or Priority Queues.']
+  ]}
+/>
+
+</TechnologyTemplate>

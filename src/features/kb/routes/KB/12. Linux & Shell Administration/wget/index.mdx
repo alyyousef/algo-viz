@@ -1,0 +1,23 @@
+---
+title: wget
+description: The classic, non-interactive command-line utility used heavily for downloading files and mirroring entire websites.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="wget">
+
+While `curl` is designed to stream data and interact with complex REST APIs, **`wget` (Web Get)** is designed to do exactly one thing: Download files to the hard drive as reliably as possible.
+
+It is a non-interactive downloader. You give it a URL, and it handles the rest in the background, even on wildly unstable networks.
+
+## Core Features
+
+- **Standard Download**: `wget https://example.com/file.zip` (Downloads the file and saves it in the current directory with its original name).
+- **Resume Broken Downloads (`-c`)**: If you are downloading a 50GB ISO and your internet cuts out at 49GB, you simply run `wget -c https://example.com/file.iso`. `wget` will look at the partial file on disk and seamlessly resume the download exactly where it left off.
+- **Run in Background (`-b`)**: `wget -b https://example.com/massive.zip`. Immediately detaches the process, allowing you to close your terminal while it finishes downloading.
+
+<Callout icon="warning" title="Website Mirroring">
+  `wget` is incredibly powerful at recursive downloading (`-r`). If you run `wget -m https://example.com`, `wget` will download the homepage, parse the HTML, find every single hyperlink, and recursively download every image, CSS file, and subpage until it has a perfect, offline, physical copy of the entire website on your hard drive.
+</Callout>
+
+</ConceptTemplate>

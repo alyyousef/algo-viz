@@ -1,0 +1,45 @@
+---
+title: NumPy
+description: The fundamental package for scientific computing with Python.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="NumPy">
+
+NumPy (Numerical Python) is the fundamental package for scientific computing in Python. It provides a high-performance multidimensional array object, and tools for working with these arrays.
+
+<Callout icon="info" title="The C-Backend">
+  Python lists are slow because they are arrays of pointers to scattered objects. NumPy arrays are homogeneous and stored in contiguous memory blocks, heavily optimized with backend C and Fortran code, making them orders of magnitude faster.
+</Callout>
+
+## Key Concepts
+
+<ComparisonTable 
+  headers={['Concept', 'Description']}
+  rows={[
+    ['ndarray', 'The core N-dimensional array object.'],
+    ['Broadcasting', 'A powerful mechanism that allows NumPy to perform arithmetic operations on arrays of different shapes.'],
+    ['Vectorization', 'Performing operations on entire arrays without using explicit Python loops.']
+  ]}
+/>
+
+## Example Usage
+
+```text
+{`import numpy as np
+
+# Create an array
+a = np.array([1, 2, 3])
+
+# Create a 2D array of zeros
+b = np.zeros((2, 3))
+
+# Element-wise operations (Vectorization)
+c = np.array([10, 20, 30])
+print(a + c) # Output: [11 22 33]
+
+# Broadcasting: adding a scalar to an array
+print(a * 5) # Output: [5 10 15]`}
+```
+
+</TechnologyTemplate>

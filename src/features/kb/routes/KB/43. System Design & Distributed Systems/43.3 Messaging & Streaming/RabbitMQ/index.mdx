@@ -1,0 +1,56 @@
+---
+title: RabbitMQ
+description: The most widely deployed open source message broker.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="RabbitMQ">
+
+RabbitMQ is an open-source message broker software that implements the Advanced Message Queuing Protocol (AMQP). It gives your applications a common platform to send and receive messages, and your messages a safe place to live until received.
+
+<Callout icon="tip" title="Smart Broker, Dumb Consumer">
+  RabbitMQ is designed as a "Smart Broker". It keeps track of exactly which consumer has read which message. Once a consumer successfully processes and acknowledges a message, RabbitMQ permanently deletes it from the queue.
+</Callout>
+
+## Exchanges and Queues
+
+Unlike Kafka where producers write directly to Topics, in RabbitMQ, producers never send messages directly to a queue. They send messages to an **Exchange**, which then routes the messages to zero or more **Queues** based on routing rules.
+
+<ComparisonTable 
+  headers={['Exchange Type', 'Routing Behavior']}
+  rows={[
+    ['Direct', 'Routes messages to a queue whose binding key exactly matches the routing key of the message.'],
+    ['Fanout', 'Broadcasts all messages to all connected queues, ignoring the routing key.'],
+    ['Topic', 'Routes messages based on wildcard matching between the routing key and the queue binding (e.g., `logs.*.error`).'],
+    ['Headers', 'Routes based on message header attributes instead of the routing key.']
+  ]}
+/>
+
+## Architecture
+
+RabbitMQ is perfect for task-queue workflows, like processing background video encoding jobs or sending emails asynchronously.
+
+<ArchitectureDiagram chart={`
+graph LR
+  Producer[Web Server\n(Producer)]
+  
+  subgraph RabbitMQ Broker
+    Exchange{Exchange\n(Type: Direct)}
+    Queue1[(Queue: PDF Processing)]
+    Queue2[(Queue: Email Sending)]
+  end
+  
+  Worker1[Worker Node A\n(PDF Generator)]
+  Worker2[Worker Node B\n(Email Sender)]
+  
+  Producer -- "pdf.create" --> Exchange
+  Producer -- "email.send" --> Exchange
+  
+  Exchange -- Routes "pdf.*" --> Queue1
+  Exchange -- Routes "email.*" --> Queue2
+  
+  Queue1 -- Pops message --> Worker1
+  Queue2 -- Pops message --> Worker2
+`} />
+
+</TechnologyTemplate>

@@ -1,0 +1,45 @@
+---
+title: JWT (JSON Web Tokens)
+description: A compact, URL-safe means of representing claims to be transferred between two parties, widely used for stateless API authentication.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="JWT (JSON Web Tokens)">
+
+Pronounced "jot," a **JSON Web Token (JWT)** is an open standard for securely transmitting information between parties as a JSON object. This information can be verified and trusted because it is digitally signed using cryptography.
+
+JWTs have become the dominant mechanism for **Stateless Authentication** in modern REST APIs and Single Page Applications (React, Vue).
+
+<Callout icon="warning" title="Signed, Not Encrypted">
+  A critical misconception is that JWTs hide data. **They do not.** By default, anyone who intercepts a JWT can decode it and read the JSON payload (like the user's email or ID). The cryptography in a standard JWT is used for a **Signature**, which guarantees the data has not been *tampered with* by a hacker, but it does not encrypt the data. Never put passwords or sensitive secrets inside a JWT payload.
+</Callout>
+
+## The Anatomy of a JWT
+
+If you look at a JWT, it appears to be a long, random string of gibberish separated by two periods: 
+`xxxxx.yyyyy.zzzzz`
+
+It is actually three distinct Base64-encoded JSON strings glued together:
+
+1. **Header (`xxxxx`)**: Contains metadata about the token, specifically the algorithm used to sign it (e.g., HMAC SHA256 or RSA).
+2. **Payload (`yyyyy`)**: Contains the "Claims" (the actual data). This usually includes the user's ID, their roles, and crucial timestamps like `iat` (Issued At) and `exp` (Expiration Time).
+3. **Signature (`zzzzz`)**: The magic part. The server takes the Header, the Payload, and a highly classified **Secret Key** (that only the server knows), and runs them through a hashing algorithm. This generates the Signature.
+
+## How Stateless Authentication Works
+
+Historically, servers used Stateful Sessions. When a user logged in, the server created a record in its memory/database mapping a random Session ID cookie to that user. Every API request required a database lookup to verify the session.
+
+With JWTs, we eliminate the database lookup:
+
+1. The user logs in with an email and password.
+2. The server verifies the password, creates a JSON object with the user's ID (`{ sub: 123 }`), signs it with its Secret Key to create a JWT, and sends it to the client.
+3. The client saves the JWT (usually in an HttpOnly Cookie or LocalStorage).
+4. On subsequent requests, the client attaches the JWT to the HTTP Header: `Authorization: Bearer <token>`.
+5. The server receives the request. It mathematically recalculates the signature using its Secret Key. If the calculated signature perfectly matches the signature attached to the token, the server *mathematically guarantees* the token is authentic and hasn't been modified. It can trust the `{ sub: 123 }` payload instantly, without ever querying the database.
+
+## The Invalidation Problem
+
+The biggest flaw with JWTs is that because they are stateless, **they cannot be easily revoked**. If a hacker steals a user's JWT, or an admin bans a user, the JWT remains mathematically valid until its expiration time (`exp`). 
+To mitigate this, architectures use incredibly short-lived Access Tokens (e.g., expiring in 15 minutes) paired with stateful, revocable **Refresh Tokens**.
+
+</ConceptTemplate>

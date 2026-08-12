@@ -1,0 +1,30 @@
+---
+title: The DOM (Document Object Model)
+description: The in-memory, object-oriented tree representation of an HTML document, allowing JavaScript to dynamically manipulate the webpage.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The DOM (Document Object Model)">
+
+When a browser downloads an HTML file, it does not keep it as a raw string of text. 
+It parses the text and constructs a massive, hierarchical tree structure in RAM called the **DOM (Document Object Model)**.
+
+## The Bridge to JavaScript
+
+HTML is a static markup language; it cannot do math or handle click events. 
+JavaScript is a programming language, but it knows absolutely nothing about web pages. 
+
+The DOM is the API (Application Programming Interface) that bridges them. The browser creates the DOM and injects a global `document` object into JavaScript.
+
+When you write `document.getElementById('btn')`, JavaScript is querying the DOM tree. 
+If JavaScript modifies a DOM node (e.g., `btn.style.color = 'red'`), the Rendering Engine instantly detects the mutation, recalculates the layout, and repaints the screen. 
+
+## Nodes vs Elements
+- **Node**: Everything in the DOM is a Node. Even the invisible whitespace between two HTML tags is parsed as a "Text Node".
+- **Element**: A specific type of Node that represents an actual HTML tag (like a `<div>` or `<p>`).
+
+<Callout icon="warning" title="DOM Manipulation is Slow">
+  JavaScript executes at near native C++ speeds, but interacting with the DOM is incredibly slow. Every time you touch the DOM, you force the browser to execute the complex Layout/Reflow math. This is why modern frameworks like React invented the "Virtual DOM"—performing all the math in raw JavaScript memory and only touching the real DOM once at the very end.
+</Callout>
+
+</ConceptTemplate>

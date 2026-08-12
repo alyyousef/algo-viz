@@ -1,0 +1,34 @@
+---
+title: Mutexes (Mutual Exclusion)
+description: The simplest and most fundamental locking mechanism used to protect shared memory from Race Conditions.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Mutexes (Mutual Exclusion)">
+
+A **Mutex** (short for Mutual Exclusion) is a software lock provided by the Operating System used to protect a Critical Section of code. 
+
+Think of a Mutex as a single physical key to a public restroom. 
+- If the restroom (Critical Section) is empty, Thread A grabs the key, locks the door behind it, and goes inside.
+- If Thread B arrives, it cannot get in because Thread A has the key. Thread B is forced to sit outside and wait (it goes to sleep).
+- When Thread A is finished, it unlocks the door and hands the key to Thread B.
+
+## How to use a Mutex
+
+In code, using a mutex looks like this:
+
+```c
+pthread_mutex_lock(&my_mutex);   // Thread acquires the lock
+balance = balance + 50;          // CRITICAL SECTION (Safe!)
+pthread_mutex_unlock(&my_mutex); // Thread releases the lock
+```
+
+If Thread 1 calls `lock()`, it succeeds. If Thread 2 calls `lock()` a microsecond later, the Operating System intercepts the call, immediately suspends Thread 2, and places it in a Waiting Queue. 
+
+This is incredibly efficient. Because Thread 2 is put to sleep by the OS, it consumes exactly 0% of the CPU while it waits for Thread 1 to finish. When Thread 1 calls `unlock()`, the OS automatically wakes Thread 2 back up.
+
+<Callout icon="warning" title="The Rule of Ownership">
+  A Mutex has a strict concept of **Ownership**. Only the specific thread that locked the mutex is legally allowed to unlock it. If Thread A locks a mutex, and Thread B attempts to unlock it, the program will throw a fatal error.
+</Callout>
+
+</ConceptTemplate>

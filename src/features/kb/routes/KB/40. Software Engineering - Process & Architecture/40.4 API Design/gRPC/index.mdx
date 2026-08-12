@@ -1,0 +1,27 @@
+---
+title: gRPC
+description: A high-performance, open-source universal RPC framework developed by Google.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="gRPC">
+
+gRPC is a modern, open-source Remote Procedure Call (RPC) framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication.
+
+<Callout icon="info" title="Under the Hood">
+  gRPC uses HTTP/2 for transport (which allows multiplexing and streaming) and Protocol Buffers (Protobuf) as the interface description language and message format.
+</Callout>
+
+## Why gRPC over REST?
+
+<ComparisonTable 
+  headers={['Feature', 'REST (JSON)', 'gRPC (Protobuf)']}
+  rows={[
+    ['Format', 'JSON (Text-based, human-readable).', 'Protobuf (Binary, completely unreadable to humans, highly compressed).'],
+    ['Speed', 'Fast, but requires parsing JSON strings into objects.', 'Extremely fast. Binary serialization is roughly 5x to 10x faster.'],
+    ['Contracts', 'OpenAPI/Swagger (Optional).', 'Strictly typed `.proto` files (Mandatory). The compiler automatically generates client code in Python, Go, Java, etc.'],
+    ['Streaming', 'Generally limited to Client-to-Server requests.', 'Supports Bi-directional streaming natively via HTTP/2.']
+  ]}
+/>
+
+</TechnologyTemplate>

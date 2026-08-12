@@ -1,0 +1,26 @@
+---
+title: Filesystem Structure
+description: The complex data structures the OS uses to turn a massive, flat array of magnetic bits into a usable hierarchy of folders and files.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Filesystem Structure">
+
+A Hard Drive or SSD is incredibly dumb. It has no concept of "Folders", "Files", or "Images". To the hardware, a 1 Terabyte SSD is just a massive, flat array of 1 Trillion magnetic blocks. You can ask the SSD for "Block #500", and it will return 4 Kilobytes of raw binary data.
+
+A **Filesystem** (like NTFS on Windows, APFS on macOS, or EXT4 on Linux) is the software abstraction built by the Operating System to turn that flat array into the beautiful tree of folders and files you see on your desktop.
+
+## The Logical Layout
+
+When you format a drive with a filesystem, the OS divides the physical drive into several logical zones:
+
+1. **The Boot Block**: The very first sector of the drive, containing the tiny Bootloader code required to start the Operating System.
+2. **The Superblock**: The master configuration file for the filesystem. It stores the total size of the drive, how many blocks are free, and the location of the root directory. If the Superblock is corrupted, the entire drive becomes unreadable.
+3. **The Inode Table**: A massive database storing the metadata (permissions, file size, creation date) for every single file on the drive.
+4. **The Data Blocks**: The vast majority of the drive, where the actual binary content of your photos, videos, and text files is stored.
+
+<Callout icon="success" title="Everything is a Tree">
+  In modern filesystems, directories (folders) are not special magical entities. A directory is simply a standard file that contains a list of text mappings. It contains rows of data saying: *"The file named 'vacation.jpg' is located at Inode #5092"*.
+</Callout>
+
+</ConceptTemplate>

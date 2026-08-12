@@ -1,0 +1,28 @@
+---
+title: User Space (Ring 3)
+description: The restricted, heavily monitored sandbox where all standard applications and software run.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="User Space">
+
+While the OS Kernel lives in Ring 0 (Kernel Space), every other program on your computer—Google Chrome, Microsoft Word, Steam, and even your terminal—runs in **User Space (Ring 3)**.
+
+User Space is a heavily restricted sandbox. When the CPU is operating in Ring 3, it intentionally disables its most powerful hardware instructions.
+
+<Callout icon="success" title="The Sandbox Restrictions">
+  A program running in User Space **cannot**:
+  - Talk directly to the hard drive, network card, or keyboard.
+  - See or modify the physical memory of any other program.
+  - Disable hardware interrupts.
+  - Modify the CPU's memory management unit (MMU).
+</Callout>
+
+## How does anything get done?
+
+If a User Space program isn't allowed to talk to the hard drive, how does it save a file? 
+It must politely ask the Kernel to do it on its behalf.
+
+It does this via a **System Call**. The program triggers a specific software interrupt (e.g., `SYSCALL`). The CPU immediately pauses the program, switches into Ring 0 (Kernel Mode), and jumps to a secure, pre-approved piece of OS code. The OS verifies that the user program has the correct permissions (e.g., "Are they allowed to write to this folder?"), and if so, the OS physically writes to the hard drive, switches back to Ring 3, and returns control to the program.
+
+</ConceptTemplate>

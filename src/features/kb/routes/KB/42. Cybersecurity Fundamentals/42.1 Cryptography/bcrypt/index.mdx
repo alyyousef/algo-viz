@@ -1,0 +1,37 @@
+---
+title: bcrypt
+description: A robust, adaptive password-hashing function designed to resist hardware brute-force attacks.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="bcrypt">
+
+bcrypt is a password-hashing function designed in 1999 based on the Blowfish cipher. Despite its age, it remains one of the most widely recommended and utilized algorithms in the software industry for securely storing user passwords.
+
+<Callout icon="success" title="The GPU Defense">
+  Standard hashing algorithms (like SHA-256) rely purely on CPU cycles. Hackers realized they could use Graphics Processing Units (GPUs), which contain thousands of cores, to guess passwords millions of times faster. bcrypt was explicitly designed to be **memory-bound**. It constantly requires random reads and writes to RAM, neutralizing the advantage of GPUs and custom ASICs.
+</Callout>
+
+## Anatomy of a bcrypt Hash
+
+A bcrypt output string isn't just a raw hash; it is a self-contained data structure containing all the metadata required to verify the password later. It always starts with `$2a$`, `$2b$`, or `$2y$`.
+
+Example bcrypt string:
+`$2b$12$w3d4C.D/z4E6J8K0L2M4N.abc123DEF456ghi789JKL012mno345p`
+
+Let's break this 60-character string down into its 4 components:
+
+1. **Algorithm Identifier (`$2b$`)**: Tells the system this is a bcrypt hash (specifically revision 'b').
+2. **Work Factor / Cost (`12`)**: The computational cost parameter. The math is run $2^{12}$ (4,096) times. Every time you increment this number by 1, the hashing time doubles.
+3. **The Salt (`w3d4C.D/z4E6J8K0L2M4N.`)**: The next 22 characters are the 128-bit cryptographically secure random salt that bcrypt automatically generated.
+4. **The Hash (`abc123DEF456ghi789JKL012mno345p`)**: The final 31 characters are the actual computed hash output.
+
+## Adaptive Security (Moore's Law)
+
+The genius of bcrypt is the **Cost parameter**. 
+
+In 2005, a cost of `08` might have taken a server 200 milliseconds to compute. By 2015, faster CPUs could compute a cost of `08` in 10 milliseconds, making brute-forcing easier. 
+
+Because bcrypt is adaptive, administrators can simply increase the cost to `12` in their code. Now, new passwords will take 200 milliseconds on the new hardware. The algorithm scales perfectly with Moore's Law without requiring a fundamental rewrite of the cryptography.
+
+</TechnologyTemplate>

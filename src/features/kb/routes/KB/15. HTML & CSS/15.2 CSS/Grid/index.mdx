@@ -1,0 +1,45 @@
+---
+title: CSS Grid Layout
+description: The ultimate two-dimensional layout architecture, allowing complex rows and columns to be defined mathematically without nested divs.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CSS Grid Layout">
+
+While Flexbox is perfect for aligning items in a single row (like a Navigation bar), it is terrible at building complex page architectures (like a dashboard with a sidebar, header, and main content area). 
+
+**CSS Grid** is the ultimate two-dimensional layout engine. It allows you to mathematically define both Rows AND Columns simultaneously.
+
+## The Grid Blueprint
+Instead of writing complex math on the child elements, CSS Grid allows you to define a structural blueprint entirely on the parent container.
+
+```css
+.dashboard {
+  display: grid;
+  grid-template-columns: 200px 1fr; /* Two columns: A fixed 200px sidebar, and the rest (1fr) */
+  grid-template-rows: 60px 1fr;     /* Two rows: A fixed 60px header, and the rest (1fr) */
+  gap: 20px;                        /* Perfect spacing between all items */
+}
+```
+
+## The Fractional Unit (fr)
+Grid introduced the `fr` (fractional) unit. It is incredibly powerful. 
+If you write `grid-template-columns: 1fr 2fr 1fr`, the browser calculates the total available width, divides it into 4 equal slices, gives 1 slice to the left column, 2 slices to the middle column (making it twice as big), and 1 slice to the right.
+
+## Grid Areas (The Holy Grail)
+Grid allows you to name sections of your layout visually using strings, creating the most readable layout code in history:
+
+```css
+.layout {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebar main  ads"
+    "footer footer footer";
+}
+
+.header-child { grid-area: header; }
+```
+The child element will instantly span across the entire top of the grid.
+
+</ConceptTemplate>

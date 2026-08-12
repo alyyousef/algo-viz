@@ -1,0 +1,70 @@
+---
+title: PostgreSQL
+description: The World's Most Advanced Open Source Relational Database.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="PostgreSQL">
+
+PostgreSQL, also known as Postgres, is a free and open-source relational database management system (RDBMS) emphasizing extensibility and SQL compliance. It was originally named POSTGRES, referring to its origins as a successor to the Ingres database developed at the University of California, Berkeley.
+
+<Callout icon="tip" title="More than just Relational">
+  While primarily an RDBMS, PostgreSQL has incredibly robust support for NoSQL features. Its `JSONB` data type allows you to store, index, and query JSON documents with performance rivaling dedicated document stores like MongoDB.
+</Callout>
+
+## Core Capabilities & Features
+
+PostgreSQL is often considered the gold standard for robust, transactional databases.
+
+<ComparisonTable 
+  headers={['Feature', 'Description', 'Use Case']}
+  rows={[
+    ['ACID Compliance', 'Guarantees that database transactions are processed reliably.', 'Banking, Financial ledgers, Critical user data.'],
+    ['MVCC', 'Multi-Version Concurrency Control prevents read locks from blocking writes.', 'High-traffic apps with concurrent reads/writes.'],
+    ['JSONB', 'Binary JSON storage with specialized indexing (GIN).', 'Hybrid schema-less architectures.'],
+    ['PostGIS', 'An extension that adds support for geographic objects.', 'Uber, Maps, Location-based queries.']
+  ]}
+/>
+
+## Standard SQL Operations
+
+PostgreSQL strictly adheres to the SQL standard while providing massive extensions.
+
+```sql
+-- Creating a table with constraints and default values
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Querying deep inside a JSONB column
+SELECT username, metadata->>'plan' as subscription_plan
+FROM users
+WHERE metadata @> '{"is_active": true}';
+```
+
+## High Availability & Replication Architecture
+
+Postgres achieves scale through robust primary-replica streaming architectures.
+
+<ArchitectureDiagram chart={`
+graph LR
+  Client[Web Application]
+  
+  subgraph Cluster
+    Primary[(Primary DB\nRead/Write)]
+    Replica1[(Replica 1\nRead Only)]
+    Replica2[(Replica 2\nRead Only)]
+  end
+  
+  Client -- Writes --> Primary
+  Client -- Reads --> Replica1
+  Client -- Reads --> Replica2
+  
+  Primary -- WAL Streaming --> Replica1
+  Primary -- WAL Streaming --> Replica2
+`} />
+
+</TechnologyTemplate>

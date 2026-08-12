@@ -1,0 +1,40 @@
+---
+title: Web Manifest
+description: A standardized JSON configuration file that instructs the mobile operating system exactly how to install and display a Progressive Web App.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Web Manifest">
+
+A website is designed to be viewed inside a browser window, surrounded by back buttons, URL bars, and tabs. 
+A Native App is designed to run in a standalone, immersive full-screen window.
+
+To make a PWA feel like a Native App, you provide a **Web Manifest** (usually named `manifest.json`).
+
+## The Configuration
+
+The manifest tells the OS exactly how to "install" the web app onto the user's home screen.
+
+```json
+{
+  "name": "My Awesome App",
+  "short_name": "App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+```
+
+- **`display: "standalone"`**: This is the most critical setting. It tells the OS to completely hide the Safari/Chrome URL bar and back buttons, forcing the app to run in its own dedicated, immersive window.
+- **Icons**: Provides the exact high-resolution PNGs the OS needs to create the icon on the iOS/Android home screen.
+- **Theme Color**: Controls the color of the OS status bar (where the battery and time are displayed) to match your brand.
+
+</ConceptTemplate>

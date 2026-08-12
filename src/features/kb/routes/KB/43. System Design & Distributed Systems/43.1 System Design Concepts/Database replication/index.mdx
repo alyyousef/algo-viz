@@ -1,0 +1,36 @@
+---
+title: Database Replication
+description: The process of maintaining identical copies of a database across multiple servers to ensure high availability and read scalability.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Database Replication">
+
+**Database Replication** is the process of copying data from a central database to one or more auxiliary databases in real-time. This is the primary method for scaling databases horizontally for read-heavy workloads and providing disaster recovery.
+
+<Callout icon="info" title="The Leader-Follower Pattern">
+  The most common replication topology is **Leader-Follower** (formerly Master-Slave). 
+  - The **Leader** node handles 100% of the WRITE requests (INSERT, UPDATE, DELETE).
+  - The **Follower** nodes receive a constant stream of changes from the Leader. They handle READ requests (SELECT). 
+  Because web apps are typically 90% reads and 10% writes, you can scale indefinitely just by adding more Follower nodes.
+</Callout>
+
+## Synchronous vs. Asynchronous Replication
+
+How does the Leader send data to the Followers?
+
+- **Synchronous**: When a user writes data, the Leader forces the Follower to acknowledge receipt of the data *before* telling the user "Success". This guarantees zero data loss if the Leader explodes, but it makes writes significantly slower (due to network latency).
+- **Asynchronous**: The Leader writes the data to its own disk, immediately tells the user "Success", and then sends the data to the Followers in the background. This is incredibly fast, but if the Leader explodes before the background sync finishes, data is permanently lost. (This is the industry default).
+
+## Replication Lag
+
+Because replication is usually asynchronous, there is a tiny delay (perhaps 500 milliseconds) between the Leader updating and the Follower updating. This is called **Replication Lag**.
+
+If a user updates their profile picture (which writes to the Leader) and immediately refreshes the page (which reads from a Follower), they might see their old picture. This is a classic violation of "Read-After-Write Consistency" caused by replication lag.
+
+## Multi-Leader and Leaderless
+
+- **Multi-Leader (Active-Active)**: Multiple nodes accept writes. Excellent for geographically distributed systems (a write node in the US, a write node in the EU). Incredibly difficult to resolve conflicts when two users update the same row on different continents.
+- **Leaderless (Dynamo/Cassandra)**: Any node can accept writes. The client writes to multiple nodes simultaneously and considers the write successful if a "quorum" (majority) of nodes acknowledge it. 
+
+</ConceptTemplate>

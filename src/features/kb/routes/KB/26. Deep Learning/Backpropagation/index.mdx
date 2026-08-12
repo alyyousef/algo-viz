@@ -1,0 +1,54 @@
+---
+title: Backpropagation
+description: The mathematical algorithm used to train neural networks.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Backpropagation">
+
+Backpropagation (short for "backward propagation of errors") is the fundamental algorithm used to train neural networks. While forward propagation is how a network *makes a guess*, backpropagation is how the network actually *learns from its mistakes*.
+
+<Callout icon="error" title="The Core Problem">
+  If a neural network predicts "Dog" but the image was a "Cat", the network knows it is wrong. But a deep network has millions of weights. Which specific weight caused the error? Should it be adjusted up or down? By how much? Backpropagation answers this using calculus.
+</Callout>
+
+## The 4 Steps of Learning
+
+<ComparisonTable 
+  headers={['Step', 'Action', 'Description']}
+  rows={[
+    ['1', 'Forward Pass', 'The input data passes through the network to generate a prediction (e.g., 0.2).'],
+    ['2', 'Calculate Loss', 'A Loss Function compares the prediction to the true target (e.g., 1.0) and computes the total error (e.g., 0.8).'],
+    ['3', 'Backward Pass', 'Using the Chain Rule of calculus, compute the partial derivative (Gradient) of the Loss with respect to every single weight in the network.'],
+    ['4', 'Gradient Descent', 'Slightly adjust the weights in the exact opposite direction of the gradient to minimize the loss for the next time.']
+  ]}
+/>
+
+## Gradient Descent
+
+Imagine the Loss Function as a rugged mountain landscape. The network wants to reach the absolute bottom of the valley (zero error). 
+Backpropagation calculates the slope of the mountain at the current position. Gradient descent tells the network to take a step downward.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Loss[High Loss / Error]
+  
+  subgraph Gradient Descent
+    Step1(Calculate Slope / Derivative)
+    Step2(Update Weights: W = W - (Learning_Rate * Slope))
+  end
+  
+  Min[Global Minimum\n(Lowest Error)]
+  
+  Loss --> Step1
+  Step1 --> Step2
+  Step2 -- Loop until convergence --> Min
+`} />
+
+## The Vanishing Gradient Problem
+
+In very deep networks (many hidden layers), as the error is propagated backward layer by layer, the gradients get multiplied together. Because these numbers are often less than 1, multiplying them repeatedly causes the gradient to shrink exponentially until it "vanishes" to zero. When the gradient is zero, the earliest layers of the network completely stop learning. 
+
+This was solved historically by using the **ReLU** (Rectified Linear Unit) activation function instead of Sigmoid.
+
+</TechnologyTemplate>

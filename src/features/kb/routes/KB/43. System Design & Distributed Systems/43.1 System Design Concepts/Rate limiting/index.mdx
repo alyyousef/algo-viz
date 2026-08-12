@@ -1,0 +1,35 @@
+---
+title: Rate Limiting
+description: The practice of controlling the rate of traffic sent or received on a network to prevent abuse and protect backend services.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Rate Limiting">
+
+**Rate Limiting** is a defensive system design mechanism used to control the amount of incoming traffic an API or network service will accept within a specified time window. 
+
+If a user exceeds the allowed limit (e.g., 100 requests per minute), the server rejects subsequent requests and returns an HTTP status code `429 Too Many Requests`.
+
+<Callout icon="success" title="Why is it necessary?">
+  1. **Preventing DDoS**: Stops malicious actors from flooding your servers with millions of requests to take down your application.
+  2. **Cost Control**: Prevents a single user's buggy script from burning through your expensive cloud computing budget.
+  3. **Fairness**: Ensures that one extremely active user doesn't starve the system's resources, keeping the app fast for everyone else.
+</Callout>
+
+## Common Rate Limiting Algorithms
+
+There are several mathematical approaches to enforcing limits, usually implemented in API Gateways or in-memory caches like Redis:
+
+### 1. Token Bucket
+Imagine a bucket that holds a maximum of 100 tokens. The system drops a new token into the bucket every second. Every time a user makes a request, they must remove a token. If the bucket is empty, the request is dropped. This allows for short "bursts" of traffic.
+
+### 2. Leaky Bucket
+Requests are placed into a queue (the bucket). The server pulls requests out of the queue at a strictly constant, fixed rate (the leak). If the queue is full, new requests spill over and are rejected. This enforces a perfectly smooth, constant output rate.
+
+### 3. Fixed Window Counter
+The system tracks the number of requests per minute (e.g., 12:00:00 to 12:00:59). If the counter hits 100, requests are blocked until 12:01:00. **Flaw**: A user can send 100 requests at 12:00:59, and another 100 at 12:01:01, resulting in 200 requests hitting the server in 2 seconds (the "burst" problem).
+
+### 4. Sliding Window Log
+Records the exact timestamp of every single request. To check if a request is valid, it sums all timestamps in the last 60 seconds. This is perfectly accurate and avoids the boundary flaw of the Fixed Window, but storing millions of timestamps consumes massive amounts of RAM.
+
+</ConceptTemplate>

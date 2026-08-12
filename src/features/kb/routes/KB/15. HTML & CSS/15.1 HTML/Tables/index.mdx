@@ -1,0 +1,28 @@
+---
+title: Tables & Tabular Data
+description: The strictly structured HTML architecture used for displaying complex, multi-dimensional grid data.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Tables & Tabular Data">
+
+In the late 1990s, before CSS was powerful, developers used massive, nested `<table>` elements to build entire website layouts. This was a dark era. 
+
+Today, you must **never** use tables for layout. Tables are strictly reserved for their mathematical purpose: displaying highly-structured, two-dimensional tabular data (like a spreadsheet or a pricing tier comparison).
+
+## The Strict Hierarchy
+
+Tables require a very specific, nested hierarchy of tags to be semantically valid and accessible.
+
+1. `<table>`: The root container.
+2. `<thead>`: Groups the header content (the column titles).
+3. `<tbody>`: Groups the core data rows.
+4. `<tr>` (Table Row): Defines a horizontal row.
+5. `<th>` (Table Header): Defines a cell that acts as a label (bold text, centered by default).
+6. `<td>` (Table Data): Defines a standard data cell.
+
+## Accessibility Importance
+If you build a table using CSS Grid and thousands of `<div>` elements, a blind user's Screen Reader will just read a massive, confusing list of random numbers. 
+By using genuine `<th>` and `<td>` tags, the Screen Reader can mathematically map the data, announcing: *"Column: Price, Row: Pro Tier, Value: $99/mo"*.
+
+</ConceptTemplate>

@@ -1,0 +1,24 @@
+---
+title: SessionStorage
+description: A variant of the Web Storage API that provides ephemeral, tab-specific storage that instantly vanishes when the tab is closed.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="SessionStorage">
+
+**SessionStorage** has the exact same synchronous Key-Value API (`setItem` / `getItem`) and the exact same 5MB capacity limit as LocalStorage. 
+
+The only difference is **Persistence Scope**.
+
+## The Ephemeral Tab Scope
+
+While LocalStorage persists forever across the entire domain, **SessionStorage is strictly locked to the specific Browser Tab**.
+
+- If the user closes the tab, the SessionStorage data is instantly and permanently deleted.
+- If the user opens `example.com` in Tab 1, and opens `example.com` in Tab 2, those two tabs have completely isolated, separate SessionStorage databases. (In contrast, LocalStorage is shared across all tabs).
+
+## Use Cases
+SessionStorage is heavily used for tracking complex, multi-page user flows that shouldn't persist or bleed into other tabs. 
+For example, if a user is filling out a massive 5-page insurance application, you save the draft data in SessionStorage. If they refresh the page, the data survives. If they finally close the tab, the sensitive draft data is safely purged from their computer.
+
+</ConceptTemplate>

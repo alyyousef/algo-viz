@@ -106,12 +106,7 @@ export default function DesktopChrome(): JSX.Element {
         onOpenFolder={openFolderWindow}
         onNavigate={(route) => void navigate(route)}
       />
-      <img
-        src="/transparentText.png"
-        alt="AlgoViz logo"
-        className="win96-desktop-logo"
-        draggable={false}
-      />
+      <img src="/ay-logo.png" alt="AY Logo" className="win96-desktop-logo" draggable={false} />
       <Taskbar97
         startButtonProps={{
           onClick: handleStartButtonClick,
@@ -129,7 +124,28 @@ export default function DesktopChrome(): JSX.Element {
           </Button97>
         }
         runningItems={<div className="win96-taskbar__items">{runningItemsContent}</div>}
-        tray={<DesktopClock />}
+        tray={
+          <>
+            <button
+              onClick={() => document.documentElement.classList.toggle('hacker-mode')}
+              title="Toggle Hacker Mode"
+              style={{
+                background: '#000',
+                color: '#0f0',
+                border: '1px inset #808080',
+                fontFamily: 'monospace',
+                fontSize: '11px',
+                padding: '0 4px',
+                marginRight: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+              }}
+            >
+              C:\&gt;
+            </button>
+            <DesktopClock />
+          </>
+        }
       />
     </div>
   )

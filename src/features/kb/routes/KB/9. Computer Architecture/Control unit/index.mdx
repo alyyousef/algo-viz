@@ -1,0 +1,30 @@
+---
+title: Control Unit (CU)
+description: The component of the CPU that directs the operation of the processor, acting as the orchestra conductor for the hardware.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Control Unit (CU)">
+
+If the ALU is the calculator of the CPU, the **Control Unit (CU)** is the orchestrator. It does not perform any actual data processing or math; instead, it is entirely responsible for directing the flow of data across the motherboard and ensuring the correct components activate at the exact right microsecond.
+
+<Callout icon="info" title="The Orchestra Conductor">
+  Think of the Control Unit like a conductor of a symphony. The conductor doesn't play an instrument (perform math), but they read the sheet music (the program code) and point their baton at the violins (the ALU) or the cellos (the RAM) telling them exactly when to play and how loud.
+</Callout>
+
+## The Fetch-Decode-Execute Cycle
+
+The CU spends its entire existence looping through a strict three-step cycle:
+
+1. **Fetch**: The CU looks at the Program Counter (a register holding the memory address of the next instruction). It sends a signal to the RAM to fetch the binary instruction stored at that address, and places it into the Instruction Register.
+2. **Decode**: The CU reads the binary instruction (e.g., \`10110000\`). It translates this binary into specific hardware signals. It determines "This is an ADD instruction, and it needs data from Register A and Register B."
+3. **Execute**: The CU sends electrical signals across the CPU's control bus. It might tell the memory to send a byte of data, tell the ALU to add two numbers, or tell a register to save a result. 
+
+## Hardwired vs. Microprogrammed
+
+Historically, there are two ways engineers design Control Units:
+
+- **Hardwired Control**: The logic is literally physically wired into the silicon using complex logic gates. It is incredibly fast, but completely rigid. If a bug is found in the instruction set, the physical chip must be thrown in the garbage.
+- **Microprogrammed Control**: A mini-computer inside the computer. Complex instructions are broken down into smaller "micro-instructions" stored in a tiny read-only memory (ROM) inside the CPU. This is slower, but allows CPU manufacturers (like Intel or AMD) to patch CPU bugs via "microcode updates" downloaded over the internet without changing the physical silicon.
+
+</ConceptTemplate>

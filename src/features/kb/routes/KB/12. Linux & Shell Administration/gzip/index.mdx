@@ -1,0 +1,33 @@
+---
+title: gzip
+description: The standard GNU compression utility used to heavily reduce the file size of text files and logs.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="gzip">
+
+**`gzip`** (GNU zip) is a single-file compression utility. It uses the DEFLATE algorithm, which is incredibly efficient at compressing raw text, logs, and database SQL dumps.
+
+In the Linux ecosystem, `gzip` is overwhelmingly the default compression format, recognizable by the `.gz` file extension.
+
+## How it works
+
+Unlike the Windows `.zip` format (which can bundle 100 files into a single archive), `gzip` can only compress **one single file at a time**.
+
+If you run `gzip backup.sql`:
+1. It compresses the file.
+2. It renames it to `backup.sql.gz`.
+3. It permanently deletes the original `backup.sql` file to save space.
+
+To decompress it, you run `gunzip backup.sql.gz`.
+
+<Callout icon="info" title="Tarballs (.tar.gz)">
+  Because `gzip` can only compress single files, sysadmins use the `tar` command to bundle 100 files together into one massive solid block (an archive), and then pipe that block through `gzip`. 
+  This results in the famous `.tar.gz` (or `.tgz`) "Tarball", which is the Linux equivalent of a Windows Zip file.
+</Callout>
+
+## zcat and zgrep
+A massive benefit of `gzip` is the ability to read files without decompressing them to the hard drive. 
+If you have a 5GB compressed log file (`syslog.2.gz`), you do not need to extract it to search it. You can simply use `zgrep "ERROR" syslog.2.gz`, which decompresses the text directly into RAM and searches it on the fly.
+
+</ConceptTemplate>

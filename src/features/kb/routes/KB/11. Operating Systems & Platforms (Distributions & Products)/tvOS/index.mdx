@@ -1,0 +1,22 @@
+---
+title: tvOS
+description: The Apple OS designed for the living room, heavily focused on media consumption, the "10-foot UI", and strict storage limitations.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="tvOS">
+
+**tvOS** is the operating system that powers the Apple TV set-top box. Like all Apple operating systems, it is built on the Darwin/XNU core, but its user-space is entirely redesigned for the "10-foot interface"—meaning it is built to be viewed from 10 feet away and controlled entirely by a simple directional remote.
+
+## The TVML Framework
+
+While developers can build tvOS apps using standard Swift and SwiftUI, Apple introduced a unique framework for tvOS called **TVML (TV Markup Language)**. 
+
+TVML allows developers to build rich, native-looking television apps (like Netflix or Hulu) using nothing but JavaScript and XML. The developer hosts the XML files on their own web server, and the tvOS device fetches and renders them as native UI components on the fly.
+
+<Callout icon="warning" title="No Persistent Storage">
+  Because the Apple TV has very little physical flash storage (e.g., 64GB), the OS enforces a radical storage rule: **Apps are not allowed to permanently save data to the hard drive.** 
+  An app can download a 2GB movie cache, but the OS Kernel is allowed to instantly delete that cache without warning if the system needs space. All persistent data (like game save files) must be synced directly to iCloud.
+</Callout>
+
+</ConceptTemplate>

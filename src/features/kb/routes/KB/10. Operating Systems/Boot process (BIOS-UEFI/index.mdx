@@ -1,0 +1,27 @@
+---
+title: The Boot Process (BIOS / UEFI)
+description: The sequence of hardware and firmware events that occur the moment you press the power button on a computer.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Boot Process (BIOS / UEFI)">
+
+When a computer is powered off, the RAM is completely empty. The CPU has absolutely no code to execute. The process of pulling the Operating System off the hard drive and into RAM is called **Bootstrapping** (or "Booting", from the phrase "pulling oneself up by one's bootstraps").
+
+## Step 1: Power-On and The Reset Vector
+When you press the power button, the motherboard's power supply stabilizes. Once stable, it sends a "Power Good" signal to the CPU. The CPU instantly wakes up, hardcodes its instruction pointer to a specific physical memory address called the **Reset Vector** (usually `0xFFFFFFF0`), and executes whatever code is there. 
+This address is permanently wired to a ROM chip on the motherboard containing the BIOS or UEFI.
+
+## Step 2: BIOS / UEFI
+**BIOS (Basic Input/Output System)** was the 16-bit standard from the 1980s. 
+**UEFI (Unified Extensible Firmware Interface)** is the modern 32/64-bit standard.
+
+The firmware performs the following:
+1. **POST (Power-On Self Test)**: It sends electrical pulses to the RAM, GPU, and keyboard to ensure the hardware is physically present and functioning.
+2. **Hardware Initialization**: It configures basic clock speeds and memory timings.
+3. **Boot Device Selection**: It checks its settings to see which hard drive, USB, or Network it should attempt to boot from.
+
+## Step 3: Finding the Bootloader
+The UEFI firmware cannot load Windows or Linux directly; it doesn't know how to parse complex filesystems like NTFS or EXT4. Its only job is to find a tiny, specialized piece of software called a **Bootloader** (like GRUB or Windows Boot Manager) located on the hard drive, load that tiny program into RAM, and hand control over to it.
+
+</ConceptTemplate>

@@ -1,0 +1,24 @@
+---
+title: dmesg
+description: A command that prints the kernel ring buffer, used primarily to diagnose hardware and driver issues.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="dmesg">
+
+When a Linux system boots up, the Kernel initializes the CPU, RAM, hard drives, and USB ports long before the system logger (like `journald`) is actually running.
+
+To record these hyper-early boot messages, the Kernel stores them in a fixed-size chunk of memory called the **Ring Buffer**. The **`dmesg`** (Display Message) command reads and prints this buffer.
+
+## When to use dmesg
+
+`dmesg` is the ultimate hardware debugging tool. Sysadmins use it when:
+1. **A server crashes**: To see if the Kernel triggered an Out-Of-Memory (OOM) killer event right before the crash.
+2. **Plugging in new hardware**: If you plug a new USB drive into a headless server, you run `dmesg | tail` to immediately see exactly what device name the Kernel assigned to it (e.g., `/dev/sdc`).
+3. **Driver Failures**: To see if a proprietary Nvidia graphics driver failed to initialize.
+
+<Callout icon="warning" title="The Ring Buffer Overwrites Itself">
+  The kernel ring buffer is fixed in size (usually around 16KB to 64KB). Once it fills up, the oldest messages are permanently deleted to make room for new ones. If a server has been running for 3 years, running `dmesg` will no longer show you the boot messages.
+</Callout>
+
+</ConceptTemplate>

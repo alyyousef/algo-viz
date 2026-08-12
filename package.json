@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/build-search-index.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/build-search-index.mjs",
     "build": "vite build",
     "lint": "eslint . --max-warnings=0",
     "preview": "vite preview",
@@ -16,9 +18,14 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
+    "@mdx-js/react": "^3.1.1",
+    "@mdx-js/rollup": "^3.1.1",
+    "mermaid": "^11.16.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.4"
+    "react-router-dom": "^7.9.4",
+    "remark-frontmatter": "^5.0.0",
+    "remark-mdx-frontmatter": "^5.2.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.14",

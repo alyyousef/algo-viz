@@ -1,0 +1,37 @@
+---
+title: Flexbox Layout
+description: A powerful, one-dimensional layout engine designed to align, distribute, and perfectly center elements within a container.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Flexbox Layout">
+
+Before Flexbox (released around 2012), centering a `<div>` vertically inside a container was famously one of the most agonizing, mathematically difficult tasks in web development (involving floating boxes and negative margins).
+
+**Flexbox (Flexible Box Module)** solved this instantly. It is a one-dimensional layout engine, meaning it aligns items either in a horizontal Row, OR a vertical Column (but not both simultaneously).
+
+## The Parent Container (Flex Container)
+To activate Flexbox, you must apply `display: flex;` to the parent container. This instantly turns all direct children into "Flex Items".
+
+## The Two Axes
+Flexbox math operates on a Main Axis and a Cross Axis.
+
+If `flex-direction: row` (the default):
+- **Main Axis** is horizontal (Left to Right). Controlled by `justify-content`.
+- **Cross Axis** is vertical (Top to Bottom). Controlled by `align-items`.
+
+To perfectly center a box dead in the middle of a container:
+```css
+.container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+}
+```
+
+## Flex Item Properties
+You can give mathematical flexibility to the child items themselves:
+- `flex-grow: 1`: Tells the item to consume all available empty space in the container.
+- `flex-shrink: 0`: Explicitly forbids the browser from crushing the item if the screen gets too small.
+
+</ConceptTemplate>

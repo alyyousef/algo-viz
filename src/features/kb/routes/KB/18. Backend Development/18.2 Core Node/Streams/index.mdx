@@ -1,0 +1,29 @@
+---
+title: Node.js Streams
+description: Objects that let you read data from a source or write data to a destination in continuous fashion.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Node.js Streams">
+
+Streams are a core concept in Node.js for handling reading/writing files, network communications, or any kind of end-to-end information exchange in an efficient way.
+
+<Callout icon="success" title="The Memory Problem">
+  If you need to serve a 10GB video file to a user, `fs.readFile()` will attempt to load all 10GB into RAM at once, instantly crashing your server. 
+  
+  Streams solve this. A `ReadStream` reads the file in tiny 64KB chunks and sends them to the user one chunk at a time, keeping your RAM usage practically at zero.
+</Callout>
+
+## Types of Streams
+
+<ComparisonTable 
+  headers={['Stream Type', 'Description', 'Example']}
+  rows={[
+    ['Readable', 'Streams from which data can be read.', "`fs.createReadStream()`, `http.IncomingMessage` (request)."],
+    ['Writable', 'Streams to which data can be written.', "`fs.createWriteStream()`, `http.ServerResponse` (response)."],
+    ['Duplex', 'Streams that are both Readable and Writable.', "`net.Socket` (TCP connection)."],
+    ['Transform', 'Duplex streams that can modify or transform the data as it is written and read.', "`zlib.createGzip` (compressing data on the fly)."]
+  ]}
+/>
+
+</TechnologyTemplate>

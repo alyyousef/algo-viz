@@ -1,0 +1,31 @@
+---
+title: Groups
+description: The mechanism Linux uses to organize multiple users and grant them collective permissions to files and hardware.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Groups">
+
+Managing permissions for 100 individual users is a nightmare. Linux simplifies this using **Groups**.
+
+A Group is simply a collection of Users. Instead of granting 5 different developers permission to read a specific log file, you create a `developers` group, grant the group permission to read the file, and add all 5 users to that group.
+
+## The Group ID (GID)
+
+Just like Users have UIDs, Groups have **GIDs (Group IDs)**.
+
+When a user is created, Linux usually creates a "Primary Group" with the exact same name and ID as the user. (e.g., User `alice` is placed into the primary group `alice`). Any file Alice creates will be owned by both her UID and her primary GID.
+
+Users can also belong to multiple "Secondary Groups".
+For example, if Alice needs to run Docker containers, you add her to the `docker` secondary group.
+
+<Callout icon="info" title="The /etc/group File">
+  Group memberships are defined in `/etc/group`. 
+  A line looks like this: `docker:x:998:alice,bob`. 
+  This means the `docker` group has GID 998, and Alice and Bob are members.
+</Callout>
+
+## The Power of the "wheel" Group
+In many Linux distributions, there is a special group called `wheel` (or `sudo` in Ubuntu). Any human user added to this specific group is allowed to temporarily execute commands as the Root superuser by prefixing their commands with the `sudo` command.
+
+</ConceptTemplate>

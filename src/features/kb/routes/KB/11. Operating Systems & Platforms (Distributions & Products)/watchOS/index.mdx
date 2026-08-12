@@ -1,0 +1,25 @@
+---
+title: watchOS
+description: Apple's most resource-constrained OS, utilizing extreme power-saving heuristics to run a Unix kernel on a microscopic battery.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="watchOS">
+
+**watchOS** powers the Apple Watch. It is a stunning engineering achievement: running a fully certified Unix-based operating system (Darwin/XNU) on a device with the battery capacity of a single AAA battery.
+
+## Extreme Power Management
+
+To ensure the watch lasts an entire day, watchOS is arguably the most draconian operating system Apple has ever built regarding background execution.
+
+In standard iOS, an app might be allowed a few seconds to finish a task in the background. In watchOS, the moment the user drops their wrist (turning off the screen), the OS instantly suspends all running applications. The CPU drops into an ultra-low-power sleep state. 
+
+<Callout icon="info" title="The ClockKit Framework">
+  The only exception to this strict background rule is "Complications"—the tiny widgets on the watch face. Developers use a highly restricted API called **ClockKit**. The OS wakes the app up dozens of times a day for exactly a few milliseconds, asks it for the next 100 possible data updates (e.g., weather temperatures), caches them, and immediately kills the app again.
+</Callout>
+
+## Independent Execution
+Historically, watchOS was purely an extension of iOS; apps actually ran their code on the iPhone and just streamed the UI over Bluetooth to the watch. 
+Modern watchOS applications are fully native—the Swift code executes directly on the watch's internal CPU, allowing the watch to function perfectly even when the iPhone is left at home.
+
+</ConceptTemplate>

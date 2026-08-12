@@ -1,0 +1,33 @@
+---
+title: systemctl
+description: The primary command-line tool used by administrators to interact with systemd and manage background services.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="systemctl">
+
+If `systemd` is the brain of the modern Linux operating system, **`systemctl`** is the keyboard you use to talk to it.
+
+It is the primary command used to start, stop, restart, and monitor background services (Daemons).
+
+## Core Commands
+
+- **`sudo systemctl start nginx`**: Starts the Nginx service.
+- **`sudo systemctl stop nginx`**: Stops it.
+- **`sudo systemctl restart nginx`**: Fully stops and then starts it (drops active connections).
+- **`sudo systemctl reload nginx`**: Asks Nginx to reread its configuration file from disk *without* dropping active connections (graceful reload).
+
+<Callout icon="info" title="Enable vs Start">
+  Starting a service only runs it for the current session. If the server reboots, the service will stay dead.
+  To ensure a service boots automatically when the server turns on, you must use **`sudo systemctl enable nginx`**. This creates a physical symlink in the FHS tree telling the Kernel to launch it on boot.
+</Callout>
+
+## Viewing Status
+The most important command for debugging is **`systemctl status nginx`**.
+It prints a beautifully formatted summary showing:
+1. Is it actively running? (Usually highlighted in bright green).
+2. Is it Enabled for boot?
+3. The exact PID of the main process.
+4. The last 10 lines of the service's log output from `journald`.
+
+</ConceptTemplate>

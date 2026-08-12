@@ -1,0 +1,29 @@
+---
+title: strace (System Call Trace)
+description: The ultimate diagnostic tool used to intercept and record the raw system calls a program makes directly to the Linux Kernel.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="strace (System Call Trace)">
+
+When a program wants to read a file, open a network port, or allocate memory, it cannot do it directly. It must ask the Linux Kernel for permission by triggering a **System Call** (syscall).
+
+**`strace`** is a diagnostic tool that attaches to a process and prints every single syscall it makes in real-time.
+
+## The Power of strace
+
+Sysadmins use `strace` when a program is failing silently, and the application logs are completely empty.
+
+For example, if you launch Nginx and it immediately crashes with no error message, you can run:
+`strace nginx`
+
+You will see thousands of lines of output as Nginx boots up. Near the very bottom, right before the crash, you might see:
+`openat(AT_FDCWD, "/etc/nginx/nginx.conf", O_RDONLY) = -1 EACCES (Permission denied)`
+
+Without looking at a single log file, `strace` just proved mathematically that the crash is being caused by a file permission error on the configuration file.
+
+<Callout icon="warning" title="Performance Impact">
+  Running `strace` on a process intercepts every single interaction with the Kernel. This causes massive overhead, often slowing the application down by 50x to 100x. Never run `strace` on a high-traffic production database, or you will instantly cause a massive latency outage.
+</Callout>
+
+</ConceptTemplate>

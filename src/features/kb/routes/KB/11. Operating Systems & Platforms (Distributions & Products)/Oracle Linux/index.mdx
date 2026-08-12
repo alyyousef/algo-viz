@@ -1,0 +1,30 @@
+---
+title: Oracle Linux
+description: Oracle's highly optimized, aggressive RHEL clone, featuring a custom kernel designed specifically to run massive database workloads.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Oracle Linux">
+
+**Oracle Linux** is an enterprise-class operating system developed by the database giant Oracle. 
+
+Like Rocky Linux and AlmaLinux, Oracle Linux is essentially a 1:1 clone of Red Hat Enterprise Linux (RHEL). However, while Rocky's goal is to perfectly mimic RHEL, Oracle's goal is to *beat* RHEL at its own game, specifically in the database sector.
+
+## The Unbreakable Enterprise Kernel (UEK)
+
+The standout feature of Oracle Linux is the **UEK (Unbreakable Enterprise Kernel)**. 
+
+When you install Oracle Linux, you are actually given a choice of two different Linux Kernels:
+1. **The Red Hat Compatible Kernel (RHCK)**: A perfectly identical copy of the RHEL kernel, guaranteeing 100% bug-for-bug compatibility.
+2. **The UEK**: A custom, heavily modified kernel developed by Oracle. 
+
+<Callout icon="info" title="Why build the UEK?">
+  Because Red Hat guarantees 10-year stability, the RHEL kernel is often vastly outdated. Oracle's UEK tracks much closer to the modern Linux mainline, injecting cutting-edge performance tweaks specifically designed to make massive Oracle Databases and cloud infrastructure run faster.
+</Callout>
+
+## Ksplice Zero-Downtime Updates
+
+Oracle Linux is famous for fully integrating **Ksplice**. Ksplice is an astonishing technology that allows a SysAdmin to apply critical security patches directly to the running Linux Kernel in RAM, *without requiring a reboot*. 
+For a massive banking database that cannot afford 5 minutes of reboot downtime, Ksplice is an invaluable feature.
+
+</ConceptTemplate>

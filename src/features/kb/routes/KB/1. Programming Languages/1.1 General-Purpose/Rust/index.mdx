@@ -1,0 +1,39 @@
+---
+title: Rust
+description: A systems programming language focused on memory safety, fearless concurrency, and blazing-fast performance.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="Rust" 
+  category="Programming Languages" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black_logo.svg"
+>
+
+Started by Mozilla in 2010, **Rust** was created to solve the 50-year-old nightmare of C and C++: Memory Leaks and Buffer Overflows. It offers the exact same low-level hardware control and blazing speed as C++, but it mathematically guarantees memory safety and thread safety at compile-time.
+
+For nearly a decade, Rust has been voted the "Most Loved Programming Language" by developers worldwide.
+
+<Callout icon="success" title="The Borrow Checker">
+  Rust achieves memory safety **without a Garbage Collector**. 
+  It uses a revolutionary concept called the **Borrow Checker**. The compiler tracks the "Ownership" and "Lifetimes" of every variable in your code. If two threads try to write to the same memory simultaneously, the compiler simply refuses to compile the code. If your code compiles in Rust, you are mathematically guaranteed to have zero Segfaults and zero Data Races.
+</Callout>
+
+## Key Characteristics
+
+1. **Zero-Cost Abstractions**: Like C++, high-level language features compile down to maximally optimized machine code.
+2. **Fearless Concurrency**: Because the compiler prevents data races, developers can aggressively write multi-threaded code without the fear of untraceable production crashes.
+3. **Modern Tooling**: The `cargo` package manager and build system is universally praised as one of the best in the industry.
+4. **Pattern Matching & Result Types**: Rust handles errors natively via the `Result<T, E>` enum rather than throwing exceptions, forcing the developer to explicitly handle both the success and error cases.
+
+## The Learning Curve
+
+Rust has a notoriously brutal learning curve. Fighting the Borrow Checker is a rite of passage. The compiler acts as a strict mentor, forcing you to design your memory architecture perfectly before it allows you to run the code.
+
+## Where is it used?
+
+- **Systems & OS**: Parts of the Linux Kernel and Windows OS are being actively rewritten in Rust.
+- **WebAssembly (WASM)**: Rust is the premier language for compiling high-performance code to run inside the web browser.
+- **Blockchain & Web3**: Foundational language for Solana and Polkadot smart contracts.
+
+</TechnologyTemplate>

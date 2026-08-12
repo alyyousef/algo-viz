@@ -1,0 +1,38 @@
+---
+title: Sharding
+description: A horizontal scaling technique that partitions a massive database into smaller, faster, easily managed pieces.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Sharding">
+
+**Sharding** is a database architecture pattern that involves separating a single, massive dataset into multiple smaller, independent databases (called **Shards**). It is the ultimate tool for Horizontal Scaling of database writes.
+
+<Callout icon="warning" title="Replication vs. Sharding">
+  - **Replication** copies the *same* data to multiple servers to scale READS.
+  - **Sharding** splits *different* data across multiple servers to scale WRITES and storage capacity.
+  If you have 10TB of data, Shard A holds the first 5TB, and Shard B holds the other 5TB.
+</Callout>
+
+## The Shard Key
+
+To implement sharding, you must choose a **Shard Key** (or Partition Key)—a column in your database that dictates how the data is distributed.
+
+For example, if you are building a global chat app, you might shard by `user_id`.
+- All messages for Users 1 to 10,000 are routed to Database Server A.
+- All messages for Users 10,001 to 20,000 are routed to Database Server B.
+
+## Sharding Strategies
+
+1. **Range-Based Sharding**: Splitting by a sequential range (e.g., Dates or IDs). Easy to implement, but can lead to "hotspots". If you shard by date, the server holding "Today's" data will be overwhelmed with 99% of the traffic, while 2015's server sits idle.
+2. **Hash-Based Sharding**: You run the Shard Key through a hash function (e.g., `hash(user_id) % 4`). This perfectly randomizes the data, guaranteeing an even distribution across all servers, completely eliminating hotspots. (This often utilizes **Consistent Hashing**).
+3. **Directory-Based Sharding**: A central lookup table explicitly tells the application which shard holds which data (e.g., "Tenant A is on Shard 4").
+
+## The Nightmares of Sharding
+
+Sharding should be avoided until absolutely necessary because it introduces severe architectural complexity:
+- **No Cross-Shard Joins**: You cannot perform a SQL `JOIN` between a table on Server A and a table on Server B. 
+- **Resharding**: If Shard A becomes completely full, you must split it into two new shards and migrate terabytes of data while the system is live.
+- **Celebrity Problem**: In hash-based sharding, if Justin Bieber is on Shard 3, every time he posts, millions of fans query Shard 3 simultaneously, bringing it down, even though the data is technically "evenly distributed".
+
+</ConceptTemplate>

@@ -562,3 +562,55 @@
     padding: 5px 6px 4px;
   }
 }
+
+/* Hacker Mode (Dark Theme) */
+html.hacker-mode body {
+  background: #000;
+}
+
+html.hacker-mode .bin98-help-page,
+html.hacker-mode .bin98-window,
+html.hacker-mode .bin98-main,
+html.hacker-mode .bin98-toc,
+html.hacker-mode .bin98-content,
+html.hacker-mode .bin98-codebox {
+  background: #000 !important;
+  color: #0f0 !important;
+  border-color: #0f0 !important;
+}
+
+html.hacker-mode .bin98-titlebar {
+  background: #003300 !important;
+  color: #0f0 !important;
+}
+
+html.hacker-mode .bin98-tab,
+html.hacker-mode .bin98-button,
+html.hacker-mode .bin98-push,
+html.hacker-mode .bin98-control {
+  background: #000 !important;
+  color: #0f0 !important;
+  border-color: #0f0 !important;
+}
+
+html.hacker-mode .bin98-tab.active {
+  background: #002200 !important;
+}
+
+html.hacker-mode .bin98-table th,
+html.hacker-mode .bin98-table td {
+  border-color: #0f0 !important;
+}
+
+html.hacker-mode .bin98-divider {
+  border-top-color: #0f0 !important;
+}
+
+html.hacker-mode a,
+html.hacker-mode .bin98-inline-link {
+  color: #00ffaa !important;
+}
+
+html.hacker-mode .bin98-codebox code {
+  color: #0f0 !important;
+}

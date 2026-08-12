@@ -1,0 +1,49 @@
+---
+title: Kubernetes (K8s)
+description: An open-source container orchestration system for automating software deployment, scaling, and management.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Kubernetes (K8s)">
+
+Kubernetes (commonly stylized as K8s) is an open-source container orchestration system for automating software deployment, scaling, and management. Originally designed by Google, the project is now maintained by the Cloud Native Computing Foundation.
+
+<Callout icon="tip" title="Why K8s?">
+  Docker is great for running 1 container on your laptop. But if you have 5,000 containers running across 100 servers in AWS, and 3 servers catch on fire, how do you automatically restart those containers on the surviving servers? That is what Kubernetes does.
+</Callout>
+
+## Core Architecture
+
+<ComparisonTable 
+  headers={['Component', 'Description']}
+  rows={[
+    ['Control Plane (Master)', 'The brain. It makes global decisions (scheduling, detecting crashes, scaling up).'],
+    ['Kubelet (Worker Node)', 'An agent that runs on every physical server. It listens to the Master and ensures the containers on its specific machine are healthy.'],
+    ['Pod', 'The smallest deployable unit in Kubernetes. A Pod usually contains exactly 1 Docker container.'],
+    ['Deployment', 'A declarative file (YAML) where you tell K8s: "I always want exactly 5 replicas of my web app running." K8s makes it happen.']
+  ]}
+/>
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  Master[Control Plane / Master Node]
+  
+  subgraph Worker Node 1
+    Kubelet1[Kubelet]
+    Pod1(Pod - Web App)
+    Pod2(Pod - Web App)
+  end
+  
+  subgraph Worker Node 2
+    Kubelet2[Kubelet]
+    Pod3(Pod - Web App)
+    Pod4(Pod - Database)
+  end
+  
+  Master --> Kubelet1
+  Master --> Kubelet2
+`} />
+
+</TechnologyTemplate>

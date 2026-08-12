@@ -1,0 +1,48 @@
+---
+title: TensorFlow
+description: End-to-end open source machine learning platform by Google.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="TensorFlow">
+
+TensorFlow is an open-source software library for machine learning and artificial intelligence. It can be used across a range of tasks but has a particular focus on training and inference of deep neural networks. It was developed by the Google Brain team for internal Google use in research and production.
+
+<Callout icon="tip" title="Tensors">
+  The name TensorFlow derives from the operations that such neural networks perform on multidimensional data arrays, which are referred to as **tensors**.
+</Callout>
+
+## Ecosystem
+
+<ComparisonTable 
+  headers={['Tool', 'Purpose', 'Deployment Environment']}
+  rows={[
+    ['TensorFlow Core', 'Developing and training models.', 'Desktop, Cloud, Server'],
+    ['TensorFlow Lite', 'Running inference on mobile and IoT devices.', 'iOS, Android, Raspberry Pi'],
+    ['TensorFlow.js', 'Training and deploying models in the browser.', 'Web Browsers, Node.js'],
+    ['TensorFlow Extended (TFX)', 'Deploying production ML pipelines.', 'Cloud, Enterprise Servers']
+  ]}
+/>
+
+## Keras API
+
+TensorFlow 2.x heavily relies on **Keras** as its high-level API. Keras makes building neural networks extremely intuitive by stacking layers.
+
+```text
+{`import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Build a simple sequential model
+model = models.Sequential([
+  layers.Dense(128, activation='relu', input_shape=(784,)),
+  layers.Dropout(0.2),
+  layers.Dense(10, activation='softmax')
+])
+
+# Compile the model
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])`}
+```
+
+</TechnologyTemplate>

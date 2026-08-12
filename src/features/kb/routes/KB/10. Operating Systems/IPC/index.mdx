@@ -1,0 +1,33 @@
+---
+title: Inter-Process Communication (IPC)
+description: The mechanisms provided by the Operating System that allow heavily isolated processes to securely pass data to each other.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Inter-Process Communication (IPC)">
+
+By design, the Operating System enforces strict memory isolation between Processes. Process A is physically incapable of reading or writing to the RAM of Process B. This prevents a crashing web browser from bringing down the entire OS.
+
+However, sometimes processes *need* to talk to each other. A web server process needs to send SQL queries to a database process. Because they cannot just read each other's variables, they must use **Inter-Process Communication (IPC)**.
+
+## The Cost of IPC
+
+IPC is fundamentally slow because it usually requires crossing the Kernel boundary. 
+When Process A wants to send a message to Process B:
+1. Process A executes a System Call, switching the CPU into Kernel Space (Ring 0).
+2. The Kernel copies the message from Process A's memory into Kernel memory.
+3. The Kernel wakes up Process B.
+4. Process B executes a System Call to read the message.
+5. The Kernel copies the data from Kernel memory into Process B's memory.
+
+This double-copy and double-context-switch is computationally expensive. Because of this, OS architects have invented many different flavors of IPC, each trading off speed for convenience and security.
+
+<Callout icon="info" title="The IPC Toolkit">
+  Modern operating systems provide several distinct mechanisms for IPC:
+  - **Pipes**: For simple byte-stream communication between parent and child processes.
+  - **Message Queues**: For structured, packet-based communication.
+  - **Shared Memory**: The fastest IPC mechanism, bypassing the Kernel entirely after setup.
+  - **Sockets**: For communication between processes that might be on entirely different computers over a network.
+</Callout>
+
+</ConceptTemplate>

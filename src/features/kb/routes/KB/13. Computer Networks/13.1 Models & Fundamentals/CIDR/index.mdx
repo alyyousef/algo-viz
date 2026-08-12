@@ -1,0 +1,33 @@
+---
+title: CIDR (Classless Inter-Domain Routing)
+description: The modern, flexible method of allocating IP addresses and defining subnet masks using slash notation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CIDR (Classless Inter-Domain Routing)">
+
+In the 1980s, IP addresses were distributed in rigid "Classes". 
+- **Class A**: Massive networks of 16 million IPs.
+- **Class B**: Medium networks of 65,000 IPs.
+- **Class C**: Tiny networks of 254 IPs.
+
+If a company needed 500 IPs, a Class C was too small, so the government would give them a Class B (65,000 IPs), permanently wasting 64,500 addresses. This rigid system nearly destroyed the internet in the 90s.
+
+## The Solution: CIDR
+
+**Classless Inter-Domain Routing (CIDR)** abolished the rigid Classes. It allowed engineers to draw the Subnet Mask boundary absolutely anywhere they wanted, creating custom-sized networks.
+
+To make this readable, CIDR introduced **Slash Notation**. 
+Instead of writing out a Subnet Mask like `255.255.255.0`, you simply write **`/24`**. 
+This tells the computer: *"Exactly 24 binary bits are locked for the Network, leaving 8 bits (256 addresses) for the Hosts."*
+
+### Common CIDR Blocks
+- **`/8`** (Subnet Mask: 255.0.0.0): 16.7 Million IPs.
+- **`/16`** (Subnet Mask: 255.255.0.0): 65,534 IPs.
+- **`/24`** (Subnet Mask: 255.255.255.0): 254 IPs. (The standard home Wi-Fi network).
+
+<Callout icon="success" title="Custom Boundaries">
+  CIDR allows for extreme flexibility. If you only need 30 IPs for a small office, you can assign them a **`/27`** network. A `/27` locks 27 bits for the network, leaving exactly 5 bits for hosts. Mathematically, 2 to the power of 5 is 32. Minus the Network and Broadcast IPs, you get exactly 30 usable IP addresses, wasting zero space!
+</Callout>
+
+</ConceptTemplate>

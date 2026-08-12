@@ -1,0 +1,27 @@
+---
+title: Apache Kafka
+description: An open-source distributed event streaming platform used for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Apache Kafka">
+
+Apache Kafka is an open-source distributed event streaming platform developed by LinkedIn and donated to the Apache Software Foundation. It is designed to handle trillions of events a day.
+
+<Callout icon="warning" title="Not a Message Queue">
+  Kafka is technically an **Append-Only Distributed Log**. Unlike RabbitMQ, where a message is deleted after it is read, Kafka retains the message on disk for a configured time (e.g., 7 days). This allows new services to "replay" history.
+</Callout>
+
+## Core Concepts
+
+<ComparisonTable 
+  headers={['Term', 'Description']}
+  rows={[
+    ['Topic', 'A logical channel where events are published. (e.g., `user-clicks`).'],
+    ['Partition', 'Topics are split into multiple Partitions across different servers. This allows Kafka to scale horizontally to massive throughput.'],
+    ['Producer', 'The application sending data into a Kafka Topic.'],
+    ['Consumer Group', 'A group of applications reading from a Topic. Kafka ensures that each Partition is only read by ONE consumer in the group, ensuring work is balanced and never duplicated.']
+  ]}
+/>
+
+</TechnologyTemplate>

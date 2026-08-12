@@ -1,0 +1,28 @@
+---
+title: Semantic HTML & ARIA
+description: The architectural practice of using tags that accurately describe their structural meaning, ensuring accessibility and SEO compliance.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Semantic HTML & ARIA">
+
+Before HTML5, web developers suffered from **"div soup"**. Entire websites were built using generic `<div>` elements for the header, the navigation, the footer, and the buttons. 
+
+While a `<div>` can be visually styled with CSS to *look* like a button, it mathematically *is not* a button. This completely destroys the experience for blind users relying on Screen Readers, and destroys SEO because Googlebot cannot understand the structure of the page.
+
+## Core Semantic Tags
+Semantic HTML solves this by providing specific tags that carry inherent structural meaning:
+- `<header>` / `<footer>`: Defines the top and bottom bounds of the page or article.
+- `<nav>`: Explicitly wraps primary navigation links.
+- `<main>`: The absolute most important tag. Tells the screen reader where the actual content begins, allowing users to skip past repetitive navigation bars.
+- `<article>`: A completely independent, self-contained piece of content (like a blog post or a Tweet).
+
+## ARIA (Accessible Rich Internet Applications)
+Sometimes, modern web apps require complex UI components (like a modal dialog or a custom React dropdown) that have no semantic HTML equivalent.
+In these cases, you use **ARIA attributes** to mathematically describe the component's state to the screen reader.
+
+- `aria-hidden="true"`: Hides decorative SVG icons from the screen reader.
+- `aria-expanded="true"`: Announces that the dropdown menu is currently open.
+- `role="dialog"`: Tells the screen reader that the current `<div>` is actually a modal popup that traps keyboard focus.
+
+</ConceptTemplate>

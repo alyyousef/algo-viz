@@ -1,0 +1,30 @@
+---
+title: The Node.js Event Loop
+description: How Node.js handles asynchronous I/O despite being single-threaded.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="The Node.js Event Loop">
+
+Node.js is an asynchronous event-driven JavaScript runtime. While the browser's Event Loop handles UI events and timers, the Node.js Event Loop is heavily optimized for massive concurrent I/O (File System, Networking, Databases).
+
+<Callout icon="info" title="The libuv Library">
+  Node.js relies on a C library called **libuv** to handle the actual multithreading. When you make a database query in Node, the JS thread passes the work to libuv, which maintains a hidden thread pool (default 4 threads) to do the heavy lifting in the background.
+</Callout>
+
+## The Phases of the Node Event Loop
+
+Unlike the browser, Node's Event Loop has distinct phases it loops through continuously:
+
+<ComparisonTable 
+  headers={['Phase', 'What it executes']}
+  rows={[
+    ['Timers', 'Executes callbacks scheduled by `setTimeout()` and `setInterval()`.'],
+    ['Pending Callbacks', 'Executes I/O callbacks deferred to the next loop iteration (TCP errors, etc).'],
+    ['Poll', 'Retrieves new I/O events; executes I/O related callbacks (almost all incoming requests).'],
+    ['Check', 'Executes `setImmediate()` callbacks.'],
+    ['Close Callbacks', "Executes close events, e.g., `socket.on('close', ...)`"]
+  ]}
+/>
+
+</TechnologyTemplate>

@@ -1,0 +1,24 @@
+---
+title: DNSSEC (DNS Security Extensions)
+description: A suite of cryptographic extensions designed to prevent hackers from hijacking DNS requests and silently redirecting traffic to malicious servers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="DNSSEC (DNS Security Extensions)">
+
+The original DNS protocol invented in 1983 had absolutely zero security. 
+
+If you ask your ISP's DNS resolver, *"What is the IP for bank.com?"*, a hacker sitting in the same coffee shop can rapidly blast a fake UDP response to your computer claiming, *"The IP for bank.com is 6.6.6.6 (The Hacker's Server)."*
+Your computer blindly trusts the first answer it receives, overwrites its DNS cache, and routes all your banking traffic to the hacker. This is called **DNS Cache Poisoning**.
+
+## The Cryptographic Fix
+
+To fix this, the internet implemented **DNSSEC**. 
+DNSSEC does not encrypt the DNS request (that is what DoH - DNS over HTTPS does). Instead, DNSSEC provides **Cryptographic Authentication**.
+
+When the owner of `bank.com` sets up their DNS zone, they use Asymmetric Cryptography to digitally sign every single A-Record and MX-Record using a Private Key. 
+
+When your computer queries the DNS server, the server returns the IP address *and* the cryptographic signature. Your computer uses the public key (which is verified by the Top Level Domain `.com` servers in a Chain of Trust) to verify the signature. 
+If a hacker attempts to inject a fake IP address, they cannot forge the cryptographic signature. Your computer will instantly realize the DNS response is a forgery and drop it, completely neutralizing Cache Poisoning attacks.
+
+</ConceptTemplate>

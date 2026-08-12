@@ -1,0 +1,36 @@
+---
+title: Cache Coherence Protocols (MESI)
+description: The synchronization mechanisms required to ensure that multiple CPU cores all agree on the exact state of shared memory.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Cache Coherence Protocols (MESI)">
+
+In a multi-core processor, each core has its own private L1 and L2 cache. This introduces a fatal flaw: **The Cache Coherence Problem**.
+
+Imagine Core 1 and Core 2 both read variable \`X = 5\` from RAM into their private caches.
+1. Core 1 runs \`X = X + 1\`, changing its cached \`X\` to \`6\`.
+2. Core 2 later runs \`X = X + 1\`. Because it reads from its *own* cache, it still sees \`X = 5\`, and calculates \`X = 6\`.
+
+The final answer should be \`7\`, but because the caches are out of sync, the program is corrupted. 
+
+<Callout icon="warning" title="Hardware over Software">
+  Cache coherence is entirely managed by the hardware. The operating system and the software programmer are completely blind to this synchronization; the CPU handles it invisibly.
+</Callout>
+
+## Bus Snooping
+
+To fix this, CPUs use a technique called **Bus Snooping**. Every cache controller constantly "listens" (snoops) on the memory bus. If Core 1 writes a new value to \`X\`, it broadcasts a message on the bus. Core 2 hears this broadcast, realizes its cached copy of \`X\` is now stale, and instantly marks it as invalid.
+
+## The MESI Protocol
+
+The most common implementation of bus snooping is the **MESI Protocol**, a state machine where every single cache line is tagged with one of four states:
+
+- **M (Modified)**: This core is the only one with this data, and it has *changed* it. The data in main RAM is stale. This core must write the data back to RAM before any other core can read it.
+- **E (Exclusive)**: This core is the only one with this data, but it *matches* main RAM perfectly. If this core wants to modify it, it can do so instantly without broadcasting to anyone.
+- **S (Shared)**: Multiple cores have this data in their caches, and it matches RAM. It is read-only. If a core wants to modify it, it must broadcast an "Invalidate" signal to all other cores first.
+- **I (Invalid)**: The data in this cache line is stale/garbage. The core must fetch a fresh copy from L3 Cache or RAM.
+
+MESI ensures perfect mathematical consistency across 64-core processors without requiring constant, crippling communication to main memory.
+
+</ConceptTemplate>

@@ -1,0 +1,64 @@
+---
+title: Transformers
+description: The architecture that revolutionized Natural Language Processing and powers ChatGPT.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Transformers">
+
+Introduced by Google in the landmark 2017 paper *"Attention Is All You Need"*, the Transformer is a deep learning architecture that fundamentally changed Artificial Intelligence. It completely replaced older models (like RNNs and LSTMs) and serves as the architectural foundation for all modern Large Language Models (LLMs) like GPT-4, Claude, and LLaMA.
+
+<Callout icon="tip" title="No Recurrence">
+  Before Transformers, networks read text sequentially, one word at a time (like humans do). This was slow and forgot early context. 
+  
+  Transformers read the **entire sentence at once** in parallel, making them incredibly fast to train on massive GPU clusters.
+</Callout>
+
+## The Secret Sauce: Self-Attention
+
+The core innovation of the Transformer is the **Self-Attention Mechanism**. 
+
+When processing a word, Self-Attention allows the model to look at every other word in the sentence to gather context. For example, in the sentence *"The bank of the river"*, the model uses attention to know "bank" means land, not a financial institution, by paying heavy attention to the word "river".
+
+<ComparisonTable 
+  headers={['Component', 'Function']}
+  rows={[
+    ['Positional Encoding', 'Because words are processed in parallel, the model has no concept of word order. Positional Encoding injects math to tell the model "this word came first, this word came second."'],
+    ['Multi-Head Attention', 'Runs multiple self-attention mechanisms in parallel, allowing the model to focus on different things (e.g., Head 1 focuses on grammar, Head 2 focuses on emotion).'],
+    ['Feed-Forward Network', 'A standard neural network applied to each position separately and identically to process the output of the attention mechanism.']
+  ]}
+/>
+
+## Architecture
+
+A standard Transformer consists of an **Encoder** (reads the input and builds context) and a **Decoder** (generates the output word-by-word).
+
+<ArchitectureDiagram chart={`
+graph TD
+  Input["Input: 'Bonjour'"]
+  
+  subgraph Encoder Block
+    Attn1[Multi-Head Self Attention]
+    FF1[Feed Forward Network]
+    Attn1 --> FF1
+  end
+  
+  subgraph Decoder Block
+    Attn2[Masked Self Attention]
+    Attn3[Encoder-Decoder Attention]
+    FF2[Feed Forward Network]
+    Attn2 --> Attn3 --> FF2
+  end
+  
+  Output["Output: 'Hello'"]
+  
+  Input --> Attn1
+  FF1 -- Context Vectors --> Attn3
+  FF2 --> Output
+`} />
+
+## Why it changed everything
+
+Transformers aren't just for text anymore. Because they are so good at finding patterns in sequences, researchers have successfully applied Transformer architectures to **Images** (Vision Transformers), **Audio**, and even **Protein Folding** (AlphaFold).
+
+</TechnologyTemplate>

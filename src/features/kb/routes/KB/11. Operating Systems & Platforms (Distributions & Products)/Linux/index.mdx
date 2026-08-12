@@ -1,0 +1,30 @@
+---
+title: Linux
+description: The open-source, Unix-like operating system kernel that dominates the internet, smartphones, and supercomputers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Linux">
+
+Created by Linus Torvalds in 1991 as a hobby project, **Linux** is arguably the most successful software project in human history. 
+
+Crucially, Linux is *not* a full operating system; it is just a **Kernel**. It handles the core duties of talking to hardware, managing memory, and scheduling CPU time. A usable OS (like Ubuntu or Android) is created by taking the Linux Kernel and surrounding it with user-space software (like a desktop environment, GNU core utilities, and a package manager).
+
+## The Monolithic Architecture
+
+Unlike microkernels, Linux is a **Monolithic Kernel**. 
+This means that Device Drivers, File Systems, and Networking Stacks all run directly in Kernel Space (Ring 0). 
+
+<Callout icon="warning" title="The Tradeoff">
+  Because everything runs in Ring 0, Linux is incredibly fast; there is no context-switching overhead when writing to a hard drive or sending a network packet. 
+  However, this means that a bug in a graphics card driver can theoretically crash the entire operating system, whereas in a microkernel, only the driver would crash.
+</Callout>
+
+## Ubiquity
+
+While Linux struggled to conquer the consumer desktop market (currently holding ~3-4% market share), it absolutely dominates everywhere else:
+- **Smartphones**: Android is powered by the Linux Kernel.
+- **Servers**: The vast majority of the global internet infrastructure runs on Linux.
+- **Supercomputers**: 100% of the top 500 fastest supercomputers in the world run Linux.
+
+</ConceptTemplate>

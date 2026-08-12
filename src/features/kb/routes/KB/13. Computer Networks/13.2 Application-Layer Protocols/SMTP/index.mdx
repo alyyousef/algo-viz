@@ -1,0 +1,26 @@
+---
+title: SMTP (Simple Mail Transfer Protocol)
+description: The internet standard protocol used strictly for sending (pushing) email messages from a client to a server, or between servers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="SMTP (Simple Mail Transfer Protocol)">
+
+When you click "Send" on an email, your email client uses **SMTP** (TCP Port 25, 465, or 587) to push the message to your email provider (like Gmail). Gmail then uses SMTP to push that message across the internet to the recipient's email provider (like Outlook).
+
+**SMTP is strictly a push protocol.** It cannot be used to retrieve or read emails.
+
+## The SMTP Conversation
+
+SMTP is entirely text-based. If you telnet into an SMTP server, you literally type commands like:
+- `HELO client.example.com` (Hello, I want to talk)
+- `MAIL FROM:<alice@example.com>`
+- `RCPT TO:<bob@example.com>`
+- `DATA` (Here comes the actual email body)
+
+## The Port 25 Problem
+
+Historically, all SMTP traffic used **Port 25** with zero authentication and zero encryption. Because of this, spammers could connect to any unprotected SMTP server (an "Open Relay") and use it to blast millions of spam emails, destroying the server's reputation.
+Today, almost all residential ISPs aggressively block outbound Port 25. Modern email clients are forced to use **Port 587 (SMTP over TLS)**, which mandates strict username/password authentication and TLS encryption before a single email can be sent.
+
+</ConceptTemplate>

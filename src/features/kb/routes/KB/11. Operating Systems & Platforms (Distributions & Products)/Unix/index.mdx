@@ -1,0 +1,23 @@
+---
+title: Unix
+description: The ancient, incredibly influential operating system that defined modern computing paradigms.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Unix">
+
+Developed in 1969 at AT&T's Bell Labs by Ken Thompson and Dennis Ritchie, **Unix** is the granddaddy of modern operating systems. macOS, Linux, FreeBSD, and iOS all trace their philosophical (and sometimes literal) lineage directly back to Unix.
+
+## The Unix Philosophy
+
+Unix revolutionized computing not just through code, but through a strict engineering philosophy that remains highly relevant today:
+
+1. **Everything is a file**: Hard drives, keyboards, network sockets, and mice are all exposed as simple text files. If you know how to read and write to a file, you know how to interact with the entire computer.
+2. **Do one thing and do it well**: Instead of building massive, bloated software, build tiny, specialized tools (like `grep`, `cat`, `sed`).
+3. **Chain programs together**: Use **Pipes** (`|`) to stream the output of one tiny program directly into the input of another, creating complex behavior out of simple building blocks.
+
+<Callout icon="info" title="Unix vs Unix-like">
+  Today, "Unix" is a registered trademark. An OS can only legally call itself Unix if it passes the incredibly strict Single UNIX Specification (SUS) certification. macOS is legally Unix. Linux is mathematically a clone of Unix, but it is not certified, so it is referred to as "Unix-like".
+</Callout>
+
+</ConceptTemplate>

@@ -1,0 +1,28 @@
+---
+title: ChromeOS
+description: A hyper-secure, web-first operating system built by Google on top of Gentoo Linux, designed entirely around the Chrome web browser.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="ChromeOS">
+
+**ChromeOS** is a proprietary operating system developed by Google, primarily found on inexpensive Chromebooks. It is fundamentally a heavily modified version of **Gentoo Linux**.
+
+## The Web-First Philosophy
+
+When ChromeOS launched, its entire philosophy was: *"Everything is a website."* 
+The OS had virtually no native applications. The user interface was literally just the Google Chrome web browser. If you wanted to write a document, you used Google Docs. If you wanted to listen to music, you used a web player. 
+
+Because the OS was just a browser and a kernel, it was incredibly fast, booted in 5 seconds, and was immune to 99% of traditional desktop malware, making it massively popular in the education sector.
+
+<Callout icon="info" title="The Container Revolution">
+  As the OS matured, users demanded real apps. Google brilliantly solved this without compromising security by using **Containers and Virtual Machines**:
+  - ChromeOS can now run full Android apps seamlessly in an isolated Android container (ARC).
+  - ChromeOS can run full desktop Linux applications (like VS Code) inside a lightweight virtual machine (Crostini).
+</Callout>
+
+## Verified Boot Security
+
+ChromeOS is arguably the most secure consumer OS on the market due to **Verified Boot**. Every time you turn on a Chromebook, a dedicated hardware security chip mathematically verifies the cryptographic signature of the OS Kernel. If a virus manages to modify even a single byte of the core OS, the hardware will refuse to boot and automatically redownload a fresh copy of the OS from Google.
+
+</ConceptTemplate>

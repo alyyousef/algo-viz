@@ -1,0 +1,48 @@
+---
+title: Bloom Filters
+description: A space-efficient probabilistic data structure used to test set membership.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Bloom Filters">
+
+A **Bloom filter** is a highly space-efficient probabilistic data structure invented by Burton Howard Bloom in 1970. It is used to answer a very specific question: **"Is this element a member of a set?"**
+
+<Callout icon="warning" title="The Probabilistic Trade-off">
+  Because Bloom filters use a fraction of the memory of a hash table, they make a mathematical compromise:
+  - **False Positives are possible**: The filter might say "Yes, the item is in the set" when it actually isn't.
+  - **False Negatives are impossible**: If the filter says "No, the item is not in the set", it is 100% guaranteed to not be there.
+</Callout>
+
+## How it Works
+
+A Bloom filter consists of two things:
+1. A bit array of $m$ bits, all initially set to 0.
+2. $k$ different hash functions.
+
+### Insertion
+To add the word "apple" to the filter:
+1. Run "apple" through all $k$ hash functions.
+2. Each hash function outputs an index number between $0$ and $m-1$.
+3. Go to the bit array and change the bits at those $k$ specific indices to 1.
+
+### Checking Membership
+To check if "banana" is in the filter:
+1. Run "banana" through the exact same $k$ hash functions.
+2. Check the bit array at the resulting indices.
+3. If **ANY** of the bits are 0, "banana" is definitively NOT in the set.
+4. If **ALL** of the bits are 1, "banana" *might* be in the set. (It is a false positive if those bits were accidentally flipped to 1 by the prior insertions of other words).
+
+## Practical Use Cases
+
+Bloom filters are used to prevent expensive operations (like a slow database query or a slow disk read) by putting a fast Bloom filter in front of them.
+
+1. **Malicious URLs (Web Browsers)**: Chrome used to use a Bloom filter to check if a URL was malicious. If the filter said "No", Chrome loaded the page instantly. If the filter said "Yes", Chrome would do a slower network request to Google's servers to verify if it was a true positive.
+2. **Databases (Cassandra / Postgres)**: Before doing an expensive disk seek to find a row, the database checks a Bloom filter in RAM. If the filter says "No", it skips the disk read entirely.
+3. **Username Registration**: Checking if "user123" is already taken without hitting the central database.
+
+## Tuning the Filter
+
+You can control the false positive rate by tuning the size of the bit array ($m$) and the number of hash functions ($k$) relative to how many items you expect to insert ($n$). A larger bit array results in fewer false positives but uses more RAM.
+
+</ConceptTemplate>

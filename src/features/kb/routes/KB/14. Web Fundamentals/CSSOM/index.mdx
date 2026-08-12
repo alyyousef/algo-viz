@@ -1,0 +1,24 @@
+---
+title: The CSSOM (CSS Object Model)
+description: The in-memory tree representation of all CSS rules, critical for calculating the final visual styles applied to the DOM.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The CSSOM (CSS Object Model)">
+
+Just as HTML is parsed into the DOM, CSS is parsed into the **CSSOM (CSS Object Model)**.
+
+The CSSOM is a massive tree structure that contains every single CSS rule, media query, and specificity calculation. The browser must combine the DOM and the CSSOM together to figure out how to render the page.
+
+## The Render-Blocking Problem
+
+The DOM can be built incrementally. If you have a massive HTML file, the browser can start rendering the header while the footer is still downloading.
+
+**CSS is fundamentally Render-Blocking.**
+The browser absolutely refuses to paint a single pixel on the screen until the CSSOM is 100% complete. 
+
+Why? Because CSS rules cascade. If the browser painted the DOM in black text, and then a CSS rule at the very bottom of the file said `body { color: red }`, the browser would have to instantly erase the screen and redraw everything in red, causing a massive, ugly flash of unstyled content (FOUC).
+
+To prevent this, the browser halts all rendering until all `<link rel="stylesheet">` files are fully downloaded, parsed, and the CSSOM is constructed. This is why optimizing CSS delivery is the most critical step in Web Performance.
+
+</ConceptTemplate>

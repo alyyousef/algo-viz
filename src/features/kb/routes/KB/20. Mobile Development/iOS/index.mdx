@@ -1,0 +1,46 @@
+---
+title: iOS Development
+description: Developing applications for Apple mobile devices.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="iOS Development">
+
+iOS development is the process of building mobile applications for Apple's ecosystem of mobile devices, primarily the iPhone and iPad. Development is typically done on macOS using Xcode.
+
+<Callout icon="error" title="Walled Garden">
+  To deploy an app to a physical device or the App Store, you must have an active Apple Developer Program membership ($99/year) and sign your application with cryptographic provisioning profiles.
+</Callout>
+
+## Core Technologies
+
+<ComparisonTable 
+  headers={['Technology', 'Role', 'Status']}
+  rows={[
+    ['Swift', 'Primary programming language introduced in 2014. Fast, safe, and modern.', 'Standard'],
+    ['Objective-C', 'Legacy C-based language that powered NeXTSTEP and early iOS.', 'Legacy / Maintenance'],
+    ['SwiftUI', 'Declarative UI framework introduced in 2019 (similar to React).', 'Modern Standard'],
+    ['UIKit', 'Imperative, mature UI framework based on view controllers and storyboards.', 'Mature / Still widely used']
+  ]}
+/>
+
+## Example SwiftUI Component
+
+```text
+{`import SwiftUI
+
+struct ContentView: View {
+    @State private var count = 0
+    
+    var body: some View {
+        VStack {
+            Text("You clicked \(count) times")
+            Button("Click me") {
+                count += 1
+            }
+        }
+    }
+}`}
+```
+
+</ConceptTemplate>

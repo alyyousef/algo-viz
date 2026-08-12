@@ -1,0 +1,70 @@
+---
+title: Unit Testing
+description: The practice of testing individual units or components of a software in isolation.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Unit Testing">
+
+Unit testing is a software development process in which the smallest testable parts of an application, called units, are individually and independently scrutinized for proper operation. In procedural programming, a unit could be an entire module, but it is more commonly an individual function or procedure. In object-oriented programming, a unit is often an entire interface, such as a class, but could be an individual method.
+
+<Callout icon="tip" title="The Testing Pyramid">
+  Unit tests form the massive foundational base of the Testing Pyramid. They should be incredibly fast to run (milliseconds) and highly numerous. A healthy codebase might have thousands of unit tests that run every time a developer saves a file.
+</Callout>
+
+## The AAA Pattern
+
+Nearly all unit tests follow the industry-standard AAA pattern:
+
+<ComparisonTable 
+  headers={['Step', 'Name', 'Description']}
+  rows={[
+    ['1', 'Arrange', 'Set up the conditions for the test. Initialize objects, set variables, and prepare any necessary mock data.'],
+    ['2', 'Act', 'Execute the specific function or method you are trying to test.'],
+    ['3', 'Assert', 'Verify that the result of the action matches your expected outcome.']
+  ]}
+/>
+
+## Example: Jest / Vitest
+
+```javascript
+// math.js
+export const add = (a, b) => a + b;
+
+// math.test.js
+import { add } from './math';
+
+test('adds positive numbers correctly', () => {
+  // Arrange
+  const a = 5;
+  const b = 10;
+  
+  // Act
+  const result = add(a, b);
+  
+  // Assert
+  expect(result).toBe(15);
+});
+```
+
+## Architecture of Isolation
+
+A true unit test must be completely isolated. It cannot hit a real database, make a real network request, or interact with the file system. Doing so makes it an Integration Test.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Test[Unit Test]
+  
+  subgraph The Unit
+    Func[Pure Function\n(Business Logic)]
+  end
+  
+  DB[(Database)]
+  API[External API]
+  
+  Test --> Func
+  Func -. "NOT ALLOWED" .-> DB
+  Func -. "NOT ALLOWED" .-> API
+`} />
+
+</TechnologyTemplate>

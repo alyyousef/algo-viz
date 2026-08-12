@@ -1,0 +1,37 @@
+---
+title: Amazon DynamoDB
+description: A fully managed, serverless, key-value NoSQL database designed to run high-performance applications at any scale.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="Amazon DynamoDB" 
+  category="Cloud Computing" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/b/b2/Amazon_Web_Services_Logo.svg"
+>
+
+**Amazon DynamoDB** is a fully managed, proprietary NoSQL database service that supports key-value and document data structures. It is famous for providing single-digit millisecond latency at literally any scale, whether you have 10 users or 100 million users.
+
+<Callout icon="warning" title="The Trade-off of Infinite Scale">
+  DynamoDB achieves its infinite scale by strictly enforcing how you query your data. It does **not** support SQL, it does **not** support \`JOIN\` operations, and complex aggregations are nearly impossible. You must design your table specifically around the exact queries your application will run (Single-Table Design).
+</Callout>
+
+## Core Concepts
+
+- **Tables**: The highest level data container. Unlike SQL, DynamoDB tables are schemaless.
+- **Items**: A single record in the table (similar to a SQL row).
+- **Attributes**: The data fields within an item. Except for the Primary Key, items do not need to have the same attributes.
+- **Primary Key**: The only enforced schema. It uniquely identifies every item. It can be a simple **Partition Key** (e.g., \`UserId\`) or a composite **Partition Key + Sort Key** (e.g., \`UserId\` + \`OrderDate\`).
+
+## The Magic of the Partition Key
+
+DynamoDB uses the **Partition Key** to physically distribute your data across thousands of hidden servers (Sharding). 
+When you query the database, AWS hashes the Partition Key to instantly determine exactly which physical server holds your data. This $O(1)$ time complexity is why DynamoDB queries take 5 milliseconds regardless of whether the table is 1 Megabyte or 100 Terabytes.
+
+## Provisioned vs. On-Demand
+
+You can configure how you pay for read/write throughput:
+1. **Provisioned**: You explicitly tell AWS "I want to be able to handle exactly 1,000 Reads Per Second." You pay for that capacity 24/7, even if nobody uses the app. (Best for predictable traffic).
+2. **On-Demand (Serverless)**: You pay per individual read/write request. If the app gets zero traffic, you pay $0. If the app goes viral and hits 50,000 requests per second, DynamoDB instantly scales to handle it. (Best for unpredictable traffic).
+
+</TechnologyTemplate>

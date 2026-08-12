@@ -1,0 +1,45 @@
+---
+title: Functional Programming (FP)
+description: A declarative programming paradigm where programs are constructed by applying and composing pure mathematical functions.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Functional Programming (FP)">
+
+**Functional Programming (FP)** is a declarative paradigm that treats computation as the evaluation of mathematical functions. It strictly avoids changing state and mutating data. 
+
+While languages like Haskell, Lisp, and Clojure are pure functional languages, FP concepts have heavily influenced modern multi-paradigm languages like JavaScript, Rust, and Python.
+
+<Callout icon="success" title="The Antidote to Complexity">
+  In Object-Oriented programming, bugs usually occur because the "State" of an object is modified unpredictably by different parts of the system. 
+  Functional programming eliminates this class of bugs entirely by making State **Immutable**. If you can never change a variable once it is created, you can never have a race condition in a multi-threaded app!
+</Callout>
+
+## Core Concepts
+
+1. **Pure Functions**: A function must adhere to two rules:
+   - Given the exact same input, it will *always* return the exact same output.
+   - It produces **no side effects** (it does not modify global variables, write to a database, or print to the console).
+2. **Immutability**: Once a variable or data structure is created, it can never be modified. To "change" data, you must create a brand new copy of the data structure with the updated values.
+3. **First-Class and Higher-Order Functions**: Functions are treated as data. They can be assigned to variables, passed as arguments into other functions (like `map`, `filter`, `reduce`), and returned from functions.
+
+## Example
+
+Updating a user's age:
+
+```javascript
+// OOP / Imperative (Mutation)
+const user = { name: "Alice", age: 25 };
+user.age = 26; // Mutates original state
+
+// Functional (Immutability)
+const user = { name: "Alice", age: 25 };
+const updatedUser = { ...user, age: 26 }; // Creates a pure copy
+```
+
+## Strengths and Weaknesses
+
+- **Strengths**: Code is incredibly predictable, highly testable (pure functions need no mock databases), and naturally thread-safe for parallel processing.
+- **Weaknesses**: Strict immutability means constantly copying massive arrays or objects in memory, which can lead to high memory usage and Garbage Collection pauses if the language engine isn't heavily optimized for it.
+
+</ConceptTemplate>

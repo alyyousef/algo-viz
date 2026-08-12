@@ -1,0 +1,45 @@
+---
+title: PostgreSQL
+description: The World's Most Advanced Open Source Relational Database.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="PostgreSQL">
+
+PostgreSQL (often pronounced "post-gress") is a powerful, open-source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
+
+<Callout icon="info" title="ACID Compliance">
+  Postgres is fully ACID compliant (Atomicity, Consistency, Isolation, Durability), making it highly reliable for financial and enterprise transactions.
+</Callout>
+
+## Key Features
+
+<ComparisonTable 
+  headers={['Feature', 'Description']}
+  rows={[
+    ['MVCC', 'Multiversion Concurrency Control prevents read locks from blocking writes.'],
+    ['JSONB', 'Native support for JSON data types allowing NoSQL-like document storage within SQL tables.'],
+    ['Extensions', 'Massive ecosystem of extensions like PostGIS for geospatial data.']
+  ]}
+/>
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  Client(Client App) --> Postmaster(Postmaster / Main Process)
+  Postmaster --> Backend1(Backend Process 1)
+  Postmaster --> Backend2(Backend Process 2)
+  
+  subgraph Shared Memory
+    Buffers(Shared Buffers)
+    WAL_Buf(WAL Buffers)
+  end
+  
+  Backend1 <--> Shared Memory
+  Backend2 <--> Shared Memory
+  
+  Shared Memory --> Disk[(Disk Storage)]
+`} />
+
+</TechnologyTemplate>

@@ -1,0 +1,50 @@
+---
+title: Asymmetric Encryption
+description: A cryptographic system that uses a mathematically linked pair of keys—one public and one private.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Asymmetric Encryption">
+
+Asymmetric encryption (also known as Public-Key Cryptography) was a revolutionary breakthrough invented in the 1970s. It solves the massive flaw of symmetric encryption (the Key Distribution Problem) by using **two different keys** instead of one.
+
+<Callout icon="success" title="The Key Pair">
+  1. **Public Key**: Shared openly with the entire world. It is used to *encrypt* data.
+  2. **Private Key**: Kept absolutely secret. It is the only thing in the universe that can *decrypt* data encrypted by the corresponding Public Key.
+</Callout>
+
+## How it Solves Key Exchange
+
+Imagine Alice wants to receive a secure message from Bob across the public internet.
+
+1. Alice generates a Public/Private key pair.
+2. Alice sends her Public Key to Bob (in plain text, she doesn't care who sees it).
+3. Bob writes the message "SECRET" and encrypts it using Alice's Public Key.
+4. Bob sends the ciphertext to Alice. Even if a hacker intercepts it, the hacker cannot decrypt it. *Even Bob cannot decrypt his own message once he encrypts it.*
+5. Alice receives the ciphertext and decrypts it using her closely guarded Private Key.
+
+<ArchitectureDiagram chart={`
+graph LR
+  Bob[Bob's Plaintext] --> Encrypt[Encrypt with Alice's Public Key]
+  Encrypt --> Ciphertext[Encrypted Ciphertext]
+  Ciphertext --> Decrypt[Decrypt with Alice's Private Key]
+  Decrypt --> Alice[Alice reads Plaintext]
+`} />
+
+## The Mathematical Foundation
+
+How is it possible to have a key that locks but cannot unlock? 
+
+Asymmetric encryption relies on **one-way mathematical functions** (trapdoor functions). These are math problems that are incredibly easy for a computer to calculate in one direction, but practically impossible to reverse unless you possess a specific piece of secret information (the private key).
+
+Common mathematical foundations:
+- **Integer Factorization**: Multiplying two massive prime numbers is easy. Taking the result and figuring out what two primes created it is incredibly hard. *(Used by RSA).*
+- **Discrete Logarithms & Elliptic Curves**: Even more complex math allowing for much smaller key sizes. *(Used by ECC).*
+
+## The Downside: Speed
+
+Asymmetric encryption is incredibly slow—often 100x to 1,000x slower than symmetric encryption. It requires massive CPU resources to multiply 2048-bit prime numbers. 
+
+Therefore, in modern systems (like HTTPS), asymmetric encryption is only used for the first few milliseconds of a connection to safely exchange a *symmetric* session key. Once the symmetric key is securely shared, the slow asymmetric math is abandoned for the rest of the session.
+
+</TechnologyTemplate>

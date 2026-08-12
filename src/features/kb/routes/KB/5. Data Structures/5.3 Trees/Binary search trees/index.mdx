@@ -1,0 +1,46 @@
+---
+title: Binary Search Trees (BST)
+description: A node-based binary tree data structure with strict ordering rules.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Binary Search Trees (BST)">
+
+A Binary Search Tree (BST) is a tree data structure where each node has at most two child nodes (left and right). It enforces a strict mathematical property:
+
+1. The left subtree of a node contains only nodes with keys **lesser** than the node's key.
+2. The right subtree of a node contains only nodes with keys **greater** than the node's key.
+
+<Callout icon="error" title="The Unbalanced Nightmare">
+  If you insert sorted data into a standard BST (1, 2, 3, 4, 5), it degenerates into a Linked List! The O(log n) lookup time collapses to O(n). This is why self-balancing trees like AVL and Red-Black trees were invented.
+</Callout>
+
+## Time Complexity
+
+<ComparisonTable 
+  headers={['Operation', 'Average Case (Balanced)', 'Worst Case (Unbalanced)']}
+  rows={[
+    ['Search', 'O(log n)', 'O(n)'],
+    ['Insert', 'O(log n)', 'O(n)'],
+    ['Delete', 'O(log n)', 'O(n)']
+  ]}
+/>
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  8((8)) --> 3((3))
+  8 --> 10((10))
+  
+  3 --> 1((1))
+  3 --> 6((6))
+  
+  6 --> 4((4))
+  6 --> 7((7))
+  
+  10 --> 14((14))
+  14 --> 13((13))
+`} />
+
+</TechnologyTemplate>

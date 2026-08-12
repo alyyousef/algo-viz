@@ -1,0 +1,38 @@
+---
+title: HTML5 Architecture
+description: The structural foundation of the modern web, providing the core markup language used to build dynamic web applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="HTML5 Architecture">
+
+**HTML (HyperText Markup Language)** is the structural bedrock of the internet. It is not a programming language; it is a declarative markup language that tells the browser how to structure content into a **DOM Tree**.
+
+## The HTML5 Revolution
+Released by the WHATWG, HTML5 completely revolutionized the web by shifting the focus from "static documents" to "dynamic applications."
+
+It introduced:
+1. **Semantic Tags**: Replacing thousands of meaningless `<div>`s with structural tags like `<nav>`, `<article>`, and `<main>`.
+2. **Native Multimedia**: Native `<video>` and `<audio>` tags, finally killing Adobe Flash forever.
+3. **The Web API Ecosystem**: HTML5 shipped alongside massive Javascript APIs like LocalStorage, WebSockets, and the Canvas API.
+
+## The Boilerplate
+
+Every valid HTML5 document strictly requires the following boilerplate:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>My App</title>
+  </head>
+  <body>
+    <!-- Visible content goes here -->
+  </body>
+</html>
+```
+
+- `<!DOCTYPE html>`: This is not an HTML tag. It is a historical artifact that explicitly tells the browser rendering engine to run in "Standards Mode", preventing it from intentionally rendering the page incorrectly (Quirks Mode) to support IE6 from 2001.
+
+</ConceptTemplate>

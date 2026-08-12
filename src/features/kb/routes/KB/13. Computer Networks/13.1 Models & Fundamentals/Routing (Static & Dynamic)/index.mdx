@@ -1,0 +1,32 @@
+---
+title: Routing (Static & Dynamic)
+description: The Layer 3 mechanisms used by routers to calculate the fastest path across the global Internet.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Routing (Static & Dynamic)">
+
+A **Router** (Layer 3) is fundamentally a highly specialized computer designed to read the Destination IP address of an incoming packet, check its internal **Routing Table**, and instantly forward the packet out of the correct physical port toward the destination.
+
+But how does the Router know which port is the correct path?
+
+## Static Routing
+
+**Static Routing** means a human Sysadmin manually logged into the router and typed a permanent rule:
+*"If you see a packet destined for `10.5.5.0/24`, send it out of Port 3."*
+
+This is perfect for small networks. However, if the cable on Port 3 gets cut by a backhoe, the static route is permanently broken, and traffic blackholes until a human manually fixes it.
+
+## Dynamic Routing Protocols
+
+The Internet is too massive for humans to write static routes. Instead, routers run **Dynamic Routing Protocols** (like OSPF, BGP, or EIGRP). 
+Routers automatically talk to each other, constantly exchanging maps of the network. 
+
+1. **OSPF (Open Shortest Path First)**: Used internally within large corporate networks (IGP). Routers use complex Dijkstra math to calculate the fastest path to a destination based on bandwidth (e.g., preferring a 10Gbps fiber link over a 1Gbps copper link).
+2. **BGP (Border Gateway Protocol)**: The absolute backbone of the Internet (EGP). BGP is used to route traffic between massive ISPs (like Comcast and AT&T). If an underwater fiber cable connecting London to New York is cut, BGP automatically recalculates the global routing table in seconds, silently rerouting the world's traffic through South America to avoid the outage.
+
+<Callout icon="warning" title="BGP Hijacking">
+  Because BGP assumes all ISPs are trustworthy, it is vulnerable to hijacking. If a malicious ISP falsely broadcasts to the world, *"I am the fastest route to YouTube!"*, the global internet will unquestioningly overwrite its routing tables and funnel all YouTube traffic to the malicious ISP in a matter of minutes.
+</Callout>
+
+</ConceptTemplate>

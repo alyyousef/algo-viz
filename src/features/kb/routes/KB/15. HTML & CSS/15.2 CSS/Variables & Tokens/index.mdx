@@ -1,0 +1,50 @@
+---
+title: CSS Variables & Design Tokens
+description: The native mechanism for defining dynamic, reusable values (colors, spacing) to ensure absolute design consistency and enable Dark Mode.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CSS Variables & Design Tokens">
+
+Historically, if a company's brand color was `#ff0000`, developers had to manually type `#ff0000` on 5,000 different buttons, borders, and text elements. If the CEO decided to rebrand to blue, it required a massive, error-prone find-and-replace operation.
+
+Preprocessors like Sass solved this with static variables, but **CSS Custom Properties (CSS Variables)** brought this natively to the browser with one massive advantage: they are dynamic and can be manipulated by Javascript in real-time.
+
+## The Syntax
+Variables are typically declared on the root element (`:root`) to make them globally accessible. They must be prefixed with two dashes `--`.
+
+```css
+:root {
+  --brand-primary: #ff0000;
+  --spacing-md: 16px;
+}
+
+.btn {
+  background-color: var(--brand-primary);
+  padding: var(--spacing-md);
+}
+```
+
+## Design Tokens & Dark Mode
+CSS Variables are the architectural foundation of **Design Tokens**—the strict mathematical constants (colors, typography, spacing) that define a company's Design System.
+
+Because CSS Variables are dynamic, implementing a complex **Dark Mode** takes exactly 3 lines of code. You don't have to rewrite the button classes; you simply overwrite the variable definitions!
+
+```css
+/* Default Light Mode */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+/* Dark Mode Override */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+  }
+}
+```
+The browser instantly recalculates the entire page, swapping the colors flawlessly.
+
+</ConceptTemplate>

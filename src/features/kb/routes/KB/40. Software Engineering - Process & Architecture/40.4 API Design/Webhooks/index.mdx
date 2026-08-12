@@ -1,0 +1,29 @@
+---
+title: Webhooks
+description: User-defined HTTP callbacks triggered by specific events.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Webhooks">
+
+A webhook in web development is a method of augmenting or altering the behavior of a web page or web application with custom callbacks. These callbacks may be maintained, modified, and managed by third-party users and developers who may not necessarily be affiliated with the originating website or application.
+
+<Callout icon="success" title="Push vs Pull">
+  **Without Webhooks (Polling):** Your app asks Stripe every 5 minutes, "Did the user pay yet?" (Wastes massive amounts of server resources).
+  
+  **With Webhooks:** You give Stripe a URL (`https://yourapp.com/api/stripe-webhook`). When the user pays, Stripe instantly POSTs the payment data to your URL.
+</Callout>
+
+## Security Considerations
+
+Because Webhooks are public URLs that accept data, they must be secured:
+
+<ComparisonTable 
+  headers={['Security Method', 'Description']}
+  rows={[
+    ['Secret Signatures', 'The sender (e.g., Stripe) hashes the payload using a secret key only you both know. You verify the hash before processing the payload.'],
+    ['IP Whitelisting', 'Your server only accepts POST requests to the webhook URL if the traffic originates from known, published IP addresses of the provider.']
+  ]}
+/>
+
+</TechnologyTemplate>

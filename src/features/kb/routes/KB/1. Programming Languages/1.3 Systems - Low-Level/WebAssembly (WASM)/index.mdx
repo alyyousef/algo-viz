@@ -1,0 +1,26 @@
+---
+title: WebAssembly (WASM)
+description: A binary instruction format for a stack-based virtual machine, designed as a portable compilation target for programming languages.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="WebAssembly (WASM)">
+
+WebAssembly (WASM) is a binary instruction format for a stack-based virtual machine. It is designed as a portable compilation target for programming languages, enabling deployment on the web for client and server applications.
+
+<Callout icon="success" title="Near-Native Performance">
+  Before WASM, JavaScript was the *only* language that could run in a web browser. With WASM, you can write a video editing engine in C++ or Rust, compile it to a tiny WASM binary, and run it in the browser at near-native CPU speeds. (Figma and AutoCAD Web run on WASM).
+</Callout>
+
+## Characteristics
+
+<ComparisonTable 
+  headers={['Feature', 'Description']}
+  rows={[
+    ['Format', 'WASM is a binary format (not human readable like JS). It decodes significantly faster than JS can be parsed.'],
+    ['Security', 'It executes in a memory-safe, sandboxed execution environment. It cannot access the DOM or the user\'s hard drive directly.'],
+    ['Language Agnostic', 'C, C++, Rust, Go, and C# can all compile directly to WASM.']
+  ]}
+/>
+
+</TechnologyTemplate>

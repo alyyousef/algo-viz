@@ -1,0 +1,32 @@
+---
+title: CPU Scheduling (Round-Robin)
+description: The most common and fundamental time-sharing scheduling algorithm used by operating systems to create the illusion of multitasking.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="CPU Scheduling (Round-Robin)">
+
+If your computer only has 4 CPU cores, how can it run 200 background processes at the same time? 
+
+It can't. The OS Kernel's **Scheduler** rapidly switches the CPU between the 200 processes thousands of times a second. The most famous and historically significant algorithm for doing this is **Round-Robin (RR)**.
+
+## How Round-Robin Works
+
+Round-Robin is designed to be perfectly fair. It uses a hardware timer to enforce a strict **Time Quantum** (or Time Slice), which is usually around 10 to 100 milliseconds.
+
+1. The Scheduler takes all the "Ready" processes and puts them in a circular queue (a circle).
+2. It gives the CPU to Process 1.
+3. Once Process 1 has run for exactly one Time Quantum (e.g., 10ms), the hardware timer interrupts the CPU.
+4. The Scheduler violently yanks Process 1 off the CPU (a Context Switch), puts it at the back of the queue, and gives the CPU to Process 2. 
+5. This repeats infinitely.
+
+<Callout icon="warning" title="The Quantum Tradeoff">
+  - If the Quantum is too large (e.g., 2 seconds), the computer feels incredibly laggy because you have to wait 2 seconds for your mouse movement process to get a turn on the CPU.
+  - If the Quantum is too small (e.g., 1 millisecond), the OS spends 90% of its time performing computationally expensive Context Switches, wasting the CPU's power on administrative overhead instead of actual work.
+</Callout>
+
+## Interactive vs CPU-Bound
+
+Round-Robin works decently well, but it treats all processes equally. This is actually a flaw. A video rendering program (CPU-Bound) will happily chew up its entire 10ms slice. But a text editor (Interactive) spends 9.9ms waiting for the user to type a key, and only uses 0.1ms of CPU time. Round-Robin is too simple to optimize for this, leading to the invention of MLFQ and CFS.
+
+</ConceptTemplate>

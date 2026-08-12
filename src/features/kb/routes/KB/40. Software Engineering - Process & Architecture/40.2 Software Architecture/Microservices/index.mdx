@@ -1,0 +1,30 @@
+---
+title: Microservices
+description: An architectural style that structures an application as a collection of loosely coupled, independently deployable services.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Microservices">
+
+**Microservices Architecture** is an approach to software development where a large application is built as a suite of small, modular services. Each service runs a unique process and communicates through a well-defined, lightweight mechanism (usually HTTP REST APIs or gRPC).
+
+<Callout icon="info" title="The Anti-Monolith">
+  In a traditional **Monolithic Architecture**, the UI, business logic, and database access are all bundled into a single massive codebase and deployed as a single unit. If the billing module has a bug, you must re-deploy the entire application. In a microservices architecture, the billing module is its own standalone application. It can be written in a different language, use a different database, and be deployed independently.
+</Callout>
+
+## Key Characteristics
+
+1. **Independent Deployability**: The core tenet. You can update the "Search" microservice without touching the "Checkout" microservice.
+2. **Organized Around Business Capabilities**: Conway's Law states that software design reflects a company's communication structures. Microservices align perfectly with small, cross-functional teams (e.g., "The Payments Team").
+3. **Decentralized Data Management**: Each microservice should own its own database. The Payments service has a payments DB; the User service has a users DB. They do not share databases directly (to avoid coupling).
+4. **Polyglot Persistence/Programming**: Teams can choose the best tool for the job. The AI Recommendation service can be written in Python, while the high-throughput API gateway is written in Go.
+
+## The Hidden Costs
+
+Microservices solve organizational scaling problems, but they introduce massive technical complexity:
+
+- **Network Latency**: Calling a function in a monolith takes nanoseconds. Calling a microservice takes milliseconds over the network.
+- **Distributed Transactions**: How do you guarantee a transaction if it requires updating data in three different microservices? (You usually have to use complex Saga patterns).
+- **Operational Complexity**: Instead of monitoring 1 application, you are now monitoring, logging, and orchestrating 500 applications (requiring tools like Kubernetes and Istio).
+
+</ConceptTemplate>

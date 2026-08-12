@@ -1,0 +1,32 @@
+---
+title: JSON Web Tokens (JWT)
+description: A compact, URL-safe means of representing claims to be transferred between two parties.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="JSON Web Tokens (JWT)">
+
+JSON Web Token (JWT, pronounced "jot") is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. This information can be verified and trusted because it is digitally signed.
+
+<Callout icon="error" title="JWTs are NOT Encrypted">
+  Unless you explicitly use JWE (JSON Web Encryption), the payload of a JWT is simply Base64 encoded, meaning anyone who captures it can instantly decode and read it. **Never put passwords or Social Security Numbers inside a JWT payload.**
+</Callout>
+
+## Structure of a JWT
+
+A JWT consists of three parts separated by dots (`.`):
+
+<ComparisonTable 
+  headers={['Part', 'Description', 'Example Content']}
+  rows={[
+    ['Header', 'Defines the type of token and the signing algorithm used (like HMAC SHA256 or RSA).', `{"alg": "HS256", "typ": "JWT"}`],
+    ['Payload (Claims)', 'The actual data you want to transmit (e.g., User ID, roles, expiration timestamp).', `{"userId": "123", "role": "admin", "exp": 1690000000}`],
+    ['Signature', 'A cryptographic hash of the Header + Payload + Your Secret Server Key. This proves the token was not tampered with.', `SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`]
+  ]}
+/>
+
+## Statelessness
+
+Because the JWT contains the signature, the Backend API does not need to query the database to check if the user's session is valid. It simply runs the math to verify the signature. This makes scaling APIs horizontally incredibly easy.
+
+</TechnologyTemplate>

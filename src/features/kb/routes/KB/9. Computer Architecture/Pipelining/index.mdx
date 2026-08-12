@@ -1,0 +1,39 @@
+---
+title: Instruction Pipelining
+description: The foundational hardware technique that allows modern CPUs to overlap the execution of multiple instructions, massively increasing throughput.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Instruction Pipelining">
+
+The foundational logic of a CPU is the **Fetch-Decode-Execute** cycle. In early processors (like the original Intel 8086), the CPU would fetch Instruction 1, decode it, and execute it. Only after Instruction 1 was completely finished would the CPU fetch Instruction 2. 
+
+Because executing an instruction requires multiple distinct physical hardware components (the memory bus, the decoder, the ALU), running sequentially means that while the ALU is doing math, the memory bus is sitting completely idle.
+
+**Pipelining** is the brilliant engineering solution to this inefficiency, operating on the exact same logic as a Henry Ford assembly line.
+
+<Callout icon="info" title="The Laundry Analogy">
+  Imagine doing 4 loads of laundry. A load requires 1 hour in the Washer, 1 hour in the Dryer, and 1 hour to Fold. 
+  - **Non-Pipelined**: You put Load 1 in the washer. Wait an hour. Move it to the dryer. Wait an hour. Fold it. Wait an hour. Then you start Load 2. Total time for 4 loads = **12 hours**.
+  - **Pipelined**: You put Load 1 in the washer. When it finishes, you move it to the dryer, and *immediately put Load 2 in the empty washer*. Both machines are now working simultaneously. Total time for 4 loads = **6 hours**.
+</Callout>
+
+## The Classic 5-Stage RISC Pipeline
+
+In a classic RISC architecture, an instruction is broken down into 5 stages, each taking exactly 1 clock cycle:
+
+1. **IF (Instruction Fetch)**: Fetch the binary instruction from the L1 Cache.
+2. **ID (Instruction Decode)**: Decode the binary and read the necessary CPU Registers.
+3. **EX (Execute)**: The ALU performs the actual math or logical operation.
+4. **MEM (Memory Access)**: If the instruction needs to read/write to RAM, it happens here.
+5. **WB (Write Back)**: The final result is written back into the CPU Registers.
+
+If the pipeline is perfectly full, the CPU is retiring **one complete instruction every single clock cycle**, even though each individual instruction takes 5 cycles from start to finish.
+
+## Deep Pipelining (The Pentium 4 Era)
+
+In the early 2000s, Intel realized that if you slice the pipeline into *more* stages, each stage has less work to do, meaning you can crank the clock speed incredibly high. The infamous Intel Pentium 4 had a **31-stage pipeline**, allowing it to hit an unprecedented 3.8 GHz. 
+
+However, deep pipelines suffer catastrophically when things go wrong (specifically due to Branch Prediction failures). If the CPU guesses a branch wrong, it has to flush 31 half-completed instructions and start over, losing massive amounts of performance. Modern CPUs have settled on a sweet spot of around **14 to 20 stages**.
+
+</ConceptTemplate>

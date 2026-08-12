@@ -1,0 +1,50 @@
+---
+title: Turing Machines
+description: A mathematical model of computation that defines an abstract machine.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Turing Machines">
+
+A Turing machine is a mathematical model of computation describing an abstract machine that manipulates symbols on a strip of tape according to a table of rules. Despite its simplicity, a Turing machine can be adapted to simulate the logic of *any* computer algorithm, and is particularly useful in explaining the functions of a CPU inside a computer.
+
+<Callout icon="info" title="The Church-Turing Thesis">
+  Invented in 1936 by Alan Turing, the Turing Machine is the foundational concept of all modern Computer Science. The Church-Turing thesis states that if an algorithm can be computed by *anything* in the universe, it can be computed by a Turing Machine. 
+  
+  If a programming language can simulate a Turing Machine, it is called **Turing Complete** (meaning it can theoretically solve any computable problem).
+</Callout>
+
+## The Components
+
+A Turing Machine is delightfully simple. It consists of:
+
+<ComparisonTable 
+  headers={['Component', 'Description']}
+  rows={[
+    ['An Infinite Tape', 'An infinitely long strip of paper divided into cells. Each cell contains a symbol (e.g., 0, 1, or Blank). This is the "RAM".'],
+    ['A Head', 'Can read the symbol on the current cell, write a new symbol, and move exactly one cell left or right.'],
+    ['A State Register', 'Stores the current "state" of the machine (e.g., State 1, State 2, Halt).'],
+    ['A Finite Table of Rules', 'The "code". For example: "If in State 1 and reading a 0, write a 1, move Right, and transition to State 2."']
+  ]}
+/>
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  subgraph The Tape (Infinite)
+    C1[0] -.- C2[1] -.- C3[1] -.- C4[Blank] -.- C5[0]
+  end
+  
+  Head[Read/Write Head]
+  
+  subgraph Control Unit
+    State[Current State: Q2]
+    Rules[Rule Table]
+  end
+  
+  Head --> C3
+  ControlUnit --> Head
+`} />
+
+</TechnologyTemplate>

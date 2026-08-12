@@ -1,0 +1,38 @@
+---
+title: Machine Instructions
+description: The absolute lowest level of software—the raw binary numbers that are physically decoded and executed by the CPU hardware.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Machine Instructions">
+
+While programmers write code in Python, C++, or even Assembly language, the CPU hardware cannot understand text. It is a physical machine made of logic gates. The only thing it understands is voltage, represented as binary \`1\`s and \`0\`s.
+
+A **Machine Instruction** is a specific binary pattern that physically triggers a specific sequence of logic gates inside the CPU's Control Unit to perform a task.
+
+<Callout icon="success" title="Assembly is just a mask">
+  Assembly language (e.g., \`ADD EAX, EBX\`) is just a human-readable text replacement for Machine Code. An Assembler program simply looks up \`ADD EAX, EBX\` in a dictionary and outputs the raw binary \`00000001 11011000\` into the \`.exe\` file.
+</Callout>
+
+## The Anatomy of an Instruction
+
+A machine instruction is a string of bits (e.g., 32 bits long). It is fundamentally divided into two parts: the **Opcode** and the **Operands**.
+
+### 1. Opcode (Operation Code)
+The first handful of bits tell the CPU's instruction decoder *what action to take*. 
+For example, if the CPU reads \`001001\`, the hardware routes power to the ALU's addition circuit. If it reads \`101011\`, it routes power to the memory load circuit.
+
+### 2. Operands (The Data/Addresses)
+The remaining bits tell the CPU *what data to operate on*.
+Depending on the instruction format, these bits might represent:
+- **Registers**: (e.g., \`0001\` means Register 1, \`0010\` means Register 2).
+- **Immediate Values**: The actual raw number (e.g., the binary for the number \`42\`) embedded directly into the instruction itself.
+- **Memory Addresses**: A pointer to a location in RAM.
+
+## Fixed-Length vs Variable-Length
+
+The layout of these bits is strictly defined by the CPU's Instruction Set Architecture (ISA).
+- **RISC (ARM, RISC-V)**: Uses **Fixed-Length** instructions. Every single instruction is exactly 32 bits long. This makes the hardware decoder incredibly fast and simple to design, but can waste memory space.
+- **CISC (x86)**: Uses **Variable-Length** instructions. A simple instruction might be 1 byte long, while a complex AVX-512 memory-fetch instruction might be 15 bytes long. This saves memory (creating incredibly dense code) but requires massive, power-hungry, and complex hardware decoders on the chip to figure out where one instruction ends and the next begins.
+
+</ConceptTemplate>

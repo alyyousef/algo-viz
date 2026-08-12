@@ -1,0 +1,27 @@
+---
+title: The Kernel
+description: The omnipotent core of the operating system that wields absolute power over the computer's hardware.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Kernel">
+
+The **Kernel** is the absolute core of the Operating System. It is the very first program loaded into RAM during the boot process (after the bootloader), and it remains in RAM until the computer is turned off. 
+
+The Kernel is the ultimate dictator of the machine. It is the only software on the computer that has direct, unrestricted access to the CPU's hardware instructions, the MMU (Memory Management Unit), and the physical peripherals.
+
+<Callout icon="warning" title="Absolute Power">
+  If a normal user program (like a web browser) has a bug and tries to divide by zero or access restricted memory, the Kernel immediately catches the fault and terminates the browser. But if the **Kernel itself** has a bug and faults, there is no higher authority to catch it. The entire system instantly halts, resulting in a Kernel Panic or a Blue Screen of Death (BSOD).
+</Callout>
+
+## What does the Kernel do?
+
+The Kernel is responsible for the lowest-level orchestration of the machine:
+1. **Interrupt Handling**: It responds to hardware jolts (e.g., a keyboard press) in microseconds.
+2. **Process Scheduling**: It decides which program gets to use which CPU core, and for exactly how many milliseconds.
+3. **Memory Management**: It programs the CPU's MMU to map Virtual Memory to Physical RAM.
+4. **Hardware Interfacing**: It contains (or loads) the Device Drivers necessary to talk to graphics cards, network interfaces, and storage controllers.
+
+Because the Kernel is so powerful, modern CPUs enforce strict hardware boundaries to protect it from malicious or buggy user software. This is implemented via **Protection Rings** (Kernel Space vs User Space).
+
+</ConceptTemplate>

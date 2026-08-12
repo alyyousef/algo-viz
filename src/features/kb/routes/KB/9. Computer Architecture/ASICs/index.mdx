@@ -1,0 +1,33 @@
+---
+title: Application-Specific Integrated Circuits (ASICs)
+description: Custom-designed silicon chips built to perform exactly one task with absolute, mathematically perfect efficiency.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Application-Specific Integrated Circuits (ASICs)">
+
+A standard CPU (like an Intel core) is a **General Purpose** processor. Because it must be capable of running a web browser, rendering a video, and calculating a spreadsheet, its silicon is full of compromises. It wastes massive amounts of power and area on instruction decoders, branch predictors, and caches.
+
+If you have a computationally heavy task that never changes, a CPU is the wrong tool. Instead, you design an **ASIC (Application-Specific Integrated Circuit)**.
+
+<Callout icon="info" title="Hardware vs. Software">
+  Instead of writing a software program in C++ and feeding it to a general CPU, you physically design the algorithm out of copper wire and logic gates. The algorithm is permanently etched into the silicon. It cannot run an operating system, and it cannot be updated, but it will perform its singular task thousands of times faster than a CPU, while using a fraction of the electricity.
+</Callout>
+
+## The Lifecycle of an ASIC
+
+Designing an ASIC is one of the most expensive and complex engineering tasks on earth.
+1. **Design**: Hardware engineers write the logic using a Hardware Description Language (HDL) like Verilog or VHDL.
+2. **Verification**: The design is rigorously tested in software simulations. If there is a single bug in the logic, millions of dollars are wasted.
+3. **Tape-out & Fabrication**: The blueprints are sent to a foundry (like TSMC in Taiwan). They create the physical photolithography masks and manufacture the silicon chips. The initial setup cost (NRE - Non-Recurring Engineering) can exceed **$50 million**.
+
+Because the upfront cost is so astronomical, ASICs are only viable if you plan to manufacture and sell millions of units to recoup the engineering costs.
+
+## Real-World Examples
+
+You interact with ASICs every single day:
+- **Smartphones**: The tiny chips inside your iPhone dedicated strictly to encoding H.264 video, or processing the camera sensor data.
+- **Networking**: The massive internet routers powering AWS and Google data centers use ASICs to route millions of network packets per second without ever touching a CPU.
+- **Bitcoin Mining**: In the early days, people mined Bitcoin using CPUs. As the math got harder, they moved to GPUs. Today, the entire Bitcoin network runs exclusively on ASICs—chips specifically physically wired to calculate the SHA-256 hash algorithm and literally nothing else.
+
+</ConceptTemplate>

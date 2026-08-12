@@ -1,0 +1,25 @@
+---
+title: Observer Pattern
+description: A behavioral design pattern that lets you define a subscription mechanism to notify multiple objects about any events that happen to the object they're observing.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Observer Pattern">
+
+The Observer pattern is a software design pattern in which an object, named the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods.
+
+<Callout icon="success" title="The Core of UI Frameworks">
+  This is the exact pattern that powers React, Vue, and Angular reactivity. When the internal state (Subject) changes, it immediately fires an event to the UI components (Observers) to re-render themselves.
+</Callout>
+
+## Mechanism
+
+<ComparisonTable 
+  headers={['Component', 'Role']}
+  rows={[
+    ['Subject (Publisher)', 'Holds the main state. It has `subscribe(observer)` and `unsubscribe(observer)` methods.'],
+    ['Observer (Subscriber)', 'Implements an `update()` method. When the Subject changes, it loops through its array of Observers and calls `update()` on all of them.']
+  ]}
+/>
+
+</TechnologyTemplate>

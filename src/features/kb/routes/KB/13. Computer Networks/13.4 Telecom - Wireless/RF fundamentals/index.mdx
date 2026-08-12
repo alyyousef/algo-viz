@@ -1,0 +1,25 @@
+---
+title: RF Fundamentals (Radio Frequency)
+description: The core physics principles governing how data is encoded and transmitted invisibly through the air via electromagnetic waves.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="RF Fundamentals (Radio Frequency)">
+
+Wired networking sends data using physical voltages across copper or light pulses across fiber. Wireless networking sends data by manipulating the invisible **Electromagnetic Spectrum**.
+
+To transmit a binary `1` or `0` over the air, antennas generate Radio Frequency (RF) waves.
+
+## The Three Properties of a Wave
+
+Every radio wave has three mathematical properties that engineers can manipulate to encode data (known as Modulation):
+
+1. **Amplitude**: The height (power) of the wave. You can encode a `1` as a tall wave, and a `0` as a short wave (AM Radio works this way).
+2. **Frequency**: How fast the wave oscillates per second, measured in Hertz (Hz). A 2.4 GHz Wi-Fi wave oscillates 2.4 billion times per second. You can encode a `1` as a fast wave, and a `0` as a slow wave (FM Radio works this way).
+3. **Phase**: The starting position of the wave. By suddenly shifting the wave backwards by 180 degrees, the receiver detects the "glitch" and translates it into binary data (PSK - Phase Shift Keying).
+
+<Callout icon="info" title="The Trade-off of Physics">
+  In RF engineering, you cannot cheat physics. **Low frequencies (like AM Radio at 1 MHz)** can travel for hundreds of miles and punch straight through concrete mountains, but they are incredibly slow, transferring almost zero data. **High frequencies (like 5G mmWave at 30 GHz)** can transfer multi-gigabit data instantly, but they cannot penetrate a single pane of glass and will drop if you put your hand over the phone.
+</Callout>
+
+</ConceptTemplate>

@@ -1,0 +1,24 @@
+---
+title: WebRTC (Real-Time Communication)
+description: A massive, complex open-source project and API that enables direct, peer-to-peer audio, video, and data streaming between browsers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="WebRTC (Real-Time Communication)">
+
+If you want to build a video conferencing app like Zoom or Google Meet entirely inside a web browser, HTTP and WebSockets are entirely the wrong tools. They route all traffic through a central backend server, which introduces massive latency and requires the company to pay thousands of dollars in bandwidth costs.
+
+To solve this, Google open-sourced **WebRTC**.
+
+## The Peer-to-Peer Architecture
+
+WebRTC allows Browser A (Alice) to connect *directly* to Browser B (Bob) over UDP, completely bypassing the backend server. The video stream flows directly from Alice's laptop to Bob's laptop.
+
+However, establishing a direct P2P connection over the modern internet is incredibly difficult because of **NATs and Firewalls**.
+
+### The Signaling & Traversal Process
+1. **Signaling Server**: Alice and Bob still need a central WebSocket server just to find each other (to exchange IP addresses and encryption keys). Once they shake hands, the central server steps away.
+2. **STUN Servers**: Because Alice's laptop is hidden behind her home Wi-Fi router (NAT), she doesn't know her own public IP. She pings a public STUN server, which replies: *"Your public IP is 198.51.100.4"*. She sends this IP to Bob.
+3. **TURN Servers**: In corporate environments, strict firewalls physically block P2P UDP traffic. If the direct connection fails, WebRTC silently falls back to a TURN server—a massive, expensive cloud relay that forcefully proxies the video traffic through standard HTTPS ports.
+
+</ConceptTemplate>

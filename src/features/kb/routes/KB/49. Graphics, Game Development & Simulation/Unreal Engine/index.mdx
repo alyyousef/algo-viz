@@ -1,0 +1,78 @@
+---
+title: Unreal Engine
+description: A powerful 3D creation tool by Epic Games.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Unreal Engine">
+
+Unreal Engine (UE) is a 3D computer graphics game engine developed by Epic Games. Initially designed for PC first-person shooters, it is now heavily used in AAA game development, film and television virtual production (like *The Mandalorian*), and architectural visualization.
+
+<Callout icon="warning" title="Steep Learning Curve">
+  Unreal Engine is incredibly powerful, offering photorealistic rendering (Nanite, Lumen) out of the box, but it is notoriously complex to learn compared to Unity or Godot. It utilizes C++ instead of C#, which requires manual memory management awareness.
+</Callout>
+
+## Blueprints vs C++
+
+Unreal offers two primary ways to script game logic:
+
+<ComparisonTable 
+  headers={['Method', 'Description', 'Pros / Cons']}
+  rows={[
+    ['Blueprints', 'A visual node-based scripting system.', 'Extremely fast iteration, designer-friendly. Can become visually messy ("spaghetti code").'],
+    ['C++', 'Standard C++ integrated with Unreal\'s macro system.', 'Maximum performance. Requires compilation times, harder to debug.']
+  ]}
+/>
+
+## Example: C++ Actor
+
+An `Actor` in Unreal is any object that can be placed in a level.
+
+```cpp
+#include "MyActor.h"
+
+AMyActor::AMyActor()
+{
+    // Set this actor to call Tick() every frame
+    PrimaryActorTick.bCanEverTick = true;
+}
+
+void AMyActor::BeginPlay()
+{
+    Super::BeginPlay();
+    UE_LOG(LogTemp, Warning, TEXT("Hello from Unreal C++!"));
+}
+
+void AMyActor::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    // Move the actor upwards every frame
+    FVector NewLocation = GetActorLocation();
+    NewLocation.Z += 100.0f * DeltaTime;
+    SetActorLocation(NewLocation);
+}
+```
+
+## Core Subsystems
+
+Unreal includes massive built-in frameworks that you would normally have to write yourself in other engines.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Game[Your Game]
+  
+  subgraph Unreal Engine Core
+    GAS[Gameplay Ability System\n(Spells, Buffs, Stats)]
+    Lumen[Lumen\n(Global Illumination)]
+    Nanite[Nanite\n(Virtual Geometry)]
+    Chaos[Chaos\n(Physics & Destruction)]
+  end
+  
+  Game --> GAS
+  Game --> Lumen
+  Game --> Nanite
+  Game --> Chaos
+`} />
+
+</TechnologyTemplate>

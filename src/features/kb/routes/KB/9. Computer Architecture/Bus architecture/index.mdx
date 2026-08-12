@@ -1,0 +1,30 @@
+---
+title: Bus Architecture
+description: The physical communication system (wires and protocols) that transfers data between components inside a computer.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Bus Architecture">
+
+A CPU is useless if it cannot talk to RAM, the hard drive, or the graphics card. In computer architecture, a **Bus** is simply a shared electrical communication pathway consisting of multiple parallel wires.
+
+<Callout icon="info" title="Why 'Bus'?">
+  The term comes from the Latin *omnibus* (meaning "for all"). Just like a city bus carries multiple passengers along a shared route, a computer bus carries data for multiple different hardware components along a shared set of electrical wires.
+</Callout>
+
+## The System Bus
+
+Historically, the CPU communicated with the rest of the motherboard via the **System Bus** (or Front-Side Bus). It consists of three distinct parallel sub-buses:
+
+1. **Address Bus**: Defines *where* the data is going. If the CPU wants to read from RAM, it places the 64-bit binary memory address on these wires. The width of this bus determines the maximum amount of RAM the CPU can address (e.g., a 32-bit address bus can only access 4GB of RAM).
+2. **Data Bus**: Carries the actual payload (the data being read or written). The width of this bus determines how much data can be transferred in a single clock cycle.
+3. **Control Bus**: Carries command signals (e.g., \`Memory Read\`, \`Memory Write\`, \`Interrupt\`) and timing signals from the clock.
+
+## Point-to-Point vs. Shared Buses
+
+For decades, buses were physically **shared**. The CPU, the RAM, and the PCI slots were all spliced into the exact same physical wires. Only one device could talk at a time, requiring a "Bus Arbiter" to manage traffic.
+
+Because shared buses suffered from massive electrical interference at high frequencies (limiting clock speeds), modern architectures moved to **Point-to-Point topologies**. 
+Today, PCIe (Peripheral Component Interconnect Express) and QPI (QuickPath Interconnect) use dedicated, high-speed serial links between components, completely eliminating the shared-wire bottlenecks of the 1990s.
+
+</ConceptTemplate>

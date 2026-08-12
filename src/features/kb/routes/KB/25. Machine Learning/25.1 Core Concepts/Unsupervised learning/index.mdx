@@ -1,0 +1,31 @@
+---
+title: Unsupervised Learning
+description: A machine learning paradigm where the model is trained on an unlabeled dataset.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Unsupervised Learning">
+
+Unsupervised learning is a type of machine learning that looks for previously undetected patterns in a data set with no pre-existing labels and with a minimum of human supervision.
+
+<Callout icon="tip" title="Finding Hidden Structure">
+  Unlike Supervised Learning, there are no "correct answers" provided. The algorithm's job is simply to group the data, find anomalies, or compress the data by discovering inherent structures within it.
+</Callout>
+
+## Common Use Cases
+
+<ComparisonTable 
+  headers={['Type', 'Description', 'Example']}
+  rows={[
+    ['Clustering', 'Grouping unlabeled data into subsets based on similarity.', 'Customer Segmentation (grouping shoppers by purchasing habits).'],
+    ['Anomaly Detection', 'Identifying rare items or events which raise suspicions by differing significantly from the majority of the data.', 'Credit Card Fraud Detection.'],
+    ['Dimensionality Reduction', 'Compressing data while retaining its core mathematical essence.', 'Principal Component Analysis (PCA).']
+  ]}
+/>
+
+## Common Algorithms
+- K-Means Clustering
+- Hierarchical Clustering
+- Autoencoders
+
+</TechnologyTemplate>

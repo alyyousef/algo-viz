@@ -1,5 +1,5 @@
-import { dsaRouteDefinitions } from '@/features/dsa/routeManifest'
-import { slugifySegment } from '@/features/dsa/utils/slug'
+import { kbRouteDefinitions } from '@/features/kb/routeManifest'
+import { slugifySegment } from '@/features/kb/utils/slug'
 
 export type ExplorerNodeKind = 'folder' | 'visualization'
 
@@ -114,7 +114,7 @@ const compareSegmentArrays = (a: string[], b: string[]): number => {
   return a.length - b.length
 }
 
-const segmentPaths = dsaRouteDefinitions
+const segmentPaths = kbRouteDefinitions
   .map(({ segments }) => segments)
   .filter((segments): segments is string[] => segments.length > 0)
   .sort(compareSegmentArrays)
@@ -185,7 +185,7 @@ sortedNonLeafPrefixes.forEach((prefix) => {
   folderCache.set(prefix, childFolder)
 })
 
-dsaRouteDefinitions.forEach(({ segments, path }) => {
+kbRouteDefinitions.forEach(({ segments, path }) => {
   if (segments.length === 0) {
     return
   }

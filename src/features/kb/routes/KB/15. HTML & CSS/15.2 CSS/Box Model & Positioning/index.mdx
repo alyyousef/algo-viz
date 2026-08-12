@@ -1,0 +1,31 @@
+---
+title: Box Model & Positioning
+description: The absolute core mathematical model of CSS layout, defining how every element calculates its physical size and placement on the screen.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Box Model & Positioning">
+
+Every single element on a web page, regardless of whether it's a circle or a triangle visually, is mathematically calculated by the browser as a rectangular **Box**.
+
+## The Box Model
+The physical size of an element is calculated by combining four layers:
+1. **Content**: The actual text or image (width/height).
+2. **Padding**: Transparent space *inside* the border, pushing the border away from the content.
+3. **Border**: The physical line surrounding the padding.
+4. **Margin**: Transparent space *outside* the border, pushing other elements away.
+
+<Callout icon="warning" title="The box-sizing Revolution">
+  Historically, if you set `width: 100px; padding: 20px; border: 5px;`, the browser would add them together, making the box 150px wide. This caused layouts to violently explode. 
+  Today, every modern website applies a global reset: `* { box-sizing: border-box; }`. This forces the browser to mathematically absorb the padding and border into the 100px width, guaranteeing the element never grows larger than 100px.
+</Callout>
+
+## Positioning
+The `position` property dictates how an element behaves within the document flow.
+- **static** (Default): The element flows naturally down the page.
+- **relative**: The element remains in the natural flow, but can be nudged using `top/left/right/bottom` relative to its original position.
+- **absolute**: The element is **completely violently ripped out of the normal document flow**. It hovers above the page and aligns itself mathematically to its nearest `relative` parent container.
+- **fixed**: Ripped out of the flow and anchored to the physical screen (the viewport). Even if the user scrolls down, a `fixed` header remains locked to the top of the glass.
+- **sticky**: Acts like `relative` until the user scrolls past it, at which point it instantly switches to `fixed` and locks to the top of the screen.
+
+</ConceptTemplate>

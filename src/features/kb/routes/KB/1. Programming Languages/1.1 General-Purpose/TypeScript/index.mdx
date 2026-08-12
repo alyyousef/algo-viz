@@ -1,0 +1,37 @@
+---
+title: TypeScript
+description: A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate 
+  title="TypeScript (TS)" 
+  category="Programming Languages" 
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
+>
+
+**TypeScript** is a language created by Microsoft in 2012 to solve the biggest problem with JavaScript: writing and maintaining massive applications in a dynamically typed language is a nightmare.
+
+TypeScript is a **strict syntactical superset** of JavaScript. This means any valid JS code is automatically valid TS code. TypeScript simply adds an advanced Static Type System on top of JS.
+
+<Callout icon="success" title="The Build-Step Eraser">
+  Browsers cannot execute TypeScript. Before running the code, the TS Compiler (`tsc`) strips away all the types and transpiles the code back down to pure, standard JavaScript. Therefore, TypeScript has **zero runtime overhead**. It exists purely to catch errors in your IDE before you even run the code.
+</Callout>
+
+## Why TypeScript?
+
+If you misspell a property in JavaScript (e.g., `user.emial`), the code will run, crash in production, and anger your customers.
+In TypeScript, you define an `interface User { email: string }`. If you type `user.emial`, the IDE immediately throws a red underline error, completely preventing the bug from reaching production.
+
+## Key Features
+
+1. **Interfaces and Types**: Define the strict shape of objects, API responses, and function parameters.
+2. **Generics**: Write reusable components that can safely work over a variety of types (e.g., `Array<T>`).
+3. **Union and Intersection Types**: Express complex logic (e.g., `type Status = "success" | "error" | "loading"`).
+4. **Gradual Adoption**: You can introduce TS into an existing JS codebase one file at a time.
+
+## Industry Adoption
+
+TypeScript has largely "won" the frontend ecosystem. It is the default language for Angular, is overwhelmingly preferred for React/Next.js projects, and is increasingly the standard for Node.js backends. 
+
+</TechnologyTemplate>

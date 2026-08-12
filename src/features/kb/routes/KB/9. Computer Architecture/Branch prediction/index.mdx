@@ -1,0 +1,41 @@
+---
+title: Branch Prediction
+description: The highly advanced, AI-like hardware mechanism CPUs use to guess the outcome of if/else statements before they are actually calculated.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Branch Prediction">
+
+Because pipelines are severely damaged by stalling at conditional branches (Control Hazards), modern CPUs rely entirely on **Branch Prediction** to guess which way an `if/else` statement will go. 
+
+Over the decades, Branch Predictors have evolved from simple heuristics to some of the most complex, neural-network-like structures in all of hardware engineering. A modern Intel or AMD processor boasts a branch prediction accuracy exceeding **95%**.
+
+<Callout icon="success" title="Why is it so accurate?">
+  Human code is highly predictable. If a program is running a `for(int i=0; i<1000; i++)` loop, the branch condition (`i<1000`) will evaluate to TRUE 999 times in a row, and FALSE only once. A good predictor recognizes this pattern almost instantly.
+</Callout>
+
+## Types of Branch Predictors
+
+### 1. Static Prediction (The Old Way)
+Early predictors didn't use history. They used hard-coded rules determined by the compiler:
+- **Always predict backward branches as TAKEN**: (Assuming it's a loop).
+- **Always predict forward branches as NOT TAKEN**: (Assuming it's an edge-case error check).
+This was fast and required no memory, but was relatively inaccurate.
+
+### 2. Dynamic Prediction: The 2-Bit Counter (Bimodal Predictor)
+The CPU allocates a small piece of SRAM called the Branch History Table (BHT). It stores a 2-bit state machine (00, 01, 10, 11) for recent branch instructions.
+- `11`: Strongly Taken
+- `10`: Weakly Taken
+- `01`: Weakly Not Taken
+- `00`: Strongly Not Taken
+
+If the branch is taken, the counter increments. If not, it decrements. The genius of the 2-bit counter is that a single anomaly (e.g., exiting a loop once) will only move the counter from `11` to `10`, meaning the next time this code runs, it will still correctly guess "Taken".
+
+### 3. Two-Level Adaptive Predictors
+Code is often correlated. For example, if `if (x > 0)` is true, and `if (y > 0)` is true, then `if (x + y > 0)` is guaranteed to be true. 
+Modern predictors use **Global History Registers** that track the outcome of the last *N* branches across the entire program. This history is hashed to index into the prediction table, allowing the CPU to recognize incredibly complex, intertwined logical patterns.
+
+### 4. Neural Branch Predictors (Perceptrons)
+Modern AMD Ryzen and Intel processors use hardware-implemented Neural Networks (Perceptrons) as their branch predictors. They use machine learning weights to analyze dozens of different historical factors simultaneously to produce a highly accurate prediction in a fraction of a nanosecond.
+
+</ConceptTemplate>

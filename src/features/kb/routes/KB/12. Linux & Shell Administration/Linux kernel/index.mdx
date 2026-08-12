@@ -1,0 +1,32 @@
+---
+title: Linux Kernel
+description: The core foundation of the Linux OS that directly manages hardware, memory, and CPU scheduling.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Linux Kernel">
+
+The **Linux Kernel** is the absolute core of the Linux operating system. It acts as the bridge between the physical hardware (CPU, RAM, Hard Drives) and the user-space applications (Web Browsers, Databases). 
+
+Without the kernel, your computer is just an inert block of silicon.
+
+## Monolithic Architecture
+
+Linux is a **Monolithic Kernel**. This means that almost all core OS services run in a single, massive, highly privileged memory space (Ring 0 / Kernel Space). 
+
+This includes:
+- **Device Drivers**: The code that tells the OS how to talk to a specific Nvidia graphics card or Realtek Wi-Fi chip.
+- **File Systems**: The logic for reading/writing to EXT4, NTFS, or FAT32 partitions.
+- **Network Stack**: The code that actually constructs TCP/IP packets.
+
+<Callout icon="warning" title="Monolithic Trade-offs">
+  Because everything runs in the same privileged space, Linux is incredibly fast; processes do not need to constantly cross boundaries to talk to the network card. However, a bug in a poorly written USB driver can theoretically crash the entire kernel, causing a system-wide "Kernel Panic".
+</Callout>
+
+## Interacting with the Kernel
+
+User-space applications cannot talk to the hardware directly. If a Node.js server wants to read a file, it must ask the Kernel to do it via a **System Call (syscall)** (e.g., `open()`, `read()`). 
+
+You can interact with kernel parameters at runtime using the `/proc` and `/sys` virtual filesystems, or by using the `sysctl` command.
+
+</ConceptTemplate>

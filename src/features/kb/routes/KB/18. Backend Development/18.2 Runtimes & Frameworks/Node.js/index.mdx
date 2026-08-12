@@ -1,0 +1,66 @@
+---
+title: Node.js
+description: An asynchronous event-driven JavaScript runtime.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Node.js">
+
+Node.js is an open-source, cross-platform, back-end JavaScript runtime environment that runs on the V8 engine and executes JavaScript code outside a web browser. Created by Ryan Dahl in 2009, it revolutionized web development by enabling developers to use JavaScript to write command line tools and for server-side scripting.
+
+<Callout icon="info" title="The Single-Threaded Myth">
+  While Node.js JavaScript execution is single-threaded (using an event loop), the underlying C++ libraries (libuv) maintain a thread pool to handle heavy I/O tasks like file reading or network requests asynchronously.
+</Callout>
+
+## The Event Loop Architecture
+
+The core of Node.js's non-blocking I/O model is the **Event Loop**. Instead of spinning up a new thread for every request (like traditional Apache servers), Node.js operates on a single thread, delegating heavy operations to the OS.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Request[Incoming HTTP Request]
+  
+  subgraph Node.js Process
+    V8[V8 Engine / Call Stack]
+    EventLoop[Event Loop]
+    Worker[Worker Threads / libuv]
+  end
+  
+  OS[(Operating System Kernel)]
+  
+  Request --> V8
+  V8 -- Async Task (e.g. fs.readFile) --> EventLoop
+  EventLoop -- Offload --> Worker
+  Worker -- OS Call --> OS
+  OS -- Interrupt / Done --> Worker
+  Worker -- Callback to Queue --> EventLoop
+  EventLoop -- Push to Stack --> V8
+`} />
+
+## Non-Blocking I/O Example
+
+Traditional servers block execution while reading a file. Node.js executes the request, hands the file read to the OS, and moves on to serve the next user instantly.
+
+```javascript
+const fs = require('fs');
+
+console.log('1. Starting file read...');
+
+// This is NON-BLOCKING. The callback fires when the OS finishes reading.
+fs.readFile('massive-file.txt', 'utf8', (err, data) => {
+    if (err) throw err;
+    console.log('3. File read complete!');
+});
+
+console.log('2. Continuing to do other work...');
+
+// Output Order: 1, 2, 3
+```
+
+## Common Use Cases
+- **REST APIs & GraphQL Servers** (Express, NestJS, Fastify)
+- **Real-time Chat Applications** (Socket.io)
+- **Streaming Servers** (Netflix uses Node.js heavily for UI serving)
+- **CLI Tools** (Webpack, Vite, npm)
+
+</TechnologyTemplate>

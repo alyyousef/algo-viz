@@ -1,0 +1,32 @@
+---
+title: curl
+description: The ubiquitous command-line tool and library for transferring data over network protocols, primarily HTTP/HTTPS.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="curl">
+
+**`curl`** (Client URL) is the Swiss Army knife of networking. It allows you to make HTTP requests, download files, and interact with REST APIs directly from your terminal. It is installed by default on almost every operating system on Earth, including Windows 10+.
+
+## Basic HTTP Requests
+
+By default, `curl` executes a standard HTTP GET request and prints the raw response body to the terminal screen.
+`curl https://api.github.com/users/torvalds`
+
+<Callout icon="info" title="Viewing Headers">
+  If an API is failing and you need to debug the HTTP headers, use the `-i` flag (include headers) or the `-v` flag (verbose mode, which shows exactly what `curl` is sending and receiving byte-by-byte).
+</Callout>
+
+## Advanced API Interaction
+
+`curl` can perfectly simulate a complex frontend JavaScript `fetch()` call.
+
+- **Send a POST request (`-X`)** with a JSON body (`-d`) and specific headers (`-H`):
+```bash
+curl -X POST https://api.example.com/login      -H "Content-Type: application/json"      -d '{"username": "admin", "password": "123"}'
+```
+
+## Downloading Files
+While `wget` is usually preferred for downloading files, you can use `curl -O` to tell curl to save the remote file to your hard drive using its original file name instead of printing the binary gibberish to the screen.
+
+</ConceptTemplate>

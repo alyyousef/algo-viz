@@ -1,0 +1,37 @@
+---
+title: Salting
+description: The practice of adding random data to an input before hashing it to defend against pre-computed attacks.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Salting">
+
+In cryptography, a **salt** is random data that is used as an additional input to a one-way function that hashes data, a password, or a passphrase. Salting is an absolute, non-negotiable requirement for securely storing passwords in modern databases.
+
+<Callout icon="error" title="The Problem: Rainbow Tables">
+  Because hash functions are deterministic, the password "password123" will ALWAYS generate the exact same hash (e.g., `5e884898...`). Hackers know this. Instead of cracking hashes on the fly, hackers generate **Rainbow Tables**: massive terabyte-sized databases where they pre-computed the hashes for every single dictionary word and common password combination. When they steal a database, they just look up the hash in their table and instantly get the password.
+</Callout>
+
+## How Salting Fixes the Problem
+
+A salt is a cryptographically secure random string (e.g., `8f4b2R9x`) generated uniquely for *every single user* at the exact moment they create their account.
+
+Instead of hashing just the password:
+`Hash( "password123" ) = 5e884898...`
+
+The system appends the salt to the password and hashes the combined string:
+`Hash( "password123" + "8f4b2R9x" ) = 9a2F4b7C...`
+
+### Defeating Rainbow Tables
+Even if a hacker's Rainbow Table contains the hash for "password123", it does not contain the hash for "password1238f4b2R9x", because that specific random salt has never existed in the universe before. The pre-computed table is entirely useless. The hacker is forced to start from scratch and brute-force the hash one guess at a time.
+
+### Defeating Identical Hashes
+If two users both choose the terrible password "password123", without salting, the database will show two identical hashes. An attacker immediately knows they have the same password. With salting, because the salt is uniquely generated per user, identical passwords will result in completely different hashes in the database.
+
+## Do Salts Need to be Secret?
+
+**No.** Salts are not encryption keys; they are not secrets. The salt's only job is to ensure uniqueness, not secrecy. 
+
+The salt is stored in plain text right next to the hash in the database. When the user logs in, the system retrieves their specific salt from the database, attaches it to the password attempt, and runs the hashing algorithm to see if it matches. (Modern algorithms like *bcrypt* automate this entirely by storing the salt directly inside the final hash string).
+
+</TechnologyTemplate>

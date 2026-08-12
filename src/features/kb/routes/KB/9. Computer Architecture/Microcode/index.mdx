@@ -1,0 +1,32 @@
+---
+title: Microcode
+description: The hidden layer of firmware embedded directly inside the CPU that translates complex machine instructions into physical hardware signals.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Microcode">
+
+We are taught that Machine Code (1s and 0s) is the lowest level of software, directly executed by the hardware. In modern CPUs (specifically x86), this is a lie. 
+
+There is a secret, sub-layer of programming hidden entirely inside the CPU called **Microcode**.
+
+<Callout icon="warning" title="The x86 Nightmare">
+  Intel's x86 architecture is a CISC (Complex Instruction Set) nightmare. It contains highly complex instructions like "Copy an entire block of RAM while decrypting it." Wiring a physical hardware logic gate circuit to do this in a single clock cycle is physically impossible. 
+</Callout>
+
+## The Translator
+
+To solve the complexity of CISC instructions, modern x86 processors are actually simple, incredibly fast **RISC** processors hidden under a mask. 
+
+When the CPU fetches a complex x86 machine instruction from RAM, it doesn't execute it. Instead, it sends it to the **Microcode ROM**. This is a tiny ROM chip inside the CPU containing thousands of tiny, proprietary "Micro-operations" (uOps).
+The complex x86 instruction is translated into a sequence of 4 or 5 incredibly simple uOps (e.g., Load, Load, Add, Store). These tiny uOps are what actually get sent down the CPU pipeline to the ALUs.
+
+## The Microcode Update
+
+Because Microcode is effectively software that controls the hardware, **it can be updated**. 
+If Intel discovers a fatal hardware flaw in a CPU *after* it has been manufactured and sold (like the Meltdown/Spectre vulnerabilities or a math bug in the ALU), they cannot physically mail a new chip to everyone on earth.
+
+Instead, they release a **Microcode Update** through a Windows Update or a BIOS flash. 
+When the computer boots, the OS injects the new Microcode into a special volatile SRAM patch-table inside the CPU. The CPU is reprogrammed on the fly to avoid using the broken physical silicon pathways, fixing the hardware bug entirely via a secret software update.
+
+</ConceptTemplate>

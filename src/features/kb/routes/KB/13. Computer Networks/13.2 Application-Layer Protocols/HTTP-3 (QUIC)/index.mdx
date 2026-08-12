@@ -1,0 +1,28 @@
+---
+title: HTTP/3 (QUIC)
+description: The radical 2022 overhaul of HTTP that completely abandons TCP in favor of a highly optimized, encrypted UDP architecture.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="HTTP/3 (QUIC)">
+
+HTTP/2 was incredible, but it revealed a new bottleneck: **TCP itself**.
+While HTTP/2 solved Head-of-Line blocking at the Application Layer (Layer 7), if a single TCP packet was dropped by a router, the TCP protocol (Layer 4) would blindly freeze the entire connection to wait for a retransmission, accidentally recreating Head-of-Line blocking.
+
+To fix this, Google decided to completely abandon TCP. 
+They built **QUIC**, which became the foundation of **HTTP/3**.
+
+## The Shift to UDP
+
+HTTP/3 runs entirely on **UDP**. 
+Because UDP is connectionless and has no error checking, HTTP/3 simply builds all of the reliability, sequence tracking, and retransmission logic directly into the Application Layer software.
+
+### The Benefits of QUIC:
+1. **0-RTT Handshakes**: TCP + TLS requires multiple back-and-forth round trips just to establish a secure connection before data can flow. QUIC caches cryptographic keys, allowing returning visitors to send encrypted HTTP data on the very first packet (Zero Round Trip Time).
+2. **Connection Migration**: If you are watching a YouTube video on Wi-Fi, and you leave your house, your phone switches to 5G. Your IP address changes. In TCP, the connection instantly dies and the video buffers. In QUIC, connections are tracked by a cryptographic ID, not an IP address. The video continues playing flawlessly while switching networks.
+
+<Callout icon="warning" title="Firewall Headaches">
+  Because UDP was historically only used for DNS and gaming, thousands of enterprise firewalls aggressively block or throttle heavy UDP traffic. System administrators had to radically reconfigure their firewall rules to allow UDP Port 443 so HTTP/3 traffic could pass through without being dropped.
+</Callout>
+
+</ConceptTemplate>

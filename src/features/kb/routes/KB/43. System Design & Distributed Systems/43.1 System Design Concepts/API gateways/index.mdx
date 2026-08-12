@@ -1,0 +1,59 @@
+---
+title: API Gateways
+description: The single entry point for all clients into a microservices architecture.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="API Gateways">
+
+An API Gateway sits between clients and services. It acts as a reverse proxy, routing requests from clients to services. It may also perform various cross-cutting tasks such as authentication, SSL termination, and rate limiting.
+
+<Callout icon="tip" title="Decoupling">
+  By using an API Gateway, the client doesn't need to know the IP address or hostnames of 50 different microservices. It just talks to one endpoint (e.g., `api.example.com`), and the Gateway handles the internal routing.
+</Callout>
+
+## Core Responsibilities
+
+An API Gateway does much more than simple routing.
+
+<ComparisonTable 
+  headers={['Feature', 'Description']}
+  rows={[
+    ['Routing', 'Mapping `/users` to the User Service and `/orders` to the Order Service.'],
+    ['Authentication / Authorization', 'Validating JWTs before the request even reaches the internal service.'],
+    ['Rate Limiting', 'Preventing DDoS attacks or API abuse by throttling requests per IP/User.'],
+    ['Request Aggregation', 'Hitting 3 different microservices and returning a single, unified JSON response to the client.']
+  ]}
+/>
+
+## API Gateway vs Load Balancer
+
+While they sound similar, they solve different problems.
+
+- **Load Balancers** are dumb pipes. They don't care *what* the request is, they just want to distribute it evenly to prevent servers from crashing.
+- **API Gateways** are smart. They understand the business logic of the request (e.g., "Is this user allowed to access the /admin endpoint?").
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  Mobile[Mobile App]
+  Web[Web App]
+  
+  Gateway{API Gateway\n(Kong / AWS API Gateway)}
+  
+  subgraph Internal Microservices
+    Auth[Auth Service]
+    User[User Service]
+    Order[Order Service]
+  end
+  
+  Mobile --> Gateway
+  Web --> Gateway
+  
+  Gateway -- /auth --> Auth
+  Gateway -- /users --> User
+  Gateway -- /orders --> Order
+`} />
+
+</TechnologyTemplate>

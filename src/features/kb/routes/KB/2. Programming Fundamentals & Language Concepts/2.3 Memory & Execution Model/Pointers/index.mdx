@@ -1,0 +1,42 @@
+---
+title: Pointers
+description: A programming language object that stores the memory address of another value located in computer memory.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Pointers">
+
+In computer science, a pointer is an object in many programming languages that stores a memory address. This can be that of another value located in computer memory, or in some cases, that of memory-mapped computer hardware.
+
+<Callout icon="error" title="Null Pointer Exception">
+  Invented by Tony Hoare in 1965, the Null Pointer is famously called his "Billion Dollar Mistake". Trying to read data from a pointer that points to 'null' (memory address 0) will instantly crash the program.
+</Callout>
+
+## Value vs Reference
+
+<ComparisonTable 
+  headers={['Concept', 'Description']}
+  rows={[
+    ['Pass by Value', 'The function receives a complete, independent copy of the data. Modifying it does not affect the original data.'],
+    ['Pass by Reference', 'The function receives a Pointer (a memory address). Modifying the data modifies the original, exact data in memory. Highly efficient for massive arrays (no copying needed).']
+  ]}
+/>
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph LR
+  subgraph CPU Registers
+    Ptr[Pointer Variable: 0x2A3F]
+  end
+  
+  subgraph RAM Memory
+    Addr1[0x2A3E: 10]
+    Addr2[0x2A3F: 42 (The actual data)]
+    Addr3[0x2A40: 99]
+  end
+  
+  Ptr --> Addr2
+`} />
+
+</TechnologyTemplate>

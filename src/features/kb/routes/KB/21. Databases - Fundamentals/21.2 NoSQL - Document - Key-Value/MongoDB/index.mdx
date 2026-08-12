@@ -1,0 +1,76 @@
+---
+title: MongoDB
+description: A document-oriented NoSQL database program.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="MongoDB">
+
+MongoDB is a source-available cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas.
+
+<Callout icon="warning" title="When to use (and when not to)">
+  MongoDB is excellent for rapidly evolving schemas, content management, and storing polymorphic data. However, if your data is highly relational (requiring many JOINs across many tables) or requires complex multi-document ACID transactions, a traditional RDBMS like PostgreSQL is usually a better choice.
+</Callout>
+
+## The Document Paradigm
+
+Instead of tables and rows, MongoDB uses **Collections** and **Documents**. Documents use a binary JSON format called **BSON** (Binary JSON), which allows for native storage of rich data types like Dates, Geo-coordinates, and nested arrays.
+
+<ComparisonTable 
+  headers={['RDBMS (SQL)', 'MongoDB']}
+  rows={[
+    ['Database', 'Database'],
+    ['Table', 'Collection'],
+    ['Row', 'Document'],
+    ['Column', 'Field'],
+    ['JOIN', '$lookup (Aggregation)']
+  ]}
+/>
+
+## Example Document Structure
+
+In MongoDB, related data is often embedded directly into a single document to improve read performance, rather than being normalized across multiple tables.
+
+```json
+{
+  "_id": ObjectId("507f191e810c19729de860ea"),
+  "username": "alice_wonder",
+  "email": "alice@example.com",
+  "tags": ["developer", "gaming", "ai"],
+  "address": {
+    "street": "123 Main St",
+    "city": "San Francisco",
+    "zip": "94105"
+  }
+}
+```
+
+## Architecture & Sharding
+
+MongoDB is designed to scale horizontally across multiple servers through a process called **Sharding**.
+
+<ArchitectureDiagram chart={`
+graph TD
+  App[Application / Driver]
+  Router(mongos Router)
+  
+  subgraph Shard 1
+    P1[(Primary)]
+    S1A[(Secondary)]
+    S1B[(Secondary)]
+  end
+  
+  subgraph Shard 2
+    P2[(Primary)]
+    S2A[(Secondary)]
+  end
+  
+  App --> Router
+  Router -- Hash(A-M) --> P1
+  Router -- Hash(N-Z) --> P2
+  
+  P1 -. Replication .-> S1A
+  P1 -. Replication .-> S1B
+`} />
+
+</TechnologyTemplate>

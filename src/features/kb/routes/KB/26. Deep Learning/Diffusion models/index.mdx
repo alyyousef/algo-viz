@@ -1,0 +1,45 @@
+---
+title: Diffusion Models
+description: Generative models that learn to create data by reversing a gradual noise-addition process.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Diffusion Models">
+
+Diffusion Models are a class of state-of-the-art generative deep learning models. They are the architecture behind modern, hyper-realistic AI image generators like Midjourney, DALL-E 3, and Stable Diffusion.
+
+<Callout icon="info" title="Thermodynamics Inspiration">
+  The concept is inspired by non-equilibrium thermodynamics. Imagine a drop of ink in a glass of water. Over time, it diffuses until the water is a uniform color (entropy). A diffusion model learns to run this physical process in reverse—turning a uniform cloud of noise back into a structured "drop of ink" (a coherent image).
+</Callout>
+
+## The Diffusion Process
+
+Diffusion models operate in two distinct phases:
+
+### 1. The Forward Process (Adding Noise)
+During training, the model takes a clear image and systematically adds Gaussian noise to it over a series of steps (e.g., 1000 steps). By the end of the process, the image is completely destroyed and looks like pure static (isotropic Gaussian noise). This process is fixed and requires no training.
+
+### 2. The Reverse Process (Denoising)
+The neural network (typically a U-Net architecture) is trained to reverse this process. It is given a slightly noisy image and trained to predict the *noise* that was added in the previous step so it can be subtracted out.
+
+<ComparisonTable 
+  headers={['Model Type', 'How it generates data']}
+  rows={[
+    ['GANs', 'A single, immediate mapping from a noise vector to a complete image.'],
+    ['Diffusion Models', 'An iterative, step-by-step process of refining pure noise into a coherent image over dozens of steps.']
+  ]}
+/>
+
+## Why Diffusion over GANs?
+
+While GANs were the king of image generation for years, they suffered from "mode collapse" (only generating a few types of images) and were notoriously difficult and unstable to train. 
+
+Diffusion models, while computationally much slower during generation (because they have to run the neural network dozens of times iteratively), offer far greater stability during training and produce much higher diversity and quality in their outputs.
+
+## Latent Diffusion Models (LDMs)
+
+Operating directly on pixel space (a 1024x1024 image has over 3 million values) is extremely computationally expensive. 
+
+**Stable Diffusion** solved this by introducing Latent Diffusion Models. Instead of adding noise to the actual pixels, an Autoencoder compresses the image into a smaller "latent space" (e.g., 64x64). The diffusion process (adding and removing noise) happens entirely in this compressed space, making it fast enough to run on consumer GPUs. The final latent representation is then decoded back into a full-size image.
+
+</TechnologyTemplate>

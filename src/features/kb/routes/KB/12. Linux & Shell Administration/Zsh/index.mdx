@@ -1,0 +1,28 @@
+---
+title: Zsh (Z Shell)
+description: A highly advanced, wildly customizable shell that acts as a modern replacement for Bash, featuring powerful auto-completion.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Zsh (Z Shell)">
+
+**Zsh (Z Shell)** is an extended shell that takes everything good about Bash and heavily supercharges it for interactive desktop use. 
+
+While Bash is the king of headless servers, Zsh has become the undisputed king of developer laptops. In 2019, Apple officially abandoned Bash and made Zsh the default shell for all new macOS installations.
+
+## Killer Features
+
+Zsh is massively popular due to three main features that Bash lacks out of the box:
+
+1. **Advanced Auto-Completion**: In Bash, pressing TAB completes file names. In Zsh, pressing TAB can complete Git branches, `npm` scripts, and complex Docker arguments, complete with a navigable, interactive menu.
+2. **Path Expansion**: You don't have to type `cd /usr/local/bin`. You can just type `cd /u/l/b`, hit TAB, and Zsh will instantly expand it.
+3. **Spelling Correction**: If you accidentally type `git statsu`, Zsh will automatically intercept the command and ask: *“zsh: correct 'statsu' to 'status' [nyae]?”*
+
+<Callout icon="success" title="Oh My Zsh">
+  The primary reason Zsh became so popular is **Oh My Zsh**, a massive open-source, community-driven framework for managing Zsh configurations. It provides hundreds of beautiful, heavily customized terminal themes and pre-configured plugins (like coloring command outputs) that take seconds to install.
+</Callout>
+
+## Configuration
+Like Bash uses `~/.bashrc`, Zsh uses **`~/.zshrc`** for user-specific configuration. Zsh is highly backward-compatible; almost any script written for Bash will run perfectly in Zsh.
+
+</ConceptTemplate>

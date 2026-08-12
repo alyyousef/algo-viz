@@ -1,0 +1,34 @@
+---
+title: IPv6
+description: The next-generation Layer 3 protocol designed to permanently solve IP exhaustion using massive 128-bit hexadecimal addresses.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="IPv6">
+
+Because the world ran out of IPv4 addresses, the IETF developed **Internet Protocol version 6 (IPv6)**.
+
+IPv6 does not use 32 bits. It uses **128 bits**. 
+This increases the total number of IP addresses from 4 Billion to **340 Undecillion** (340 followed by 36 zeros). This is enough to assign a unique, publicly routable IP address to every single atom on the surface of the Earth.
+
+## IPv6 Addressing Format
+
+Because 128 bits is massive, IPv6 Abandons dotted-decimal and uses Hexadecimal separated by colons.
+Example: **`2001:0db8:85a3:0000:0000:8a2e:0370:7334`**
+
+### Compression Rules
+To make typing easier, IPv6 allows you to compress the address:
+1. **Drop Leading Zeros**: `0db8` becomes `db8`.
+2. **Double Colon (::)**: If you have consecutive blocks of all zeros, you can replace them entirely with a double colon (but you can only use `::` once per address).
+**Compressed**: `2001:db8:85a3::8a2e:370:7334`
+
+## Key Differences from IPv4
+
+- **No More NAT**: Because IP addresses are infinite, Network Address Translation (NAT) is completely unnecessary. Every smartphone and smart fridge gets a direct, globally routable Public IP. (Firewalls simply block incoming traffic to protect them).
+- **No More Broadcasts**: IPv4 relied heavily on network-crushing Broadcasts (ARP). IPv6 completely abolishes Broadcasts, replacing them entirely with hyper-efficient Multicast groups (NDP - Neighbor Discovery Protocol).
+
+<Callout icon="success" title="The Dual-Stack Reality">
+  Transitioning the entire planet to IPv6 overnight is impossible. Today, we live in a "Dual-Stack" world. Your smartphone and laptop are assigned both an IPv4 address and an IPv6 address simultaneously. When you visit Google, your device attempts to connect via IPv6 first; if it fails, it silently falls back to IPv4.
+</Callout>
+
+</ConceptTemplate>

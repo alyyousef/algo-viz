@@ -1,0 +1,67 @@
+---
+title: MySQL
+description: The world's most popular open-source relational database management system.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="MySQL">
+
+MySQL is an open-source relational database management system (RDBMS) backed by Oracle. For over two decades, it has been the default database for web applications, forming the "M" in the ubiquitous LAMP stack (Linux, Apache, MySQL, PHP).
+
+<Callout icon="tip" title="InnoDB Storage Engine">
+  MySQL supports pluggable storage engines, but **InnoDB** is the default and most important one. It provides ACID-compliant transaction features, row-level locking, and foreign key constraints.
+</Callout>
+
+## MySQL vs PostgreSQL
+
+The two titans of open-source relational databases are often compared.
+
+<ComparisonTable 
+  headers={['Feature', 'MySQL', 'PostgreSQL']}
+  rows={[
+    ['Focus', 'Speed, reliability, and ease of use (especially for read-heavy web apps).', 'Strict standards compliance, advanced data types, and data integrity.'],
+    ['JSON Support', 'Basic JSON functions.', 'Incredible JSONB support, indexable JSON.'],
+    ['Extensibility', 'Limited.', 'Highly extensible (custom types, functions, PostGIS).']
+  ]}
+/>
+
+## Example: Creating a Table
+
+MySQL uses standard SQL syntax but has specific types like `AUTO_INCREMENT` for primary keys.
+
+```sql
+CREATE TABLE employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    hire_date DATE DEFAULT CURRENT_DATE,
+    department_id INT,
+    
+    -- Foreign key constraint
+    FOREIGN KEY (department_id) REFERENCES departments(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB;
+```
+
+## Architecture: Replication
+
+MySQL is incredibly famous for its Master-Slave (Primary-Replica) replication architecture to scale out read operations.
+
+<ArchitectureDiagram chart={`
+graph TD
+  App[Web Application]
+  
+  Primary[(Primary DB\nReads & Writes)]
+  Replica1[(Read Replica 1)]
+  Replica2[(Read Replica 2)]
+  
+  App -- Write (INSERT/UPDATE) --> Primary
+  App -. Read (SELECT) .-> Replica1
+  App -. Read (SELECT) .-> Replica2
+  
+  Primary -- Async Binlog Sync --> Replica1
+  Primary -- Async Binlog Sync --> Replica2
+`} />
+
+</TechnologyTemplate>

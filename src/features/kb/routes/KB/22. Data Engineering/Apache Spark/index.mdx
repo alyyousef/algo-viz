@@ -1,0 +1,73 @@
+---
+title: Apache Spark
+description: A unified analytics engine for large-scale data processing.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Apache Spark">
+
+Apache Spark is an open-source, distributed processing system used for big data workloads. It utilizes in-memory caching and optimized query execution for fast analytic queries against data of any size. It is the modern successor to Hadoop MapReduce.
+
+<Callout icon="tip" title="In-Memory Processing">
+  Spark is famously up to 100x faster than Hadoop MapReduce because it processes data in RAM (Random Access Memory) rather than writing intermediate results back to physical hard drives between every step.
+</Callout>
+
+## Core APIs
+
+<ComparisonTable 
+  headers={['API', 'Description', 'Use Case']}
+  rows={[
+    ['RDD (Resilient Distributed Dataset)', 'The fundamental, low-level data structure of Spark. A fault-tolerant collection of elements partitioned across the cluster.', 'Legacy code, or when you need extreme low-level control.'],
+    ['DataFrames & Datasets', 'Higher-level APIs organized into named columns (like a table). Powered by the Catalyst Optimizer.', '99% of modern Spark workloads. Data manipulation and SQL queries.'],
+    ['Spark Streaming', 'Micro-batch processing for real-time data streams.', 'Processing Kafka streams in near real-time.']
+  ]}
+/>
+
+## Example: PySpark
+
+Spark can be written in Scala, Java, SQL, or Python (PySpark). PySpark is incredibly popular among Data Scientists.
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+# Initialize Spark Session
+spark = SparkSession.builder.appName("SalesAnalysis").getOrCreate()
+
+# Load a massive 500GB CSV file from an S3 bucket
+df = spark.read.csv("s3://bucket/sales_data.csv", header=True, inferSchema=True)
+
+# Perform distributed transformation and aggregation
+high_value_sales = df.filter(col("amount") > 1000) \
+                     .groupBy("region") \
+                     .sum("amount")
+
+# Trigger the action and write the result back to disk
+high_value_sales.write.parquet("s3://bucket/high_value_sales.parquet")
+```
+
+## Architecture
+
+Spark utilizes a Master-Worker architecture. 
+
+<ArchitectureDiagram chart={`
+graph TD
+  Driver[Driver Program\n(SparkContext)]
+  ClusterManager{Cluster Manager\n(YARN / Kubernetes)}
+  
+  subgraph Worker Nodes
+    Worker1[Worker Node 1\n(Executors + Tasks)]
+    Worker2[Worker Node 2\n(Executors + Tasks)]
+    Worker3[Worker Node 3\n(Executors + Tasks)]
+  end
+  
+  Driver -- Requests Resources --> ClusterManager
+  ClusterManager -- Allocates --> Worker1
+  ClusterManager -- Allocates --> Worker2
+  ClusterManager -- Allocates --> Worker3
+  
+  Driver -. Sends Code & Tasks .-> Worker1
+  Driver -. Sends Code & Tasks .-> Worker2
+`} />
+
+</TechnologyTemplate>

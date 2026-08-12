@@ -1,0 +1,38 @@
+---
+title: Graphics Processing Units (GPUs)
+description: Highly specialized, massively parallel processors designed to handle thousands of simultaneous mathematical operations.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Graphics Processing Units (GPUs)">
+
+The **Central Processing Unit (CPU)** is a generalist. It is designed to execute complex, branching logic (\`if/else\`, loops, memory management) incredibly fast. A high-end CPU might have 16 or 24 massive cores.
+
+The **Graphics Processing Unit (GPU)** is a specialist. It is designed to do one extremely simple math problem, but do it 10,000 times simultaneously. A high-end GPU might have **16,000 tiny cores**.
+
+<Callout icon="info" title="The Ferrari vs. The Bus">
+  A CPU is a Ferrari. It can move 2 passengers (data) at 200 mph. It is perfect for complex, sequential tasks.
+  A GPU is a fleet of 50 city buses. They only move at 40 mph, but they can transport 3,000 passengers at once. It is perfect for massive, parallel tasks.
+</Callout>
+
+## The Origin: Rendering Graphics
+
+Rendering a 3D video game running at 4K resolution (3840 $\times$ 2160 pixels) at 60 frames per second is a staggering mathematical challenge. Every single frame, the computer must calculate the light reflection, shadow, and color of **8.2 million pixels**. 
+
+Doing this sequentially on a 16-core CPU is impossible; the CPU would choke. However, calculating the color of Pixel A has absolutely nothing to do with Pixel B. The math is completely independent. 
+GPUs were designed as massively parallel architectures (SIMD - Single Instruction, Multiple Data) to crunch the lighting algebra for thousands of pixels at the exact same microsecond.
+
+## The AI Revolution (GPGPU)
+
+In the late 2000s, scientists realized that the massively parallel math used for rendering 3D graphics (matrix multiplication) was the exact same math required for training Artificial Neural Networks.
+
+Nvidia released **CUDA**, a software layer that allowed programmers to write C++ code and execute it directly on the GPU for non-graphical tasks. This birthed General Purpose GPU (GPGPU) computing.
+
+Almost every major breakthrough in Artificial Intelligence (including the training of Large Language Models like ChatGPT) is strictly the result of stringing thousands of Nvidia GPUs together in massive server farms. A CPU would take decades to train a modern AI; a cluster of GPUs can do it in weeks.
+
+## CPU vs GPU Architecture
+
+- **Cores**: CPUs have few, highly complex cores with massive L3 caches and advanced Branch Prediction to handle unpredictable \`if/else\` logic. GPUs have thousands of very simple, "dumb" cores that all execute the exact same instruction simultaneously on different pieces of data.
+- **Memory (VRAM)**: GPUs require so much data so quickly that standard motherboard RAM is too slow. GPUs feature their own dedicated, ultra-high-bandwidth memory (GDDR or HBM) physically wired directly next to the GPU die, capable of moving terabytes of data per second.
+
+</ConceptTemplate>

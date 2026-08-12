@@ -1,0 +1,44 @@
+---
+title: Procedural Programming
+description: A programming paradigm derived from imperative programming, based on the concept of the procedure call.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Procedural Programming">
+
+**Procedural Programming** is a specific, structured type of Imperative Programming. As early programs grew in size, writing thousands of lines of sequential code (often relying on dangerous `GOTO` statements) resulted in unmaintainable "spaghetti code."
+
+The Procedural paradigm solved this by introducing the concept of the **Procedure** (also known as routines, subroutines, or functions). It dictates that a program should be broken down into a series of smaller, reusable computational steps.
+
+<Callout icon="info" title="The Foundation of Software Engineering">
+  Procedural programming was the first major step toward modern software architecture. It introduced the idea of **Modularity** and **Scoping**—allowing variables to live locally inside a function rather than existing in a massive, global state.
+</Callout>
+
+## Core Concepts
+
+1. **Functions/Procedures**: Blocks of code that take inputs (arguments), perform a specific sequence of operations, and return an output.
+2. **Modularity**: Complex problems are decomposed into a hierarchy of smaller, manageable functions. (e.g., `main()` calls `read_file()`, which calls `parse_data()`).
+3. **Data and Logic Separation**: In procedural code, data structures (like structs or records) and the functions that operate on them are kept completely separate. (This is the primary difference from Object-Oriented Programming).
+
+## C: The Procedural King
+
+The **C** programming language is the ultimate example of procedural programming. 
+
+```c
+// The Data
+struct Rectangle {
+    int width;
+    int height;
+};
+
+// The Procedure (Logic is separate from Data)
+int calculateArea(struct Rectangle rect) {
+    return rect.width * rect.height;
+}
+```
+
+## Evolution into OOP
+
+Procedural programming works incredibly well for algorithms and system-level code (like the Linux Kernel). However, in massive business applications (like building a GUI or an RPG game), keeping hundreds of global variables and thousands of disconnected functions synchronized became chaotic. This limitation led directly to the creation of **Object-Oriented Programming**.
+
+</ConceptTemplate>

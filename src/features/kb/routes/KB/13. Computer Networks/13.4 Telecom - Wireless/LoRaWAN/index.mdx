@@ -1,0 +1,28 @@
+---
+title: LoRaWAN (Long Range Wide Area Network)
+description: A revolutionary LPWAN technology capable of transmitting data across entire cities while running on a single watch battery for 10 years.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="LoRaWAN (Long Range Wide Area Network)">
+
+Wi-Fi reaches 100 feet. Cellular reaches miles, but drains a smartphone battery in 12 hours. 
+If you are a farmer who needs to put a soil-moisture sensor in a field 10 miles away, and you want that sensor to run on a AA battery for 10 years, you cannot use Wi-Fi or Cellular.
+
+You use **LoRaWAN**.
+
+## The Physics of Chirp Spread Spectrum
+
+LoRa (Long Range) operates in the sub-gigahertz frequencies (e.g., 915 MHz in the US). 
+It uses a proprietary military-derived modulation technique called **Chirp Spread Spectrum (CSS)**. 
+
+Instead of sending distinct binary pulses, it encodes data by smoothly sweeping the frequency up or down (a "Chirp", much like a dolphin). Because the receiver knows exactly what mathematical curve to look for, it can successfully detect a LoRa transmission even if the signal is *weaker than the ambient background radiation (noise floor)*.
+
+## The Massive Trade-Off
+
+LoRa achieves impossible range (up to 10 miles in rural areas) with microscopic battery drain. 
+But physics demands a sacrifice: **Bandwidth**.
+
+LoRaWAN is incredibly, painfully slow. A device might only be able to send **11 bytes of data** at a time, and due to fair-use airtime laws, it might only be legally allowed to transmit data once every 15 minutes. It is strictly for telemetry (like sending a temperature reading of `72F`), not for streaming audio or video.
+
+</ConceptTemplate>

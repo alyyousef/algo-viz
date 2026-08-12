@@ -1,0 +1,38 @@
+---
+title: Public Key Infrastructure (PKI)
+description: The framework of roles, policies, hardware, and software needed to manage digital certificates and public-key encryption.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Public Key Infrastructure (PKI)">
+
+Public Key Infrastructure (PKI) is the complex ecosystem of hardware, software, policies, and procedures needed to create, manage, distribute, and revoke digital certificates. It is the foundational trust system that makes HTTPS and secure internet commerce possible.
+
+<Callout icon="warning" title="The Problem PKI Solves">
+  Asymmetric cryptography is great: Alice sends her Public Key to Bob so he can encrypt messages for her. But how does Bob know the Public Key actually belongs to Alice? A hacker (Mallory) could intercept the connection, hand Bob her own Public Key, and say, "Hi, I'm Alice, use this key." Bob would unknowingly encrypt data for the hacker. PKI solves this **authentication problem**.
+</Callout>
+
+## The Certificate Authority (CA)
+
+At the heart of PKI is the **Certificate Authority (CA)**. A CA is a highly trusted, third-party organization (like DigiCert, Let's Encrypt, or GlobalSign) whose sole job is to verify identities and vouch for them.
+
+Instead of Alice just sending a raw Public Key, she asks a CA to bind her identity to her Public Key.
+
+1. Alice generates a key pair and sends her Public Key and her company ID to the CA.
+2. The CA performs strict background checks (verifying she owns the domain name, checking corporate registry documents, etc.).
+3. Once verified, the CA takes Alice's Public Key, wraps it in a document with her identity, and **Digitally Signs** the document using the CA's own highly-guarded Private Key.
+4. This signed document is a **Digital Certificate**.
+
+## The Chain of Trust
+
+When Bob visits Alice's website, Alice hands Bob her Certificate. How does Bob know the CA's signature is real?
+
+Every operating system (Windows, macOS) and web browser (Chrome, Firefox) comes pre-installed with a "Trust Store." This is a secure list containing the Public Keys of the top ~100 Certificate Authorities in the world (known as **Root CAs**). 
+
+Bob's browser looks at Alice's certificate, sees it was signed by "DigiCert", pulls DigiCert's Public Key from its pre-installed Trust Store, and mathematically verifies the digital signature. Because the OS inherently trusts the Root CA, and the Root CA vouched for Alice, Bob's browser now mathematically trusts Alice.
+
+## Revocation
+
+If Alice's server is hacked and her Private Key is stolen, her certificate is compromised. PKI handles this via revocation. Alice notifies the CA, and the CA adds the certificate's serial number to a **Certificate Revocation List (CRL)** or updates their **OCSP** (Online Certificate Status Protocol) responder. When Bob's browser checks the certificate, it queries the CA, sees it is revoked, and immediately drops the connection.
+
+</TechnologyTemplate>

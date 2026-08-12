@@ -1,0 +1,32 @@
+---
+title: Deadlock Detection
+description: The algorithms operating systems use to realize that a group of threads are permanently stuck waiting for each other.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Deadlock Detection">
+
+A **Deadlock** is a catastrophic synchronization failure where two or more threads are permanently frozen because they are waiting on resources held by each other. 
+
+Imagine Thread 1 holds Lock A, and is waiting for Lock B. Thread 2 holds Lock B, and is waiting for Lock A. Neither can proceed. They will wait for eternity. 
+
+Because preventing deadlocks is computationally expensive, many systems (specifically Database Management Systems like PostgreSQL) allow deadlocks to happen naturally, but use **Deadlock Detection** to find and destroy them after the fact.
+
+<Callout icon="info" title="The Resource Allocation Graph">
+  The OS builds a directed graph. 
+  - Circles represent Threads.
+  - Squares represent Locks/Resources.
+  - An arrow from a Thread to a Lock means "I am waiting for this".
+  - An arrow from a Lock to a Thread means "This thread owns me".
+  
+  If the OS detects a **Cycle** (a closed loop) in this graph, a deadlock has definitively occurred.
+</Callout>
+
+## How to Recover
+
+Once the OS detects a deadlock cycle, it must break it. It cannot politely ask a thread to let go of a lock. It must use brute force.
+
+1. **Process Termination**: The OS brutally murders (terminates) one of the threads involved in the deadlock loop. This instantly releases the locks it was holding, allowing the other threads to proceed. The murdered thread loses all its progress.
+2. **Resource Preemption (Rollback)**: Used extensively in Databases. The Database forcefully aborts the SQL transaction of one of the deadlocked queries, rolls back any changes it made to the tables, releases its locks, and silently restarts the query from the beginning a few milliseconds later. 
+
+</ConceptTemplate>

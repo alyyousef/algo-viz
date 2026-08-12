@@ -1,0 +1,49 @@
+---
+title: Animations, Transitions & Transforms
+description: The high-performance CSS APIs utilized to smoothly animate elements using hardware-accelerated GPU processing.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Animations, Transitions & Transforms">
+
+Historically, animating a dropdown menu or a loading spinner required heavy Javascript loops (`setInterval`). This was catastrophically bad for performance because it blocked the main CPU thread.
+
+CSS introduced native Animation APIs that offload the complex math directly to the GPU, guaranteeing a buttery-smooth 60 Frames Per Second (FPS).
+
+## The Big Three
+
+### 1. Transforms
+The `transform` property allows you to mathematically manipulate the visual rendering of an element without disrupting the DOM layout.
+- `transform: translateX(50px)` (Moves it right)
+- `transform: scale(1.5)` (Makes it larger)
+- `transform: rotate(45deg)` (Spins it)
+
+*Crucial rule: Translating an element is 100x faster than animating its `margin-left`, because translating happens on the GPU and does not trigger a browser Layout Reflow.*
+
+### 2. Transitions
+A Transition tells the browser to automatically interpolate the frames between State A and State B when an interaction occurs.
+```css
+.btn {
+  background-color: blue;
+  transition: background-color 0.3s ease-in-out;
+}
+.btn:hover {
+  background-color: red;
+}
+```
+When hovered, the browser automatically generates all the purple frames in between over 300 milliseconds.
+
+### 3. Keyframe Animations
+While Transitions require a user interaction (like a hover), Keyframes allow you to define complex, multi-step, infinitely looping animations.
+```css
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+```
+
+</ConceptTemplate>

@@ -1,0 +1,41 @@
+---
+title: RISC-V Architecture
+description: The open-source, royalty-free Instruction Set Architecture that threatens to disrupt the x86 and ARM duopolies.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="RISC-V Architecture">
+
+For decades, if a hardware startup or university wanted to build a custom CPU, they faced a massive legal wall. 
+If they wanted to use **x86**, it was legally impossible (locked down by Intel and AMD). 
+If they wanted to use **ARM**, they had to pay millions of dollars in licensing fees and sign strict NDAs before they could even look at the architecture.
+
+In 2010, researchers at UC Berkeley decided to fix this by creating **RISC-V** (pronounced "Risk-Five"), a completely open-source, royalty-free Instruction Set Architecture.
+
+<Callout icon="success" title="The Linux of Hardware">
+  Just as Linux commoditized the operating system (allowing anyone to run servers for free without paying Microsoft), RISC-V threatens to commoditize CPU hardware. Any student, startup, or nation-state can download the RISC-V specification and physically manufacture a CPU without paying a single cent to anyone.
+</Callout>
+
+## The Modular Design
+
+The genius of RISC-V is its strict modularity. The base specification (RV32I) is incredibly tiny, containing fewer than 50 basic integer instructions. This allows students to build a functioning processor on an FPGA in a single semester.
+
+If a company wants to build a smartwatch, they use the base integer set. If a company wants to build a supercomputer, they take the base set and snap on standardized "Extensions":
+- **M**: Integer Multiplication and Division
+- **A**: Atomic Instructions (for multi-core locking)
+- **F**: Single-Precision Floating-Point math
+- **V**: Vector Operations (for AI and graphics)
+
+This prevents the "instruction bloat" seen in x86, where every single CPU is forced to carry 40 years of legacy instructions.
+
+## Geopolitical Implications
+
+CPU architectures are heavily tied to national security. Because x86 (Intel/AMD) and ARM (UK-based, heavily US-influenced) are controlled by Western corporations, countries facing US technology sanctions (like China or Russia) are cut off from licensing modern CPU architectures.
+
+RISC-V is governed by an independent foundation in Switzerland, completely immune to US export controls. Because of this, billions of dollars are currently being poured into RISC-V research by Chinese tech giants (Alibaba, Huawei) to achieve complete silicon independence.
+
+## The Future
+
+While x86 dominates PCs and ARM dominates smartphones, RISC-V is rapidly taking over the **Embedded/IoT market** (smartwatches, hard drive controllers, microwaves). Western companies like Western Digital and Nvidia are actively replacing internal ARM management chips with RISC-V to save hundreds of millions in licensing fees.
+
+</ConceptTemplate>

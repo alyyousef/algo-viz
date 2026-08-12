@@ -1,0 +1,28 @@
+---
+title: Browser Rendering Engines
+description: The core mathematical C++ engines responsible for parsing HTML/CSS, calculating layouts, and painting pixels to the screen.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Browser Rendering Engines">
+
+When a server replies with an HTTP payload containing raw HTML text, your monitor cannot display text. It can only display colored pixels.
+The **Rendering Engine** is the massive C++ program responsible for converting that text into pixels.
+
+## The Big Three
+- **Blink**: Developed by Google. Powers Chrome, Edge, Brave, Opera, and Vivaldi. (Blink is a fork of WebKit).
+- **WebKit**: Developed by Apple. Powers Safari. (Note: Apple legally forces *all* browsers on iOS, including Chrome for iOS, to use WebKit under the hood).
+- **Gecko**: Developed by Mozilla. Powers Firefox.
+
+## The Critical Rendering Path
+
+To paint pixels, the engine must execute the **Critical Rendering Path**:
+
+1. **Parse HTML**: Converts the raw HTML string into the DOM Tree.
+2. **Parse CSS**: Converts the raw CSS string into the CSSOM Tree.
+3. **Render Tree**: Combines the DOM and CSSOM into a unified Render Tree, stripping out non-visible elements (like `<head>` or `display: none`).
+4. **Layout (Reflow)**: Calculates the exact X/Y coordinates and width/height in pixels for every single box on the screen. (This is highly CPU intensive).
+5. **Paint**: Fills the pixels with colors, shadows, and text.
+6. **Composite**: If elements overlap (using `z-index` or animations), the engine sends the layers to the GPU to be composited together at 60 frames per second.
+
+</ConceptTemplate>

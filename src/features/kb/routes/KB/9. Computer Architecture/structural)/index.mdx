@@ -1,0 +1,39 @@
+---
+title: Structural Hazards
+description: Bottlenecks in a pipelined CPU caused when two different instructions require the exact same physical hardware component at the exact same time.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Structural Hazards">
+
+The third and final type of pipeline hazard is the **Structural Hazard**. Unlike Data Hazards (waiting for a variable) or Control Hazards (waiting for an `if` condition), a Structural Hazard is purely a physical limitation of the silicon.
+
+A Structural Hazard occurs when two different instructions moving through the pipeline attempt to use the **exact same physical piece of hardware** during the exact same clock cycle.
+
+<Callout icon="info" title="The Single Cash Register">
+  Imagine a fast-food restaurant with a pipeline: Order -> Cook -> Pay. 
+  If the person taking orders is *also* the only person allowed to run the cash register, a Structural Hazard occurs. They cannot take a new order and ring up a paying customer at the exact same time. One person must wait.
+</Callout>
+
+## Classic Examples of Structural Hazards
+
+### 1. The Single Memory Bus
+In a classic Von Neumann architecture, the CPU only has one connection (bus) to the main memory. 
+- Instruction 1 is in Stage 4 (Memory Access), attempting to read a variable from RAM.
+- Instruction 4 is in Stage 1 (Instruction Fetch), attempting to fetch its own code from RAM.
+Because there is only one physical wire, they collide. 
+
+**The Fix:** Modern CPUs use a **Modified Harvard Architecture** for their L1 Cache, splitting it into a dedicated Instruction Cache (L1i) and a Data Cache (L1d). This physical duplication completely eliminates this specific structural hazard.
+
+### 2. The Single ALU
+If a CPU only has one Arithmetic Logic Unit, but the pipeline requires one instruction to do integer math while another instruction simultaneously needs the ALU to calculate a memory address offset, a collision occurs.
+
+**The Fix:** Modern **Superscalar** CPUs physically duplicate execution units. A modern Intel core doesn't have one ALU; it might have four ALUs, two dedicated Floating Point Units, and two Address Generation Units, ensuring multiple instructions always have the physical hardware available to execute simultaneously.
+
+## When Duplication Fails
+
+Duplicating hardware (adding more ALUs or memory ports) costs massive amounts of silicon area, increases heat, and consumes more power. Hardware engineers cannot duplicate everything infinitely. 
+
+When a structural hazard cannot be physically designed away, the CPU's only option is to **Stall** (inject a pipeline bubble). The newer instruction is frozen in place for one clock cycle while the older instruction finishes using the contested hardware.
+
+</ConceptTemplate>

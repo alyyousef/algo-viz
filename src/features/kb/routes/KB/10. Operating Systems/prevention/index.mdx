@@ -1,0 +1,28 @@
+---
+title: Deadlock Prevention
+description: Designing a system with strict, unbreakable rules that mathematically eliminate the possibility of a deadlock ever occurring.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Deadlock Prevention">
+
+While *Deadlock Detection* allows deadlocks to happen and fixes them later, **Deadlock Prevention** aims to design the system so that a deadlock is mathematically impossible to construct in the first place.
+
+In 1971, Edward Coffman proved that a Deadlock can **only** occur if four specific conditions are met simultaneously (The Coffman Conditions). If an OS architect can design a system that breaks just *one* of these four rules, deadlocks are permanently eradicated.
+
+<Callout icon="success" title="The Four Coffman Conditions">
+  1. **Mutual Exclusion**: Resources cannot be shared (e.g., a Mutex).
+  2. **Hold and Wait**: A thread can hold onto Lock A while waiting in line for Lock B.
+  3. **No Preemption**: The OS cannot violently steal a lock away from a thread.
+  4. **Circular Wait**: A closed loop of threads waiting on each other exists.
+</Callout>
+
+## Breaking the Rules
+
+To prevent deadlocks, engineers write code that violates at least one condition:
+
+- **Breaking "Hold and Wait"**: Require threads to request *all* the locks they will ever need at the very beginning of the program. If they can't get all of them instantly, they get none of them. (Very inefficient for resource usage).
+- **Breaking "No Preemption"**: Allow the OS to forcefully strip locks away from threads if they wait too long. (Extremely dangerous, as it can cause data corruption if the thread was mid-write).
+- **Breaking "Circular Wait" (The Best Strategy)**: Assign a strict numerical ID to every lock in the system (Lock 1, Lock 2, Lock 3). Enforce a rule that threads are **only allowed to request locks in ascending order**. If a thread holds Lock 2, the compiler physically prevents it from requesting Lock 1. This mathematically eliminates the possibility of a loop forming.
+
+</ConceptTemplate>

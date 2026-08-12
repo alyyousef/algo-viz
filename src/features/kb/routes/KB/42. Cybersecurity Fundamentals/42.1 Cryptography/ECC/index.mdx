@@ -1,0 +1,43 @@
+---
+title: Elliptic-Curve Cryptography (ECC)
+description: An approach to public-key cryptography based on the algebraic structure of elliptic curves.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Elliptic-Curve Cryptography (ECC)">
+
+Elliptic-Curve Cryptography (ECC) is a modern approach to public-key (asymmetric) cryptography. It provides the exact same level of security as older systems like RSA, but it uses vastly smaller key sizes, resulting in significantly faster computations and lower memory usage.
+
+<Callout icon="success" title="The Replacement for RSA">
+  For decades, the internet relied on RSA for secure connections. However, as computers got faster, RSA key sizes had to double and quadruple to remain secure (from 512-bit up to 4096-bit). This mathematical overhead became too slow for mobile devices and high-traffic web servers. ECC solved this performance crisis and is now the gold standard for modern TLS/HTTPS.
+</Callout>
+
+## The Mathematics of Curves
+
+While RSA relies on the difficulty of factoring massive prime numbers, ECC relies on the **Elliptic Curve Discrete Logarithm Problem (ECDLP)**.
+
+An elliptic curve is a specific type of mathematical graph, looking somewhat like a sideways bell curve. ECC relies on a strange geometric property of these curves:
+1. You pick a starting point on the curve.
+2. You draw a line through it, intersecting the curve at a new point, and reflect it across the axis.
+3. You repeat this "dot and reflect" process $n$ times (where $n$ is your Private Key).
+4. The final resting point on the graph is your Public Key.
+
+**The Trapdoor:** If you know the starting point, the curve equation, and $n$, calculating the final point is incredibly fast. However, if a hacker only knows the starting point and the final point, it is computationally impossible to figure out how many times ($n$) you bounced around the curve to get there.
+
+## Key Size Comparison
+
+The math behind ECC is much harder to break than the factoring problem behind RSA. Therefore, an ECC key can be exponentially smaller while providing the exact same cryptographic strength.
+
+<ComparisonTable 
+  headers={['Security Level (Symmetric Equivalent)', 'RSA Key Size', 'ECC Key Size', 'Size Ratio']}
+  rows={[
+    ['80-bit (Legacy)', '1024-bit', '160-bit', '~ 1:6'],
+    ['112-bit (Standard)', '2048-bit', '224-bit', '~ 1:9'],
+    ['128-bit (Highly Secure)', '3072-bit', '256-bit', '~ 1:12'],
+    ['256-bit (Top Secret / Military)', '15360-bit (Unusable)', '512-bit', '~ 1:30']
+  ]}
+/>
+
+A 256-bit ECC key (often using the `secp256r1` curve) is the modern standard for securing websites, generating Bitcoin wallets, and signing secure messages on mobile devices.
+
+</TechnologyTemplate>

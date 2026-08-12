@@ -1,0 +1,32 @@
+---
+title: journalctl
+description: The incredibly powerful command-line tool used to query the centralized binary logs managed by systemd's journald.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="journalctl">
+
+Historically, Linux services dumped their logs into plain text files scattered across `/var/log`. You had to use `grep` and `awk` to manually piece together what happened when a server crashed.
+
+When `systemd` took over Linux, it introduced **systemd-journald**, a background daemon that intercepts all logs from the Kernel, the Bootloader, and every single service, storing them in a centralized, highly indexed, **binary** format.
+
+You cannot read binary logs with `cat`. You must use the **`journalctl`** command.
+
+## Querying the Journal
+
+Because the logs are indexed, `journalctl` allows you to perform hyper-specific database-like queries instantly:
+
+- **View logs for a specific service**: 
+  `journalctl -u nginx.service`
+- **View logs since the last reboot**: 
+  `journalctl -b`
+- **View logs within a specific timeframe**: 
+  `journalctl --since "2024-10-18 08:00:00" --until "1 hour ago"`
+- **Follow logs in real-time (like tail -f)**: 
+  `journalctl -u sshd.service -f`
+
+<Callout icon="success" title="Structured Metadata">
+  Because the journal intercepts the logs directly from the execution environment, it automatically attaches massive amounts of hidden metadata to every log line. You can query logs by the exact PID (`_PID=1234`), the exact user UID, or even the specific executable path, making debugging drastically easier than parsing plain text syslog files.
+</Callout>
+
+</ConceptTemplate>

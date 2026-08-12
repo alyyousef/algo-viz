@@ -1,0 +1,65 @@
+---
+title: End-to-End (E2E) Testing
+description: Testing the entire application from start to finish, exactly as a real user would experience it.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="End-to-End (E2E) Testing">
+
+End-to-end (E2E) testing is a methodology used to test whether the flow of an application is performing as designed from start to finish. The purpose of carrying out end-to-end tests is to identify system dependencies and to ensure that the right information is passed between various system components and systems.
+
+<Callout icon="error" title="The Top of the Pyramid">
+  E2E tests sit at the very top of the Testing Pyramid. Because they launch real browsers, click real buttons, and hit real backend servers, they are incredibly slow, expensive to maintain, and highly prone to flakiness. You should only write E2E tests for the most critical user journeys (e.g., the Checkout Flow).
+</Callout>
+
+## Popular Frameworks
+
+<ComparisonTable 
+  headers={['Framework', 'Description']}
+  rows={[
+    ['Cypress', 'A wildly popular JavaScript-based E2E framework that runs directly inside the browser, offering excellent debugging and time-travel capabilities.'],
+    ['Playwright', 'Built by Microsoft, supports multiple languages (JS, Python, Java) and natively supports parallel execution across Chromium, WebKit, and Firefox.'],
+    ['Selenium', 'The ancient, heavy-duty industry standard. Uses WebDriver to control browsers. Highly robust but slower and harder to set up than modern alternatives.']
+  ]}
+/>
+
+## How It Works
+
+An E2E test doesn't know about your code. It doesn't call functions. It simply opens a browser, finds elements on the screen, and interacts with them.
+
+```javascript
+// Playwright Example
+test('User can log in', async ({ page }) => {
+  await page.goto('https://myapp.com/login');
+  
+  // Interact exactly like a user
+  await page.fill('#email', 'user@example.com');
+  await page.fill('#password', 'secret123');
+  await page.click('button[type="submit"]');
+  
+  // Assert the UI updated
+  await expect(page.locator('.welcome-message')).toHaveText('Welcome, User!');
+});
+```
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph TD
+  E2E[E2E Test Runner\n(Playwright/Cypress)]
+  
+  Browser[Headless Browser\n(Chrome)]
+  
+  Frontend[React / Vue Frontend]
+  Backend[Node.js / Go Backend]
+  DB[(Production-like DB)]
+  ThirdParty[Stripe API]
+  
+  E2E -- Controls --> Browser
+  Browser -- Clicks/Types --> Frontend
+  Frontend -- HTTP / REST --> Backend
+  Backend <--> DB
+  Backend <--> ThirdParty
+`} />
+
+</TechnologyTemplate>

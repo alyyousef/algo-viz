@@ -1,0 +1,36 @@
+---
+title: UFW (Uncomplicated Firewall)
+description: The default, heavily simplified firewall configuration tool used in Ubuntu to manage underlying iptables/nftables rules.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="UFW (Uncomplicated Firewall)">
+
+Configuring raw `iptables` rules is a miserable experience. If you make a typo, you can instantly lock yourself out of your cloud server, forcing you to destroy the instance and start over.
+
+To solve this, Canonical (the makers of Ubuntu) created **UFW (Uncomplicated Firewall)**. 
+It is a frontend abstraction. You type simple English commands, and UFW writes the complex `iptables` syntax in the background.
+
+## Basic Usage
+
+By default, UFW is usually installed but disabled. 
+
+1. **Set Default Policies**:
+   `sudo ufw default deny incoming`
+   `sudo ufw default allow outgoing`
+2. **Allow SSH (CRITICAL before enabling)**:
+   `sudo ufw allow 22/tcp`
+3. **Allow Web Traffic**:
+   `sudo ufw allow 80/tcp`
+   `sudo ufw allow 443/tcp`
+4. **Enable the Firewall**:
+   `sudo ufw enable`
+
+<Callout icon="warning" title="The SSH Lockout Danger">
+  The single most common mistake junior admins make is running `ufw enable` *before* they explicitly run `ufw allow 22`. Because the default policy denies all incoming traffic, the second they hit Enter, their SSH tunnel is instantly severed, and they can never get back into the server.
+</Callout>
+
+## Viewing Status
+Running `sudo ufw status numbered` provides a perfectly clean, readable list of all active firewall rules, with index numbers allowing you to easily delete specific rules (e.g., `sudo ufw delete 3`).
+
+</ConceptTemplate>

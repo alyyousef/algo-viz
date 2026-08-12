@@ -1,0 +1,51 @@
+---
+title: B+ Trees
+description: A crucial variation of the B-Tree where all values are stored in the leaf nodes, forming the backbone of modern relational databases.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="B+ Trees">
+
+A **B+ Tree** is an advanced variation of a B-Tree. It is the absolute standard data structure used by almost all relational databases (like MySQL, PostgreSQL, and SQL Server) to store and index tables.
+
+<Callout icon="success" title="The Key Difference">
+  In a standard B-Tree, both keys and actual data records can be stored in *any* node (internal or leaf). 
+  In a **B+ Tree**, internal nodes ONLY store keys for routing. The actual data records are ONLY stored in the leaf nodes. Furthermore, the leaf nodes are linked together in a doubly-linked list.
+</Callout>
+
+## Why is it better for databases?
+
+### 1. Higher Fanout (Shallower Tree)
+Because internal nodes don't waste space storing actual data records, they can store vastly more routing keys per block. This means a B+ Tree has a much higher "fanout" (branching factor) than a B-Tree. 
+A B+ Tree with millions of records might only be 3 or 4 levels deep, meaning finding any record requires a maximum of 4 disk reads.
+
+### 2. Fast Range Queries
+Databases frequently need to execute range queries (e.g., `SELECT * FROM Users WHERE Age > 20 AND Age < 30`). 
+In a standard B-Tree, finding all these users requires constantly traversing up and down the tree branches. 
+In a B+ Tree, you simply traverse down to find the first user (Age 21), and because the leaves form a linked list, you just sequentially read across the leaf nodes until you hit Age 30. It is incredibly fast.
+
+<ArchitectureDiagram chart={`
+graph TD
+  Root[Internal Node: Keys Only] --> Child1[Internal Node: Keys Only]
+  Root --> Child2[Internal Node: Keys Only]
+  Child1 --> Leaf1[Leaf: Data Records]
+  Child1 --> Leaf2[Leaf: Data Records]
+  Child2 --> Leaf3[Leaf: Data Records]
+  Child2 --> Leaf4[Leaf: Data Records]
+  Leaf1 <--> Leaf2
+  Leaf2 <--> Leaf3
+  Leaf3 <--> Leaf4
+`} />
+
+## Time Complexity
+
+<ComparisonTable 
+  headers={['Operation', 'Time Complexity', 'Explanation']}
+  rows={[
+    ['Search (Exact Match)', '$O(\log n)$', 'Traverse down the tree to the specific leaf node.'],
+    ['Search (Range)', '$O(\log n + k)$', 'Traverse to the start of the range, then sequential read $k$ elements via the linked list.'],
+    ['Insert/Delete', '$O(\log n)$', 'Leaf node splitting or merging might cascade up to the root, but the depth is logarithmic.']
+  ]}
+/>
+
+</ConceptTemplate>

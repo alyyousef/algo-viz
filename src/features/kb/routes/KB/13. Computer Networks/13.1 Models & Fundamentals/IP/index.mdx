@@ -1,0 +1,47 @@
+---
+title: Internet Protocol (IP)
+description: The principal communications protocol for relaying datagrams across network boundaries, establishing the Internet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Internet Protocol (IP)">
+
+The Internet Protocol (IP) is the foundational routing protocol of the entire Internet. Operating at the Network Layer (Layer 3) of the OSI model, IP is responsible for addressing hosts and routing packets from a source network to a destination network.
+
+<Callout icon="info" title="The Postal Service of the Internet">
+  If TCP is the certified mail process that guarantees delivery, IP is the actual postal service network. It puts the sender's address and the receiver's address on the envelope (packet) and figures out which roads (routers) to take to get the envelope to the right city.
+</Callout>
+
+## The Role of IP
+
+IP has two primary responsibilities:
+
+1. **Addressing**: Every device connected to an IP network must have a unique IP address. This acts as the logical identifier for the device.
+2. **Routing**: When a packet is sent to an IP address outside of the local network, routers inspect the destination IP address in the packet header and use routing tables to forward the packet closer to its final destination.
+
+## Connectionless and Unreliable
+
+Crucially, the Internet Protocol itself is **connectionless** and provides **"best-effort"** delivery. 
+- It does not establish a connection before sending.
+- It does not guarantee that the packet will arrive.
+- It does not guarantee that packets will arrive in the correct order.
+
+Reliability is strictly the responsibility of the upper-layer protocol (like TCP). If you use UDP over IP, the entire transmission is completely unreliable.
+
+## The IP Packet Header
+
+When data from the Transport layer (TCP/UDP) comes down to the Network layer, IP encapsulates it by adding an IP Header. This header contains vital routing information.
+
+Key fields in an IPv4 header include:
+- **Source IP Address**: The sender's logical address.
+- **Destination IP Address**: The receiver's logical address.
+- **Time to Live (TTL)**: A counter that decrements by 1 every time the packet passes through a router. If TTL hits 0, the packet is destroyed. This prevents packets from looping infinitely if there is a routing error.
+- **Protocol**: Indicates what layer 4 protocol is inside the payload (e.g., 6 for TCP, 17 for UDP).
+
+## Versions: IPv4 vs IPv6
+
+The Internet currently operates on two versions of IP simultaneously:
+- **IPv4**: The original standard. Uses 32-bit addresses (e.g., `192.168.1.1`). It mathematically ran out of unique addresses years ago, but is kept alive via NAT (Network Address Translation).
+- **IPv6**: The modern replacement. Uses 128-bit addresses (e.g., `2001:0db8:85a3:0000:0000:8a2e:0370:7334`), providing enough unique addresses for every atom on the surface of the earth.
+
+</TechnologyTemplate>

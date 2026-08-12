@@ -1,0 +1,37 @@
+---
+title: Dijkstra's Algorithm
+description: An algorithm for finding the shortest paths between nodes in a graph.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Dijkstra's Algorithm">
+
+Dijkstra's algorithm is an algorithm for finding the shortest paths between nodes in a graph, which may represent, for example, road networks. It was conceived by computer scientist Edsger W. Dijkstra in 1956 and published three years later.
+
+<Callout icon="error" title="No Negative Weights">
+  Dijkstra's algorithm strictly cannot handle graphs with negative edge weights. Once a node is marked as "visited", its shortest path is considered final. A negative weight could provide a shorter path later, breaking this greedy assumption. (Use Bellman-Ford for negative weights).
+</Callout>
+
+## How it Works
+
+1. Mark all nodes unvisited. Create a set of all the unvisited nodes.
+2. Assign to every node a tentative distance value: set it to zero for our initial node and to infinity for all other nodes.
+3. For the current node, consider all of its unvisited neighbors and calculate their tentative distances through the current node.
+4. When we are done considering all of the unvisited neighbors of the current node, mark the current node as visited. A visited node will never be checked again.
+5. If the destination node has been marked visited, then stop.
+
+## Architecture
+
+<ArchitectureDiagram chart={`
+graph LR
+  A((A)) -- 4 --> B((B))
+  A -- 2 --> C((C))
+  B -- 5 --> C
+  B -- 10 --> D((D))
+  C -- 3 --> D
+  
+  style A fill:#bfb,stroke:#333,stroke-width:2px
+  style C fill:#ff9,stroke:#333,stroke-width:2px
+`} />
+
+</TechnologyTemplate>

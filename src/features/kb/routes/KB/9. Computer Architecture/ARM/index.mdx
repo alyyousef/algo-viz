@@ -1,0 +1,31 @@
+---
+title: ARM Architecture
+description: The dominant RISC architecture powering all smartphones, IoT devices, and increasingly, modern high-performance laptops and cloud servers.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="ARM Architecture">
+
+While x86 dominates the desktop, **ARM (Advanced RISC Machines)** is the most widely manufactured CPU architecture in human history. 
+
+Rooted in the **RISC** (Reduced Instruction Set Computer) philosophy, ARM was designed from day one to execute simple instructions efficiently. Because it lacks the massive, complex decoding hardware required by x86, ARM processors require significantly fewer transistors. This results in chips that draw a fraction of the electricity and produce minimal heat, making them the undisputed kings of battery-powered devices.
+
+<Callout icon="info" title="A Business Model, Not a Chip Maker">
+  Unlike Intel or AMD, the company ARM Holdings does not manufacture physical silicon chips. Instead, they design the architecture (the blueprints) and **license** the Intellectual Property (IP) to other companies. Apple, Qualcomm, Samsung, and Amazon pay ARM a fee to use the instruction set, and then manufacture their own highly customized physical chips.
+</Callout>
+
+## Why ARM Conquered the World
+
+1. **Power Efficiency**: An Intel x86 chip running at full load might draw 100 to 200 Watts of power, requiring massive fans to prevent melting. A high-end ARM chip in an iPad draws 5 to 15 Watts, requiring no fan at all while delivering incredible performance.
+2. **Customization**: Because companies license the architecture, they can build custom **SoCs (System on a Chip)**. Apple doesn't just build a CPU; they glue the ARM CPU, their custom GPU, an AI Neural Engine, and the RAM all onto a single piece of silicon to maximize speed.
+3. **The big.LITTLE Architecture**: ARM pioneered the concept of putting two completely different types of cores on the same chip. An 8-core smartphone chip will have 4 "Performance Cores" (fast, battery-draining) and 4 "Efficiency Cores" (slow, battery-sipping). The OS dynamically shifts background tasks to the efficiency cores to maximize battery life.
+
+## The ARM Invasion of Desktop and Server
+
+For 20 years, the tech industry believed ARM was only for low-power mobile phones, while x86 was required for "real" high-performance computing. 
+
+**Apple Silicon (M1/M2/M3)** shattered this myth in 2020. By transitioning MacBooks from Intel x86 to custom ARM chips, Apple proved that a properly designed, heavily cached ARM processor could completely destroy x86 processors in raw speed while preserving 18+ hours of battery life.
+
+Simultaneously, **AWS (Amazon)** introduced their custom ARM-based Graviton server chips, offering cloud customers the same compute performance as Intel servers but at a 40% lower electricity/cooling cost, sparking a massive shift in backend infrastructure toward ARM.
+
+</ConceptTemplate>

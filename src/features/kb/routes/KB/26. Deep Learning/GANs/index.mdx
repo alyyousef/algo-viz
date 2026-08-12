@@ -1,0 +1,55 @@
+---
+title: Generative Adversarial Networks (GANs)
+description: A framework where two neural networks contest with each other in a zero-sum game to generate new data.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate title="Generative Adversarial Networks (GANs)">
+
+Generative Adversarial Networks (GANs) are a class of machine learning frameworks designed by Ian Goodfellow and his colleagues in 2014. GANs are a method of generative modeling using deep learning methods, where two neural networks are trained simultaneously in an adversarial setting.
+
+<Callout icon="info" title="The Counterfeiter and the Police">
+  The standard analogy for a GAN is a game of cat and mouse between a counterfeiter (the Generator) trying to produce fake currency, and the police (the Discriminator) trying to detect the fakes. As the game goes on, both get better at their jobs until the fakes are indistinguishable from real currency.
+</Callout>
+
+## The Two Networks
+
+A GAN consists of two entirely separate neural networks that compete against each other:
+
+1. **The Generator ($G$)**: Its goal is to generate fake data (e.g., images) that look as realistic as possible. It takes random noise as input and outputs a synthetic data sample.
+2. **The Discriminator ($D$)**: Its goal is to differentiate between real data (from the training set) and fake data (created by the Generator). It acts as a binary classifier.
+
+## The Training Process
+
+Training a GAN is a minimax game. 
+
+- The Discriminator wants to maximize its accuracy in distinguishing real from fake.
+- The Generator wants to minimize the Discriminator's accuracy (or maximize its mistake rate).
+
+<ArchitectureDiagram chart={`
+graph LR
+  Noise[Random Noise] --> Generator
+  Generator --> FakeData[Fake Data]
+  RealData[Real Data] --> Discriminator
+  FakeData --> Discriminator
+  Discriminator --> Prediction[Real or Fake?]
+`} />
+
+The training loop alternates between two phases:
+1. **Train the Discriminator**: Show it a batch of real data (label 1) and a batch of fake data from the generator (label 0). Calculate the loss and backpropagate to update *only* the Discriminator's weights.
+2. **Train the Generator**: Generate a batch of fake data. Pass it to the Discriminator. Calculate the loss based on how many the Discriminator classified as *fake* (the generator wants it to be classified as real). Backpropagate this loss through the Discriminator (without updating its weights) to update the Generator's weights.
+
+## Challenges with GANs
+
+While incredibly powerful for tasks like image generation (e.g., DeepFakes, StyleGAN), GANs are notoriously difficult to train.
+
+<ComparisonTable 
+  headers={['Problem', 'Description']}
+  rows={[
+    ['Mode Collapse', 'The Generator discovers one specific output that fools the Discriminator perfectly and only produces that one output, losing all diversity.'],
+    ['Non-convergence', 'The models oscillate and never reach an equilibrium (Nash equilibrium).'],
+    ['Vanishing Gradients', 'If the Discriminator gets too good too fast, the Generator learns nothing because the gradients are near zero.']
+  ]}
+/>
+
+</TechnologyTemplate>

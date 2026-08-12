@@ -1,0 +1,33 @@
+---
+title: Component Frameworks (Bootstrap & Foundation)
+description: The era of massive, pre-built CSS frameworks that provided ready-to-use UI components and grid systems.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Component Frameworks">
+
+Before modern CSS Grid and Flexbox were universally supported, building a responsive layout was a mathematically horrifying experience involving `float: left;` and clearing hacks. 
+
+To standardize web development, massive Component-Based CSS Frameworks emerged.
+
+## Bootstrap (The King of the 2010s)
+Created by Twitter, Bootstrap was the most influential CSS framework in history. It provided a mathematically perfect **12-Column Responsive Grid System**. 
+By simply applying classes like `col-md-6`, a developer could instantly create a complex layout that automatically stacked vertically on mobile phones.
+
+Bootstrap also provided a massive suite of pre-designed components: Navbar, Modals, Cards, and Buttons. 
+```html
+<button class="btn btn-primary">Save Changes</button>
+```
+
+The primary flaw of Bootstrap was **The "Bootstrap Look."** Because millions of websites used it without heavy customization, the entire internet started looking exactly the same. Furthermore, overriding Bootstrap's heavily specific CSS required massive amounts of `!important` hacks.
+
+## Foundation
+Created by ZURB, Foundation was the primary competitor to Bootstrap. It was heavily favored by enterprise developers because it was slightly more modular, structurally agnostic, and was the first framework to aggressively push the "Mobile-First" design philosophy.
+
+## Bulma
+A modern alternative that arrived later. Unlike Bootstrap (which historically required heavy jQuery/Javascript dependencies for its dropdowns and modals), Bulma was purely CSS-based and built entirely on the modern Flexbox architecture.
+
+## The Modern Decline
+Today, component frameworks have massively declined. The 12-column grid is now natively solvable in 3 lines of pure CSS Grid. Furthermore, companies prefer building their own custom Design Systems using React/Vue components styled with Tailwind CSS, rather than fighting against Bootstrap's opinionated defaults.
+
+</ConceptTemplate>

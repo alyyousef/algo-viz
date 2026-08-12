@@ -1,18 +1,20 @@
+import { MDXProvider } from '@mdx-js/react'
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import NotFound from '@/app/routes/NotFound'
-import { dsaLegacyRedirectEntries, dsaRouteDefinitions } from '@/features/dsa/routeManifest'
+import { mdxComponents } from '@/features/kb/components/mdx/MdxComponents'
+import { kbLegacyRedirectEntries, kbRouteDefinitions } from '@/features/kb/routeManifest'
 import Win96AlgoVizDesktop from '@/features/win96-desktop/Win96AlgoVizDesktop'
 
 import type { ComponentType, JSX } from 'react'
 
-interface DsaRouteEntry {
+interface KbRouteEntry {
   path: string
   Component: ComponentType<Record<string, unknown>>
 }
 
-const dsaRouteEntries: DsaRouteEntry[] = dsaRouteDefinitions.flatMap(
+const kbRouteEntries: KbRouteEntry[] = kbRouteDefinitions.flatMap(
   ({ path, alternatePaths, factory }) => {
     const Component = lazy(factory)
     return [
@@ -54,24 +56,26 @@ function PageLoader(): JSX.Element {
 
 export default function App(): JSX.Element {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/algoViz" replace />} />
-      <Route path="/algoViz" element={<Win96AlgoVizDesktop />} />
-      {dsaLegacyRedirectEntries.map(({ from, to }) => (
-        <Route key={`${from}->${to}`} path={from} element={<Navigate to={to} replace />} />
-      ))}
-      {dsaRouteEntries.map(({ path, Component }) => (
-        <Route
-          key={path}
-          path={path}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <Component />
-            </Suspense>
-          }
-        />
-      ))}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <MDXProvider components={mdxComponents}>
+      <Routes>
+        <Route path="/" element={<Navigate to="/algoViz" replace />} />
+        <Route path="/algoViz" element={<Win96AlgoVizDesktop />} />
+        {kbLegacyRedirectEntries.map(({ from, to }) => (
+          <Route key={`${from}->${to}`} path={from} element={<Navigate to={to} replace />} />
+        ))}
+        {kbRouteEntries.map(({ path, Component }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <Component />
+              </Suspense>
+            }
+          />
+        ))}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </MDXProvider>
   )
 }

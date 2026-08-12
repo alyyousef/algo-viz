@@ -1,0 +1,31 @@
+---
+title: Web Components & Shadow DOM
+description: A suite of native browser APIs allowing developers to create custom, encapsulated HTML tags without relying on frameworks like React or Vue.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Web Components & Shadow DOM">
+
+React, Vue, and Angular became wildly popular because they introduced the concept of **Component-Based Architecture**. 
+However, the W3C recognized that component architecture shouldn't require downloading a 100KB JavaScript framework. It should be built natively into the browser. 
+
+This resulted in **Web Components**.
+
+## The Three Core APIs
+
+1. **Custom Elements**: Allows you to define your own HTML tags via JavaScript. You can tell the browser that whenever it sees `<my-cool-button>`, it should execute a specific JS class.
+2. **HTML Templates**: The `<template>` tag allows you to write HTML that the browser parses, but refuses to render until explicitly instructed by JavaScript.
+3. **The Shadow DOM**: The absolute most important piece of the puzzle.
+
+## The Shadow DOM (Style Encapsulation)
+
+In traditional web development, CSS is global. If you write `p { color: red }`, every single paragraph on the entire page turns red. This makes building reusable widgets (like a Video Player) terrifying, because the host website's CSS might bleed in and destroy the widget's layout.
+
+The **Shadow DOM** solves this by creating a hidden, completely isolated DOM tree attached to an element.
+- CSS written inside the Shadow DOM cannot leak out.
+- CSS written on the main page cannot leak into the Shadow DOM.
+- JavaScript `document.querySelectorAll` from the main page cannot pierce the Shadow boundary.
+
+This is exactly how the native `<video>` tag works—the play buttons and volume sliders are actually hidden inside a Shadow DOM!
+
+</ConceptTemplate>

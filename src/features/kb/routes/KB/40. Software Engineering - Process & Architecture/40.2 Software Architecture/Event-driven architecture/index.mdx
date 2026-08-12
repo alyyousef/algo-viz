@@ -1,0 +1,28 @@
+---
+title: Event-Driven Architecture
+description: A software architecture paradigm promoting the production, detection, and consumption of events.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Event-Driven Architecture (EDA)">
+
+**Event-Driven Architecture (EDA)** is a design pattern where the flow of the system is determined by "Events"—significant changes in state. Instead of services directly calling each other synchronously (like a traditional REST API), services communicate asynchronously by broadcasting and listening to events.
+
+<Callout icon="success" title="The Power of Decoupling">
+  In a traditional system, when a user registers, the `UserService` must synchronously call the `EmailService` to send a welcome email. The `UserService` is now hard-coupled to the `EmailService`. If the `EmailService` crashes, the user registration fails.
+  In EDA, the `UserService` simply broadcasts an event: `UserRegistered(id: 123)` to a Message Broker. It doesn't care who listens. The `EmailService` listens to that broker and sends the email asynchronously. Total decoupling.
+</Callout>
+
+## Core Components
+
+1. **Event Producers**: Applications or IoT devices that detect a state change and publish an event to the router. (e.g., "Item Added to Cart").
+2. **Event Routers / Brokers**: The middleware infrastructure that ingests, stores, and routes the events. (e.g., Apache Kafka, AWS EventBridge, RabbitMQ).
+3. **Event Consumers**: Services that subscribe to specific event types. When they receive an event, they execute their business logic.
+
+## Types of Event-Driven Patterns
+
+- **Pub/Sub (Publish-Subscribe)**: Producers publish events to a "Topic". Multiple consumers can subscribe to the topic. Every consumer receives a copy of the event.
+- **Event Streaming**: Events are written to an append-only log (like Kafka). Consumers read from the stream at their own pace. Events are strictly ordered and persistent, allowing consumers to "replay" history.
+- **Event Sourcing**: Instead of storing the current state of a database entity, the system stores every single event that mutated the entity. The current state is derived by replaying the events (similar to how Git tracks commits, or a bank tracks ledger transactions).
+
+</ConceptTemplate>

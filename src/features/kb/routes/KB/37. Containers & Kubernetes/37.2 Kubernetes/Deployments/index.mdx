@@ -1,0 +1,38 @@
+---
+title: Kubernetes Deployments
+description: A higher-level API object that manages the declarative updates, scaling, and self-healing of Pods.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Deployments">
+
+While a Pod is the fundamental unit of Kubernetes, you almost never create a Pod manually. Pods are mortal; if they crash, they are gone forever.
+
+To achieve high availability and self-healing, you wrap your Pods in a **Deployment**. A Deployment is a Control Plane controller that ensures a specified number of identical Pods (replicas) are running at all times.
+
+<Callout icon="success" title="The Self-Healing Promise">
+  If you tell a Deployment "I want 3 replicas of my Nginx Pod", it creates them. If a physical Worker Node explodes and takes down 1 of those Pods, the Deployment controller detects that Current State (2) does not match Desired State (3). It will instantly command the Scheduler to spin up a new Pod on a healthy node to replace it.
+</Callout>
+
+## ReplicaSets (The Middleman)
+
+Technically, a Deployment does not manage Pods directly. It manages a **ReplicaSet**, which in turn manages the Pods. 
+When you update a Deployment to use a new Docker image tag (e.g., \`v2\`), the Deployment creates a *new* ReplicaSet for \`v2\`, and slowly scales the old \`v1\` ReplicaSet down to zero.
+
+## Zero-Downtime Rollouts
+
+The primary reason to use Deployments is for safe, automated version updates. 
+
+When you deploy a new version of your application, the Deployment executes a **Rolling Update**:
+1. It creates 1 new Pod with version 2.
+2. It waits for the new Pod to pass its Readiness Probes (confirming it isn't crashing).
+3. Once healthy, it deletes 1 old Pod running version 1.
+4. It repeats this process until all Pods are running version 2. 
+
+If version 2 contains a catastrophic bug and immediately crashes, the Deployment halts the rollout, leaving the remaining version 1 Pods online to serve traffic, ensuring zero downtime for your users.
+
+## Rollbacks
+
+Because the Deployment controller keeps the old ReplicaSets around (scaled to 0), if a deployment goes wrong, you can instantly rollback to the previous version with a single command: \`kubectl rollout undo deployment/my-app\`.
+
+</ConceptTemplate>
