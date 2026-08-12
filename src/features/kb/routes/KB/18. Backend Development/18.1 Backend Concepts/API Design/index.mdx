@@ -1,0 +1,46 @@
+---
+title: API Design (REST, GraphQL, gRPC)
+description: The evolution of how systems communicate, transitioning from URL-based REST to query-based GraphQL, and ultra-fast binary gRPC.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="API Design (REST, GraphQL, gRPC)">
+
+An **API (Application Programming Interface)** is the contract that allows the frontend to request data from the backend.
+
+## 1. REST (Representational State Transfer)
+The absolute industry standard since the 2000s. REST treats everything as a **Resource** accessible via a specific URL, manipulated using standard HTTP methods.
+
+- **GET /users**: Fetch a list of all users.
+- **GET /users/123**: Fetch exactly user 123.
+- **POST /users**: Create a new user.
+- **PUT /users/123**: Fully replace user 123.
+- **DELETE /users/123**: Delete user 123.
+
+**The Flaws of REST**:
+1. **Over-fetching**: If you hit `GET /users/123` to just get the user's name, the API might return 50 different fields (email, address, phone number) that you don't need, wasting massive amounts of network bandwidth on mobile devices.
+2. **Under-fetching (The N+1 Problem)**: If you need a user and their recent posts, you often have to make one request to `/users/123`, wait for the response, and then make a second request to `/users/123/posts`, causing slow waterfall network latency.
+
+## 2. GraphQL
+Invented by Facebook to solve REST's flaws. GraphQL has exactly ONE endpoint (`POST /graphql`). 
+Instead of hitting different URLs, the client sends a mathematical query string explicitly asking for exactly what it needs, and the server returns exactly that—nothing more, nothing less.
+
+```graphql
+# Client Request
+query {
+  user(id: "123") {
+    name
+    posts {
+      title
+    }
+  }
+}
+```
+GraphQL mathematically solved Over-fetching and Under-fetching, but it shifts immense computational complexity to the backend (preventing malicious nested queries from crashing the server).
+
+## 3. gRPC (Remote Procedure Call)
+Created by Google. While REST and GraphQL send JSON strings over HTTP/1.1, JSON parsing is computationally expensive.
+**gRPC** uses **Protocol Buffers (Protobufs)** to serialize data into pure, ultra-fast **Binary**. It operates over HTTP/2, allowing for bidirectional streaming. 
+gRPC is generally not used for Frontend-to-Backend communication (because browsers struggle with raw binary), but it is the absolute industry standard for internal **Microservice-to-Microservice** communication where maximum performance is required.
+
+</ConceptTemplate>

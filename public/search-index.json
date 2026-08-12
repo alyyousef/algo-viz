@@ -1688,452 +1688,108 @@
     "matchText": "authentication identity and access webauthn kb 53 authentication identity and access webauthn"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/API versioning/index.mdx",
-    "title": "API versioning",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/api-versioning",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/api-versioning",
-    "matchText": "backend development 1 concepts api versioning kb 18 backend development 18 1 concepts api versioning"
+    "id": "./routes/KB/18. Backend Development/18.1 Backend Concepts/API Design/index.mdx",
+    "title": "API Design",
+    "breadcrumb": "Backend Development / 1 Backend Concepts",
+    "route": "/kb/18-backend-development/18-1-backend-concepts/api-design",
+    "routeLabel": "kb/18-backend-development/18-1-backend-concepts/api-design",
+    "matchText": "backend development 1 backend concepts api design kb 18 backend development 18 1 backend concepts api design"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/APIs/index.mdx",
-    "title": "APIs",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/apis",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/apis",
-    "matchText": "backend development 1 concepts apis kb 18 backend development 18 1 concepts apis"
+    "id": "./routes/KB/18. Backend Development/18.1 Backend Concepts/Authentication & Security/index.mdx",
+    "title": "Authentication & Security",
+    "breadcrumb": "Backend Development / 1 Backend Concepts",
+    "route": "/kb/18-backend-development/18-1-backend-concepts/authentication-and-security",
+    "routeLabel": "kb/18-backend-development/18-1-backend-concepts/authentication-and-security",
+    "matchText": "backend development 1 backend concepts authentication and security kb 18 backend development 18 1 backend concepts authentication and security"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Authentication/index.mdx",
-    "title": "Authentication",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/authentication",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/authentication",
-    "matchText": "backend development 1 concepts authentication kb 18 backend development 18 1 concepts authentication"
+    "id": "./routes/KB/18. Backend Development/18.1 Backend Concepts/Background Processing/index.mdx",
+    "title": "Background Processing",
+    "breadcrumb": "Backend Development / 1 Backend Concepts",
+    "route": "/kb/18-backend-development/18-1-backend-concepts/background-processing",
+    "routeLabel": "kb/18-backend-development/18-1-backend-concepts/background-processing",
+    "matchText": "backend development 1 backend concepts background processing kb 18 backend development 18 1 backend concepts background processing"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Authorisation/index.mdx",
-    "title": "Authorisation",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/authorisation",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/authorisation",
-    "matchText": "backend development 1 concepts authorisation kb 18 backend development 18 1 concepts authorisation"
+    "id": "./routes/KB/18. Backend Development/18.1 Backend Concepts/Performance & Reliability/index.mdx",
+    "title": "Performance & Reliability",
+    "breadcrumb": "Backend Development / 1 Backend Concepts",
+    "route": "/kb/18-backend-development/18-1-backend-concepts/performance-and-reliability",
+    "routeLabel": "kb/18-backend-development/18-1-backend-concepts/performance-and-reliability",
+    "matchText": "backend development 1 backend concepts performance and reliability kb 18 backend development 18 1 backend concepts performance and reliability"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Background jobs/index.mdx",
-    "title": "Background jobs",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/background-jobs",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/background-jobs",
-    "matchText": "backend development 1 concepts background jobs kb 18 backend development 18 1 concepts background jobs"
+    "id": "./routes/KB/18. Backend Development/18.1 Backend Concepts/Real-Time Communication/index.mdx",
+    "title": "Real-Time Communication",
+    "breadcrumb": "Backend Development / 1 Backend Concepts",
+    "route": "/kb/18-backend-development/18-1-backend-concepts/real-time-communication",
+    "routeLabel": "kb/18-backend-development/18-1-backend-concepts/real-time-communication",
+    "matchText": "backend development 1 backend concepts real time communication kb 18 backend development 18 1 backend concepts real time communication"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Caching/index.mdx",
-    "title": "Caching",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/caching",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/caching",
-    "matchText": "backend development 1 concepts caching kb 18 backend development 18 1 concepts caching"
+    "id": "./routes/KB/18. Backend Development/18.1 Backend Concepts/Server Architecture/index.mdx",
+    "title": "Server Architecture",
+    "breadcrumb": "Backend Development / 1 Backend Concepts",
+    "route": "/kb/18-backend-development/18-1-backend-concepts/server-architecture",
+    "routeLabel": "kb/18-backend-development/18-1-backend-concepts/server-architecture",
+    "matchText": "backend development 1 backend concepts server architecture kb 18 backend development 18 1 backend concepts server architecture"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Cookies/index.mdx",
-    "title": "Cookies",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/cookies",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/cookies",
-    "matchText": "backend development 1 concepts cookies kb 18 backend development 18 1 concepts cookies"
+    "id": "./routes/KB/18. Backend Development/18.2 Node.js Core/Streams & Buffers/index.mdx",
+    "title": "Streams & Buffers",
+    "breadcrumb": "Backend Development / 2 Node.js Core",
+    "route": "/kb/18-backend-development/18-2-node-js-core/streams-and-buffers",
+    "routeLabel": "kb/18-backend-development/18-2-node-js-core/streams-and-buffers",
+    "matchText": "backend development 2 node js core streams and buffers kb 18 backend development 18 2 node js core streams and buffers"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Cron jobs/index.mdx",
-    "title": "Cron jobs",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/cron-jobs",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/cron-jobs",
-    "matchText": "backend development 1 concepts cron jobs kb 18 backend development 18 1 concepts cron jobs"
+    "id": "./routes/KB/18. Backend Development/18.2 Node.js Core/The Event Loop/index.mdx",
+    "title": "The Event Loop",
+    "breadcrumb": "Backend Development / 2 Node.js Core",
+    "route": "/kb/18-backend-development/18-2-node-js-core/the-event-loop",
+    "routeLabel": "kb/18-backend-development/18-2-node-js-core/the-event-loop",
+    "matchText": "backend development 2 node js core the event loop kb 18 backend development 18 2 node js core the event loop"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Email sending/index.mdx",
-    "title": "Email sending",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/email-sending",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/email-sending",
-    "matchText": "backend development 1 concepts email sending kb 18 backend development 18 1 concepts email sending"
+    "id": "./routes/KB/18. Backend Development/18.3 Backend Frameworks/Go & Rust/index.mdx",
+    "title": "Go & Rust",
+    "breadcrumb": "Backend Development / 3 Backend Frameworks",
+    "route": "/kb/18-backend-development/18-3-backend-frameworks/go-and-rust",
+    "routeLabel": "kb/18-backend-development/18-3-backend-frameworks/go-and-rust",
+    "matchText": "backend development 3 backend frameworks go and rust kb 18 backend development 18 3 backend frameworks go and rust"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Error handling/index.mdx",
-    "title": "Error handling",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/error-handling",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/error-handling",
-    "matchText": "backend development 1 concepts error handling kb 18 backend development 18 1 concepts error handling"
+    "id": "./routes/KB/18. Backend Development/18.3 Backend Frameworks/Java & CSharp/index.mdx",
+    "title": "Java & CSharp",
+    "breadcrumb": "Backend Development / 3 Backend Frameworks",
+    "route": "/kb/18-backend-development/18-3-backend-frameworks/java-and-csharp",
+    "routeLabel": "kb/18-backend-development/18-3-backend-frameworks/java-and-csharp",
+    "matchText": "backend development 3 backend frameworks java and csharp kb 18 backend development 18 3 backend frameworks java and csharp"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/File uploads/index.mdx",
-    "title": "File uploads",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/file-uploads",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/file-uploads",
-    "matchText": "backend development 1 concepts file uploads kb 18 backend development 18 1 concepts file uploads"
+    "id": "./routes/KB/18. Backend Development/18.3 Backend Frameworks/Node.js Ecosystem/index.mdx",
+    "title": "Node.js Ecosystem",
+    "breadcrumb": "Backend Development / 3 Backend Frameworks",
+    "route": "/kb/18-backend-development/18-3-backend-frameworks/node-js-ecosystem",
+    "routeLabel": "kb/18-backend-development/18-3-backend-frameworks/node-js-ecosystem",
+    "matchText": "backend development 3 backend frameworks node js ecosystem kb 18 backend development 18 3 backend frameworks node js ecosystem"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/GraphQL/index.mdx",
-    "title": "GraphQL",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/graphql",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/graphql",
-    "matchText": "backend development 1 concepts graphql kb 18 backend development 18 1 concepts graphql"
+    "id": "./routes/KB/18. Backend Development/18.3 Backend Frameworks/Python Ecosystem/index.mdx",
+    "title": "Python Ecosystem",
+    "breadcrumb": "Backend Development / 3 Backend Frameworks",
+    "route": "/kb/18-backend-development/18-3-backend-frameworks/python-ecosystem",
+    "routeLabel": "kb/18-backend-development/18-3-backend-frameworks/python-ecosystem",
+    "matchText": "backend development 3 backend frameworks python ecosystem kb 18 backend development 18 3 backend frameworks python ecosystem"
   },
   {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/gRPC/index.mdx",
-    "title": "gRPC",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/grpc",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/grpc",
-    "matchText": "backend development 1 concepts grpc kb 18 backend development 18 1 concepts grpc"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/JWT/index.mdx",
-    "title": "JWT",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/jwt",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/jwt",
-    "matchText": "backend development 1 concepts jwt kb 18 backend development 18 1 concepts jwt"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Logging/index.mdx",
-    "title": "Logging",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/logging",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/logging",
-    "matchText": "backend development 1 concepts logging kb 18 backend development 18 1 concepts logging"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Middleware/index.mdx",
-    "title": "Middleware",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/middleware",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/middleware",
-    "matchText": "backend development 1 concepts middleware kb 18 backend development 18 1 concepts middleware"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/OAuth 2.0/index.mdx",
-    "title": "OAuth 2.0",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/oauth-2-0",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/oauth-2-0",
-    "matchText": "backend development 1 concepts oauth 2 0 kb 18 backend development 18 1 concepts oauth 2 0"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/OpenID Connect/index.mdx",
-    "title": "OpenID Connect",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/openid-connect",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/openid-connect",
-    "matchText": "backend development 1 concepts openid connect kb 18 backend development 18 1 concepts openid connect"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Queues/index.mdx",
-    "title": "Queues",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/queues",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/queues",
-    "matchText": "backend development 1 concepts queues kb 18 backend development 18 1 concepts queues"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Rate limiting/index.mdx",
-    "title": "Rate limiting",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/rate-limiting",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/rate-limiting",
-    "matchText": "backend development 1 concepts rate limiting kb 18 backend development 18 1 concepts rate limiting"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/REST/index.mdx",
-    "title": "REST",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/rest",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/rest",
-    "matchText": "backend development 1 concepts rest kb 18 backend development 18 1 concepts rest"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Server architecture/index.mdx",
-    "title": "Server architecture",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/server-architecture",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/server-architecture",
-    "matchText": "backend development 1 concepts server architecture kb 18 backend development 18 1 concepts server architecture"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Server-side rendering/index.mdx",
-    "title": "Server-side rendering",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/server-side-rendering",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/server-side-rendering",
-    "matchText": "backend development 1 concepts server side rendering kb 18 backend development 18 1 concepts server side rendering"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Sessions/index.mdx",
-    "title": "Sessions",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/sessions",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/sessions",
-    "matchText": "backend development 1 concepts sessions kb 18 backend development 18 1 concepts sessions"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Templating engines/index.mdx",
-    "title": "Templating engines",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/templating-engines",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/templating-engines",
-    "matchText": "backend development 1 concepts templating engines kb 18 backend development 18 1 concepts templating engines"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/WebSockets/index.mdx",
-    "title": "WebSockets",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/websockets",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/websockets",
-    "matchText": "backend development 1 concepts websockets kb 18 backend development 18 1 concepts websockets"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.1 Concepts/Workers/index.mdx",
-    "title": "Workers",
-    "breadcrumb": "Backend Development / 1 Concepts",
-    "route": "/kb/18-backend-development/18-1-concepts/workers",
-    "routeLabel": "kb/18-backend-development/18-1-concepts/workers",
-    "matchText": "backend development 1 concepts workers kb 18 backend development 18 1 concepts workers"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Core Node/Event loop/index.mdx",
-    "title": "Event loop",
-    "breadcrumb": "Backend Development / 2 Core Node",
-    "route": "/kb/18-backend-development/18-2-core-node/event-loop",
-    "routeLabel": "kb/18-backend-development/18-2-core-node/event-loop",
-    "matchText": "backend development 2 core node event loop kb 18 backend development 18 2 core node event loop"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Core Node/Streams/index.mdx",
-    "title": "Streams",
-    "breadcrumb": "Backend Development / 2 Core Node",
-    "route": "/kb/18-backend-development/18-2-core-node/streams",
-    "routeLabel": "kb/18-backend-development/18-2-core-node/streams",
-    "matchText": "backend development 2 core node streams kb 18 backend development 18 2 core node streams"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Actix Web/index.mdx",
-    "title": "Actix Web",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/actix-web",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/actix-web",
-    "matchText": "backend development 2 runtimes and frameworks actix web kb 18 backend development 18 2 runtimes and frameworks actix web"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/ASP.NET Core/index.mdx",
-    "title": "ASP.NET Core",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/asp-net-core",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/asp-net-core",
-    "matchText": "backend development 2 runtimes and frameworks asp net core kb 18 backend development 18 2 runtimes and frameworks asp net core"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Axum/index.mdx",
-    "title": "Axum",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/axum",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/axum",
-    "matchText": "backend development 2 runtimes and frameworks axum kb 18 backend development 18 2 runtimes and frameworks axum"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/CodeIgniter/index.mdx",
-    "title": "CodeIgniter",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/codeigniter",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/codeigniter",
-    "matchText": "backend development 2 runtimes and frameworks codeigniter kb 18 backend development 18 2 runtimes and frameworks codeigniter"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Deno's built-in HTTP server/index.mdx",
-    "title": "Deno's built-in HTTP server",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/deno-s-built-in-http-server",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/deno-s-built-in-http-server",
-    "matchText": "backend development 2 runtimes and frameworks deno s built in http server kb 18 backend development 18 2 runtimes and frameworks deno s built in http server"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Django/index.mdx",
-    "title": "Django",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/django",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/django",
-    "matchText": "backend development 2 runtimes and frameworks django kb 18 backend development 18 2 runtimes and frameworks django"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Echo/index.mdx",
-    "title": "Echo",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/echo",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/echo",
-    "matchText": "backend development 2 runtimes and frameworks echo kb 18 backend development 18 2 runtimes and frameworks echo"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Express/index.mdx",
-    "title": "Express",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/express",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/express",
-    "matchText": "backend development 2 runtimes and frameworks express kb 18 backend development 18 2 runtimes and frameworks express"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/FastAPI/index.mdx",
-    "title": "FastAPI",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/fastapi",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/fastapi",
-    "matchText": "backend development 2 runtimes and frameworks fastapi kb 18 backend development 18 2 runtimes and frameworks fastapi"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Fastify/index.mdx",
-    "title": "Fastify",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/fastify",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/fastify",
-    "matchText": "backend development 2 runtimes and frameworks fastify kb 18 backend development 18 2 runtimes and frameworks fastify"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Fiber/index.mdx",
-    "title": "Fiber",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/fiber",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/fiber",
-    "matchText": "backend development 2 runtimes and frameworks fiber kb 18 backend development 18 2 runtimes and frameworks fiber"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Flask/index.mdx",
-    "title": "Flask",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/flask",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/flask",
-    "matchText": "backend development 2 runtimes and frameworks flask kb 18 backend development 18 2 runtimes and frameworks flask"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Gin/index.mdx",
-    "title": "Gin",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/gin",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/gin",
-    "matchText": "backend development 2 runtimes and frameworks gin kb 18 backend development 18 2 runtimes and frameworks gin"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Hapi/index.mdx",
-    "title": "Hapi",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/hapi",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/hapi",
-    "matchText": "backend development 2 runtimes and frameworks hapi kb 18 backend development 18 2 runtimes and frameworks hapi"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Koa/index.mdx",
-    "title": "Koa",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/koa",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/koa",
-    "matchText": "backend development 2 runtimes and frameworks koa kb 18 backend development 18 2 runtimes and frameworks koa"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Laravel/index.mdx",
-    "title": "Laravel",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/laravel",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/laravel",
-    "matchText": "backend development 2 runtimes and frameworks laravel kb 18 backend development 18 2 runtimes and frameworks laravel"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/NestJS/index.mdx",
-    "title": "NestJS",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/nestjs",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/nestjs",
-    "matchText": "backend development 2 runtimes and frameworks nestjs kb 18 backend development 18 2 runtimes and frameworks nestjs"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Node.js/index.mdx",
-    "title": "Node.js",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/node-js",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/node-js",
-    "matchText": "backend development 2 runtimes and frameworks node js kb 18 backend development 18 2 runtimes and frameworks node js"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Phoenix/index.mdx",
-    "title": "Phoenix",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/phoenix",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/phoenix",
-    "matchText": "backend development 2 runtimes and frameworks phoenix kb 18 backend development 18 2 runtimes and frameworks phoenix"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Rocket/index.mdx",
-    "title": "Rocket",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/rocket",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/rocket",
-    "matchText": "backend development 2 runtimes and frameworks rocket kb 18 backend development 18 2 runtimes and frameworks rocket"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Ruby on Rails/index.mdx",
-    "title": "Ruby on Rails",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/ruby-on-rails",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/ruby-on-rails",
-    "matchText": "backend development 2 runtimes and frameworks ruby on rails kb 18 backend development 18 2 runtimes and frameworks ruby on rails"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Sanic/index.mdx",
-    "title": "Sanic",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/sanic",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/sanic",
-    "matchText": "backend development 2 runtimes and frameworks sanic kb 18 backend development 18 2 runtimes and frameworks sanic"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Sinatra/index.mdx",
-    "title": "Sinatra",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/sinatra",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/sinatra",
-    "matchText": "backend development 2 runtimes and frameworks sinatra kb 18 backend development 18 2 runtimes and frameworks sinatra"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Spring/index.mdx",
-    "title": "Spring",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/spring",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/spring",
-    "matchText": "backend development 2 runtimes and frameworks spring kb 18 backend development 18 2 runtimes and frameworks spring"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Spring Boot/index.mdx",
-    "title": "Spring Boot",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/spring-boot",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/spring-boot",
-    "matchText": "backend development 2 runtimes and frameworks spring boot kb 18 backend development 18 2 runtimes and frameworks spring boot"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Symfony/index.mdx",
-    "title": "Symfony",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/symfony",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/symfony",
-    "matchText": "backend development 2 runtimes and frameworks symfony kb 18 backend development 18 2 runtimes and frameworks symfony"
-  },
-  {
-    "id": "./routes/KB/18. Backend Development/18.2 Runtimes & Frameworks/Tornado/index.mdx",
-    "title": "Tornado",
-    "breadcrumb": "Backend Development / 2 Runtimes & Frameworks",
-    "route": "/kb/18-backend-development/18-2-runtimes-and-frameworks/tornado",
-    "routeLabel": "kb/18-backend-development/18-2-runtimes-and-frameworks/tornado",
-    "matchText": "backend development 2 runtimes and frameworks tornado kb 18 backend development 18 2 runtimes and frameworks tornado"
+    "id": "./routes/KB/18. Backend Development/18.3 Backend Frameworks/Ruby & PHP/index.mdx",
+    "title": "Ruby & PHP",
+    "breadcrumb": "Backend Development / 3 Backend Frameworks",
+    "route": "/kb/18-backend-development/18-3-backend-frameworks/ruby-and-php",
+    "routeLabel": "kb/18-backend-development/18-3-backend-frameworks/ruby-and-php",
+    "matchText": "backend development 3 backend frameworks ruby and php kb 18 backend development 18 3 backend frameworks ruby and php"
   },
   {
     "id": "./routes/KB/55. Blockchain & Web3/Bitcoin/index.mdx",
@@ -11496,276 +11152,76 @@
     "matchText": "formal methods and verification tla kb 57 formal methods and verification tla"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Alpine.js/index.mdx",
-    "title": "Alpine.js",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Animation/index.mdx",
+    "title": "Animation",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/alpine-js",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/alpine-js",
-    "matchText": "frontend frameworks libraries and state management alpine js kb 17 frontend frameworks libraries and state management alpine js"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/animation",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/animation",
+    "matchText": "frontend frameworks libraries and state management animation kb 17 frontend frameworks libraries and state management animation"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Angular/index.mdx",
-    "title": "Angular",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Component Libraries/index.mdx",
+    "title": "Component Libraries",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/angular",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/angular",
-    "matchText": "frontend frameworks libraries and state management angular kb 17 frontend frameworks libraries and state management angular"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/component-libraries",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/component-libraries",
+    "matchText": "frontend frameworks libraries and state management component libraries kb 17 frontend frameworks libraries and state management component libraries"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Astro/index.mdx",
-    "title": "Astro",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Core UI Frameworks/index.mdx",
+    "title": "Core UI Frameworks",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/astro",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/astro",
-    "matchText": "frontend frameworks libraries and state management astro kb 17 frontend frameworks libraries and state management astro"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/core-ui-frameworks",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/core-ui-frameworks",
+    "matchText": "frontend frameworks libraries and state management core ui frameworks kb 17 frontend frameworks libraries and state management core ui frameworks"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Chart.js/index.mdx",
-    "title": "Chart.js",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Data Fetching & Routing/index.mdx",
+    "title": "Data Fetching & Routing",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/chart-js",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/chart-js",
-    "matchText": "frontend frameworks libraries and state management chart js kb 17 frontend frameworks libraries and state management chart js"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/data-fetching-and-routing",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/data-fetching-and-routing",
+    "matchText": "frontend frameworks libraries and state management data fetching and routing kb 17 frontend frameworks libraries and state management data fetching and routing"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/D3.js/index.mdx",
-    "title": "D3.js",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Data Visualization & 3D/index.mdx",
+    "title": "Data Visualization & 3D",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/d3-js",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/d3-js",
-    "matchText": "frontend frameworks libraries and state management d3 js kb 17 frontend frameworks libraries and state management d3 js"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/data-visualization-and-3d",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/data-visualization-and-3d",
+    "matchText": "frontend frameworks libraries and state management data visualization and 3d kb 17 frontend frameworks libraries and state management data visualization and 3d"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Formik/index.mdx",
-    "title": "Formik",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Forms & Validation/index.mdx",
+    "title": "Forms & Validation",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/formik",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/formik",
-    "matchText": "frontend frameworks libraries and state management formik kb 17 frontend frameworks libraries and state management formik"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/forms-and-validation",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/forms-and-validation",
+    "matchText": "frontend frameworks libraries and state management forms and validation kb 17 frontend frameworks libraries and state management forms and validation"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Framer Motion/index.mdx",
-    "title": "Framer Motion",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Meta-Frameworks/index.mdx",
+    "title": "Meta-Frameworks",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/framer-motion",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/framer-motion",
-    "matchText": "frontend frameworks libraries and state management framer motion kb 17 frontend frameworks libraries and state management framer motion"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/meta-frameworks",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/meta-frameworks",
+    "matchText": "frontend frameworks libraries and state management meta frameworks kb 17 frontend frameworks libraries and state management meta frameworks"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/GSAP/index.mdx",
-    "title": "GSAP",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Minimalist UI/index.mdx",
+    "title": "Minimalist UI",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/gsap",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/gsap",
-    "matchText": "frontend frameworks libraries and state management gsap kb 17 frontend frameworks libraries and state management gsap"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/minimalist-ui",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/minimalist-ui",
+    "matchText": "frontend frameworks libraries and state management minimalist ui kb 17 frontend frameworks libraries and state management minimalist ui"
   },
   {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/HTMX/index.mdx",
-    "title": "HTMX",
+    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/State Management/index.mdx",
+    "title": "State Management",
     "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/htmx",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/htmx",
-    "matchText": "frontend frameworks libraries and state management htmx kb 17 frontend frameworks libraries and state management htmx"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Jotai/index.mdx",
-    "title": "Jotai",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/jotai",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/jotai",
-    "matchText": "frontend frameworks libraries and state management jotai kb 17 frontend frameworks libraries and state management jotai"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/jQuery/index.mdx",
-    "title": "jQuery",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/jquery",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/jquery",
-    "matchText": "frontend frameworks libraries and state management jquery kb 17 frontend frameworks libraries and state management jquery"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Lit/index.mdx",
-    "title": "Lit",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/lit",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/lit",
-    "matchText": "frontend frameworks libraries and state management lit kb 17 frontend frameworks libraries and state management lit"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/MobX/index.mdx",
-    "title": "MobX",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/mobx",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/mobx",
-    "matchText": "frontend frameworks libraries and state management mobx kb 17 frontend frameworks libraries and state management mobx"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Next.js/index.mdx",
-    "title": "Next.js",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/next-js",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/next-js",
-    "matchText": "frontend frameworks libraries and state management next js kb 17 frontend frameworks libraries and state management next js"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Nuxt/index.mdx",
-    "title": "Nuxt",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/nuxt",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/nuxt",
-    "matchText": "frontend frameworks libraries and state management nuxt kb 17 frontend frameworks libraries and state management nuxt"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Qwik/index.mdx",
-    "title": "Qwik",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/qwik",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/qwik",
-    "matchText": "frontend frameworks libraries and state management qwik kb 17 frontend frameworks libraries and state management qwik"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/React/index.mdx",
-    "title": "React",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/react",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/react",
-    "matchText": "frontend frameworks libraries and state management react kb 17 frontend frameworks libraries and state management react"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/React Hook Form/index.mdx",
-    "title": "React Hook Form",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/react-hook-form",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/react-hook-form",
-    "matchText": "frontend frameworks libraries and state management react hook form kb 17 frontend frameworks libraries and state management react hook form"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/React Router/index.mdx",
-    "title": "React Router",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/react-router",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/react-router",
-    "matchText": "frontend frameworks libraries and state management react router kb 17 frontend frameworks libraries and state management react router"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Recharts/index.mdx",
-    "title": "Recharts",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/recharts",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/recharts",
-    "matchText": "frontend frameworks libraries and state management recharts kb 17 frontend frameworks libraries and state management recharts"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Recoil/index.mdx",
-    "title": "Recoil",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/recoil",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/recoil",
-    "matchText": "frontend frameworks libraries and state management recoil kb 17 frontend frameworks libraries and state management recoil"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Redux/index.mdx",
-    "title": "Redux",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/redux",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/redux",
-    "matchText": "frontend frameworks libraries and state management redux kb 17 frontend frameworks libraries and state management redux"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Redux Toolkit/index.mdx",
-    "title": "Redux Toolkit",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/redux-toolkit",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/redux-toolkit",
-    "matchText": "frontend frameworks libraries and state management redux toolkit kb 17 frontend frameworks libraries and state management redux toolkit"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Remix/index.mdx",
-    "title": "Remix",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/remix",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/remix",
-    "matchText": "frontend frameworks libraries and state management remix kb 17 frontend frameworks libraries and state management remix"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/SolidJS/index.mdx",
-    "title": "SolidJS",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/solidjs",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/solidjs",
-    "matchText": "frontend frameworks libraries and state management solidjs kb 17 frontend frameworks libraries and state management solidjs"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Storybook/index.mdx",
-    "title": "Storybook",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/storybook",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/storybook",
-    "matchText": "frontend frameworks libraries and state management storybook kb 17 frontend frameworks libraries and state management storybook"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Svelte/index.mdx",
-    "title": "Svelte",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/svelte",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/svelte",
-    "matchText": "frontend frameworks libraries and state management svelte kb 17 frontend frameworks libraries and state management svelte"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/SvelteKit/index.mdx",
-    "title": "SvelteKit",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/sveltekit",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/sveltekit",
-    "matchText": "frontend frameworks libraries and state management sveltekit kb 17 frontend frameworks libraries and state management sveltekit"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/TanStack Query/index.mdx",
-    "title": "TanStack Query",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/tanstack-query",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/tanstack-query",
-    "matchText": "frontend frameworks libraries and state management tanstack query kb 17 frontend frameworks libraries and state management tanstack query"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/TanStack Router/index.mdx",
-    "title": "TanStack Router",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/tanstack-router",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/tanstack-router",
-    "matchText": "frontend frameworks libraries and state management tanstack router kb 17 frontend frameworks libraries and state management tanstack router"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Three.js/index.mdx",
-    "title": "Three.js",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/three-js",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/three-js",
-    "matchText": "frontend frameworks libraries and state management three js kb 17 frontend frameworks libraries and state management three js"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Vue/index.mdx",
-    "title": "Vue",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/vue",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/vue",
-    "matchText": "frontend frameworks libraries and state management vue kb 17 frontend frameworks libraries and state management vue"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/XState/index.mdx",
-    "title": "XState",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/xstate",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/xstate",
-    "matchText": "frontend frameworks libraries and state management xstate kb 17 frontend frameworks libraries and state management xstate"
-  },
-  {
-    "id": "./routes/KB/17. Frontend Frameworks, Libraries & State Management/Zustand/index.mdx",
-    "title": "Zustand",
-    "breadcrumb": "Frontend Frameworks, Libraries & State Management",
-    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/zustand",
-    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/zustand",
-    "matchText": "frontend frameworks libraries and state management zustand kb 17 frontend frameworks libraries and state management zustand"
+    "route": "/kb/17-frontend-frameworks-libraries-and-state-management/state-management",
+    "routeLabel": "kb/17-frontend-frameworks-libraries-and-state-management/state-management",
+    "matchText": "frontend frameworks libraries and state management state management kb 17 frontend frameworks libraries and state management state management"
   },
   {
     "id": "./routes/KB/29. Generative AI & Multimodal/Agentic workflows/index.mdx",
@@ -13104,1028 +12560,124 @@
     "matchText": "interview problem solving prep topics whiteboarding strategy kb 64 interview problem solving prep topics whiteboarding strategy"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/AMD/index.mdx",
-    "title": "AMD",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Code Quality/index.mdx",
+    "title": "Code Quality",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/amd",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/amd",
-    "matchText": "javascript ecosystem and tooling amd kb 16 javascript ecosystem and tooling amd"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/code-quality",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/code-quality",
+    "matchText": "javascript ecosystem and tooling code quality kb 16 javascript ecosystem and tooling code quality"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Babel/index.mdx",
-    "title": "Babel",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Legacy Bundlers/index.mdx",
+    "title": "Legacy Bundlers",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/babel",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/babel",
-    "matchText": "javascript ecosystem and tooling babel kb 16 javascript ecosystem and tooling babel"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/legacy-bundlers",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/legacy-bundlers",
+    "matchText": "javascript ecosystem and tooling legacy bundlers kb 16 javascript ecosystem and tooling legacy bundlers"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Bun/index.mdx",
-    "title": "Bun",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Modern Build Tools/index.mdx",
+    "title": "Modern Build Tools",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/bun",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/bun",
-    "matchText": "javascript ecosystem and tooling bun kb 16 javascript ecosystem and tooling bun"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/modern-build-tools",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/modern-build-tools",
+    "matchText": "javascript ecosystem and tooling modern build tools kb 16 javascript ecosystem and tooling modern build tools"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Deno/index.mdx",
-    "title": "Deno",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Monorepos/index.mdx",
+    "title": "Monorepos",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/deno",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/deno",
-    "matchText": "javascript ecosystem and tooling deno kb 16 javascript ecosystem and tooling deno"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/monorepos",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/monorepos",
+    "matchText": "javascript ecosystem and tooling monorepos kb 16 javascript ecosystem and tooling monorepos"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/ECMAScript/index.mdx",
-    "title": "ECMAScript",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Package Managers/index.mdx",
+    "title": "Package Managers",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/ecmascript",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/ecmascript",
-    "matchText": "javascript ecosystem and tooling ecmascript kb 16 javascript ecosystem and tooling ecmascript"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/package-managers",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/package-managers",
+    "matchText": "javascript ecosystem and tooling package managers kb 16 javascript ecosystem and tooling package managers"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/ES6+ features/index.mdx",
-    "title": "ES6+ features",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/The Core Languages/index.mdx",
+    "title": "The Core Languages",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/es6-features",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/es6-features",
-    "matchText": "javascript ecosystem and tooling es6 features kb 16 javascript ecosystem and tooling es6 features"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/the-core-languages",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/the-core-languages",
+    "matchText": "javascript ecosystem and tooling the core languages kb 16 javascript ecosystem and tooling the core languages"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/esbuild/index.mdx",
-    "title": "esbuild",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/The Module Systems/index.mdx",
+    "title": "The Module Systems",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/esbuild",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/esbuild",
-    "matchText": "javascript ecosystem and tooling esbuild kb 16 javascript ecosystem and tooling esbuild"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/the-module-systems",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/the-module-systems",
+    "matchText": "javascript ecosystem and tooling the module systems kb 16 javascript ecosystem and tooling the module systems"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/ESLint/index.mdx",
-    "title": "ESLint",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/The Runtimes/index.mdx",
+    "title": "The Runtimes",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/eslint",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/eslint",
-    "matchText": "javascript ecosystem and tooling eslint kb 16 javascript ecosystem and tooling eslint"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/the-runtimes",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/the-runtimes",
+    "matchText": "javascript ecosystem and tooling the runtimes kb 16 javascript ecosystem and tooling the runtimes"
   },
   {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/ESM/index.mdx",
-    "title": "ESM",
+    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Transpilers & Compilers/index.mdx",
+    "title": "Transpilers & Compilers",
     "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/esm",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/esm",
-    "matchText": "javascript ecosystem and tooling esm kb 16 javascript ecosystem and tooling esm"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/JavaScript/index.mdx",
-    "title": "JavaScript",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/javascript",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/javascript",
-    "matchText": "javascript ecosystem and tooling javascript kb 16 javascript ecosystem and tooling javascript"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Lerna)/index.mdx",
-    "title": "Lerna)",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/lerna",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/lerna",
-    "matchText": "javascript ecosystem and tooling lerna kb 16 javascript ecosystem and tooling lerna"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Module systems (CommonJS/index.mdx",
-    "title": "Module systems (CommonJS",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/module-systems-commonjs",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/module-systems-commonjs",
-    "matchText": "javascript ecosystem and tooling module systems commonjs kb 16 javascript ecosystem and tooling module systems commonjs"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Monorepo tooling (Nx/index.mdx",
-    "title": "Monorepo tooling (Nx",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/monorepo-tooling-nx",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/monorepo-tooling-nx",
-    "matchText": "javascript ecosystem and tooling monorepo tooling nx kb 16 javascript ecosystem and tooling monorepo tooling nx"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Node.js runtime internals/index.mdx",
-    "title": "Node.js runtime internals",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/node-js-runtime-internals",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/node-js-runtime-internals",
-    "matchText": "javascript ecosystem and tooling node js runtime internals kb 16 javascript ecosystem and tooling node js runtime internals"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/npm/index.mdx",
-    "title": "npm",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/npm",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/npm",
-    "matchText": "javascript ecosystem and tooling npm kb 16 javascript ecosystem and tooling npm"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Parcel/index.mdx",
-    "title": "Parcel",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/parcel",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/parcel",
-    "matchText": "javascript ecosystem and tooling parcel kb 16 javascript ecosystem and tooling parcel"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/pnpm/index.mdx",
-    "title": "pnpm",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/pnpm",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/pnpm",
-    "matchText": "javascript ecosystem and tooling pnpm kb 16 javascript ecosystem and tooling pnpm"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Prettier/index.mdx",
-    "title": "Prettier",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/prettier",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/prettier",
-    "matchText": "javascript ecosystem and tooling prettier kb 16 javascript ecosystem and tooling prettier"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Rollup/index.mdx",
-    "title": "Rollup",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/rollup",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/rollup",
-    "matchText": "javascript ecosystem and tooling rollup kb 16 javascript ecosystem and tooling rollup"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/SWC/index.mdx",
-    "title": "SWC",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/swc",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/swc",
-    "matchText": "javascript ecosystem and tooling swc kb 16 javascript ecosystem and tooling swc"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Turbopack/index.mdx",
-    "title": "Turbopack",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/turbopack",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/turbopack",
-    "matchText": "javascript ecosystem and tooling turbopack kb 16 javascript ecosystem and tooling turbopack"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Turborepo/index.mdx",
-    "title": "Turborepo",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/turborepo",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/turborepo",
-    "matchText": "javascript ecosystem and tooling turborepo kb 16 javascript ecosystem and tooling turborepo"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/TypeScript/index.mdx",
-    "title": "TypeScript",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/typescript",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/typescript",
-    "matchText": "javascript ecosystem and tooling typescript kb 16 javascript ecosystem and tooling typescript"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/UMD)/index.mdx",
-    "title": "UMD)",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/umd",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/umd",
-    "matchText": "javascript ecosystem and tooling umd kb 16 javascript ecosystem and tooling umd"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Vite/index.mdx",
-    "title": "Vite",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/vite",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/vite",
-    "matchText": "javascript ecosystem and tooling vite kb 16 javascript ecosystem and tooling vite"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Webpack/index.mdx",
-    "title": "Webpack",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/webpack",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/webpack",
-    "matchText": "javascript ecosystem and tooling webpack kb 16 javascript ecosystem and tooling webpack"
-  },
-  {
-    "id": "./routes/KB/16. JavaScript Ecosystem & Tooling/Yarn/index.mdx",
-    "title": "Yarn",
-    "breadcrumb": "JavaScript Ecosystem & Tooling",
-    "route": "/kb/16-javascript-ecosystem-and-tooling/yarn",
-    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/yarn",
-    "matchText": "javascript ecosystem and tooling yarn kb 16 javascript ecosystem and tooling yarn"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Ant/index.mdx",
-    "title": "Ant",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/ant",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/ant",
-    "matchText": "language specific ecosystems 1 java jvm ant kb 19 language specific ecosystems 19 1 java jvm ant"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Clojure)/index.mdx",
-    "title": "Clojure)",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/clojure",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/clojure",
-    "matchText": "language specific ecosystems 1 java jvm clojure kb 19 language specific ecosystems 19 1 java jvm clojure"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Gradle/index.mdx",
-    "title": "Gradle",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/gradle",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/gradle",
-    "matchText": "language specific ecosystems 1 java jvm gradle kb 19 language specific ecosystems 19 1 java jvm gradle"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Groovy/index.mdx",
-    "title": "Groovy",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/groovy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/groovy",
-    "matchText": "language specific ecosystems 1 java jvm groovy kb 19 language specific ecosystems 19 1 java jvm groovy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Hibernate/index.mdx",
-    "title": "Hibernate",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/hibernate",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/hibernate",
-    "matchText": "language specific ecosystems 1 java jvm hibernate kb 19 language specific ecosystems 19 1 java jvm hibernate"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Jakarta EE/index.mdx",
-    "title": "Jakarta EE",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jakarta-ee",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jakarta-ee",
-    "matchText": "language specific ecosystems 1 java jvm jakarta ee kb 19 language specific ecosystems 19 1 java jvm jakarta ee"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/JDK/index.mdx",
-    "title": "JDK",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jdk",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jdk",
-    "matchText": "language specific ecosystems 1 java jvm jdk kb 19 language specific ecosystems 19 1 java jvm jdk"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Jetty/index.mdx",
-    "title": "Jetty",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jetty",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jetty",
-    "matchText": "language specific ecosystems 1 java jvm jetty kb 19 language specific ecosystems 19 1 java jvm jetty"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/JPA/index.mdx",
-    "title": "JPA",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jpa",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jpa",
-    "matchText": "language specific ecosystems 1 java jvm jpa kb 19 language specific ecosystems 19 1 java jvm jpa"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/JRE/index.mdx",
-    "title": "JRE",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jre",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jre",
-    "matchText": "language specific ecosystems 1 java jvm jre kb 19 language specific ecosystems 19 1 java jvm jre"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/JUnit/index.mdx",
-    "title": "JUnit",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/junit",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/junit",
-    "matchText": "language specific ecosystems 1 java jvm junit kb 19 language specific ecosystems 19 1 java jvm junit"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/JVM/index.mdx",
-    "title": "JVM",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jvm",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jvm",
-    "matchText": "language specific ecosystems 1 java jvm jvm kb 19 language specific ecosystems 19 1 java jvm jvm"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/JVM languages (Kotlin/index.mdx",
-    "title": "JVM languages (Kotlin",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/jvm-languages-kotlin",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/jvm-languages-kotlin",
-    "matchText": "language specific ecosystems 1 java jvm jvm languages kotlin kb 19 language specific ecosystems 19 1 java jvm jvm languages kotlin"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Kotlin interop/index.mdx",
-    "title": "Kotlin interop",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/kotlin-interop",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/kotlin-interop",
-    "matchText": "language specific ecosystems 1 java jvm kotlin interop kb 19 language specific ecosystems 19 1 java jvm kotlin interop"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Maven/index.mdx",
-    "title": "Maven",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/maven",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/maven",
-    "matchText": "language specific ecosystems 1 java jvm maven kb 19 language specific ecosystems 19 1 java jvm maven"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Mockito/index.mdx",
-    "title": "Mockito",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/mockito",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/mockito",
-    "matchText": "language specific ecosystems 1 java jvm mockito kb 19 language specific ecosystems 19 1 java jvm mockito"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Netty/index.mdx",
-    "title": "Netty",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/netty",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/netty",
-    "matchText": "language specific ecosystems 1 java jvm netty kb 19 language specific ecosystems 19 1 java jvm netty"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Scala/index.mdx",
-    "title": "Scala",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/scala",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/scala",
-    "matchText": "language specific ecosystems 1 java jvm scala kb 19 language specific ecosystems 19 1 java jvm scala"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Spring/index.mdx",
-    "title": "Spring",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/spring",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/spring",
-    "matchText": "language specific ecosystems 1 java jvm spring kb 19 language specific ecosystems 19 1 java jvm spring"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Spring Boot/index.mdx",
-    "title": "Spring Boot",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/spring-boot",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/spring-boot",
-    "matchText": "language specific ecosystems 1 java jvm spring boot kb 19 language specific ecosystems 19 1 java jvm spring boot"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Spring Cloud/index.mdx",
-    "title": "Spring Cloud",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/spring-cloud",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/spring-cloud",
-    "matchText": "language specific ecosystems 1 java jvm spring cloud kb 19 language specific ecosystems 19 1 java jvm spring cloud"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.1 Java - JVM/Tomcat/index.mdx",
-    "title": "Tomcat",
-    "breadcrumb": "Language-Specific Ecosystems / 1 Java - JVM",
-    "route": "/kb/19-language-specific-ecosystems/19-1-java-jvm/tomcat",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-1-java-jvm/tomcat",
-    "matchText": "language specific ecosystems 1 java jvm tomcat kb 19 language specific ecosystems 19 1 java jvm tomcat"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/.NET/index.mdx",
-    "title": ".NET",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/net",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/net",
-    "matchText": "language specific ecosystems 2 net net kb 19 language specific ecosystems 19 2 net net"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/.NET 5+/index.mdx",
-    "title": ".NET 5+",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/net-5",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/net-5",
-    "matchText": "language specific ecosystems 2 net net 5 kb 19 language specific ecosystems 19 2 net net 5"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/.NET Core/index.mdx",
-    "title": ".NET Core",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/net-core",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/net-core",
-    "matchText": "language specific ecosystems 2 net net core kb 19 language specific ecosystems 19 2 net net core"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/ASP.NET Core/index.mdx",
-    "title": "ASP.NET Core",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/asp-net-core",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/asp-net-core",
-    "matchText": "language specific ecosystems 2 net asp net core kb 19 language specific ecosystems 19 2 net asp net core"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/Blazor/index.mdx",
-    "title": "Blazor",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/blazor",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/blazor",
-    "matchText": "language specific ecosystems 2 net blazor kb 19 language specific ecosystems 19 2 net blazor"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/CLR/index.mdx",
-    "title": "CLR",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/clr",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/clr",
-    "matchText": "language specific ecosystems 2 net clr kb 19 language specific ecosystems 19 2 net clr"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/Csharp/index.mdx",
-    "title": "Csharp",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/csharp",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/csharp",
-    "matchText": "language specific ecosystems 2 net csharp kb 19 language specific ecosystems 19 2 net csharp"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/Entity Framework/index.mdx",
-    "title": "Entity Framework",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/entity-framework",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/entity-framework",
-    "matchText": "language specific ecosystems 2 net entity framework kb 19 language specific ecosystems 19 2 net entity framework"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/Fsharp interop/index.mdx",
-    "title": "Fsharp interop",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/fsharp-interop",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/fsharp-interop",
-    "matchText": "language specific ecosystems 2 net fsharp interop kb 19 language specific ecosystems 19 2 net fsharp interop"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/LINQ/index.mdx",
-    "title": "LINQ",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/linq",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/linq",
-    "matchText": "language specific ecosystems 2 net linq kb 19 language specific ecosystems 19 2 net linq"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/MSBuild/index.mdx",
-    "title": "MSBuild",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/msbuild",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/msbuild",
-    "matchText": "language specific ecosystems 2 net msbuild kb 19 language specific ecosystems 19 2 net msbuild"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/MSTest/index.mdx",
-    "title": "MSTest",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/mstest",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/mstest",
-    "matchText": "language specific ecosystems 2 net mstest kb 19 language specific ecosystems 19 2 net mstest"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/NuGet/index.mdx",
-    "title": "NuGet",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/nuget",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/nuget",
-    "matchText": "language specific ecosystems 2 net nuget kb 19 language specific ecosystems 19 2 net nuget"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/NUnit/index.mdx",
-    "title": "NUnit",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/nunit",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/nunit",
-    "matchText": "language specific ecosystems 2 net nunit kb 19 language specific ecosystems 19 2 net nunit"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/Razor/index.mdx",
-    "title": "Razor",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/razor",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/razor",
-    "matchText": "language specific ecosystems 2 net razor kb 19 language specific ecosystems 19 2 net razor"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.2 .NET/xUnit/index.mdx",
-    "title": "xUnit",
-    "breadcrumb": "Language-Specific Ecosystems / 2 .NET",
-    "route": "/kb/19-language-specific-ecosystems/19-2-net/xunit",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-2-net/xunit",
-    "matchText": "language specific ecosystems 2 net xunit kb 19 language specific ecosystems 19 2 net xunit"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Beautiful Soup/index.mdx",
-    "title": "Beautiful Soup",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/beautiful-soup",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/beautiful-soup",
-    "matchText": "language specific ecosystems 3 python beautiful soup kb 19 language specific ecosystems 19 3 python beautiful soup"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Bokeh/index.mdx",
-    "title": "Bokeh",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/bokeh",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/bokeh",
-    "matchText": "language specific ecosystems 3 python bokeh kb 19 language specific ecosystems 19 3 python bokeh"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/CatBoost/index.mdx",
-    "title": "CatBoost",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/catboost",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/catboost",
-    "matchText": "language specific ecosystems 3 python catboost kb 19 language specific ecosystems 19 3 python catboost"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Celery/index.mdx",
-    "title": "Celery",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/celery",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/celery",
-    "matchText": "language specific ecosystems 3 python celery kb 19 language specific ecosystems 19 3 python celery"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Conda/index.mdx",
-    "title": "Conda",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/conda",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/conda",
-    "matchText": "language specific ecosystems 3 python conda kb 19 language specific ecosystems 19 3 python conda"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/CPython/index.mdx",
-    "title": "CPython",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/cpython",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/cpython",
-    "matchText": "language specific ecosystems 3 python cpython kb 19 language specific ecosystems 19 3 python cpython"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Django/index.mdx",
-    "title": "Django",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/django",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/django",
-    "matchText": "language specific ecosystems 3 python django kb 19 language specific ecosystems 19 3 python django"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/FastAPI/index.mdx",
-    "title": "FastAPI",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/fastapi",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/fastapi",
-    "matchText": "language specific ecosystems 3 python fastapi kb 19 language specific ecosystems 19 3 python fastapi"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Flask/index.mdx",
-    "title": "Flask",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/flask",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/flask",
-    "matchText": "language specific ecosystems 3 python flask kb 19 language specific ecosystems 19 3 python flask"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/httpx/index.mdx",
-    "title": "httpx",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/httpx",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/httpx",
-    "matchText": "language specific ecosystems 3 python httpx kb 19 language specific ecosystems 19 3 python httpx"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Jupyter/index.mdx",
-    "title": "Jupyter",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/jupyter",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/jupyter",
-    "matchText": "language specific ecosystems 3 python jupyter kb 19 language specific ecosystems 19 3 python jupyter"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Keras/index.mdx",
-    "title": "Keras",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/keras",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/keras",
-    "matchText": "language specific ecosystems 3 python keras kb 19 language specific ecosystems 19 3 python keras"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/LightGBM/index.mdx",
-    "title": "LightGBM",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/lightgbm",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/lightgbm",
-    "matchText": "language specific ecosystems 3 python lightgbm kb 19 language specific ecosystems 19 3 python lightgbm"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Matplotlib/index.mdx",
-    "title": "Matplotlib",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/matplotlib",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/matplotlib",
-    "matchText": "language specific ecosystems 3 python matplotlib kb 19 language specific ecosystems 19 3 python matplotlib"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/mypy/index.mdx",
-    "title": "mypy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/mypy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/mypy",
-    "matchText": "language specific ecosystems 3 python mypy kb 19 language specific ecosystems 19 3 python mypy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/NumPy/index.mdx",
-    "title": "NumPy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/numpy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/numpy",
-    "matchText": "language specific ecosystems 3 python numpy kb 19 language specific ecosystems 19 3 python numpy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/OpenCV/index.mdx",
-    "title": "OpenCV",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/opencv",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/opencv",
-    "matchText": "language specific ecosystems 3 python opencv kb 19 language specific ecosystems 19 3 python opencv"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Pandas/index.mdx",
-    "title": "Pandas",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pandas",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pandas",
-    "matchText": "language specific ecosystems 3 python pandas kb 19 language specific ecosystems 19 3 python pandas"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Pillow/index.mdx",
-    "title": "Pillow",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pillow",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pillow",
-    "matchText": "language specific ecosystems 3 python pillow kb 19 language specific ecosystems 19 3 python pillow"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/pip/index.mdx",
-    "title": "pip",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pip",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pip",
-    "matchText": "language specific ecosystems 3 python pip kb 19 language specific ecosystems 19 3 python pip"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/pipx/index.mdx",
-    "title": "pipx",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pipx",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pipx",
-    "matchText": "language specific ecosystems 3 python pipx kb 19 language specific ecosystems 19 3 python pipx"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Playwright/index.mdx",
-    "title": "Playwright",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/playwright",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/playwright",
-    "matchText": "language specific ecosystems 3 python playwright kb 19 language specific ecosystems 19 3 python playwright"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Plotly/index.mdx",
-    "title": "Plotly",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/plotly",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/plotly",
-    "matchText": "language specific ecosystems 3 python plotly kb 19 language specific ecosystems 19 3 python plotly"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Poetry/index.mdx",
-    "title": "Poetry",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/poetry",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/poetry",
-    "matchText": "language specific ecosystems 3 python poetry kb 19 language specific ecosystems 19 3 python poetry"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Pydantic/index.mdx",
-    "title": "Pydantic",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pydantic",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pydantic",
-    "matchText": "language specific ecosystems 3 python pydantic kb 19 language specific ecosystems 19 3 python pydantic"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/PyPI/index.mdx",
-    "title": "PyPI",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pypi",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pypi",
-    "matchText": "language specific ecosystems 3 python pypi kb 19 language specific ecosystems 19 3 python pypi"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/PyPy/index.mdx",
-    "title": "PyPy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pypy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pypy",
-    "matchText": "language specific ecosystems 3 python pypy kb 19 language specific ecosystems 19 3 python pypy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/pytest/index.mdx",
-    "title": "pytest",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pytest",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pytest",
-    "matchText": "language specific ecosystems 3 python pytest kb 19 language specific ecosystems 19 3 python pytest"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/PyTorch/index.mdx",
-    "title": "PyTorch",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/pytorch",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/pytorch",
-    "matchText": "language specific ecosystems 3 python pytorch kb 19 language specific ecosystems 19 3 python pytorch"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Requests/index.mdx",
-    "title": "Requests",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/requests",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/requests",
-    "matchText": "language specific ecosystems 3 python requests kb 19 language specific ecosystems 19 3 python requests"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Scikit-learn/index.mdx",
-    "title": "Scikit-learn",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/scikit-learn",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/scikit-learn",
-    "matchText": "language specific ecosystems 3 python scikit learn kb 19 language specific ecosystems 19 3 python scikit learn"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/SciPy/index.mdx",
-    "title": "SciPy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/scipy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/scipy",
-    "matchText": "language specific ecosystems 3 python scipy kb 19 language specific ecosystems 19 3 python scipy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Scrapy/index.mdx",
-    "title": "Scrapy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/scrapy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/scrapy",
-    "matchText": "language specific ecosystems 3 python scrapy kb 19 language specific ecosystems 19 3 python scrapy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Seaborn/index.mdx",
-    "title": "Seaborn",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/seaborn",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/seaborn",
-    "matchText": "language specific ecosystems 3 python seaborn kb 19 language specific ecosystems 19 3 python seaborn"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Selenium/index.mdx",
-    "title": "Selenium",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/selenium",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/selenium",
-    "matchText": "language specific ecosystems 3 python selenium kb 19 language specific ecosystems 19 3 python selenium"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/SQLAlchemy/index.mdx",
-    "title": "SQLAlchemy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/sqlalchemy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/sqlalchemy",
-    "matchText": "language specific ecosystems 3 python sqlalchemy kb 19 language specific ecosystems 19 3 python sqlalchemy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/Statsmodels/index.mdx",
-    "title": "Statsmodels",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/statsmodels",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/statsmodels",
-    "matchText": "language specific ecosystems 3 python statsmodels kb 19 language specific ecosystems 19 3 python statsmodels"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/SymPy/index.mdx",
-    "title": "SymPy",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/sympy",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/sympy",
-    "matchText": "language specific ecosystems 3 python sympy kb 19 language specific ecosystems 19 3 python sympy"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/TensorFlow/index.mdx",
-    "title": "TensorFlow",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/tensorflow",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/tensorflow",
-    "matchText": "language specific ecosystems 3 python tensorflow kb 19 language specific ecosystems 19 3 python tensorflow"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/tox/index.mdx",
-    "title": "tox",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/tox",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/tox",
-    "matchText": "language specific ecosystems 3 python tox kb 19 language specific ecosystems 19 3 python tox"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/uv/index.mdx",
-    "title": "uv",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/uv",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/uv",
-    "matchText": "language specific ecosystems 3 python uv kb 19 language specific ecosystems 19 3 python uv"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/venv/index.mdx",
-    "title": "venv",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/venv",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/venv",
-    "matchText": "language specific ecosystems 3 python venv kb 19 language specific ecosystems 19 3 python venv"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.3 Python/XGBoost/index.mdx",
-    "title": "XGBoost",
-    "breadcrumb": "Language-Specific Ecosystems / 3 Python",
-    "route": "/kb/19-language-specific-ecosystems/19-3-python/xgboost",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-3-python/xgboost",
-    "matchText": "language specific ecosystems 3 python xgboost kb 19 language specific ecosystems 19 3 python xgboost"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/ActiveRecord/index.mdx",
-    "title": "ActiveRecord",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/activerecord",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/activerecord",
-    "matchText": "language specific ecosystems 4 ruby activerecord kb 19 language specific ecosystems 19 4 ruby activerecord"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/Bundler/index.mdx",
-    "title": "Bundler",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/bundler",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/bundler",
-    "matchText": "language specific ecosystems 4 ruby bundler kb 19 language specific ecosystems 19 4 ruby bundler"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/Gem/index.mdx",
-    "title": "Gem",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/gem",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/gem",
-    "matchText": "language specific ecosystems 4 ruby gem kb 19 language specific ecosystems 19 4 ruby gem"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/rbenv/index.mdx",
-    "title": "rbenv",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/rbenv",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/rbenv",
-    "matchText": "language specific ecosystems 4 ruby rbenv kb 19 language specific ecosystems 19 4 ruby rbenv"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/RSpec/index.mdx",
-    "title": "RSpec",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/rspec",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/rspec",
-    "matchText": "language specific ecosystems 4 ruby rspec kb 19 language specific ecosystems 19 4 ruby rspec"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/RVM/index.mdx",
-    "title": "RVM",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/rvm",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/rvm",
-    "matchText": "language specific ecosystems 4 ruby rvm kb 19 language specific ecosystems 19 4 ruby rvm"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.4 Ruby/Sidekiq/index.mdx",
-    "title": "Sidekiq",
-    "breadcrumb": "Language-Specific Ecosystems / 4 Ruby",
-    "route": "/kb/19-language-specific-ecosystems/19-4-ruby/sidekiq",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-4-ruby/sidekiq",
-    "matchText": "language specific ecosystems 4 ruby sidekiq kb 19 language specific ecosystems 19 4 ruby sidekiq"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.5 Go/channels/index.mdx",
-    "title": "channels",
-    "breadcrumb": "Language-Specific Ecosystems / 5 Go",
-    "route": "/kb/19-language-specific-ecosystems/19-5-go/channels",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-5-go/channels",
-    "matchText": "language specific ecosystems 5 go channels kb 19 language specific ecosystems 19 5 go channels"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.5 Go/Go modules/index.mdx",
-    "title": "Go modules",
-    "breadcrumb": "Language-Specific Ecosystems / 5 Go",
-    "route": "/kb/19-language-specific-ecosystems/19-5-go/go-modules",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-5-go/go-modules",
-    "matchText": "language specific ecosystems 5 go go modules kb 19 language specific ecosystems 19 5 go go modules"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.5 Go/Go toolchain/index.mdx",
-    "title": "Go toolchain",
-    "breadcrumb": "Language-Specific Ecosystems / 5 Go",
-    "route": "/kb/19-language-specific-ecosystems/19-5-go/go-toolchain",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-5-go/go-toolchain",
-    "matchText": "language specific ecosystems 5 go go toolchain kb 19 language specific ecosystems 19 5 go go toolchain"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.5 Go/GOPATH/index.mdx",
-    "title": "GOPATH",
-    "breadcrumb": "Language-Specific Ecosystems / 5 Go",
-    "route": "/kb/19-language-specific-ecosystems/19-5-go/gopath",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-5-go/gopath",
-    "matchText": "language specific ecosystems 5 go gopath kb 19 language specific ecosystems 19 5 go gopath"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.5 Go/goroutines/index.mdx",
-    "title": "goroutines",
-    "breadcrumb": "Language-Specific Ecosystems / 5 Go",
-    "route": "/kb/19-language-specific-ecosystems/19-5-go/goroutines",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-5-go/goroutines",
-    "matchText": "language specific ecosystems 5 go goroutines kb 19 language specific ecosystems 19 5 go goroutines"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.5 Go/testing package/index.mdx",
-    "title": "testing package",
-    "breadcrumb": "Language-Specific Ecosystems / 5 Go",
-    "route": "/kb/19-language-specific-ecosystems/19-5-go/testing-package",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-5-go/testing-package",
-    "matchText": "language specific ecosystems 5 go testing package kb 19 language specific ecosystems 19 5 go testing package"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/async runtimes (Tokio/index.mdx",
-    "title": "async runtimes (Tokio",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/async-runtimes-tokio",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/async-runtimes-tokio",
-    "matchText": "language specific ecosystems 6 rust async runtimes tokio kb 19 language specific ecosystems 19 6 rust async runtimes tokio"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/async-std)/index.mdx",
-    "title": "async-std)",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/async-std",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/async-std",
-    "matchText": "language specific ecosystems 6 rust async std kb 19 language specific ecosystems 19 6 rust async std"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/Cargo/index.mdx",
-    "title": "Cargo",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/cargo",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/cargo",
-    "matchText": "language specific ecosystems 6 rust cargo kb 19 language specific ecosystems 19 6 rust cargo"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/crates.io/index.mdx",
-    "title": "crates.io",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/crates-io",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/crates-io",
-    "matchText": "language specific ecosystems 6 rust crates io kb 19 language specific ecosystems 19 6 rust crates io"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/ownership-borrowing/index.mdx",
-    "title": "ownership-borrowing",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/ownership-borrowing",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/ownership-borrowing",
-    "matchText": "language specific ecosystems 6 rust ownership borrowing kb 19 language specific ecosystems 19 6 rust ownership borrowing"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/traits/index.mdx",
-    "title": "traits",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/traits",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/traits",
-    "matchText": "language specific ecosystems 6 rust traits kb 19 language specific ecosystems 19 6 rust traits"
-  },
-  {
-    "id": "./routes/KB/19. Language-Specific Ecosystems/19.6 Rust/unsafe Rust/index.mdx",
-    "title": "unsafe Rust",
-    "breadcrumb": "Language-Specific Ecosystems / 6 Rust",
-    "route": "/kb/19-language-specific-ecosystems/19-6-rust/unsafe-rust",
-    "routeLabel": "kb/19-language-specific-ecosystems/19-6-rust/unsafe-rust",
-    "matchText": "language specific ecosystems 6 rust unsafe rust kb 19 language specific ecosystems 19 6 rust unsafe rust"
+    "route": "/kb/16-javascript-ecosystem-and-tooling/transpilers-and-compilers",
+    "routeLabel": "kb/16-javascript-ecosystem-and-tooling/transpilers-and-compilers",
+    "matchText": "javascript ecosystem and tooling transpilers and compilers kb 16 javascript ecosystem and tooling transpilers and compilers"
+  },
+  {
+    "id": "./routes/KB/19. Language-Specific Ecosystems/The .NET Ecosystem/index.mdx",
+    "title": "The .NET Ecosystem",
+    "breadcrumb": "Language-Specific Ecosystems",
+    "route": "/kb/19-language-specific-ecosystems/the-net-ecosystem",
+    "routeLabel": "kb/19-language-specific-ecosystems/the-net-ecosystem",
+    "matchText": "language specific ecosystems the net ecosystem kb 19 language specific ecosystems the net ecosystem"
+  },
+  {
+    "id": "./routes/KB/19. Language-Specific Ecosystems/The Go Ecosystem/index.mdx",
+    "title": "The Go Ecosystem",
+    "breadcrumb": "Language-Specific Ecosystems",
+    "route": "/kb/19-language-specific-ecosystems/the-go-ecosystem",
+    "routeLabel": "kb/19-language-specific-ecosystems/the-go-ecosystem",
+    "matchText": "language specific ecosystems the go ecosystem kb 19 language specific ecosystems the go ecosystem"
+  },
+  {
+    "id": "./routes/KB/19. Language-Specific Ecosystems/The Java Ecosystem/index.mdx",
+    "title": "The Java Ecosystem",
+    "breadcrumb": "Language-Specific Ecosystems",
+    "route": "/kb/19-language-specific-ecosystems/the-java-ecosystem",
+    "routeLabel": "kb/19-language-specific-ecosystems/the-java-ecosystem",
+    "matchText": "language specific ecosystems the java ecosystem kb 19 language specific ecosystems the java ecosystem"
+  },
+  {
+    "id": "./routes/KB/19. Language-Specific Ecosystems/The Python Ecosystem/index.mdx",
+    "title": "The Python Ecosystem",
+    "breadcrumb": "Language-Specific Ecosystems",
+    "route": "/kb/19-language-specific-ecosystems/the-python-ecosystem",
+    "routeLabel": "kb/19-language-specific-ecosystems/the-python-ecosystem",
+    "matchText": "language specific ecosystems the python ecosystem kb 19 language specific ecosystems the python ecosystem"
+  },
+  {
+    "id": "./routes/KB/19. Language-Specific Ecosystems/The Ruby Ecosystem/index.mdx",
+    "title": "The Ruby Ecosystem",
+    "breadcrumb": "Language-Specific Ecosystems",
+    "route": "/kb/19-language-specific-ecosystems/the-ruby-ecosystem",
+    "routeLabel": "kb/19-language-specific-ecosystems/the-ruby-ecosystem",
+    "matchText": "language specific ecosystems the ruby ecosystem kb 19 language specific ecosystems the ruby ecosystem"
+  },
+  {
+    "id": "./routes/KB/19. Language-Specific Ecosystems/The Rust Ecosystem/index.mdx",
+    "title": "The Rust Ecosystem",
+    "breadcrumb": "Language-Specific Ecosystems",
+    "route": "/kb/19-language-specific-ecosystems/the-rust-ecosystem",
+    "routeLabel": "kb/19-language-specific-ecosystems/the-rust-ecosystem",
+    "matchText": "language specific ecosystems the rust ecosystem kb 19 language specific ecosystems the rust ecosystem"
   },
   {
     "id": "./routes/KB/28. Large Language Models/Adapters/index.mdx",

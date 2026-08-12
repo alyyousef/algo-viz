@@ -1,0 +1,28 @@
+---
+title: Modern Build Tools (Vite, Turbopack)
+description: The next-generation architecture that abandons heavy bundling during development in favor of instant, unbundled ESM delivery.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Modern Build Tools">
+
+The Webpack era created a catastrophic developer experience problem. In a large app, if a developer changed a single CSS color, they would have to wait 30 seconds for Webpack to re-bundle the entire application before the browser would update.
+
+Evan You (creator of Vue) realized that modern browsers had finally implemented native support for ES Modules (`<script type="module">`).
+
+## Vite (The French word for "Quick")
+Vite completely revolutionized frontend development by entirely abandoning the concept of bundling during development.
+
+When you start a Vite dev server:
+1. It does **not** bundle your code.
+2. It uses blazing-fast **esbuild** (written in Go) to instantly pre-compile your npm dependencies.
+3. It serves your source code directly to the browser as native ESM over HTTP.
+4. If you edit a file, Vite uses **HMR (Hot Module Replacement)** to instantly swap out exactly that one module in the browser via WebSockets in milliseconds.
+
+The result: A Vite dev server starts in 100 milliseconds, regardless of whether your app has 10 files or 10,000 files. (Note: For Production, Vite still heavily bundles the code using Rollup for optimal network performance).
+
+## Turbopack
+Created by Tobias Koppers (the original creator of Webpack) at Vercel. 
+Turbopack is billed as the "Rust-based successor to Webpack". Instead of abandoning bundling like Vite, it relies on incredibly complex, heavily-cached incremental Rust compilation to achieve extreme speed, specifically optimized for massive Next.js architectures.
+
+</ConceptTemplate>

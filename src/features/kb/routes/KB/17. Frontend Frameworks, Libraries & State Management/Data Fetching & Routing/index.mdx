@@ -1,0 +1,37 @@
+---
+title: Data Fetching & Routing (TanStack, React Router)
+description: The sophisticated architectures required to synchronize server state with the UI, manage HTTP caching, and orchestrate client-side URL navigation.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Data Fetching & Routing">
+
+Historically, developers used Redux to store API data. This was a catastrophic architectural mistake. **Server Data is not Global UI State.** Server Data is inherently asynchronous, instantly becomes stale, and requires complex polling and caching logic.
+
+## TanStack Query (React Query)
+Created by Tanner Linsley, TanStack Query mathematically solved the "Server State" problem and rendered Redux largely obsolete for API calls.
+
+Instead of writing massive `useEffect` hooks to fetch data, you use TanStack Query.
+```ts
+const { data, isLoading, isError } = useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos
+})
+```
+
+It automatically handles:
+1. **Caching**: If you visit the Todos page again, it instantly shows the cached data while secretly fetching updates in the background.
+2. **Deduplication**: If 5 components request the Todos simultaneously, it mathematically merges them into exactly 1 network request.
+3. **Retry Logic**: It automatically retries failed network requests 3 times with exponential backoff.
+
+## Client-Side Routing
+In a traditional website, clicking a link causes a hard page refresh (the browser downloads a new HTML file). 
+In a Single Page Application (SPA), the browser mathematically suppresses the hard refresh, updates the URL via the HTML5 History API, and Javascript instantly mounts a new component.
+
+### 1. React Router
+The undisputed historical king of SPA routing. Created by Remix (now Shopify). It utilizes a complex nested route architecture, allowing inner sections of a page (like a dashboard widget) to navigate independently of the outer layout.
+
+### 2. TanStack Router
+A massive modern challenger. It is built entirely around 100% Type-Safety. It ensures that if you link to a URL route that requires a `?userId=123` search parameter, the TypeScript compiler will violently crash if you forget to provide it.
+
+</ConceptTemplate>

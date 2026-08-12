@@ -29,20 +29,6 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/mermaid')) {
-            return 'mermaid'
-          }
-          if (id.includes('node_modules/cytoscape')) {
-            return 'cytoscape'
-          }
-          if (id.includes('node_modules/')) {
-            return 'vendor'
-          }
-        },
-      },
-    },
+    chunkSizeWarningLimit: 2000,
   },
 })

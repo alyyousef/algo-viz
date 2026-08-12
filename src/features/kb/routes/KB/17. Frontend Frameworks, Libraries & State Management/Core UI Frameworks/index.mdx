@@ -1,0 +1,31 @@
+---
+title: Core UI Frameworks (React, Vue, Angular, Svelte, Solid)
+description: The massive architectural shift from imperative DOM manipulation to declarative, state-driven UI frameworks.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Core UI Frameworks">
+
+Historically, rendering a list of users on a screen required manually querying the DOM (`document.getElementById`) and mathematically updating individual HTML nodes in a highly imperative manner. As applications grew into massive Single Page Applications (SPAs), this led to catastrophic spaghetti code.
+
+The industry solved this by introducing **Declarative UI Frameworks**. You define what the UI *should* look like based on current data (State), and the framework mathematically handles updating the actual DOM for you.
+
+## 1. React (The Global Standard)
+Created by Facebook. React is not actually a framework; it's a library. It introduced two massive architectural paradigms:
+1. **Component-Based Architecture**: Breaking the UI into reusable, isolated Javascript functions.
+2. **The Virtual DOM**: Interacting with the real DOM is incredibly slow. React keeps a lightweight Javascript copy of the DOM in memory. When state changes, React mathematically calculates the "Diff" between the old Virtual DOM and the new Virtual DOM, and then executes a single, highly-optimized batch update to the real DOM.
+
+## 2. Vue.js
+Created by Evan You. Vue was designed to take the best parts of Angular and React. It uses a Virtual DOM like React but uses a mathematically "Reactive" state system. Instead of explicitly calling `setState`, Vue uses Javascript Proxies to silently track when a variable is accessed or mutated, triggering automatic UI updates.
+
+## 3. Angular
+Created by Google. Unlike React, Angular is a massive, highly-opinionated **Framework**. It forces you to write in TypeScript and provides built-in routing, state, and HTTP clients. It historically utilized **Two-Way Data Binding** and complex decorators, making it the dominant choice for massive, strictly-architected enterprise applications.
+
+## 4. Svelte (The Compiler Revolution)
+Created by Rich Harris. Svelte completely shattered the industry by declaring: **"The Virtual DOM is pure overhead."**
+Unlike React, Svelte does not ship a heavy framework runtime to the browser. Instead, Svelte is a **Compiler**. During the build step, it mathematically analyzes your code and compiles it down to tiny, highly-optimized, imperative Vanilla Javascript DOM updates.
+
+## 5. SolidJS
+Created by Ryan Carniato. Solid looks identical to React (using JSX and Signals), but like Svelte, it completely abandons the Virtual DOM. It compiles down to direct DOM nodes, making it the fastest Javascript framework in existence for raw performance benchmarks.
+
+</ConceptTemplate>

@@ -1,0 +1,35 @@
+---
+title: Authentication & Security
+description: The cryptographic systems used to verify identity (Authentication) and determine access rights (Authorization) in stateless web applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Authentication & Security">
+
+HTTP is mathematically **Stateless**. If you log in on one request, the server immediately forgets who you are on the very next request. We must pass an identifier on every single request.
+
+## 1. Stateful Sessions (Cookies)
+The historical standard.
+1. User submits email/password.
+2. Backend verifies it, generates a random string (`SessionID: abc-123`), and stores it in the server's RAM or Redis database mapped to the User ID.
+3. Backend sends the SessionID to the browser via an HTTP-Only **Cookie**.
+4. On every subsequent request, the browser automatically attaches the cookie. The backend checks its database to see if `abc-123` is valid.
+
+**The Flaw**: It does not scale easily. If you have 10 backend servers behind a load balancer, and Server A stores the SessionID in its RAM, the user will be instantly logged out if their next request hits Server B (unless you set up a centralized Redis cluster).
+
+## 2. Stateless JWT (JSON Web Tokens)
+The modern API standard.
+1. User submits email/password.
+2. Backend verifies it, and cryptographically signs a JSON object using a secret key (`HMAC SHA256`). This is the JWT.
+3. The server does **not** save the JWT in a database. It simply sends it to the client.
+4. The client sends the JWT in the `Authorization: Bearer <token>` header on every request.
+5. The backend uses its secret key to mathematically verify the signature. If the signature is valid, the server trusts the data inside the token (like `userId: 123`).
+
+**The Flaw**: Because the server doesn't track JWTs in a database, a JWT cannot be explicitly revoked or destroyed. If a hacker steals a JWT that is valid for 1 hour, there is mathematically no way to stop them until the 1 hour expires.
+
+## OAuth 2.0 & OpenID Connect (SSO)
+Instead of forcing users to create a new password for your app, you can use **OAuth 2.0**.
+OAuth 2.0 is an *Authorization* framework (e.g., letting an app read your Google Calendar without giving the app your Google password). 
+**OpenID Connect (OIDC)** is an identity layer built on top of OAuth 2.0 that provides *Authentication* (Single Sign-On). When you click "Sign in with Google," OIDC returns an ID Token (a JWT) proving who you are.
+
+</ConceptTemplate>

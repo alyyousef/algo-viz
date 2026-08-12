@@ -1,0 +1,25 @@
+---
+title: Package Managers (npm, Yarn, pnpm)
+description: The tools designed to resolve, download, and manage the massive dependency trees of open-source Javascript libraries.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Package Managers">
+
+Modern applications rely on thousands of open-source libraries (React, Lodash, Tailwind). Managing the exact version numbers and deep dependencies of these libraries requires a **Package Manager**.
+
+## npm (Node Package Manager)
+The default package manager that ships with Node.js. It created the infamous **`node_modules`** folder—a massive, endlessly deep directory containing all your downloaded code.
+Historically, npm was extremely slow, lacked deterministic lockfiles, and if 10 different projects on your computer all used React, npm would download and copy React 10 separate times, consuming massive amounts of hard drive space.
+
+## Yarn (The Facebook Fix)
+In 2016, Facebook grew tired of npm's failures and released **Yarn**. 
+Yarn introduced the **Lockfile** (`yarn.lock`), which mathematically guaranteed that if Developer A installed a package, Developer B would get the *exact same* cryptographic hash version. It also downloaded packages in parallel, drastically increasing installation speeds. (npm eventually copied all these features).
+
+## pnpm (Performant NPM)
+The current industry pinnacle. **pnpm** mathematically solved the hard drive space issue by using a global **content-addressable store** and OS-level **Symlinks** (Hard Links).
+
+If you have 100 projects on your computer that use React, pnpm downloads React exactly once to a hidden folder on your OS (`~/.pnpm-store`). It then creates instantaneous symbolic links in your `node_modules` that point to the global store. 
+This makes pnpm astronomically faster than npm and saves gigabytes of disk space.
+
+</ConceptTemplate>

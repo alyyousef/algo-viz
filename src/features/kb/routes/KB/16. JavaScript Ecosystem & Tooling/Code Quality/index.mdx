@@ -1,0 +1,45 @@
+---
+title: Code Quality (ESLint, Prettier)
+description: The automated static analysis tools that mathematically enforce stylistic consistency and prevent logical errors before execution.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Code Quality (ESLint, Prettier)">
+
+In a team of 50 developers, everyone has different opinions on coding style. Some prefer single quotes, some prefer double quotes. Some prefer 2 spaces, some prefer tabs. 
+
+Without automated tooling, Pull Request reviews devolve into bitter arguments over indentation, wasting thousands of hours of expensive engineering time. 
+
+The industry mathematically solved this using a strict separation of concerns:
+
+## 1. Prettier (The Code Formatter)
+Prettier is an "opinionated" code formatter. It does not care about logic or bugs. Its only job is visual spacing.
+When you press Save in your editor, Prettier rips your code apart into an Abstract Syntax Tree (AST), deletes all of your personal formatting, and reprints it using a strict set of mathematical rules. 
+
+```js
+// You write this ugly mess:
+foo(arg1,arg2,
+arg3,arg4);
+
+// Prettier instantly formats it on Save:
+foo(
+  arg1,
+  arg2,
+  arg3,
+  arg4
+);
+```
+It completely eliminates all team debates about formatting.
+
+## 2. ESLint (The Logic Linter)
+While Prettier handles formatting, ESLint analyzes your actual Javascript logic to mathematically prevent bugs.
+
+ESLint scans the AST for dangerous patterns:
+- `no-unused-vars`: You declared a variable but never used it.
+- `eqeqeq`: You used `==` instead of the strict `===`.
+- `react-hooks/exhaustive-deps`: You forgot to include a variable in a React `useEffect` dependency array, which will cause a stale closure bug in Production.
+
+## The Synergy
+Today, these tools are run automatically on "pre-commit hooks" using a tool called **Husky**. The system will literally forbid the developer from committing their code to Git unless Prettier has formatted it and ESLint reports zero errors.
+
+</ConceptTemplate>

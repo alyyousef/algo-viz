@@ -1,0 +1,38 @@
+---
+title: Data Visualization & 3D (D3.js, Three.js)
+description: The highly specialized mathematical libraries used to render complex SVG charts and interactive WebGL 3D environments.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Data Visualization & 3D">
+
+When standard HTML divs are mathematically insufficient to represent massive datasets or complex geometries, we shift to the Canvas API, SVGs, and WebGL.
+
+## 1. D3.js (Data-Driven Documents)
+Created by Mike Bostock (at the New York Times), D3 is the absolute bedrock of web data visualization.
+D3 is not a "charting library" (it doesn't have a `<BarChart>` component). Instead, it is a low-level mathematical engine that takes massive JSON arrays of data, computes the complex geometric scales (mapping a $1,000,000 salary to a 50px high pixel coordinate), and binds the data directly to SVG DOM elements.
+
+**The Flaw**: D3 aggressively mutates the DOM natively. This completely conflicts with React's Virtual DOM architecture.
+
+## 2. Recharts & Chart.js
+To solve the D3 conflict, developers created high-level wrappers.
+- **Recharts**: The most popular React charting library. It uses D3 under the hood strictly for the mathematical scaling calculations, but allows React to handle the actual rendering of the SVG DOM nodes, flawlessly respecting the Virtual DOM.
+- **Chart.js**: A highly popular vanilla JS library that renders entirely onto an HTML5 `<canvas>` element instead of using SVGs, making it incredibly performant for massive datasets (like plotting 50,000 stock market ticks).
+
+## 3. Three.js (The WebGL Wrapper)
+Writing raw WebGL (Web Graphics Library) to render a 3D cube in the browser requires hundreds of lines of horrifyingly complex C-style GLSL shader code and heavy matrix multiplication math.
+
+**Three.js** is a massive Javascript abstraction layer over WebGL. It provides human-readable APIs for Cameras, Lighting, Geometries, and Materials. 
+In the React ecosystem, this is dominated by **React Three Fiber (R3F)**, which brilliantly maps Three.js instances directly to React Components, allowing you to render a 3D spinning box using declarative JSX:
+
+```tsx
+<Canvas>
+  <ambientLight />
+  <mesh rotation={[10, 10, 0]}>
+    <boxGeometry args={[1, 1, 1]} />
+    <meshStandardMaterial color="hotpink" />
+  </mesh>
+</Canvas>
+```
+
+</ConceptTemplate>

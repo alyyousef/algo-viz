@@ -1,0 +1,46 @@
+---
+title: The Module Systems (CJS, ESM, AMD)
+description: The historical nightmare of Javascript imports, leading to the ultimate triumph of native ES Modules.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Module Systems (CJS, ESM)">
+
+For the first 20 years of its existence, JavaScript had absolutely no native way to split code into multiple files. You simply loaded massive, global `<script>` tags in your HTML file and hoped they loaded in the correct order without colliding.
+
+To fix this, the community invented fragmented "Module Systems."
+
+## The Legacy Systems
+
+### CommonJS (CJS)
+When Node.js was created in 2009 for backend servers, it needed a module system immediately. They invented **CommonJS**. It uses `require()` and is entirely **synchronous**.
+```js
+const fs = require('fs');
+module.exports = { myFunction };
+```
+CommonJS worked perfectly on the backend, but it was disastrous for browsers (which need to load files asynchronously over the network).
+
+### AMD (Asynchronous Module Definition)
+Used primarily by libraries like **RequireJS**, AMD was designed specifically for the browser. It used a massive, ugly wrapper function to load dependencies asynchronously before executing the code.
+```js
+define(['dep1', 'dep2'], function (dep1, dep2) {
+    return function () {};
+});
+```
+
+### UMD (Universal Module Definition)
+A terrifying Frankenstein wrapper that attempted to detect if the code was running in Node (CJS) or a browser (AMD), and dynamically served both.
+
+## ES Modules (ESM) - The Standard
+In 2015, ECMAScript finally introduced a native, official module architecture built directly into the JavaScript language: **ESM**.
+
+```js
+import { myFunction } from './utils.js';
+export const myVariable = 42;
+```
+
+ESM is asynchronous, statically analyzable (which allows Bundlers to mathematically perform "Tree-Shaking" to delete unused code), and natively supported by all modern browsers via `<script type="module">`.
+
+**The Transition Nightmare**: For the last decade, the Javascript ecosystem has suffered immensely trying to migrate the billions of existing CommonJS packages over to ESM.
+
+</ConceptTemplate>

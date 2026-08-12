@@ -1,0 +1,25 @@
+---
+title: The Ruby Ecosystem
+description: The developer-happiness focused ecosystem, Gems, Bundler, and the architecture of background job processing.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Ruby Ecosystem">
+
+Ruby is a dynamic, object-oriented language created by Yukihiro Matsumoto (Matz) with a singular philosophy: **Developer Happiness**. It intentionally sacrifices raw execution speed to provide an incredibly elegant, human-readable syntax.
+
+## 1. RubyGems and Bundler
+In the Ruby ecosystem, third-party libraries are called **Gems**.
+- **RubyGems**: The package manager that allows you to install libraries globally (`gem install rails`).
+- **Bundler**: Because global gems conflict across projects, Bundler was created. You define your dependencies in a `Gemfile`, and run `bundle install`. Bundler mathematically resolves the dependency graph and generates a `Gemfile.lock`, ensuring absolute determinism across all developer machines.
+
+## 2. Version Managers (rbenv & RVM)
+Ruby undergoes major version changes frequently (e.g., Ruby 2.7 to 3.0). To manage this, developers use tools like **rbenv** or **RVM** (Ruby Version Manager). 
+These tools allow a developer to have 10 different versions of the Ruby interpreter installed on their Mac, dynamically switching between them using a `.ruby-version` file inside a project folder.
+
+## 3. Sidekiq (The Standard for Concurrency)
+Ruby, much like Python, historically struggled with heavy multi-threading. 
+Because web frameworks like Ruby on Rails are heavily utilized for massive web apps, they needed a way to process heavy background tasks (like sending 10,000 emails).
+**Sidekiq** became the absolute standard. It is a mathematical marvel that uses Redis as an in-memory queue, allowing Ruby to spawn thousands of lightweight background worker processes to execute jobs asynchronously outside of the main HTTP request cycle.
+
+</ConceptTemplate>

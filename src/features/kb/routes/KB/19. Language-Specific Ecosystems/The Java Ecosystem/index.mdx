@@ -1,0 +1,34 @@
+---
+title: The Java Ecosystem
+description: The core architecture of the JVM, JRE, JDK, and the build systems that power global enterprise software.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Java Ecosystem">
+
+Java was created in 1995 with the revolutionary promise of **"Write Once, Run Anywhere" (WORA)**. Instead of compiling code into machine-specific binaries (like C++), Java compiles into mathematical byte-code that runs inside a virtual machine.
+
+## 1. JVM, JRE, and JDK
+To understand Java, you must understand its three core layers:
+
+- **JVM (Java Virtual Machine)**: The engine itself. It takes the compiled Java byte-code and executes it on the host operating system. The JVM is not just for Java; languages like Kotlin, Scala, and Clojure also compile to JVM byte-code.
+- **JRE (Java Runtime Environment)**: The JVM + the core Java class libraries. This is all a user needs installed on their computer to *run* a Java application.
+- **JDK (Java Development Kit)**: The JRE + the compiler (`javac`) and debugging tools. This is what you need installed to *write* Java code.
+
+## 2. Build Systems (Maven vs Gradle)
+Java applications consist of thousands of classes and external libraries (`.jar` files). Build systems automate the downloading of these libraries and the compilation process.
+
+### Apache Maven
+The historical industry standard. Maven uses an XML file (`pom.xml`) to declare dependencies and relies heavily on strict convention over configuration.
+```xml
+<!-- pom.xml example -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+### Gradle
+The modern, mathematically superior successor to Maven. Instead of static XML, Gradle uses a Domain-Specific Language (Groovy or Kotlin DSL) in its `build.gradle` file. It uses advanced caching and incremental compilation, making it massively faster than Maven. It is the official build system for Android development.
+
+</ConceptTemplate>

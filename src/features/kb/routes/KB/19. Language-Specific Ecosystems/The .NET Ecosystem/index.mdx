@@ -1,0 +1,31 @@
+---
+title: The .NET Ecosystem
+description: The architecture of Microsoft's cross-platform framework, the CLR, and the C# programming language.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The .NET Ecosystem">
+
+Historically, the **.NET Framework** was deeply tied to the Windows operating system. However, with the release of **.NET Core** (and later just **.NET 5+**), Microsoft completely rewrote the ecosystem to be highly-performant, open-source, and natively cross-platform (Linux, macOS, Windows).
+
+## 1. The CLR (Common Language Runtime)
+Much like Java's JVM, .NET utilizes a virtual machine called the **CLR**. 
+When you write C# or F# code, it is compiled into **CIL (Common Intermediate Language)**. The CLR then mathematically executes this CIL code using a JIT (Just-In-Time) compiler, turning it into optimized native machine code.
+
+## 2. C# and LINQ
+**C# (C-Sharp)** is the primary language of .NET. It is widely considered one of the best designed object-oriented languages in existence. 
+One of its greatest mathematical innovations is **LINQ (Language Integrated Query)**. LINQ allows developers to write SQL-like queries directly inside C# code to filter, map, and sort arrays or database tables, with strict compile-time type safety.
+
+```csharp
+// LINQ Example
+var richCustomers = users
+    .Where(u => u.Balance > 10000)
+    .OrderBy(u => u.Name)
+    .Select(u => new { u.Name, u.Email });
+```
+
+## 3. Tooling (NuGet & MSBuild)
+- **NuGet**: The official package manager for .NET (equivalent to `npm` for Node or `pip` for Python). Developers define dependencies in a `.csproj` file, and NuGet downloads the compiled DLL files from the central repository.
+- **MSBuild**: The internal build engine for .NET. When you run `dotnet build` in the CLI, MSBuild mathematically resolves the dependency tree and compiles the C# code into a final binary executable.
+
+</ConceptTemplate>

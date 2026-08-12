@@ -1,0 +1,40 @@
+---
+title: Streams & Buffers
+description: The memory management architecture required to process massive files without crashing the server's RAM limits.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Streams & Buffers">
+
+In naive backend development, if a user uploads a 5GB 4K Video to your server, a beginner might use `fs.readFile()` to read the file.
+`fs.readFile()` attempts to load the entire 5GB file into the server's RAM at once. If your server only has 2GB of RAM, the Node.js process will violently crash with a **Fatal Error: JavaScript heap out of memory**.
+
+To solve this, Node.js provides **Streams**.
+
+## The Architecture of Streams
+A Stream is an abstract interface that breaks massive data down into tiny mathematical chunks (called **Buffers**, typically 64kb in size), and processes them piece by piece sequentially over time.
+
+Instead of reading the 5GB video into RAM, you open a **Readable Stream**. Node.js reads the first 64kb chunk, you encrypt or compress it, and then you immediately write it to a **Writable Stream** (like saving it to Amazon S3 or sending it to an HTTP response). The 64kb is then deleted from RAM, and Node.js reads the next chunk.
+
+Because of this architecture, Node.js can process a 500-Gigabyte file using only 64 kilobytes of RAM.
+
+## Types of Streams
+1. **Readable**: Streams you can read from (e.g., reading a file via `fs.createReadStream`, or an incoming HTTP request body).
+2. **Writable**: Streams you can write to (e.g., writing to a file, or the outgoing HTTP `res` object).
+3. **Duplex**: Streams that are both Readable and Writable (e.g., TCP Network Sockets).
+4. **Transform**: A Duplex stream that mathematically modifies the data as it passes through (e.g., zlib compression, or AES encryption).
+
+## Piping
+Node.js provides a `.pipe()` method (similar to the Unix `|` pipe operator) to effortlessly connect streams together while automatically handling "Backpressure" (if the Writable stream is slower than the Readable stream, pipe will automatically pause the Readable stream so RAM doesn't overflow).
+
+```js
+// Reading a file, compressing it via gzip, and saving it.
+const fs = require('fs');
+const zlib = require('zlib');
+
+fs.createReadStream('massive-log.txt')
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('massive-log.txt.gz'));
+```
+
+</ConceptTemplate>

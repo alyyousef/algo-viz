@@ -1,0 +1,27 @@
+---
+title: The Runtimes (Node.js, Deno, Bun)
+description: The execution engines that allow JavaScript to run directly on operating systems outside of the browser.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Runtimes (Node.js, Deno, Bun)">
+
+Historically, JavaScript was locked inside a cage: the web browser. It could not read local computer files, it could not open network ports, and it could not run as a background service.
+
+## Node.js (The Pioneer)
+In 2009, Ryan Dahl took Google Chrome's blazing-fast **V8 JavaScript Engine**, ripped it out of the browser, and strapped it to a C++ architecture that gave it full OS access. This created **Node.js**.
+
+Node.js revolutionized the industry. For the first time ever, developers could write their frontend UI in Javascript, and their backend API in Javascript. It introduced an asynchronous, Event-Driven, non-blocking I/O model that was capable of handling tens of thousands of concurrent connections (drastically outperforming traditional Ruby and PHP servers).
+
+## Deno (The Secure Successor)
+Years later, Ryan Dahl realized Node.js had massive architectural flaws: 
+1. It lacked security (any Node package could secretly delete your entire hard drive).
+2. It relied on a centralized `package.json` and the `node_modules` folder.
+
+He created **Deno** (written in Rust) to fix this. Deno is secure by default (requiring explicit permissions to read files or access the network), natively supports TypeScript out-of-the-box without transpilers, and imports URLs directly (like the browser) instead of using `node_modules`.
+
+## Bun (The Speed Demon)
+Created by Jarred Sumner, **Bun** is the newest runtime. Instead of Google's V8, it uses Apple's **JavaScriptCore** engine. It is written in Zig and is mathematically hyper-optimized for extreme performance. 
+Bun is designed to be a completely unified ecosystem: it acts as a runtime, a package manager (replacing `npm`), and a bundler (replacing `Webpack`), executing significantly faster than Node.js.
+
+</ConceptTemplate>

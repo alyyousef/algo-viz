@@ -1,0 +1,37 @@
+---
+title: State Management (Redux, Zustand, MobX, XState)
+description: The complex architectural patterns required to share data globally across hundreds of deeply nested UI components.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="State Management">
+
+In a component-based architecture (like React), passing data (State) down through 10 layers of child components is called **Prop Drilling**. It creates unmaintainable spaghetti code.
+To solve this, we extract the data into a Global Store that any component can access directly.
+
+## 1. Redux (The Flux Architecture)
+Created by Dan Abramov. For years, Redux was the absolute mandatory standard for React apps. It implements a strict unidirectional data flow called **Flux**.
+- **State** is completely immutable. You cannot mathematically modify it directly.
+- You must dispatch an **Action** (a string like `"USER_LOGGED_IN"`).
+- A **Reducer** (a pure mathematical function) intercepts the action, copies the state, applies the change, and returns the new state.
+
+**The Flaw**: Redux required a catastrophic amount of boilerplate code (Actions, Reducers, Types, Thunks) just to update a single boolean value. Today, it is largely wrapped in **Redux Toolkit (RTK)** to minimize this boilerplate.
+
+## 2. Zustand (The Minimalist King)
+German for "State". Created by Daishi Kato, Zustand is currently the most heavily favored state management library in the React ecosystem. 
+It completely abandons Redux boilerplate. It uses modern React Hooks to create a tiny, mathematically flawless global store with zero providers required.
+
+```ts
+const useStore = create((set) => ({
+  bears: 0,
+  increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
+}))
+```
+
+## 3. MobX (The Reactive Approach)
+Unlike Redux's strict immutable paradigm, MobX encourages you to mathematically mutate state directly. It relies heavily on Object-Oriented Programming (Classes) and Javascript Proxies/Observables. When you change a property, MobX automatically triggers re-renders on the exact components observing that specific property.
+
+## 4. XState (State Machines)
+Instead of managing random variables (`isLoading`, `isError`), XState mathematically models your application as a **Finite State Machine**. An application can only be in one state at a time (e.g., `idle` -> `loading` -> `success`). This entirely prevents "impossible states" (like being `isError: true` and `isSuccess: true` simultaneously).
+
+</ConceptTemplate>

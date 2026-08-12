@@ -1,0 +1,37 @@
+---
+title: Server Architecture
+description: The fundamental models of how clients and servers interact to generate, render, and deliver dynamic web applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Server Architecture">
+
+The core of web development is the **Client-Server Model**. The Client (browser) requests a resource, and the Server (backend) computes the logic, fetches from the database, and returns a response.
+
+## MVC (Model-View-Controller)
+Historically the most famous architectural pattern for backend applications (heavily popularized by Ruby on Rails and Django).
+- **Model**: The mathematical representation of the data (e.g., a `User` class mapped directly to a database table).
+- **View**: The UI that the user sees (the HTML template).
+- **Controller**: The brain. It receives the HTTP request from the router, asks the Model for data, passes that data into the View, and returns the final HTML to the client.
+
+## Rendering Strategies
+
+### Server-Side Rendering (SSR) & Templating Engines
+Before the modern React era, all HTML was generated on the backend. 
+A **Templating Engine** (like Jinja for Python, EJS for Node, or Blade for PHP) allows you to inject backend variables directly into HTML strings.
+```html
+<!-- EJS Template Example -->
+<h1>Welcome, <%= user.name %>!</h1>
+<ul>
+  <% users.forEach(function(u){ %>
+    <li><%= u.email %></li>
+  <% }); %>
+</ul>
+```
+When a user visits the URL, the server executes this loop, generates the raw HTML string, and sends it to the browser. This is incredible for SEO and initial load times, but creates a "hard page refresh" every time you click a link.
+
+### Client-Side Rendering (SPA Architecture)
+The industry eventually shifted to Single Page Applications (React/Vue). 
+In this model, the backend completely stops rendering HTML. Instead, the backend simply exposes an API that returns raw JSON data. The Client (browser) downloads a massive Javascript bundle, fetches the JSON, and mathematically constructs the DOM elements on the user's computer.
+
+</ConceptTemplate>

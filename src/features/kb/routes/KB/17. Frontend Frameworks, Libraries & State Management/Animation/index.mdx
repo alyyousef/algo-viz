@@ -1,0 +1,36 @@
+---
+title: Animation (Framer Motion, GSAP)
+description: The advanced Javascript architectures used to execute buttery-smooth, physics-based animations at 60 frames per second.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Animation (Framer Motion, GSAP)">
+
+While basic CSS Transitions and Keyframes are sufficient for simple hover effects, they completely fall apart when orchestrating massive, multi-step, scroll-linked animations or animating components mounting and unmounting from the DOM.
+
+## 1. Framer Motion (The Physics Engine)
+Created by Matt Perry, Framer Motion is the absolute standard for React animation.
+Instead of dealing with rigid CSS durations (like `0.3s`), Framer Motion is built on a mathematical **Spring Physics** engine. You define mass, stiffness, and damping, resulting in fluid, organic animations that mimic the real world.
+
+Crucially, it introduced the `<AnimatePresence>` wrapper, mathematically solving the hardest problem in React: animating a component *out* of the DOM just before it gets violently unmounted by state changes.
+
+```tsx
+<motion.div
+  initial={{ opacity: 0, scale: 0.5 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ type: "spring", stiffness: 100 }}
+>
+  Hello
+</motion.div>
+```
+
+## 2. GSAP (GreenSock Animation Platform)
+Before modern React existed, GSAP was the undisputed king of web animation, and it remains the most powerful library in existence for raw timeline orchestration.
+
+GSAP completely bypasses CSS and uses highly-optimized Javascript math via `requestAnimationFrame` to manipulate DOM properties directly at 60+ FPS. 
+It is explicitly designed for building massive "Scrollytelling" websites (like the Apple iPhone landing pages) where the entire page's animation state is mathematically linked to the user's scrollbar position (via the ScrollTrigger plugin).
+
+## 3. Lottie
+Created by Airbnb. Lottie is an architecture that mathematically exports complex Adobe After Effects animations as tiny JSON files. The Lottie web player parses the JSON and renders the animation using high-performance SVGs, allowing designers to ship Hollywood-level animations directly to the browser with zero coding required.
+
+</ConceptTemplate>

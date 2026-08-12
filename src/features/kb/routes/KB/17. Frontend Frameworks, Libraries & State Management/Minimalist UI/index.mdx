@@ -1,0 +1,47 @@
+---
+title: Minimalist UI (jQuery, HTMX, Alpine.js)
+description: The legacy of imperative DOM manipulation, and the modern rebellion against the massive complexity of Single Page Applications.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Minimalist UI">
+
+Not every website needs to be a 5MB React Single Page Application. If you are building a simple blog or an e-commerce landing page, shipping massive Javascript bundles is terrible for performance and SEO.
+
+## 1. jQuery (The Historical King)
+In the late 2000s, Javascript was a nightmare. Every browser (Internet Explorer, Firefox, Chrome) implemented the DOM API differently. 
+**jQuery** mathematically solved this by providing a unified, incredibly simple API wrapper.
+```js
+// Selecting an element and fading it out
+$('#login-btn').fadeOut();
+```
+jQuery became the most widely used library in history. Today, it is largely obsolete because native Javascript (ES6) absorbed all of its best features (like `document.querySelector` and `fetch`).
+
+## 2. HTMX (The HTML Rebellion)
+Created by Carson Gross, **HTMX** is a rapidly growing philosophy that violently rejects the complexity of React.
+The core philosophy is: **HTML is already a great language, it's just missing features.** 
+
+Instead of writing massive Javascript fetch requests to update the DOM, HTMX allows you to do it directly in HTML attributes:
+```html
+<button 
+  hx-post="/api/like-button" 
+  hx-target="#like-count" 
+  hx-swap="innerHTML">
+  Like
+</button>
+```
+When clicked, HTMX automatically sends a POST request, takes the raw HTML the server sends back, and seamlessly injects it into the `#like-count` div without a page reload.
+
+## 3. Alpine.js
+Often paired with Tailwind CSS, Alpine.js brings the reactive power of Vue directly into HTML without requiring a massive build step (Webpack/Vite). It is designed to sprinkle tiny bits of interactivity (like dropdowns and modals) into static HTML pages.
+
+```html
+<div x-data="{ open: false }">
+    <button @click="open = true">Open Dropdown</button>
+    <ul x-show="open" @click.outside="open = false">
+        <li>Settings</li>
+    </ul>
+</div>
+```
+
+</ConceptTemplate>

@@ -1,0 +1,31 @@
+---
+title: Background Processing
+description: The architecture of decoupling heavy, time-consuming computational tasks from the main HTTP request/response cycle.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Background Processing">
+
+When a user clicks "Generate PDF Report" on a website, generating that PDF might take 15 seconds. 
+If the backend attempts to generate the PDF during the HTTP request, the user's browser will hang and spin for 15 seconds, and the server's thread will be completely blocked, preventing it from serving other users.
+
+This is solved using **Background Processing Architecture**.
+
+## Message Queues & Workers
+Instead of doing the work immediately, the web server simply drops a "Message" into a Queue and instantly returns an HTTP `202 Accepted` to the user.
+
+1. **The Message Queue (Broker)**: A highly-available storage system (like **RabbitMQ**, **Redis**, or **Apache Kafka**). It holds thousands of pending task messages.
+2. **The Worker Nodes**: Completely separate backend servers that constantly monitor the Queue. When they see a "Generate PDF" message, a Worker pulls it off the queue, spends 15 seconds computing it, saves the PDF to AWS S3, and then marks the task as complete.
+
+This guarantees that the main Web Servers remain blazing fast and never get bogged down by heavy CPU tasks (like video encoding, AI inference, or sending 10,000 emails).
+
+## Cron Jobs (Scheduled Tasks)
+Derived from the Unix `cron` utility. A Cron Job is a mathematical expression used to schedule a function to run at a specific time in the future, or on a recurring basis.
+
+For example, a script that charges all users' credit cards for their monthly subscription on the 1st of every month at midnight.
+The standard Cron expression has 5 fields: `Minute Hour Day Month DayOfWeek`.
+- `0 0 1 * *` (Run at 00:00 on the 1st of every month).
+
+Modern systems use distributed task schedulers (like AWS EventBridge or Celery Beat) to trigger these jobs reliably across multiple worker nodes.
+
+</ConceptTemplate>

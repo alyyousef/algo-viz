@@ -1,0 +1,31 @@
+---
+title: Transpilers & Compilers (Babel, SWC, esbuild)
+description: The build tools that mathematically transform futuristic TypeScript and React JSX into older JavaScript that legacy browsers can understand.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Transpilers & Compilers">
+
+When React introduced **JSX** (writing HTML directly inside Javascript), browsers had no idea how to read it. They would instantly crash with a Syntax Error. 
+Furthermore, when ES6 released, developers wanted to use new features like Arrow Functions, but users on older browsers (Internet Explorer) couldn't run them.
+
+We needed a tool to "Transpile" (Translate + Compile) the futuristic code back down into older, highly-compatible JavaScript.
+
+## Babel (The JS Pioneer)
+**Babel** was the undisputed king of transpilation for nearly a decade. 
+It parsed your React JSX and ES6 code into an Abstract Syntax Tree (AST), mathematically transformed the nodes, and spat out ugly, highly compatible ES5 code. 
+
+**The Flaw**: Babel was written in Javascript. As codebases grew to millions of lines, Babel would often take 5+ minutes just to compile the application. Javascript was simply too slow for heavy compiler mathematics.
+
+## The Systems Language Revolution
+To fix the compilation speed crisis, developers began rewriting JavaScript tooling in low-level, hyper-optimized Systems Languages.
+
+### 1. esbuild (Written in Go)
+Created by Evan Wallace, esbuild shocked the industry by compiling code **10x to 100x faster than Babel**. Because it was written in Go, it could heavily utilize CPU multi-threading and shared memory architectures that Node.js could not.
+
+### 2. SWC (Speedy Web Compiler - Written in Rust)
+Created by Next.js (Vercel), SWC is a Rust-based compiler designed specifically as a drop-in replacement for Babel. It performs the exact same AST transformations but operates at near-native CPU speeds.
+
+Today, nearly all modern frameworks (Next.js, Vite) have completely abandoned Babel in favor of esbuild or SWC.
+
+</ConceptTemplate>
